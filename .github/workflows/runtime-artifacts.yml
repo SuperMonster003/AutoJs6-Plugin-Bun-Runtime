@@ -1,0 +1,49 @@
+name: Bun runtime artifact integrity
+
+on:
+  push:
+    paths:
+      - ".gitattributes"
+      - "app/src/main/jniLibs/**"
+      - "tools/bun-runtime/**"
+      - ".github/workflows/runtime-artifacts.yml"
+  pull_request:
+    paths:
+      - ".gitattributes"
+      - "app/src/main/jniLibs/**"
+      - "tools/bun-runtime/**"
+      - ".github/workflows/runtime-artifacts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-runtime:
+    name: Reproduce pinned official Bun payloads
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository and runtime payloads
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+
+      - name: Verify checked-in payloads
+        shell: pwsh
+        run: node tools/bun-runtime/verify-runtime.mjs
+
+      - name: Download and reproduce official release payloads
+        shell: pwsh
+        run: ./tools/bun-runtime/materialize-runtime.ps1
+
+      - name: Confirm reproduced bytes match Git LFS objects
+        shell: pwsh
+        run: git diff --exit-code -- app/src/main/jniLibs

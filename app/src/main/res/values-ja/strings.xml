@@ -1,0 +1,4 @@
+<resources>
+    <string name="plugin_description">独立した Android プロセスで Bun エンジンを使って JavaScript と TypeScript を実行します</string>
+    <string name="plugin_instruction">JS または TS file の先頭に &quot;bun&quot;; を置きます. Version 0.1 は --no-install で 1 つの source snapshot を実行し, AutoJs6 globals, Java bridge, relative project import は提供しません.</string>
+</resources>

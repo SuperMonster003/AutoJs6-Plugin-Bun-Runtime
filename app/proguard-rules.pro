@@ -1,0 +1,4 @@
+-keep class org.autojs.plugin.bun.runtime.api.** { *; }
+-keep class org.autojs.plugin.common.api.** { *; }
+-keep class io.github.supermonster003.autojs6.plugin.bun.runtime.** extends android.app.Service { *; }
+-keep class io.github.supermonster003.autojs6.plugin.bun.runtime.** extends android.app.Activity { *; }

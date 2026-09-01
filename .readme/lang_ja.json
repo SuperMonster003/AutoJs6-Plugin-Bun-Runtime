@@ -1,0 +1,93 @@
+{
+  "$name": "日本語",
+  "text_current_lowercase": "現在",
+  "text_plugin_synopsis": "独立した Android プロセスで Bun エンジンを使って JavaScript と TypeScript を実行します",
+  "h3_languages": "言語",
+  "p_languages_all_supported": "現在の README.md は次の言語に対応しています",
+  "h3_introduction": "概要",
+  "p_introduction": "Bun Runtime は AutoJs6 が [Bun]({{ bun_official_url }}) を独立した JavaScript と TypeScript エンジンとして選択できる Android プラグインです. ホストは file descriptor で 1 つの source snapshot を送り, プラグインは固定された公式 Bun Android executable を専用 runtime process で起動します. stdout, stderr, 完了, timeout, cancel event は Binder で戻ります. これは実際の Bun 実行であり, Rhino や Node.js の alias ではありません.",
+  "h3_features": "機能",
+  "features": [
+    "独立エンジン: コードを別の AutoJs6 エンジンへ転送せず, 公式 Bun {{ bun_version }} Android executable を実行します.",
+    "JavaScript と TypeScript: 固定 Android build で利用できる ESM syntax と Bun API を含む 1 つの JS または TS source snapshot を Bun が解析して実行します.",
+    "観測可能な実行: stdout と stderr をホストへ stream し, 最終結果には exit status, duration, timeout, cancel と上限付き diagnostic が含まれます.",
+    "管理された runtime payload: `arm64-v8a` と `x86_64` の binary は tag, commit, size, SHA-256, ELF machine, 最小 PT_LOAD alignment で固定されています.",
+    "ローカライズ: plugin metadata, plugin center instruction, README, changelog を 1 つの検証済み source set から 10 言語で提供します."
+  ],
+  "h3_usage": "インストールと使用方法",
+  "usage_steps": [
+    "Android {{ min_android_version }} (API {{ android_min_sdk }}) 以降で AutoJs6 build {{ required_host_version_code }} ({{ required_host_version_name }}) 以降を使用します.",
+    "端末 ABI に一致する release APK をインストールします. 多くのスマートフォンとタブレットでは `arm64-v8a`, 対応 emulator または device では `x86_64`, 不明な場合は `universal` を選びます.",
+    "AutoJs6 plugin center を開いて Bun Runtime を有効にします. 新規インストール後も停止中の場合はホストに表示される `有効化` action を使用します.",
+    "JavaScript または TypeScript file の先頭に独立 directive `\"bun\";` を置き, AutoJs6 から通常どおり実行します."
+  ],
+  "p_usage_note": "Version 0.1 は request ごとに `bun run --no-install <source>` で 1 つの immutable source snapshot を実行し, 不足 dependency を自動 install しません. 既存の Rhino または Node.js project を Bun へ移行する前に制限を確認してください.",
+  "h3_quick_start": "クイックスタート",
+  "p_quick_start_intro": "この file を実行してホストが Bun を選択し Android runtime が起動したことを確認します",
+  "p_quick_start_result": "期待する出力は `Bun {{ bun_version }}` で始まり, 次の行に `android` と表示されます.",
+  "p_typescript_intro": "Bun が TypeScript を直接処理するため, ホスト側の TypeScript compilation は不要です",
+  "h3_compatibility": "互換性",
+  "compatibility_points": [
+    "Runtime: 公式 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
+    "Platform: Android {{ min_android_version }} (API {{ android_min_sdk }}) 以降. 公式 64-bit payload は `arm64-v8a` と baseline `x86_64` に対応します. API 31 real device では Bun syscall 436 `close_range` が app seccomp `SIGSYS` で失敗しました. Standard AOSP Android 13 app allowlist はこの syscall を含まず, API 34 で追加されます. Sony API 33 device 1 台は予想外に成功しましたが, device-specific result は portable support の証拠になりません. API 35 real device の JS と TS Binder round trip は成功しました. API 28 から 33 は upstream fallback と portable validation が完了するまで support range 外です.",
+    "Host contract: AutoJs6 build {{ required_host_version_code }} 以降と Bun runtime contract version {{ plugin_contract_version }}.",
+    "Request limit: source は {{ max_source_size }} まで, stdout と stderr の combined streaming budget は {{ max_output_size }} まで, default timeout は {{ default_timeout }} です.",
+    "Package: single-ABI APK は小さく, 大きい `universal` APK は対応する 2 つの ABI を含みます."
+  ],
+  "h3_limitations": "Version 0.1 の制限",
+  "limitations": [
+    "1 つの source snapshot のみ: multi-file project transfer と relative project import はこの release では未実装です.",
+    "AutoJs6 globals なし: Rhino globals, Android automation API, host object は Bun 内に現れません.",
+    "Java bridge なし: Bun は AutoJs6 process の Java class や object に直接 access できません.",
+    "完全な toolchain は保証しません: `bunx`, 端末上で生成した executable, runtime C compilation, 任意の native addon は support scope 外です.",
+    "Security sandbox ではありません: Bun script は plugin app UID の trusted code として動作し, plugin に付与された permission を利用できます."
+  ],
+  "h3_security": "権限と整合性",
+  "security_points": [
+    "Export された Wake, info, runtime component は `org.autojs.permission.PLUGIN` で保護されます. AutoJs6 は通常の plugin authorization check も行います.",
+    "Source snapshot は実行ごとの private directory に配置されます. Executable は Android の read-only native library directory から起動され, writable storage へ copy して実行しません.",
+    "Repository lock は公式 release archive と packaged binary の両方を記録します. CI は build 前に size, SHA-256, ELF type, machine, alignment の drift を拒否します.",
+    "Trusted Bun script が `fetch` などの network API を使用できるよう plugin は Internet permission を宣言します. Plugin は sandbox ではないため, 信頼できる script だけを実行してください."
+  ],
+  "h3_faq": "FAQ",
+  "faq": [
+    {
+      "q": "Bun に AutoJs6 globals がないのはなぜですか?",
+      "a": "Bun は独立 process と JavaScript engine であり, Rhino compatibility layer ではありません. 将来の host bridge は各 automation capability を明示的に公開する必要があり, version 0.1 は意図的に bridge を提供しません."
+    },
+    {
+      "q": "Script から別の local project file を import できますか?",
+      "a": "Version 0.1 ではできません. Contract は 1 つの source snapshot だけを転送し project tree はまだ転送しないため, relative project import を解決できません. Single-file ESM syntax は利用できます."
+    },
+    {
+      "q": "16 KB page-size device に対応していますか?",
+      "a": "Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上です. 実際の 16 KB Android runtime test はまだ完了していないため, end-to-end support が検証済みとは表明しません."
+    },
+    {
+      "q": "どの APK をインストールすればよいですか?",
+      "a": "多くの実機 Android device は `arm64-v8a` です. 対応 emulator または x86_64 device では baseline `x86_64` を使います. `universal` は両方を含み, ABI が不明な場合の安全な選択です."
+    }
+  ],
+  "h3_plugin_interface": "プラグインインターフェース",
+  "p_plugin_interface": "以下の stable identifier と limit は AutoJs6 host と plugin developer 向けです",
+  "p_contract": "`BunRuntimeService` は action `{{ plugin_service_action }}` と category `{{ plugin_service_category }}` で発見されます. `ParcelFileDescriptor` で source を, request で execution ID を受け取り, synchronous `runScript` call が active の間に `bun run --no-install <source>` を実行します. Stdout と stderr は oneway callback で bounded chunk としてのみ送信します. Returned terminal Bundle と `finished` event は status と diagnostic summary field だけを含み, complete output stream を含まないため, 各 Binder transaction は size limit 以下に保たれます. Service は explicit cancel と runtime prewarming に対応し, `:bun_runtime` で動作します.",
+  "p_16kb_status": "16 KB status: packaged `arm64-v8a` と `x86_64` ELF の PT_LOAD segment は 16 KB alignment requirement を満たします. 実際の 16 KB Android device または emulator ではまだ実行していないため, ELF alignment だけが検証済みです.",
+  "h3_roadmap": "ロードマップ",
+  "p_roadmap": "Roadmap は現在の動作と, planned project snapshot, narrow AutoJs6 capability bridge, より広い Android validation, 将来の Bun upgrade を区別します. 未チェック項目は計画であり, 現在の support を示しません.",
+  "text_link_roadmap": "ROADMAP.md を表示",
+  "h3_release_history": "リリース履歴",
+  "h5_more_release_history": "その他のリリース履歴",
+  "h3_build": "Build と検証",
+  "p_build_intro": "Verification または Gradle packaging の前に Git LFS で 2 つの pinned runtime binary を materialize する必要があります. 標準 local check は以下のとおりです. JDK 17 以降, Node.js, Android SDK 36 が必要です.",
+  "h3_localization": "ローカライズと文書生成",
+  "p_localization": "JSON と Markdown template を編集してから `py .python/generate_markdown.py` を実行します. 生成済み README, changelog, plugin-instruction file は直接編集しないでください. `--check` は file を書き込まずに language shape, version alignment, localized resource, orphan artifact, generated-file drift を検証します.",
+  "h3_license": "ライセンス",
+  "p_license": "Plugin code は [Mozilla Public License 2.0]({{ license_url }}) です. Bundled official Bun executable は MIT licensed Bun code, LGPL-2 で statically linked された JavaScriptCore と WebKit, および個別 license の third-party component を含みます. [Third-Party Notices]({{ third_party_notices_url }}) と pinned Bun [LICENSE.md]({{ bun_license_url }}) を確認してください.",
+  "h3_links": "リンク",
+  "text_link_autojs6": "AutoJs6 project",
+  "text_link_bun": "Bun 公式サイト",
+  "text_link_bun_release": "固定 Bun release",
+  "text_link_third_party_notices": "第三者通知",
+  "p_instruction_backend": "この release は隔離された plugin runtime process で `bun run --no-install <source>` を使って公式 Bun {{ bun_version }} Android executable を起動します. 1 つの JS または TS source snapshot を受け取り, 不足 dependency を自動 install せず, stdout, stderr, 最終 status を AutoJs6 へ stream します.",
+  "p_instruction_more": "Compatibility, security, package selection, version 0.1 の全 limitation は[プロジェクト README]({{ repo_url }}) を確認してください."
+}
