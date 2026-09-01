@@ -20,9 +20,9 @@ The executable is not a JNI shared library and is never loaded with `System.load
 
 ## Android runtime compatibility
 
-Although the official Bun Android build targets Android API 28 at link time, that does not make it executable under every Android app seccomp policy. On a real API 31 device, Bun 1.4.0 was terminated with `SIGSYS` when it invoked syscall 436, `close_range`. The standard AOSP Android 13 app syscall allowlist still lacks `close_range`, while Android 14 (API 34) adds it. One Sony API 33 device unexpectedly completed the runtime test, but a device-specific policy exception is not portable support evidence. A real API 35 device completed JavaScript and TypeScript Binder round trips successfully.
+Although the official Bun Android build targets Android API 28 at link time, that does not make it executable under every Android app seccomp policy. On a real API 31 device, Bun 1.4.0 was terminated with `SIGSYS` when it invoked syscall 436, `close_range`. AOSP Android 12 and earlier app syscall allowlists lack `close_range`, while Android 13 (T, API 33) allowlists the raw syscall. Android 14 (U, API 34) adds the public bionic `close_range` wrapper, but Bun invokes the raw syscall and does not require that API 34 libc symbol. A real Sony API 33 runtime run passed consistently with this AOSP boundary, and a real API 35 device completed JavaScript and TypeScript Binder round trips successfully.
 
-The plugin therefore requires Android 14 (API 34) or later, and API 28 through 33 remain outside the supported range. Lowering this requirement depends on an upstream Bun fallback that avoids the blocked syscall and on portable validation across lower Android versions; the ELF build target or one vendor-specific success alone is not sufficient evidence.
+The plugin therefore requires Android 13 (API 33) or later. API 28 through 32 remain outside the supported range until a patched Bun runtime handles the Android seccomp traps and passes portable validation across those releases. The API 28 ELF build target alone is not sufficient evidence, and a manifest-only minSdk change cannot make the unmodified runtime portable there.
 
 ## Redistributed artifacts
 

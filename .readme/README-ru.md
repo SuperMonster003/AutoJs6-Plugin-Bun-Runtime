@@ -59,7 +59,7 @@ Bun Runtime является отдельным Android-плагином, кот
 
 ******
 
-1. Используйте AutoJs6 build 5278 (6.8.0) или новее на Android 14 (API 34) или новее.
+1. Используйте AutoJs6 build 5278 (6.8.0) или новее на Android 13 (API 33) или новее.
 2. Установите release APK, соответствующий ABI устройства. Для большинства телефонов и планшетов выберите `arm64-v8a`, для совместимого эмулятора или устройства выберите `x86_64`, а при сомнении выберите `universal`.
 3. Откройте центр плагинов AutoJs6 и включите Bun Runtime. Если новый плагин остается остановленным, используйте действие `Активировать`, показанное хостом.
 4. Поместите отдельную директиву `"bun";` в начало файла JavaScript или TypeScript и запустите его из AutoJs6 обычным способом.
@@ -100,7 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - Runtime: официальный Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Платформа: Android 14 (API 34) или новее, официальные 64-bit payload для `arm64-v8a` и baseline `x86_64`. Реальный запуск на API 31 завершился `SIGSYS` app seccomp на syscall 436 `close_range` Bun. Стандартный список приложений AOSP Android 13 еще не содержит этот syscall и добавляет его в API 34. Один аппарат Sony API 33 неожиданно прошел тест, но результат отдельного устройства не доказывает переносимую поддержку. На реальном API 35 прошли Binder-вызовы JS и TS. API 28 по 33 остаются вне поддерживаемого диапазона до появления upstream fallback и переносимой проверки.
+- Платформа: Android 13 (API 33) или новее, официальные 64-bit payload для `arm64-v8a` и baseline `x86_64`. Реальный запуск на API 31 завершился `SIGSYS` app seccomp на syscall 436 `close_range` Bun. Списки разрешений приложений AOSP Android 12 и более ранних версий не содержат этот syscall, а Android 13 (T, API 33) разрешает raw syscall. Android 14 добавляет публичный wrapper bionic, но Bun вызывает raw syscall и не требует этот символ libc API 34. Реальные runtime tests на API 33 и API 35 прошли. API 28 по 32 остаются неподдерживаемыми, пока patched Bun runtime не обработает traps seccomp и не пройдет переносимую проверку.
 - Контракт хоста: AutoJs6 build 5278 или новее и Bun runtime contract version 1.
 - Лимиты: исходный код до 16 MiB, общий бюджет потоков stdout и stderr до 8 MiB, timeout по умолчанию 60 seconds.
 - Пакеты: APK для одного ABI меньше, а более крупный APK `universal` содержит оба поддерживаемых ABI.
@@ -193,6 +193,14 @@ default timeout: 60 seconds
 ### История выпусков
 
 ******
+
+#### v0.2.0
+
+_2026/09/01_
+
+- `Подсказка` Android 13 (API 33) теперь является официальной минимальной целью; API 28 по 32 остаются неподдерживаемыми, пока patched Bun runtime не пройдет переносимую проверку
+- `Улучшение` Снизить поддерживаемую версию Android с Android 14 (API 34) до Android 13 (API 33), сохранив закрепленные официальные Android payload Bun 1.4.0
+- `Улучшение` Задокументировать границу seccomp AOSP T: Android 13 разрешает raw syscall `close_range` Bun, а сбой на API 31 показывает, что API 28 по 32 требуют патч совместимости Bun, а не только изменение manifest
 
 #### v0.1.0
 

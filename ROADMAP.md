@@ -1,6 +1,6 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-更新日期: 2026-09-01
+更新日期: 2026-09-02
 
 本文档是 Bun Runtime 插件从首个单源码引擎版本演进到 Android 9+ 实验运行时、多文件项目执行和受控宿主能力桥的执行清单。每个条目只有在实现、文档和对应等级的验证证据同时满足后才可勾选；未勾选条目是规划意向，不代表当前版本能力或发布时间承诺。
 
@@ -59,7 +59,7 @@
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 | Bun 1.4.0、Binder 流式执行、双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | 进行中 | 官方 Bun 保持不变，最低版本降至 API 33 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 未开始 | 固定源码、补丁、工具链和双 ABI 产物 | 上游/构建/测试 |
+| M2 patched Bun 可复现构建 | 已启动 | 已建立固定输入与补丁参考骨架，构建和产物尚未就绪 | 上游/构建/测试 |
 | M3 Android 9-12 实验支持 | 等待 M2 | API 28-32 安装、探测、执行与诊断 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall、FD、进程生命周期和 OEM 矩阵闭环 | 测试/设备/发布 |
 | M5 16 KB 与发布完整性 | 进行中 | ELF、ZIP、安装后 payload 和真实 16 KB 执行 | 构建/测试/设备/发布 |
@@ -94,17 +94,17 @@ M1 只使用官方 Bun v1.4.0 release artifact，不引入 downstream native for
 
 ### M1-A: 事实与构建边界
 
-- [ ] (插件) 将 `MIN_SDK_VERSION` 从 34 调整为 33，并确认最终 debug、androidTest、单 ABI 和 universal APK manifest 均为 `minSdkVersion=33`。
-- [ ] (构建) 将 runtime lock 中“官方 ELF 链接目标 API 28”和“当前产品支持下限 API 33”拆成独立字段，避免再次混淆 native link target、seccomp allowlist 和插件支持策略。
-- [ ] (构建/测试) 扩展 runtime verifier，至少检查 lock schema、支持下限不低于 ELF 链接下限、ELF Android platform note、PIE、machine、系统库依赖和 `PT_LOAD` alignment。
-- [ ] (发布) 修正 `AGENTS.md`、`THIRD_PARTY_NOTICES.md`、README 文案源和本 Roadmap 中关于 Android 13 `close_range` allowlist 的陈述，并在全部 10 语言生成产物中同步 Android 13 下限。
-- [ ] (发布) 为 Android 13 支持建立新的 changelog 版本，不回写或篡改已经发布的 v0.1.0 历史记录。
+- [x] (插件) 将 `MIN_SDK_VERSION` 从 34 调整为 33，并确认最终 debug、androidTest、单 ABI 和 universal APK manifest 均为 `minSdkVersion=33`。(2026-09-01，G0/G1)
+- [x] (构建) 将 runtime lock 中“官方 ELF 链接目标 API 28”和“当前产品支持下限 API 33”拆成独立字段，避免再次混淆 native link target、seccomp allowlist 和插件支持策略。(2026-09-01，G0)
+- [x] (构建/测试) 扩展 runtime verifier，检查 lock schema、支持下限、ELF Android platform note、PIE、machine、interpreter、系统库依赖和 `PT_LOAD` alignment。(2026-09-01，G1)
+- [x] (发布) 修正 `AGENTS.md`、`THIRD_PARTY_NOTICES.md`、README 文案源和本 Roadmap 中关于 Android 13 `close_range` allowlist 的陈述，并在全部 10 语言生成产物中同步 Android 13 下限。(2026-09-01，G1)
+- [x] (发布) 为 Android 13 支持建立新的 v0.2.0 changelog，不回写或篡改已经发布的 v0.1.0 历史记录。(2026-09-01，G1)
 
 ### M1-B: 自动化与设备验证
 
-- [ ] (测试) CI 新增 API 33 `x86_64` instrumentation，至少覆盖 discovery、binding、metadata、prewarm、JS、TS、Unicode stdout/stderr、timeout、output limit、cancellation 和无效请求。
-- [ ] (测试) 保留当前 API 35 `x86_64` 回归，不以 API 33 job 替代当前平台测试。
-- [ ] (设备) 在至少一台 API 33 `arm64-v8a` 真机重新安装由 `minSdk=33` 正式构建的 APK，并执行完整 instrumentation，而不仅是 README 示例。
+- [x] (测试) CI 新增 API 33 `x86_64` instrumentation，并在本地对应 AVD 完成 3/3 测试；覆盖 discovery、binding、metadata、prewarm、JS、TS、Unicode stdout/stderr、真实 `Bun.spawn`、私有目录文件 I/O、timeout、output limit、cancellation 和无效请求。(2026-09-01，G1/G2)
+- [x] (测试) 保留 API 35 `x86_64` CI 回归，不以 API 33 job 替代当前平台测试；另在 API 35 arm64 真机完成相同 3/3 套件。(2026-09-01，G1/G2)
+- [x] (设备) Sony XQ-DQ72 API 33 `arm64-v8a` 已重新安装 `minSdk=33` 的 v0.2.0 构建并完成完整 instrumentation；环境与范围见 `docs/compatibility/2026-09-01-m1.json`。(2026-09-01，G2)
 - [ ] (设备) 补一台不同 OEM 或 Pixel/AOSP 类 API 33 arm64 环境；记录 fingerprint、kernel、page size 和完整测试范围。
 - [ ] (发布) 验证从 v0.1.0 覆盖升级、全新安装、Wake 激活、插件发现和进程重启；仅在 G3 完成后把 Android 13 写为正式发布兼容范围。
 
@@ -113,6 +113,8 @@ M1 升阶门: G0/G1 全绿，API 33 `x86_64` AOSP/Google APIs AVD 与至少一�
 ## M2: patched Bun 可复现构建
 
 M2 不直接承诺 Android 9-12 可用；它先建立可以审计、重放和替换上游补丁的 native 供应链。
+
+启动记录 (2026-09-02，G0): `tools/bun-runtime/experimental/api28` 已建立独立实验 identity、固定 Bun v1.4.0 与 PR #39775 的 5 个不可变上游提交、双 ABI/API 28 configure inputs、联网 materializer、离线 verifier 和 5 个回归测试。由于真正面向 v1.4.0 的 downstream backport、完整工具链/依赖锁、双次构建、ELF 审计和设备证据仍为空，`buildReady`、`distributionReady` 与 `runtimeProduced` 均保持 `false`，以下交付项暂不提前勾选。
 
 - [ ] (上游) 固定 Bun stable tag、完整 commit、相关 submodule/dependency revision，以及 PR #39775 所采用的具体补丁提交；开放 PR 更新时必须人工审阅差异。
 - [ ] (构建) 新增 versioned patch series，每个 patch 记录来源、目的、适用 commit、许可证影响和上游状态；不直接修改无法追踪来源的 vendored snapshot。

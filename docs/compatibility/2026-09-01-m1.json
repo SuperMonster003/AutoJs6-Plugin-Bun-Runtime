@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-01",
+  "milestone": "M1",
+  "plugin": {
+    "versionName": "0.2.0",
+    "minimumSupportedApi": 33,
+    "minimumSupportedAndroidVersion": "13"
+  },
+  "runtime": {
+    "name": "Bun",
+    "version": "1.4.0",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "distribution": "official Android release artifact"
+  },
+  "instrumentation": {
+    "testCount": 3,
+    "testClass": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+    "tests": [
+      "manifestPublishesWakeInfoAndRuntimeContracts",
+      "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+      "timeoutCancellationAndInvalidRequestAreBounded"
+    ],
+    "coverage": [
+      "action and category discovery",
+      "explicit Binder binding and descriptor",
+      "Wake, INFO, runtime and permission metadata",
+      "repeated runtime prewarm and identity",
+      "JavaScript and TypeScript execution",
+      "Unicode stdout and stderr streaming",
+      "Bun.spawn child execution without a shell",
+      "private workspace and TMPDIR file I/O",
+      "workspace cleanup",
+      "timeout",
+      "cancellation",
+      "output limit",
+      "oversized source",
+      "invalid request"
+    ]
+  },
+  "environments": [
+    {
+      "id": "api33-aosp-avd-x86_64",
+      "kind": "avd",
+      "avdName": "AVD_API_33",
+      "model": "sdk_gphone64_x86_64",
+      "androidVersion": "13",
+      "apiLevel": 33,
+      "abi": "x86_64",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+      "result": "passed",
+      "testsPassed": 3,
+      "testsFailed": 0,
+      "evidenceLevel": "G2"
+    },
+    {
+      "id": "api33-sony-xq-dq72-arm64",
+      "kind": "physical-device",
+      "manufacturer": "Sony",
+      "model": "XQ-DQ72",
+      "androidVersion": "13",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+      "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+      "result": "passed",
+      "testsPassed": 3,
+      "testsFailed": 0,
+      "evidenceLevel": "G2"
+    },
+    {
+      "id": "api35-xiaomi-23046rp50c-arm64",
+      "kind": "physical-device",
+      "manufacturer": "Xiaomi",
+      "model": "23046RP50C",
+      "androidVersion": "15",
+      "apiLevel": 35,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+      "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+      "result": "passed",
+      "testsPassed": 3,
+      "testsFailed": 0,
+      "evidenceLevel": "G2",
+      "notes": [
+        "A temporary instrumentation-only applicationId suffix avoided replacing an older differently signed test build.",
+        "The temporary target was removed by the test runner and the normal v0.2.0 arm64 package was installed afterward."
+      ]
+    }
+  ],
+  "commands": {
+    "ciEquivalent": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=<api>",
+    "hostInstalledDevice": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=<api> -PandroidTestPermissionName=<unique-test-permission>",
+    "sideBySideDevice": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=<api> -PandroidTestPermissionName=<unique-test-permission> -PinstrumentationApplicationIdSuffix=<suffix>"
+  },
+  "remainingGaps": [
+    "A second API 33 arm64 physical environment from another OEM or a Pixel-class device is still required for M1 G3.",
+    "The API 33 and API 35 GitHub Actions matrix is configured but its first remote run is not represented by this local report.",
+    "No 16 KiB page-size execution evidence is claimed."
+  ]
+}

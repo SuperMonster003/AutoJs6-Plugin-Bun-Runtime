@@ -1,0 +1,12 @@
+{
+  "profile": "android-release",
+  "overrides": {
+    "arch": "x64",
+    "androidApiLevel": 28,
+    "baseline": true,
+    "canary": false,
+    "lto": false,
+    "buildDir": "build/autojs6-api28/x86_64",
+    "cacheDir": "build/autojs6-api28/cache"
+  }
+}

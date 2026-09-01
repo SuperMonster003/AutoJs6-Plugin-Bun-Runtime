@@ -29,7 +29,7 @@
   "h3_compatibility": "التوافق",
   "compatibility_points": [
     "Runtime: Bun الرسمي {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
-    "المنصة: Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث, مع payload رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`. فشل real-device run على API 31 بسبب app seccomp `SIGSYS` عند Bun syscall 436 `close_range`. لا تتضمن standard AOSP Android 13 app allowlist هذا syscall وتضيفه API 34. نجح جهاز Sony API 33 واحد بشكل غير متوقع, لكن هذه النتيجة الخاصة بجهاز لا تثبت portable support. نجحت JS و TS Binder round trip على جهاز API 35 حقيقي. تبقى API 28 إلى 33 خارج support range حتى يتوفر upstream fallback و portable validation.",
+    "المنصة: Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث, مع payload رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`. فشل real-device run على API 31 بسبب app seccomp `SIGSYS` عند Bun syscall 436 `close_range`. لا تتضمن AOSP Android 12 والإصدارات الأقدم هذا syscall في app allowlist, بينما يسمح Android 13 (T, API 33) بالـ raw syscall. يضيف Android 14 public bionic wrapper, لكن Bun يستدعي raw syscall ولا يحتاج إلى API 34 libc symbol. نجحت runtime tests حقيقية على API 33 و API 35. تبقى API 28 إلى 32 غير مدعومة حتى يعالج patched Bun runtime seccomp traps ويجتاز portable validation.",
     "عقد المضيف: AutoJs6 build {{ required_host_version_code }} أو أحدث و Bun runtime contract version {{ plugin_contract_version }}.",
     "الحدود: مصدر حتى {{ max_source_size }}, و combined streaming budget لـ stdout و stderr حتى {{ max_output_size }}, و default timeout مقداره {{ default_timeout }}.",
     "الحزم: تكون single-ABI APK أصغر, بينما تتضمن `universal` APK الأكبر كلا ABI المدعومين."

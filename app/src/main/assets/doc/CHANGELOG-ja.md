@@ -4,6 +4,14 @@
 
 ******
 
+# v0.2.0
+
+###### 2026/09/01
+
+* `ヒント` Android 13 (API 33) を正式な minimum target とし, API 28 から 32 は patched Bun runtime が portable validation を通過するまで未対応
+* `改善` 固定済みの公式 Bun 1.4.0 Android payload を維持したまま, 対応する Android の下限を Android 14 (API 34) から Android 13 (API 33) に変更
+* `改善` AOSP T seccomp 境界を明文化: Android 13 は Bun の raw `close_range` syscall を allowlist し, API 31 の失敗から API 28 から 32 には manifest-only change ではなく Bun compatibility patch が必要と確認
+
 # v0.1.0
 
 ###### 2026/09/01

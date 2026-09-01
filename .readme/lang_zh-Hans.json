@@ -29,7 +29,7 @@
   "h3_compatibility": "兼容性",
   "compatibility_points": [
     "运行时: 官方 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
-    "平台: Android {{ min_android_version }} (API {{ android_min_sdk }}) 或更高版本, 官方 64 位 payload 支持 `arm64-v8a` 和 baseline `x86_64`. API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. 标准 AOSP Android 13 app allowlist 仍缺少该 syscall, API 34 才加入. 一台 Sony API 33 设备意外通过, 但这种设备特定结果不能证明可移植支持. API 35 真机 JS 和 TS Binder 往返已通过. API 28 到 33 仍不在支持范围内, 需要等待上游 fallback 和可移植验证.",
+    "平台: Android {{ min_android_version }} (API {{ android_min_sdk }}) 或更高版本, 官方 64 位 payload 支持 `arm64-v8a` 和 baseline `x86_64`. API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. AOSP Android 12 及更早版本的 app allowlist 不包含该 syscall, Android 13 (T, API 33) 已允许 raw syscall. Android 14 增加公开 bionic wrapper, 但 Bun 直接调用 raw syscall, 不需要 API 34 libc symbol. API 33 和 API 35 真机 runtime test 已通过. API 28 到 32 仍不受支持, 需要 patched Bun runtime 处理 seccomp trap 并通过可移植验证.",
     "宿主契约: AutoJs6 build {{ required_host_version_code }} 或更高版本, Bun runtime contract version {{ plugin_contract_version }}.",
     "请求边界: 源码最大 {{ max_source_size }}, stdout 和 stderr 组合流式预算最大 {{ max_output_size }}, 默认超时为 {{ default_timeout }}.",
     "安装包: 单 ABI APK 体积更小, 较大的 `universal` APK 同时包含两个受支持 ABI."

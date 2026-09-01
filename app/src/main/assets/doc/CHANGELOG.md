@@ -4,6 +4,14 @@
 
 ******
 
+# v0.2.0
+
+###### 2026/09/01
+
+* `Hint` Android 13 (API 33) is now the official minimum target; API 28 through 32 remain unsupported until a patched Bun runtime passes portable validation
+* `Improvement` Lower the supported Android floor from Android 14 (API 34) to Android 13 (API 33) while retaining the pinned official Bun 1.4.0 Android payloads
+* `Improvement` Document the AOSP T seccomp boundary: Android 13 allowlists Bun's raw `close_range` syscall, while the API 31 failure shows API 28 through 32 require a Bun compatibility patch rather than a manifest-only change
+
 # v0.1.0
 
 ###### 2026/09/01

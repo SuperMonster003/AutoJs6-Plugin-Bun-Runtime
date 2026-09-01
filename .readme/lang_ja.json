@@ -29,7 +29,7 @@
   "h3_compatibility": "互換性",
   "compatibility_points": [
     "Runtime: 公式 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
-    "Platform: Android {{ min_android_version }} (API {{ android_min_sdk }}) 以降. 公式 64-bit payload は `arm64-v8a` と baseline `x86_64` に対応します. API 31 real device では Bun syscall 436 `close_range` が app seccomp `SIGSYS` で失敗しました. Standard AOSP Android 13 app allowlist はこの syscall を含まず, API 34 で追加されます. Sony API 33 device 1 台は予想外に成功しましたが, device-specific result は portable support の証拠になりません. API 35 real device の JS と TS Binder round trip は成功しました. API 28 から 33 は upstream fallback と portable validation が完了するまで support range 外です.",
+    "Platform: Android {{ min_android_version }} (API {{ android_min_sdk }}) 以降. 公式 64-bit payload は `arm64-v8a` と baseline `x86_64` に対応します. API 31 real device では Bun syscall 436 `close_range` が app seccomp `SIGSYS` で失敗しました. AOSP Android 12 以前の app allowlist はこの syscall を含みませんが, Android 13 (T, API 33) は raw syscall を allowlist します. Android 14 は public bionic wrapper を追加しますが, Bun は raw syscall を呼び出すため API 34 libc symbol は不要です. API 33 と API 35 の real runtime test は成功しました. API 28 から 32 は patched Bun runtime が seccomp trap を処理し portable validation を通過するまで未対応です.",
     "Host contract: AutoJs6 build {{ required_host_version_code }} 以降と Bun runtime contract version {{ plugin_contract_version }}.",
     "Request limit: source は {{ max_source_size }} まで, stdout と stderr の combined streaming budget は {{ max_output_size }} まで, default timeout は {{ default_timeout }} です.",
     "Package: single-ABI APK は小さく, 大きい `universal` APK は対応する 2 つの ABI を含みます."

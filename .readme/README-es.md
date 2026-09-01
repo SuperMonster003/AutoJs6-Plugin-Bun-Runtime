@@ -59,7 +59,7 @@ Bun Runtime es un plugin Android independiente que permite a AutoJs6 elegir [Bun
 
 ******
 
-1. Usa AutoJs6 build 5278 (6.8.0) o posterior en Android 14 (API 34) o posterior.
+1. Usa AutoJs6 build 5278 (6.8.0) o posterior en Android 13 (API 33) o posterior.
 2. Instala el APK que coincida con el ABI del dispositivo. Elige `arm64-v8a` para la mayoría de teléfonos y tabletas, `x86_64` para un emulador o dispositivo compatible, o `universal` si no estás seguro.
 3. Abre el centro de plugins de AutoJs6 y activa Bun Runtime. Si el plugin recién instalado permanece detenido, usa la acción `Activar` que muestra el host.
 4. Pon la directiva independiente `"bun";` al principio de un archivo JavaScript o TypeScript y ejecútalo normalmente desde AutoJs6.
@@ -100,7 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - Runtime: Bun oficial 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Plataforma: Android 14 (API 34) o posterior, con binarios oficiales de 64 bits para `arm64-v8a` y `x86_64` baseline. Una prueba real en API 31 falló con `SIGSYS` de app seccomp en la syscall 436 `close_range` de Bun. La lista estándar de apps AOSP Android 13 aún no incluye esa syscall y la añade en API 34. Un dispositivo Sony API 33 pasó de forma inesperada, pero ese resultado específico no demuestra compatibilidad portable. Los recorridos Binder JS y TS en un dispositivo API 35 pasaron. API 28 a 33 siguen fuera del rango admitido hasta disponer de fallback upstream y validación portable.
+- Plataforma: Android 13 (API 33) o posterior, con binarios oficiales de 64 bits para `arm64-v8a` y `x86_64` baseline. Una prueba real en API 31 falló con `SIGSYS` de app seccomp en la syscall 436 `close_range` de Bun. Las listas de apps de AOSP Android 12 y anteriores no incluyen esa syscall, mientras Android 13 (T, API 33) permite la syscall directa. Android 14 añade el wrapper público de bionic, pero Bun invoca la syscall directa y no necesita ese símbolo libc de API 34. Las pruebas reales del runtime en API 33 y API 35 pasaron. API 28 a 32 siguen sin soporte hasta que un runtime Bun parcheado gestione los traps de seccomp y supere la validación portable.
 - Contrato del host: AutoJs6 build 5278 o posterior y contrato Bun runtime versión 1.
 - Límites: fuente de hasta 16 MiB, presupuesto combinado de streaming para stdout y stderr de hasta 8 MiB y timeout predeterminado de 60 seconds.
 - Paquetes: los APK de un solo ABI reducen el tamaño, mientras el APK `universal` incluye los dos ABI admitidos.
@@ -193,6 +193,14 @@ La hoja de ruta separa el comportamiento actual de las instantáneas de proyecto
 ### Historial de versiones
 
 ******
+
+#### v0.2.0
+
+_2026/09/01_
+
+- `Aviso` Android 13 (API 33) es ahora el objetivo mínimo oficial; API 28 a 32 siguen sin soporte hasta que un runtime Bun parcheado supere la validación portable
+- `Mejora` Reducir el mínimo Android admitido de Android 14 (API 34) a Android 13 (API 33) conservando los payload Android oficiales y fijados de Bun 1.4.0
+- `Mejora` Documentar el límite seccomp de AOSP T: Android 13 permite la syscall `close_range` directa de Bun, mientras el fallo en API 31 demuestra que API 28 a 32 requieren un parche de compatibilidad de Bun y no solo un cambio de manifest
 
 #### v0.1.0
 

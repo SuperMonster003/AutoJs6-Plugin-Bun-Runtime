@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "upstream": {
     "repository": "https://github.com/oven-sh/bun",
     "tag": "bun-v1.4.0",
@@ -8,10 +8,11 @@
     "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
   },
   "androidBuild": {
-    "minimumApi": 34,
+    "minimumSupportedApi": 33,
+    "minimumSupportedAndroidVersion": "13",
     "delivery": "pinned-official-release-binary",
     "execution": "read-only-nativeLibraryDir-process",
-    "note": "libbun_exec.so is an Android PIE executable renamed for native-library extraction; it is not a JNI shared library. The plugin requires API 34 because Bun 1.4.0 calls close_range, which older Android app seccomp policies reject with SIGSYS."
+    "note": "libbun_exec.so is an Android PIE executable renamed for native-library extraction; it is not a JNI shared library. Each packaged Bun executable identifies API 28 as its link-time Android API, while the plugin supports API 33 or later. Bun 1.4.0 invokes close_range directly during startup, and the AOSP Android 13 zygote seccomp allowlist permits that syscall; the public Android 14 libc wrapper is a separate compatibility boundary."
   },
   "artifacts": [
     {
@@ -24,6 +25,13 @@
       "binaryBytes": 87914400,
       "binarySha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
       "elfMachine": 183,
+      "androidIdentApi": 28,
+      "interpreter": "/system/bin/linker64",
+      "neededLibraries": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
       "minimumLoadAlignment": 16384
     },
     {
@@ -36,6 +44,13 @@
       "binaryBytes": 90420592,
       "binarySha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
       "elfMachine": 62,
+      "androidIdentApi": 28,
+      "interpreter": "/system/bin/linker64",
+      "neededLibraries": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
       "minimumLoadAlignment": 16384
     }
   ]

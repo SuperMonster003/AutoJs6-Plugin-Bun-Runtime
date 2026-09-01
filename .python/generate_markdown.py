@@ -106,6 +106,17 @@ PLACEHOLDER_MARKERS = (
 )
 TEMPLATE_PATTERN = re.compile(r"\{\{\s*([A-Za-z0-9_$.-]+)\s*\}\}")
 RELEASED_DATE_PATTERN = re.compile(r"^\d{4}/\d{2}/\d{2}$")
+ANDROID_API_TO_VERSION = {
+    28: "9",
+    29: "10",
+    30: "11",
+    31: "12",
+    32: "12L",
+    33: "13",
+    34: "14",
+    35: "15",
+    36: "16",
+}
 
 
 class MarkdownGenerationError(Exception):
@@ -318,6 +329,37 @@ def validate_version_alignment(root: Path, changelog_sources: dict[str, dict[str
     return label
 
 
+def parse_integer(value: Any, field: str) -> int:
+    try:
+        return int(str(value))
+    except (TypeError, ValueError):
+        raise MarkdownGenerationError(f"{field} must be an integer, found {value!r}") from None
+
+
+def validate_android_compatibility_alignment(root: Path, common: dict[str, Any]) -> None:
+    properties = read_properties(root / "version.properties")
+    runtime_lock = load_json(root / "tools" / "bun-runtime" / "runtime.lock.json")
+    android_build = runtime_lock.get("androidBuild")
+    require(isinstance(android_build, dict), "runtime.lock.json androidBuild must be an object")
+
+    manifest_api = parse_integer(properties.get("MIN_SDK_VERSION"), "version.properties MIN_SDK_VERSION")
+    lock_api = parse_integer(android_build.get("minimumSupportedApi"), "runtime lock minimumSupportedApi")
+    documentation_api = parse_integer(common.get("android_min_sdk"), ".readme/common.json android_min_sdk")
+    require(
+        manifest_api == lock_api == documentation_api,
+        "Android minimum API drift: "
+        f"version.properties={manifest_api}, runtime.lock.json={lock_api}, README common={documentation_api}",
+    )
+
+    expected_version = ANDROID_API_TO_VERSION.get(manifest_api)
+    require(expected_version is not None, f"No Android version mapping is defined for API {manifest_api}")
+    documented_version = str(common.get("min_android_version", ""))
+    require(
+        documented_version == expected_version,
+        f"Android API {manifest_api} maps to Android {expected_version}, not {documented_version!r}",
+    )
+
+
 # ---------------------------------------------------------------------------
 # Android resource validation (validated, never generated)
 # ---------------------------------------------------------------------------
@@ -428,6 +470,8 @@ def load_languages(root: Path) -> tuple[dict[str, dict[str, Any]], dict[str, dic
     changelog_dir = root / ".changelog"
     common = load_json(readme_dir / "common.json")
     version_name = current_version_label(root).removeprefix("v")
+
+    validate_android_compatibility_alignment(root, common)
 
     validate_language_source_inventory(root)
     raw_languages = {code: load_json(readme_dir / f"lang_{code}.json") for code in LANGUAGE_CODES}

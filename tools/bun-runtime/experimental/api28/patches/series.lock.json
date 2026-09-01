@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "seriesId": "bun-pr-39775-upstream-reference-2026-09-01",
+  "applicationTarget": {
+    "tag": "bun-v1.4.0",
+    "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "status": "backport-not-started"
+  },
+  "upstreamPullRequest": {
+    "number": 39775,
+    "url": "https://github.com/oven-sh/bun/pull/39775",
+    "stateAtSnapshot": "open",
+    "mergedAtSnapshot": false,
+    "snapshotDate": "2026-09-01",
+    "baseCommit": "01c4e2fd6d94adf2e9157d1e6329c328eb37dfae",
+    "headCommit": "d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c",
+    "commitCount": 5,
+    "applicationTargetRelationship": {
+      "kind": "ancestor",
+      "commitsBehindPullRequestBase": 4,
+      "mergeBase": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+      "verificationUrl": "https://github.com/oven-sh/bun/compare/34cbb9a40b4bd1bd767d134a7065e66c2432a676...01c4e2fd6d94adf2e9157d1e6329c328eb37dfae"
+    }
+  },
+  "upstreamReferencePatches": [
+    {
+      "order": 1,
+      "commit": "3c00f0f6f57aad8943561ab44e64a443b77cd6db",
+      "parent": "01c4e2fd6d94adf2e9157d1e6329c328eb37dfae",
+      "title": "Turn seccomp SIGSYS traps into ENOSYS so syscall fallbacks work on Android",
+      "purpose": "Install the initial seccomp SIGSYS-to-ENOSYS handling and add close_range, pidfd_open, and openat2 coverage.",
+      "url": "https://github.com/oven-sh/bun/commit/3c00f0f6f57aad8943561ab44e64a443b77cd6db.patch",
+      "bytes": 17764,
+      "sha256": "4d05759b2e7d6b1f2ccdfc14b0041e33d6d93f63779ff66e7fffed07766ce9a5",
+      "materializedPath": "upstream-reference/0001-3c00f0f6.patch",
+      "affectedPaths": [
+        "src/jsc/bindings/bun-spawn.cpp",
+        "src/jsc/bindings/c-bindings.cpp",
+        "test/cli/run/seccomp-trap.c",
+        "test/cli/run/seccomp-trap.test.ts"
+      ],
+      "upstreamStatus": "open-unmerged-pr-at-snapshot",
+      "licenseContext": "oven-sh/bun MIT repository; downstream distribution review remains required"
+    },
+    {
+      "order": 2,
+      "commit": "931fd9270a18ed6b88c91e5a731b75afb9e1b025",
+      "parent": "3c00f0f6f57aad8943561ab44e64a443b77cd6db",
+      "title": "Restore the caller's signal mask after close_range in the spawn child",
+      "purpose": "Preserve SIGSYS handling through the child close_range fallback while restoring the caller mask before execve.",
+      "url": "https://github.com/oven-sh/bun/commit/931fd9270a18ed6b88c91e5a731b75afb9e1b025.patch",
+      "bytes": 8186,
+      "sha256": "e4b74358aae3ab52c297caaf00723966df9288acfca97004839ea6da34442d8e",
+      "materializedPath": "upstream-reference/0002-931fd927.patch",
+      "affectedPaths": [
+        "src/jsc/bindings/bun-spawn.cpp",
+        "src/jsc/bindings/c-bindings.cpp",
+        "test/cli/run/seccomp-trap.c",
+        "test/cli/run/seccomp-trap.test.ts"
+      ],
+      "upstreamStatus": "open-unmerged-pr-at-snapshot",
+      "licenseContext": "oven-sh/bun MIT repository; downstream distribution review remains required"
+    },
+    {
+      "order": 3,
+      "commit": "5a50e2a56443fb54308155f6b98ebb1e4ececd2d",
+      "parent": "931fd9270a18ed6b88c91e5a731b75afb9e1b025",
+      "title": "Keep the SIGSYS handler when JS listens for SIGSYS",
+      "purpose": "Keep the seccomp handler installed while preserving kill-sent SIGSYS listener behavior.",
+      "url": "https://github.com/oven-sh/bun/commit/5a50e2a56443fb54308155f6b98ebb1e4ececd2d.patch",
+      "bytes": 12770,
+      "sha256": "f5abe9d9944ec04e849a1eb3462d1cf14f708db18988fa5d25892928a95aa50f",
+      "materializedPath": "upstream-reference/0003-5a50e2a5.patch",
+      "affectedPaths": [
+        "src/jsc/bindings/BunProcess.cpp",
+        "src/jsc/bindings/bun-spawn.cpp",
+        "src/jsc/bindings/c-bindings.cpp",
+        "test/cli/run/seccomp-trap.test.ts"
+      ],
+      "upstreamStatus": "open-unmerged-pr-at-snapshot",
+      "licenseContext": "oven-sh/bun MIT repository; downstream distribution review remains required"
+    },
+    {
+      "order": 4,
+      "commit": "82dbeed974233b9e65f627200bde720e7a888787",
+      "parent": "5a50e2a56443fb54308155f6b98ebb1e4ececd2d",
+      "title": "Shorten the SIGSYS comments",
+      "purpose": "Carry the upstream review cleanup so the reference series exactly matches the PR head.",
+      "url": "https://github.com/oven-sh/bun/commit/82dbeed974233b9e65f627200bde720e7a888787.patch",
+      "bytes": 3970,
+      "sha256": "25829f29066359d9994d6ab959a73d7654b3d2e16e849280bf5e1feeff012938",
+      "materializedPath": "upstream-reference/0004-82dbeed9.patch",
+      "affectedPaths": [
+        "src/jsc/bindings/bun-spawn.cpp",
+        "src/jsc/bindings/c-bindings.cpp"
+      ],
+      "upstreamStatus": "open-unmerged-pr-at-snapshot",
+      "licenseContext": "oven-sh/bun MIT repository; downstream distribution review remains required"
+    },
+    {
+      "order": 5,
+      "commit": "d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c",
+      "parent": "82dbeed974233b9e65f627200bde720e7a888787",
+      "title": "Set SA_RESTART on the SIGSYS handler",
+      "purpose": "Preserve interrupted-syscall restart behavior for kill-sent SIGSYS while seccomp traps still return ENOSYS.",
+      "url": "https://github.com/oven-sh/bun/commit/d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c.patch",
+      "bytes": 1200,
+      "sha256": "3cce5df72a9c3d0fc03086ec5dfcb7c2ab08f742e40cb78ccdc04c69197bc9b2",
+      "materializedPath": "upstream-reference/0005-d6171ce7.patch",
+      "affectedPaths": [
+        "src/jsc/bindings/c-bindings.cpp"
+      ],
+      "upstreamStatus": "open-unmerged-pr-at-snapshot",
+      "licenseContext": "oven-sh/bun MIT repository; downstream distribution review remains required"
+    }
+  ],
+  "downstreamBackport": {
+    "directory": "downstream",
+    "status": "not-started",
+    "requiredBeforeBuild": true,
+    "patches": [],
+    "note": "Only patches generated and reviewed against the applicationTarget commit belong here. Upstream reference patches are never applied automatically."
+  }
+}
