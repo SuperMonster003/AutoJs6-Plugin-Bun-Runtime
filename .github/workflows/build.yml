@@ -33,8 +33,11 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Verify pinned Bun executables
-        run: node tools/bun-runtime/verify-runtime.mjs
+      - name: Verify Bun runtime supply-chain inputs
+        run: |
+          node tools/bun-runtime/verify-runtime.mjs
+          node tools/bun-runtime/experimental/api28/verify-experiment.mjs
+          node --test tools/bun-runtime/experimental/api28/verify-experiment.test.mjs
 
       - name: Run tests, lint, and assemble debug APKs
         run: |
@@ -56,10 +59,18 @@ jobs:
           compression-level: 0
 
   instrumentation:
-    name: Binder and Bun round trip (x86_64)
+    name: Binder and Bun round trip (API ${{ matrix.api_level }} ${{ matrix.target }}, x86_64)
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api_level: 33
+            target: aosp_atd
+          - api_level: 35
+            target: google_apis
 
     steps:
       - name: Check out repository and runtime payloads
@@ -88,8 +99,8 @@ jobs:
       - name: Run Android instrumentation
         uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
-          api-level: 35
-          target: google_apis
+          api-level: ${{ matrix.api_level }}
+          target: ${{ matrix.target }}
           arch: x86_64
           profile: pixel_7
-          script: ./gradlew connectedDebugAndroidTest --stacktrace
+          script: ./gradlew connectedDebugAndroidTest -PrequiredApiLevel=${{ matrix.api_level }} --stacktrace

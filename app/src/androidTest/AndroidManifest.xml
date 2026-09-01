@@ -3,9 +3,11 @@
 
     <!-- CI/device tests may run without AutoJs6 installed. Defining its signature permission in
          the test-only APK preserves the production Binder boundary without shipping a duplicate
-         permission owner in the plugin APK. -->
+         permission owner in the plugin APK. On a device with AutoJs6 installed, override only this
+         declaration with -PandroidTestPermissionName=<unique-name>; the real permission request
+         below remains unchanged. -->
     <permission
-        android:name="org.autojs.permission.PLUGIN"
+        android:name="${androidTestPermissionName}"
         android:protectionLevel="signature" />
     <uses-permission android:name="org.autojs.permission.PLUGIN" />
 

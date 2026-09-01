@@ -9,6 +9,14 @@ plugins {
 }
 
 val globalApplicationId = "io.github.supermonster003.autojs6.plugin.bun.runtime"
+val pluginPermission = "org.autojs.permission.PLUGIN"
+val androidTestPermissionName = providers.gradleProperty("androidTestPermissionName")
+    .orElse(pluginPermission)
+    .map(String::trim)
+val requiredApiLevel = providers.gradleProperty("requiredApiLevel")
+    .map(String::trim)
+val instrumentationApplicationIdSuffix = providers.gradleProperty("instrumentationApplicationIdSuffix")
+    .map(String::trim)
 var isSignsValid = false
 
 android {
@@ -20,6 +28,17 @@ android {
         minSdk = versions.sdkVersionMin
         targetSdk = versions.sdkVersionTarget
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["androidTestPermissionName"] = androidTestPermissionName.get().also { permissionName ->
+            require(permissionName.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+"))) {
+                "androidTestPermissionName must be a fully-qualified Android permission name, but was '$permissionName'"
+            }
+        }
+        requiredApiLevel.orNull?.let { apiLevel ->
+            require(apiLevel.toIntOrNull() != null) {
+                "requiredApiLevel must be an integer, but was '$apiLevel'"
+            }
+            testInstrumentationRunnerArguments["requiredApiLevel"] = apiLevel
+        }
         versionCode = versions.appVersionCode
         versionName = versions.appVersionName
 
@@ -53,6 +72,12 @@ android {
         debug {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            instrumentationApplicationIdSuffix.orNull?.let { suffix ->
+                require(suffix.matches(Regex("\\.[a-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)*"))) {
+                    "instrumentationApplicationIdSuffix must be a dot-prefixed Android package suffix, but was '$suffix'"
+                }
+                applicationIdSuffix = suffix
+            }
             releaseSigning?.let { signingConfig = it }
         }
         release {
@@ -100,9 +125,12 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.register<Exec>("verifyBunRuntimeArtifacts") {
     group = "verification"
-    description = "Verifies pinned Bun Android executables before packaging."
-    inputs.file(rootProject.file("tools/bun-runtime/runtime.lock.json"))
+    description = "Verifies pinned Bun Android executables and compatibility metadata before packaging."
     inputs.files(
+        rootProject.file("tools/bun-runtime/verify-runtime.mjs"),
+        rootProject.file("tools/bun-runtime/runtime.lock.json"),
+        rootProject.file("version.properties"),
+        rootProject.file(".readme/common.json"),
         rootProject.file("app/src/main/jniLibs/arm64-v8a/libbun_exec.so"),
         rootProject.file("app/src/main/jniLibs/x86_64/libbun_exec.so"),
     )

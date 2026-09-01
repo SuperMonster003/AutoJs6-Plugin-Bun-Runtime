@@ -5,6 +5,16 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.0": {
+      "released_date": "2026/09/01",
+      "hint": [
+        "أصبح Android 13 (API 33) هو minimum target الرسمي; تبقى API 28 إلى 32 غير مدعومة حتى يجتاز patched Bun runtime اختبار portable validation"
+      ],
+      "improvement": [
+        "خفض الحد الأدنى المدعوم من Android 14 (API 34) إلى Android 13 (API 33) مع الاحتفاظ بالـ official Bun 1.4.0 Android payload المثبتة",
+        "توثيق حد AOSP T seccomp: يسمح Android 13 بالـ raw `close_range` syscall الذي يستدعيه Bun, بينما يوضح فشل API 31 أن API 28 إلى 32 تحتاج Bun compatibility patch بدلا من manifest-only change"
+      ]
+    },
     "v0.1.0": {
       "released_date": "2026/09/01",
       "hint": [

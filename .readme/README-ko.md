@@ -59,7 +59,7 @@ Bun Runtime은 AutoJs6가 [Bun](https://bun.sh/)을 별도의 JavaScript 및 Typ
 
 ******
 
-1. Android 14 (API 34) 이상에서 AutoJs6 build 5278 (6.8.0) 이상을 사용합니다.
+1. Android 13 (API 33) 이상에서 AutoJs6 build 5278 (6.8.0) 이상을 사용합니다.
 2. 기기 ABI와 일치하는 release APK를 설치합니다. 대부분의 휴대전화와 태블릿은 `arm64-v8a`, 호환 emulator 또는 device는 `x86_64`, 확실하지 않으면 `universal`을 선택합니다.
 3. AutoJs6 plugin center를 열고 Bun Runtime을 활성화합니다. 새로 설치한 플러그인이 중지 상태이면 호스트가 표시하는 `활성화` action을 사용합니다.
 4. JavaScript 또는 TypeScript file의 시작에 독립 directive `"bun";`를 넣고 AutoJs6에서 평소와 같이 실행합니다.
@@ -100,7 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - Runtime: 공식 Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Platform: Android 14 (API 34) 이상. 공식 64-bit payload는 `arm64-v8a` 및 baseline `x86_64`를 지원합니다. API 31 real device에서는 Bun syscall 436 `close_range`가 app seccomp `SIGSYS`로 실패했습니다. Standard AOSP Android 13 app allowlist에는 이 syscall이 없고 API 34에서 추가됩니다. Sony API 33 device 한 대는 예상과 달리 통과했지만 device-specific result는 portable support 증거가 아닙니다. API 35 real device의 JS 및 TS Binder round trip은 통과했습니다. API 28부터 33은 upstream fallback 및 portable validation 전까지 support range 밖입니다.
+- Platform: Android 13 (API 33) 이상. 공식 64-bit payload는 `arm64-v8a` 및 baseline `x86_64`를 지원합니다. API 31 real device에서는 Bun syscall 436 `close_range`가 app seccomp `SIGSYS`로 실패했습니다. AOSP Android 12 이하 app allowlist에는 이 syscall이 없지만 Android 13 (T, API 33)은 raw syscall을 허용합니다. Android 14는 public bionic wrapper를 추가하지만 Bun은 raw syscall을 호출하므로 API 34 libc symbol이 필요하지 않습니다. API 33 및 API 35 real runtime test는 통과했습니다. API 28부터 32는 patched Bun runtime이 seccomp trap을 처리하고 portable validation을 통과할 때까지 지원되지 않습니다.
 - Host contract: AutoJs6 build 5278 이상 및 Bun runtime contract version 1.
 - Request limit: source는 최대 16 MiB, stdout 및 stderr combined streaming budget은 최대 8 MiB, default timeout은 60 seconds입니다.
 - Package: single-ABI APK는 더 작고 큰 `universal` APK에는 지원하는 두 ABI가 모두 포함됩니다.
@@ -193,6 +193,14 @@ Roadmap은 현재 동작과 planned project snapshot, 제한된 AutoJs6 capabili
 ### 릴리스 기록
 
 ******
+
+#### v0.2.0
+
+_2026/09/01_
+
+- `힌트` Android 13 (API 33)이 이제 공식 minimum target이며 API 28부터 32는 patched Bun runtime이 portable validation을 통과할 때까지 지원되지 않습니다
+- `개선` 고정된 공식 Bun 1.4.0 Android payload를 유지하면서 지원 Android 하한을 Android 14 (API 34)에서 Android 13 (API 33)으로 변경
+- `개선` AOSP T seccomp 경계를 문서화: Android 13은 Bun의 raw `close_range` syscall을 허용하며 API 31 실패를 통해 API 28부터 32에는 manifest-only change가 아닌 Bun compatibility patch가 필요함을 확인
 
 #### v0.1.0
 

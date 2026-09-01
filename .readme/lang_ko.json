@@ -29,7 +29,7 @@
   "h3_compatibility": "호환성",
   "compatibility_points": [
     "Runtime: 공식 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
-    "Platform: Android {{ min_android_version }} (API {{ android_min_sdk }}) 이상. 공식 64-bit payload는 `arm64-v8a` 및 baseline `x86_64`를 지원합니다. API 31 real device에서는 Bun syscall 436 `close_range`가 app seccomp `SIGSYS`로 실패했습니다. Standard AOSP Android 13 app allowlist에는 이 syscall이 없고 API 34에서 추가됩니다. Sony API 33 device 한 대는 예상과 달리 통과했지만 device-specific result는 portable support 증거가 아닙니다. API 35 real device의 JS 및 TS Binder round trip은 통과했습니다. API 28부터 33은 upstream fallback 및 portable validation 전까지 support range 밖입니다.",
+    "Platform: Android {{ min_android_version }} (API {{ android_min_sdk }}) 이상. 공식 64-bit payload는 `arm64-v8a` 및 baseline `x86_64`를 지원합니다. API 31 real device에서는 Bun syscall 436 `close_range`가 app seccomp `SIGSYS`로 실패했습니다. AOSP Android 12 이하 app allowlist에는 이 syscall이 없지만 Android 13 (T, API 33)은 raw syscall을 허용합니다. Android 14는 public bionic wrapper를 추가하지만 Bun은 raw syscall을 호출하므로 API 34 libc symbol이 필요하지 않습니다. API 33 및 API 35 real runtime test는 통과했습니다. API 28부터 32는 patched Bun runtime이 seccomp trap을 처리하고 portable validation을 통과할 때까지 지원되지 않습니다.",
     "Host contract: AutoJs6 build {{ required_host_version_code }} 이상 및 Bun runtime contract version {{ plugin_contract_version }}.",
     "Request limit: source는 최대 {{ max_source_size }}, stdout 및 stderr combined streaming budget은 최대 {{ max_output_size }}, default timeout은 {{ default_timeout }}입니다.",
     "Package: single-ABI APK는 더 작고 큰 `universal` APK에는 지원하는 두 ABI가 모두 포함됩니다."

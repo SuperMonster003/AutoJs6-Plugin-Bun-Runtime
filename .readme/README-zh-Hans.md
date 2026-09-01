@@ -59,7 +59,7 @@ Bun Runtime 是一个独立 Android 插件, 让 AutoJs6 可以选择 [Bun](https
 
 ******
 
-1. 在 Android 14 (API 34) 或更高版本上使用 AutoJs6 build 5278 (6.8.0) 或更高版本.
+1. 在 Android 13 (API 33) 或更高版本上使用 AutoJs6 build 5278 (6.8.0) 或更高版本.
 2. 安装与设备 ABI 匹配的发布 APK. 大多数手机和平板选择 `arm64-v8a`, 兼容的模拟器或设备选择 `x86_64`, 不确定时选择 `universal`.
 3. 打开 AutoJs6 插件中心并启用 Bun Runtime. 如果新安装插件仍处于停止状态, 使用宿主显示的 `激活` 操作.
 4. 在 JavaScript 或 TypeScript 文件开头放置独立指令 `"bun";`, 然后像平常一样从 AutoJs6 运行.
@@ -100,7 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - 运行时: 官方 Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- 平台: Android 14 (API 34) 或更高版本, 官方 64 位 payload 支持 `arm64-v8a` 和 baseline `x86_64`. API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. 标准 AOSP Android 13 app allowlist 仍缺少该 syscall, API 34 才加入. 一台 Sony API 33 设备意外通过, 但这种设备特定结果不能证明可移植支持. API 35 真机 JS 和 TS Binder 往返已通过. API 28 到 33 仍不在支持范围内, 需要等待上游 fallback 和可移植验证.
+- 平台: Android 13 (API 33) 或更高版本, 官方 64 位 payload 支持 `arm64-v8a` 和 baseline `x86_64`. API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. AOSP Android 12 及更早版本的 app allowlist 不包含该 syscall, Android 13 (T, API 33) 已允许 raw syscall. Android 14 增加公开 bionic wrapper, 但 Bun 直接调用 raw syscall, 不需要 API 34 libc symbol. API 33 和 API 35 真机 runtime test 已通过. API 28 到 32 仍不受支持, 需要 patched Bun runtime 处理 seccomp trap 并通过可移植验证.
 - 宿主契约: AutoJs6 build 5278 或更高版本, Bun runtime contract version 1.
 - 请求边界: 源码最大 16 MiB, stdout 和 stderr 组合流式预算最大 8 MiB, 默认超时为 60 seconds.
 - 安装包: 单 ABI APK 体积更小, 较大的 `universal` APK 同时包含两个受支持 ABI.
@@ -193,6 +193,14 @@ default timeout: 60 seconds
 ### 发行历史
 
 ******
+
+#### v0.2.0
+
+_2026/09/01_
+
+- `提示` Android 13 (API 33) 现为正式最低目标; API 28 到 32 在 patched Bun runtime 通过可移植验证前仍不受支持
+- `优化` 保留固定的官方 Bun 1.4.0 Android payload, 将支持的 Android 下限从 Android 14 (API 34) 降至 Android 13 (API 33)
+- `优化` 记录 AOSP T seccomp 分界: Android 13 已允许 Bun 调用的 raw `close_range` syscall, API 31 失败则表明 API 28 到 32 需要 Bun 兼容补丁, 仅修改 manifest 无法兼容
 
 #### v0.1.0
 

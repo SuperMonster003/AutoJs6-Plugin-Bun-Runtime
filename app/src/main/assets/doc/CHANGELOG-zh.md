@@ -4,6 +4,14 @@
 
 ******
 
+# v0.2.0
+
+###### 2026/09/01
+
+* `提示` Android 13 (API 33) 现为正式最低目标; API 28 到 32 在 patched Bun runtime 通过可移植验证前仍不受支持
+* `优化` 保留固定的官方 Bun 1.4.0 Android payload, 将支持的 Android 下限从 Android 14 (API 34) 降至 Android 13 (API 33)
+* `优化` 记录 AOSP T seccomp 分界: Android 13 已允许 Bun 调用的 raw `close_range` syscall, API 31 失败则表明 API 28 到 32 需要 Bun 兼容补丁, 仅修改 manifest 无法兼容
+
 # v0.1.0
 
 ###### 2026/09/01

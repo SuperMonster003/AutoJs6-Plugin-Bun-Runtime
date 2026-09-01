@@ -39,11 +39,12 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Supported Android range
 
-- The plugin requires Android 14, API 34, or later even though the upstream binary is linked for API 28.
-- A real API 31 run was terminated by app seccomp with `SIGSYS` on syscall 436, `close_range`. The standard AOSP Android 13 app allowlist lacks this syscall and Android 14 adds it.
-- One Sony API 33 device passed unexpectedly. Treat that as a vendor-specific result, not evidence of portable API 33 support.
+- The plugin requires Android 13, API 33, or later even though the upstream binary is linked for API 28.
+- A real API 31 run was terminated by app seccomp with `SIGSYS` on syscall 436, `close_range`. AOSP Android 12 and earlier app allowlists lack this syscall, while Android 13 (T, API 33) allowlists the raw `close_range` syscall.
+- Android 14 (U, API 34) adds the public bionic `close_range` wrapper, but Bun 1.4.0 invokes the raw syscall and does not require that API 34 libc symbol.
+- A real Sony API 33 runtime run passed, consistent with the AOSP Android 13 seccomp boundary.
 - Real API 35 JavaScript and TypeScript Binder round trips have passed.
-- API 28 through 33 remain unsupported until Bun has a suitable upstream fallback and portable lower-version validation passes.
+- API 28 through 32 remain unsupported until a patched Bun runtime handles Android seccomp traps and portable lower-version validation passes. A manifest-only minSdk change cannot make the unmodified runtime portable on those releases.
 - Both packaged ELF files meet at least 16 KB PT_LOAD alignment. Do not claim verified end-to-end 16 KB support until execution passes on a real 16 KB Android environment and APK ZIP alignment is also checked.
 
 ## Execution contract
@@ -91,7 +92,7 @@ py -B -m unittest discover -s .python -p "test_*.py"
 ```
 
 - Update the current changelog entry in every language for each feature, fix, improvement, or dependency change. Keep the newest changelog version aligned with `VERSION_NAME`.
-- Documentation must state the single-source, no-install, no-relative-import, no-AutoJs6-global, no-Java-bridge, Android 14, Binder-output, and unverified-16-KB boundaries accurately.
+- Documentation must state the single-source, no-install, no-relative-import, no-AutoJs6-global, no-Java-bridge, Android 13, Binder-output, and unverified-16-KB boundaries accurately.
 
 ## Tests and CI
 

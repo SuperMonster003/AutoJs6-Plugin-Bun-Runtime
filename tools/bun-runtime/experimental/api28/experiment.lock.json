@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "name": "autojs6-bun-api28-patched-experiment",
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "status": "scaffolding-only",
+    "officialArtifact": false,
+    "runtimeProduced": false,
+    "buildReady": false,
+    "distributionReady": false
+  },
+  "upstream": {
+    "repository": "https://github.com/oven-sh/bun",
+    "tag": "bun-v1.4.0",
+    "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
+    "license": "MIT",
+    "licenseFile": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/LICENSE.md",
+    "dependencyPolicy": "Use only dependency and WebKit identities resolved by this exact source commit; an expanded dependency lock is still required before buildReady may become true."
+  },
+  "patchSeries": "patches/series.lock.json",
+  "toolchain": {
+    "host": {
+      "os": "linux",
+      "architecture": "x86_64",
+      "containerBase": "ubuntu:20.04",
+      "containerDigest": null,
+      "status": "digest-pending"
+    },
+    "androidNdk": {
+      "version": "r27c",
+      "archiveSha256": null,
+      "status": "checksum-pending"
+    },
+    "llvm": {
+      "version": "21.1.8"
+    },
+    "rust": {
+      "channel": "nightly-2026-07-20",
+      "targets": [
+        "aarch64-linux-android",
+        "x86_64-linux-android"
+      ]
+    },
+    "cmake": {
+      "version": "3.30.5"
+    },
+    "bootstrapBun": {
+      "version": "1.3.13"
+    },
+    "ninja": {
+      "version": null,
+      "status": "version-pending"
+    }
+  },
+  "target": {
+    "androidApi": 28,
+    "androidRange": "9-12L",
+    "supportedApis": [
+      28,
+      29,
+      30,
+      31,
+      32
+    ],
+    "buildProfile": "android-release",
+    "scope": "bun run --no-install single-source engine only",
+    "abis": [
+      {
+        "androidAbi": "arm64-v8a",
+        "bunArch": "aarch64",
+        "rustTarget": "aarch64-linux-android",
+        "clangTarget": "aarch64-unknown-linux-android28",
+        "cpuFloor": "armv8-a+crc",
+        "baseline": false,
+        "config": "config/arm64-v8a.configure.json"
+      },
+      {
+        "androidAbi": "x86_64",
+        "bunArch": "x64",
+        "rustTarget": "x86_64-linux-android",
+        "clangTarget": "x86_64-unknown-linux-android28",
+        "cpuFloor": "nehalem-no-avx",
+        "baseline": true,
+        "config": "config/x86_64.configure.json"
+      }
+    ]
+  },
+  "outputPolicy": {
+    "bunCheckoutBuildRoot": "build/autojs6-api28",
+    "repositoryForbiddenWriteRoots": [
+      "tools/bun-runtime/prebuilt",
+      "app/src/main/jniLibs",
+      "tools/bun-runtime/runtime.lock.json"
+    ],
+    "allowedRepositoryArtifacts": "text manifests, configs, scripts, tests, and patch files only"
+  },
+  "sourceEvidence": [
+    {
+      "path": "scripts/build/config.ts",
+      "gitBlobSha1": "5a20204a4759a14ce5983b8a7ce308f73592baac",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/scripts/build/config.ts",
+      "fact": "ANDROID_API_LEVEL_DEFAULT is 28 and Android cross targets include the API level."
+    },
+    {
+      "path": "scripts/build/profiles.ts",
+      "gitBlobSha1": "04a3d46b9c73aee19506a7ea6445b24030371237",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/scripts/build/profiles.ts",
+      "fact": "android-release selects Release, Linux, AArch64, Android ABI, and prebuilt WebKit."
+    },
+    {
+      "path": "scripts/build.ts",
+      "gitBlobSha1": "2af7a1ee594287eb3b4d71eabb9a5f76f6e5b05f",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/scripts/build.ts",
+      "fact": "The build entry accepts a persisted profile and overrides through --config-file."
+    },
+    {
+      "path": ".buildkite/Dockerfile",
+      "gitBlobSha1": "f2bcac12a6b48843a20deca5c7a9fc3ce51f7f89",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/.buildkite/Dockerfile",
+      "fact": "The upstream image declares NDK r27c, LLVM 21.1.8, CMake 3.30.5, and bootstrap Bun 1.3.13."
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "gitBlobSha1": "e48bb2731da8046ad2b2a9e4ad408b43c7bc4698",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/rust-toolchain.toml",
+      "fact": "Rust is pinned to nightly-2026-07-20 and declares both Android targets."
+    },
+    {
+      "path": "scripts/build/tools.ts",
+      "gitBlobSha1": "c12e7e088a91b04e44ef2dde06464e1662901a2c",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/scripts/build/tools.ts",
+      "fact": "The expected LLVM version is 21.1.8."
+    },
+    {
+      "path": "scripts/build/flags.ts",
+      "gitBlobSha1": "184aa86f8fc32c07ebf95224f49b441303dd9c2f",
+      "url": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/scripts/build/flags.ts",
+      "fact": "Android AArch64 uses ARMv8-A plus CRC and x86_64 uses the Nehalem baseline."
+    }
+  ],
+  "knownBlockers": [
+    {
+      "id": "v1.4.0-backport",
+      "resolved": false,
+      "description": "PR #39775 is pinned only as an upstream reference series; reviewed downstream patches against Bun v1.4.0 do not exist yet."
+    },
+    {
+      "id": "toolchain-byte-lock",
+      "resolved": false,
+      "description": "The host image digest, NDK archive SHA-256, Ninja version, and remaining downloaded inputs are not fully locked."
+    },
+    {
+      "id": "dependency-lock",
+      "resolved": false,
+      "description": "The dependency and prebuilt WebKit identities encoded by the Bun source have not yet been expanded into this experiment lock."
+    },
+    {
+      "id": "build-and-runtime-evidence",
+      "resolved": false,
+      "description": "No patched executable, repeat build comparison, ELF audit, or API 28-32 device result has been produced."
+    }
+  ]
+}

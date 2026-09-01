@@ -21,6 +21,7 @@ import org.autojs.plugin.common.api.PluginCapabilityKeys
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
@@ -34,6 +35,26 @@ import java.util.concurrent.atomic.AtomicReference
 @RunWith(AndroidJUnit4::class)
 class BunRuntimeInstrumentedTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+    @Before
+    fun assertInstrumentationApiLevel() {
+        assertTrue(
+            "Bun runtime instrumentation requires Android 13 (API 33) or newer, but ran on API ${Build.VERSION.SDK_INT}",
+            Build.VERSION.SDK_INT >= MIN_SUPPORTED_API_LEVEL,
+        )
+        val requiredApiLevel = requireNotNull(
+            InstrumentationRegistry.getArguments()
+                .getString(REQUIRED_API_LEVEL_ARGUMENT)
+                ?.toIntOrNull(),
+        ) {
+            "Instrumentation runner argument $REQUIRED_API_LEVEL_ARGUMENT must contain the expected API level"
+        }
+        assertEquals(
+            "Instrumentation ran on API ${Build.VERSION.SDK_INT}, but the workflow required API $requiredApiLevel",
+            requiredApiLevel,
+            Build.VERSION.SDK_INT,
+        )
+    }
 
     @Test
     fun discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip() {
@@ -68,21 +89,12 @@ class BunRuntimeInstrumentedTest {
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_CANCELLATION))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT))
 
-            val probe = runtime.prewarmRuntime()
-            assertTrue(probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty(), probe.getBoolean(BunRuntimeContract.KEY_RUNTIME_READY))
-            assertEquals(BunRuntimeContract.RUNTIME_VERSION, probe.getString(BunRuntimeContract.KEY_RUNTIME_VERSION))
-            assertEquals(BunRuntimeContract.RUNTIME_REVISION, probe.getString(BunRuntimeContract.KEY_RUNTIME_REVISION))
-            assertTrue(probe.getString(BunRuntimeContract.KEY_PROCESS_NAME).orEmpty().endsWith(":bun_runtime"))
+            val probes = List(PREWARM_REPETITIONS) { runtime.prewarmRuntime() }
+            probes.forEach { probe -> assertRuntimeProbe(probe, packagedAbis) }
             assertEquals(
-                packagedAbis,
-                probe.getStringArray(BunRuntimeContract.KEY_SUPPORTED_ABIS).orEmpty().toSet(),
+                probes.first().getString(BunRuntimeContract.KEY_RUNTIME_PATH),
+                probes.last().getString(BunRuntimeContract.KEY_RUNTIME_PATH),
             )
-            assertEquals(
-                Build.SUPPORTED_ABIS.first(packagedAbis::contains),
-                probe.getString(BunRuntimeContract.KEY_PROCESS_ABI),
-            )
-            assertEquals(BunRuntimeContract.MAX_SOURCE_BYTES, probe.getLong(BunRuntimeContract.KEY_MAX_SOURCE_BYTES))
-            assertEquals(BunRuntimeContract.MAX_OUTPUT_BYTES, probe.getLong(BunRuntimeContract.KEY_MAX_OUTPUT_BYTES))
 
             val javaScript = runSource(
                 runtime,
@@ -103,6 +115,63 @@ class BunRuntimeInstrumentedTest {
             )
             assertTrue(typeScript.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
             assertTrue(typeScript.stdout.contains("typescript=42"))
+
+            val spawnAndFileIo = runSource(
+                runtime,
+                "spawn-and-file-io.bun.js",
+                """
+                    import { readFile, realpath, writeFile } from "node:fs/promises";
+                    import { dirname, join } from "node:path";
+
+                    const workDirectory = process.cwd();
+                    const temporaryDirectory = process.env.TMPDIR;
+                    const canonicalWorkDirectory = await realpath(workDirectory);
+                    const canonicalTemporaryParent = temporaryDirectory
+                        ? await realpath(dirname(temporaryDirectory))
+                        : "";
+                    if (canonicalTemporaryParent !== canonicalWorkDirectory) {
+                        throw new Error("TMPDIR is outside the private execution workspace");
+                    }
+
+                    const marker = join(workDirectory, "file-io-smoke.txt");
+                    await writeFile(marker, "file-io-ok", "utf8");
+                    const markerText = await readFile(marker, "utf8");
+
+                    const child = Bun.spawn({
+                        cmd: [process.execPath, "-e", "process.stdout.write('spawn-ok')"],
+                        cwd: workDirectory,
+                        stdout: "pipe",
+                        stderr: "pipe",
+                    });
+                    const childStdout = await new Response(child.stdout).text();
+                    const childStderr = await new Response(child.stderr).text();
+                    const childExitCode = await child.exited;
+                    if (childExitCode !== 0) {
+                        throw new Error("Bun.spawn failed with " + childExitCode + ": " + childStderr);
+                    }
+                    if (childStdout !== "spawn-ok") {
+                        throw new Error("Unexpected Bun.spawn output: " + childStdout);
+                    }
+
+                    console.log("$WORKSPACE_OUTPUT_PREFIX" + canonicalWorkDirectory);
+                    console.log("file=" + markerText + ";spawn=" + childStdout);
+                """.trimIndent(),
+            )
+            assertTrue(
+                buildString {
+                    append(spawnAndFileIo.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty())
+                    if (spawnAndFileIo.stderr.isNotBlank()) append("; stderr: ${spawnAndFileIo.stderr}")
+                    if (spawnAndFileIo.stdout.isNotBlank()) append("; stdout: ${spawnAndFileIo.stdout}")
+                },
+                spawnAndFileIo.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED),
+            )
+            assertTrue(spawnAndFileIo.stdout.contains("file=file-io-ok;spawn=spawn-ok"))
+            val workspacePath = spawnAndFileIo.stdout.lineSequence()
+                .single { line -> line.startsWith(WORKSPACE_OUTPUT_PREFIX) }
+                .removePrefix(WORKSPACE_OUTPUT_PREFIX)
+            val workspace = File(workspacePath).canonicalFile
+            assertEquals(File(context.cacheDir, "bun-executions").canonicalFile, workspace.parentFile)
+            assertTrue("Private execution workspace was not removed after the run", !workspace.exists())
         }
     }
 
@@ -323,6 +392,26 @@ class BunRuntimeInstrumentedTest {
         }
     }
 
+    private fun assertRuntimeProbe(probe: Bundle, packagedAbis: Set<String>) {
+        assertTrue(
+            probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty(),
+            probe.getBoolean(BunRuntimeContract.KEY_RUNTIME_READY),
+        )
+        assertEquals(BunRuntimeContract.RUNTIME_VERSION, probe.getString(BunRuntimeContract.KEY_RUNTIME_VERSION))
+        assertEquals(BunRuntimeContract.RUNTIME_REVISION, probe.getString(BunRuntimeContract.KEY_RUNTIME_REVISION))
+        assertTrue(probe.getString(BunRuntimeContract.KEY_PROCESS_NAME).orEmpty().endsWith(":bun_runtime"))
+        assertEquals(
+            packagedAbis,
+            probe.getStringArray(BunRuntimeContract.KEY_SUPPORTED_ABIS).orEmpty().toSet(),
+        )
+        assertEquals(
+            Build.SUPPORTED_ABIS.first(packagedAbis::contains),
+            probe.getString(BunRuntimeContract.KEY_PROCESS_ABI),
+        )
+        assertEquals(BunRuntimeContract.MAX_SOURCE_BYTES, probe.getLong(BunRuntimeContract.KEY_MAX_SOURCE_BYTES))
+        assertEquals(BunRuntimeContract.MAX_OUTPUT_BYTES, probe.getLong(BunRuntimeContract.KEY_MAX_OUTPUT_BYTES))
+    }
+
     private fun withBoundRuntime(block: (IBunRuntimePlugin) -> Unit) {
         val discovery = Intent(BunPluginActions.RUNTIME)
             .addCategory(BunPluginActions.CATEGORY)
@@ -359,4 +448,11 @@ class BunRuntimeInstrumentedTest {
         val stdout: String,
         val stderr: String,
     )
+
+    private companion object {
+        const val MIN_SUPPORTED_API_LEVEL = Build.VERSION_CODES.TIRAMISU
+        const val PREWARM_REPETITIONS = 2
+        const val REQUIRED_API_LEVEL_ARGUMENT = "requiredApiLevel"
+        const val WORKSPACE_OUTPUT_PREFIX = "workdir="
+    }
 }

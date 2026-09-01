@@ -5,6 +5,16 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.2.0": {
+      "released_date": "2026/09/01",
+      "hint": [
+        "Android 13 (API 33) теперь является официальной минимальной целью; API 28 по 32 остаются неподдерживаемыми, пока patched Bun runtime не пройдет переносимую проверку"
+      ],
+      "improvement": [
+        "Снизить поддерживаемую версию Android с Android 14 (API 34) до Android 13 (API 33), сохранив закрепленные официальные Android payload Bun 1.4.0",
+        "Задокументировать границу seccomp AOSP T: Android 13 разрешает raw syscall `close_range` Bun, а сбой на API 31 показывает, что API 28 по 32 требуют патч совместимости Bun, а не только изменение manifest"
+      ]
+    },
     "v0.1.0": {
       "released_date": "2026/09/01",
       "hint": [
