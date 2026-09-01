@@ -1,0 +1,4 @@
+<resources>
+    <string name="plugin_description">在隔离的 Android 进程中使用独立 Bun 引擎运行 JavaScript 和 TypeScript</string>
+    <string name="plugin_instruction">在 JS 或 TS 文件开头放置 &quot;bun&quot;;. 0.1 版使用 --no-install 运行一个源码快照, 不提供 AutoJs6 globals, Java bridge 或相对项目导入.</string>
+</resources>

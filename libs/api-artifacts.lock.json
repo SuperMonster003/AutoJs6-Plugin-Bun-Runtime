@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "artifacts": [
+    {
+      "file": "bun-runtime-api.aar",
+      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5278",
+      "bytes": 13547,
+      "sha256": "6fac4aa0332c09f399ff6e554bc088507c86b779ea08ec118e687e3836ee48a4"
+    },
+    {
+      "file": "common-plugin-api.aar",
+      "source": "AutoJs6 common plugin API controlled AAR",
+      "bytes": 10578,
+      "sha256": "f9ff9676543f45b2ff2b64bb832d377dbd5b7003acf3bb4239e98556c68b246f"
+    }
+  ]
+}

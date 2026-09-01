@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "upstream": {
+    "repository": "https://github.com/oven-sh/bun",
+    "tag": "bun-v1.4.0",
+    "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "license": "MIT",
+    "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0"
+  },
+  "androidBuild": {
+    "minimumApi": 34,
+    "delivery": "pinned-official-release-binary",
+    "execution": "read-only-nativeLibraryDir-process",
+    "note": "libbun_exec.so is an Android PIE executable renamed for native-library extraction; it is not a JNI shared library. The plugin requires API 34 because Bun 1.4.0 calls close_range, which older Android app seccomp policies reject with SIGSYS."
+  },
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "asset": "bun-linux-aarch64-android.zip",
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.4.0/bun-linux-aarch64-android.zip",
+      "archiveBytes": 35184745,
+      "archiveSha256": "42544d7438bb92c7e7df7d30b9a5858cb7a834636608e5b850f59138283567fc",
+      "binaryPath": "app/src/main/jniLibs/arm64-v8a/libbun_exec.so",
+      "binaryBytes": 87914400,
+      "binarySha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+      "elfMachine": 183,
+      "minimumLoadAlignment": 16384
+    },
+    {
+      "abi": "x86_64",
+      "asset": "bun-linux-x64-android-baseline.zip",
+      "url": "https://github.com/oven-sh/bun/releases/download/bun-v1.4.0/bun-linux-x64-android-baseline.zip",
+      "archiveBytes": 36577224,
+      "archiveSha256": "1b917b67209ae4b90da619e95167b9fe958a412130f399482b65bf9823998944",
+      "binaryPath": "app/src/main/jniLibs/x86_64/libbun_exec.so",
+      "binaryBytes": 90420592,
+      "binarySha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
+      "elfMachine": 62,
+      "minimumLoadAlignment": 16384
+    }
+  ]
+}

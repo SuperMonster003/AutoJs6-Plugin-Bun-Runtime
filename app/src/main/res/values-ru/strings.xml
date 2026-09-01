@@ -1,0 +1,4 @@
+<resources>
+    <string name="plugin_description">Запускает JavaScript и TypeScript в независимом движке Bun в изолированном процессе Android</string>
+    <string name="plugin_instruction">Поместите &quot;bun&quot;; в начало файла JS или TS. Версия 0.1 использует --no-install, выполняет один снимок и не предоставляет globals AutoJs6, мост Java или относительные импорты.</string>
+</resources>

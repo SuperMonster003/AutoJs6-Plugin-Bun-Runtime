@@ -1,0 +1,9 @@
+descriptor=org.autojs.plugin.bun.runtime.api.IBunRuntimePlugin
+1=getInfo
+2=getRuntimeInfo
+3=runScript
+4=cancelScript
+5=prewarmRuntime
+
+descriptor=org.autojs.plugin.bun.runtime.api.IBunRuntimeCallback
+1=onEvent

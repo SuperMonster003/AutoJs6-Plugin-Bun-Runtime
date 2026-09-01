@@ -1,0 +1,29 @@
+{
+  "changelog_label_hint": "تلميح",
+  "changelog_label_feature": "ميزة",
+  "changelog_label_fix": "إصلاح",
+  "changelog_label_improvement": "تحسين",
+  "changelog_label_dependency": "تبعية",
+  "$data": {
+    "v0.1.0": {
+      "released_date": "2026/09/01",
+      "hint": [
+        "يشغل الإصدار الأول source snapshot واحدة ولا يعرض AutoJs6 globals أو Java bridge أو multi-file project أو relative project import"
+      ],
+      "feature": [
+        "تشغيل JavaScript و TypeScript باستخدام Bun 1.4.0 Android executable الرسمية كمحرك `bun` مستقل يختار بواسطة `\"bun\";` ويستخدم `bun run --no-install <source>` دون تثبيت dependency تلقائيا",
+        "بث stdout و stderr فقط كـ bounded oneway Binder callback chunk, بينما يبلغ terminal result عن status و diagnostic دون حمل complete output stream",
+        "دعم explicit cancellation و default timeout مدته 60 ثانية و runtime information و prewarming في plugin process المعزولة `:bun_runtime`",
+        "توفير official 64-bit Android payload لـ `arm64-v8a` و baseline `x86_64` مع single-ABI package و `universal` package",
+        "توفير plugin discovery و Wake activation محمية و PluginInfo metadata كاملة و user documentation بعشر لغات"
+      ],
+      "improvement": [
+        "استخدام versioned Binder contract مع ParcelFileDescriptor source transport وحد source مقداره 16 MiB وحد combined output مقداره 8 MiB",
+        "تشغيل Bun من Android read-only native library directory والتحقق من size و SHA-256 و ELF type و machine و alignment لكل official release archive و packaged binary",
+        "التحقق من PT_LOAD alignment لا يقل عن 16 KB لكلا packaged executable مع تسجيل واضح لعدم اكتمال اختبار Android runtime حقيقي بحجم 16 KB",
+        "توليد README وتعليمات plugin center و built-in changelog asset من validated JSON source مع فحوص CI للـ build و Markdown و runtime artifact",
+        "طلب Android 14 (API 34) بعد app seccomp `SIGSYS` على API 31 عند Bun syscall 436 `close_range`; نجح جهاز Sony API 33 واحد بشكل غير متوقع لكنه ليس portable evidence, بينما نجحت JS و TS Binder round trip على API 35 وتنتظر الإصدارات الأقدم upstream fallback"
+      ]
+    }
+  }
+}
