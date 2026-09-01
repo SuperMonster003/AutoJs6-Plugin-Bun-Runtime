@@ -59,7 +59,7 @@
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 | Bun 1.4.0、Binder 流式执行、双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | 进行中 | 官方 Bun 保持不变，最低版本降至 API 33 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 已启动 | 已建立固定输入与补丁参考骨架，构建和产物尚未就绪 | 上游/构建/测试 |
+| M2 patched Bun 可复现构建 | 进行中 | downstream 源码链与依赖 identity 已锁定，构建和产物尚未就绪 | 上游/构建/测试 |
 | M3 Android 9-12 实验支持 | 等待 M2 | API 28-32 安装、探测、执行与诊断 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall、FD、进程生命周期和 OEM 矩阵闭环 | 测试/设备/发布 |
 | M5 16 KB 与发布完整性 | 进行中 | ELF、ZIP、安装后 payload 和真实 16 KB 执行 | 构建/测试/设备/发布 |
@@ -114,10 +114,10 @@ M1 升阶门: G0/G1 全绿，API 33 `x86_64` AOSP/Google APIs AVD 与至少一�
 
 M2 不直接承诺 Android 9-12 可用；它先建立可以审计、重放和替换上游补丁的 native 供应链。
 
-启动记录 (2026-09-02，G0): `tools/bun-runtime/experimental/api28` 已建立独立实验 identity、固定 Bun v1.4.0 与 PR #39775 的 5 个不可变上游提交、双 ABI/API 28 configure inputs、联网 materializer、离线 verifier 和 5 个回归测试。由于真正面向 v1.4.0 的 downstream backport、完整工具链/依赖锁、双次构建、ELF 审计和设备证据仍为空，`buildReady`、`distributionReady` 与 `runtimeProduced` 均保持 `false`，以下交付项暂不提前勾选。
+进展记录 (2026-09-02，G0/G1): `tools/bun-runtime/experimental/api28` 已建立独立实验 identity；固定 Bun v1.4.0、PR #39775 的 5 个不可变提交和 22 个 Android-release 依赖 identity；6 个 downstream patch 可从 release commit 确定性重放，其中前 5 个 stable patch ID 与上游一致，第 6 个把可移动 Brotli tag 固定为完整 commit。受影响的兼容代码与固定 PR head 完全一致，Ubuntu base manifest、NDK r27c 下载件、Node headers 和双 ABI WebKit prebuilt 也已有摘要锁。离线 verifier 有 11 个回归测试，CI 会在临时 Bun checkout 中重放整条 patch chain，并核对 28 个 build/dependency definition blob、Brotli patch 前 blob 与无 submodule 事实。由于其余工具链/下载字节锁、双次构建、ELF 审计和设备证据仍为空，`buildReady`、`distributionReady` 与 `runtimeProduced` 均保持 `false`。
 
-- [ ] (上游) 固定 Bun stable tag、完整 commit、相关 submodule/dependency revision，以及 PR #39775 所采用的具体补丁提交；开放 PR 更新时必须人工审阅差异。
-- [ ] (构建) 新增 versioned patch series，每个 patch 记录来源、目的、适用 commit、许可证影响和上游状态；不直接修改无法追踪来源的 vendored snapshot。
+- [x] (上游) 固定 Bun stable tag、完整 commit、无 submodule 的 Git tree 证据、22 个 Android-release dependency revision，以及 PR #39775 的 5 个具体补丁提交；开放 PR 更新仍必须人工审阅差异。(2026-09-02，G0/G1)
+- [x] (构建) 新增 6 个 versioned downstream patch，每个 patch 记录来源、目的、适用 commit、摘要、许可证影响和上游/本项目归属；清洁重放结果与确定性 commit/tree 均由 CI 验证。(2026-09-02，G1)
 - [ ] (构建) 提供清洁环境可复现的 Android build 入口，固定 NDK r27c、Rust/LLVM/Bun 构建环境、API 28 target、CPU baseline 和双 ABI 参数。
 - [ ] (构建) 将官方产物和 downstream 产物使用不同的 lock identity、variant 与摘要，防止把自建二进制误报为官方 release artifact。
 - [ ] (测试) 对 patched runtime 增加静态门禁: ELF64、PIE、interpreter、Android platform note API 28、`DT_NEEDED` allowlist、bionic 符号版本、`PT_LOAD` alignment、导出/动态符号和 SHA-256。
@@ -166,6 +166,8 @@ M4 升阶门: Android 9+ 的支持声明由完整 G3 证据支撑；patched runt
 - [ ] (设备) 在真实 16 KB 页 Android 设备或 `google_apis_ps16k` 环境执行完整 Bun Binder instrumentation，并硬断言运行时 `PAGE_SIZE=16384`。
 - [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁，不从官方 payload 的静态结果推断自建产物兼容。
 - [ ] (发布) `appendDigestToReleasedFiles` 验证签名、预期三类 APK、ABI payload、CRC32 与 SHA-256；Release notes 如实区分静态对齐和端到端执行状态。
+
+进展记录 (2026-09-02，G1/G2): 已新增统一 APK verifier、4 个 ZIP/payload 回归测试，并接入 debug CI 与 release 收集任务；它要求三类 APK 集合精确匹配，执行 `zipalign -c -P 16 4`，并对压缩后的 Bun entry 解压核对 ABI、字节数、CRC32 与 runtime lock SHA-256。本地 debug/release 各三份 APK 均已通过。instrumentation 也已增加安装后 `nativeLibraryDir/libbun_exec.so` 的字节数与 SHA-256 断言，Sony XQ-DQ72 API 33 arm64 真机已通过更新后的 4/4 instrumentation；证据见 `docs/compatibility/2026-09-02-m5-payload-integrity.json`。release 安装后摘要和真实 16 KB 页执行仍未完成，因此复合条目保持未勾选。
 
 M5 验收条件: 官方和 patched 发行线各自在宣称支持前完成 ELF、APK ZIP、安装后 payload 和真实 16 KB execution 四层验证。
 

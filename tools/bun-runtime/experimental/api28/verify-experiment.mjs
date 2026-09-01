@@ -40,7 +40,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   requireEqual(lock.schemaVersion, 1, "experiment.lock.json: schemaVersion");
   requireRecord(lock.identity, "experiment.lock.json: identity");
   requireEqual(lock.identity.variant, "bun-1.4.0-android-api28-patched-experimental", "identity.variant");
-  requireEqual(lock.identity.status, "scaffolding-only", "identity.status");
+  requireEqual(lock.identity.status, "source-backport-and-inputs-verified", "identity.status");
   requireEqual(lock.identity.officialArtifact, false, "identity.officialArtifact");
   requireEqual(lock.identity.runtimeProduced, false, "identity.runtimeProduced");
   requireEqual(lock.identity.buildReady, false, "identity.buildReady");
@@ -55,6 +55,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   const seriesPath = resolveInside(root, lock.patchSeries, "patchSeries");
   const series = readJson(seriesPath);
   const patchResult = verifyPatchSeries(dirname(seriesPath), lock, series);
+  const sourceInputResult = verifySourceInputs(root, lock, series);
   verifyBlockers(lock.knownBlockers, lock.identity);
   verifyNoRuntimeArtifacts(root);
 
@@ -65,6 +66,9 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
     referencePatchCount: patchResult.total,
     materializedPatchCount: patchResult.materialized,
     missingReferencePatchCount: patchResult.missing,
+    downstreamPatchCount: patchResult.downstream,
+    activeDependencyCount: sourceInputResult.active,
+    lockedPrebuiltCount: sourceInputResult.prebuilt,
     buildReady: lock.identity.buildReady,
     distributionReady: lock.identity.distributionReady,
   };
@@ -90,11 +94,43 @@ function verifyToolchain(toolchain) {
   requireEqual(toolchain.host?.os, "linux", "toolchain.host.os");
   requireEqual(toolchain.host?.architecture, "x86_64", "toolchain.host.architecture");
   requireEqual(toolchain.host?.containerBase, "ubuntu:20.04", "toolchain.host.containerBase");
-  requireEqual(toolchain.host?.containerDigest, null, "toolchain.host.containerDigest");
-  requireEqual(toolchain.host?.status, "digest-pending", "toolchain.host.status");
+  requireEqual(
+    toolchain.host?.containerDigest,
+    "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
+    "toolchain.host.containerDigest",
+  );
+  requireEqual(
+    toolchain.host?.linuxAmd64ManifestDigest,
+    "sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a",
+    "toolchain.host.linuxAmd64ManifestDigest",
+  );
+  requireEqual(toolchain.host?.status, "base-image-locked", "toolchain.host.status");
+  requireEqual(toolchain.host?.snapshotDate, "2026-09-02", "toolchain.host.snapshotDate");
+  requireEqual(
+    toolchain.host?.registryManifestUrl,
+    "https://registry-1.docker.io/v2/library/ubuntu/manifests/20.04",
+    "toolchain.host.registryManifestUrl",
+  );
   requireEqual(toolchain.androidNdk?.version, "r27c", "toolchain.androidNdk.version");
-  requireEqual(toolchain.androidNdk?.archiveSha256, null, "toolchain.androidNdk.archiveSha256");
-  requireEqual(toolchain.androidNdk?.status, "checksum-pending", "toolchain.androidNdk.status");
+  requireEqual(toolchain.androidNdk?.revision, "27.2.12479018", "toolchain.androidNdk.revision");
+  requireEqual(
+    toolchain.androidNdk?.url,
+    "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip",
+    "toolchain.androidNdk.url",
+  );
+  requireEqual(toolchain.androidNdk?.archiveBytes, 663987688, "toolchain.androidNdk.archiveBytes");
+  requireEqual(
+    toolchain.androidNdk?.archiveSha1,
+    "090e8083a715fdb1a3e402d0763c388abb03fb4e",
+    "toolchain.androidNdk.archiveSha1",
+  );
+  requireEqual(
+    toolchain.androidNdk?.archiveSha256,
+    "59c2f6dc96743b5daf5d1626684640b20a6bd2b1d85b13156b90333741bad5cc",
+    "toolchain.androidNdk.archiveSha256",
+  );
+  requireEqual(toolchain.androidNdk?.status, "archive-locked", "toolchain.androidNdk.status");
+  requireNonEmptyString(toolchain.androidNdk?.officialChecksumSource, "toolchain.androidNdk.officialChecksumSource");
   requireEqual(toolchain.llvm?.version, "21.1.8", "toolchain.llvm.version");
   requireEqual(toolchain.rust?.channel, "nightly-2026-07-20", "toolchain.rust.channel");
   requireSameArray(
@@ -219,7 +255,7 @@ function verifyPatchSeries(patchRoot, lock, series) {
   requireEqual(series.seriesId, "bun-pr-39775-upstream-reference-2026-09-01", "patch seriesId");
   requireEqual(series.applicationTarget?.tag, lock.upstream.tag, "patch application target tag");
   requireEqual(series.applicationTarget?.commit, lock.upstream.commit, "patch application target commit");
-  requireEqual(series.applicationTarget?.status, "backport-not-started", "patch application target status");
+  requireEqual(series.applicationTarget?.status, "clean-replay-verified", "patch application target status");
 
   const pr = series.upstreamPullRequest;
   requireRecord(pr, "upstreamPullRequest");
@@ -261,6 +297,7 @@ function verifyPatchSeries(patchRoot, lock, series) {
     );
     require(Number.isSafeInteger(patch.bytes) && patch.bytes > 0, `${label}: bytes must be positive`);
     require(SHA256.test(patch.sha256), `${label}: sha256 must be a full lowercase digest`);
+    require(SHA1.test(patch.stablePatchId), `${label}: stablePatchId must be a full lowercase SHA-1`);
     requireNonEmptyString(patch.title, `${label}: title`);
     requireNonEmptyString(patch.purpose, `${label}: purpose`);
     requireArray(patch.affectedPaths, `${label}: affectedPaths`);
@@ -301,14 +338,281 @@ function verifyPatchSeries(patchRoot, lock, series) {
   const downstream = series.downstreamBackport;
   requireRecord(downstream, "downstreamBackport");
   requireEqual(downstream.directory, "downstream", "downstreamBackport.directory");
-  requireEqual(downstream.status, "not-started", "downstreamBackport.status");
-  requireEqual(downstream.requiredBeforeBuild, true, "downstreamBackport.requiredBeforeBuild");
-  requireArray(downstream.patches, "downstreamBackport.patches");
-  requireEqual(downstream.patches.length, 0, "downstreamBackport.patches length");
-  rejectUnlistedPatches(resolve(patchRoot, downstream.directory), new Set(), "downstream");
-  requireEqual(lock.identity.buildReady, false, "buildReady while downstream backport is absent");
+  requireEqual(downstream.status, "clean-replay-verified", "downstreamBackport.status");
+  requireEqual(downstream.requiredForBuild, true, "downstreamBackport.requiredForBuild");
+  requireEqual(downstream.baseCommit, lock.upstream.commit, "downstreamBackport.baseCommit");
+  require(SHA1.test(downstream.headCommit), "downstreamBackport.headCommit must be a full lowercase SHA-1");
+  require(SHA1.test(downstream.headTreeSha1), "downstreamBackport.headTreeSha1 must be a full lowercase SHA-1");
+  requireRecord(downstream.generation, "downstreamBackport.generation");
+  requireEqual(
+    downstream.generation.strategy,
+    "git am of immutable upstream commits followed by deterministic git format-patch",
+    "downstreamBackport.generation.strategy",
+  );
+  requireSameArray(
+    downstream.generation.gitAmOptions,
+    ["--keep-cr", "--committer-date-is-author-date"],
+    "downstreamBackport.generation.gitAmOptions",
+  );
+  requireSameArray(
+    downstream.generation.formatPatchOptions,
+    ["--full-index", "--binary", "--no-signature"],
+    "downstreamBackport.generation.formatPatchOptions",
+  );
+  require(/^\d{4}-\d{2}-\d{2}$/.test(downstream.generation.verifiedDate), "invalid downstream verification date");
 
-  return { total: series.upstreamReferencePatches.length, materialized, missing };
+  requireRecord(downstream.upstreamEquivalence, "downstreamBackport.upstreamEquivalence");
+  requireEqual(
+    downstream.upstreamEquivalence.upstreamHeadCommit,
+    pr.headCommit,
+    "downstreamBackport.upstreamEquivalence.upstreamHeadCommit",
+  );
+  requireEqual(
+    downstream.upstreamEquivalence.affectedPathsMatchExactly,
+    true,
+    "downstreamBackport.upstreamEquivalence.affectedPathsMatchExactly",
+  );
+  const expectedComparisonPaths = [...new Set(
+    series.upstreamReferencePatches.flatMap((patch) => patch.affectedPaths),
+  )].sort();
+  requireSameArray(
+    [...downstream.upstreamEquivalence.comparisonPaths].sort(),
+    expectedComparisonPaths,
+    "downstreamBackport.upstreamEquivalence.comparisonPaths",
+  );
+
+  requireArray(downstream.patches, "downstreamBackport.patches");
+  requireEqual(downstream.patches.length, pr.commitCount + 1, "downstreamBackport.patches length");
+  const listedDownstreamPaths = new Set();
+  expectedParent = downstream.baseCommit;
+  for (let index = 0; index < downstream.patches.length; index += 1) {
+    const patch = downstream.patches[index];
+    const upstreamPatch = series.upstreamReferencePatches[index];
+    const label = `downstream patch ${index + 1}`;
+    requireRecord(patch, label);
+    requireEqual(patch.order, index + 1, `${label}: order`);
+    require(SHA1.test(patch.commit), `${label}: commit must be a full lowercase SHA-1`);
+    requireEqual(patch.parent, expectedParent, `${label}: parent`);
+    if (upstreamPatch === undefined) {
+      requireEqual(patch.origin, "autojs6-supply-chain", `${label}: origin`);
+      requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
+      require(SHA1.test(patch.stablePatchId), `${label}: stablePatchId must be a full lowercase SHA-1`);
+      requireEqual(patch.declaredUpstreamRef, "v1.1.0", `${label}: declaredUpstreamRef`);
+      requireEqual(
+        patch.resolvedCommit,
+        "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+        `${label}: resolvedCommit`,
+      );
+      requireSameArray(patch.affectedPaths, ["scripts/build/deps/brotli.ts"], `${label}: affectedPaths`);
+    } else {
+      requireEqual(patch.sourceCommit, upstreamPatch.commit, `${label}: sourceCommit`);
+      requireEqual(patch.stablePatchId, upstreamPatch.stablePatchId, `${label}: stablePatchId`);
+      requireSameArray(patch.affectedPaths, upstreamPatch.affectedPaths, `${label}: affectedPaths`);
+    }
+    requireSafeRelativePath(patch.path, `${label}: path`);
+    require(
+      patch.path.startsWith(`${downstream.directory}/`) && extname(patch.path).toLowerCase() === ".patch",
+      `${label}: path must name a patch in ${downstream.directory}`,
+    );
+    require(!listedDownstreamPaths.has(patch.path), `${label}: duplicate path`);
+    listedDownstreamPaths.add(patch.path);
+    require(Number.isSafeInteger(patch.bytes) && patch.bytes > 0, `${label}: bytes must be positive`);
+    require(SHA256.test(patch.sha256), `${label}: sha256 must be a full lowercase digest`);
+    requireNonEmptyString(patch.purpose, `${label}: purpose`);
+    require(
+      typeof patch.licenseImpact === "string" && patch.licenseImpact.includes("MIT"),
+      `${label}: licenseImpact must record the Bun repository license context`,
+    );
+
+    const localPath = resolveInside(patchRoot, patch.path, `${label}: path`);
+    require(existsSync(localPath), `${label}: patch file is missing`);
+    const stat = lstatSync(localPath);
+    require(stat.isFile() && !stat.isSymbolicLink(), `${label}: patch must be a regular file`);
+    const bytes = readFileSync(localPath);
+    requireEqual(bytes.length, patch.bytes, `${label}: byte count`);
+    requireEqual(sha256(bytes), patch.sha256, `${label}: SHA-256`);
+    require(
+      bytes.subarray(0, 46).toString("ascii").startsWith(`From ${patch.commit} `),
+      `${label}: patch has the wrong From header`,
+    );
+    expectedParent = patch.commit;
+  }
+  requireEqual(expectedParent, downstream.headCommit, "downstream backport series head");
+  rejectUnlistedPatches(resolve(patchRoot, downstream.directory), listedDownstreamPaths, "downstream");
+  requireNonEmptyString(downstream.note, "downstreamBackport.note");
+
+  return {
+    total: series.upstreamReferencePatches.length,
+    materialized,
+    missing,
+    downstream: downstream.patches.length,
+  };
+}
+
+function verifySourceInputs(root, lock, series) {
+  const sourceInputPath = resolveInside(root, lock.sourceInputLock, "sourceInputLock");
+  const inputs = readJson(sourceInputPath);
+  requireEqual(inputs.schemaVersion, 1, "source input schemaVersion");
+  requireEqual(inputs.bunBaseCommit, lock.upstream.commit, "source inputs Bun base commit");
+  requireEqual(
+    inputs.downstreamHeadCommit,
+    series.downstreamBackport.headCommit,
+    "source inputs downstream head commit",
+  );
+  requireEqual(inputs.status, "android-release-revision-identities-locked", "source inputs status");
+  requireEqual(inputs.snapshotDate, "2026-09-02", "source inputs snapshotDate");
+  requireEqual(inputs.resolution?.profile, "android-release", "source inputs profile");
+  requireEqual(inputs.resolution?.androidApiLevel, 28, "source inputs Android API");
+  requireSameArray(inputs.resolution?.abis, ["arm64-v8a", "x86_64"], "source inputs ABIs");
+  requireEqual(inputs.resolution?.submodulesPresent, false, "source inputs submodulesPresent");
+  requireNonEmptyString(inputs.resolution?.submoduleEvidence, "source inputs submoduleEvidence");
+
+  const expectedMachinery = [
+    "scripts/build/config.ts",
+    "scripts/build/profiles.ts",
+    "scripts/build/source.ts",
+    "scripts/build/deps/index.ts",
+  ];
+  verifyDefinitionRecords(inputs.sourceMachinery, expectedMachinery, "source machinery");
+
+  const expectedActive = [
+    "picohttpparser",
+    "nodejs",
+    "zlib",
+    "zstd",
+    "brotli",
+    "libdeflate",
+    "libarchive",
+    "libjpeg-turbo",
+    "libspng",
+    "libwebp",
+    "cares",
+    "hdrhistogram",
+    "highway",
+    "lolhtml",
+    "rust-argon2",
+    "lshpack",
+    "lsqpack",
+    "mimalloc",
+    "sqlite",
+    "boringssl",
+    "lsquic",
+    "WebKit",
+  ];
+  requireArray(inputs.activeDependencies, "activeDependencies");
+  requireSameArray(inputs.activeDependencies.map((dependency) => dependency.name), expectedActive, "active dependencies");
+  const definitionPaths = new Set();
+  let githubArchives = 0;
+  let prebuilt = 0;
+  for (const dependency of inputs.activeDependencies) {
+    const label = `dependency ${dependency.name}`;
+    requireRecord(dependency, label);
+    requireSafeRelativePath(dependency.definitionPath, `${label}: definitionPath`);
+    require(
+      dependency.definitionPath.startsWith("scripts/build/deps/"),
+      `${label}: definitionPath must be in scripts/build/deps`,
+    );
+    require(!definitionPaths.has(dependency.definitionPath), `${label}: duplicate definitionPath`);
+    definitionPaths.add(dependency.definitionPath);
+    require(SHA1.test(dependency.definitionBlobSha1), `${label}: invalid definition blob`);
+
+    if (dependency.kind === "github-archive") {
+      githubArchives += 1;
+      require(/^[^/]+\/[^/]+$/.test(dependency.repository), `${label}: invalid GitHub repository`);
+      require(SHA1.test(dependency.revision), `${label}: revision must be an immutable full commit`);
+      if (dependency.name === "brotli") {
+        requireEqual(dependency.upstreamTag, "v1.1.0", `${label}: upstreamTag`);
+        requireEqual(
+          dependency.revision,
+          "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+          `${label}: revision`,
+        );
+        require(SHA1.test(dependency.baseDefinitionBlobSha1), `${label}: invalid base definition blob`);
+        requireEqual(
+          dependency.pinPatch,
+          "patches/downstream/0006-build-pin-Brotli-v1.1.0-to-immutable-commit.patch",
+          `${label}: pinPatch`,
+        );
+        const seriesPatchPath = dependency.pinPatch.replace(/^patches\//, "");
+        const pinPatch = series.downstreamBackport.patches.find((patch) => patch.path === seriesPatchPath);
+        require(pinPatch !== undefined, `${label}: pin patch is absent from the downstream series`);
+        requireEqual(pinPatch.resolvedCommit, dependency.revision, `${label}: pin patch resolution`);
+      }
+    } else if (dependency.kind === "prebuilt") {
+      prebuilt += 1;
+      requireEqual(dependency.name, "nodejs", `${label}: prebuilt name`);
+      requireEqual(dependency.version, "26.3.0", `${label}: version`);
+      requireEqual(dependency.identity, dependency.version, `${label}: identity`);
+      requireEqual(dependency.bytes, 9957179, `${label}: bytes`);
+      require(SHA256.test(dependency.sha256), `${label}: invalid SHA-256`);
+      requireEqual(
+        dependency.url,
+        `https://nodejs.org/dist/v${dependency.version}/node-v${dependency.version}-headers.tar.gz`,
+        `${label}: URL`,
+      );
+      requireEqual(
+        dependency.checksumManifest,
+        `https://nodejs.org/dist/v${dependency.version}/SHASUMS256.txt`,
+        `${label}: checksum manifest`,
+      );
+    } else if (dependency.kind === "in-tree") {
+      requireEqual(dependency.name, "sqlite", `${label}: in-tree name`);
+      requireEqual(dependency.path, "src/jsc/bindings/sqlite", `${label}: in-tree path`);
+      requireEqual(dependency.identityCommit, lock.upstream.commit, `${label}: identity commit`);
+    } else if (dependency.kind === "prebuilt-matrix") {
+      prebuilt += 2;
+      requireEqual(dependency.name, "WebKit", `${label}: matrix name`);
+      require(SHA1.test(dependency.revision), `${label}: WebKit revision`);
+      requireEqual(dependency.identity, `${dependency.revision}-android`, `${label}: identity`);
+      requireArray(dependency.variants, `${label}: variants`);
+      requireSameArray(dependency.variants.map((variant) => variant.abi), ["arm64-v8a", "x86_64"], `${label}: ABIs`);
+      for (const variant of dependency.variants) {
+        require(Number.isSafeInteger(variant.bytes) && variant.bytes > 0, `${label}/${variant.abi}: bytes`);
+        require(SHA256.test(variant.sha256), `${label}/${variant.abi}: invalid SHA-256`);
+        requireNonEmptyString(variant.asset, `${label}/${variant.abi}: asset`);
+        requireEqual(
+          variant.url,
+          `https://github.com/oven-sh/WebKit/releases/download/autobuild-${dependency.revision}/${variant.asset}`,
+          `${label}/${variant.abi}: URL`,
+        );
+      }
+      requireEqual(
+        dependency.releaseApi,
+        `https://api.github.com/repos/oven-sh/WebKit/releases/tags/autobuild-${dependency.revision}`,
+        `${label}: release API`,
+      );
+    } else {
+      throw new Error(`${label}: unsupported source kind ${JSON.stringify(dependency.kind)}`);
+    }
+  }
+  requireEqual(githubArchives, 19, "GitHub archive dependency count");
+  requireEqual(prebuilt, 3, "prebuilt input count");
+
+  requireArray(inputs.excludedDependencies, "excludedDependencies");
+  requireSameArray(inputs.excludedDependencies.map((dependency) => dependency.name), ["libuv", "tinycc"], "excluded dependencies");
+  for (const dependency of inputs.excludedDependencies) {
+    requireSafeRelativePath(dependency.definitionPath, `excluded ${dependency.name}: definitionPath`);
+    require(SHA1.test(dependency.definitionBlobSha1), `excluded ${dependency.name}: invalid definition blob`);
+    requireNonEmptyString(dependency.reason, `excluded ${dependency.name}: reason`);
+  }
+
+  requireEqual(inputs.readiness?.activeDependencyCount, expectedActive.length, "source readiness dependency count");
+  requireEqual(inputs.readiness?.revisionIdentitiesComplete, true, "source revision readiness");
+  requireEqual(inputs.readiness?.prebuiltChecksumsComplete, true, "prebuilt checksum readiness");
+  requireEqual(inputs.readiness?.githubArchiveChecksumsComplete, false, "GitHub archive checksum readiness");
+  requireEqual(inputs.readiness?.allDownloadedBytesLocked, false, "download byte-lock readiness");
+  requireNonEmptyString(inputs.readiness?.note, "source readiness note");
+
+  return { active: expectedActive.length, prebuilt };
+}
+
+function verifyDefinitionRecords(records, expectedPaths, label) {
+  requireArray(records, label);
+  requireSameArray(records.map((record) => record.path), expectedPaths, `${label} paths`);
+  for (const record of records) {
+    requireSafeRelativePath(record.path, `${label}: path`);
+    require(SHA1.test(record.gitBlobSha1), `${label}: invalid Git blob for ${record.path}`);
+  }
 }
 
 function rejectUnlistedPatches(directory, listedPaths, label) {
@@ -322,16 +626,26 @@ function rejectUnlistedPatches(directory, listedPaths, label) {
 
 function verifyBlockers(blockers, identity) {
   requireArray(blockers, "knownBlockers");
-  require(blockers.length > 0, "knownBlockers must not be empty while the experiment is scaffolding-only");
+  const expectedResolution = new Map([
+    ["v1.4.0-backport", true],
+    ["toolchain-byte-lock", false],
+    ["dependency-lock", true],
+    ["build-and-runtime-evidence", false],
+  ]);
+  requireEqual(blockers.length, expectedResolution.size, "knownBlockers length");
   const ids = new Set();
+  let unresolved = 0;
   for (const blocker of blockers) {
     requireRecord(blocker, "known blocker");
     requireNonEmptyString(blocker.id, "known blocker id");
     require(!ids.has(blocker.id), `duplicate known blocker id: ${blocker.id}`);
     ids.add(blocker.id);
-    requireEqual(blocker.resolved, false, `${blocker.id}: resolved`);
+    require(expectedResolution.has(blocker.id), `unexpected known blocker id: ${blocker.id}`);
+    requireEqual(blocker.resolved, expectedResolution.get(blocker.id), `${blocker.id}: resolved`);
+    if (!blocker.resolved) unresolved += 1;
     requireNonEmptyString(blocker.description, `${blocker.id}: description`);
   }
+  requireEqual(unresolved, 2, "unresolved blocker count");
   requireEqual(identity.buildReady, false, "identity.buildReady with unresolved blockers");
   requireEqual(identity.distributionReady, false, "identity.distributionReady with unresolved blockers");
 }
@@ -439,8 +753,13 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
       `OK ${result.referencePatchCount} immutable upstream patch records; ` +
         `${result.materializedPatchCount} materialized, ${result.missingReferencePatchCount} optional copies absent`,
     );
+    console.log(`OK ${result.downstreamPatchCount} deterministic downstream patches are locked and materialized`);
+    console.log(
+      `OK ${result.activeDependencyCount} Android-release dependency identities and ` +
+        `${result.lockedPrebuiltCount} prebuilt SHA-256 values are locked`,
+    );
     console.log("OK no runtime/archive artifact is present in the experiment directory");
-    console.log("NOT BUILD READY: downstream backport, complete toolchain lock, build, ELF audit, and device evidence remain open");
+    console.log("NOT BUILD READY: remaining downloaded-byte/toolchain locks, build, ELF audit, and device evidence are open");
   } catch (error) {
     console.error(`ERROR ${error.message}`);
     process.exitCode = 1;

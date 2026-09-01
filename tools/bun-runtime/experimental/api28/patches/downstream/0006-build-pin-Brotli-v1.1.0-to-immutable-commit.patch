@@ -1,0 +1,22 @@
+From 778ce669a38888457c36cab0f2231c3f25592b7d Mon Sep 17 00:00:00 2001
+From: AutoJs6 Runtime Maintainers <runtime@autojs6.invalid>
+Date: Wed, 2 Sep 2026 00:00:00 +0800
+Subject: [PATCH] build: pin Brotli v1.1.0 to immutable commit
+
+---
+ scripts/build/deps/brotli.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/build/deps/brotli.ts b/scripts/build/deps/brotli.ts
+index 12eb3514018a40eda8fc250b1da1e5f3b326c1c5..af40f8ac2a5477e698a58f2d615a13c320540601 100644
+--- a/scripts/build/deps/brotli.ts
++++ b/scripts/build/deps/brotli.ts
+@@ -12,7 +12,7 @@ import type { Dependency, DirectBuild } from "../source.ts";
+ 
+ // Upstream brotli pins releases by tag, not commit. A retag would change
+ // what we fetch — if that ever matters, resolve the tag to a sha and pin that.
+-const BROTLI_COMMIT = "v1.1.0";
++const BROTLI_COMMIT = "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d"; // v1.1.0
+ 
+ // prettier-ignore
+ const SOURCES = [

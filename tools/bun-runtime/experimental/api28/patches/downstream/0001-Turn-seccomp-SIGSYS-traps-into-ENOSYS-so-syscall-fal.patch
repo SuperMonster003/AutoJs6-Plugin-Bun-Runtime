@@ -1,0 +1,453 @@
+From 93fa21efee1272b3c5279e25c0d40f96e247ded4 Mon Sep 17 00:00:00 2001
+From: robobun <117481402+robobun@users.noreply.github.com>
+Date: Thu, 20 Aug 2026 16:58:21 +0000
+Subject: [PATCH 1/5] Turn seccomp SIGSYS traps into ENOSYS so syscall
+ fallbacks work on Android
+
+A seccomp policy built on SECCOMP_RET_TRAP, such as Android's per-app
+policy, answers a blocked syscall with SIGSYS instead of an errno. Bun
+has ENOSYS fallbacks for close_range, pidfd_open, openat2, copy_file_range
+and clone3, but the process died before any of them could run. On Termux,
+`bun create astro` died this way inside `bun add` while linking bins.
+
+Install a SIGSYS handler in bun_initialize_process, before the first
+close_range call, that sets the syscall return register to -ENOSYS for
+SYS_SECCOMP traps and resumes. A SIGSYS sent with kill(2) is re-raised
+with the previous disposition.
+
+Drop SIGSYS from the spawnSync signal forwarding list so the handler
+stays installed while a script runs, and keep it installed in the vfork
+child until right before execve so the child's close_range call can fall
+back as well. SIGSYS is also left unblocked around vfork, since a trap on
+a blocked signal kills the process.
+
+The test builds a small seccomp helper and runs bun under policies that
+trap close_range, pidfd_open and openat2.
+---
+ src/jsc/bindings/bun-spawn.cpp    |  17 ++++
+ src/jsc/bindings/c-bindings.cpp   |  57 ++++++++++-
+ test/cli/run/seccomp-trap.c       | 118 ++++++++++++++++++++++
+ test/cli/run/seccomp-trap.test.ts | 158 ++++++++++++++++++++++++++++++
+ 4 files changed, 348 insertions(+), 2 deletions(-)
+ create mode 100644 test/cli/run/seccomp-trap.c
+ create mode 100644 test/cli/run/seccomp-trap.test.ts
+
+diff --git a/src/jsc/bindings/bun-spawn.cpp b/src/jsc/bindings/bun-spawn.cpp
+index be91f7791c042c5f3f70b69deb2e22b3c15fe76b..fb3e7a145e7ae333638b61d9df9482cfef13cb42 100644
+--- a/src/jsc/bindings/bun-spawn.cpp
++++ b/src/jsc/bindings/bun-spawn.cpp
+@@ -247,6 +247,13 @@ extern "C" ssize_t posix_spawn_bun(
+ #endif
+ 
+     sigfillset(&blockall);
++#if OS(LINUX)
++    // A seccomp trap (SIGSYS) kills the process when the signal is blocked
++    // instead of reaching the handler from bun_initialize_process, which turns
++    // it into ENOSYS. Keep it deliverable so clone3 below and the child's setup
++    // syscalls fail with ENOSYS like they do under an errno-returning policy.
++    sigdelset(&blockall, SIGSYS);
++#endif
+     sigprocmask(SIG_SETMASK, &blockall, &oldmask);
+ #if !OS(ANDROID)
+     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cs);
+@@ -296,6 +303,13 @@ extern "C" ssize_t posix_spawn_bun(
+         struct sigaction sa = { 0 };
+         sa.sa_handler = SIG_DFL;
+         for (int i = 0; i < NSIG; i++) {
++#if OS(LINUX)
++            // Keep the seccomp trap handler until right before execve so a
++            // blocked close_range() below falls back to the loop instead of
++            // killing the child.
++            if (i == SIGSYS)
++                continue;
++#endif
+             sigaction(i, &sa, 0);
+         }
+ 
+@@ -451,6 +465,9 @@ extern "C" ssize_t posix_spawn_bun(
+         // Close all fds > current_max_fd, preferring cloexec if available
+         closeRangeOrLoop(current_max_fd + 1, INT_MAX, true);
+ 
++#if OS(LINUX)
++        sigaction(SIGSYS, &sa, 0);
++#endif
+         if (execve(path, argv, envp) == -1) {
+             return childFailed();
+         }
+diff --git a/src/jsc/bindings/c-bindings.cpp b/src/jsc/bindings/c-bindings.cpp
+index 1ead5980b9baac3bc6eaf218fe935fd45d822c46..aa0e3f8e20b7cb2615313fb9d0a9659851eadf17 100644
+--- a/src/jsc/bindings/c-bindings.cpp
++++ b/src/jsc/bindings/c-bindings.cpp
+@@ -274,6 +274,54 @@ extern "C" ssize_t bun_close_range(unsigned int start, unsigned int end, unsigne
+ {
+     return syscall(__NR_close_range, start, end, flags);
+ }
++
++#if CPU(X86_64) || CPU(ARM64)
++#include <ucontext.h>
++
++#ifndef SYS_SECCOMP
++#define SYS_SECCOMP 1
++#endif
++
++static struct sigaction sigsys_action_before_seccomp_shim;
++
++// A seccomp policy answers a blocked syscall either with an errno
++// (SECCOMP_RET_ERRNO, what Docker's default profile does) or with SIGSYS
++// (SECCOMP_RET_TRAP, what Android's per-app policy does). Every newer syscall
++// Bun issues (close_range, pidfd_open, openat2, copy_file_range, clone3, ...)
++// has a fallback for the errno form, so turn the signal form into it: make the
++// blocked syscall return -ENOSYS and resume. This is the documented use of
++// SECCOMP_RET_TRAP (seccomp(2)).
++static void onSeccompTrap(int sig, siginfo_t* info, void* context)
++{
++    if (info->si_code == SYS_SECCOMP && context) {
++        ucontext_t* uc = static_cast<ucontext_t*>(context);
++#if CPU(X86_64)
++        uc->uc_mcontext.gregs[REG_RAX] = -ENOSYS;
++#else
++        uc->uc_mcontext.regs[0] = static_cast<unsigned long long>(-ENOSYS);
++#endif
++        return;
++    }
++
++    // Sent with kill(2): behave as if this handler was never installed.
++    sigaction(SIGSYS, &sigsys_action_before_seccomp_shim, nullptr);
++    raise(sig);
++}
++
++static void installSeccompTrapHandler()
++{
++    struct sigaction sa;
++    memset(&sa, 0, sizeof(sa));
++    sa.sa_sigaction = onSeccompTrap;
++    sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
++    sigemptyset(&sa.sa_mask);
++    sigaction(SIGSYS, &sa, &sigsys_action_before_seccomp_shim);
++}
++#else
++static void installSeccompTrapHandler()
++{
++}
++#endif // CPU(X86_64) || CPU(ARM64)
+ #else // OS(FREEBSD)
+ // FreeBSD 12.2+ libc has close_range; 14.0+ supports CLOSE_RANGE_CLOEXEC
+ // (same value 1<<2 as Linux). Passing flags through means execveZ-failure
+@@ -620,6 +668,10 @@ extern "C" void bun_initialize_process()
+     setvbuf(stderr, nullptr, _IONBF, 0);
+ 
+ #if OS(LINUX)
++    // Must come before bun_close_range: close_range(2) is the first syscall a
++    // seccomp policy is likely to block.
++    installSeccompTrapHandler();
++
+     // Prevent leaking inherited file descriptors on Linux
+     // This is less of an issue for macOS due to posix_spawn
+     // This is best effort, not all linux kernels support close_range or CLOSE_RANGE_CLOEXEC
+@@ -943,7 +995,9 @@ extern "C" int64_t Bun__currentSyncPID = 0;
+ static int Bun__pendingSignalToSend = 0;
+ static struct sigaction previous_actions[NSIG];
+ 
+-// npm's signal list minus SIGIOT/SIGPOLL (aliases of SIGABRT/SIGIO; listing both would overwrite previous_actions[N]).
++// npm's signal list minus SIGIOT/SIGPOLL (aliases of SIGABRT/SIGIO; listing both would overwrite previous_actions[N])
++// and minus SIGSYS: the kernel raises it for a syscall of this process, so there is nothing to forward, and on Linux
++// the handler installed by bun_initialize_process must stay in place while the child runs.
+ // https://github.com/npm/cli/blob/fefd509992a05c2dfddbe7bc46931c42f1da69d7/workspaces/arborist/lib/signals.js#L26-L57
+ #define FOR_EACH_POSIX_SIGNAL(M) \
+     M(SIGABRT);                  \
+@@ -956,7 +1010,6 @@ static struct sigaction previous_actions[NSIG];
+     M(SIGXFSZ);                  \
+     M(SIGUSR2);                  \
+     M(SIGTRAP);                  \
+-    M(SIGSYS);                   \
+     M(SIGQUIT);                  \
+     M(SIGIO);
+ 
+diff --git a/test/cli/run/seccomp-trap.c b/test/cli/run/seccomp-trap.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..8e7301529fc48777ba1afa151f9d2c5a48f1885a
+--- /dev/null
++++ b/test/cli/run/seccomp-trap.c
+@@ -0,0 +1,118 @@
++// Test helper: seccomp-trap <nr>[,<nr>...]|none <program> [args...]
++//
++// Installs a seccomp filter that answers the listed syscall numbers with
++// SECCOMP_RET_TRAP (the process gets SIGSYS, which is what Android's per-app
++// policy does for syscalls it does not allow), then execs the program. The
++// filter is inherited by every process the program spawns.
++//
++// Exit codes: 77 when the filter cannot be installed, 2 on bad usage.
++//
++// The kernel ABI constants are spelled out so this builds with only libc
++// headers (no linux-headers package needed).
++#define _GNU_SOURCE
++#include <stddef.h>
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/prctl.h>
++#include <sys/resource.h>
++#include <unistd.h>
++
++#if defined(__x86_64__)
++#define MY_AUDIT_ARCH 0xC000003EU
++#elif defined(__aarch64__)
++#define MY_AUDIT_ARCH 0xC00000B7U
++#else
++#define MY_AUDIT_ARCH 0U
++#endif
++
++#ifndef PR_SET_NO_NEW_PRIVS
++#define PR_SET_NO_NEW_PRIVS 38
++#endif
++#ifndef PR_SET_SECCOMP
++#define PR_SET_SECCOMP 22
++#endif
++#define SECCOMP_MODE_FILTER 2
++#define SECCOMP_RET_TRAP 0x00030000U
++#define SECCOMP_RET_ALLOW 0x7fff0000U
++
++#define BPF_LD_W_ABS 0x20
++#define BPF_JMP_JEQ_K 0x15
++#define BPF_RET_K 0x06
++#define SECCOMP_DATA_NR 0
++#define SECCOMP_DATA_ARCH 4
++
++#define MAX_TRAPPED 32
++
++struct bpf_insn {
++    uint16_t code;
++    uint8_t jt;
++    uint8_t jf;
++    uint32_t k;
++};
++
++struct bpf_prog {
++    unsigned short len;
++    struct bpf_insn* filter;
++};
++
++static struct bpf_insn stmt(uint16_t code, uint32_t k)
++{
++    struct bpf_insn insn = { code, 0, 0, k };
++    return insn;
++}
++
++static struct bpf_insn jeq(uint32_t k, uint8_t jt)
++{
++    struct bpf_insn insn = { BPF_JMP_JEQ_K, jt, 0, k };
++    return insn;
++}
++
++int main(int argc, char** argv)
++{
++    if (argc < 3) return 2;
++    if (MY_AUDIT_ARCH == 0) return 77;
++
++    // Some runs below die from SIGSYS on purpose. Do not write core files.
++    struct rlimit no_core = { 0, 0 };
++    setrlimit(RLIMIT_CORE, &no_core);
++
++    uint32_t trapped[MAX_TRAPPED];
++    unsigned count = 0;
++    if (strcmp(argv[1], "none") != 0) {
++        for (char* tok = strtok(argv[1], ","); tok != NULL; tok = strtok(NULL, ",")) {
++            if (count == MAX_TRAPPED) return 2;
++            trapped[count++] = (uint32_t)strtoul(tok, NULL, 10);
++        }
++    }
++
++    // Layout: arch check (3), load nr (1), one compare per trapped syscall,
++    // ALLOW, TRAP. Each compare jumps over the remaining compares and the
++    // ALLOW straight to the TRAP.
++    struct bpf_insn insns[3 + 1 + MAX_TRAPPED + 2];
++    unsigned n = 0;
++    insns[n++] = stmt(BPF_LD_W_ABS, SECCOMP_DATA_ARCH);
++    insns[n++] = jeq(MY_AUDIT_ARCH, 1);
++    insns[n++] = stmt(BPF_RET_K, SECCOMP_RET_ALLOW);
++    insns[n++] = stmt(BPF_LD_W_ABS, SECCOMP_DATA_NR);
++    for (unsigned i = 0; i < count; i++) {
++        insns[n++] = jeq(trapped[i], (uint8_t)(count - i));
++    }
++    insns[n++] = stmt(BPF_RET_K, SECCOMP_RET_ALLOW);
++    insns[n++] = stmt(BPF_RET_K, SECCOMP_RET_TRAP);
++
++    struct bpf_prog prog = { (unsigned short)n, insns };
++    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) != 0) {
++        perror("prctl(PR_SET_NO_NEW_PRIVS)");
++        return 77;
++    }
++    if (prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &prog) != 0) {
++        perror("prctl(PR_SET_SECCOMP)");
++        return 77;
++    }
++
++    execvp(argv[2], &argv[2]);
++    perror("execvp");
++    return 127;
++}
+diff --git a/test/cli/run/seccomp-trap.test.ts b/test/cli/run/seccomp-trap.test.ts
+new file mode 100644
+index 0000000000000000000000000000000000000000..3591c16cdf2dde9bfb2bc0991c5a2dc54c25b01d
+--- /dev/null
++++ b/test/cli/run/seccomp-trap.test.ts
+@@ -0,0 +1,158 @@
++import { describe, expect, test } from "bun:test";
++import { bunEnv, bunExe, isLinux, tempDir, tempDirWithFiles } from "harness";
++import { readlinkSync, statSync } from "node:fs";
++import { join } from "node:path";
++
++// Android's per-app seccomp policy (and any other policy built on
++// SECCOMP_RET_TRAP) answers a syscall it does not allow with SIGSYS instead of
++// an errno. Bun installs a SIGSYS handler at startup that makes the blocked
++// syscall return ENOSYS, so the ENOSYS fallbacks that already exist for these
++// syscalls take over. Without it the process dies with "Bad system call".
++//
++// seccomp-trap.c installs such a policy for the given syscall numbers and
++// execs Bun under it. The numbers below are the same on x86_64 and aarch64.
++// close_range, openat2 and fchmodat2 are the ones Android is known to trap
++// (#30766, #39060).
++const SYS_pidfd_open = 434;
++const SYS_close_range = 436;
++const SYS_openat2 = 437;
++const SYS_fchmodat2 = 452;
++
++describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
++  const helper = isLinux ? buildHelper() : null;
++
++  async function runTrapped(trapped: number[] | "none", cmd: string[], cwd?: string) {
++    await using proc = Bun.spawn({
++      cmd: [helper!, trapped === "none" ? "none" : trapped.join(","), ...cmd],
++      env: bunEnv,
++      cwd,
++      stdin: "ignore",
++      stdout: "pipe",
++      stderr: "pipe",
++    });
++    const [stdout, stderr] = await Promise.all([proc.stdout.text(), proc.stderr.text(), proc.exited]);
++    return { stdout, stderr, exitCode: proc.exitCode, signalCode: proc.signalCode };
++  }
++
++  test.concurrent.skipIf(!helper)("bun starts when close_range is trapped", async () => {
++    // bun_initialize_process calls close_range(2) before anything else runs.
++    const result = await runTrapped([SYS_close_range], [bunExe(), "-e", `console.log("ok")`]);
++    expect(result).toEqual({ stdout: "ok\n", stderr: "", exitCode: 0, signalCode: null });
++  });
++
++  test.concurrent.skipIf(!helper)("spawned children exec when close_range is trapped", async () => {
++    // The vfork child calls close_range(2) right before execve(2).
++    const result = await runTrapped(
++      [SYS_close_range],
++      [
++        bunExe(),
++        "-e",
++        `const r = Bun.spawnSync(["echo", "hi"]);
++         console.log(JSON.stringify({ stdout: r.stdout.toString(), exitCode: r.exitCode, signalCode: r.signalCode ?? null }));`,
++      ],
++    );
++    expect(result).toEqual({
++      stdout: JSON.stringify({ stdout: "hi\n", exitCode: 0, signalCode: null }) + "\n",
++      stderr: "",
++      exitCode: 0,
++      signalCode: null,
++    });
++  });
++
++  test.concurrent.skipIf(!helper)("Bun.spawn falls back to the waiter thread when pidfd_open is trapped", async () => {
++    const result = await runTrapped(
++      [SYS_pidfd_open],
++      [
++        bunExe(),
++        "-e",
++        `const results = [];
++         for (let i = 0; i < 3; i++) {
++           const proc = Bun.spawn(["echo", "hi" + i], { stdout: "pipe" });
++           results.push([await proc.stdout.text(), await proc.exited]);
++         }
++         console.log(JSON.stringify(results));`,
++      ],
++    );
++    expect(result).toEqual({
++      stdout:
++        JSON.stringify([
++          ["hi0\n", 0],
++          ["hi1\n", 0],
++          ["hi2\n", 0],
++        ]) + "\n",
++      stderr: "",
++      exitCode: 0,
++      signalCode: null,
++    });
++  });
++
++  test.concurrent.skipIf(!helper)("bun install links a nested bin when openat2 and fchmodat2 are trapped", async () => {
++    // Bin linking checks a nested link target with openat2(RESOLVE_BENEATH),
++    // falling back to realpath on ENOSYS, and then makes the target executable
++    // with fchmodat2, falling back to libc's fchmodat on ENOSYS.
++    using dir = tempDir("seccomp-trap-install", {
++      "package.json": JSON.stringify({ name: "app", dependencies: { dep: "file:./dep" } }),
++      "dep/package.json": JSON.stringify({ name: "dep", version: "1.0.0", bin: { depbin: "bin/cli.js" } }),
++      "dep/bin/cli.js": `#!/usr/bin/env node\nconsole.log("depbin");\n`,
++    });
++    const target = join(String(dir), "dep/bin/cli.js");
++    expect(statSync(target).mode & 0o111).toBe(0);
++
++    const result = await runTrapped([SYS_openat2, SYS_fchmodat2], [bunExe(), "install"], String(dir));
++    expect({ exitCode: result.exitCode, signalCode: result.signalCode }).toEqual({ exitCode: 0, signalCode: null });
++    expect(readlinkSync(join(String(dir), "node_modules/.bin/depbin"))).toBe("../dep/bin/cli.js");
++    expect(statSync(target).mode & 0o100).toBe(0o100);
++  });
++
++  test.concurrent.skipIf(!helper)("bun run --no-orphans waits for the script when pidfd_open is trapped", async () => {
++    // spawnSync installs signal forwarding handlers around the script; SIGSYS
++    // must not be one of them, or the pidfd_open(2) in the no-orphans wait loop
++    // is forwarded to the script as a kill instead of returning ENOSYS.
++    using dir = tempDir("seccomp-trap-run", {
++      "package.json": JSON.stringify({ name: "app", scripts: { hello: "echo hello-from-script" } }),
++    });
++    const result = await runTrapped(
++      [SYS_pidfd_open],
++      [bunExe(), "run", "--no-orphans", "--silent", "hello"],
++      String(dir),
++    );
++    expect(result).toEqual({ stdout: "hello-from-script\n", stderr: "", exitCode: 0, signalCode: null });
++  });
++
++  test.concurrent.skipIf(!helper)("a SIGSYS sent with kill still terminates the process", async () => {
++    const result = await runTrapped("none", [bunExe(), "-e", `process.kill(process.pid, "SIGSYS");`]);
++    expect({ exitCode: result.exitCode, signalCode: result.signalCode }).toEqual({
++      exitCode: null,
++      signalCode: "SIGSYS",
++    });
++  });
++});
++
++// Compiles seccomp-trap.c and checks that this environment lets us install a
++// seccomp filter. Returns null (tests are skipped) when there is no C compiler
++// or the filter cannot be installed. A compile error is a test failure.
++function buildHelper(): string | null {
++  const cc = Bun.which("clang") || Bun.which("gcc") || Bun.which("cc");
++  if (!cc) {
++    console.warn("SKIP seccomp-trap: no C compiler on PATH");
++    return null;
++  }
++
++  const dir = tempDirWithFiles("seccomp-trap-helper", {});
++  const bin = join(dir, "seccomp-trap");
++  const compile = Bun.spawnSync({
++    cmd: [cc, "-O0", "-o", bin, join(import.meta.dirname, "seccomp-trap.c")],
++    stdout: "pipe",
++    stderr: "pipe",
++  });
++  if (compile.exitCode !== 0) {
++    throw new Error(`failed to compile seccomp-trap.c:\n${compile.stderr.toString()}`);
++  }
++
++  const probe = Bun.spawnSync({ cmd: [bin, "none", Bun.which("true")!], stdout: "pipe", stderr: "pipe" });
++  if (probe.exitCode !== 0) {
++    console.warn(`SKIP seccomp-trap: cannot install a seccomp filter here: ${probe.stderr.toString().trim()}`);
++    return null;
++  }
++  return bin;
++}

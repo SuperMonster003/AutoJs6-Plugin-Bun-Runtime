@@ -1,0 +1,290 @@
+From 87d5492dd1a4df392c80c88774cfb1a39824238c Mon Sep 17 00:00:00 2001
+From: robobun <117481402+robobun@users.noreply.github.com>
+Date: Thu, 20 Aug 2026 17:57:37 +0000
+Subject: [PATCH 3/5] Keep the SIGSYS handler when JS listens for SIGSYS
+
+process.on("SIGSYS") installed the JS forwarding handler over the seccomp
+handler. After that a trapped syscall returned its own syscall number as a
+result (the kernel rolls the registers back before it delivers the trap),
+and once the listener was removed the next trap killed the process.
+signal-exit registers such a listener, so this is the common case for CLIs.
+
+The seccomp handler now stays installed and forwards a kill(2)-sent SIGSYS
+to JS itself while a listener exists. It no longer keeps a saved previous
+action: a kill(2)-sent SIGSYS without a listener resets to SIG_DFL and
+re-raises, like onExitSignal does. The watch-mode reload also leaves SIGSYS
+for execve to reset.
+---
+ src/jsc/bindings/BunProcess.cpp   | 26 +++++++++--
+ src/jsc/bindings/bun-spawn.cpp    | 13 ++----
+ src/jsc/bindings/c-bindings.cpp   | 72 ++++++++++++++++++-------------
+ test/cli/run/seccomp-trap.test.ts | 28 ++++++++++++
+ 4 files changed, 96 insertions(+), 43 deletions(-)
+
+diff --git a/src/jsc/bindings/BunProcess.cpp b/src/jsc/bindings/BunProcess.cpp
+index 3e5239d2831942799ff5822bec17f4cbfb24c1db..c007a66093cf3de5a806f6c957de238bc08d1d18 100644
+--- a/src/jsc/bindings/BunProcess.cpp
++++ b/src/jsc/bindings/BunProcess.cpp
+@@ -1501,8 +1501,17 @@ __attribute__((noinline)) static void forwardSignal(int signalNumber)
+ static int watchModeStickySignal = 0;
+ 
+ #if !OS(WINDOWS)
++#if OS(LINUX)
++// c-bindings.cpp: the seccomp SIGSYS handler forwards kill(2)-sent SIGSYS itself.
++extern "C" bool Bun__forwardSIGSYSToJS(bool enabled);
++#endif
++
+ static void installForwardSignalHandler(int signalNumber)
+ {
++#if OS(LINUX)
++    if (signalNumber == SIGSYS && Bun__forwardSIGSYSToJS(true))
++        return;
++#endif
+     struct sigaction action;
+     memset(&action, 0, sizeof(struct sigaction));
+     action.sa_handler = forwardSignal;
+@@ -1512,6 +1521,18 @@ static void installForwardSignalHandler(int signalNumber)
+     sigaction(signalNumber, &action, nullptr);
+ }
+ 
++static void uninstallForwardSignalHandler(int signalNumber)
++{
++#if OS(LINUX)
++    if (signalNumber == SIGSYS && Bun__forwardSIGSYSToJS(false))
++        return;
++#endif
++    if (void (*oldHandler)(int) = signal(signalNumber, SIG_DFL); oldHandler != forwardSignal) {
++        // Don't uninstall the old handler if it's not the one we installed.
++        signal(signalNumber, oldHandler);
++    }
++}
++
+ extern "C" void Bun__installWatchModeSignalHandler(int signalNumber)
+ {
+     Bun__ensureSignalHandler();
+@@ -1618,10 +1639,7 @@ static void onDidChangeListeners(EventEmitter& eventEmitter, const Identifier& e
+                         // "has JS listeners" source of truth that e.g. self-kill flush consults.
+                         if (signalNumber != watchModeStickySignal) {
+ #if !OS(WINDOWS)
+-                            if (void (*oldHandler)(int) = signal(signalNumber, SIG_DFL); oldHandler != forwardSignal) {
+-                                // Don't uninstall the old handler if it's not the one we installed.
+-                                signal(signalNumber, oldHandler);
+-                            }
++                            uninstallForwardSignalHandler(signalNumber);
+ #else
+                             SignalHandleValue signal_handle = signalToContextIdsMap->get(signalNumber);
+                             Bun__UVSignalHandle__close(signal_handle.handle);
+diff --git a/src/jsc/bindings/bun-spawn.cpp b/src/jsc/bindings/bun-spawn.cpp
+index 291a6f7b88952968a950811110c539d961fc35a4..d4d1a4ba27b618e7842288fcc5df63bbcca74dcb 100644
+--- a/src/jsc/bindings/bun-spawn.cpp
++++ b/src/jsc/bindings/bun-spawn.cpp
+@@ -248,10 +248,8 @@ extern "C" ssize_t posix_spawn_bun(
+ 
+     sigfillset(&blockall);
+ #if OS(LINUX)
+-    // A seccomp trap (SIGSYS) kills the process when the signal is blocked
+-    // instead of reaching the handler from bun_initialize_process, which turns
+-    // it into ENOSYS. Keep it deliverable so clone3 below and the child's setup
+-    // syscalls fail with ENOSYS like they do under an errno-returning policy.
++    // A seccomp trap on a blocked SIGSYS kills the process instead of reaching
++    // the ENOSYS handler (installSIGSYSHandler in c-bindings.cpp).
+     sigdelset(&blockall, SIGSYS);
+ #endif
+     sigprocmask(SIG_SETMASK, &blockall, &oldmask);
+@@ -304,9 +302,7 @@ extern "C" ssize_t posix_spawn_bun(
+         sa.sa_handler = SIG_DFL;
+         for (int i = 0; i < NSIG; i++) {
+ #if OS(LINUX)
+-            // Keep the seccomp trap handler until right before execve so a
+-            // blocked close_range() below falls back to the loop instead of
+-            // killing the child.
++            // close_range() below still needs the ENOSYS handler; reset before execve.
+             if (i == SIGSYS)
+                 continue;
+ #endif
+@@ -464,8 +460,7 @@ extern "C" ssize_t posix_spawn_bun(
+         // Close all fds > current_max_fd, preferring cloexec if available
+         closeRangeOrLoop(current_max_fd + 1, INT_MAX, true);
+ 
+-        // The caller's mask goes back last (execve keeps it): a caller that
+-        // blocks SIGSYS must not make a trapped close_range() above fatal.
++        // After close_range(): the caller's mask may block SIGSYS. execve keeps the mask.
+         sigprocmask(SIG_SETMASK, &childmask, 0);
+ #if OS(LINUX)
+         sigaction(SIGSYS, &sa, 0);
+diff --git a/src/jsc/bindings/c-bindings.cpp b/src/jsc/bindings/c-bindings.cpp
+index 86f6e055586a1470a88266920c60af7d53015d03..92a57a0b962a57d26c512b9ba46629684523a49d 100644
+--- a/src/jsc/bindings/c-bindings.cpp
++++ b/src/jsc/bindings/c-bindings.cpp
+@@ -276,22 +276,22 @@ extern "C" ssize_t bun_close_range(unsigned int start, unsigned int end, unsigne
+ }
+ 
+ #if CPU(X86_64) || CPU(ARM64)
++#include <atomic>
+ #include <ucontext.h>
+ 
+ #ifndef SYS_SECCOMP
+ #define SYS_SECCOMP 1
+ #endif
+ 
+-static struct sigaction sigsys_action_before_seccomp_shim;
++extern "C" void Bun__onPosixSignal(int signalNumber);
+ 
+-// A seccomp policy answers a blocked syscall either with an errno
+-// (SECCOMP_RET_ERRNO, what Docker's default profile does) or with SIGSYS
+-// (SECCOMP_RET_TRAP, what Android's per-app policy does). Every newer syscall
+-// Bun issues (close_range, pidfd_open, openat2, copy_file_range, clone3, ...)
+-// has a fallback for the errno form, so turn the signal form into it: make the
+-// blocked syscall return -ENOSYS and resume. This is the documented use of
+-// SECCOMP_RET_TRAP (seccomp(2)).
+-static void onSeccompTrap(int sig, siginfo_t* info, void* context)
++// Set while JS has a process.on("SIGSYS") listener (BunProcess.cpp).
++static std::atomic<bool> forwardSIGSYSToJS { false };
++
++// A SECCOMP_RET_TRAP policy (Android's per-app policy) answers a blocked
++// syscall with SIGSYS instead of an errno. Make the call return ENOSYS, which
++// the callers of close_range, pidfd_open, openat2, fchmodat2, ... handle.
++static void onSIGSYS(int sig, siginfo_t* info, void* context)
+ {
+     if (info->si_code == SYS_SECCOMP && context) {
+         ucontext_t* uc = static_cast<ucontext_t*>(context);
+@@ -303,31 +303,44 @@ static void onSeccompTrap(int sig, siginfo_t* info, void* context)
+         return;
+     }
+ 
+-    // Sent with kill(2): behave as if this handler was never installed.
+-    sigaction(SIGSYS, &sigsys_action_before_seccomp_shim, nullptr);
++    // Sent with kill(2).
++    if (forwardSIGSYSToJS.load(std::memory_order_relaxed)) {
++        Bun__onPosixSignal(sig);
++        return;
++    }
++    signal(sig, SIG_DFL);
+     raise(sig);
+ }
+ 
+-static void installSeccompTrapHandler()
++static void installSIGSYSHandler()
+ {
+-    // A second install would save this handler as the previous action and make
+-    // the kill(2) path above re-enter itself forever.
+-    static bool installed = false;
+-    if (installed)
+-        return;
+-    installed = true;
+-
+     struct sigaction sa;
+     memset(&sa, 0, sizeof(sa));
+-    sa.sa_sigaction = onSeccompTrap;
++    sa.sa_sigaction = onSIGSYS;
+     sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
+     sigemptyset(&sa.sa_mask);
+-    sigaction(SIGSYS, &sa, &sigsys_action_before_seccomp_shim);
++    sigaction(SIGSYS, &sa, nullptr);
++}
++
++// process.on("SIGSYS") must not replace the handler above, so it registers
++// here instead. Returns false where the handler does not exist and the caller
++// has to install its own.
++extern "C" bool Bun__forwardSIGSYSToJS(bool enabled)
++{
++    forwardSIGSYSToJS.store(enabled, std::memory_order_relaxed);
++    if (enabled)
++        installSIGSYSHandler();
++    return true;
+ }
+ #else
+-static void installSeccompTrapHandler()
++static void installSIGSYSHandler()
+ {
+ }
++
++extern "C" bool Bun__forwardSIGSYSToJS(bool)
++{
++    return false;
++}
+ #endif // CPU(X86_64) || CPU(ARM64)
+ #else // OS(FREEBSD)
+ // FreeBSD 12.2+ libc has close_range; 14.0+ supports CLOSE_RANGE_CLOEXEC
+@@ -377,8 +390,9 @@ extern "C" void on_before_reload_process_posix()
+     }
+ 
+     // Reset caught dispositions so a SIGTERM arriving between here and execve isn't queued-then-
+-    // lost. Inherited SIG_IGN is left alone. SIGSEGV/SIGBUS/RT/sigThreadSuspendResume are left
+-    // for execve to reset atomically — resetting them here races JSC's sampler/GC threads fatally.
++    // lost. Inherited SIG_IGN is left alone. SIGSEGV/SIGBUS/RT/sigThreadSuspendResume/SIGSYS are left
++    // for execve to reset atomically — resetting them here races JSC's sampler/GC threads (and, for
++    // SIGSYS, any thread whose syscall a seccomp policy traps) fatally.
+     struct sigaction sa {};
+     sa.sa_handler = SIG_DFL;
+     sigemptyset(&sa.sa_mask);
+@@ -386,7 +400,7 @@ extern "C" void on_before_reload_process_posix()
+         if (s == SIGKILL || s == SIGSTOP || s == SIGSEGV || s == SIGBUS)
+             continue;
+ #if OS(LINUX)
+-        if (s == g_wtfConfig.sigThreadSuspendResume)
++        if (s == g_wtfConfig.sigThreadSuspendResume || s == SIGSYS)
+             continue;
+ #endif
+ #ifdef SIGRTMIN
+@@ -675,9 +689,8 @@ extern "C" void bun_initialize_process()
+     setvbuf(stderr, nullptr, _IONBF, 0);
+ 
+ #if OS(LINUX)
+-    // Must come before bun_close_range: close_range(2) is the first syscall a
+-    // seccomp policy is likely to block.
+-    installSeccompTrapHandler();
++    // Before bun_close_range: a seccomp policy may trap it.
++    installSIGSYSHandler();
+ 
+     // Prevent leaking inherited file descriptors on Linux
+     // This is less of an issue for macOS due to posix_spawn
+@@ -1003,8 +1016,7 @@ static int Bun__pendingSignalToSend = 0;
+ static struct sigaction previous_actions[NSIG];
+ 
+ // npm's signal list minus SIGIOT/SIGPOLL (aliases of SIGABRT/SIGIO; listing both would overwrite previous_actions[N])
+-// and minus SIGSYS: the kernel raises it for a syscall of this process, so there is nothing to forward, and on Linux
+-// the handler installed by bun_initialize_process must stay in place while the child runs.
++// and minus SIGSYS (raised for this process's own syscall; owned by installSIGSYSHandler on Linux).
+ // https://github.com/npm/cli/blob/fefd509992a05c2dfddbe7bc46931c42f1da69d7/workspaces/arborist/lib/signals.js#L26-L57
+ #define FOR_EACH_POSIX_SIGNAL(M) \
+     M(SIGABRT);                  \
+diff --git a/test/cli/run/seccomp-trap.test.ts b/test/cli/run/seccomp-trap.test.ts
+index 16aeb5ffc0a91c11407c4417de07f65ef8248cae..261eda2713b3ea3ef2c5b66239c6f74bdbe55619 100644
+--- a/test/cli/run/seccomp-trap.test.ts
++++ b/test/cli/run/seccomp-trap.test.ts
+@@ -172,6 +172,34 @@ describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
+       signalCode: "SIGSYS",
+     });
+   });
++
++  test.concurrent.skipIf(!helper)("process.on('SIGSYS') keeps the trap handler and still sees kill", async () => {
++    // signal-exit and similar libraries listen for SIGSYS. The listener must
++    // not replace the trap handler (spawning still works while it is installed
++    // and after it is removed), and a SIGSYS sent with kill still reaches JS.
++    const result = await runTrapped(
++      [SYS_pidfd_open],
++      [
++        bunExe(),
++        "-e",
++        `const { promise, resolve } = Promise.withResolvers();
++         process.on("SIGSYS", resolve);
++         const first = Bun.spawnSync(["echo", "hi"]).stdout.toString();
++         process.kill(process.pid, "SIGSYS");
++         await promise;
++         process.removeAllListeners("SIGSYS");
++         const second = Bun.spawnSync(["echo", "hi"]).stdout.toString();
++         console.log(JSON.stringify({ first, listenerRan: true, second }));
++         process.kill(process.pid, "SIGSYS");`,
++      ],
++    );
++    expect(result).toEqual({
++      stdout: JSON.stringify({ first: "hi\n", listenerRan: true, second: "hi\n" }) + "\n",
++      stderr: "",
++      exitCode: null,
++      signalCode: "SIGSYS",
++    });
++  });
+ });
+ 
+ // Compiles seccomp-trap.c and checks that this environment lets us install a

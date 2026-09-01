@@ -201,6 +201,9 @@ _2026/09/01_
 - `Aviso` Android 13 (API 33) es ahora el objetivo mínimo oficial; API 28 a 32 siguen sin soporte hasta que un runtime Bun parcheado supere la validación portable
 - `Mejora` Reducir el mínimo Android admitido de Android 14 (API 34) a Android 13 (API 33) conservando los payload Android oficiales y fijados de Bun 1.4.0
 - `Mejora` Documentar el límite seccomp de AOSP T: Android 13 permite la syscall `close_range` directa de Bun, mientras el fallo en API 31 demuestra que API 28 a 32 requieren un parche de compatibilidad de Bun y no solo un cambio de manifest
+- `Mejora` Preparar el experimento Android 9+ con un backport determinista de seis parches del código de Bun, entradas NDK y de contenedor fijadas e identidades inmutables para 22 dependencias activas de la versión Android, manteniendo explícitamente no disponible el runtime aún no compilado
+- `Mejora` Verificar cada APK Debug y Release para alineación ZIP de 16 KB, contenido ABI exacto, tamaños y resúmenes SHA-256 fijados de los payload de Bun, y verificar los bytes instalados en el dispositivo de prueba Android 13
+- `Dependencia` Añadir el runtime Kotlin Parcelize requerido por Release R8 para conservar las clases compartidas del contrato Parcelable
 
 #### v0.1.0
 

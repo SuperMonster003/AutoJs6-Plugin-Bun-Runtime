@@ -201,6 +201,9 @@ _2026/09/01_
 - `Hint` Android 13 (API 33) is now the official minimum target; API 28 through 32 remain unsupported until a patched Bun runtime passes portable validation
 - `Improvement` Lower the supported Android floor from Android 14 (API 34) to Android 13 (API 33) while retaining the pinned official Bun 1.4.0 Android payloads
 - `Improvement` Document the AOSP T seccomp boundary: Android 13 allowlists Bun's raw `close_range` syscall, while the API 31 failure shows API 28 through 32 require a Bun compatibility patch rather than a manifest-only change
+- `Improvement` Prepare the Android 9+ experiment with a deterministic six-patch Bun source backport, pinned NDK and container inputs, and immutable identities for 22 active Android-release dependencies, while keeping the unbuilt runtime explicitly unavailable
+- `Improvement` Verify every Debug and Release APK for 16 KB ZIP alignment, exact ABI contents, locked Bun payload sizes and SHA-256 digests, and verify the installed payload bytes on the Android 13 test device
+- `Dependency` Add the Kotlin Parcelize runtime required by Release R8 to retain the shared Parcelable contract classes
 
 #### v0.1.0
 

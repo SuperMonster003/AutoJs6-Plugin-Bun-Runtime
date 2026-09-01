@@ -201,6 +201,9 @@ _2026/09/01_
 - `ヒント` Android 13 (API 33) を正式な minimum target とし, API 28 から 32 は patched Bun runtime が portable validation を通過するまで未対応
 - `改善` 固定済みの公式 Bun 1.4.0 Android payload を維持したまま, 対応する Android の下限を Android 14 (API 34) から Android 13 (API 33) に変更
 - `改善` AOSP T seccomp 境界を明文化: Android 13 は Bun の raw `close_range` syscall を allowlist し, API 31 の失敗から API 28 から 32 には manifest-only change ではなく Bun compatibility patch が必要と確認
+- `改善` 決定的に再現できる 6 patch の Bun source backport, 固定した NDK と container input, Android release で有効な 22 dependency の不変 identity により Android 9+ experiment を準備し, 未 build の runtime は明示的に利用不可のまま維持
+- `改善` すべての Debug と Release APK について 16 KB ZIP alignment, 正確な ABI content, 固定 Bun payload の size と SHA-256 を検証し, Android 13 test device 上の installed payload bytes も検証
+- `依存関係` 共有 Parcelable contract class を Release R8 で保持するために必要な Kotlin Parcelize runtime を追加
 
 #### v0.1.0
 

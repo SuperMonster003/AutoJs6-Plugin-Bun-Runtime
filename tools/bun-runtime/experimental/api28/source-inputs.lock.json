@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "bunBaseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+  "downstreamHeadCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+  "status": "android-release-revision-identities-locked",
+  "snapshotDate": "2026-09-02",
+  "resolution": {
+    "profile": "android-release",
+    "androidApiLevel": 28,
+    "abis": [
+      "arm64-v8a",
+      "x86_64"
+    ],
+    "submodulesPresent": false,
+    "submoduleEvidence": "The exact Bun v1.4.0 Git tree contains no .gitmodules entry."
+  },
+  "sourceMachinery": [
+    {
+      "path": "scripts/build/config.ts",
+      "gitBlobSha1": "5a20204a4759a14ce5983b8a7ce308f73592baac"
+    },
+    {
+      "path": "scripts/build/profiles.ts",
+      "gitBlobSha1": "04a3d46b9c73aee19506a7ea6445b24030371237"
+    },
+    {
+      "path": "scripts/build/source.ts",
+      "gitBlobSha1": "e57282be9a74a1fce7cc68eb56fa76c4f490099a"
+    },
+    {
+      "path": "scripts/build/deps/index.ts",
+      "gitBlobSha1": "4084e71f876c67ca7329fb51d151f2650f519cd2"
+    }
+  ],
+  "activeDependencies": [
+    {
+      "name": "picohttpparser",
+      "definitionPath": "scripts/build/deps/picohttpparser.ts",
+      "definitionBlobSha1": "5b5dea6d1ba0aca6da294006bc6e3a8bbe8203dc",
+      "kind": "github-archive",
+      "repository": "h2o/picohttpparser",
+      "revision": "066d2b1e9ab820703db0837a7255d92d30f0c9f5"
+    },
+    {
+      "name": "nodejs",
+      "definitionPath": "scripts/build/deps/nodejs-headers.ts",
+      "definitionBlobSha1": "ad8f798f3c73fe40da36f4a6826d4381bed3a6b8",
+      "kind": "prebuilt",
+      "version": "26.3.0",
+      "identity": "26.3.0",
+      "url": "https://nodejs.org/dist/v26.3.0/node-v26.3.0-headers.tar.gz",
+      "bytes": 9957179,
+      "sha256": "fca113c5d5add8bfb1aa31129a24acb8d49aa69ab3c22a2cc569aec88960526d",
+      "checksumManifest": "https://nodejs.org/dist/v26.3.0/SHASUMS256.txt"
+    },
+    {
+      "name": "zlib",
+      "definitionPath": "scripts/build/deps/zlib.ts",
+      "definitionBlobSha1": "2ee3470f9502aa51a05118c8d4f15f1a6bf6edba",
+      "kind": "github-archive",
+      "repository": "zlib-ng/zlib-ng",
+      "revision": "12731092979c6d07f42da27da673a9f6c7b13586"
+    },
+    {
+      "name": "zstd",
+      "definitionPath": "scripts/build/deps/zstd.ts",
+      "definitionBlobSha1": "8bf87f0356277f75c903f9cb884e4c5eacbc6d71",
+      "kind": "github-archive",
+      "repository": "facebook/zstd",
+      "revision": "f8745da6ff1ad1e7bab384bd1f9d742439278e99"
+    },
+    {
+      "name": "brotli",
+      "definitionPath": "scripts/build/deps/brotli.ts",
+      "baseDefinitionBlobSha1": "12eb3514018a40eda8fc250b1da1e5f3b326c1c5",
+      "definitionBlobSha1": "af40f8ac2a5477e698a58f2d615a13c320540601",
+      "kind": "github-archive",
+      "repository": "google/brotli",
+      "upstreamTag": "v1.1.0",
+      "revision": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+      "pinPatch": "patches/downstream/0006-build-pin-Brotli-v1.1.0-to-immutable-commit.patch"
+    },
+    {
+      "name": "libdeflate",
+      "definitionPath": "scripts/build/deps/libdeflate.ts",
+      "definitionBlobSha1": "e84688dda40ed56f2eaa35bb7fa09f85cef4f29f",
+      "kind": "github-archive",
+      "repository": "ebiggers/libdeflate",
+      "revision": "c8c56a20f8f621e6a966b716b31f1dedab6a41e3"
+    },
+    {
+      "name": "libarchive",
+      "definitionPath": "scripts/build/deps/libarchive.ts",
+      "definitionBlobSha1": "9c0d9523338f319d040c867977deb3884610b86f",
+      "kind": "github-archive",
+      "repository": "libarchive/libarchive",
+      "revision": "ded82291ab41d5e355831b96b0e1ff49e24d8939"
+    },
+    {
+      "name": "libjpeg-turbo",
+      "definitionPath": "scripts/build/deps/libjpeg-turbo.ts",
+      "definitionBlobSha1": "224d1f312df0e524256ec8ae5e92db3ae1a9cfd8",
+      "kind": "github-archive",
+      "repository": "libjpeg-turbo/libjpeg-turbo",
+      "revision": "e352b02f794f701407b39af08576035ba3360d60"
+    },
+    {
+      "name": "libspng",
+      "definitionPath": "scripts/build/deps/libspng.ts",
+      "definitionBlobSha1": "0f664524baf21751b188f5d103aee4c1b80767fb",
+      "kind": "github-archive",
+      "repository": "randy408/libspng",
+      "revision": "fb768002d4288590083a476af628e51c3f1d47cd"
+    },
+    {
+      "name": "libwebp",
+      "definitionPath": "scripts/build/deps/libwebp.ts",
+      "definitionBlobSha1": "762034f19c8f80390f7eb5a8853b360dd8d4bf10",
+      "kind": "github-archive",
+      "repository": "webmproject/libwebp",
+      "revision": "b7e29b9d75bd31422b00c2a446d49d7af06c328d"
+    },
+    {
+      "name": "cares",
+      "definitionPath": "scripts/build/deps/cares.ts",
+      "definitionBlobSha1": "38ac7cb52f4dacfb4cad5ef4a1ac09e5918d1305",
+      "kind": "github-archive",
+      "repository": "c-ares/c-ares",
+      "revision": "c7a3138dcfe3bb0eaaf10c0c24c36dc66dc790ab"
+    },
+    {
+      "name": "hdrhistogram",
+      "definitionPath": "scripts/build/deps/hdrhistogram.ts",
+      "definitionBlobSha1": "79a368e37541dd5d184b0ba3a5bdff0ac84c316e",
+      "kind": "github-archive",
+      "repository": "HdrHistogram/HdrHistogram_c",
+      "revision": "be60a9987ee48d0abf0d7b6a175bad8d6c1585d1"
+    },
+    {
+      "name": "highway",
+      "definitionPath": "scripts/build/deps/highway.ts",
+      "definitionBlobSha1": "7a23f5ba116931142559456b10789662fa77c17e",
+      "kind": "github-archive",
+      "repository": "google/highway",
+      "revision": "2607d3b5b0113992fe84d3848859eae13b3b52c1"
+    },
+    {
+      "name": "lolhtml",
+      "definitionPath": "scripts/build/deps/lolhtml.ts",
+      "definitionBlobSha1": "5ce4ce8593554f2afcf7df001c75bbaa95ffb0b0",
+      "kind": "github-archive",
+      "repository": "oven-sh/lol-html",
+      "revision": "725ce499aa9b71e38b7a2d0a9fbb6d7294a4079e"
+    },
+    {
+      "name": "rust-argon2",
+      "definitionPath": "scripts/build/deps/rust-argon2.ts",
+      "definitionBlobSha1": "f5c71e5c45785c5035c4bfefd76710c77893f210",
+      "kind": "github-archive",
+      "repository": "sru-systems/rust-argon2",
+      "revision": "ed81866f163f0c7026aa6fd8388adf37242eb32a"
+    },
+    {
+      "name": "lshpack",
+      "definitionPath": "scripts/build/deps/lshpack.ts",
+      "definitionBlobSha1": "01629a31c369772fbdd5409d06e67ce75b8a426f",
+      "kind": "github-archive",
+      "repository": "litespeedtech/ls-hpack",
+      "revision": "8905c024b6d052f083a3d11d0a169b3c2735c8a1"
+    },
+    {
+      "name": "lsqpack",
+      "definitionPath": "scripts/build/deps/lsqpack.ts",
+      "definitionBlobSha1": "519553351b9c9ca80ce4980c56eba5ef5fc65e00",
+      "kind": "github-archive",
+      "repository": "litespeedtech/ls-qpack",
+      "revision": "1e9c5b8e59f8161c54f168a570c8bfdc59ded0c3"
+    },
+    {
+      "name": "mimalloc",
+      "definitionPath": "scripts/build/deps/mimalloc.ts",
+      "definitionBlobSha1": "55cd9c1cc57600cc5f082370294aef8be468485b",
+      "kind": "github-archive",
+      "repository": "oven-sh/mimalloc",
+      "revision": "6a14aee24315e503fa295a1fa90fe8b24ad91774"
+    },
+    {
+      "name": "sqlite",
+      "definitionPath": "scripts/build/deps/sqlite.ts",
+      "definitionBlobSha1": "6d6eec0375d67bfee4f227ddc7f8015ffa98951c",
+      "kind": "in-tree",
+      "path": "src/jsc/bindings/sqlite",
+      "identityCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676"
+    },
+    {
+      "name": "boringssl",
+      "definitionPath": "scripts/build/deps/boringssl.ts",
+      "definitionBlobSha1": "9703b4cea646f1065ab956b0c97a1c20a34a0534",
+      "kind": "github-archive",
+      "repository": "oven-sh/boringssl",
+      "revision": "2288897e2e716330490893d226b4f079f9da9e0c"
+    },
+    {
+      "name": "lsquic",
+      "definitionPath": "scripts/build/deps/lsquic.ts",
+      "definitionBlobSha1": "becb1d0aa9e97c66e2e80899ead3b641e19d2b99",
+      "kind": "github-archive",
+      "repository": "litespeedtech/lsquic",
+      "revision": "3181911301b1aa4f54c1ed690901abc674ee08fb"
+    },
+    {
+      "name": "WebKit",
+      "definitionPath": "scripts/build/deps/webkit.ts",
+      "definitionBlobSha1": "91822332efd23e5f0b99a600be364936928dd451",
+      "kind": "prebuilt-matrix",
+      "revision": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+      "identity": "0f966e81b78c84bb23213e391bc679c4ef83e56b-android",
+      "releaseApi": "https://api.github.com/repos/oven-sh/WebKit/releases/tags/autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b",
+      "variants": [
+        {
+          "abi": "arm64-v8a",
+          "asset": "bun-webkit-linux-arm64-android.tar.gz",
+          "url": "https://github.com/oven-sh/WebKit/releases/download/autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b/bun-webkit-linux-arm64-android.tar.gz",
+          "bytes": 467483228,
+          "sha256": "a062ee47d9849e55e0a637f477f18e8e22615a7308da26c9146dc2f5eb1f9a08"
+        },
+        {
+          "abi": "x86_64",
+          "asset": "bun-webkit-linux-amd64-android.tar.gz",
+          "url": "https://github.com/oven-sh/WebKit/releases/download/autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b/bun-webkit-linux-amd64-android.tar.gz",
+          "bytes": 466336923,
+          "sha256": "00f989d360d129a82aecedbe72d1e92eff0c5c539e825c283ac009f88a83095b"
+        }
+      ]
+    }
+  ],
+  "excludedDependencies": [
+    {
+      "name": "libuv",
+      "definitionPath": "scripts/build/deps/libuv.ts",
+      "definitionBlobSha1": "48e26b7e2bfa36e715b70ec705a4fe8af1163953",
+      "reason": "The Bun dependency predicate enables this source only for Windows targets."
+    },
+    {
+      "name": "tinycc",
+      "definitionPath": "scripts/build/deps/tinycc.ts",
+      "definitionBlobSha1": "7fa186cde0b5c7fba23428deacba682fd9181332",
+      "reason": "Bun disables TinyCC for the Android ABI because upstream TinyCC has no bionic target."
+    }
+  ],
+  "readiness": {
+    "activeDependencyCount": 22,
+    "revisionIdentitiesComplete": true,
+    "prebuiltChecksumsComplete": true,
+    "githubArchiveChecksumsComplete": false,
+    "allDownloadedBytesLocked": false,
+    "note": "All Android-release dependency revisions are explicit after the Brotli pin patch. Node.js headers and both Android WebKit assets have authoritative SHA-256 values; GitHub-generated source archive bytes are not yet materialized and checksum-locked."
+  }
+}

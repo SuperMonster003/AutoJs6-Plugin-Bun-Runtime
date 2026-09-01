@@ -1,0 +1,185 @@
+From 931fd9270a18ed6b88c91e5a731b75afb9e1b025 Mon Sep 17 00:00:00 2001
+From: robobun <117481402+robobun@users.noreply.github.com>
+Date: Thu, 20 Aug 2026 17:37:46 +0000
+Subject: [PATCH] Restore the caller's signal mask after close_range in the
+ spawn child
+
+The child took over the caller's mask before it called close_range. A
+caller that blocks SIGSYS made a trapped close_range fatal in the child.
+Restore the mask right before execve instead, which keeps it for the new
+image. Make the handler install idempotent, reject syscall numbers that do
+not parse in the test helper, and add a test that blocks SIGSYS on the
+spawning thread.
+---
+ src/jsc/bindings/bun-spawn.cpp    |  4 +-
+ src/jsc/bindings/c-bindings.cpp   |  7 ++++
+ test/cli/run/seccomp-trap.c       |  9 +++-
+ test/cli/run/seccomp-trap.test.ts | 68 ++++++++++++++++++++++++++-----
+ 4 files changed, 75 insertions(+), 13 deletions(-)
+
+diff --git a/src/jsc/bindings/bun-spawn.cpp b/src/jsc/bindings/bun-spawn.cpp
+index fb3e7a145e7a..291a6f7b8895 100644
+--- a/src/jsc/bindings/bun-spawn.cpp
++++ b/src/jsc/bindings/bun-spawn.cpp
+@@ -458,13 +458,15 @@ extern "C" ssize_t posix_spawn_bun(
+         }
+ #endif
+ 
+-        sigprocmask(SIG_SETMASK, &childmask, 0);
+         if (!envp)
+             envp = environ;
+ 
+         // Close all fds > current_max_fd, preferring cloexec if available
+         closeRangeOrLoop(current_max_fd + 1, INT_MAX, true);
+ 
++        // The caller's mask goes back last (execve keeps it): a caller that
++        // blocks SIGSYS must not make a trapped close_range() above fatal.
++        sigprocmask(SIG_SETMASK, &childmask, 0);
+ #if OS(LINUX)
+         sigaction(SIGSYS, &sa, 0);
+ #endif
+diff --git a/src/jsc/bindings/c-bindings.cpp b/src/jsc/bindings/c-bindings.cpp
+index aa0e3f8e20b7..86f6e055586a 100644
+--- a/src/jsc/bindings/c-bindings.cpp
++++ b/src/jsc/bindings/c-bindings.cpp
+@@ -310,6 +310,13 @@ static void onSeccompTrap(int sig, siginfo_t* info, void* context)
+ 
+ static void installSeccompTrapHandler()
+ {
++    // A second install would save this handler as the previous action and make
++    // the kill(2) path above re-enter itself forever.
++    static bool installed = false;
++    if (installed)
++        return;
++    installed = true;
++
+     struct sigaction sa;
+     memset(&sa, 0, sizeof(sa));
+     sa.sa_sigaction = onSeccompTrap;
+diff --git a/test/cli/run/seccomp-trap.c b/test/cli/run/seccomp-trap.c
+index 8e7301529fc4..3f89be0ae274 100644
+--- a/test/cli/run/seccomp-trap.c
++++ b/test/cli/run/seccomp-trap.c
+@@ -83,7 +83,14 @@ int main(int argc, char** argv)
+     if (strcmp(argv[1], "none") != 0) {
+         for (char* tok = strtok(argv[1], ","); tok != NULL; tok = strtok(NULL, ",")) {
+             if (count == MAX_TRAPPED) return 2;
+-            trapped[count++] = (uint32_t)strtoul(tok, NULL, 10);
++            // A token that does not parse must not silently become syscall 0 (read).
++            char* end = NULL;
++            unsigned long nr = strtoul(tok, &end, 10);
++            if (end == tok || *end != '\0' || nr > UINT32_MAX) {
++                fprintf(stderr, "seccomp-trap: bad syscall number '%s'\n", tok);
++                return 2;
++            }
++            trapped[count++] = (uint32_t)nr;
+         }
+     }
+ 
+diff --git a/test/cli/run/seccomp-trap.test.ts b/test/cli/run/seccomp-trap.test.ts
+index 3591c16cdf2d..16aeb5ffc0a9 100644
+--- a/test/cli/run/seccomp-trap.test.ts
++++ b/test/cli/run/seccomp-trap.test.ts
+@@ -1,5 +1,5 @@
+ import { describe, expect, test } from "bun:test";
+-import { bunEnv, bunExe, isLinux, tempDir, tempDirWithFiles } from "harness";
++import { bunEnv, bunExe, isLinux, libcPathForDlopen, tempDir, tempDirWithFiles } from "harness";
+ import { readlinkSync, statSync } from "node:fs";
+ import { join } from "node:path";
+ 
+@@ -21,11 +21,15 @@ const SYS_fchmodat2 = 452;
+ describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
+   const helper = isLinux ? buildHelper() : null;
+ 
+-  async function runTrapped(trapped: number[] | "none", cmd: string[], cwd?: string) {
++  async function runTrapped(
++    trapped: number[] | "none",
++    cmd: string[],
++    options: { cwd?: string; env?: Record<string, string> } = {},
++  ) {
+     await using proc = Bun.spawn({
+       cmd: [helper!, trapped === "none" ? "none" : trapped.join(","), ...cmd],
+-      env: bunEnv,
+-      cwd,
++      env: { ...bunEnv, ...options.env },
++      cwd: options.cwd,
+       stdin: "ignore",
+       stdout: "pipe",
+       stderr: "pipe",
+@@ -59,6 +63,45 @@ describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
+     });
+   });
+ 
++  test.concurrent.skipIf(!helper)(
++    "spawned children exec when close_range is trapped and the caller blocks SIGSYS",
++    async () => {
++      // The child takes over the caller's signal mask only after close_range(2):
++      // a trap on a blocked SIGSYS kills the process instead of reaching the
++      // handler. The fixture blocks SIGSYS on the spawning thread first.
++      using dir = tempDir("seccomp-trap-blocked", {
++        "fixture.js": `
++          import { dlopen, FFIType, ptr } from "bun:ffi";
++          const libc = dlopen(process.env.LIBC_PATH, {
++            sigprocmask: { args: [FFIType.i32, FFIType.ptr, FFIType.ptr], returns: FFIType.i32 },
++          });
++          // Large enough for every libc's sigset_t; SIGSYS (31) is bit 30 of the first word.
++          const set = new BigUint64Array(16);
++          set[0] = 1n << 30n;
++          const SIG_BLOCK = 0;
++          if (libc.symbols.sigprocmask(SIG_BLOCK, ptr(set), null) !== 0) throw new Error("sigprocmask failed");
++          const r = Bun.spawnSync(["echo", "hi"]);
++          console.log(JSON.stringify({ stdout: r.stdout.toString(), exitCode: r.exitCode, signalCode: r.signalCode ?? null }));
++        `,
++      });
++      const result = await runTrapped([SYS_close_range], [bunExe(), "fixture.js"], {
++        cwd: String(dir),
++        env: { LIBC_PATH: libcPathForDlopen() },
++      });
++      // bun:ffi under ASAN may print a warning about dlopen; nothing else is allowed on stderr.
++      result.stderr = result.stderr
++        .split("\n")
++        .filter(line => line && !line.startsWith("WARNING: ASAN interferes"))
++        .join("\n");
++      expect(result).toEqual({
++        stdout: JSON.stringify({ stdout: "hi\n", exitCode: 0, signalCode: null }) + "\n",
++        stderr: "",
++        exitCode: 0,
++        signalCode: null,
++      });
++    },
++  );
++
+   test.concurrent.skipIf(!helper)("Bun.spawn falls back to the waiter thread when pidfd_open is trapped", async () => {
+     const result = await runTrapped(
+       [SYS_pidfd_open],
+@@ -98,8 +141,13 @@ describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
+     const target = join(String(dir), "dep/bin/cli.js");
+     expect(statSync(target).mode & 0o111).toBe(0);
+ 
+-    const result = await runTrapped([SYS_openat2, SYS_fchmodat2], [bunExe(), "install"], String(dir));
+-    expect({ exitCode: result.exitCode, signalCode: result.signalCode }).toEqual({ exitCode: 0, signalCode: null });
++    const result = await runTrapped([SYS_openat2, SYS_fchmodat2], [bunExe(), "install"], { cwd: String(dir) });
++    expect(result).toEqual({
++      stdout: expect.stringContaining(" installed"),
++      stderr: expect.not.stringContaining("error"),
++      exitCode: 0,
++      signalCode: null,
++    });
+     expect(readlinkSync(join(String(dir), "node_modules/.bin/depbin"))).toBe("../dep/bin/cli.js");
+     expect(statSync(target).mode & 0o100).toBe(0o100);
+   });
+@@ -111,11 +159,9 @@ describe.skipIf(!isLinux)("seccomp SECCOMP_RET_TRAP policies", () => {
+     using dir = tempDir("seccomp-trap-run", {
+       "package.json": JSON.stringify({ name: "app", scripts: { hello: "echo hello-from-script" } }),
+     });
+-    const result = await runTrapped(
+-      [SYS_pidfd_open],
+-      [bunExe(), "run", "--no-orphans", "--silent", "hello"],
+-      String(dir),
+-    );
++    const result = await runTrapped([SYS_pidfd_open], [bunExe(), "run", "--no-orphans", "--silent", "hello"], {
++      cwd: String(dir),
++    });
+     expect(result).toEqual({ stdout: "hello-from-script\n", stderr: "", exitCode: 0, signalCode: null });
+   });
+ 

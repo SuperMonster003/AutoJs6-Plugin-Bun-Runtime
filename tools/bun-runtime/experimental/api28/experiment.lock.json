@@ -3,7 +3,7 @@
   "identity": {
     "name": "autojs6-bun-api28-patched-experiment",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
-    "status": "scaffolding-only",
+    "status": "source-backport-and-inputs-verified",
     "officialArtifact": false,
     "runtimeProduced": false,
     "buildReady": false,
@@ -16,21 +16,30 @@
     "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
     "license": "MIT",
     "licenseFile": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/LICENSE.md",
-    "dependencyPolicy": "Use only dependency and WebKit identities resolved by this exact source commit; an expanded dependency lock is still required before buildReady may become true."
+    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series; all remaining downloaded bytes must still be checksum-locked before buildReady may become true."
   },
   "patchSeries": "patches/series.lock.json",
+  "sourceInputLock": "source-inputs.lock.json",
   "toolchain": {
     "host": {
       "os": "linux",
       "architecture": "x86_64",
       "containerBase": "ubuntu:20.04",
-      "containerDigest": null,
-      "status": "digest-pending"
+      "containerDigest": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
+      "linuxAmd64ManifestDigest": "sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a",
+      "status": "base-image-locked",
+      "snapshotDate": "2026-09-02",
+      "registryManifestUrl": "https://registry-1.docker.io/v2/library/ubuntu/manifests/20.04"
     },
     "androidNdk": {
       "version": "r27c",
-      "archiveSha256": null,
-      "status": "checksum-pending"
+      "revision": "27.2.12479018",
+      "url": "https://dl.google.com/android/repository/android-ndk-r27c-linux.zip",
+      "archiveBytes": 663987688,
+      "archiveSha1": "090e8083a715fdb1a3e402d0763c388abb03fb4e",
+      "archiveSha256": "59c2f6dc96743b5daf5d1626684640b20a6bd2b1d85b13156b90333741bad5cc",
+      "status": "archive-locked",
+      "officialChecksumSource": "https://github.com/android/ndk/wiki/Home/24fe2d7ee3591346e0e8ae615977a15c0a4fba40#ndk-r27c-2024-lts"
     },
     "llvm": {
       "version": "21.1.8"
@@ -142,18 +151,18 @@
   "knownBlockers": [
     {
       "id": "v1.4.0-backport",
-      "resolved": false,
-      "description": "PR #39775 is pinned only as an upstream reference series; reviewed downstream patches against Bun v1.4.0 do not exist yet."
+      "resolved": true,
+      "description": "Five deterministic compatibility patches apply cleanly to exact Bun v1.4.0, match the upstream stable patch IDs, and produce byte-identical affected paths to the pinned PR head; a sixth deterministic patch pins Brotli by full commit."
     },
     {
       "id": "toolchain-byte-lock",
       "resolved": false,
-      "description": "The host image digest, NDK archive SHA-256, Ninja version, and remaining downloaded inputs are not fully locked."
+      "description": "The Ubuntu base manifest and NDK archive are locked, but the exact Ninja/APT/LLVM/rustup/bootstrap inputs and GitHub-generated dependency archive bytes are not yet fully locked."
     },
     {
       "id": "dependency-lock",
-      "resolved": false,
-      "description": "The dependency and prebuilt WebKit identities encoded by the Bun source have not yet been expanded into this experiment lock."
+      "resolved": true,
+      "description": "All 22 Android-release dependency identities are expanded from the pinned source. A project-owned patch replaces the movable Brotli tag with its full commit, and Node.js headers plus both Android WebKit prebuilts have authoritative SHA-256 locks."
     },
     {
       "id": "build-and-runtime-evidence",
