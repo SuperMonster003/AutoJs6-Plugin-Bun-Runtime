@@ -1,3 +1,4 @@
+import groovy.json.JsonSlurper
 import java.util.Properties
 
 plugins {
@@ -18,6 +19,16 @@ val requiredApiLevel = providers.gradleProperty("requiredApiLevel")
 val instrumentationApplicationIdSuffix = providers.gradleProperty("instrumentationApplicationIdSuffix")
     .map(String::trim)
 var isSignsValid = false
+val bunRuntimeLockFile = rootProject.file("tools/bun-runtime/runtime.lock.json")
+@Suppress("UNCHECKED_CAST")
+val bunRuntimeArtifacts = ((JsonSlurper().parse(bunRuntimeLockFile) as Map<String, Any>)["artifacts"] as List<Map<String, Any>>)
+    .associateBy { artifact -> artifact.getValue("abi") as String }
+
+fun runtimeLockString(abi: String, key: String): String =
+    bunRuntimeArtifacts.getValue(abi).getValue(key) as String
+
+fun runtimeLockLong(abi: String, key: String): Long =
+    (bunRuntimeArtifacts.getValue(abi).getValue(key) as Number).toLong()
 
 android {
     namespace = globalApplicationId
@@ -48,6 +59,26 @@ android {
         resValue("string", "plugin_engine", "bun")
         resValue("string", "plugin_variant", "bun-1.4.0-android")
         resValue("string", "plugin_version_date", utils.getDateString("MMM d, yyyy", "GMT+08:00"))
+        buildConfigField(
+            "String",
+            "BUN_RUNTIME_ARM64_V8A_SHA256",
+            "\"${runtimeLockString("arm64-v8a", "binarySha256")}\"",
+        )
+        buildConfigField(
+            "long",
+            "BUN_RUNTIME_ARM64_V8A_BYTES",
+            "${runtimeLockLong("arm64-v8a", "binaryBytes")}L",
+        )
+        buildConfigField(
+            "String",
+            "BUN_RUNTIME_X86_64_SHA256",
+            "\"${runtimeLockString("x86_64", "binarySha256")}\"",
+        )
+        buildConfigField(
+            "long",
+            "BUN_RUNTIME_X86_64_BYTES",
+            "${runtimeLockLong("x86_64", "binaryBytes")}L",
+        )
     }
 
     signingConfigs {
@@ -113,6 +144,7 @@ android {
 dependencies {
     implementation(files("$rootDir/libs/common-plugin-api.aar"))
     implementation(files("$rootDir/libs/bun-runtime-api.aar"))
+    implementation("org.jetbrains.kotlin:kotlin-parcelize-runtime:${System.getProperty("gradle.kotlin.version")}")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.test.ext.junit)
@@ -148,6 +180,29 @@ tasks.register<Exec>("verifyApiArtifacts") {
     commandLine("node", rootProject.file("tools/verify-api-artifacts.mjs"))
 }
 
+fun registerApkRuntimeVerification(variant: String) =
+    tasks.register<Exec>("verify${variant.replaceFirstChar(Char::uppercase)}ApkRuntimeIntegrity") {
+        group = "verification"
+        description = "Verifies $variant APK alignment and embedded Bun payload bytes against the runtime lock."
+        dependsOn("assemble${variant.replaceFirstChar(Char::uppercase)}")
+        inputs.files(
+            rootProject.file("tools/bun-runtime/verify-apk-runtime.mjs"),
+            bunRuntimeLockFile,
+        )
+        inputs.dir(layout.buildDirectory.dir("outputs/apk/$variant"))
+        commandLine(
+            "node",
+            rootProject.file("tools/bun-runtime/verify-apk-runtime.mjs"),
+            "--apk-directory",
+            layout.buildDirectory.dir("outputs/apk/$variant").get().asFile,
+            "--variant",
+            variant,
+        )
+    }
+
+val verifyDebugApkRuntimeIntegrity = registerApkRuntimeVerification("debug")
+val verifyReleaseApkRuntimeIntegrity = registerApkRuntimeVerification("release")
+
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("NativeLibs") }.configureEach {
     dependsOn("verifyBunRuntimeArtifacts")
     dependsOn("verifyApiArtifacts")
@@ -164,6 +219,7 @@ tasks.register<Copy>("appendDigestToReleasedFiles") {
         "app-x86_64-release.$ext",
     )
     dependsOn("assembleRelease")
+    dependsOn(verifyReleaseApkRuntimeIntegrity)
     doFirst {
         check(isSignsValid) {
             "Release signing configuration is missing or incomplete; refusing to collect unsigned APKs"

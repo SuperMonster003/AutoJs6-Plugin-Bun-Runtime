@@ -26,6 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.io.RandomAccessFile
+import java.security.MessageDigest
 import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -54,6 +55,23 @@ class BunRuntimeInstrumentedTest {
             requiredApiLevel,
             Build.VERSION.SDK_INT,
         )
+    }
+
+    @Test
+    fun installedNativeRuntimeMatchesTheLockedPayload() {
+        val packagedAbis = context.packagedRuntimeAbis().toSet()
+        val processAbi = requireNotNull(Build.SUPPORTED_ABIS.firstOrNull(packagedAbis::contains)) {
+            "No installed Bun runtime matches device ABIs ${Build.SUPPORTED_ABIS.contentToString()}"
+        }
+        val expected = when (processAbi) {
+            "arm64-v8a" -> BuildConfig.BUN_RUNTIME_ARM64_V8A_BYTES to BuildConfig.BUN_RUNTIME_ARM64_V8A_SHA256
+            "x86_64" -> BuildConfig.BUN_RUNTIME_X86_64_BYTES to BuildConfig.BUN_RUNTIME_X86_64_SHA256
+            else -> error("Unexpected packaged Bun ABI: $processAbi")
+        }
+        val runtime = File(context.applicationInfo.nativeLibraryDir, "libbun_exec.so")
+        assertTrue("Installed Bun runtime is missing: $runtime", runtime.isFile)
+        assertEquals("Installed Bun runtime byte count", expected.first, runtime.length())
+        assertEquals("Installed Bun runtime SHA-256", expected.second, runtime.sha256())
     }
 
     @Test
@@ -448,6 +466,19 @@ class BunRuntimeInstrumentedTest {
         val stdout: String,
         val stderr: String,
     )
+
+    private fun File.sha256(): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        inputStream().buffered().use { input ->
+            val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+            while (true) {
+                val count = input.read(buffer)
+                if (count < 0) break
+                digest.update(buffer, 0, count)
+            }
+        }
+        return digest.digest().joinToString("") { byte -> "%02x".format(byte.toInt() and 0xff) }
+    }
 
     private companion object {
         const val MIN_SUPPORTED_API_LEVEL = Build.VERSION_CODES.TIRAMISU

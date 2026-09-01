@@ -4,7 +4,7 @@
   "applicationTarget": {
     "tag": "bun-v1.4.0",
     "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "status": "backport-not-started"
+    "status": "clean-replay-verified"
   },
   "upstreamPullRequest": {
     "number": 39775,
@@ -32,6 +32,7 @@
       "url": "https://github.com/oven-sh/bun/commit/3c00f0f6f57aad8943561ab44e64a443b77cd6db.patch",
       "bytes": 17764,
       "sha256": "4d05759b2e7d6b1f2ccdfc14b0041e33d6d93f63779ff66e7fffed07766ce9a5",
+      "stablePatchId": "1db8473961f5d04f988c0fae58640b5c0b9af2f8",
       "materializedPath": "upstream-reference/0001-3c00f0f6.patch",
       "affectedPaths": [
         "src/jsc/bindings/bun-spawn.cpp",
@@ -51,6 +52,7 @@
       "url": "https://github.com/oven-sh/bun/commit/931fd9270a18ed6b88c91e5a731b75afb9e1b025.patch",
       "bytes": 8186,
       "sha256": "e4b74358aae3ab52c297caaf00723966df9288acfca97004839ea6da34442d8e",
+      "stablePatchId": "8706870466b210c63d2ded5935ba463d6f289ef7",
       "materializedPath": "upstream-reference/0002-931fd927.patch",
       "affectedPaths": [
         "src/jsc/bindings/bun-spawn.cpp",
@@ -70,6 +72,7 @@
       "url": "https://github.com/oven-sh/bun/commit/5a50e2a56443fb54308155f6b98ebb1e4ececd2d.patch",
       "bytes": 12770,
       "sha256": "f5abe9d9944ec04e849a1eb3462d1cf14f708db18988fa5d25892928a95aa50f",
+      "stablePatchId": "98da3237fd390c0d8a7c1d89fe63b2d5fc9ffb94",
       "materializedPath": "upstream-reference/0003-5a50e2a5.patch",
       "affectedPaths": [
         "src/jsc/bindings/BunProcess.cpp",
@@ -89,6 +92,7 @@
       "url": "https://github.com/oven-sh/bun/commit/82dbeed974233b9e65f627200bde720e7a888787.patch",
       "bytes": 3970,
       "sha256": "25829f29066359d9994d6ab959a73d7654b3d2e16e849280bf5e1feeff012938",
+      "stablePatchId": "35d492898612e88077e59b29ac2b61243c0e53ba",
       "materializedPath": "upstream-reference/0004-82dbeed9.patch",
       "affectedPaths": [
         "src/jsc/bindings/bun-spawn.cpp",
@@ -106,6 +110,7 @@
       "url": "https://github.com/oven-sh/bun/commit/d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c.patch",
       "bytes": 1200,
       "sha256": "3cce5df72a9c3d0fc03086ec5dfcb7c2ab08f742e40cb78ccdc04c69197bc9b2",
+      "stablePatchId": "0d4d4522ade3a808343e235fccff0c88389cc95a",
       "materializedPath": "upstream-reference/0005-d6171ce7.patch",
       "affectedPaths": [
         "src/jsc/bindings/c-bindings.cpp"
@@ -116,9 +121,140 @@
   ],
   "downstreamBackport": {
     "directory": "downstream",
-    "status": "not-started",
-    "requiredBeforeBuild": true,
-    "patches": [],
-    "note": "Only patches generated and reviewed against the applicationTarget commit belong here. Upstream reference patches are never applied automatically."
+    "status": "clean-replay-verified",
+    "requiredForBuild": true,
+    "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "headCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+    "headTreeSha1": "8cfb6a060e87fcdbbf1191b344387291f1476cf4",
+    "generation": {
+      "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
+      "gitAmOptions": [
+        "--keep-cr",
+        "--committer-date-is-author-date"
+      ],
+      "formatPatchOptions": [
+        "--full-index",
+        "--binary",
+        "--no-signature"
+      ],
+      "verifiedDate": "2026-09-02"
+    },
+    "upstreamEquivalence": {
+      "upstreamHeadCommit": "d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c",
+      "affectedPathsMatchExactly": true,
+      "comparisonPaths": [
+        "src/jsc/bindings/BunProcess.cpp",
+        "src/jsc/bindings/bun-spawn.cpp",
+        "src/jsc/bindings/c-bindings.cpp",
+        "test/cli/run/seccomp-trap.c",
+        "test/cli/run/seccomp-trap.test.ts"
+      ]
+    },
+    "patches": [
+      {
+        "order": 1,
+        "commit": "93fa21efee1272b3c5279e25c0d40f96e247ded4",
+        "parent": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "sourceCommit": "3c00f0f6f57aad8943561ab44e64a443b77cd6db",
+        "stablePatchId": "1db8473961f5d04f988c0fae58640b5c0b9af2f8",
+        "path": "downstream/0001-Turn-seccomp-SIGSYS-traps-into-ENOSYS-so-syscall-fal.patch",
+        "bytes": 17992,
+        "sha256": "3dc621fe424478fd1f36bd1dbf60a4d3a19e1bfa16f3e1ac7108a1eb17c7c874",
+        "purpose": "Backport the initial seccomp SIGSYS-to-ENOSYS handling and syscall fallback tests onto exact Bun v1.4.0.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-spawn.cpp",
+          "src/jsc/bindings/c-bindings.cpp",
+          "test/cli/run/seccomp-trap.c",
+          "test/cli/run/seccomp-trap.test.ts"
+        ],
+        "licenseImpact": "No license change; byte-equivalent diff from the MIT-licensed upstream commit."
+      },
+      {
+        "order": 2,
+        "commit": "e5fe76f3aeeffff3048f992d3e651c0c85566dd3",
+        "parent": "93fa21efee1272b3c5279e25c0d40f96e247ded4",
+        "sourceCommit": "931fd9270a18ed6b88c91e5a731b75afb9e1b025",
+        "stablePatchId": "8706870466b210c63d2ded5935ba463d6f289ef7",
+        "path": "downstream/0002-Restore-the-caller-s-signal-mask-after-close_range-i.patch",
+        "bytes": 8414,
+        "sha256": "ac0eba6eef3d4f351ad6c1376120f688757baa92de4c875645e4fe0f5ac8ff16",
+        "purpose": "Backport signal-mask restoration around the spawn-child close_range fallback onto exact Bun v1.4.0.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-spawn.cpp",
+          "src/jsc/bindings/c-bindings.cpp",
+          "test/cli/run/seccomp-trap.c",
+          "test/cli/run/seccomp-trap.test.ts"
+        ],
+        "licenseImpact": "No license change; byte-equivalent diff from the MIT-licensed upstream commit."
+      },
+      {
+        "order": 3,
+        "commit": "87d5492dd1a4df392c80c88774cfb1a39824238c",
+        "parent": "e5fe76f3aeeffff3048f992d3e651c0c85566dd3",
+        "sourceCommit": "5a50e2a56443fb54308155f6b98ebb1e4ececd2d",
+        "stablePatchId": "98da3237fd390c0d8a7c1d89fe63b2d5fc9ffb94",
+        "path": "downstream/0003-Keep-the-SIGSYS-handler-when-JS-listens-for-SIGSYS.patch",
+        "bytes": 12998,
+        "sha256": "7b5d22b913c38fe1a8aba66d8ddd2c3ce43f58cf29b55edd1744446204546d7b",
+        "purpose": "Backport coexistence between the seccomp handler and JavaScript SIGSYS listeners onto exact Bun v1.4.0.",
+        "affectedPaths": [
+          "src/jsc/bindings/BunProcess.cpp",
+          "src/jsc/bindings/bun-spawn.cpp",
+          "src/jsc/bindings/c-bindings.cpp",
+          "test/cli/run/seccomp-trap.test.ts"
+        ],
+        "licenseImpact": "No license change; byte-equivalent diff from the MIT-licensed upstream commit."
+      },
+      {
+        "order": 4,
+        "commit": "239185963b6ebf87b616aa262a09763784fc8a65",
+        "parent": "87d5492dd1a4df392c80c88774cfb1a39824238c",
+        "sourceCommit": "82dbeed974233b9e65f627200bde720e7a888787",
+        "stablePatchId": "35d492898612e88077e59b29ac2b61243c0e53ba",
+        "path": "downstream/0004-Shorten-the-SIGSYS-comments.patch",
+        "bytes": 4086,
+        "sha256": "6363be87f6186700b1f4aef06561d8390c46ac4ae6be24d344447955a9fd33d1",
+        "purpose": "Keep the downstream series byte-equivalent to the reviewed upstream comment cleanup.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-spawn.cpp",
+          "src/jsc/bindings/c-bindings.cpp"
+        ],
+        "licenseImpact": "No license change; byte-equivalent diff from the MIT-licensed upstream commit."
+      },
+      {
+        "order": 5,
+        "commit": "373d612de197f05bb5a7abdbd09d421ea0e8c02c",
+        "parent": "239185963b6ebf87b616aa262a09763784fc8a65",
+        "sourceCommit": "d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c",
+        "stablePatchId": "0d4d4522ade3a808343e235fccff0c88389cc95a",
+        "path": "downstream/0005-Set-SA_RESTART-on-the-SIGSYS-handler.patch",
+        "bytes": 1260,
+        "sha256": "eee3bc109d7b5d1fb5295371f12fde7969d5b14e1d1dc5e849e6fad3a1993c87",
+        "purpose": "Backport SA_RESTART behavior for kill-sent SIGSYS onto exact Bun v1.4.0.",
+        "affectedPaths": [
+          "src/jsc/bindings/c-bindings.cpp"
+        ],
+        "licenseImpact": "No license change; byte-equivalent diff from the MIT-licensed upstream commit."
+      },
+      {
+        "order": 6,
+        "commit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+        "parent": "373d612de197f05bb5a7abdbd09d421ea0e8c02c",
+        "origin": "autojs6-supply-chain",
+        "sourceCommit": null,
+        "stablePatchId": "9e2466813177cda4a914aac7d21f43fa9f1ae7c5",
+        "path": "downstream/0006-build-pin-Brotli-v1.1.0-to-immutable-commit.patch",
+        "bytes": 949,
+        "sha256": "529eb51b6b460233386cbc1d74bef875f1c677265de91f52b433bac6292ae950",
+        "purpose": "Replace Bun's movable Brotli v1.1.0 tag input with the exact commit to which that tag resolved during the 2026-09-02 supply-chain audit.",
+        "declaredUpstreamRef": "v1.1.0",
+        "resolvedCommit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+        "affectedPaths": [
+          "scripts/build/deps/brotli.ts"
+        ],
+        "licenseImpact": "No license change; the same MIT-licensed Brotli v1.1.0 source revision is selected by immutable commit rather than a movable tag."
+      }
+    ],
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic downstream stable patch IDs match the corresponding upstream commits, and all compatibility-affected paths match the pinned upstream PR head exactly. A sixth project-owned patch replaces Bun's movable Brotli v1.1.0 tag with its audited full commit for reproducible dependency resolution."
   }
 }

@@ -108,10 +108,11 @@ Run the smallest sufficient set first, then the complete relevant set before del
 
 ```powershell
 node tools/bun-runtime/verify-runtime.mjs
+node --test tools/bun-runtime/verify-apk-runtime.test.mjs
 py .python/generate_markdown.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 .\gradlew.bat :app:testDebugUnitTest
-.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest
+.\gradlew.bat :app:verifyDebugApkRuntimeIntegrity :app:assembleDebugAndroidTest
 .\gradlew.bat :app:lintDebug
 ```
 

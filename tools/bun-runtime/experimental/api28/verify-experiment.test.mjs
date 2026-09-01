@@ -9,13 +9,14 @@ import { verifyExperiment } from "./verify-experiment.mjs";
 
 const experimentRoot = dirname(fileURLToPath(import.meta.url));
 
-test("the checked-in API 28 experiment scaffold passes offline verification", () => {
+test("the checked-in API 28 experiment backport passes offline verification", () => {
   const result = verifyExperiment(experimentRoot);
   assert.equal(result.buildReady, false);
   assert.equal(result.distributionReady, false);
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
+  assert.equal(result.downstreamPatchCount, 6);
 });
 
 test("a moving PR patch URL is rejected", () => {
@@ -28,7 +29,7 @@ test("a moving PR patch URL is rejected", () => {
   });
 });
 
-test("buildReady cannot be enabled while the downstream backport is absent", () => {
+test("buildReady cannot be enabled while build and runtime blockers remain", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "experiment.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));
@@ -53,6 +54,65 @@ test("a materialized reference patch must match its locked bytes", () => {
     const patchPath = resolve(copy, "patches/upstream-reference/0001-3c00f0f6.patch");
     writeFileSync(patchPath, "not the locked upstream patch\n");
     assert.throws(() => verifyExperiment(copy), /materialized byte count/);
+  });
+});
+
+test("a downstream patch must match its locked digest", () => {
+  withExperimentCopy((copy) => {
+    const patchPath = resolve(
+      copy,
+      "patches/downstream/0005-Set-SA_RESTART-on-the-SIGSYS-handler.patch",
+    );
+    writeFileSync(patchPath, `${readFileSync(patchPath, "utf8")}\n`);
+    assert.throws(() => verifyExperiment(copy), /downstream patch 5: byte count/);
+  });
+});
+
+test("a downstream patch cannot claim a different upstream diff", () => {
+  withExperimentCopy((copy) => {
+    const seriesPath = resolve(copy, "patches/series.lock.json");
+    const series = JSON.parse(readFileSync(seriesPath, "utf8"));
+    series.downstreamBackport.patches[2].stablePatchId = series.upstreamReferencePatches[1].stablePatchId;
+    writeFileSync(seriesPath, `${JSON.stringify(series, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /downstream patch 3: stablePatchId/);
+  });
+});
+
+test("an unlisted downstream patch is rejected", () => {
+  withExperimentCopy((copy) => {
+    const patchPath = resolve(copy, "patches/downstream/unreviewed.patch");
+    writeFileSync(patchPath, "unreviewed\n");
+    assert.throws(() => verifyExperiment(copy), /unlisted patch file/);
+  });
+});
+
+test("a dependency source cannot regress to a movable tag", () => {
+  withExperimentCopy((copy) => {
+    const sourcePath = resolve(copy, "source-inputs.lock.json");
+    const sources = JSON.parse(readFileSync(sourcePath, "utf8"));
+    sources.activeDependencies.find((dependency) => dependency.name === "brotli").revision = "v1.1.0";
+    writeFileSync(sourcePath, `${JSON.stringify(sources, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /revision must be an immutable full commit/);
+  });
+});
+
+test("a prebuilt dependency must retain its authoritative SHA-256", () => {
+  withExperimentCopy((copy) => {
+    const sourcePath = resolve(copy, "source-inputs.lock.json");
+    const sources = JSON.parse(readFileSync(sourcePath, "utf8"));
+    sources.activeDependencies.find((dependency) => dependency.name === "WebKit").variants[0].sha256 = "pending";
+    writeFileSync(sourcePath, `${JSON.stringify(sources, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /WebKit\/arm64-v8a: invalid SHA-256/);
+  });
+});
+
+test("the container base digest cannot drift", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "experiment.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.toolchain.host.containerDigest = "sha256:" + "0".repeat(64);
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /toolchain\.host\.containerDigest/);
   });
 });
 

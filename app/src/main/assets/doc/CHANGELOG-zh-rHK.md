@@ -11,6 +11,9 @@
 * `提示` Android 13 (API 33) 現為正式最低目標; API 28 至 32 在 patched Bun runtime 通過可移植驗證前仍不受支援
 * `優化` 保留固定的官方 Bun 1.4.0 Android payload, 將支援的 Android 下限由 Android 14 (API 34) 降至 Android 13 (API 33)
 * `優化` 記錄 AOSP T seccomp 分界: Android 13 已允許 Bun 呼叫的 raw `close_range` syscall, API 31 失敗則表明 API 28 至 32 需要 Bun 兼容補丁, 只修改 manifest 無法兼容
+* `優化` 使用可確定性重播的六個 Bun 源碼 backport patch, 固定的 NDK 與 container 輸入以及 22 個 Android release active dependency 的不可變 identity 為 Android 9+ 實驗作準備, 同時明確保持未 build runtime 不可用
+* `優化` 驗證每個 Debug 和 Release APK 的 16 KB ZIP alignment, 準確 ABI 內容, 固定 Bun payload 大小與 SHA-256, 並驗證 Android 13 測試裝置上已安裝的 payload bytes
+* `依賴` 加入 Release R8 保留共用 Parcelable contract class 所需的 Kotlin Parcelize runtime
 
 # v0.1.0
 

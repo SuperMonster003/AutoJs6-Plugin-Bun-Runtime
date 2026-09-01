@@ -36,8 +36,20 @@ jobs:
       - name: Verify Bun runtime supply-chain inputs
         run: |
           node tools/bun-runtime/verify-runtime.mjs
+          node --test tools/bun-runtime/verify-apk-runtime.test.mjs
           node tools/bun-runtime/experimental/api28/verify-experiment.mjs
           node --test tools/bun-runtime/experimental/api28/verify-experiment.test.mjs
+
+      - name: Replay the Bun v1.4.0 downstream source series
+        run: |
+          bun_repo="$RUNNER_TEMP/bun-api28-backport"
+          git init "$bun_repo"
+          git -C "$bun_repo" remote add origin https://github.com/oven-sh/bun.git
+          git -C "$bun_repo" fetch --no-tags --depth=1 origin \
+            34cbb9a40b4bd1bd767d134a7065e66c2432a676:refs/heads/autojs6-base \
+            d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c:refs/heads/autojs6-upstream-head
+          node tools/bun-runtime/experimental/api28/verify-backport.mjs \
+            --bun-repository "$bun_repo"
 
       - name: Run tests, lint, and assemble debug APKs
         run: |
@@ -45,6 +57,7 @@ jobs:
           ./gradlew \
             :app:testDebugUnitTest \
             :app:assembleDebug \
+            :app:verifyDebugApkRuntimeIntegrity \
             :app:assembleDebugAndroidTest \
             :app:lintDebug \
             --stacktrace

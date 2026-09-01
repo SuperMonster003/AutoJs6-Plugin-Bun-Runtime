@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-02",
+  "milestone": "M5-partial",
+  "scope": "official Bun v1.4.0 debug/release APK and installed debug payload integrity",
+  "runtime": {
+    "distribution": "official Android release artifact",
+    "version": "1.4.0",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "arm64Sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+    "x86_64Sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df"
+  },
+  "apkVerification": {
+    "variant": "debug",
+    "command": "node tools/bun-runtime/verify-apk-runtime.mjs --apk-directory app/build/outputs/apk/debug --variant debug",
+    "zipalignCommand": "zipalign -c -P 16 4",
+    "zipalignBuildToolsVersion": "37.0.0",
+    "checks": [
+      "exact single-ABI and universal APK set",
+      "expected Bun ZIP entry set by APK type",
+      "uncompressed runtime byte count",
+      "uncompressed runtime CRC32",
+      "uncompressed runtime SHA-256",
+      "zipalign 16 KiB page-alignment policy"
+    ],
+    "apks": [
+      {
+        "name": "app-arm64-v8a-debug.apk",
+        "bytes": 40778168,
+        "sha256": "5861cbb1b2882724fcc5a2158d171cab2c039ac3ac7053eb7fbe9d068efc0ebb",
+        "runtimeAbis": [
+          "arm64-v8a"
+        ],
+        "result": "passed"
+      },
+      {
+        "name": "app-universal-debug.apk",
+        "bytes": 80684171,
+        "sha256": "48cbc8476fb677fe81ef7e554975a722fbc4f26246e02c46ee35443fcb43f8de",
+        "runtimeAbis": [
+          "arm64-v8a",
+          "x86_64"
+        ],
+        "result": "passed"
+      },
+      {
+        "name": "app-x86_64-debug.apk",
+        "bytes": 42604237,
+        "sha256": "7924fe105c6607bcbead6f8ed14cd2d7e9d3572d17d6c58a5bfc23f7b973a91b",
+        "runtimeAbis": [
+          "x86_64"
+        ],
+        "result": "passed"
+      }
+    ]
+  },
+  "releaseApkVerification": {
+    "variant": "release",
+    "command": ".\\gradlew.bat :app:verifyReleaseApkRuntimeIntegrity",
+    "zipalignCommand": "zipalign -c -P 16 4",
+    "zipalignBuildToolsVersion": "37.0.0",
+    "apks": [
+      {
+        "name": "app-arm64-v8a-release.apk",
+        "bytes": 35321827,
+        "sha256": "88d02f8e03721ab30fbcc1005c9b40d967458f2a6f92ee287d0e36fd7ffd328d",
+        "runtimeAbis": [
+          "arm64-v8a"
+        ],
+        "result": "passed"
+      },
+      {
+        "name": "app-universal-release.apk",
+        "bytes": 71898802,
+        "sha256": "322c7dfaa0c682a19d90c144bb4f6a0b166b4f43da5694fd5d137b09c25d80ce",
+        "runtimeAbis": [
+          "arm64-v8a",
+          "x86_64"
+        ],
+        "result": "passed"
+      },
+      {
+        "name": "app-x86_64-release.apk",
+        "bytes": 36714352,
+        "sha256": "8beea3e66f1dbd7e4ca41e5fae41b5e93b84946e08ab18479f9e1c70845e1228",
+        "runtimeAbis": [
+          "x86_64"
+        ],
+        "result": "passed"
+      }
+    ],
+    "result": "passed"
+  },
+  "installedPayloadVerification": {
+    "device": {
+      "id": "api33-sony-xq-dq72-arm64",
+      "kind": "physical-device",
+      "manufacturer": "Sony",
+      "model": "XQ-DQ72",
+      "androidVersion": "13",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+      "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys"
+    },
+    "command": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=33",
+    "deviceSelection": "ANDROID_SERIAL resolved to the single connected XQ-DQ72; the hardware serial is intentionally omitted",
+    "testClass": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+    "testsPassed": 4,
+    "testsFailed": 0,
+    "payloadTest": "installedNativeRuntimeMatchesTheLockedPayload",
+    "installedPath": "applicationInfo.nativeLibraryDir/libbun_exec.so",
+    "checks": [
+      "installed file exists",
+      "installed byte count equals runtime lock",
+      "installed SHA-256 equals runtime lock"
+    ],
+    "result": "passed",
+    "evidenceLevel": "G2"
+  },
+  "remainingGaps": [
+    "Release APK installed-payload integrity has not yet been recorded on a device.",
+    "This device uses 4 KiB pages, so this record is not 16 KiB execution evidence.",
+    "No patched API 28 runtime artifact exists; official-runtime results do not transfer to the experimental line."
+  ]
+}
