@@ -14,6 +14,7 @@
 * `تحسين` تمهيد لدعم Android 9+ مستقبلا: إنشاء خطة patch لمصدر Bun قابلة لإعادة التطبيق بدقة (6 patch) وتثبيت مدخلات build (تثبيت NDK والحاوية, و 22 dependency نشطة من Android release); لم يتم build للـ runtime المعدل بعد ولن يدخل الحزم الحالية
 * `تحسين` تعزيز فحوص جودة الحزم: يتحقق كل Debug و Release APK من 16 KB ZIP alignment والمحتوى الدقيق لكل ABI وحجم Bun payload المثبتة و SHA-256 الخاص بها, مع مطابقة بايتات payload المثبتة على جهاز اختبار Android 13
 * `تحسين` تقوية سلسلة التوريد: تثبيت البايتات الدقيقة لـ 19 Bun source archive و 17 تنزيل toolchain, وجرد 181 إدخال integrity لـ Cargo و 172 لـ Bun registry, وإضافة materializer يرفض الكتابة فوق الملفات وفحص build مسبق لكلا ABI محمي ببوابة `buildReady`
+* `تحسين` توسيع مكتبة الأمثلة الجاهزة للنسخ والتشغيل بإضافة أمثلة مشروحة لطلبات الشبكة, وقراءة الملفات وكتابتها في مساحة العمل الخاصة, وتدفق stdout/stderr, وأنواع TypeScript, مع بوابة توثيق تتحقق من توجيه `"bun";` في السطر الأول وحدود المصدر الواحد ومنع تثبيت الحزم
 * `تبعية` إضافة Kotlin Parcelize runtime لكي يحتفظ R8 في Release بفئة Parcelable contract المشتركة
 
 # v0.1.0

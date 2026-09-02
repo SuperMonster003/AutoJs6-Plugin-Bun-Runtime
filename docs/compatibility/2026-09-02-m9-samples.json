@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-02",
+  "milestone": "M9",
+  "scope": "checked-in single-source sample validation and execution",
+  "plugin": {
+    "versionName": "0.2.0",
+    "minimumSupportedApi": 33
+  },
+  "runtime": {
+    "distribution": "official Android release artifact",
+    "version": "1.4.0",
+    "revision": "1.4.0+34cbb9a40",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676"
+  },
+  "staticValidation": {
+    "entryPoint": "py .python/generate_markdown.py --check",
+    "unitTestCommand": "py -B -m unittest discover -s .python -p \"test_*.py\"",
+    "unitTestsPassed": 11,
+    "checks": [
+      "exact five-file sample inventory",
+      "controlled .bun.js and .bun.ts names",
+      "literal \"bun\"; directive on the first line",
+      "at least one explanatory comment per sample",
+      "no relative imports",
+      "no package-install or bunx command",
+      "expected behavior marker per sample"
+    ],
+    "result": "passed",
+    "evidenceLevel": "G1"
+  },
+  "instrumentation": {
+    "testClass": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+    "sampleTest": "checkedInSamplesExecuteWithinPublishedBoundaries",
+    "assetSource": "repository samples directory included directly in androidTest assets",
+    "samples": [
+      {
+        "name": "hello.bun.js",
+        "verified": [
+          "Bun 1.4.0 runtime identity",
+          "android process platform"
+        ]
+      },
+      {
+        "name": "typescript.bun.ts",
+        "verified": [
+          "TypeScript parsing without a separate compile step",
+          "typed collection result"
+        ]
+      },
+      {
+        "name": "file-io.bun.js",
+        "verified": [
+          "Bun.write in the private execution workspace",
+          "Bun.file JSON readback"
+        ]
+      },
+      {
+        "name": "output-streams.bun.js",
+        "verified": [
+          "console stdout and stderr callbacks",
+          "process.stdout and process.stderr callbacks"
+        ]
+      },
+      {
+        "name": "fetch.bun.js",
+        "verified": [
+          "Bun fetch over IPv4 TCP",
+          "HTTP status and response body readback"
+        ],
+        "testEndpoint": "device-local http://127.0.0.1:<ephemeral-port>/sample",
+        "defaultUserEndpoint": "https://example.com/",
+        "notes": [
+          "Instrumentation sets SAMPLE_FETCH_URL to the local endpoint; users who do not set it use the public default.",
+          "The test is deterministic and does not claim public Internet reachability."
+        ]
+      }
+    ]
+  },
+  "environments": [
+    {
+      "id": "api33-sony-xq-dq72-arm64",
+      "kind": "physical-device",
+      "manufacturer": "Sony",
+      "model": "XQ-DQ72",
+      "androidVersion": "13",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+      "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+      "command": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=33 -PandroidTestPermissionName=<unique-test-permission>",
+      "deviceSelection": "ANDROID_SERIAL selected this device explicitly; the hardware serial is intentionally omitted",
+      "testsPassed": 5,
+      "testsFailed": 0,
+      "result": "passed",
+      "evidenceLevel": "G2"
+    },
+    {
+      "id": "api35-xiaomi-23046rp50c-arm64",
+      "kind": "physical-device",
+      "manufacturer": "Xiaomi",
+      "model": "23046RP50C",
+      "androidVersion": "15",
+      "apiLevel": 35,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+      "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+      "command": ".\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=35 -PandroidTestPermissionName=<unique-test-permission> -PinstrumentationApplicationIdSuffix=<temporary-suffix>",
+      "deviceSelection": "ANDROID_SERIAL selected this device explicitly; the hardware serial is intentionally omitted",
+      "testsPassed": 5,
+      "testsFailed": 0,
+      "result": "passed",
+      "evidenceLevel": "G2",
+      "notes": [
+        "A temporary instrumentation-only applicationId suffix avoided replacing an unrelated installed build.",
+        "The test runner removed the temporary target after the suite."
+      ]
+    }
+  ],
+  "excludedAttempts": [
+    {
+      "kind": "physical-device",
+      "manufacturer": "Xiaomi",
+      "model": "22120RN86C",
+      "androidVersion": "13",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "4.19.191-perf-g2f9faa927855",
+      "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+      "result": "not-evaluated",
+      "reason": "The installed AutoJs6 package owns org.autojs.permission.PLUGIN with a signing certificate that does not match the local instrumentation APK. Three Binder tests were denied before runtime execution; this is test authorization failure, not Bun compatibility evidence.",
+      "compatibilityConclusion": "none"
+    }
+  ],
+  "remainingGaps": [
+    "The Redmi authorization failure does not satisfy M1's second-OEM API 33 runtime requirement.",
+    "Both passed devices use 4 KiB pages, so this record is not 16 KiB execution evidence.",
+    "The public https://example.com endpoint remains a user-facing example and was not contacted by instrumentation."
+  ]
+}

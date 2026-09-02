@@ -27,6 +27,7 @@
   "p_quick_start_intro": "Guarda el siguiente contenido como archivo de script y ejecútalo para confirmar que el motor Bun ha tomado el control de la ejecución",
   "p_quick_start_result": "Si todo funciona, la primera línea de salida es `Bun {{ bun_version }}` y la segunda es `android`.",
   "p_typescript_intro": "Los archivos TypeScript también se ejecutan directamente, sin compilación previa ni configuración adicional",
+  "p_more_samples": "Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/]({{ samples_url }}): solicitudes de red, archivos del espacio de trabajo privado, stdout/stderr y tipos de TypeScript. Todos respetan los límites actuales de una sola fuente y `--no-install`.",
   "h3_compatibility": "Compatibilidad",
   "compatibility_points": [
     "Motor: Bun oficial {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",

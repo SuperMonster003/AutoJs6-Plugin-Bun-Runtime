@@ -12,6 +12,7 @@
   "license_url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE",
   "third_party_notices_url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md",
   "roadmap_url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/ROADMAP.md",
+  "samples_url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/tree/master/samples",
   "plugin_application_id": "io.github.supermonster003.autojs6.plugin.bun.runtime",
   "plugin_id": "bun-runtime",
   "plugin_engine": "bun",

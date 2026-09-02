@@ -15,7 +15,8 @@
         "查明低版本無法使用的根本原因: Android 13 起系統 seccomp 放行 Bun 呼叫的 raw `close_range` syscall, 而 API 31 真機失敗證明 API 28 到 32 需要修改 Bun 本身, 僅修改 manifest 無法解決",
         "為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 源碼補丁方案 (6 個補丁) 並鎖定構建輸入 (固定 NDK 與容器, 22 個 Android release 活躍依賴); 補丁版 runtime 尚未構建, 也不會進入目前安裝套件",
         "加強安裝套件品質檢查: 每個 Debug 和 Release APK 均驗證 16 KB ZIP alignment, 精確 ABI 內容以及固定 Bun payload 的大小與 SHA-256, 並在 Android 13 測試裝置上核對已安裝的 payload 位元組",
-        "加固供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載件的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 構建預檢"
+        "加固供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載件的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 構建預檢",
+        "擴充可複製執行的範例庫: 新增附有註解的網絡 fetch, 私人工作目錄檔案讀寫, stdout/stderr 串流輸出和更完整的 TypeScript 類型範例; 文件門禁會檢查首行 `\"bun\";` 指令以及單一源碼和禁止安裝依賴的邊界"
       ],
       "dependency": [
         "新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class"

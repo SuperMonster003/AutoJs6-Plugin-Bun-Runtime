@@ -26,6 +26,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.io.RandomAccessFile
+import java.net.InetAddress
+import java.net.ServerSocket
+import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.UUID
 import java.util.concurrent.CountDownLatch
@@ -36,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
 @RunWith(AndroidJUnit4::class)
 class BunRuntimeInstrumentedTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val instrumentationContext = InstrumentationRegistry.getInstrumentation().context
 
     @Before
     fun assertInstrumentationApiLevel() {
@@ -190,6 +194,45 @@ class BunRuntimeInstrumentedTest {
             val workspace = File(workspacePath).canonicalFile
             assertEquals(File(context.cacheDir, "bun-executions").canonicalFile, workspace.parentFile)
             assertTrue("Private execution workspace was not removed after the run", !workspace.exists())
+        }
+    }
+
+    @Test
+    fun checkedInSamplesExecuteWithinPublishedBoundaries() {
+        withBoundRuntime { runtime ->
+            val expectations = listOf(
+                SampleExpectation(
+                    sourceName = "hello.bun.js",
+                    stdout = listOf("Hello from Bun 1.4.0 on android"),
+                ),
+                SampleExpectation(
+                    sourceName = "typescript.bun.ts",
+                    stdout = listOf("Completed 1 of 2 typed tasks"),
+                ),
+                SampleExpectation(
+                    sourceName = "file-io.bun.js",
+                    stdout = listOf("Saved and restored bun 1.4.0", "Temporary file:"),
+                ),
+                SampleExpectation(
+                    sourceName = "output-streams.bun.js",
+                    stdout = listOf("stdout: a normal result", "stdout: written without console.log"),
+                    stderr = listOf("stderr: a diagnostic message", "stderr: written without console.error"),
+                ),
+            )
+            expectations.forEach { expectation ->
+                assertSampleRun(runtime, expectation)
+            }
+
+            withLocalHttpEndpoint { endpoint ->
+                assertSampleRun(
+                    runtime,
+                    SampleExpectation(
+                        sourceName = "fetch.bun.js",
+                        stdout = listOf("GET $endpoint -> 200", "Received 15 characters"),
+                        environment = mapOf("SAMPLE_FETCH_URL" to endpoint),
+                    ),
+                )
+            }
         }
     }
 
@@ -349,6 +392,7 @@ class BunRuntimeInstrumentedTest {
         executionId: String = "instrumentation-${UUID.randomUUID()}",
         timeoutMillis: Long = 30_000L,
         outputByteLimit: Long = 1024L * 1024L,
+        environment: Map<String, String> = emptyMap(),
         startedSignal: CountDownLatch? = null,
         expectStarted: Boolean = true,
     ): CapturedRun {
@@ -387,6 +431,11 @@ class BunRuntimeInstrumentedTest {
                     putString(BunRuntimeContract.KEY_SOURCE_NAME, sourceName)
                     putLong(BunRuntimeContract.KEY_TIMEOUT_MILLIS, timeoutMillis)
                     putLong(BunRuntimeContract.KEY_OUTPUT_BYTE_LIMIT, outputByteLimit)
+                    if (environment.isNotEmpty()) {
+                        putBundle(BunRuntimeContract.KEY_ENVIRONMENT, Bundle().apply {
+                            environment.forEach(::putString)
+                        })
+                    }
                 }, descriptor, callback)
             }.also {
                 assertEquals(
@@ -407,6 +456,73 @@ class BunRuntimeInstrumentedTest {
             }
         } finally {
             sourceFile.delete()
+        }
+    }
+
+    private fun assertSampleRun(runtime: IBunRuntimePlugin, expectation: SampleExpectation) {
+        val source = instrumentationContext.assets.open(expectation.sourceName)
+            .bufferedReader(Charsets.UTF_8)
+            .use { it.readText() }
+        val captured = runSource(
+            runtime = runtime,
+            sourceName = expectation.sourceName,
+            sourceText = source,
+            environment = expectation.environment,
+        )
+        assertTrue(
+            buildString {
+                append("Sample ${expectation.sourceName} failed")
+                append("; result=${captured.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()}")
+                if (captured.stdout.isNotBlank()) append("; stdout=${captured.stdout}")
+                if (captured.stderr.isNotBlank()) append("; stderr=${captured.stderr}")
+            },
+            captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED),
+        )
+        expectation.stdout.forEach { text ->
+            assertTrue("${expectation.sourceName} stdout did not contain $text", captured.stdout.contains(text))
+        }
+        expectation.stderr.forEach { text ->
+            assertTrue("${expectation.sourceName} stderr did not contain $text", captured.stderr.contains(text))
+        }
+        if (expectation.stderr.isEmpty()) {
+            assertTrue("${expectation.sourceName} wrote unexpected stderr: ${captured.stderr}", captured.stderr.isEmpty())
+        }
+    }
+
+    private fun withLocalHttpEndpoint(block: (String) -> Unit) {
+        val body = "sample-fetch-ok"
+        ServerSocket(0, 1, InetAddress.getByName("127.0.0.1")).use { server ->
+            server.soTimeout = 30_000
+            val executor = Executors.newSingleThreadExecutor()
+            val response = executor.submit {
+                server.accept().use { client ->
+                    client.soTimeout = 10_000
+                    val reader = client.getInputStream().bufferedReader(StandardCharsets.US_ASCII)
+                    while (true) {
+                        val line = reader.readLine() ?: break
+                        if (line.isEmpty()) break
+                    }
+                    val payload = buildString {
+                        append("HTTP/1.1 200 OK\r\n")
+                        append("Content-Type: text/plain; charset=utf-8\r\n")
+                        append("Content-Length: ${body.toByteArray(StandardCharsets.UTF_8).size}\r\n")
+                        append("Connection: close\r\n")
+                        append("\r\n")
+                        append(body)
+                    }.toByteArray(StandardCharsets.UTF_8)
+                    client.getOutputStream().apply {
+                        write(payload)
+                        flush()
+                    }
+                }
+            }
+            try {
+                block("http://127.0.0.1:${server.localPort}/sample")
+                response.get(10, TimeUnit.SECONDS)
+            } finally {
+                server.close()
+                executor.shutdownNow()
+            }
         }
     }
 
@@ -465,6 +581,13 @@ class BunRuntimeInstrumentedTest {
         val result: Bundle,
         val stdout: String,
         val stderr: String,
+    )
+
+    private data class SampleExpectation(
+        val sourceName: String,
+        val stdout: List<String>,
+        val stderr: List<String> = emptyList(),
+        val environment: Map<String, String> = emptyMap(),
     )
 
     private fun File.sha256(): String {

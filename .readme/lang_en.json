@@ -27,6 +27,7 @@
   "p_quick_start_intro": "Save the following content as a script file and run it to confirm that the Bun engine has taken over execution",
   "p_quick_start_result": "If everything works, the first output line is `Bun {{ bun_version }}` and the second line is `android`.",
   "p_typescript_intro": "TypeScript files run directly as well, with no ahead-of-time compilation or extra configuration",
+  "p_more_samples": "More annotated, copy-and-run examples for network requests, private-workspace file I/O, stdout/stderr, and TypeScript types are available in [samples/]({{ samples_url }}). Every example stays within the current single-source and `--no-install` boundaries.",
   "h3_compatibility": "Compatibility",
   "compatibility_points": [
     "Engine: official Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",

@@ -14,6 +14,7 @@
 * `Amélioration` Préparer la future prise en charge d'Android 9+: un plan de correctifs du code source de Bun rejouable avec précision (6 correctifs) est établi et les entrées de build sont verrouillées (NDK et conteneur épinglés, 22 dépendances actives d'Android release); le runtime corrigé n'est pas encore compilé et n'entre pas dans les paquets actuels
 * `Amélioration` Renforcer les contrôles de qualité des paquets: chaque APK Debug et Release vérifie le ZIP alignment de 16 KB, le contenu ABI exact ainsi que la taille et le SHA-256 du payload Bun épinglé, et les octets du payload installé sont contrôlés sur un appareil de test Android 13
 * `Amélioration` Durcir la chaîne d'approvisionnement: les octets exacts de 19 archives sources de Bun et de 17 téléchargements de toolchain sont épinglés, 181 entrées d'intégrité Cargo et 172 du registre Bun sont inventoriées, et un materializer refusant l'écrasement ainsi qu'une prévérification de build double ABI protégée par la porte `buildReady` sont ajoutés
+* `Amélioration` Enrichir la bibliothèque d'exemples prêts à copier et à exécuter avec des cas commentés de fetch réseau, de fichiers dans l'espace de travail privé, de streaming stdout/stderr et de types TypeScript; ajouter une porte documentaire qui impose la directive `"bun";` en première ligne et les limites de source unique sans installation
 * `Dépendance` Ajouter le runtime Kotlin Parcelize afin que R8 en Release conserve la classe partagée du contrat Parcelable
 
 # v0.1.0
