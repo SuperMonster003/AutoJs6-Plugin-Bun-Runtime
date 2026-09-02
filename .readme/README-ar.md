@@ -138,7 +138,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### هل أجهزة page-size بحجم 16 KB مدعومة?
 
-كلا ELF executable المعبأين لهما PT_LOAD alignment لا يقل عن 16 KB, لكن اختبار end-to-end في بيئة Android حقيقية بحجم 16 KB لم يكتمل بعد, لذلك لا يدعي هذا الإصدار دعم 16 KB متحققا منه.
+يجتاز كلا ELF executable المعبأين وجميع إدخالات APK بوابات 16 KB alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز APK لـ `arm64-v8a` مجموعة Binder الكاملة عبر `libndk_translation`, لكن payload `x86_64` الأصلي يتوقف بالـ exit code 134 حتى مع script بسيطة; ولم يتم اختبار arm64 الأصلي بعد. هذه أدلة جزئية, لذلك لا يزال هذا الإصدار لا يدعي دعما عاما لـ 16 KB.
 
 #### أي APK يجب أن أثبت?
 
@@ -193,7 +193,7 @@ default timeout: 60 seconds
 
 يتم اكتشاف `BunRuntimeService` عبر action `org.autojs.plugin.bun.RUNTIME` و category `bun`. يستقبل المصدر عبر `ParcelFileDescriptor` و execution ID ضمن الطلب, ثم ينفذ `bun run --no-install <source>` مع بقاء استدعاء `runScript` المتزامن نشطا. يتم إرسال stdout و stderr فقط كـ bounded chunk عبر oneway callback. يحتوي terminal Bundle المعاد و event باسم `finished` على status و diagnostic summary field فقط ولا يحمل complete output stream, مما يبقي كل Binder transaction دون size limit. تدعم service cancellation صريحة و runtime prewarming وتعمل في `:bun_runtime`.
 
-حالة 16 KB: تستوفي PT_LOAD segment في ELF المضمنة لـ `arm64-v8a` و `x86_64` متطلبات 16 KB alignment. لم يتم التشغيل بعد على جهاز أو محاكي Android حقيقي بحجم 16 KB, لذلك تم التحقق من ELF alignment فقط.
+حالة 16 KB: يجتاز كلا ELF payload وإدخالاتهما في APK بوابات alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز `arm64-v8a` اختبارات Binder الخمسة عبر `libndk_translation`, بينما يتوقف `x86_64` الأصلي بالـ exit code 134 مع script بسيطة; ويبقى arm64 الأصلي غير مختبر. لا يتم ادعاء دعم عام لـ 16 KB.
 
 ******
 
@@ -216,12 +216,14 @@ default timeout: 60 seconds
 _2026/09/01_
 
 - `تلميح` يخفض هذا الإصدار الحد الأدنى لمتطلبات النظام من Android 14 إلى Android 13 (API 33); تبقى Android 9 حتى 12L (API 28 حتى 32) غير مدعومة حتى يجتاز Bun runtime المعدل بالـ patch اختبار قابلية النقل
+- `إصلاح` تحديد ABI للـ runtime المثبتة من SHA-256 للـ payload المقفلة بدلا من ترتيب iteration في جدول ABI, وجعل prewarming ينفذ JavaScript smoke test مصغرة لرفض runtime غير القابلة للاستخدام قبل بدء scripts المستخدم
 - `تحسين` خفض الحد الأدنى لمتطلبات النظام: يستمر استخدام Bun 1.4.0 Android payload الرسمية المثبتة, مع تخفيف الحد الأدنى للدعم من Android 14 (API 34) إلى Android 13 (API 33) لتغطية أجهزة أكثر
 - `تحسين` تحديد السبب الجذري لعدم العمل على الإصدارات الأقدم: بدءا من Android 13 يسمح seccomp النظام بالـ raw `close_range` syscall الذي يستدعيه Bun, بينما يثبت فشل جهاز حقيقي على API 31 أن API 28 حتى 32 تتطلب تعديل Bun نفسه, ولا يكفي تغيير manifest وحده
 - `تحسين` تمهيد لدعم Android 9+ مستقبلا: إنشاء خطة patch لمصدر Bun قابلة لإعادة التطبيق بدقة (6 patch) وتثبيت مدخلات build (تثبيت NDK والحاوية, و 22 dependency نشطة من Android release); لم يتم build للـ runtime المعدل بعد ولن يدخل الحزم الحالية
 - `تحسين` تعزيز فحوص جودة الحزم: يتحقق كل Debug و Release APK من 16 KB ZIP alignment والمحتوى الدقيق لكل ABI وحجم Bun payload المثبتة و SHA-256 الخاص بها, مع مطابقة بايتات payload المثبتة على جهاز اختبار Android 13
 - `تحسين` تقوية سلسلة التوريد: تثبيت البايتات الدقيقة لـ 19 Bun source archive و 17 تنزيل toolchain, وجرد 181 إدخال integrity لـ Cargo و 172 لـ Bun registry, وإضافة materializer يرفض الكتابة فوق الملفات وفحص build مسبق لكلا ABI محمي ببوابة `buildReady`
 - `تحسين` توسيع مكتبة الأمثلة الجاهزة للنسخ والتشغيل بإضافة أمثلة مشروحة لطلبات الشبكة, وقراءة الملفات وكتابتها في مساحة العمل الخاصة, وتدفق stdout/stderr, وأنواع TypeScript, مع بوابة توثيق تتحقق من توجيه `"bun";` في السطر الأول وحدود المصدر الواحد ومنع تثبيت الحزم
+- `تحسين` التحقق من تنفيذ 16 KB على AVD بنظام Android 16 (API 36) مع فرض PAGE_SIZE=16384: يجتاز APK أحادي ABI لـ `arm64-v8a` جميع اختبارات Binder الخمسة عبر `libndk_translation`, بينما يتوقف payload `x86_64` الأصلي بالـ exit code 134 حتى مع script بسيطة; لذلك يبقى الدعم العام لـ 16 KB غير معلن
 - `تبعية` إضافة Kotlin Parcelize runtime لكي يحتفظ R8 في Release بفئة Parcelable contract المشتركة
 
 #### v0.1.0

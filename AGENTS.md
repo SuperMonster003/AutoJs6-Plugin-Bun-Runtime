@@ -45,7 +45,9 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - A real Sony API 33 runtime run passed, consistent with the AOSP Android 13 seccomp boundary.
 - Real API 35 JavaScript and TypeScript Binder round trips have passed.
 - API 28 through 32 remain unsupported until a patched Bun runtime handles Android seccomp traps and portable lower-version validation passes. A manifest-only minSdk change cannot make the unmodified runtime portable on those releases.
-- Both packaged ELF files meet at least 16 KB PT_LOAD alignment. Do not claim verified end-to-end 16 KB support until execution passes on a real 16 KB Android environment and APK ZIP alignment is also checked.
+- Both packaged ELF files meet at least 16 KB PT_LOAD alignment, and every debug/release APK passes the 16 KB ZIP alignment gate.
+- On an Android 16 / API 36 x86_64 AVD with `PAGE_SIZE=16384` hard-asserted, the official `arm64-v8a` payload passed the full 5-test Binder suite through `libndk_translation`, while the native `x86_64` payload aborted with exit code 134 on the minimal `--eval "void 0"` probe.
+- Do not claim general end-to-end 16 KB support: native x86_64 remains blocked, native arm64 has not been exercised in a 16 KB environment, and the future patched runtime has no 16 KB execution evidence.
 
 ## Execution contract
 

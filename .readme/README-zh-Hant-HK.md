@@ -138,7 +138,7 @@ Bun 會呼叫 Linux 的 `close_range` 系統呼叫 (syscall 436), 而 Android 12
 
 #### 支援 16 KB page size 裝置嗎?
 
-兩個內置 ELF executable 的 PT_LOAD alignment 均不低於 16 KB, 但尚未在真正 16 KB Android 環境完成 end-to-end 測試, 因此目前版本不聲稱已驗證 16 KB 支援.
+兩個內置 ELF executable 與所有 APK entry 均通過 16 KB alignment 門禁. 在 Android 16 (API 36) 16 KB AVD 上, `arm64-v8a` APK 經 `libndk_translation` 完整通過 5 項 Binder 測試, 但原生 `x86_64` payload 連最小 script 也會以 exit code 134 中止; 原生 arm64 尚未驗證. 這只是部分證據, 因此目前版本仍不聲稱普遍支援 16 KB.
 
 #### 應該安裝哪個 APK?
 
@@ -193,7 +193,7 @@ default timeout: 60 seconds
 
 `BunRuntimeService` 透過 action `org.autojs.plugin.bun.RUNTIME` 和 category `bun` 被發現. 它透過 `ParcelFileDescriptor` 接收源碼, 從 request 接收 execution ID, 並在同步 `runScript` call 維持 active 期間執行 `bun run --no-install <source>`. Stdout 和 stderr 只會以有界 chunk 透過 oneway callback 傳送. 傳回的 terminal Bundle 和 `finished` event 只包含 status 和 diagnostic summary field, 不會攜帶完整 output stream, 令每次 Binder transaction 保持在 size limit 內. Service 支援明確 cancellation 和 runtime prewarming, 並在 `:bun_runtime` 執行.
 
-16 KB 狀態: 已封裝的 `arm64-v8a` 和 `x86_64` ELF PT_LOAD segment 符合 16 KB alignment 要求. 尚未在真正 16 KB Android 裝置或模擬器執行, 因此目前只驗證 ELF alignment.
+16 KB 狀態: 兩種 ELF payload 及其 APK entry 均通過 alignment 門禁. 在 Android 16 (API 36) 16 KB AVD 上, `arm64-v8a` 經 `libndk_translation` 完整通過 5 項 Binder 測試, 但原生 `x86_64` 連最小 script 也會以 exit code 134 中止; 原生 arm64 尚未驗證. 目前不聲稱普遍支援 16 KB.
 
 ******
 
@@ -216,12 +216,14 @@ default timeout: 60 seconds
 _2026/09/01_
 
 - `提示` 本版本將最低系統要求從 Android 14 降至 Android 13 (API 33); Android 9 到 12L (API 28 到 32) 仍不受支援, 需等待補丁版 Bun runtime 通過可移植性驗證
+- `修復` 不再按 ABI 表的遍歷次序猜測已安裝 runtime, 改用鎖定 payload 的 SHA-256 識別實際 ABI; prewarm 還會執行最小 JavaScript smoke test, 在用戶 script 啟動前拒絕無法執行的 runtime
 - `優化` 降低最低系統要求: 繼續使用固定的官方 Bun 1.4.0 Android payload, 將支援下限從 Android 14 (API 34) 放寬至 Android 13 (API 33), 覆蓋更多裝置
 - `優化` 查明低版本無法使用的根本原因: Android 13 起系統 seccomp 放行 Bun 呼叫的 raw `close_range` syscall, 而 API 31 真機失敗證明 API 28 到 32 需要修改 Bun 本身, 僅修改 manifest 無法解決
 - `優化` 為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 源碼補丁方案 (6 個補丁) 並鎖定構建輸入 (固定 NDK 與容器, 22 個 Android release 活躍依賴); 補丁版 runtime 尚未構建, 也不會進入目前安裝套件
 - `優化` 加強安裝套件品質檢查: 每個 Debug 和 Release APK 均驗證 16 KB ZIP alignment, 精確 ABI 內容以及固定 Bun payload 的大小與 SHA-256, 並在 Android 13 測試裝置上核對已安裝的 payload 位元組
 - `優化` 加固供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載件的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 構建預檢
 - `優化` 擴充可複製執行的範例庫: 新增附有註解的網絡 fetch, 私人工作目錄檔案讀寫, stdout/stderr 串流輸出和更完整的 TypeScript 類型範例; 文件門禁會檢查首行 `"bun";` 指令以及單一源碼和禁止安裝依賴的邊界
+- `優化` 在強制 PAGE_SIZE=16384 的 Android 16 (API 36) AVD 驗證 16 KB 執行: `arm64-v8a` 單 ABI APK 經 `libndk_translation` 完整通過 5 項 Binder instrumentation, 但原生 `x86_64` payload 連最小 script 也會以 exit code 134 中止, 因此仍不聲稱普遍支援 16 KB
 - `依賴` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
 
 #### v0.1.0

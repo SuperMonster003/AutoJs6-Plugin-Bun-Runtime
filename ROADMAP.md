@@ -67,7 +67,7 @@
 - [x] (设备) Android 15 / API 35 `arm64-v8a` 真机已通过 README JavaScript 与 TypeScript 的 Binder 往返测试.
 - [x] (设备) Android 13 / API 33 `arm64-v8a` 真机已有成功运行记录, 与 AOSP T allowlist 结论一致; 仍需补充 AOSP/`x86_64` 与更多 OEM 证据后才能进入 G3.
 - [x] (设备) Android 12 / API 31 `arm64-v8a` 真机已观察到 syscall 436 (`close_range`) 被应用 seccomp 以 `SIGSYS` 终止 -- 这证明未修改的官方 runtime 不能作为 API 28-32 的通用产物.
-- [ ] (测试) 当前尚无完整的 API 28-35, 双 ABI, 跨 OEM 运行矩阵, 也尚未完成真实 16 KB 页环境的 Bun 执行.
+- [ ] (测试) 当前尚无完整的 API 28-35, 双 ABI, 跨 OEM 运行矩阵. API 36 的 16 KB AVD 已完成分 ABI 验证: `arm64-v8a` 经原生翻译桥 5/5 通过, 原生 `x86_64` 最小脚本 exit 134, 因此尚不能形成通用 16 KB 支持结论.
 
 ## 里程碑总览
 
@@ -210,17 +210,21 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - 新增统一 APK verifier 和 4 个 ZIP/payload 回归测试, 已接入 debug CI 与 release 收集任务.
 - verifier 要求三类 APK 集合精确匹配, 执行 `zipalign -c -P 16 4`, 并对压缩后的 Bun entry 解压核对 ABI, 字节数, CRC32 与 runtime lock SHA-256; 本地 debug/release 各三份 APK 均已通过.
 - instrumentation 增加了安装后 `nativeLibraryDir/libbun_exec.so` 的字节数与 SHA-256 断言; Sony XQ-DQ72 API 33 arm64 真机已通过更新后的 4/4 instrumentation, 证据见 `docs/compatibility/2026-09-02-m5-payload-integrity.json`.
-- release 安装后摘要和真实 16 KB 页执行仍未完成, 因此对应复合条目保持未勾选.
+- instrumentation 新增可选 `requiredPageSizeBytes` 硬断言; runtime ABI 改为由安装后 payload 的锁定 SHA-256 识别, prewarm 在版本与 revision 后执行最小 `--eval "void 0"` 探针, 避免把只能显示版本但无法执行脚本的 runtime 报告为 ready.
+- Android 16 / API 36 x86_64 16 KB AVD 已完成双路径验证: `arm64-v8a` 单 ABI APK 经 `libndk_translation` 完整 5/5 Binder instrumentation 通过, 原生 `x86_64` 则连 `-e 42` 都稳定以 exit 134 中止; 关闭 regexp JIT, 全部 JIT 或 `--smol` 均无效. 双路径报告见 `docs/compatibility/2026-09-02-m5-16kb-execution.json`.
+- release 安装后摘要, 原生 arm64 16 KB 执行和原生 x86_64 修复仍未完成, 因此 M5 仍在进行中, 不扩大通用 16 KB 支持声明.
 
 条目清单:
 
 - [x] (构建) 当前两个官方 ELF 的所有 `PT_LOAD` segment 至少 16 KB 对齐.
 - [ ] (构建/发布) 对 debug/release 的单 ABI 与 universal APK 执行 `zipalign -c -P 16 4`, 并核对安装后 `nativeLibraryDir` 字节与 lock SHA-256 一致.
-- [ ] (设备) 在真实 16 KB 页 Android 设备或 `google_apis_ps16k` 环境执行完整 Bun Binder instrumentation, 并硬断言运行时 `PAGE_SIZE=16384`.
+- [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
+- [ ] (设备/x86_64) 修复原生 `x86_64` 在 16 KB 页环境执行最小脚本即 exit 134 的阻断, 再重复完整 Binder instrumentation; `--version` / `--revision` 成功不能替代脚本执行.
+- [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 AVD 上重复完整 instrumentation, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
 - [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁, 不从官方 payload 的静态结果推断自建产物兼容.
 - [ ] (发布) `appendDigestToReleasedFiles` 验证签名, 预期三类 APK, ABI payload, CRC32 与 SHA-256; Release notes 如实区分静态对齐和端到端执行状态.
 
-**M5 验收条件:** 官方和 patched 发行线各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和真实 16 KB execution 四层验证.
+**M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.
 
 ## M6: 多文件项目执行
 
@@ -275,6 +279,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 | 风险 | 早期信号 | 处理与回退 |
 |---|---|---|
 | OEM API 33 seccomp/SELinux 差异 | probe `SIGSYS`, `EACCES` 或无法从 `nativeLibraryDir` exec | 保留设备报告, 暂缓该 OEM 正式声明; 不得通过复制 executable 到可写目录绕过 |
+| 16 KB 环境中 runtime 仅 metadata probe 成功 | `--version` / `--revision` 成功, 最小 JS probe 却 exit 134 | prewarm 必须执行最小 JS smoke probe; 按 ABI 归档失败, 不从 ELF/ZIP 对齐或翻译桥通过推断原生兼容 |
 | 新 Bun syscall 在延迟路径触发 | Worker, spawn, watch, network 或 install 首次 exit 159 | 固定 syscall 与负载回归; 回到已验证 runtime, 不扩大能力声明 |
 | 全局 SIGSYS handler 干扰 Bun 信号语义 | 用户信号丢失, watch/reload 或 child 异常 | 关闭实验发行线, 回退 API 33 官方 runtime; 修复需重新通过信号专项矩阵 |
 | FD fallback 不等价 | 子进程继承 Binder/PFD 或私有文件描述符 | 视为安全阻断; 不得以性能或兼容为由发布 no-op fallback |

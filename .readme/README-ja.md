@@ -138,7 +138,7 @@ Bun は Linux の `close_range` system call (syscall 436) を呼び出します�
 
 #### 16 KB page-size 端末に対応していますか?
 
-Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上ですが, 実際の 16 KB Android 環境での end-to-end テストはまだ完了していないため, このリリースは検証済みの 16 KB 対応を表明しません.
+Packaged された 2 つの ELF executable とすべての APK entry は 16 KB alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では, `arm64-v8a` APK が `libndk_translation` 経由で Binder suite 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort し, native arm64 は未検証です. これは部分的な証拠であるため, この release は一般的な 16 KB 対応をまだ表明しません.
 
 #### どの APK をインストールすればよいですか?
 
@@ -193,7 +193,7 @@ default timeout: 60 seconds
 
 `BunRuntimeService` は action `org.autojs.plugin.bun.RUNTIME` と category `bun` で発見されます. `ParcelFileDescriptor` で source を, request で execution ID を受け取り, synchronous `runScript` call が active の間に `bun run --no-install <source>` を実行します. Stdout と stderr は oneway callback で bounded chunk としてのみ送信します. Returned terminal Bundle と `finished` event は status と diagnostic summary field だけを含み, complete output stream を含まないため, 各 Binder transaction は size limit 以下に保たれます. Service は explicit cancel と runtime prewarming に対応し, `:bun_runtime` で動作します.
 
-16 KB status: packaged `arm64-v8a` と `x86_64` ELF の PT_LOAD segment は 16 KB alignment requirement を満たします. 実際の 16 KB Android device または emulator ではまだ実行していないため, ELF alignment だけが検証済みです.
+16 KB status: 2 つの ELF payload と APK entry は alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では `arm64-v8a` が `libndk_translation` 経由で Binder test 全 5 件に成功しましたが, native `x86_64` は最小 script でも exit code 134 で abort し, native arm64 は未検証です. 一般的な 16 KB 対応は表明しません.
 
 ******
 
@@ -216,12 +216,14 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 _2026/09/01_
 
 - `ヒント` 本バージョンは最低システム要件を Android 14 から Android 13 (API 33) に引き下げました. Android 9 から 12L (API 28 から 32) は引き続き未対応で, patch 版 Bun runtime が移植性検証を通過するまでお待ちください
+- `修正` インストール済み runtime の ABI を ABI table の iteration 順ではなく locked payload の SHA-256 から識別し, prewarming で最小 JavaScript smoke test を実行して使用不能な runtime を user script 開始前に拒否
 - `改善` 最低システム要件の引き下げ: 固定された公式 Bun 1.4.0 Android payload をそのまま使用し, サポート下限を Android 14 (API 34) から Android 13 (API 33) に緩和してより多くのデバイスをカバー
 - `改善` 旧バージョンで動作しない根本原因を特定: Android 13 以降はシステムの seccomp が Bun の呼び出す raw `close_range` syscall を許可する一方, API 31 実機での失敗により API 28 から 32 は Bun 本体の修正が必要で, manifest の変更だけでは解決できないことが判明
 - `改善` 将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); patch 版 runtime は未ビルドで, 現行パッケージには含まれません
 - `改善` パッケージ品質チェックの強化: すべての Debug および Release APK で 16 KB ZIP alignment, 正確な ABI 内容, 固定 Bun payload のサイズと SHA-256 を検証し, Android 13 テスト端末でインストール済み payload のバイトを照合
 - `改善` サプライチェーンの強化: 19 個の Bun source archive と 17 個の toolchain ダウンロードの正確なバイトを固定し, 181 個の Cargo と 172 個の Bun registry integrity エントリーを棚卸しし, 上書きを拒否する materializer と `buildReady` ゲートで保護されたデュアル ABI ビルド preflight を追加
 - `改善` コピーして実行できるサンプル集を拡充: ネットワーク fetch, プライベートワークスペースのファイル入出力, stdout/stderr ストリーミング, より実用的な TypeScript 型のコメント付きサンプルを追加し, 先頭行の `"bun";` ディレクティブと単一ソースおよびインストール禁止の境界を文書ゲートで検証
+- `改善` PAGE_SIZE=16384 を強制した Android 16 (API 36) AVD で 16 KB execution を検証: `arm64-v8a` single-ABI APK は `libndk_translation` 経由で Binder instrumentation 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort するため, 一般的な 16 KB 対応は表明しません
 - `依存関係` Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加
 
 #### v0.1.0

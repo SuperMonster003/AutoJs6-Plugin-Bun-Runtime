@@ -138,7 +138,7 @@ Una ejecución está limitada a 60 seconds por defecto; al agotarse el tiempo, e
 
 #### Se admiten dispositivos con páginas de 16 KB?
 
-Ambos ejecutables ELF empaquetados tienen una alineación PT_LOAD de al menos 16 KB, pero aún no se ha completado una prueba integral en un entorno Android real de 16 KB, así que esta versión no afirma un soporte de 16 KB verificado.
+Los dos ejecutables ELF empaquetados y todas las entradas de los APK superan las puertas de alineación de 16 KB. En un AVD de 16 KB con Android 16 (API 36), el APK `arm64-v8a` superó toda la suite de Binder mediante `libndk_translation`, pero el payload `x86_64` nativo aborta con código de salida 134 incluso con un script mínimo; arm64 nativo aún no se ha probado. Es evidencia parcial, por lo que esta versión todavía no afirma soporte general de 16 KB.
 
 #### Qué APK debo instalar?
 
@@ -193,7 +193,7 @@ default timeout: 60 seconds
 
 `BunRuntimeService` se descubre mediante la acción `org.autojs.plugin.bun.RUNTIME` y la categoría `bun`. Recibe el código mediante `ParcelFileDescriptor` y un ID de ejecución en la solicitud, y ejecuta `bun run --no-install <source>` mientras permanece activa la llamada sincrónica `runScript`. Stdout y stderr se envían solo en fragmentos limitados mediante el callback oneway. El Bundle terminal devuelto y el evento `finished` contienen campos de estado y resumen diagnóstico, nunca los streams completos, para mantener cada transacción Binder bajo su límite. El servicio admite cancelación explícita y precalentamiento y vive en `:bun_runtime`.
 
-Estado de 16 KB: los segmentos PT_LOAD de los ELF `arm64-v8a` y `x86_64` empaquetados cumplen la alineación de 16 KB. Todavía no se ha ejecutado en un dispositivo o emulador Android real de 16 KB, por lo que solo está verificada la alineación ELF.
+Estado de 16 KB: ambos payloads ELF y sus entradas en los APK superan las puertas de alineación. En un AVD de 16 KB con Android 16 (API 36), `arm64-v8a` superó las 5 pruebas de Binder mediante `libndk_translation`, mientras que `x86_64` nativo aborta con código 134 en un script mínimo; arm64 nativo sigue sin probarse. No se afirma soporte general de 16 KB.
 
 ******
 
@@ -216,12 +216,14 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 _2026/09/01_
 
 - `Aviso` Esta versión reduce el requisito mínimo de sistema de Android 14 a Android 13 (API 33); Android 9 a 12L (API 28 a 32) sigue sin soporte hasta que un runtime de Bun parcheado supere la validación de portabilidad
+- `Corrección` Identificar el ABI del runtime instalado mediante el SHA-256 del payload fijado, en vez del orden de iteración de la tabla ABI, y hacer que el precalentamiento ejecute una prueba mínima de JavaScript para rechazar un runtime inutilizable antes de iniciar scripts de usuario
 - `Mejora` Reducir el requisito mínimo de sistema: se conserva el payload Android oficial y fijado de Bun 1.4.0 y se relaja el límite inferior de soporte de Android 14 (API 34) a Android 13 (API 33), cubriendo más dispositivos
 - `Mejora` Identificar la causa raíz de los fallos en versiones antiguas: desde Android 13 el seccomp del sistema permite la syscall raw `close_range` que Bun invoca, mientras que un fallo en dispositivo real con API 31 demuestra que API 28 a 32 requieren parchear el propio Bun y no basta con cambiar el manifest
 - `Mejora` Preparar el futuro soporte de Android 9+: se establece un plan de parches del código fuente de Bun reproducible con exactitud (6 parches) y se fijan las entradas de build (NDK y contenedor fijados, 22 dependencias activas de Android release); el runtime parcheado aún no está compilado y no se incluye en los paquetes actuales
 - `Mejora` Reforzar los controles de calidad del paquete: cada APK de Debug y Release verifica el ZIP alignment de 16 KB, el contenido ABI exacto y el tamaño y SHA-256 del payload fijado de Bun, y los bytes del payload instalado se cotejan en un dispositivo de prueba con Android 13
 - `Mejora` Endurecer la cadena de suministro: se fijan los bytes exactos de 19 archivos fuente de Bun y 17 descargas de toolchain, se inventarían 181 entradas de integridad de Cargo y 172 del registro de Bun, y se añaden un materializer que rechaza sobrescrituras y una precomprobación de build de doble ABI protegida por la puerta `buildReady`
 - `Mejora` Ampliar la biblioteca de ejemplos listos para copiar y ejecutar con casos comentados de fetch de red, archivos del espacio de trabajo privado, streaming de stdout/stderr y tipos de TypeScript más completos; añadir una puerta de documentación que exige la directiva `"bun";` en la primera línea y los límites de una sola fuente y sin instalación
+- `Mejora` Validar la ejecución con 16 KB en un AVD Android 16 (API 36) forzando PAGE_SIZE=16384: el APK de ABI única `arm64-v8a` supera las 5 pruebas de instrumentación Binder mediante `libndk_translation`, mientras que el payload `x86_64` nativo aborta con código de salida 134 incluso con un script mínimo; por ello no se afirma soporte general de 16 KB
 - `Dependencia` Añadir el runtime de Kotlin Parcelize para que R8 en Release conserve la clase compartida del contrato Parcelable
 
 #### v0.1.0
