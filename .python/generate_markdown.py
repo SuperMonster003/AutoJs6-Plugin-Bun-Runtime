@@ -51,7 +51,7 @@ LANGUAGE_CODES = [
     "zh-Hant-HK",
     "zh-Hant-TW",
 ]
-LANGUAGE_CODE_DEFAULT = "en"
+LANGUAGE_CODE_DEFAULT = "zh-Hans"
 ANDROID_CHANGELOG_ALIASES = {
     "zh-Hans": ["zh", "zh-Hans"],
     "zh-Hant-HK": ["zh-rHK", "zh-Hant-HK"],

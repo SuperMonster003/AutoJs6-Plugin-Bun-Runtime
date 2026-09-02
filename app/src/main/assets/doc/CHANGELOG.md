@@ -1,6 +1,6 @@
 ******
 
-### Release History
+### 发行历史
 
 ******
 
@@ -8,26 +8,26 @@
 
 ###### 2026/09/01
 
-* `Hint` Android 13 (API 33) is now the official minimum target; API 28 through 32 remain unsupported until a patched Bun runtime passes portable validation
-* `Improvement` Lower the supported Android floor from Android 14 (API 34) to Android 13 (API 33) while retaining the pinned official Bun 1.4.0 Android payloads
-* `Improvement` Document the AOSP T seccomp boundary: Android 13 allowlists Bun's raw `close_range` syscall, while the API 31 failure shows API 28 through 32 require a Bun compatibility patch rather than a manifest-only change
-* `Improvement` Prepare the Android 9+ experiment with a deterministic six-patch Bun source backport, pinned NDK and container inputs, and immutable identities for 22 active Android-release dependencies, while keeping the unbuilt runtime explicitly unavailable
-* `Improvement` Verify every Debug and Release APK for 16 KB ZIP alignment, exact ABI contents, locked Bun payload sizes and SHA-256 digests, and verify the installed payload bytes on the Android 13 test device
-* `Improvement` Lock the exact bytes of 19 Bun source archives and 17 immutable direct toolchain downloads, inventory 181 Cargo and 172 Bun registry integrity entries, and add non-overwriting materializers plus a `buildReady`-gated two-ABI build preflight
-* `Dependency` Add the Kotlin Parcelize runtime required by Release R8 to retain the shared Parcelable contract classes
+* `提示` Android 13 (API 33) 现为正式最低目标; API 28 到 32 在 patched Bun runtime 通过可移植验证前仍不受支持
+* `优化` 保留固定的官方 Bun 1.4.0 Android payload, 将支持的 Android 下限从 Android 14 (API 34) 降至 Android 13 (API 33)
+* `优化` 记录 AOSP T seccomp 分界: Android 13 已允许 Bun 调用的 raw `close_range` syscall, API 31 失败则表明 API 28 到 32 需要 Bun 兼容补丁, 仅修改 manifest 无法兼容
+* `优化` 使用可确定性重放的六补丁 Bun 源码 backport, 固定的 NDK 与容器输入以及 22 个 Android release 活跃依赖的不可变身份为 Android 9+ 实验做准备, 同时明确保持未构建 runtime 不可用
+* `优化` 验证每个 Debug 和 Release APK 的 16 KB ZIP alignment, 精确 ABI 内容, 固定 Bun payload 大小与 SHA-256, 并验证 Android 13 测试设备上已安装的 payload 字节
+* `优化` 锁定 19 个 Bun source archive 与 17 个不可变直接工具链下载件的精确字节, 盘点 181 个 Cargo 和 172 个 Bun registry integrity 条目, 并新增拒绝覆盖的 materializer 与受 `buildReady` 闸门保护的双 ABI 构建预检
+* `依赖` 添加 Release R8 保留共享 Parcelable contract class 所需的 Kotlin Parcelize runtime
 
 # v0.1.0
 
 ###### 2026/09/01
 
-* `Hint` The first release runs one source snapshot and does not expose AutoJs6 globals, a Java bridge, multi-file projects, or relative project imports
-* `Feature` Run JavaScript and TypeScript with the official Bun 1.4.0 Android executable as an independent `bun` engine selected by the `"bun";` directive, using `bun run --no-install <source>` without automatic dependency installation
-* `Feature` Stream stdout and stderr only as bounded oneway Binder callback chunks, while terminal results report status and diagnostics without carrying the complete output streams
-* `Feature` Support explicit cancellation, a 60-second default timeout, runtime information, and prewarming in the isolated `:bun_runtime` plugin process
-* `Feature` Ship official 64-bit Android payloads for `arm64-v8a` and baseline `x86_64`, plus single-ABI and `universal` packages
-* `Feature` Provide plugin discovery, protected Wake activation, complete PluginInfo metadata, and user documentation in 10 languages
-* `Improvement` Use a versioned Binder contract with ParcelFileDescriptor source transport, a 16 MiB source limit, and an 8 MiB combined output limit
-* `Improvement` Launch Bun from Android's read-only native library directory and verify the pinned release archive and packaged binary sizes, SHA-256 digests, ELF type, machine, and alignment
-* `Improvement` Verify at least 16 KB PT_LOAD alignment for both packaged executables while explicitly recording that no real 16 KB Android runtime test has been completed
-* `Improvement` Generate README, plugin-center instructions, and built-in changelog assets from validated JSON sources, with build, Markdown, and runtime artifact CI checks
-* `Improvement` Require Android 14 (API 34) after a real API 31 run hit app seccomp `SIGSYS` on Bun syscall 436 `close_range`; one Sony API 33 device unexpectedly passed but is not portable evidence, while API 35 JS and TS Binder round trips passed and lower versions await an upstream fallback
+* `提示` 首个版本每次运行一个源码快照, 不提供 AutoJs6 globals, Java bridge, 多文件项目或相对项目导入
+* `新增` 使用官方 Bun 1.4.0 Android executable 作为独立 `bun` 引擎运行 JavaScript 和 TypeScript, 通过 `"bun";` 指令选择, 并使用 `bun run --no-install <source>` 避免自动安装依赖
+* `新增` 仅通过有界 oneway Binder callback 分块流式返回 stdout 和 stderr, terminal result 只报告状态和诊断, 不携带完整输出流
+* `新增` 在隔离的 `:bun_runtime` 插件进程中支持显式取消, 60 秒默认 timeout, runtime information 和 prewarming
+* `新增` 提供 `arm64-v8a` 和 baseline `x86_64` 官方 64 位 Android payload, 以及单 ABI 和 `universal` 安装包
+* `新增` 提供插件发现, 受保护的 Wake 激活, 完整 PluginInfo metadata 和 10 种语言用户文档
+* `优化` 使用版本化 Binder contract, 通过 ParcelFileDescriptor 传输源码, 源码上限为 16 MiB, 组合输出上限为 8 MiB
+* `优化` 从 Android 只读 native library directory 启动 Bun, 并验证固定 release archive 和 packaged binary 的大小, SHA-256, ELF type, machine 和 alignment
+* `优化` 验证两个已打包 executable 的 PT_LOAD alignment 均至少为 16 KB, 同时明确记录尚未完成真实 16 KB Android runtime 测试
+* `优化` 从经过校验的 JSON source 生成 README, 插件中心说明和内置 changelog asset, 并加入 build, Markdown 和 runtime artifact CI 检查
+* `优化` 将最低版本设为 Android 14 (API 34), 因为 API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. 一台 Sony API 33 设备意外通过但不能证明可移植支持, API 35 真机 JS 和 TS Binder 往返已通过, 更低版本需等待上游 fallback
