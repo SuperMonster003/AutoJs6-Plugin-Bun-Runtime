@@ -203,6 +203,7 @@ _2026/09/01_
 - `تحسين` توثيق حد AOSP T seccomp: يسمح Android 13 بالـ raw `close_range` syscall الذي يستدعيه Bun, بينما يوضح فشل API 31 أن API 28 إلى 32 تحتاج Bun compatibility patch بدلا من manifest-only change
 - `تحسين` تجهيز تجربة Android 9+ بسلسلة deterministic من ستة patches لمصدر Bun, وتثبيت مدخلات NDK وcontainer والهويات الثابتة لـ 22 dependency نشطة لإصدار Android, مع إبقاء runtime غير المبني غير متاح صراحة
 - `تحسين` التحقق من كل APK من نوعي Debug وRelease لمحاذاة ZIP بمقدار 16 KB, ومحتوى ABI الدقيق, وأحجام Bun payload المثبتة وSHA-256, والتحقق من bytes المثبتة على جهاز اختبار Android 13
+- `تحسين` تثبيت bytes الدقيقة لـ 19 Bun source archive و17 direct toolchain download غير قابل للتغيير, وجرد 181 Cargo و172 Bun registry integrity entry, وإضافة materializer يرفض الاستبدال وbuild preflight ثنائي ABI محمي ببوابة `buildReady`
 - `تبعية` إضافة Kotlin Parcelize runtime الذي يحتاجه Release R8 للاحتفاظ بفئات Parcelable contract المشتركة
 
 #### v0.1.0

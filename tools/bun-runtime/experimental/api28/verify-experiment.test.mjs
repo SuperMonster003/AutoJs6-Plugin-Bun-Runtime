@@ -17,6 +17,12 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
   assert.equal(result.downstreamPatchCount, 6);
+  assert.equal(result.lockedGithubArchiveCount, 19);
+  assert.equal(result.lockedToolchainDownloadCount, 17);
+  assert.equal(result.lockedToolchainBuildArtifactCount, 12);
+  assert.equal(result.lockedToolchainProvenanceCount, 5);
+  assert.equal(result.cargoRegistryPackageCount, 181);
+  assert.equal(result.bunIntegrityEntryCount, 172);
 });
 
 test("a moving PR patch URL is rejected", () => {
@@ -96,6 +102,16 @@ test("a dependency source cannot regress to a movable tag", () => {
   });
 });
 
+test("a GitHub source archive cannot have a pending SHA-256", () => {
+  withExperimentCopy((copy) => {
+    const sourcePath = resolve(copy, "source-inputs.lock.json");
+    const sources = JSON.parse(readFileSync(sourcePath, "utf8"));
+    sources.activeDependencies.find((dependency) => dependency.name === "zlib").sha256 = "pending";
+    writeFileSync(sourcePath, `${JSON.stringify(sources, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /dependency zlib: invalid archive SHA-256/);
+  });
+});
+
 test("a prebuilt dependency must retain its authoritative SHA-256", () => {
   withExperimentCopy((copy) => {
     const sourcePath = resolve(copy, "source-inputs.lock.json");
@@ -113,6 +129,48 @@ test("the container base digest cannot drift", () => {
     lock.toolchain.host.containerDigest = "sha256:" + "0".repeat(64);
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /toolchain\.host\.containerDigest/);
+  });
+});
+
+test("a direct toolchain download cannot have a pending SHA-256", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "toolchain-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.directDownloads.find((artifact) => artifact.id === "node-24.3.0-linux-x64").sha256 = "pending";
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /node-24\.3\.0-linux-x64: invalid SHA-256/);
+  });
+});
+
+test("the mutable host package layer cannot be reported as complete", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "toolchain-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.hostPackageLayer.status = "locked";
+    lock.readiness.hostPackageLayerLocked = true;
+    lock.readiness.complete = true;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /host package layer status/);
+  });
+});
+
+test("every Cargo registry package must retain a Cargo.lock checksum", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "build-network-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.cargo.registrySha256Count -= 1;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /Cargo registry SHA-256 count/);
+  });
+});
+
+test("the unmaterialized build-network closure cannot be reported complete", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "build-network-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.readiness.complete = true;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /build network lock completeness/);
   });
 });
 

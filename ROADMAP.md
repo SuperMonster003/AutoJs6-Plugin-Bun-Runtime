@@ -59,7 +59,7 @@
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 | Bun 1.4.0、Binder 流式执行、双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | 进行中 | 官方 Bun 保持不变，最低版本降至 API 33 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 进行中 | downstream 源码链与依赖 identity 已锁定，构建和产物尚未就绪 | 上游/构建/测试 |
+| M2 patched Bun 可复现构建 | 进行中 | downstream 源码链、源码归档和直接工具链下载已锁定；APT/registry 离线闭包、构建和产物尚未就绪 | 上游/构建/测试 |
 | M3 Android 9-12 实验支持 | 等待 M2 | API 28-32 安装、探测、执行与诊断 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall、FD、进程生命周期和 OEM 矩阵闭环 | 测试/设备/发布 |
 | M5 16 KB 与发布完整性 | 进行中 | ELF、ZIP、安装后 payload 和真实 16 KB 执行 | 构建/测试/设备/发布 |
@@ -114,10 +114,12 @@ M1 升阶门: G0/G1 全绿，API 33 `x86_64` AOSP/Google APIs AVD 与至少一�
 
 M2 不直接承诺 Android 9-12 可用；它先建立可以审计、重放和替换上游补丁的 native 供应链。
 
-进展记录 (2026-09-02，G0/G1): `tools/bun-runtime/experimental/api28` 已建立独立实验 identity；固定 Bun v1.4.0、PR #39775 的 5 个不可变提交和 22 个 Android-release 依赖 identity；6 个 downstream patch 可从 release commit 确定性重放，其中前 5 个 stable patch ID 与上游一致，第 6 个把可移动 Brotli tag 固定为完整 commit。受影响的兼容代码与固定 PR head 完全一致，Ubuntu base manifest、NDK r27c 下载件、Node headers 和双 ABI WebKit prebuilt 也已有摘要锁。离线 verifier 有 11 个回归测试，CI 会在临时 Bun checkout 中重放整条 patch chain，并核对 28 个 build/dependency definition blob、Brotli patch 前 blob 与无 submodule 事实。由于其余工具链/下载字节锁、双次构建、ELF 审计和设备证据仍为空，`buildReady`、`distributionReady` 与 `runtimeProduced` 均保持 `false`。
+进展记录 (2026-09-02，G0/G1): `tools/bun-runtime/experimental/api28` 已建立独立实验 identity；固定 Bun v1.4.0、PR #39775 的 5 个不可变提交和 22 个 Android-release 依赖 identity；6 个 downstream patch 可从 release commit 确定性重放，其中前 5 个 stable patch ID 与上游一致，第 6 个把可移动 Brotli tag 固定为完整 commit。受影响的兼容代码与固定 PR head 完全一致。19 个 Bun 实际使用的 GitHub source archive 已真实下载并按字节数、SHA-256、单一顶层目录和 traversal 规则锁定；NDK/CMake/bootstrap Bun/Node/Ninja/rustup/最小 Rust 闭包等 17 个不可变直接下载件共 1,024,309,832 bytes 也已锁定。两个 materializer 都要求显式输出目录、拒绝覆盖漂移文件并支持离线复核；CI 会重新物化 19 个 source archive 与 5 个小型工具链 provenance 文件。只读 build plan 和完整输入 preflight 已落地，`--execute` 在 `buildReady=false` 时硬拒绝执行。离线网络清单另确认 Cargo.lock 有 181/181 crates.io SHA-256，三个实际 `bun install --frozen-lockfile` 锁文件有 172 个外部 SHA-512 integrity，但 registry archive、离线 cache、Ubuntu/PPA/apt.llvm.org package closure 尚未物化。四个 Node test 文件共 28 个回归测试；CI 仍会在临时 Bun checkout 中重放 patch chain，并核对 build/dependency definition blob、Brotli patch 前 blob 与无 submodule 事实。由于主机 package/registry 离线闭包、双次构建、ELF 审计和设备证据仍为空，`buildReady`、`distributionReady` 与 `runtimeProduced` 均保持 `false`。
 
 - [x] (上游) 固定 Bun stable tag、完整 commit、无 submodule 的 Git tree 证据、22 个 Android-release dependency revision，以及 PR #39775 的 5 个具体补丁提交；开放 PR 更新仍必须人工审阅差异。(2026-09-02，G0/G1)
 - [x] (构建) 新增 6 个 versioned downstream patch，每个 patch 记录来源、目的、适用 commit、摘要、许可证影响和上游/本项目归属；清洁重放结果与确定性 commit/tree 均由 CI 验证。(2026-09-02，G1)
+- [x] (构建/测试) 锁定 19 个 GitHub source archive 和 17 个不可变直接工具链下载件，提供安全、可离线复核的 source/toolchain materializer，并把在线重新物化纳入 CI；滚动 rustup discovery URL 不进入可复现闭包。(2026-09-02，G0/G1)
+- [x] (构建/测试) 新增默认只读的双 ABI build plan、干净 patched checkout/完整缓存/NDK 预检和 `buildReady` 执行闸；同时单独盘点 Cargo/Bun registry 输入，未物化 archive 不得标成离线就绪。(2026-09-02，G1)
 - [ ] (构建) 提供清洁环境可复现的 Android build 入口，固定 NDK r27c、Rust/LLVM/Bun 构建环境、API 28 target、CPU baseline 和双 ABI 参数。
 - [ ] (构建) 将官方产物和 downstream 产物使用不同的 lock identity、variant 与摘要，防止把自建二进制误报为官方 release artifact。
 - [ ] (测试) 对 patched runtime 增加静态门禁: ELF64、PIE、interpreter、Android platform note API 28、`DT_NEEDED` allowlist、bionic 符号版本、`PT_LOAD` alignment、导出/动态符号和 SHA-256。
@@ -217,6 +219,13 @@ M7 验收条件: 每项能力都可单独协商、授权、测试和撤销；Bun
 ```powershell
 node tools/bun-runtime/verify-runtime.mjs
 node tools/verify-api-artifacts.mjs
+node tools/bun-runtime/experimental/api28/verify-experiment.mjs
+node tools/bun-runtime/experimental/api28/build-experiment.mjs
+node --test `
+  tools/bun-runtime/experimental/api28/verify-experiment.test.mjs `
+  tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs `
+  tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs `
+  tools/bun-runtime/experimental/api28/build-experiment.test.mjs
 py .python/generate_markdown.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 .\gradlew.bat :app:testDebugUnitTest

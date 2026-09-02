@@ -13,6 +13,7 @@
 * `Improvement` Document the AOSP T seccomp boundary: Android 13 allowlists Bun's raw `close_range` syscall, while the API 31 failure shows API 28 through 32 require a Bun compatibility patch rather than a manifest-only change
 * `Improvement` Prepare the Android 9+ experiment with a deterministic six-patch Bun source backport, pinned NDK and container inputs, and immutable identities for 22 active Android-release dependencies, while keeping the unbuilt runtime explicitly unavailable
 * `Improvement` Verify every Debug and Release APK for 16 KB ZIP alignment, exact ABI contents, locked Bun payload sizes and SHA-256 digests, and verify the installed payload bytes on the Android 13 test device
+* `Improvement` Lock the exact bytes of 19 Bun source archives and 17 immutable direct toolchain downloads, inventory 181 Cargo and 172 Bun registry integrity entries, and add non-overwriting materializers plus a `buildReady`-gated two-ABI build preflight
 * `Dependency` Add the Kotlin Parcelize runtime required by Release R8 to retain the shared Parcelable contract classes
 
 # v0.1.0

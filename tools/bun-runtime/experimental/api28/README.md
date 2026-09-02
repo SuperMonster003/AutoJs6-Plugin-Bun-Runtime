@@ -3,10 +3,11 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-> Status: source backport and Android-release dependency identities verified;
-> not build ready. No patched Bun binary has been built, validated, or approved
-> for distribution from this directory. The unmodified official Bun artifacts
-> remain the only runtime artifacts used by the plugin.
+> Status: source backport, Android-release dependency bytes, and immutable
+> direct toolchain downloads verified; not build ready. No patched Bun binary
+> has been built, validated, or approved for distribution from this directory.
+> The unmodified official Bun artifacts remain the only runtime artifacts used
+> by the plugin.
 
 ## Safety boundary
 
@@ -56,9 +57,27 @@ target facts:
 Every source URL and Git blob identifier used for those facts is recorded in
 `experiment.lock.json` and is anchored to the full Bun commit, not a moving
 branch or tag. `source-inputs.lock.json` expands all 22 dependencies enabled by
-the Android release profile. Node.js headers and both Android WebKit prebuilts
-also carry authoritative SHA-256 values. GitHub-generated source archive bytes
-and the remaining toolchain downloads are not yet fully byte-locked.
+the Android release profile. All 19 exact GitHub archive URLs were downloaded,
+checked for a single safe top-level directory, and locked by byte count and
+SHA-256. Node.js headers and both Android WebKit prebuilts also carry
+authoritative SHA-256 values.
+
+`toolchain-inputs.lock.json` separately locks 17 immutable direct downloads:
+12 build artifacts and 5 checksum/provenance documents, totalling
+1,024,309,832 bytes. This includes the NDK, CMake, bootstrap Bun, Node, Ninja,
+rustup, the minimal pinned Rust host components, `rust-src`, and both Android
+Rust standard libraries. The rolling rustup discovery manifest is deliberately
+not a reproducible input; the lock uses the versioned rustup 1.29.1 archive and
+its versioned checksum instead.
+
+Those direct locks do not make the complete build offline. The pinned
+`Cargo.lock` contains 181 crates.io entries with 181 SHA-256 checksums, while
+the three frozen Bun installs used by code generation contain 172 external
+SHA-512 integrity entries. `build-network-inputs.lock.json` records their exact
+lockfile blobs and the active network paths, but their registry archives,
+byte counts, platform selection, and offline caches remain open. The mutable
+Ubuntu/PPA/apt.llvm.org package closure and exact GCC/LLVM package files also
+remain open.
 
 ## Directory contract
 
@@ -67,13 +86,18 @@ api28/
   README.md                         this status and workflow
   experiment.lock.json              experiment identity, inputs, and blockers
   source-inputs.lock.json           resolved Android dependency identities
+  toolchain-inputs.lock.json        direct toolchain bytes and host-package gap
+  build-network-inputs.lock.json    Cargo/Bun lockfile closure and offline gap
   config/*.configure.json           pinned Bun configure inputs for two ABIs
   patches/series.lock.json          immutable PR snapshot and downstream chain
   patches/upstream-reference/       verified immutable upstream patch evidence
   patches/downstream/               reviewed v1.4.0 source and supply-chain patches
+  build-experiment.mjs              read-only plan, offline preflight, gated build
+  materialize-source-inputs.mjs     exact Bun prefetch-layout source fetcher
+  materialize-toolchain-inputs.mjs  exact direct-toolchain download fetcher
   materialize-upstream-patches.ps1  online, immutable-source patch fetcher
   verify-experiment.mjs             offline static verifier
-  verify-experiment.test.mjs        verifier regression tests
+  *.test.mjs                        verifier/materializer/build-gate regressions
   verify-backport.mjs               clean-checkout deterministic replay verifier
 ```
 
@@ -83,10 +107,36 @@ api28/
 
    ```powershell
    node tools/bun-runtime/experimental/api28/verify-experiment.mjs
-   node --test tools/bun-runtime/experimental/api28/verify-experiment.test.mjs
+   node tools/bun-runtime/experimental/api28/build-experiment.mjs
+   node --test `
+     tools/bun-runtime/experimental/api28/verify-experiment.test.mjs `
+     tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs `
+     tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs `
+     tools/bun-runtime/experimental/api28/build-experiment.test.mjs
    ```
 
-2. Re-materialize upstream review evidence from immutable `oven-sh/bun` commit
+2. Materialize immutable source and direct-toolchain inputs only into explicit
+   cache directories. Existing files are accepted only after exact verification
+   and are never overwritten:
+
+   ```powershell
+   node tools/bun-runtime/experimental/api28/materialize-source-inputs.mjs `
+     --output-directory <absolute-source-prefetch-directory> `
+     --group github-archives
+
+   node tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.mjs `
+     --output-directory <absolute-toolchain-directory> `
+     --group provenance
+   ```
+
+   Source groups are `github-archives`, `source-prebuilts`, and `all-source`.
+   Toolchain groups are `bootstrap`, `android-ndk`, `build`, `provenance`, and
+   `all`. Add `--offline` to prove that a previously populated cache is
+   complete without making a network request. Source inputs use Bun's exact
+   `by-url/<first-32-URL-SHA256>` prefetch layout; neither materializer extracts
+   an archive or writes to a plugin runtime directory.
+
+3. Re-materialize upstream review evidence from immutable `oven-sh/bun` commit
    URLs when auditing a fresh checkout:
 
    ```powershell
@@ -97,7 +147,7 @@ api28/
    Existing files are never overwritten. Their byte count, SHA-256, and
    `From <commit>` header must match the lock before they are accepted.
 
-3. Fetch the exact Bun release commit and fixed PR head into a dedicated Bun
+4. Fetch the exact Bun release commit and fixed PR head into a dedicated Bun
    repository, then replay the reviewed series in a disposable worktree:
 
    ```powershell
@@ -112,30 +162,45 @@ api28/
    Brotli's pre-patch blob, and confirms that neither endpoint has a
    `.gitmodules` entry.
 
-4. Once the remaining toolchain byte locks are complete, the two configure
-   inputs are the recorded build entry. They use relative build/cache paths and
-   expect `ANDROID_NDK_ROOT` to identify the locked NDK r27c installation:
+5. Generate the recorded two-ABI build plan. This is read-only and succeeds
+   even while the open gates are being worked through:
 
    ```powershell
-   bun scripts/build.ts --config-file=<absolute-path-to-this-directory>/config/arm64-v8a.configure.json
-   ninja -C build/autojs6-api28/arm64-v8a
-
-   bun scripts/build.ts --config-file=<absolute-path-to-this-directory>/config/x86_64.configure.json
-   ninja -C build/autojs6-api28/x86_64
+   node tools/bun-runtime/experimental/api28/build-experiment.mjs
+   node tools/bun-runtime/experimental/api28/build-experiment.mjs --abi x86_64
    ```
 
-   These commands are recorded build intentions, not a report that a build has
-   succeeded. Run each ABI from a fresh source checkout for reproducibility
-   comparisons.
+6. The same entry has a non-mutating full-input preflight. It requires a clean
+   Bun checkout at the deterministic downstream head, no existing experimental
+   build root, all 22 source inputs, all 17 direct toolchain inputs, and an
+   installed NDK r27c:
+
+   ```powershell
+   node tools/bun-runtime/experimental/api28/build-experiment.mjs --preflight `
+     --bun-repository <absolute-clean-patched-bun-repository> `
+     --source-prefetch-directory <absolute-source-prefetch-directory> `
+     --toolchain-directory <absolute-toolchain-directory> `
+     --android-ndk-root <absolute-installed-ndk-r27c-directory>
+   ```
+
+   `--execute` additionally checks Linux x86_64 plus exact Node, bootstrap Bun,
+   CMake, Ninja, Clang, Rust, and Cargo versions before it can configure or run
+   Ninja. It is hard-locked while `buildReady` is false, so no current command
+   can accidentally turn this incomplete supply chain into an untracked Bun
+   executable. The future execution path sets the locked source prefetch, NDK,
+   Rust toolchain, `SOURCE_DATE_EPOCH`, locale, and timezone for both ABIs.
 
 ## Gates that remain open
 
 The experiment intentionally leaves `buildReady` and `distributionReady` false.
 At minimum, later work must:
 
-- pin Ninja and every remaining APT, LLVM, rustup, bootstrap, and generated
-  GitHub source archive byte input;
-- materialize the locked dependencies and confirm their downloaded bytes;
+- snapshot-pin every Ubuntu/PPA/apt.llvm.org package and the exact GCC/LLVM
+  package closure, then lock the resulting Linux amd64 OCI image;
+- materialize all 181 Cargo registry archives and the exact Linux x86_64 subset
+  of 172 Bun registry entries into verified offline caches;
+- run the full preflight and prove configure plus Ninja make no unrecorded
+  network request;
 - build both ABIs twice and explain every binary difference;
 - run the full ELF, symbol-version, dependency, alignment, license, and source
   availability gates; and

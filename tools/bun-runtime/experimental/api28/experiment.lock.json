@@ -3,7 +3,7 @@
   "identity": {
     "name": "autojs6-bun-api28-patched-experiment",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
-    "status": "source-backport-and-inputs-verified",
+    "status": "source-backport-and-direct-inputs-verified",
     "officialArtifact": false,
     "runtimeProduced": false,
     "buildReady": false,
@@ -16,10 +16,13 @@
     "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
     "license": "MIT",
     "licenseFile": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/LICENSE.md",
-    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series; all remaining downloaded bytes must still be checksum-locked before buildReady may become true."
+    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series. Direct source and toolchain downloads are byte-locked; the host package and complete build-time network closure must also be immutable before buildReady may become true."
   },
   "patchSeries": "patches/series.lock.json",
   "sourceInputLock": "source-inputs.lock.json",
+  "toolchainInputLock": "toolchain-inputs.lock.json",
+  "buildNetworkInputLock": "build-network-inputs.lock.json",
+  "buildEntry": "build-experiment.mjs",
   "toolchain": {
     "host": {
       "os": "linux",
@@ -42,24 +45,30 @@
       "officialChecksumSource": "https://github.com/android/ndk/wiki/Home/24fe2d7ee3591346e0e8ae615977a15c0a4fba40#ndk-r27c-2024-lts"
     },
     "llvm": {
-      "version": "21.1.8"
+      "version": "21.1.8",
+      "status": "host-package-layer-pending"
     },
     "rust": {
       "channel": "nightly-2026-07-20",
+      "version": "1.99.0-nightly (9f36de775 2026-07-19)",
+      "profile": "minimal",
+      "status": "direct-downloads-locked",
       "targets": [
         "aarch64-linux-android",
         "x86_64-linux-android"
       ]
     },
     "cmake": {
-      "version": "3.30.5"
+      "version": "3.30.5",
+      "status": "direct-download-locked"
     },
     "bootstrapBun": {
-      "version": "1.3.13"
+      "version": "1.3.13",
+      "status": "direct-download-locked"
     },
     "ninja": {
-      "version": null,
-      "status": "version-pending"
+      "version": "1.13.2",
+      "status": "direct-download-locked"
     }
   },
   "target": {
@@ -103,6 +112,12 @@
       "tools/bun-runtime/runtime.lock.json"
     ],
     "allowedRepositoryArtifacts": "text manifests, configs, scripts, tests, and patch files only"
+  },
+  "reproducibility": {
+    "sourceDateEpoch": 1788278400,
+    "timezone": "UTC",
+    "locale": "C.UTF-8",
+    "networkPolicy": "Build execution must remain disabled until every build-time input is locked and the eventual build runs with network access disabled."
   },
   "sourceEvidence": [
     {
@@ -157,12 +172,12 @@
     {
       "id": "toolchain-byte-lock",
       "resolved": false,
-      "description": "The Ubuntu base manifest and NDK archive are locked, but the exact Ninja/APT/LLVM/rustup/bootstrap inputs and GitHub-generated dependency archive bytes are not yet fully locked."
+      "description": "The Ubuntu base manifest and all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents are byte-locked. The mutable Ubuntu/PPA/apt.llvm.org package closure and exact LLVM/GCC .deb files remain unresolved; Cargo and Bun lockfile identities are inventoried separately, but their registry archives and offline caches are not yet materialized."
     },
     {
       "id": "dependency-lock",
       "resolved": true,
-      "description": "All 22 Android-release dependency identities are expanded from the pinned source. A project-owned patch replaces the movable Brotli tag with its full commit, and Node.js headers plus both Android WebKit prebuilts have authoritative SHA-256 locks."
+      "description": "All 22 Android-release dependency identities are expanded from the pinned source. A project-owned patch replaces the movable Brotli tag with its full commit; all 19 generated GitHub source archives, Node.js headers, and both Android WebKit prebuilts have byte-count and SHA-256 locks."
     },
     {
       "id": "build-and-runtime-evidence",
