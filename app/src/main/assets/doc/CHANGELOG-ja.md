@@ -8,26 +8,26 @@
 
 ###### 2026/09/01
 
-* `ヒント` Android 13 (API 33) を正式な minimum target とし, API 28 から 32 は patched Bun runtime が portable validation を通過するまで未対応
-* `改善` 固定済みの公式 Bun 1.4.0 Android payload を維持したまま, 対応する Android の下限を Android 14 (API 34) から Android 13 (API 33) に変更
-* `改善` AOSP T seccomp 境界を明文化: Android 13 は Bun の raw `close_range` syscall を allowlist し, API 31 の失敗から API 28 から 32 には manifest-only change ではなく Bun compatibility patch が必要と確認
-* `改善` 決定的に再現できる 6 patch の Bun source backport, 固定した NDK と container input, Android release で有効な 22 dependency の不変 identity により Android 9+ experiment を準備し, 未 build の runtime は明示的に利用不可のまま維持
-* `改善` すべての Debug と Release APK について 16 KB ZIP alignment, 正確な ABI content, 固定 Bun payload の size と SHA-256 を検証し, Android 13 test device 上の installed payload bytes も検証
-* `改善` 19 個の Bun source archive と 17 個の不変な direct toolchain download の正確な bytes を固定し, Cargo 181 件と Bun 172 件の registry integrity entry を棚卸しし, 上書きを拒否する materializer と `buildReady` gate 付き双 ABI build preflight を追加
-* `依存関係` 共有 Parcelable contract class を Release R8 で保持するために必要な Kotlin Parcelize runtime を追加
+* `ヒント` 本バージョンは最低システム要件を Android 14 から Android 13 (API 33) に引き下げました. Android 9 から 12L (API 28 から 32) は引き続き未対応で, patch 版 Bun runtime が移植性検証を通過するまでお待ちください
+* `改善` 最低システム要件の引き下げ: 固定された公式 Bun 1.4.0 Android payload をそのまま使用し, サポート下限を Android 14 (API 34) から Android 13 (API 33) に緩和してより多くのデバイスをカバー
+* `改善` 旧バージョンで動作しない根本原因を特定: Android 13 以降はシステムの seccomp が Bun の呼び出す raw `close_range` syscall を許可する一方, API 31 実機での失敗により API 28 から 32 は Bun 本体の修正が必要で, manifest の変更だけでは解決できないことが判明
+* `改善` 将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); patch 版 runtime は未ビルドで, 現行パッケージには含まれません
+* `改善` パッケージ品質チェックの強化: すべての Debug および Release APK で 16 KB ZIP alignment, 正確な ABI 内容, 固定 Bun payload のサイズと SHA-256 を検証し, Android 13 テスト端末でインストール済み payload のバイトを照合
+* `改善` サプライチェーンの強化: 19 個の Bun source archive と 17 個の toolchain ダウンロードの正確なバイトを固定し, 181 個の Cargo と 172 個の Bun registry integrity エントリーを棚卸しし, 上書きを拒否する materializer と `buildReady` ゲートで保護されたデュアル ABI ビルド preflight を追加
+* `依存関係` Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加
 
 # v0.1.0
 
 ###### 2026/09/01
 
-* `ヒント` 最初の release は 1 つの source snapshot を実行し, AutoJs6 globals, Java bridge, multi-file project, relative project import は提供しません
-* `機能` 公式 Bun 1.4.0 Android executable を独立した `bun` engine として JavaScript と TypeScript を実行し, `"bun";` directive と `bun run --no-install <source>` で選択して dependency の自動 install を回避
-* `機能` Stdout と stderr を bounded oneway Binder callback chunk としてのみ stream し, terminal result は complete output stream を含まず status と diagnostic だけを報告
-* `機能` 隔離された `:bun_runtime` plugin process で explicit cancellation, default 60 秒 timeout, runtime information, prewarming に対応
-* `機能` `arm64-v8a` と baseline `x86_64` の公式 64-bit Android payload, single-ABI package, `universal` package を提供
-* `機能` Plugin discovery, 保護された Wake activation, 完全な PluginInfo metadata, 10 言語の user documentation を提供
-* `改善` Versioned Binder contract と ParcelFileDescriptor source transport を使用し, source limit 16 MiB, combined output limit 8 MiB を設定
-* `改善` Android read-only native library directory から Bun を起動し, 固定 release archive と packaged binary の size, SHA-256, ELF type, machine, alignment を検証
-* `改善` 両 packaged executable の PT_LOAD alignment が 16 KB 以上であることを検証し, 実際の 16 KB Android runtime test が未完了であることを明記
-* `改善` Validated JSON source から README, plugin-center instruction, built-in changelog asset を生成し, build, Markdown, runtime artifact の CI check を追加
-* `改善` API 31 real device で Bun syscall 436 `close_range` が app seccomp `SIGSYS` となったため Android 14 (API 34) を必須化. Sony API 33 device 1 台は予想外に成功したものの portable evidence ではなく, API 35 の JS と TS Binder round trip は成功し, lower version は upstream fallback 待ち
+* `ヒント` 初回リリース: 各実行は独立したスクリプトファイル 1 つを実行します. AutoJs6 の内蔵関数, Java bridge, 複数ファイルのプロジェクト, 相対パス import はまだ利用できません
+* `機能` 独立した `bun` エンジンを追加: スクリプトの 1 行目に `"bun";` と書くだけで公式 Bun 1.4.0 Android executable により JavaScript と TypeScript を実行. 実際のコマンドは `bun run --no-install <source>` で, 依存関係の自動インストールは行いません
+* `機能` 実行出力をリアルタイムで返送: stdout と stderr は有界の oneway Binder callback によりチャンク単位でストリーミングされ, 最終結果は状態と診断情報のみを報告し, 完全な出力ストリームは含みません
+* `機能` 実行を制御可能に: スクリプトは隔離された `:bun_runtime` プラグインプロセスで実行され, 明示的なキャンセル, 60 秒のデフォルト timeout, runtime 情報の照会, prewarming に対応
+* `機能` `arm64-v8a` と baseline `x86_64` の公式 64-bit Android payload, および単一 ABI と `universal` パッケージを提供
+* `機能` 完全なプラグイン体験を提供: プラグイン検出, 権限で保護されたアクティベーション (Wake), 完全な PluginInfo metadata, 10 言語のユーザードキュメント
+* `改善` バージョン管理された Binder contract を採用し, ParcelFileDescriptor でソースを転送. ソース上限 16 MiB, 合計出力上限 8 MiB
+* `改善` Android の読み取り専用 native library ディレクトリーから Bun を起動し, 固定 release archive とパッケージ済み binary のサイズ, SHA-256, ELF 属性を検証
+* `改善` パッケージされた 2 つの executable の PT_LOAD alignment がいずれも 16 KB 以上であることを検証しつつ, 実際の 16 KB Android 環境でのテストが未完了であることを正直に記載
+* `改善` 検証済み JSON ソースから README, プラグインセンター説明, 内蔵 changelog を生成し, ビルド, Markdown, runtime artifact の CI チェックを追加
+* `改善` 最低バージョンを暫定的に Android 14 (API 34) に設定: API 31 実機では Bun の `close_range` syscall が seccomp により `SIGSYS` で強制終了され, Sony 製 API 33 端末 1 台は予想外に通過したものの移植性の証明には不十分で, API 35 実機での JS と TS の Binder 往復テストは通過

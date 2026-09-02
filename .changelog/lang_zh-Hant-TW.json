@@ -8,37 +8,37 @@
     "v0.2.0": {
       "released_date": "2026/09/01",
       "hint": [
-        "Android 13 (API 33) 現為正式最低目標; API 28 到 32 在 patched Bun runtime 通過可攜式驗證前仍不受支援"
+        "本版本將最低系統要求從 Android 14 降至 Android 13 (API 33); Android 9 到 12L (API 28 到 32) 仍不受支援, 需等待補丁版 Bun runtime 通過可攜性驗證"
       ],
       "improvement": [
-        "保留固定的官方 Bun 1.4.0 Android payload, 將支援的 Android 下限從 Android 14 (API 34) 降至 Android 13 (API 33)",
-        "記錄 AOSP T seccomp 分界: Android 13 已允許 Bun 呼叫的 raw `close_range` syscall, API 31 失敗則表明 API 28 到 32 需要 Bun 相容性補丁, 僅修改 manifest 無法相容",
-        "使用可確定性重播的六個 Bun 原始碼 backport patch, 固定的 NDK 與 container 輸入以及 22 個 Android release active dependency 的不可變 identity 為 Android 9+ 實驗做準備, 同時明確維持未 build runtime 不可用",
-        "驗證每個 Debug 和 Release APK 的 16 KB ZIP alignment, 精確 ABI 內容, 固定 Bun payload 大小與 SHA-256, 並驗證 Android 13 測試裝置上已安裝的 payload bytes",
-        "鎖定 19 個 Bun source archive 與 17 個不可變 direct toolchain download 的精確 bytes, 盤點 181 個 Cargo 及 172 個 Bun registry integrity entry, 並新增拒絕覆寫的 materializer 與受 `buildReady` gate 保護的雙 ABI build preflight"
+        "降低最低系統要求: 繼續使用固定的官方 Bun 1.4.0 Android payload, 將支援下限從 Android 14 (API 34) 放寬至 Android 13 (API 33), 涵蓋更多裝置",
+        "查明低版本無法使用的根本原因: Android 13 起系統 seccomp 放行 Bun 呼叫的 raw `close_range` syscall, 而 API 31 實機失敗證明 API 28 到 32 需要修改 Bun 本身, 僅修改 manifest 無法解決",
+        "為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 原始碼補丁方案 (6 個補丁) 並鎖定建置輸入 (固定 NDK 與容器, 22 個 Android release 活躍相依性); 補丁版 runtime 尚未建置, 也不會進入目前安裝套件",
+        "加強安裝套件品質檢查: 每個 Debug 和 Release APK 均驗證 16 KB ZIP alignment, 精確 ABI 內容以及固定 Bun payload 的大小與 SHA-256, 並在 Android 13 測試裝置上核對已安裝的 payload 位元組",
+        "強化供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載檔的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 建置預檢"
       ],
       "dependency": [
-        "加入 Release R8 保留共用 Parcelable contract class 所需的 Kotlin Parcelize runtime"
+        "新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class"
       ]
     },
     "v0.1.0": {
       "released_date": "2026/09/01",
       "hint": [
-        "首個版本每次執行一個原始碼快照, 不提供 AutoJs6 globals, Java bridge, 多檔 project 或相對 project import"
+        "首個版本: 每次執行一個獨立腳本檔案, 暫不提供 AutoJs6 內建函數, Java bridge, 多檔案專案和相對路徑匯入"
       ],
       "feature": [
-        "使用官方 Bun 1.4.0 Android executable 作為獨立 `bun` 引擎執行 JavaScript 和 TypeScript, 透過 `\"bun\";` 指令選擇, 並使用 `bun run --no-install <source>` 避免自動安裝 dependency",
-        "只透過有界 oneway Binder callback chunk 串流傳回 stdout 和 stderr, terminal result 只報告 status 和 diagnostic, 不攜帶完整 output stream",
-        "在隔離的 `:bun_runtime` 插件行程中支援 explicit cancellation, 60 秒 default timeout, runtime information 和 prewarming",
-        "提供 `arm64-v8a` 和 baseline `x86_64` 官方 64-bit Android payload, 以及單一 ABI 和 `universal` 安裝套件",
-        "提供插件 discovery, 受保護的 Wake activation, 完整 PluginInfo metadata 和 10 種語言使用者文件"
+        "新增獨立 `bun` 引擎: 在腳本第一行寫上 `\"bun\";` 即可用官方 Bun 1.4.0 Android executable 執行 JavaScript 和 TypeScript, 實際命令為 `bun run --no-install <source>`, 不會自動安裝相依套件",
+        "即時回傳執行輸出: stdout 和 stderr 透過有界 oneway Binder callback 分塊串流回傳, 最終結果只回報狀態和診斷資訊, 不攜帶完整輸出流",
+        "執行可控: 腳本在隔離的 `:bun_runtime` 插件行程中執行, 支援顯式取消, 60 秒預設逾時, runtime 資訊查詢和 prewarming",
+        "提供 `arm64-v8a` 和 baseline `x86_64` 官方 64 位元 Android payload, 以及單 ABI 和 `universal` 安裝套件",
+        "提供完整插件體驗: 插件探索, 受權限保護的啟用 (Wake), 完整 PluginInfo metadata 和 10 種語言的使用者文件"
       ],
       "improvement": [
-        "使用 versioned Binder contract, 透過 ParcelFileDescriptor 傳輸原始碼, 原始碼上限為 16 MiB, combined output 上限為 8 MiB",
-        "從 Android read-only native library directory 啟動 Bun, 並驗證固定 release archive 和 packaged binary 的 size, SHA-256, ELF type, machine 和 alignment",
-        "驗證兩個 packaged executable 的 PT_LOAD alignment 均至少為 16 KB, 同時明確記錄尚未完成真正 16 KB Android runtime 測試",
-        "從 validated JSON source 產生 README, 插件中心說明和 built-in changelog asset, 並加入 build, Markdown 和 runtime artifact CI 檢查",
-        "將最低版本設為 Android 14 (API 34), 因為 API 31 實機上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 終止. 一台 Sony API 33 裝置意外通過但不能證明可攜式支援, API 35 實機 JS 和 TS Binder 往返已通過, 較低版本需等待上游 fallback"
+        "採用版本化 Binder contract, 透過 ParcelFileDescriptor 傳輸原始碼, 原始碼上限 16 MiB, 合併輸出上限 8 MiB",
+        "從 Android 唯讀 native library 目錄啟動 Bun, 並校驗固定 release archive 和打包 binary 的大小, SHA-256 與 ELF 屬性",
+        "驗證兩個打包 executable 的 PT_LOAD alignment 均不低於 16 KB, 同時如實說明尚未完成真實 16 KB Android 環境測試",
+        "由經過校驗的 JSON 文案源產生 README, 插件中心說明和內建更新日誌, 並加入建置, Markdown 和 runtime artifact 的 CI 檢查",
+        "將最低版本暫定為 Android 14 (API 34): API 31 實機上 Bun 的 `close_range` syscall 被 seccomp 以 `SIGSYS` 終止, 一台 Sony API 33 裝置雖意外通過但不足以證明可攜性, API 35 實機 JS 和 TS Binder 往返測試已通過"
       ]
     }
   }
