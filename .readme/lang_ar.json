@@ -5,75 +5,88 @@
   "h3_languages": "اللغات",
   "p_languages_all_supported": "يدعم ملف README.md الحالي اللغات التالية",
   "h3_introduction": "مقدمة",
-  "p_introduction": "Bun Runtime هو plugin مستقل لنظام Android يتيح لـ AutoJs6 اختيار [Bun]({{ bun_official_url }}) كمحرك منفصل لـ JavaScript و TypeScript. يرسل المضيف snapshot واحدة من المصدر عبر file descriptor, ويشغل plugin ملف Bun Android executable الرسمي والمثبت داخل runtime process خاصة به, ثم يعيد stdout و stderr وحالة الاكتمال و timeout و cancellation عبر Binder. هذا تشغيل حقيقي لـ Bun وليس alias لـ Rhino أو Node.js.",
+  "p_introduction": "Bun Runtime هو plugin مستقل يضيف إلى AutoJs6 محرك script حديثا اختياريا: [Bun]({{ bun_official_url }}). بعد تثبيت plugin وتفعيله, يكفي وضع `\"bun\";` في السطر الأول من ملف JavaScript أو TypeScript ليتم تسليم هذا الملف إلى محرك Bun {{ bun_version }} حقيقي بدلا من محرك Rhino المدمج, فتصبح صياغة JavaScript الحديثة و TypeScript و Bun API المدمجة مثل `fetch` قابلة للاستخدام مباشرة على أجهزة Android.\n\nيعمل plugin بطريقة بسيطة: يرسل AutoJs6 محتوى script إلى plugin, ويشغل plugin ملف Bun Android executable الرسمي في process معزولة خاصة به, ثم يعود الخرج مع النتيجة النهائية إلى console الخاصة بـ AutoJs6 في الوقت الفعلي. هذا Bun حقيقي, وليس alias أو طبقة محاكاة فوق Rhino أو Node.js.",
   "h3_features": "الميزات",
   "features": [
-    "محرك مستقل: يشغل Bun {{ bun_version }} Android executable الرسمي بدلا من تمرير الكود إلى محرك آخر في AutoJs6.",
-    "JavaScript و TypeScript: يحلل Bun وينفذ snapshot واحدة من JS أو TS, بما في ذلك ESM syntax و Bun API المتاحة في Android build المثبتة.",
-    "تنفيذ قابل للمراقبة: يتم بث stdout و stderr إلى المضيف, وتبلغ النتيجة النهائية عن exit status والمدة و timeout و cancellation و diagnostic محدودة.",
-    "Runtime محكومة: يتم تثبيت binary الخاصة بـ `arm64-v8a` و `x86_64` بواسطة tag و commit والحجم و SHA-256 و ELF machine والحد الأدنى من PT_LOAD alignment.",
-    "تسليم محلي: تغطي plugin metadata وتعليمات plugin center و README و changelog عشر لغات من مجموعة مصادر واحدة تم التحقق منها."
+    "محرك Bun حقيقي: يتم تنفيذ script مباشرة بواسطة Bun {{ bun_version }} Android executable الرسمي, دون transpilation ودون تمرير إلى محركات AutoJs6 الأخرى.",
+    "TypeScript جاهز فورا: تعمل ملفات TS مباشرة دون خطوة compile أو إعداد إضافي, وتعمل صياغة JavaScript الحديثة و ESM syntax داخل الملف الواحد و Bun API المتاحة في Android build المثبتة.",
+    "تنفيذ شفاف: يعود خرج مثل `console.log` إلى console الخاصة بـ AutoJs6 في الوقت الفعلي, وتبلغ النتيجة النهائية عن exit status والمدة وما إذا كان التشغيل انتهى بـ timeout أو تم إلغاؤه.",
+    "مستقر وقابل للتحكم: يعمل كل script في plugin process معزولة, ويمكن إلغاؤه في أي وقت, ويتم إنهاؤه تلقائيا عند timeout, لذلك لا يسقط script معطوب AutoJs6 معه أبدا.",
+    "مصدر محرك قابل للتحقق: يطابق Bun executable المضمن الإصدار الرسمي byte مقابل byte, ويتم فرض tag و commit والحجم و SHA-256 وخصائص ELF أثناء build و CI.",
+    "تسليم محلي كامل: تغطي plugin metadata وتعليمات plugin center و README و changelog عشر لغات, وكلها مولدة من مجموعة مصادر واحدة تم التحقق منها."
   ],
   "h3_usage": "التثبيت والاستخدام",
   "usage_steps": [
-    "استخدم AutoJs6 build {{ required_host_version_code }} ({{ required_host_version_name }}) أو أحدث على Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث.",
-    "ثبت release APK المطابق لـ ABI الجهاز. اختر `arm64-v8a` لمعظم الهواتف والأجهزة اللوحية, و `x86_64` لمحاكي أو جهاز متوافق, أو `universal` عند عدم التأكد.",
-    "افتح plugin center في AutoJs6 وفعل Bun Runtime. إذا بقي plugin المثبت حديثا متوقفا, استخدم إجراء `تنشيط` الذي يعرضه المضيف.",
-    "ضع التوجيه المستقل `\"bun\";` في بداية ملف JavaScript أو TypeScript, ثم شغله بالطريقة المعتادة من AutoJs6."
+    "جهز البيئة: ثبت AutoJs6 build {{ required_host_version_code }} ({{ required_host_version_name }}) أو أحدث على Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث.",
+    "ثبت plugin: نزل وثبت APK المطابق للجهاز من [Releases]({{ repo_url }}/releases). اختر `arm64-v8a` لمعظم الهواتف والأجهزة اللوحية, و `x86_64` للمحاكيات أو أجهزة x86_64, أو `universal` عند عدم التأكد (أكبر قليلا ويعمل على كليهما).",
+    "فعل plugin: افتح plugin center في AutoJs6 وفعل Bun Runtime. إذا ظهر plugin المثبت حديثا متوقفا, اضغط إجراء `تنشيط` الذي يعرضه المضيف.",
+    "شغل script: ضع `\"bun\";` وحده في السطر الأول من ملف JavaScript أو TypeScript (مع علامتي الاقتباس والفاصلة المنقوطة), ثم شغل الملف من AutoJs6 كالمعتاد."
   ],
-  "p_usage_note": "ينفذ الإصدار 0.1 snapshot واحدة غير قابلة للتغيير لكل طلب باستخدام `bun run --no-install <source>`, لذلك لا يثبت dependency مفقودة تلقائيا. اقرأ القيود أدناه قبل نقل مشروع Rhino أو Node.js موجود إلى Bun.",
+  "p_usage_note": "ينفذ كل تشغيل snapshot واحدة من الملف الحالي (الأمر الفعلي هو `bun run --no-install <source>`); لا يثبت plugin أبدا npm dependency تلقائيا ولا يقرأ ملفات أخرى في المشروع. اقرأ القيود الحالية أدناه قبل نقل مشروع Rhino أو Node.js موجود إلى Bun.",
   "h3_quick_start": "بدء سريع",
-  "p_quick_start_intro": "شغل هذا الملف للتأكد من أن المضيف اختار Bun وأن Android runtime بدأت",
-  "p_quick_start_result": "يبدأ الخرج المتوقع بـ `Bun {{ bun_version }}` ثم يطبع `android`.",
-  "p_typescript_intro": "يعالج Bun TypeScript مباشرة, لذلك لا يلزم TypeScript compilation في جانب المضيف",
+  "p_quick_start_intro": "احفظ المحتوى التالي كملف script وشغله للتأكد من أن محرك Bun تولى التنفيذ",
+  "p_quick_start_result": "إذا سار كل شيء جيدا, يكون أول سطر في الخرج `Bun {{ bun_version }}` والسطر الثاني `android`.",
+  "p_typescript_intro": "تعمل ملفات TypeScript مباشرة أيضا, دون compile مسبق أو إعداد إضافي",
   "h3_compatibility": "التوافق",
   "compatibility_points": [
-    "Runtime: Bun الرسمي {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
-    "المنصة: Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث, مع payload رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`. فشل real-device run على API 31 بسبب app seccomp `SIGSYS` عند Bun syscall 436 `close_range`. لا تتضمن AOSP Android 12 والإصدارات الأقدم هذا syscall في app allowlist, بينما يسمح Android 13 (T, API 33) بالـ raw syscall. يضيف Android 14 public bionic wrapper, لكن Bun يستدعي raw syscall ولا يحتاج إلى API 34 libc symbol. نجحت runtime tests حقيقية على API 33 و API 35. تبقى API 28 إلى 32 غير مدعومة حتى يعالج patched Bun runtime seccomp traps ويجتاز portable validation.",
-    "عقد المضيف: AutoJs6 build {{ required_host_version_code }} أو أحدث و Bun runtime contract version {{ plugin_contract_version }}.",
-    "الحدود: مصدر حتى {{ max_source_size }}, و combined streaming budget لـ stdout و stderr حتى {{ max_output_size }}, و default timeout مقداره {{ default_timeout }}.",
-    "الحزم: تكون single-ABI APK أصغر, بينما تتضمن `universal` APK الأكبر كلا ABI المدعومين."
+    "المحرك: Bun الرسمي {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",
+    "النظام: Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث, مع executable رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`. لا يدعم بعد Android 9 حتى 12L (API 28 حتى 32); تشرح الأسئلة الشائعة أعلاه السبب. نجحت اختبارات الأجهزة الحقيقية على API 33 و API 35.",
+    "المضيف: AutoJs6 build {{ required_host_version_code }} أو أحدث, مع Bun runtime contract version {{ plugin_contract_version }}.",
+    "حدود كل تشغيل: مصدر حتى {{ max_source_size }}, وخرج stdout و stderr مجتمعين حتى {{ max_output_size }}, و timeout افتراضي مقداره {{ default_timeout }}.",
+    "الحزم: تبقي single-ABI APK التثبيت أصغر, بينما تتضمن `universal` APK الأكبر كلا ABI المدعومين."
   ],
-  "h3_limitations": "قيود الإصدار 0.1",
+  "h3_limitations": "القيود الحالية",
   "limitations": [
-    "Snapshot واحدة فقط: لا ينفذ هذا الإصدار نقل مشروع متعدد الملفات أو relative project import.",
-    "لا توجد AutoJs6 globals: لا تظهر Rhino globals أو Android automation API أو host object داخل Bun.",
-    "لا يوجد Java bridge: لا يستطيع Bun الوصول مباشرة إلى Java class أو object داخل عملية AutoJs6.",
-    "لا يوجد وعد بـ toolchain كاملة: تقع `bunx` و executable المنتجة على الجهاز و runtime C compilation وأي native addon خارج النطاق المدعوم.",
-    "ليس security sandbox: يعمل Bun script ككود موثوق تحت plugin app UID ويمكنه استخدام permission الممنوحة إلى plugin."
+    "ملف واحد لكل تشغيل: يستقبل plugin وينفذ source snapshot واحدة دون مجلد المشروع, لذلك لا يمكن حل relative import مثل `import './utils.js'`. لا تتأثر ESM syntax داخل الملف الواحد; عند الحاجة إلى عدة module, اجمعها أولا في ملف واحد على حاسوب (انظر الأسئلة الشائعة).",
+    "لا توجد دوال AutoJs6 مدمجة: automation API مثل `click()` و `toast()` و Rhino globals غير موجودة داخل Bun script, لذلك تناسب Bun script حاليا المهام التي لا تعتمد على قدرات المضيف, مثل الحساب ومعالجة النصوص وطلبات الشبكة.",
+    "لا يوجد Java bridge: لا يستطيع Bun script الوصول مباشرة إلى Java class أو object في عملية AutoJs6.",
+    "لا يوجد وعد بـ Bun toolchain كاملة: تقع `bunx` و executable المنتجة على الجهاز و runtime C compilation وأي native addon خارج النطاق المدعوم.",
+    "ليس security sandbox: يعمل Bun script ككود موثوق في plugin process ويمكنه استخدام permission الممنوحة للـ plugin, لذلك شغل فقط script التي تثق بها."
   ],
   "h3_security": "الأذونات والتكامل",
   "security_points": [
-    "تتم حماية مكونات Wake و info و runtime المصدرة بواسطة `org.autojs.permission.PLUGIN`; ويواصل AutoJs6 فحوص authorization المعتادة للـ plugin.",
-    "توضع source snapshot في private directory خاصة بكل تشغيل. يتم تشغيل executable من read-only native library directory في Android ولا تنسخ إلى writable storage للتنفيذ.",
-    "يسجل repository lock كلا من official release archive و packaged binary. ترفض CI أي اختلاف في الحجم أو SHA-256 أو ELF type أو machine أو alignment قبل build.",
-    "يعلن plugin عن Internet permission لأن Bun script الموثوقة قد تستخدم network API مثل `fetch`. Plugin ليس sandbox, لذلك شغل فقط script التي تثق بها."
+    "تتم حماية مكونات التنشيط (Wake) و info و runtime المصدرة بواسطة `org.autojs.permission.PLUGIN`, ويواصل AutoJs6 فحوص authorization المعتادة للـ plugin.",
+    "توضع script snapshot في private directory خاصة بكل تشغيل, ويتم تشغيل Bun executable من read-only native library directory في Android بدلا من نسخها إلى writable storage.",
+    "يسجل repository lock كلا من official release archive و binary المعبأة في APK; ترفض CI أي انحراف في الحجم أو SHA-256 أو خصائص ELF قبل build.",
+    "يعلن plugin عن Internet permission لأن Bun script الموثوقة قد تستخدم network API مثل `fetch`. Plugin ليس sandbox; شغل فقط script التي تثق بها."
   ],
   "h3_faq": "الأسئلة الشائعة",
   "faq": [
     {
-      "q": "لماذا لا توجد AutoJs6 globals داخل Bun?",
-      "a": "Bun هو process ومحرك JavaScript منفصل, وليس Rhino compatibility layer. يجب أن يعرض host bridge مستقبلي كل automation capability بوضوح, ولا يقدم الإصدار 0.1 هذا bridge عمدا."
+      "q": "لماذا دوال AutoJs6 مثل `click()` و `toast()` غير متاحة في Bun script?",
+      "a": "يعمل Bun في process منفصلة وهو محرك JavaScript مختلف تماما عن Rhino, لذلك لا تظهر AutoJs6 globals داخل Bun script. يتطلب السماح لـ Bun script باستدعاء قدرات الأتمتة host bridge يعرض كل قدرة بوضوح; لا يقدم الإصدار الحالي هذا bridge عمدا حتى الآن. انظر خريطة الطريق للاطلاع على الخطط."
     },
     {
-      "q": "هل يمكن لـ script استيراد ملف local project آخر?",
-      "a": "ليس في الإصدار 0.1. ينقل contract source snapshot واحدة فقط ولا ينقل project tree حتى الآن, لذلك لا يمكن حل relative project import. تظل single-file ESM syntax مدعومة."
+      "q": "هل يمكنني استخدام حزم npm?",
+      "a": "ليس بتثبيتها على الجهاز. يعمل plugin دائما بـ `--no-install` ولا ينزل dependency أبدا. إذا كانت مكتبة خارجية ضرورية فعلا, اجمع أولا script مع dependency الخاصة به من JS الخالص في ملف واحد على حاسوب, مثلا بـ `bun build`, ثم شغل هذا الملف على الجهاز; لا يمكن بهذه الطريقة استخدام الحزم التي تعتمد على native addon."
     },
     {
-      "q": "هل يدعم plugin أجهزة page-size بحجم 16 KB?",
-      "a": "تبلغ PT_LOAD alignment في كلا ELF executable المضمنين 16 KB على الأقل. لم يكتمل اختبار Android runtime حقيقي بحجم 16 KB, لذلك لا يدعي هذا الإصدار دعما end-to-end تم التحقق منه."
+      "q": "هل يمكن لـ script عمل `import` لملفات أخرى من المشروع?",
+      "a": "ليس حاليا. ينقل plugin contract source snapshot واحدة دون مجلد المشروع, لذلك لا يمكن حل relative import. دعم المشاريع متعددة الملفات مدرج في خريطة الطريق, و ESM syntax داخل الملف الواحد تعمل بشكل طبيعي."
+    },
+    {
+      "q": "لماذا Android 13 هو الحد الأدنى?",
+      "a": "يستدعي Bun نداء النظام `close_range` في Linux (syscall 436), وهو غير مدرج في app seccomp allowlist على Android 12L وما قبله, لذلك يقتل process الخاصة بـ Bun بإشارة `SIGSYS` (تم إعادة إنتاجه على جهاز حقيقي API 31). يسمح Android 13 بهذا النداء, ونجحت اختبارات الأجهزة الحقيقية على API 33 و API 35. يتطلب دعم الإصدارات الأقدم عمل patch لـ Bun; انظر خريطة الطريق لمتابعة التقدم."
+    },
+    {
+      "q": "ماذا يحدث عندما ينتهي وقت script أو يطبع أكثر من اللازم?",
+      "a": "يحدد كل تشغيل افتراضيا بـ {{ default_timeout }}; عند timeout يتم إنهاء process الخاصة بـ Bun وتوسم النتيجة بأنها انتهت المهلة. عندما يتجاوز خرج stdout و stderr مجتمعين {{ max_output_size }}, ينتهي التشغيل بخطأ تجاوز حد الخرج بدلا من الاقتطاع الصامت. في كلتا الحالتين, قسم المهمة أو قلل كمية الخرج."
+    },
+    {
+      "q": "هل أجهزة page-size بحجم 16 KB مدعومة?",
+      "a": "كلا ELF executable المعبأين لهما PT_LOAD alignment لا يقل عن 16 KB, لكن اختبار end-to-end في بيئة Android حقيقية بحجم 16 KB لم يكتمل بعد, لذلك لا يدعي هذا الإصدار دعم 16 KB متحققا منه."
     },
     {
       "q": "أي APK يجب أن أثبت?",
-      "a": "تستخدم معظم أجهزة Android الفعلية `arm64-v8a`. استخدم baseline `x86_64` للمحاكيات أو أجهزة x86_64 المتوافقة. تتضمن `universal` كليهما وهي الخيار الآمن عند عدم معرفة ABI."
+      "a": "تستخدم معظم الهواتف والأجهزة اللوحية `arm64-v8a`. استخدم baseline `x86_64` للمحاكيات أو أجهزة x86_64. عند عدم التأكد, ثبت `universal` الذي يتضمن كلا ABI; أكبر قليلا لكنه الخيار الأكثر أمانا."
     }
   ],
   "h3_plugin_interface": "واجهة plugin",
-  "p_plugin_interface": "هذه المعرفات والحدود الثابتة مخصصة لمطوري host في AutoJs6 و plugin",
+  "p_plugin_interface": "هذا القسم موجه لمطوري مضيف AutoJs6 و plugin; يمكن للمستخدمين العاديين تخطيه. المعرفات والحدود الثابتة هي",
   "p_contract": "يتم اكتشاف `BunRuntimeService` عبر action `{{ plugin_service_action }}` و category `{{ plugin_service_category }}`. يستقبل المصدر عبر `ParcelFileDescriptor` و execution ID ضمن الطلب, ثم ينفذ `bun run --no-install <source>` مع بقاء استدعاء `runScript` المتزامن نشطا. يتم إرسال stdout و stderr فقط كـ bounded chunk عبر oneway callback. يحتوي terminal Bundle المعاد و event باسم `finished` على status و diagnostic summary field فقط ولا يحمل complete output stream, مما يبقي كل Binder transaction دون size limit. تدعم service cancellation صريحة و runtime prewarming وتعمل في `:bun_runtime`.",
   "p_16kb_status": "حالة 16 KB: تستوفي PT_LOAD segment في ELF المضمنة لـ `arm64-v8a` و `x86_64` متطلبات 16 KB alignment. لم يتم التشغيل بعد على جهاز أو محاكي Android حقيقي بحجم 16 KB, لذلك تم التحقق من ELF alignment فقط.",
   "h3_roadmap": "خريطة الطريق",
-  "p_roadmap": "تفصل خريطة الطريق السلوك الحالي عن project snapshot المخططة و AutoJs6 capability bridge محدود والتحقق الأوسع على Android وترقيات Bun المستقبلية. العناصر غير المحددة خطط وليست دعوى دعم حالي.",
+  "p_roadmap": "تجيب خريطة الطريق عن سؤالين: ما الذي يعمل الآن وما الذي يأتي لاحقا. تصف العناصر المحددة السلوك الفعلي للإصدار الحالي; أما العناصر غير المحددة (المشاريع متعددة الملفات و AutoJs6 capability bridge ودعم إصدارات Android أوسع وترقيات Bun وغيرها) فهي خطط, وليست وعدا بدعم حالي.",
   "text_link_roadmap": "عرض ROADMAP.md",
   "h3_release_history": "سجل الإصدارات",
   "h5_more_release_history": "لمزيد من سجل الإصدارات",
@@ -88,6 +101,6 @@
   "text_link_bun": "موقع Bun الرسمي",
   "text_link_bun_release": "إصدار Bun المثبت",
   "text_link_third_party_notices": "إشعارات الأطراف الخارجية",
-  "p_instruction_backend": "يشغل هذا الإصدار Bun {{ bun_version }} Android executable الرسمية في plugin runtime process معزولة باستخدام `bun run --no-install <source>`. يستقبل JS أو TS source snapshot واحدة, ولا يثبت dependency مفقودة تلقائيا, ويبث stdout و stderr والحالة النهائية إلى AutoJs6.",
-  "p_instruction_more": "راجع [README الخاص بالمشروع]({{ repo_url }}) لمعرفة التوافق والأمان واختيار الحزمة وجميع قيود الإصدار 0.1."
+  "p_instruction_backend": "يتيح هذا plugin لـ AutoJs6 تشغيل JavaScript و TypeScript بمحرك Bun {{ bun_version }} الرسمي: ضع `\"bun\";` في السطر الأول من script, فيتم تنفيذ الملف بواسطة Bun في plugin process معزولة (الأمر الفعلي هو `bun run --no-install <source>`), مع بث الخرج والنتيجة النهائية إلى AutoJs6. ينفذ كل تشغيل snapshot واحدة من الملف الحالي ولا يثبت npm dependency تلقائيا أبدا.",
+  "p_instruction_more": "راجع [README الخاص بالمشروع]({{ repo_url }}) لمعرفة التوافق والأذونات واختيار الحزمة والقائمة الكاملة للقيود الحالية."
 }

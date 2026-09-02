@@ -1,6 +1,11 @@
-Bun Runtime 是一個獨立 Android 插件, 讓 AutoJs6 可以選擇 [Bun](https://bun.sh/) 作為獨立的 JavaScript 和 TypeScript 引擎. 宿主透過檔案描述元傳送一個原始碼快照, 插件在自己的 runtime 行程中啟動固定版本的官方 Bun Android executable, 並透過 Binder 傳回標準輸出, 標準錯誤, 完成狀態, timeout 和取消事件. 這是真正的 Bun 執行, 不是 Rhino 或 Node.js 的別名.
+本插件讓 AutoJs6 使用官方 Bun 1.4.0 引擎執行 JavaScript 和 TypeScript: 在腳本第一行寫上 `"bun";`, 檔案就會交給隔離插件行程中的 Bun 執行 (實際命令為 `bun run --no-install <source>`), 輸出和執行結果即時傳回 AutoJs6. 每次只執行目前檔案的一份快照, 不會自動安裝 npm dependency.
 
-此版本在隔離的插件 runtime 行程中使用 `bun run --no-install <source>` 啟動官方 Bun 1.4.0 Android executable. 它接收一個 JS 或 TS 原始碼快照, 不會自動安裝缺少的 dependency, 並將 stdout, stderr 和最終狀態串流傳回 AutoJs6.
+### 安裝和使用
+
+1. 準備環境: 在 Android 13 (API 33) 或更新版本系統上, 安裝 AutoJs6 build 5278 (6.8.0) 或更新版本.
+2. 安裝插件: 從 [Releases](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases) 下載並安裝與裝置相符的 APK. 大多數手機和平板選擇 `arm64-v8a`, 模擬器或 x86_64 裝置選擇 `x86_64`, 不確定時選擇 `universal` (體積稍大, 兩類裝置均可用).
+3. 啟用插件: 開啟 AutoJs6 的插件中心並啟用 Bun Runtime. 如果新安裝的插件顯示為停止狀態, 點按宿主提供的 `啟用` 操作即可.
+4. 執行腳本: 在 JavaScript 或 TypeScript 檔案的第一行單獨寫上 `"bun";` (含引號和分號), 然後照常在 AutoJs6 中執行這個檔案.
 
 ### 快速開始
 
@@ -11,14 +16,14 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-預期輸出以 `Bun 1.4.0` 開始, 下一行顯示 `android`.
+如果一切正常, 輸出第一行為 `Bun 1.4.0`, 第二行為 `android`.
 
-### 0.1 版限制
+### 目前限制
 
-- 只支援一個原始碼快照: 此版本尚未實作多檔 project transfer 和相對 project import.
-- 沒有 AutoJs6 globals: Rhino global, Android automation API 和宿主 object 不會出現在 Bun 內.
-- 沒有 Java bridge: Bun 無法直接存取 AutoJs6 行程中的 Java class 或 object.
-- 不保證完整 toolchain: `bunx`, 裝置端產生的 executable, runtime C compilation 和任意 native addon 不在支援範圍內.
-- 不是 security sandbox: Bun script 以受信任程式碼身分在插件 app UID 下執行, 並可使用授予插件的 permission.
+- 只執行單一檔案: 插件每次接收並執行一個原始碼快照, 不傳輸專案目錄, 因此 `import './utils.js'` 這類相對路徑 import 無法解析. 單檔內部的 ESM 語法不受影響; 需要多個模組時, 可先在電腦上打包為單一檔案 (見常見問題).
+- 沒有 AutoJs6 內建函式: `click()`, `toast()` 等自動化 API 和 Rhino 全域物件在 Bun 腳本中不存在, Bun 腳本目前適合計算, 文字處理, 網路請求等不依賴宿主能力的任務.
+- 沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 行程中的 Java class 或 object.
+- 不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.
+- 不是 security sandbox: Bun 腳本以受信任程式碼身分在插件行程中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本.
 
-請查看[專案 README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime), 了解相容性, 安全, 安裝套件選擇和完整的 0.1 版限制.
+關於相容性, 權限, 安裝套件選擇和全部目前限制, 請查看[專案 README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime).

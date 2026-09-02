@@ -1,4 +1,4 @@
 <resources>
     <string name="plugin_description">在隔離的 Android 行程中使用獨立 Bun 引擎執行 JavaScript 和 TypeScript</string>
-    <string name="plugin_instruction">在 JS 或 TS 檔案開頭加入 &quot;bun&quot;;. 0.1 版使用 --no-install 執行一個原始碼快照, 不提供 AutoJs6 globals, Java bridge 或相對 project import.</string>
+    <string name="plugin_instruction">在 JS 或 TS 檔案第一行單獨加入 &quot;bun&quot;;, 然後照常從 AutoJs6 執行該檔案. 每次執行只會執行這一個檔案: 不會自動安裝 npm dependency, Bun 腳本中也無法使用 AutoJs6 內建函數.</string>
 </resources>

@@ -1,4 +1,4 @@
 <resources>
     <string name="plugin_description">يشغل JavaScript و TypeScript باستخدام محرك Bun المستقل داخل عملية Android معزولة</string>
-    <string name="plugin_instruction">ضع &quot;bun&quot;; في بداية ملف JS أو TS. يستخدم الإصدار 0.1 --no-install ويشغل source snapshot واحدة ولا يوفر AutoJs6 globals أو Java bridge أو relative project import.</string>
+    <string name="plugin_instruction">ضع &quot;bun&quot;; وحده في السطر الأول من ملف JS أو TS, ثم شغل الملف من AutoJs6 كالمعتاد. ينفذ كل تشغيل هذا الملف وحده: لا يتم تثبيت npm dependency تلقائيا أبدا, ودوال AutoJs6 المدمجة غير متاحة داخل Bun script.</string>
 </resources>

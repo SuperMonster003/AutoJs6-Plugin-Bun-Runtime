@@ -1,6 +1,11 @@
-Bun Runtime est un plugin Android autonome qui permet à AutoJs6 de choisir [Bun](https://bun.sh/) comme moteur JavaScript et TypeScript distinct. L'hôte envoie un instantané de source par un descripteur de fichier, le plugin démarre l'exécutable Android officiel et épinglé de Bun dans son propre processus runtime, puis stdout, stderr, la fin, le timeout et l'annulation reviennent par Binder. Il s'agit d'une véritable exécution Bun, et non d'un alias de Rhino ou Node.js.
+Ce plugin permet à AutoJs6 d'exécuter JavaScript et TypeScript avec le moteur officiel Bun 1.4.0: placez `"bun";` sur la première ligne d'un script, et le fichier est exécuté par Bun dans un processus isolé du plugin (la commande réelle est `bun run --no-install <source>`), la sortie et le résultat final étant retransmis à AutoJs6. Chaque exécution traite un instantané du fichier courant et n'installe jamais automatiquement de dépendances npm.
 
-Cette version lance l'exécutable Android officiel de Bun 1.4.0 dans un processus runtime isolé avec `bun run --no-install <source>`. Elle reçoit un instantané JS ou TS, n'installe jamais automatiquement les dépendances absentes et retransmet stdout, stderr et l'état final à AutoJs6.
+### Installation et utilisation
+
+1. Préparez l'environnement: installez AutoJs6 build 5278 (6.8.0) ou ultérieur sur Android 13 (API 33) ou ultérieur.
+2. Installez le plugin: téléchargez et installez l'APK correspondant à l'appareil depuis [Releases](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases). Choisissez `arm64-v8a` pour la plupart des téléphones et tablettes, `x86_64` pour les émulateurs ou appareils x86_64, ou `universal` en cas de doute (un peu plus gros, fonctionne sur les deux).
+3. Activez le plugin: ouvrez le centre de plugins AutoJs6 et activez Bun Runtime. Si le plugin fraîchement installé apparaît arrêté, touchez l'action `Activer` proposée par l'hôte.
+4. Exécutez un script: placez `"bun";` seul sur la première ligne d'un fichier JavaScript ou TypeScript (guillemets et point-virgule compris), puis exécutez le fichier depuis AutoJs6 comme d'habitude.
 
 ### Démarrage rapide
 
@@ -11,14 +16,14 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-La sortie attendue commence par `Bun 1.4.0`, puis affiche `android`.
+Si tout fonctionne, la première ligne de sortie est `Bun 1.4.0` et la seconde est `android`.
 
-### Limites de la version 0.1
+### Limites actuelles
 
-- Un seul instantané: le transfert de projets multifichiers et les imports relatifs au projet ne sont pas implémentés dans cette version.
-- Pas de globals AutoJs6: les globals Rhino, les API d'automatisation Android et les objets de l'hôte n'apparaissent pas dans Bun.
-- Pas de pont Java: Bun ne peut pas accéder directement aux classes ou objets Java du processus AutoJs6.
-- Pas de promesse de toolchain complet: `bunx`, les exécutables produits sur l'appareil, la compilation C au runtime et les addons natifs arbitraires sont hors périmètre.
-- Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance sous l'UID du plugin et peut utiliser les permissions accordées au plugin.
+- Un fichier par exécution: le plugin reçoit et exécute un seul instantané de source sans le répertoire du projet, donc les imports relatifs comme `import './utils.js'` ne peuvent pas être résolus. La syntaxe ESM à l'intérieur du fichier unique n'est pas affectée; quand plusieurs modules sont nécessaires, regroupez-les d'abord en un seul fichier sur un ordinateur (voir la FAQ).
+- Pas de fonctions intégrées AutoJs6: les API d'automatisation comme `click()` et `toast()` et les globals Rhino n'existent pas dans les scripts Bun, qui conviennent donc pour l'instant aux tâches indépendantes de l'hôte comme le calcul, le traitement de texte et les requêtes réseau.
+- Pas de pont Java: les scripts Bun ne peuvent pas accéder directement aux classes ou objets Java du processus AutoJs6.
+- Pas de promesse de toolchain Bun complet: `bunx`, la production d'exécutables sur l'appareil, la compilation C au runtime et les addons natifs arbitraires restent hors périmètre.
+- Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance dans le processus du plugin et peut utiliser les permissions accordées au plugin, donc n'exécutez que des scripts fiables.
 
-Consultez le [README du projet](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) pour la compatibilité, la sécurité, le choix du paquet et toutes les limites de la version 0.1.
+Consultez le [README du projet](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) pour la compatibilité, les permissions, le choix du paquet et la liste complète des limites actuelles.

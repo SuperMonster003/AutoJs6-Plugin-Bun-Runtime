@@ -39,19 +39,9 @@ Le fichier README.md actuel prend en charge les langues suivantes:
 
 ******
 
-Bun Runtime est un plugin Android autonome qui permet à AutoJs6 de choisir [Bun](https://bun.sh/) comme moteur JavaScript et TypeScript distinct. L'hôte envoie un instantané de source par un descripteur de fichier, le plugin démarre l'exécutable Android officiel et épinglé de Bun dans son propre processus runtime, puis stdout, stderr, la fin, le timeout et l'annulation reviennent par Binder. Il s'agit d'une véritable exécution Bun, et non d'un alias de Rhino ou Node.js.
+Bun Runtime est un plugin autonome qui ajoute à AutoJs6 un moteur de scripts moderne optionnel: [Bun](https://bun.sh/). Une fois le plugin installé et activé, placer `"bun";` sur la première ligne d'un fichier JavaScript ou TypeScript confie ce fichier à un vrai moteur Bun 1.4.0 au lieu du moteur Rhino intégré, si bien que la syntaxe JavaScript moderne, TypeScript et les API intégrées de Bun comme `fetch` deviennent directement utilisables sur les appareils Android.
 
-******
-
-### Fonctionnalités
-
-******
-
-- Moteur indépendant: exécute le binaire Android officiel de Bun 1.4.0 au lieu de transmettre le code à un autre moteur AutoJs6.
-- JavaScript et TypeScript: Bun analyse et exécute un unique instantané JS ou TS, avec la syntaxe ESM et les API Bun disponibles dans le build Android épinglé.
-- Exécution observable: stdout et stderr sont transmis à l'hôte, tandis que le résultat final indique le statut, la durée, le timeout, l'annulation et des diagnostics bornés.
-- Runtime contrôlé: les binaires `arm64-v8a` et `x86_64` sont épinglés par tag, commit, taille, SHA-256, machine ELF et alignement PT_LOAD minimal.
-- Livraison localisée: métadonnées, instructions du centre de plugins, README et changelog couvrent 10 langues depuis un même jeu validé.
+Le fonctionnement du plugin est simple: AutoJs6 envoie le contenu du script au plugin, le plugin démarre l'exécutable Android officiel de Bun dans son propre processus isolé, et la sortie ainsi que le résultat final reviennent en temps réel dans la console AutoJs6. C'est du vrai Bun, pas un alias ni une couche d'émulation au-dessus de Rhino ou Node.js.
 
 ******
 
@@ -59,12 +49,12 @@ Bun Runtime est un plugin Android autonome qui permet à AutoJs6 de choisir [Bun
 
 ******
 
-1. Utilisez AutoJs6 build 5278 (6.8.0) ou ultérieur sur Android 13 (API 33) ou ultérieur.
-2. Installez l'APK correspondant à l'ABI de l'appareil. Choisissez `arm64-v8a` pour la plupart des téléphones et tablettes, `x86_64` pour un émulateur ou appareil compatible, ou `universal` en cas de doute.
-3. Ouvrez le centre de plugins AutoJs6 et activez Bun Runtime. Si le plugin nouvellement installé reste arrêté, utilisez l'action `Activer` proposée par l'hôte.
-4. Placez la directive autonome `"bun";` au début d'un fichier JavaScript ou TypeScript, puis exécutez-le normalement depuis AutoJs6.
+1. Préparez l'environnement: installez AutoJs6 build 5278 (6.8.0) ou ultérieur sur Android 13 (API 33) ou ultérieur.
+2. Installez le plugin: téléchargez et installez l'APK correspondant à l'appareil depuis [Releases](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases). Choisissez `arm64-v8a` pour la plupart des téléphones et tablettes, `x86_64` pour les émulateurs ou appareils x86_64, ou `universal` en cas de doute (un peu plus gros, fonctionne sur les deux).
+3. Activez le plugin: ouvrez le centre de plugins AutoJs6 et activez Bun Runtime. Si le plugin fraîchement installé apparaît arrêté, touchez l'action `Activer` proposée par l'hôte.
+4. Exécutez un script: placez `"bun";` seul sur la première ligne d'un fichier JavaScript ou TypeScript (guillemets et point-virgule compris), puis exécutez le fichier depuis AutoJs6 comme d'habitude.
 
-> La version 0.1 exécute un instantané immuable par requête avec `bun run --no-install <source>` et n'installe donc jamais automatiquement les dépendances absentes. Consultez les limites avant de migrer un projet Rhino ou Node.js existant vers Bun.
+> Chaque exécution traite un instantané du fichier courant (la commande réelle est `bun run --no-install <source>`); le plugin n'installe jamais automatiquement de dépendances npm et ne lit jamais d'autres fichiers du projet. Lisez les limites actuelles ci-dessous avant de migrer un projet Rhino ou Node.js existant vers Bun.
 
 ******
 
@@ -72,7 +62,7 @@ Bun Runtime est un plugin Android autonome qui permet à AutoJs6 de choisir [Bun
 
 ******
 
-Exécutez ce fichier pour confirmer que l'hôte a sélectionné Bun et que le runtime Android a démarré:
+Enregistrez le contenu suivant comme fichier de script et exécutez-le pour confirmer que le moteur Bun a pris en charge l'exécution:
 
 ```javascript
 "bun";
@@ -81,9 +71,9 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-La sortie attendue commence par `Bun 1.4.0`, puis affiche `android`.
+Si tout fonctionne, la première ligne de sortie est `Bun 1.4.0` et la seconde est `android`.
 
-Bun traite TypeScript directement, sans compilation TypeScript côté hôte:
+Les fichiers TypeScript s'exécutent aussi directement, sans compilation préalable ni configuration supplémentaire:
 
 ```typescript
 "bun";
@@ -95,38 +85,28 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-### Compatibilité
+### Fonctionnalités
 
 ******
 
-- Runtime: Bun officiel 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Plateforme: Android 13 (API 33) ou ultérieur, avec des binaires officiels 64 bits pour `arm64-v8a` et `x86_64` baseline. Un appareil réel API 31 a échoué avec `SIGSYS` app seccomp sur la syscall 436 `close_range` de Bun. Les listes d'autorisation AOSP Android 12 et antérieures n'incluent pas cette syscall, tandis qu'Android 13 (T, API 33) autorise la syscall brute. Android 14 ajoute le wrapper bionic public, mais Bun appelle la syscall brute et n'a pas besoin de ce symbole libc d'API 34. Les tests réels du runtime sur API 33 et API 35 ont réussi. API 28 à 32 restent non prises en charge jusqu'à ce qu'un runtime Bun corrigé gère les traps seccomp et réussisse la validation portable.
-- Contrat hôte: AutoJs6 build 5278 ou ultérieur et contrat Bun runtime version 1.
-- Bornes: source jusqu'à 16 MiB, budget de streaming combiné stdout et stderr jusqu'à 8 MiB et timeout par défaut de 60 seconds.
-- Paquets: les APK mono-ABI sont plus petits, tandis que l'APK `universal` contient les deux ABI pris en charge.
+- Un vrai moteur Bun: les scripts sont exécutés directement par l'exécutable Android officiel de Bun 1.4.0, sans transpilation et sans transfert vers d'autres moteurs AutoJs6.
+- TypeScript prêt à l'emploi: les fichiers TS s'exécutent directement sans étape de compilation ni configuration supplémentaire, et la syntaxe JavaScript moderne, la syntaxe ESM dans un fichier unique et les API Bun disponibles dans le build Android épinglé fonctionnent toutes.
+- Exécution transparente: la sortie comme `console.log` revient en temps réel dans la console AutoJs6, et le résultat final indique le statut de sortie, la durée et si l'exécution a expiré ou a été annulée.
+- Stable et contrôlable: chaque script s'exécute dans un processus isolé du plugin, peut être annulé à tout moment et est terminé automatiquement en cas de timeout, si bien qu'un script défaillant n'entraîne jamais AutoJs6 avec lui.
+- Provenance vérifiable du moteur: l'exécutable Bun embarqué correspond octet par octet à la version officielle, et son tag, commit, taille, SHA-256 et propriétés ELF sont vérifiés au build et en CI.
+- Livraison entièrement localisée: métadonnées du plugin, instructions du centre de plugins, README et changelog couvrent 10 langues, tous générés depuis un même jeu de sources validé.
 
 ******
 
-### Limites de la version 0.1
+### Limites actuelles
 
 ******
 
-- Un seul instantané: le transfert de projets multifichiers et les imports relatifs au projet ne sont pas implémentés dans cette version.
-- Pas de globals AutoJs6: les globals Rhino, les API d'automatisation Android et les objets de l'hôte n'apparaissent pas dans Bun.
-- Pas de pont Java: Bun ne peut pas accéder directement aux classes ou objets Java du processus AutoJs6.
-- Pas de promesse de toolchain complet: `bunx`, les exécutables produits sur l'appareil, la compilation C au runtime et les addons natifs arbitraires sont hors périmètre.
-- Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance sous l'UID du plugin et peut utiliser les permissions accordées au plugin.
-
-******
-
-### Permissions et intégrité
-
-******
-
-- Les composants Wake, info et runtime exportés sont protégés par `org.autojs.permission.PLUGIN`; AutoJs6 conserve ses contrôles habituels d'autorisation des plugins.
-- L'instantané est placé dans un répertoire privé propre à chaque exécution. L'exécutable démarre depuis le répertoire natif Android en lecture seule et n'est pas copié vers un stockage inscriptible.
-- Le lock du dépôt consigne les archives officielles et les binaires empaquetés. La CI refuse toute dérive de taille, SHA-256, type ELF, machine ou alignement avant le build.
-- Le plugin déclare l'accès Internet car des scripts Bun de confiance peuvent utiliser des API réseau comme `fetch`. Le plugin n'est pas un sandbox, alors exécutez uniquement des scripts fiables.
+- Un fichier par exécution: le plugin reçoit et exécute un seul instantané de source sans le répertoire du projet, donc les imports relatifs comme `import './utils.js'` ne peuvent pas être résolus. La syntaxe ESM à l'intérieur du fichier unique n'est pas affectée; quand plusieurs modules sont nécessaires, regroupez-les d'abord en un seul fichier sur un ordinateur (voir la FAQ).
+- Pas de fonctions intégrées AutoJs6: les API d'automatisation comme `click()` et `toast()` et les globals Rhino n'existent pas dans les scripts Bun, qui conviennent donc pour l'instant aux tâches indépendantes de l'hôte comme le calcul, le traitement de texte et les requêtes réseau.
+- Pas de pont Java: les scripts Bun ne peuvent pas accéder directement aux classes ou objets Java du processus AutoJs6.
+- Pas de promesse de toolchain Bun complet: `bunx`, la production d'exécutables sur l'appareil, la compilation C au runtime et les addons natifs arbitraires restent hors périmètre.
+- Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance dans le processus du plugin et peut utiliser les permissions accordées au plugin, donc n'exécutez que des scripts fiables.
 
 ******
 
@@ -134,21 +114,56 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-#### Pourquoi les globals AutoJs6 manquent-ils dans Bun?
+#### Pourquoi les fonctions AutoJs6 comme `click()` et `toast()` sont-elles indisponibles dans les scripts Bun?
 
-Bun est un processus et un moteur JavaScript distincts, pas une couche compatible Rhino. Un futur pont devra exposer explicitement chaque capacité d'automatisation; la version 0.1 ne fournit volontairement aucun pont.
+Bun s'exécute dans un processus séparé et constitue un moteur JavaScript complètement différent de Rhino, donc les globals AutoJs6 n'apparaissent pas dans les scripts Bun. Permettre aux scripts Bun d'appeler des capacités d'automatisation nécessite un pont hôte exposant chaque capacité explicitement; la version actuelle n'en fournit volontairement pas encore. Voir la feuille de route pour les plans.
 
-#### Un script peut-il importer un autre fichier local du projet?
+#### Puis-je utiliser des paquets npm?
 
-Pas dans la version 0.1. Le contrat transfère un seul instantané et pas encore l'arborescence du projet, donc les imports relatifs ne peuvent pas être résolus. La syntaxe ESM dans un fichier unique reste prise en charge.
+Pas en les installant sur l'appareil. Le plugin s'exécute toujours avec `--no-install` et ne télécharge jamais de dépendances. Si une bibliothèque tierce est vraiment nécessaire, regroupez d'abord le script et ses dépendances JS pures en un seul fichier sur un ordinateur, par exemple avec `bun build`, puis exécutez ce fichier sur l'appareil; les paquets reposant sur des addons natifs ne peuvent pas être utilisés ainsi.
 
-#### Le plugin prend-il en charge les appareils à pages de 16 KB?
+#### Un script peut-il faire un `import` d'autres fichiers du projet?
 
-Les segments PT_LOAD des deux exécutables ELF empaquetés sont alignés sur au moins 16 KB. Aucun test réel sur un runtime Android 16 KB n'a encore été effectué, cette version ne revendique donc pas une prise en charge complète vérifiée.
+Pas pour l'instant. Le contrat du plugin transfère un seul instantané de source sans le répertoire du projet, donc les imports relatifs ne peuvent pas être résolus. La prise en charge des projets multifichiers figure sur la feuille de route, et la syntaxe ESM dans le fichier unique fonctionne normalement.
+
+#### Pourquoi Android 13 est-il le minimum?
+
+Bun invoque l'appel système Linux `close_range` (syscall 436), que la liste d'autorisation seccomp des applications sur Android 12L et antérieurs n'inclut pas, si bien que le processus Bun est tué par `SIGSYS` (reproduit sur un appareil réel API 31). Android 13 autorise cet appel, et les tests sur appareils réels API 33 et API 35 ont réussi. Prendre en charge des versions plus anciennes nécessite de patcher Bun; voir la feuille de route pour l'avancement.
+
+#### Que se passe-t-il quand un script expire ou imprime trop?
+
+Une exécution est limitée à 60 seconds par défaut; en cas de timeout, le processus Bun est terminé et le résultat est marqué comme expiré. Quand la sortie combinée stdout et stderr dépasse 8 MiB, l'exécution se termine par une erreur de limite de sortie au lieu d'être tronquée silencieusement. Dans les deux cas, découpez la tâche ou réduisez la quantité de sortie.
+
+#### Les appareils à pages de 16 KB sont-ils pris en charge?
+
+Les deux exécutables ELF empaquetés ont un alignement PT_LOAD d'au moins 16 KB, mais aucun test de bout en bout dans un environnement Android 16 KB réel n'a encore été mené, donc cette version ne revendique pas une prise en charge 16 KB vérifiée.
 
 #### Quel APK dois-je installer?
 
-La plupart des appareils Android physiques utilisent `arm64-v8a`. Utilisez `x86_64` baseline pour les émulateurs ou appareils x86_64 compatibles. Le paquet `universal` contient les deux et reste le choix sûr si l'ABI est inconnu.
+La plupart des téléphones et tablettes utilisent `arm64-v8a`. Utilisez `x86_64` baseline pour les émulateurs ou appareils x86_64. En cas de doute, installez `universal`, qui contient les deux ABI; un peu plus gros, mais le choix le plus sûr.
+
+******
+
+### Compatibilité
+
+******
+
+- Moteur: Bun officiel 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
+- Système: Android 13 (API 33) ou ultérieur, avec des exécutables officiels 64 bits pour `arm64-v8a` et `x86_64` baseline. Android 9 à 12L (API 28 à 32) ne sont pas encore pris en charge; la FAQ ci-dessus en explique la raison. Les tests sur appareils réels API 33 et API 35 ont réussi.
+- Hôte: AutoJs6 build 5278 ou ultérieur, avec le contrat Bun runtime version 1.
+- Bornes par exécution: source jusqu'à 16 MiB, sortie combinée stdout et stderr jusqu'à 8 MiB et timeout par défaut de 60 seconds.
+- Paquets: les APK mono-ABI gardent l'installation plus légère, tandis que l'APK `universal`, plus gros, contient les deux ABI pris en charge.
+
+******
+
+### Permissions et intégrité
+
+******
+
+- Les composants exportés d'activation (Wake), info et runtime sont protégés par `org.autojs.permission.PLUGIN`, et AutoJs6 effectue toujours ses contrôles habituels d'autorisation des plugins.
+- L'instantané du script est placé dans un répertoire privé propre à chaque exécution, et l'exécutable Bun démarre depuis le répertoire de bibliothèques natives Android en lecture seule au lieu d'être copié vers un stockage inscriptible.
+- Le lock du dépôt consigne à la fois les archives officielles et les binaires empaquetés dans l'APK; la CI refuse toute dérive de taille, SHA-256 ou propriétés ELF avant le build.
+- Le plugin déclare l'accès Internet car des scripts Bun de confiance peuvent utiliser des API réseau comme `fetch`. Le plugin n'est pas un sandbox; n'exécutez que des scripts fiables.
 
 ******
 
@@ -156,7 +171,7 @@ La plupart des appareils Android physiques utilisent `arm64-v8a`. Utilisez `x86_
 
 ******
 
-Ces identifiants et limites stables sont destinés aux développeurs de l'hôte AutoJs6 et du plugin:
+Cette section s'adresse aux développeurs de l'hôte AutoJs6 et de plugins; les utilisateurs ordinaires peuvent la passer. Les identifiants et limites stables sont:
 
 ```text
 application id: io.github.supermonster003.autojs6.plugin.bun.runtime
@@ -184,7 +199,7 @@ default timeout: 60 seconds
 
 ******
 
-La feuille de route distingue le comportement actuel des instantanés de projet prévus, d'un pont AutoJs6 étroit, d'une validation Android plus large et des futures mises à niveau de Bun. Les éléments non cochés sont des plans, pas des fonctions actuelles.
+La feuille de route répond à deux questions: ce qui fonctionne maintenant et ce qui vient ensuite. Les éléments cochés décrivent le comportement réel de la version actuelle; les éléments non cochés (projets multifichiers, pont de capacités AutoJs6, prise en charge élargie des versions Android, mises à niveau de Bun, etc.) sont des plans, pas des promesses de prise en charge actuelle.
 
 - [Voir ROADMAP.md](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/ROADMAP.md)
 
@@ -198,29 +213,29 @@ La feuille de route distingue le comportement actuel des instantanés de projet 
 
 _2026/09/01_
 
-- `Note` Android 13 (API 33) est désormais la cible minimale officielle; API 28 à 32 restent non prises en charge jusqu'à ce qu'un runtime Bun corrigé réussisse la validation portable
-- `Amélioration` Abaisser le minimum Android pris en charge d'Android 14 (API 34) à Android 13 (API 33) tout en conservant les payloads Android officiels et épinglés de Bun 1.4.0
-- `Amélioration` Documenter la limite seccomp d'AOSP T: Android 13 autorise la syscall `close_range` brute de Bun, tandis que l'échec sur API 31 montre qu'API 28 à 32 nécessitent un correctif de compatibilité Bun et non un simple changement de manifest
-- `Amélioration` Préparer l'expérience Android 9+ avec un backport déterministe en six correctifs du code source Bun, des entrées NDK et conteneur épinglées et des identités immuables pour 22 dépendances actives de la version Android, tout en maintenant explicitement indisponible le runtime non compilé
-- `Amélioration` Vérifier chaque APK Debug et Release pour l'alignement ZIP de 16 KB, le contenu ABI exact, les tailles et empreintes SHA-256 verrouillées des payloads Bun, puis vérifier les octets installés sur l'appareil de test Android 13
-- `Amélioration` Verrouiller les octets exacts de 19 archives source Bun et de 17 téléchargements directs immuables de la chaîne d'outils, inventorier 181 entrées d'intégrité Cargo et 172 Bun, puis ajouter des matérialiseurs sans écrasement et un précontrôle de build à deux ABI protégé par `buildReady`
-- `Dépendance` Ajouter le runtime Kotlin Parcelize requis par Release R8 afin de conserver les classes partagées du contrat Parcelable
+- `Note` Cette version abaisse la configuration minimale d'Android 14 à Android 13 (API 33); les versions Android 9 à 12L (API 28 à 32) restent non prises en charge tant qu'un runtime Bun corrigé n'a pas passé la validation de portabilité
+- `Amélioration` Abaisser la configuration minimale: le payload Android officiel épinglé de Bun 1.4.0 est conservé et le plancher de prise en charge est assoupli d'Android 14 (API 34) à Android 13 (API 33), couvrant davantage d'appareils
+- `Amélioration` Identifier la cause racine des échecs sur les anciennes versions: depuis Android 13 le seccomp du système autorise le raw syscall `close_range` invoqué par Bun, tandis qu'un échec sur appareil réel en API 31 prouve que les API 28 à 32 exigent de corriger Bun lui-même, un simple changement de manifest ne suffisant pas
+- `Amélioration` Préparer la future prise en charge d'Android 9+: un plan de correctifs du code source de Bun rejouable avec précision (6 correctifs) est établi et les entrées de build sont verrouillées (NDK et conteneur épinglés, 22 dépendances actives d'Android release); le runtime corrigé n'est pas encore compilé et n'entre pas dans les paquets actuels
+- `Amélioration` Renforcer les contrôles de qualité des paquets: chaque APK Debug et Release vérifie le ZIP alignment de 16 KB, le contenu ABI exact ainsi que la taille et le SHA-256 du payload Bun épinglé, et les octets du payload installé sont contrôlés sur un appareil de test Android 13
+- `Amélioration` Durcir la chaîne d'approvisionnement: les octets exacts de 19 archives sources de Bun et de 17 téléchargements de toolchain sont épinglés, 181 entrées d'intégrité Cargo et 172 du registre Bun sont inventoriées, et un materializer refusant l'écrasement ainsi qu'une prévérification de build double ABI protégée par la porte `buildReady` sont ajoutés
+- `Dépendance` Ajouter le runtime Kotlin Parcelize afin que R8 en Release conserve la classe partagée du contrat Parcelable
 
 #### v0.1.0
 
 _2026/09/01_
 
-- `Note` La première version exécute un seul instantané et n'expose ni globals AutoJs6, ni pont Java, ni projet multifichier, ni imports relatifs au projet
-- `Fonctionnalité` Exécuter JavaScript et TypeScript avec l'exécutable Android officiel de Bun 1.4.0 comme moteur `bun` indépendant sélectionné par `"bun";`, avec `bun run --no-install <source>` sans installation automatique des dépendances
-- `Fonctionnalité` Transmettre stdout et stderr uniquement par fragments bornés via callback oneway Binder, tandis que le résultat terminal rapporte statut et diagnostic sans contenir les streams complets
-- `Fonctionnalité` Prendre en charge l'annulation explicite, un timeout par défaut de 60 secondes, les informations runtime et le préchauffage dans le processus isolé `:bun_runtime`
-- `Fonctionnalité` Fournir les binaires Android officiels 64 bits pour `arm64-v8a` et baseline `x86_64`, avec des paquets mono-ABI et `universal`
-- `Fonctionnalité` Fournir la découverte du plugin, l'activation Wake protégée, des métadonnées PluginInfo complètes et la documentation utilisateur en 10 langues
-- `Amélioration` Utiliser un contrat Binder versionné avec transport de source par ParcelFileDescriptor, limite de source de 16 MiB et limite de sortie combinée de 8 MiB
-- `Amélioration` Lancer Bun depuis le répertoire natif Android en lecture seule et vérifier tailles, SHA-256, type ELF, machine et alignement des archives officielles et binaires empaquetés
-- `Amélioration` Vérifier un alignement PT_LOAD d'au moins 16 KB pour les deux exécutables tout en indiquant explicitement qu'aucun test Android 16 KB réel n'a été effectué
-- `Amélioration` Générer README, instructions du centre de plugins et changelog intégré depuis des JSON validés, avec contrôles CI du build, du Markdown et des artefacts runtime
-- `Amélioration` Exiger Android 14 (API 34) après un `SIGSYS` app seccomp sur API 31 pour la syscall 436 `close_range` de Bun; un Sony API 33 a réussi de façon inattendue sans prouver la portabilité, tandis que les allers-retours Binder JS et TS ont réussi sur API 35 et les versions inférieures attendent un fallback upstream
+- `Note` Première version: chaque exécution traite un seul fichier de script autonome; les fonctions intégrées d'AutoJs6, le pont Java, les projets multifichiers et les imports relatifs ne sont pas encore disponibles
+- `Fonctionnalité` Ajouter le moteur `bun` autonome: placez `"bun";` sur la première ligne d'un script pour exécuter JavaScript et TypeScript avec l'executable Android officiel de Bun 1.4.0; la commande réelle est `bun run --no-install <source>` et les dépendances ne sont jamais installées automatiquement
+- `Fonctionnalité` Renvoyer la sortie en temps réel: stdout et stderr sont diffusés par fragments bornés via oneway Binder callback, et le résultat final ne rapporte que le statut et le diagnostic, sans le flux de sortie complet
+- `Fonctionnalité` Exécution contrôlable: les scripts s'exécutent dans le processus isolé du plugin `:bun_runtime`, avec annulation explicite, timeout par défaut de 60 secondes, consultation des informations du runtime et prewarming
+- `Fonctionnalité` Fournir les payloads Android 64 bits officiels pour `arm64-v8a` et baseline `x86_64`, ainsi que des paquets mono-ABI et `universal`
+- `Fonctionnalité` Offrir l'expérience plugin complète: découverte du plugin, activation protégée par permission (Wake), métadonnées PluginInfo complètes et documentation utilisateur en 10 langues
+- `Amélioration` Adopter un contrat Binder versionné transférant la source par ParcelFileDescriptor, avec une limite de 16 MiB pour la source et de 8 MiB pour la sortie combinée
+- `Amélioration` Lancer Bun depuis le répertoire read-only de native library d'Android et vérifier la taille, le SHA-256 et les propriétés ELF des archives release épinglées et des binaires empaquetés
+- `Amélioration` Vérifier que les deux executables empaquetés ont un PT_LOAD alignment d'au moins 16 KB, tout en documentant honnêtement que le test dans un environnement Android réel en 16 KB n'est pas encore achevé
+- `Amélioration` Générer le README, les instructions du centre de plugins et le changelog intégré à partir de sources JSON validées, avec des contrôles CI pour le build, le Markdown et les artefacts du runtime
+- `Amélioration` Fixer le minimum provisoire à Android 14 (API 34): sur un appareil réel en API 31 le syscall `close_range` de Bun est tué par seccomp avec `SIGSYS`, un appareil Sony en API 33 a réussi de façon inattendue sans prouver la portabilité, et les tests aller-retour Binder JS et TS ont réussi sur un appareil réel en API 35
 
 ##### Pour plus d'historique
 
