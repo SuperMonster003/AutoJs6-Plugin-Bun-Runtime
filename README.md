@@ -5,7 +5,7 @@
     <img src="https://bun.sh/logo.svg" alt="Bun Runtime" border="0" width="128" />
   </p>
 
-  <p>Runs JavaScript and TypeScript with the independent Bun engine in an isolated Android process</p>
+  <p>在隔离的 Android 进程中使用独立 Bun 引擎运行 JavaScript 和 TypeScript</p>
 
   <p>
     <a href="https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/SuperMonster003/AutoJs6-Plugin-Bun-Runtime?label=Release"/></a>
@@ -16,63 +16,63 @@
 
 ******
 
-### Languages
+### 语言
 
 ******
 
-The current README.md supports the following languages:
+当前 README.md 支持以下语言:
 
-- English [en] # current
+- [English [en]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-en.md)
 - [العربية [ar]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-ar.md)
 - [Español [es]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-es.md)
 - [Français [fr]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-fr.md)
 - [日本語 [ja]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-ja.md)
 - [한국어 [ko]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-ko.md)
 - [Русский [ru]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-ru.md)
-- [简体中文 [zh-Hans]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-zh-Hans.md)
+- 简体中文 [zh-Hans] # 当前
 - [繁體中文 (香港) [zh-Hant-HK]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-zh-Hant-HK.md)
 - [繁體中文 (台灣) [zh-Hant-TW]](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/.readme/README-zh-Hant-TW.md)
 
 ******
 
-### Introduction
+### 简介
 
 ******
 
-Bun Runtime is a standalone Android plugin that lets AutoJs6 select [Bun](https://bun.sh/) as a separate JavaScript and TypeScript engine. The host sends one source snapshot through a file descriptor, the plugin starts the pinned official Bun Android executable in its own runtime process, and standard output, standard error, completion, timeout, and cancellation events return through Binder. This is real Bun execution and is not an alias for Rhino or Node.js.
+Bun Runtime 是一个独立 Android 插件, 让 AutoJs6 可以选择 [Bun](https://bun.sh/) 作为单独的 JavaScript 和 TypeScript 引擎. 宿主通过文件描述符发送一个源码快照, 插件在自己的运行时进程中启动固定版本的官方 Bun Android 可执行文件, 并通过 Binder 返回标准输出, 标准错误, 完成状态, 超时和取消事件. 这是真实的 Bun 执行, 不是 Rhino 或 Node.js 的别名.
 
 ******
 
-### Features
+### 功能
 
 ******
 
-- Independent engine: runs the official Bun 1.4.0 Android executable instead of forwarding code to another AutoJs6 engine.
-- JavaScript and TypeScript: Bun parses and runs a single JS or TS source snapshot, including ESM syntax and Bun APIs available in the pinned Android build.
-- Observable execution: stdout and stderr stream back to the host, while the final result reports the exit status, duration, timeout, cancellation, and bounded diagnostics.
-- Controlled runtime payloads: release binaries are pinned by tag, commit, size, SHA-256, ELF machine, and minimum PT_LOAD alignment for `arm64-v8a` and `x86_64`.
-- Localized delivery: plugin metadata, plugin-center instructions, README, and changelog cover 10 languages from one validated source set.
+- 独立引擎: 运行官方 Bun 1.4.0 Android 可执行文件, 不把代码转交给其他 AutoJs6 引擎.
+- JavaScript 和 TypeScript: Bun 解析并运行单个 JS 或 TS 源码快照, 包括 ESM 语法和固定 Android 构建中可用的 Bun API.
+- 可观察执行: stdout 和 stderr 流式返回宿主, 最终结果包含退出状态, 耗时, 超时, 取消状态和有界诊断信息.
+- 受控运行时载荷: `arm64-v8a` 和 `x86_64` 的发布二进制由 tag, commit, 大小, SHA-256, ELF machine 和最小 PT_LOAD 对齐共同固定.
+- 本地化交付: 插件元数据, 插件中心说明, README 和 changelog 由一组经过校验的文案源覆盖 10 种语言.
 
 ******
 
-### Install and Use
+### 安装和使用
 
 ******
 
-1. Use AutoJs6 build 5278 (6.8.0) or later on Android 13 (API 33) or later.
-2. Install the release APK matching the device ABI. Choose `arm64-v8a` for most phones and tablets, `x86_64` for a compatible emulator or device, or `universal` when unsure.
-3. Open the AutoJs6 plugin center and enable Bun Runtime. If the newly installed plugin remains stopped, use the `Activate` action shown by the host.
-4. Put the standalone directive `"bun";` at the beginning of a JavaScript or TypeScript file, then run it normally from AutoJs6.
+1. 在 Android 13 (API 33) 或更高版本上使用 AutoJs6 build 5278 (6.8.0) 或更高版本.
+2. 安装与设备 ABI 匹配的发布 APK. 大多数手机和平板选择 `arm64-v8a`, 兼容的模拟器或设备选择 `x86_64`, 不确定时选择 `universal`.
+3. 打开 AutoJs6 插件中心并启用 Bun Runtime. 如果新安装插件仍处于停止状态, 使用宿主显示的 `激活` 操作.
+4. 在 JavaScript 或 TypeScript 文件开头放置独立指令 `"bun";`, 然后像平常一样从 AutoJs6 运行.
 
-> Version 0.1 executes one immutable source snapshot per request with `bun run --no-install <source>`, so it never installs missing dependencies automatically. Read the limitations below before moving an existing Rhino or Node.js project to Bun.
-
-******
-
-### Quick Start
+> 0.1 版每个请求使用 `bun run --no-install <source>` 执行一个不可变源码快照, 因此绝不会自动安装缺失依赖. 将现有 Rhino 或 Node.js 项目迁移到 Bun 前请先阅读以下限制.
 
 ******
 
-Run this file to confirm the host selected Bun and the Android runtime started:
+### 快速开始
+
+******
+
+运行此文件以确认宿主选择了 Bun 并成功启动 Android 运行时:
 
 ```javascript
 "bun";
@@ -81,9 +81,9 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-Expected output begins with `Bun 1.4.0` and then prints `android`.
+预期输出以 `Bun 1.4.0` 开头, 下一行输出 `android`.
 
-Bun handles TypeScript directly, so no host-side TypeScript compilation is needed:
+Bun 直接处理 TypeScript, 因此不需要宿主侧 TypeScript 编译:
 
 ```typescript
 "bun";
@@ -95,68 +95,68 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-### Compatibility
+### 兼容性
 
 ******
 
-- Runtime: official Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Platform: Android 13 (API 33) or later, with official 64-bit payloads for `arm64-v8a` and baseline `x86_64`. An API 31 real-device run failed with app seccomp `SIGSYS` on Bun syscall 436 `close_range`. AOSP Android 12 and earlier app allowlists lack that syscall, while Android 13 (T, API 33) allowlists the raw syscall. Android 14 adds the public bionic wrapper, but Bun invokes the raw syscall and does not require that API 34 libc symbol. Real API 33 and API 35 runtime tests passed. API 28 through 32 remain unsupported until a patched Bun runtime handles the seccomp traps and passes portable validation.
-- Host contract: AutoJs6 build 5278 or later and Bun runtime contract version 1.
-- Request bounds: source up to 16 MiB, a combined stdout and stderr streaming budget up to 8 MiB, and a default timeout of 60 seconds.
-- Packages: single-ABI APKs keep installs smaller, while the larger `universal` APK contains both supported ABIs.
+- 运行时: 官方 Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
+- 平台: Android 13 (API 33) 或更高版本, 官方 64 位 payload 支持 `arm64-v8a` 和 baseline `x86_64`. API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. AOSP Android 12 及更早版本的 app allowlist 不包含该 syscall, Android 13 (T, API 33) 已允许 raw syscall. Android 14 增加公开 bionic wrapper, 但 Bun 直接调用 raw syscall, 不需要 API 34 libc symbol. API 33 和 API 35 真机 runtime test 已通过. API 28 到 32 仍不受支持, 需要 patched Bun runtime 处理 seccomp trap 并通过可移植验证.
+- 宿主契约: AutoJs6 build 5278 或更高版本, Bun runtime contract version 1.
+- 请求边界: 源码最大 16 MiB, stdout 和 stderr 组合流式预算最大 8 MiB, 默认超时为 60 seconds.
+- 安装包: 单 ABI APK 体积更小, 较大的 `universal` APK 同时包含两个受支持 ABI.
 
 ******
 
-### Version 0.1 Limitations
+### 0.1 版限制
 
 ******
 
-- One source snapshot only: multi-file project transfer and relative project imports are not implemented in this release.
-- No AutoJs6 globals: Rhino globals, Android automation APIs, and host objects do not appear inside Bun.
-- No Java bridge: Bun cannot directly access Java classes or objects from the AutoJs6 process.
-- No broad toolchain promise: `bunx`, executable output produced on-device, runtime C compilation, and arbitrary native addons are outside the supported scope.
-- Not a security sandbox: a Bun script runs as trusted code under the plugin app UID and can use permissions granted to the plugin.
+- 仅支持一个源码快照: 此版本未实现多文件项目传输和相对项目导入.
+- 没有 AutoJs6 globals: Rhino 全局对象, Android 自动化 API 和宿主对象不会出现在 Bun 中.
+- 没有 Java bridge: Bun 不能直接访问 AutoJs6 进程中的 Java 类或对象.
+- 不承诺完整工具链: `bunx`, 设备端生成的可执行文件, runtime C compilation 和任意 native addon 不在支持范围内.
+- 不是安全沙箱: Bun 脚本以受信任代码身份在插件 app UID 下运行, 并可使用授予插件的权限.
 
 ******
 
-### Permissions and Integrity
+### 权限和完整性
 
 ******
 
-- The exported Wake, info, and runtime components are protected by `org.autojs.permission.PLUGIN`; AutoJs6 still performs its normal plugin authorization checks.
-- The source snapshot is staged in a private per-run directory. The executable is launched from Android's read-only native library directory rather than copied to writable storage.
-- The repository lock records both official release archives and packaged binaries. CI rejects size, SHA-256, ELF type, machine, or alignment drift before building.
-- The plugin declares Internet access because trusted Bun scripts may use network APIs such as `fetch`. The plugin is not a sandbox and should only run scripts you trust.
+- 导出的 Wake, info 和 runtime 组件由 `org.autojs.permission.PLUGIN` 保护. AutoJs6 仍会执行正常的插件授权检查.
+- 源码快照暂存在每次运行独有的私有目录. 可执行文件从 Android 只读 native library directory 启动, 不会复制到可写存储后执行.
+- 仓库 lock 同时记录官方 release archive 和已打包 binary. CI 会在构建前拒绝大小, SHA-256, ELF type, machine 或 alignment 漂移.
+- 插件声明网络访问权限, 因为受信任的 Bun 脚本可能使用 `fetch` 等网络 API. 插件不是沙箱, 请只运行你信任的脚本.
 
 ******
 
-### FAQ
+### 常见问题
 
 ******
 
-#### Why are AutoJs6 globals missing in Bun?
+#### 为什么 Bun 中没有 AutoJs6 globals?
 
-Bun is a separate process and JavaScript engine, not a Rhino compatibility layer. A future host bridge must expose each automation capability explicitly; version 0.1 deliberately provides no such bridge.
+Bun 是单独的进程和 JavaScript 引擎, 不是 Rhino 兼容层. 未来的宿主桥接必须明确公开每项自动化能力, 0.1 版有意不提供这种桥接.
 
-#### Can a script import another local project file?
+#### 脚本可以导入另一个本地项目文件吗?
 
-Not in version 0.1. The contract transfers one source snapshot and does not yet transfer a project tree, so relative project imports cannot be resolved. Single-file ESM syntax remains supported.
+0.1 版不可以. 契约只传输一个源码快照, 尚不传输项目目录树, 因此无法解析相对项目导入. 单文件 ESM 语法仍受支持.
 
-#### Does the plugin support 16 KB page-size devices?
+#### 插件支持 16 KB page-size 设备吗?
 
-Both packaged ELF executables have PT_LOAD alignment of at least 16 KB. A real 16 KB Android runtime test has not yet been completed, so this release does not claim verified end-to-end 16 KB support.
+两个已打包 ELF executable 的 PT_LOAD alignment 均至少为 16 KB. 尚未完成真实 16 KB Android runtime 测试, 因此此版本不声称已验证端到端 16 KB 支持.
 
-#### Which APK should I install?
+#### 应该安装哪个 APK?
 
-Most physical Android devices use `arm64-v8a`. Use baseline `x86_64` for compatible emulators or x86_64 devices. The `universal` package includes both and is the safe choice when the ABI is unknown.
-
-******
-
-### Plugin Interface
+大多数 Android 实体设备使用 `arm64-v8a`. 兼容的模拟器或 x86_64 设备使用 baseline `x86_64`. `universal` 同时包含两者, 在 ABI 未知时最稳妥.
 
 ******
 
-These stable identifiers and limits are for AutoJs6 host and plugin developers:
+### 插件接口
+
+******
+
+以下稳定标识和限制面向 AutoJs6 宿主和插件开发者:
 
 ```text
 application id: io.github.supermonster003.autojs6.plugin.bun.runtime
@@ -174,23 +174,23 @@ combined stdout/stderr streaming budget: 8 MiB
 default timeout: 60 seconds
 ```
 
-`BunRuntimeService` is discovered by action `org.autojs.plugin.bun.RUNTIME` and category `bun`. It accepts the source through `ParcelFileDescriptor` and an execution ID in the request, then runs `bun run --no-install <source>` while the synchronous `runScript` call remains active. Stdout and stderr are sent only as bounded chunks through the oneway callback. The returned terminal Bundle and `finished` event contain status and diagnostic summary fields, never the complete output streams, which keeps each Binder transaction below its size limit. The service supports explicit cancellation and runtime prewarming and runs in `:bun_runtime`.
+`BunRuntimeService` 通过 action `org.autojs.plugin.bun.RUNTIME` 和 category `bun` 被发现. 它通过 `ParcelFileDescriptor` 接收源码, 从请求中接收 execution ID, 并在同步 `runScript` 调用保持活动期间执行 `bun run --no-install <source>`. Stdout 和 stderr 仅作为有界分块通过 oneway callback 发送. 返回的 terminal Bundle 和 `finished` event 只包含状态和诊断摘要字段, 从不携带完整输出流, 从而让每次 Binder transaction 保持在大小限制以内. 服务支持显式取消和 runtime prewarming, 并运行在 `:bun_runtime`.
 
-16 KB status: the packaged `arm64-v8a` and `x86_64` ELF PT_LOAD segments meet the 16 KB alignment requirement. No real 16 KB Android device or emulator run has been completed yet, so only ELF alignment is verified.
-
-******
-
-### Roadmap
+16 KB 状态: 已打包的 `arm64-v8a` 和 `x86_64` ELF PT_LOAD segment 满足 16 KB alignment 要求. 尚未在真实 16 KB Android 设备或模拟器上运行, 因此目前仅验证了 ELF alignment.
 
 ******
 
-The roadmap separates current behavior from planned project snapshots, a narrow AutoJs6 capability bridge, broader Android validation, and future Bun upgrades. Unchecked items are plans, not promises of current support.
-
-- [View ROADMAP.md](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/ROADMAP.md)
+### 路线图
 
 ******
 
-### Release History
+路线图会区分当前行为和计划中的项目快照, 狭窄 AutoJs6 capability bridge, 更广泛 Android 验证以及后续 Bun 升级. 未勾选项目代表计划, 不代表当前已支持.
+
+- [查看 ROADMAP.md](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/ROADMAP.md)
+
+******
+
+### 发行历史
 
 ******
 
@@ -198,41 +198,41 @@ The roadmap separates current behavior from planned project snapshots, a narrow 
 
 _2026/09/01_
 
-- `Hint` Android 13 (API 33) is now the official minimum target; API 28 through 32 remain unsupported until a patched Bun runtime passes portable validation
-- `Improvement` Lower the supported Android floor from Android 14 (API 34) to Android 13 (API 33) while retaining the pinned official Bun 1.4.0 Android payloads
-- `Improvement` Document the AOSP T seccomp boundary: Android 13 allowlists Bun's raw `close_range` syscall, while the API 31 failure shows API 28 through 32 require a Bun compatibility patch rather than a manifest-only change
-- `Improvement` Prepare the Android 9+ experiment with a deterministic six-patch Bun source backport, pinned NDK and container inputs, and immutable identities for 22 active Android-release dependencies, while keeping the unbuilt runtime explicitly unavailable
-- `Improvement` Verify every Debug and Release APK for 16 KB ZIP alignment, exact ABI contents, locked Bun payload sizes and SHA-256 digests, and verify the installed payload bytes on the Android 13 test device
-- `Improvement` Lock the exact bytes of 19 Bun source archives and 17 immutable direct toolchain downloads, inventory 181 Cargo and 172 Bun registry integrity entries, and add non-overwriting materializers plus a `buildReady`-gated two-ABI build preflight
-- `Dependency` Add the Kotlin Parcelize runtime required by Release R8 to retain the shared Parcelable contract classes
+- `提示` Android 13 (API 33) 现为正式最低目标; API 28 到 32 在 patched Bun runtime 通过可移植验证前仍不受支持
+- `优化` 保留固定的官方 Bun 1.4.0 Android payload, 将支持的 Android 下限从 Android 14 (API 34) 降至 Android 13 (API 33)
+- `优化` 记录 AOSP T seccomp 分界: Android 13 已允许 Bun 调用的 raw `close_range` syscall, API 31 失败则表明 API 28 到 32 需要 Bun 兼容补丁, 仅修改 manifest 无法兼容
+- `优化` 使用可确定性重放的六补丁 Bun 源码 backport, 固定的 NDK 与容器输入以及 22 个 Android release 活跃依赖的不可变身份为 Android 9+ 实验做准备, 同时明确保持未构建 runtime 不可用
+- `优化` 验证每个 Debug 和 Release APK 的 16 KB ZIP alignment, 精确 ABI 内容, 固定 Bun payload 大小与 SHA-256, 并验证 Android 13 测试设备上已安装的 payload 字节
+- `优化` 锁定 19 个 Bun source archive 与 17 个不可变直接工具链下载件的精确字节, 盘点 181 个 Cargo 和 172 个 Bun registry integrity 条目, 并新增拒绝覆盖的 materializer 与受 `buildReady` 闸门保护的双 ABI 构建预检
+- `依赖` 添加 Release R8 保留共享 Parcelable contract class 所需的 Kotlin Parcelize runtime
 
 #### v0.1.0
 
 _2026/09/01_
 
-- `Hint` The first release runs one source snapshot and does not expose AutoJs6 globals, a Java bridge, multi-file projects, or relative project imports
-- `Feature` Run JavaScript and TypeScript with the official Bun 1.4.0 Android executable as an independent `bun` engine selected by the `"bun";` directive, using `bun run --no-install <source>` without automatic dependency installation
-- `Feature` Stream stdout and stderr only as bounded oneway Binder callback chunks, while terminal results report status and diagnostics without carrying the complete output streams
-- `Feature` Support explicit cancellation, a 60-second default timeout, runtime information, and prewarming in the isolated `:bun_runtime` plugin process
-- `Feature` Ship official 64-bit Android payloads for `arm64-v8a` and baseline `x86_64`, plus single-ABI and `universal` packages
-- `Feature` Provide plugin discovery, protected Wake activation, complete PluginInfo metadata, and user documentation in 10 languages
-- `Improvement` Use a versioned Binder contract with ParcelFileDescriptor source transport, a 16 MiB source limit, and an 8 MiB combined output limit
-- `Improvement` Launch Bun from Android's read-only native library directory and verify the pinned release archive and packaged binary sizes, SHA-256 digests, ELF type, machine, and alignment
-- `Improvement` Verify at least 16 KB PT_LOAD alignment for both packaged executables while explicitly recording that no real 16 KB Android runtime test has been completed
-- `Improvement` Generate README, plugin-center instructions, and built-in changelog assets from validated JSON sources, with build, Markdown, and runtime artifact CI checks
-- `Improvement` Require Android 14 (API 34) after a real API 31 run hit app seccomp `SIGSYS` on Bun syscall 436 `close_range`; one Sony API 33 device unexpectedly passed but is not portable evidence, while API 35 JS and TS Binder round trips passed and lower versions await an upstream fallback
+- `提示` 首个版本每次运行一个源码快照, 不提供 AutoJs6 globals, Java bridge, 多文件项目或相对项目导入
+- `新增` 使用官方 Bun 1.4.0 Android executable 作为独立 `bun` 引擎运行 JavaScript 和 TypeScript, 通过 `"bun";` 指令选择, 并使用 `bun run --no-install <source>` 避免自动安装依赖
+- `新增` 仅通过有界 oneway Binder callback 分块流式返回 stdout 和 stderr, terminal result 只报告状态和诊断, 不携带完整输出流
+- `新增` 在隔离的 `:bun_runtime` 插件进程中支持显式取消, 60 秒默认 timeout, runtime information 和 prewarming
+- `新增` 提供 `arm64-v8a` 和 baseline `x86_64` 官方 64 位 Android payload, 以及单 ABI 和 `universal` 安装包
+- `新增` 提供插件发现, 受保护的 Wake 激活, 完整 PluginInfo metadata 和 10 种语言用户文档
+- `优化` 使用版本化 Binder contract, 通过 ParcelFileDescriptor 传输源码, 源码上限为 16 MiB, 组合输出上限为 8 MiB
+- `优化` 从 Android 只读 native library directory 启动 Bun, 并验证固定 release archive 和 packaged binary 的大小, SHA-256, ELF type, machine 和 alignment
+- `优化` 验证两个已打包 executable 的 PT_LOAD alignment 均至少为 16 KB, 同时明确记录尚未完成真实 16 KB Android runtime 测试
+- `优化` 从经过校验的 JSON source 生成 README, 插件中心说明和内置 changelog asset, 并加入 build, Markdown 和 runtime artifact CI 检查
+- `优化` 将最低版本设为 Android 14 (API 34), 因为 API 31 真机上的 Bun syscall 436 `close_range` 被 app seccomp 以 `SIGSYS` 终止. 一台 Sony API 33 设备意外通过但不能证明可移植支持, API 35 真机 JS 和 TS Binder 往返已通过, 更低版本需等待上游 fallback
 
-##### For more release history
+##### 更多发行历史
 
-- [CHANGELOG.md](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/app/src/main/assets/doc/CHANGELOG-en.md)
-
-******
-
-### Build and Verification
+- [CHANGELOG.md](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/app/src/main/assets/doc/CHANGELOG-zh-Hans.md)
 
 ******
 
-Git LFS must materialize both pinned runtime binaries before verification or Gradle packaging. The standard local checks are shown below; building requires JDK 17 or later, Node.js, and Android SDK 36.
+### 构建和验证
+
+******
+
+验证或 Gradle 打包前必须由 Git LFS 实体化两个固定运行时二进制. 下方是标准本地检查. 构建需要 JDK 17 或更高版本, Node.js 和 Android SDK 36.
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
@@ -242,11 +242,11 @@ py .python\generate_markdown.py --check
 
 ******
 
-### Localization and Docs Generation
+### 本地化和文档生成
 
 ******
 
-Edit the JSON and Markdown templates, then run `py .python/generate_markdown.py`. Do not edit generated README, changelog, or plugin-instruction files by hand. `--check` validates language shape, version alignment, localized resources, orphan artifacts, and generated-file drift without writing files.
+编辑 JSON 和 Markdown 模板后运行 `py .python/generate_markdown.py`. 不要手工编辑生成的 README, changelog 或 plugin-instruction 文件. `--check` 会在不写入文件的情况下校验语言结构, 版本对齐, 本地化资源, 孤立产物和生成文件漂移.
 
 ```text
 .readme/common.json
@@ -263,19 +263,19 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-### License
+### 许可证
 
 ******
 
-Plugin code is licensed under the [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). The bundled official Bun executable contains Bun's MIT-licensed code plus statically linked JavaScriptCore and WebKit under LGPL-2 and other third-party components under their own licenses. See [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) and Bun's pinned [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
+插件代码采用 [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). 随附的官方 Bun executable 包含 Bun 的 MIT 许可代码, 以 LGPL-2 许可静态链接的 JavaScriptCore 和 WebKit, 以及使用各自许可证的其他第三方组件. 请查看 [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) 和固定版本的 Bun [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
 
 ******
 
-### Links
+### 链接
 
 ******
 
-- AutoJs6 project: https://github.com/SuperMonster003/AutoJs6
-- Bun official site: https://bun.sh/
-- Pinned Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
-- Third-party notices: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+- AutoJs6 项目: https://github.com/SuperMonster003/AutoJs6
+- Bun 官方网站: https://bun.sh/
+- 固定的 Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
+- 第三方声明: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
