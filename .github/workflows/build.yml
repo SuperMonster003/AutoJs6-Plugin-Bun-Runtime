@@ -38,7 +38,21 @@ jobs:
           node tools/bun-runtime/verify-runtime.mjs
           node --test tools/bun-runtime/verify-apk-runtime.test.mjs
           node tools/bun-runtime/experimental/api28/verify-experiment.mjs
-          node --test tools/bun-runtime/experimental/api28/verify-experiment.test.mjs
+          node tools/bun-runtime/experimental/api28/build-experiment.mjs
+          node --test \
+            tools/bun-runtime/experimental/api28/verify-experiment.test.mjs \
+            tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs \
+            tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs \
+            tools/bun-runtime/experimental/api28/build-experiment.test.mjs
+
+      - name: Re-materialize immutable Bun experiment inputs
+        run: |
+          node tools/bun-runtime/experimental/api28/materialize-source-inputs.mjs \
+            --output-directory "$RUNNER_TEMP/bun-api28-source-prefetch" \
+            --group github-archives
+          node tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.mjs \
+            --output-directory "$RUNNER_TEMP/bun-api28-toolchain-provenance" \
+            --group provenance
 
       - name: Replay the Bun v1.4.0 downstream source series
         run: |

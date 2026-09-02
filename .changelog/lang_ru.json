@@ -14,7 +14,8 @@
         "Снизить поддерживаемую версию Android с Android 14 (API 34) до Android 13 (API 33), сохранив закрепленные официальные Android payload Bun 1.4.0",
         "Задокументировать границу seccomp AOSP T: Android 13 разрешает raw syscall `close_range` Bun, а сбой на API 31 показывает, что API 28 по 32 требуют патч совместимости Bun, а не только изменение manifest",
         "Подготовить эксперимент Android 9+ с детерминированным backport исходников Bun из шести патчей, закрепленными входами NDK и контейнера и неизменяемыми идентификаторами 22 активных зависимостей Android release, явно сохранив несобранный runtime недоступным",
-        "Проверять каждый Debug и Release APK на ZIP alignment 16 KB, точный состав ABI, закрепленные размеры и SHA-256 payload Bun, а также проверять установленные байты payload на тестовом устройстве Android 13"
+        "Проверять каждый Debug и Release APK на ZIP alignment 16 KB, точный состав ABI, закрепленные размеры и SHA-256 payload Bun, а также проверять установленные байты payload на тестовом устройстве Android 13",
+        "Закрепить точные байты 19 архивов исходников Bun и 17 неизменяемых прямых загрузок toolchain, учесть 181 запись целостности Cargo и 172 записи Bun registry, а также добавить materializer без перезаписи и двух-ABI preflight сборки с блокировкой `buildReady`"
       ],
       "dependency": [
         "Добавить Kotlin Parcelize runtime, необходимый Release R8 для сохранения общих классов контракта Parcelable"

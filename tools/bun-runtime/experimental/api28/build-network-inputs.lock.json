@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "snapshotDate": "2026-09-02",
+  "bunCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+  "buildMachinery": [
+    {
+      "path": "scripts/build/codegen.ts",
+      "gitBlobSha1": "7aa6c2238db71f6967377b841ed5e1db7b33a0db",
+      "fact": "The Android release graph runs frozen Bun installs in exactly the repository root, packages/bun-error, and src/node-fallbacks."
+    },
+    {
+      "path": "scripts/build/rust.ts",
+      "gitBlobSha1": "5b7872b7072de24157fa5f9ffa4cf05cbeb5066e",
+      "fact": "The Android release graph invokes the Cargo workspace build for bun_bin."
+    }
+  ],
+  "cargo": {
+    "lockfile": {
+      "path": "Cargo.lock",
+      "bytes": 70318,
+      "gitBlobSha1": "28c08e1b7bc188aa32a7d5ba3fc7647f616fe749",
+      "sha256": "819a552d52819d4d33897df69e16b698d703cec4e9009c2d132791931ab40856"
+    },
+    "packageCount": 284,
+    "registryPackageCount": 181,
+    "registrySha256Count": 181,
+    "gitSourceCount": 0,
+    "registrySource": "registry+https://github.com/rust-lang/crates.io-index",
+    "archiveUrlPattern": "https://static.crates.io/crates/{name}/{name}-{version}.crate",
+    "archiveIdentitiesLockedByCargo": true,
+    "archiveByteCountsLockedByProject": false,
+    "archivesMaterializedByProject": false,
+    "offlineSourceReplacementReady": false,
+    "note": "Cargo.lock supplies a SHA-256 for every crates.io package and contains no Git source. The project has not yet materialized the 181 .crate files, recorded their byte counts, or generated a verified offline Cargo source replacement."
+  },
+  "bunInstall": {
+    "command": "bun install --frozen-lockfile",
+    "directories": [
+      ".",
+      "packages/bun-error",
+      "src/node-fallbacks"
+    ],
+    "lockfiles": [
+      {
+        "path": "bun.lock",
+        "bytes": 15271,
+        "gitBlobSha1": "6ccdf254cb0b4f377632cb72c9da4969d313a34b",
+        "sha256": "49d0dd03629473c0c264e85c003adb0f713f27abdda80a371f137781f71104fa",
+        "packageEntryCount": 62,
+        "sha512IntegrityCount": 60,
+        "workspaceEntryCount": 2
+      },
+      {
+        "path": "packages/bun-error/bun.lock",
+        "bytes": 319,
+        "gitBlobSha1": "3081551fc3b46ab721804fe91612e04ae6202c6a",
+        "sha256": "e5f358227dd67c5c14ddbe5fe3348e2fbffb1399382909eda00e606b178a313d",
+        "packageEntryCount": 1,
+        "sha512IntegrityCount": 1,
+        "workspaceEntryCount": 0
+      },
+      {
+        "path": "src/node-fallbacks/bun.lock",
+        "bytes": 25135,
+        "gitBlobSha1": "a34d182b48ef4dccbc26412e9b79352e277ca2a4",
+        "sha256": "f2694f1fbc8689075bf005d90cecaeb393967cf96b735a8315198144278ea11d",
+        "packageEntryCount": 111,
+        "sha512IntegrityCount": 111,
+        "workspaceEntryCount": 0
+      }
+    ],
+    "packageEntryCount": 174,
+    "sha512IntegrityCount": 172,
+    "workspaceEntryCount": 2,
+    "platformSelectionResolved": false,
+    "registryTarballUrlsLockedByProject": false,
+    "archiveByteCountsLockedByProject": false,
+    "archivesMaterializedByProject": false,
+    "offlineCacheReady": false,
+    "note": "All external entries carry SHA-512 integrity in their pinned Bun lockfile. The exact Linux x86_64 install subset, canonical registry tarball URLs, byte counts, lifecycle-script behavior, and a reusable offline Bun cache still require materialization."
+  },
+  "targetExclusions": {
+    "excludedDownloaders": [
+      "Buildkite split-build artifact downloads",
+      "FreeBSD sysroot",
+      "macOS SDK",
+      "Windows xwin and NuGet sysroot inputs"
+    ],
+    "reason": "The local android-release profile builds C++ and Rust in one Linux x86_64 process and targets only Android; these host/target-specific branches are inactive."
+  },
+  "readiness": {
+    "lockfileIdentitiesComplete": true,
+    "cargoArchiveClosureComplete": false,
+    "bunArchiveClosureComplete": false,
+    "offlineBuildNetworkTestPassed": false,
+    "complete": false,
+    "resolutionGate": "Materialize and verify the exact Cargo and Bun registry archives, prepare project-owned offline caches/source replacement, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
+  }
+}

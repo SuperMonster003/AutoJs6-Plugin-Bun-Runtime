@@ -13,6 +13,7 @@
 * `개선` AOSP T seccomp 경계를 문서화: Android 13은 Bun의 raw `close_range` syscall을 허용하며 API 31 실패를 통해 API 28부터 32에는 manifest-only change가 아닌 Bun compatibility patch가 필요함을 확인
 * `개선` 결정적으로 재현되는 6개 patch의 Bun source backport, 고정된 NDK 및 container input, Android release에서 활성화된 22개 dependency의 불변 identity로 Android 9+ experiment를 준비하되 아직 build되지 않은 runtime은 명시적으로 사용할 수 없게 유지
 * `개선` 모든 Debug 및 Release APK의 16 KB ZIP alignment, 정확한 ABI content, 고정된 Bun payload size와 SHA-256을 검증하고 Android 13 test device에 설치된 payload bytes도 검증
+* `개선` 19개 Bun source archive와 17개 불변 direct toolchain download의 정확한 bytes를 고정하고 Cargo 181개 및 Bun 172개 registry integrity entry를 목록화하며 덮어쓰기를 거부하는 materializer와 `buildReady` gate가 적용된 듀얼 ABI build preflight를 추가
 * `의존성` 공유 Parcelable contract class를 Release R8에서 유지하는 데 필요한 Kotlin Parcelize runtime 추가
 
 # v0.1.0

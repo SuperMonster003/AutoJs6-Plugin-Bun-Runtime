@@ -203,6 +203,7 @@ _2026/09/01_
 - `優化` 記錄 AOSP T seccomp 分界: Android 13 已允許 Bun 呼叫的 raw `close_range` syscall, API 31 失敗則表明 API 28 到 32 需要 Bun 相容性補丁, 僅修改 manifest 無法相容
 - `優化` 使用可確定性重播的六個 Bun 原始碼 backport patch, 固定的 NDK 與 container 輸入以及 22 個 Android release active dependency 的不可變 identity 為 Android 9+ 實驗做準備, 同時明確維持未 build runtime 不可用
 - `優化` 驗證每個 Debug 和 Release APK 的 16 KB ZIP alignment, 精確 ABI 內容, 固定 Bun payload 大小與 SHA-256, 並驗證 Android 13 測試裝置上已安裝的 payload bytes
+- `優化` 鎖定 19 個 Bun source archive 與 17 個不可變 direct toolchain download 的精確 bytes, 盤點 181 個 Cargo 及 172 個 Bun registry integrity entry, 並新增拒絕覆寫的 materializer 與受 `buildReady` gate 保護的雙 ABI build preflight
 - `相依性` 加入 Release R8 保留共用 Parcelable contract class 所需的 Kotlin Parcelize runtime
 
 #### v0.1.0

@@ -33,6 +33,32 @@ const REQUIRED_EVIDENCE = new Map([
   ["scripts/build/profiles.ts", "04a3d46b9c73aee19506a7ea6445b24030371237"],
   ["scripts/build/tools.ts", "c12e7e088a91b04e44ef2dde06464e1662901a2c"],
 ]);
+const EXPECTED_TOOLCHAIN_DOWNLOAD_IDS = [
+  "android-ndk-r27c",
+  "cmake-3.30.5-linux-x86_64",
+  "bootstrap-bun-1.3.13-linux-x64",
+  "node-24.3.0-linux-x64",
+  "ninja-1.13.2-linux-x86_64",
+  "rustup-init-1.29.1-linux-x86_64",
+  "rustc-nightly-2026-07-20-linux-x86_64",
+  "cargo-nightly-2026-07-20-linux-x86_64",
+  "rust-std-nightly-2026-07-20-linux-x86_64",
+  "rust-std-nightly-2026-07-20-android-arm64",
+  "rust-std-nightly-2026-07-20-android-x86_64",
+  "rust-src-nightly-2026-07-20",
+  "cmake-3.30.5-sha256-manifest",
+  "node-24.3.0-shasums256",
+  "rustup-init-1.29.1-sha256",
+  "rust-nightly-2026-07-20-channel-manifest",
+  "rust-nightly-2026-07-20-channel-manifest-sha256",
+];
+const ALLOWED_TOOLCHAIN_HOSTS = new Set([
+  "dl.google.com",
+  "github.com",
+  "nodejs.org",
+  "pub-5e11e972747a44bf9aaf9394f185a982.r2.dev",
+  "static.rust-lang.org",
+]);
 
 export function verifyExperiment(baseDirectory = toolDirectory) {
   const root = resolve(baseDirectory);
@@ -40,7 +66,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   requireEqual(lock.schemaVersion, 1, "experiment.lock.json: schemaVersion");
   requireRecord(lock.identity, "experiment.lock.json: identity");
   requireEqual(lock.identity.variant, "bun-1.4.0-android-api28-patched-experimental", "identity.variant");
-  requireEqual(lock.identity.status, "source-backport-and-inputs-verified", "identity.status");
+  requireEqual(lock.identity.status, "source-backport-and-direct-inputs-verified", "identity.status");
   requireEqual(lock.identity.officialArtifact, false, "identity.officialArtifact");
   requireEqual(lock.identity.runtimeProduced, false, "identity.runtimeProduced");
   requireEqual(lock.identity.buildReady, false, "identity.buildReady");
@@ -49,6 +75,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   verifyUpstream(lock.upstream);
   verifyToolchain(lock.toolchain);
   verifyOutputPolicy(lock.outputPolicy);
+  verifyBuildEntry(root, lock);
   verifyEvidence(lock.sourceEvidence);
 
   const abiResults = verifyTarget(root, lock.target);
@@ -56,6 +83,8 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   const series = readJson(seriesPath);
   const patchResult = verifyPatchSeries(dirname(seriesPath), lock, series);
   const sourceInputResult = verifySourceInputs(root, lock, series);
+  const toolchainInputResult = verifyToolchainInputs(root, lock);
+  const buildNetworkInputResult = verifyBuildNetworkInputs(root, lock, series);
   verifyBlockers(lock.knownBlockers, lock.identity);
   verifyNoRuntimeArtifacts(root);
 
@@ -68,7 +97,13 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
     missingReferencePatchCount: patchResult.missing,
     downstreamPatchCount: patchResult.downstream,
     activeDependencyCount: sourceInputResult.active,
+    lockedGithubArchiveCount: sourceInputResult.githubArchives,
     lockedPrebuiltCount: sourceInputResult.prebuilt,
+    lockedToolchainDownloadCount: toolchainInputResult.directDownloads,
+    lockedToolchainBuildArtifactCount: toolchainInputResult.buildArtifacts,
+    lockedToolchainProvenanceCount: toolchainInputResult.provenanceDocuments,
+    cargoRegistryPackageCount: buildNetworkInputResult.cargoRegistryPackages,
+    bunIntegrityEntryCount: buildNetworkInputResult.bunIntegrityEntries,
     buildReady: lock.identity.buildReady,
     distributionReady: lock.identity.distributionReady,
   };
@@ -132,16 +167,268 @@ function verifyToolchain(toolchain) {
   requireEqual(toolchain.androidNdk?.status, "archive-locked", "toolchain.androidNdk.status");
   requireNonEmptyString(toolchain.androidNdk?.officialChecksumSource, "toolchain.androidNdk.officialChecksumSource");
   requireEqual(toolchain.llvm?.version, "21.1.8", "toolchain.llvm.version");
+  requireEqual(toolchain.llvm?.status, "host-package-layer-pending", "toolchain.llvm.status");
   requireEqual(toolchain.rust?.channel, "nightly-2026-07-20", "toolchain.rust.channel");
+  requireEqual(
+    toolchain.rust?.version,
+    "1.99.0-nightly (9f36de775 2026-07-19)",
+    "toolchain.rust.version",
+  );
+  requireEqual(toolchain.rust?.profile, "minimal", "toolchain.rust.profile");
+  requireEqual(toolchain.rust?.status, "direct-downloads-locked", "toolchain.rust.status");
   requireSameArray(
     toolchain.rust?.targets,
     ["aarch64-linux-android", "x86_64-linux-android"],
     "toolchain.rust.targets",
   );
   requireEqual(toolchain.cmake?.version, "3.30.5", "toolchain.cmake.version");
+  requireEqual(toolchain.cmake?.status, "direct-download-locked", "toolchain.cmake.status");
   requireEqual(toolchain.bootstrapBun?.version, "1.3.13", "toolchain.bootstrapBun.version");
-  requireEqual(toolchain.ninja?.version, null, "toolchain.ninja.version");
-  requireEqual(toolchain.ninja?.status, "version-pending", "toolchain.ninja.status");
+  requireEqual(toolchain.bootstrapBun?.status, "direct-download-locked", "toolchain.bootstrapBun.status");
+  requireEqual(toolchain.ninja?.version, "1.13.2", "toolchain.ninja.version");
+  requireEqual(toolchain.ninja?.status, "direct-download-locked", "toolchain.ninja.status");
+}
+
+function verifyToolchainInputs(root, experiment) {
+  requireEqual(experiment.toolchainInputLock, "toolchain-inputs.lock.json", "toolchainInputLock");
+  const lockPath = resolveInside(root, experiment.toolchainInputLock, "toolchainInputLock");
+  const lock = readJson(lockPath);
+  requireEqual(lock.schemaVersion, 1, "toolchain-inputs.lock.json: schemaVersion");
+  requireEqual(lock.snapshotDate, "2026-09-02", "toolchain-inputs.lock.json: snapshotDate");
+  requireEqual(lock.host?.os, "linux", "toolchain inputs host OS");
+  requireEqual(lock.host?.architecture, "x86_64", "toolchain inputs host architecture");
+  requireEqual(lock.source?.bunCommit, EXPECTED_UPSTREAM_COMMIT, "toolchain inputs source commit");
+  requireEqual(lock.source?.path, ".buildkite/Dockerfile", "toolchain inputs source path");
+  requireEqual(lock.source?.gitBlobSha1, REQUIRED_EVIDENCE.get(".buildkite/Dockerfile"), "toolchain inputs source blob");
+
+  requireArray(lock.directDownloads, "toolchain directDownloads");
+  requireSameArray(
+    lock.directDownloads.map((artifact) => artifact.id),
+    EXPECTED_TOOLCHAIN_DOWNLOAD_IDS,
+    "toolchain direct download IDs",
+  );
+  const ids = new Set();
+  const urls = new Set();
+  const filenames = new Set();
+  let totalBytes = 0;
+  let buildArtifacts = 0;
+  let provenanceDocuments = 0;
+  for (const artifact of lock.directDownloads) {
+    const label = `toolchain input ${artifact.id}`;
+    requireRecord(artifact, label);
+    requireNonEmptyString(artifact.id, `${label}: id`);
+    require(!ids.has(artifact.id), `${label}: duplicate ID`);
+    ids.add(artifact.id);
+    require(artifact.group === "build" || artifact.group === "provenance", `${label}: invalid group`);
+    if (artifact.group === "build") buildArtifacts += 1;
+    else provenanceDocuments += 1;
+    requireNonEmptyString(artifact.role, `${label}: role`);
+    requireNonEmptyString(artifact.version, `${label}: version`);
+    requireSafeFilename(artifact.filename, `${label}: filename`);
+    require(!filenames.has(artifact.filename), `${label}: duplicate filename`);
+    filenames.add(artifact.filename);
+    requireHttpsUrl(artifact.url, `${label}: URL`, ALLOWED_TOOLCHAIN_HOSTS);
+    require(!urls.has(artifact.url), `${label}: duplicate URL`);
+    urls.add(artifact.url);
+    require(Number.isSafeInteger(artifact.bytes) && artifact.bytes > 0, `${label}: invalid byte count`);
+    require(SHA256.test(artifact.sha256), `${label}: invalid SHA-256`);
+    if (artifact.sha1 !== undefined) require(SHA1.test(artifact.sha1), `${label}: invalid SHA-1`);
+    if (artifact.group === "build") requireNonEmptyString(artifact.checksumSource, `${label}: checksumSource`);
+    totalBytes += artifact.bytes;
+  }
+  requireEqual(buildArtifacts, 12, "toolchain build artifact count");
+  requireEqual(provenanceDocuments, 5, "toolchain provenance document count");
+  requireEqual(totalBytes, 1024309832, "toolchain locked byte total");
+
+  const byId = new Map(lock.directDownloads.map((artifact) => [artifact.id, artifact]));
+  const ndk = byId.get("android-ndk-r27c");
+  requireEqual(ndk.url, experiment.toolchain.androidNdk.url, "NDK lock URL consistency");
+  requireEqual(ndk.bytes, experiment.toolchain.androidNdk.archiveBytes, "NDK lock byte consistency");
+  requireEqual(ndk.sha1, experiment.toolchain.androidNdk.archiveSha1, "NDK lock SHA-1 consistency");
+  requireEqual(ndk.sha256, experiment.toolchain.androidNdk.archiveSha256, "NDK lock SHA-256 consistency");
+  requireEqual(byId.get("cmake-3.30.5-linux-x86_64")?.version, experiment.toolchain.cmake.version, "CMake lock version");
+  requireEqual(byId.get("bootstrap-bun-1.3.13-linux-x64")?.version, experiment.toolchain.bootstrapBun.version, "bootstrap Bun lock version");
+  requireEqual(byId.get("node-24.3.0-linux-x64")?.version, "24.3.0", "Node lock version");
+  requireEqual(byId.get("ninja-1.13.2-linux-x86_64")?.version, experiment.toolchain.ninja.version, "Ninja lock version");
+  requireEqual(byId.get("rustup-init-1.29.1-linux-x86_64")?.version, lock.rust?.rustupVersion, "rustup lock version");
+
+  requireEqual(lock.rust?.channel, experiment.toolchain.rust.channel, "Rust channel consistency");
+  requireEqual(lock.rust?.toolchainVersion, experiment.toolchain.rust.version, "Rust version consistency");
+  requireEqual(lock.rust?.profile, experiment.toolchain.rust.profile, "Rust profile consistency");
+  requireSameArray(lock.rust?.components, ["rustc", "cargo", "rust-std", "rust-src"], "Rust minimal components");
+  requireSameArray(lock.rust?.targets, experiment.toolchain.rust.targets, "Rust target consistency");
+  requireArray(lock.rust?.excludedForThisExperiment, "Rust excluded components");
+  requireNonEmptyString(lock.rust?.exclusionReason, "Rust exclusion reason");
+
+  requireEqual(lock.hostPackageLayer?.status, "unresolved", "host package layer status");
+  requireEqual(lock.hostPackageLayer?.containerBase, experiment.toolchain.host.containerBase, "host package base");
+  requireEqual(
+    lock.hostPackageLayer?.containerIndexDigest,
+    experiment.toolchain.host.containerDigest,
+    "host package container index digest",
+  );
+  requireEqual(
+    lock.hostPackageLayer?.linuxAmd64ManifestDigest,
+    experiment.toolchain.host.linuxAmd64ManifestDigest,
+    "host package amd64 manifest digest",
+  );
+  requireEqual(lock.hostPackageLayer?.requiredVersionFacts?.llvm, experiment.toolchain.llvm.version, "host LLVM version");
+  requireEqual(lock.hostPackageLayer?.requiredVersionFacts?.gcc, "13", "host GCC version");
+  requireArray(lock.hostPackageLayer?.mutableInputs, "host mutable inputs");
+  requireEqual(lock.hostPackageLayer.mutableInputs.length, 3, "host mutable input count");
+  requireArray(lock.hostPackageLayer?.requiredPackages, "host required packages");
+  requireNonEmptyString(lock.hostPackageLayer?.resolutionGate, "host package resolution gate");
+
+  requireEqual(lock.readiness?.directDownloadCount, 17, "toolchain readiness directDownloadCount");
+  requireEqual(lock.readiness?.buildArtifactCount, buildArtifacts, "toolchain readiness buildArtifactCount");
+  requireEqual(
+    lock.readiness?.provenanceDocumentCount,
+    provenanceDocuments,
+    "toolchain readiness provenanceDocumentCount",
+  );
+  requireEqual(lock.readiness?.directDownloadBytesLocked, true, "toolchain direct-download byte readiness");
+  requireEqual(lock.readiness?.hostPackageLayerLocked, false, "host package lock readiness");
+  requireEqual(lock.readiness?.complete, false, "toolchain lock completeness");
+  requireNonEmptyString(lock.readiness?.note, "toolchain readiness note");
+  return { directDownloads: lock.directDownloads.length, buildArtifacts, provenanceDocuments };
+}
+
+function verifyBuildNetworkInputs(root, experiment, series) {
+  requireEqual(experiment.buildNetworkInputLock, "build-network-inputs.lock.json", "buildNetworkInputLock");
+  const lockPath = resolveInside(root, experiment.buildNetworkInputLock, "buildNetworkInputLock");
+  const lock = readJson(lockPath);
+  requireEqual(lock.schemaVersion, 1, "build-network-inputs.lock.json: schemaVersion");
+  requireEqual(lock.snapshotDate, "2026-09-02", "build-network-inputs.lock.json: snapshotDate");
+  requireEqual(lock.bunCommit, series.downstreamBackport.headCommit, "build network Bun commit");
+  verifyDefinitionRecords(
+    lock.buildMachinery,
+    ["scripts/build/codegen.ts", "scripts/build/rust.ts"],
+    "build network machinery",
+  );
+  for (const record of lock.buildMachinery) requireNonEmptyString(record.fact, `${record.path}: network fact`);
+  requireEqual(
+    lock.buildMachinery[0].gitBlobSha1,
+    "7aa6c2238db71f6967377b841ed5e1db7b33a0db",
+    "codegen network machinery blob",
+  );
+  requireEqual(
+    lock.buildMachinery[1].gitBlobSha1,
+    "5b7872b7072de24157fa5f9ffa4cf05cbeb5066e",
+    "Rust network machinery blob",
+  );
+
+  requireRecord(lock.cargo, "build network Cargo closure");
+  verifyLockfileIdentity(lock.cargo.lockfile, {
+    path: "Cargo.lock",
+    bytes: 70318,
+    gitBlobSha1: "28c08e1b7bc188aa32a7d5ba3fc7647f616fe749",
+    sha256: "819a552d52819d4d33897df69e16b698d703cec4e9009c2d132791931ab40856",
+  }, "Cargo.lock");
+  requireEqual(lock.cargo.packageCount, 284, "Cargo package count");
+  requireEqual(lock.cargo.registryPackageCount, 181, "Cargo registry package count");
+  requireEqual(lock.cargo.registrySha256Count, 181, "Cargo registry SHA-256 count");
+  requireEqual(lock.cargo.gitSourceCount, 0, "Cargo Git source count");
+  requireEqual(
+    lock.cargo.registrySource,
+    "registry+https://github.com/rust-lang/crates.io-index",
+    "Cargo registry source",
+  );
+  requireEqual(
+    lock.cargo.archiveUrlPattern,
+    "https://static.crates.io/crates/{name}/{name}-{version}.crate",
+    "Cargo archive URL pattern",
+  );
+  requireEqual(lock.cargo.archiveIdentitiesLockedByCargo, true, "Cargo archive identity readiness");
+  requireEqual(lock.cargo.archiveByteCountsLockedByProject, false, "Cargo archive byte readiness");
+  requireEqual(lock.cargo.archivesMaterializedByProject, false, "Cargo archive materialization readiness");
+  requireEqual(lock.cargo.offlineSourceReplacementReady, false, "Cargo offline source readiness");
+  requireNonEmptyString(lock.cargo.note, "Cargo closure note");
+
+  requireRecord(lock.bunInstall, "build network Bun install closure");
+  requireEqual(lock.bunInstall.command, "bun install --frozen-lockfile", "Bun install command");
+  requireSameArray(
+    lock.bunInstall.directories,
+    [".", "packages/bun-error", "src/node-fallbacks"],
+    "Bun install directories",
+  );
+  requireArray(lock.bunInstall.lockfiles, "Bun install lockfiles");
+  const expectedBunLockfiles = [
+    {
+      path: "bun.lock",
+      bytes: 15271,
+      gitBlobSha1: "6ccdf254cb0b4f377632cb72c9da4969d313a34b",
+      sha256: "49d0dd03629473c0c264e85c003adb0f713f27abdda80a371f137781f71104fa",
+      packageEntryCount: 62,
+      sha512IntegrityCount: 60,
+      workspaceEntryCount: 2,
+    },
+    {
+      path: "packages/bun-error/bun.lock",
+      bytes: 319,
+      gitBlobSha1: "3081551fc3b46ab721804fe91612e04ae6202c6a",
+      sha256: "e5f358227dd67c5c14ddbe5fe3348e2fbffb1399382909eda00e606b178a313d",
+      packageEntryCount: 1,
+      sha512IntegrityCount: 1,
+      workspaceEntryCount: 0,
+    },
+    {
+      path: "src/node-fallbacks/bun.lock",
+      bytes: 25135,
+      gitBlobSha1: "a34d182b48ef4dccbc26412e9b79352e277ca2a4",
+      sha256: "f2694f1fbc8689075bf005d90cecaeb393967cf96b735a8315198144278ea11d",
+      packageEntryCount: 111,
+      sha512IntegrityCount: 111,
+      workspaceEntryCount: 0,
+    },
+  ];
+  requireEqual(lock.bunInstall.lockfiles.length, expectedBunLockfiles.length, "Bun lockfile count");
+  for (let index = 0; index < expectedBunLockfiles.length; index += 1) {
+    const observed = lock.bunInstall.lockfiles[index];
+    const expected = expectedBunLockfiles[index];
+    verifyLockfileIdentity(observed, expected, expected.path);
+    requireEqual(observed.packageEntryCount, expected.packageEntryCount, `${expected.path}: package entries`);
+    requireEqual(observed.sha512IntegrityCount, expected.sha512IntegrityCount, `${expected.path}: SHA-512 entries`);
+    requireEqual(observed.workspaceEntryCount, expected.workspaceEntryCount, `${expected.path}: workspace entries`);
+  }
+  requireEqual(lock.bunInstall.packageEntryCount, 174, "Bun package entry count");
+  requireEqual(lock.bunInstall.sha512IntegrityCount, 172, "Bun SHA-512 integrity count");
+  requireEqual(lock.bunInstall.workspaceEntryCount, 2, "Bun workspace entry count");
+  for (const field of [
+    "platformSelectionResolved",
+    "registryTarballUrlsLockedByProject",
+    "archiveByteCountsLockedByProject",
+    "archivesMaterializedByProject",
+    "offlineCacheReady",
+  ]) {
+    requireEqual(lock.bunInstall[field], false, `Bun install ${field}`);
+  }
+  requireNonEmptyString(lock.bunInstall.note, "Bun install closure note");
+
+  requireRecord(lock.targetExclusions, "build network target exclusions");
+  requireArray(lock.targetExclusions.excludedDownloaders, "excluded network downloaders");
+  requireEqual(lock.targetExclusions.excludedDownloaders.length, 4, "excluded network downloader count");
+  requireNonEmptyString(lock.targetExclusions.reason, "network target exclusion reason");
+  requireEqual(lock.readiness?.lockfileIdentitiesComplete, true, "network lockfile identity readiness");
+  requireEqual(lock.readiness?.cargoArchiveClosureComplete, false, "Cargo archive closure readiness");
+  requireEqual(lock.readiness?.bunArchiveClosureComplete, false, "Bun archive closure readiness");
+  requireEqual(lock.readiness?.offlineBuildNetworkTestPassed, false, "offline network test readiness");
+  requireEqual(lock.readiness?.complete, false, "build network lock completeness");
+  requireNonEmptyString(lock.readiness?.resolutionGate, "build network resolution gate");
+  return {
+    cargoRegistryPackages: lock.cargo.registryPackageCount,
+    bunIntegrityEntries: lock.bunInstall.sha512IntegrityCount,
+  };
+}
+
+function verifyLockfileIdentity(observed, expected, label) {
+  requireRecord(observed, `${label}: lockfile identity`);
+  requireEqual(observed.path, expected.path, `${label}: path`);
+  requireEqual(observed.bytes, expected.bytes, `${label}: bytes`);
+  requireEqual(observed.gitBlobSha1, expected.gitBlobSha1, `${label}: Git blob`);
+  requireEqual(observed.sha256, expected.sha256, `${label}: SHA-256`);
+  requireSafeRelativePath(observed.path, `${label}: safe path`);
+  require(SHA1.test(observed.gitBlobSha1), `${label}: invalid Git blob`);
+  require(SHA256.test(observed.sha256), `${label}: invalid SHA-256`);
 }
 
 function verifyOutputPolicy(policy) {
@@ -154,6 +441,18 @@ function verifyOutputPolicy(policy) {
     require(roots.has(requiredRoot), `outputPolicy must forbid writes to ${requiredRoot}`);
   }
   for (const root of roots) requireSafeRelativePath(root, `forbidden write root ${root}`);
+}
+
+function verifyBuildEntry(root, lock) {
+  requireEqual(lock.buildEntry, "build-experiment.mjs", "buildEntry");
+  const entryPath = resolveInside(root, lock.buildEntry, "buildEntry");
+  require(existsSync(entryPath), `buildEntry is missing: ${lock.buildEntry}`);
+  const stat = lstatSync(entryPath);
+  require(stat.isFile() && !stat.isSymbolicLink(), "buildEntry must be a regular file");
+  requireEqual(lock.reproducibility?.sourceDateEpoch, 1788278400, "reproducibility.sourceDateEpoch");
+  requireEqual(lock.reproducibility?.timezone, "UTC", "reproducibility.timezone");
+  requireEqual(lock.reproducibility?.locale, "C.UTF-8", "reproducibility.locale");
+  requireNonEmptyString(lock.reproducibility?.networkPolicy, "reproducibility.networkPolicy");
 }
 
 function verifyEvidence(evidence) {
@@ -459,7 +758,7 @@ function verifySourceInputs(root, lock, series) {
     series.downstreamBackport.headCommit,
     "source inputs downstream head commit",
   );
-  requireEqual(inputs.status, "android-release-revision-identities-locked", "source inputs status");
+  requireEqual(inputs.status, "android-release-source-bytes-locked", "source inputs status");
   requireEqual(inputs.snapshotDate, "2026-09-02", "source inputs snapshotDate");
   requireEqual(inputs.resolution?.profile, "android-release", "source inputs profile");
   requireEqual(inputs.resolution?.androidApiLevel, 28, "source inputs Android API");
@@ -520,6 +819,18 @@ function verifySourceInputs(root, lock, series) {
       githubArchives += 1;
       require(/^[^/]+\/[^/]+$/.test(dependency.repository), `${label}: invalid GitHub repository`);
       require(SHA1.test(dependency.revision), `${label}: revision must be an immutable full commit`);
+      requireEqual(
+        dependency.url,
+        `https://github.com/${dependency.repository}/archive/${dependency.revision}.tar.gz`,
+        `${label}: archive URL`,
+      );
+      require(Number.isSafeInteger(dependency.bytes) && dependency.bytes > 0, `${label}: archive bytes`);
+      require(SHA256.test(dependency.sha256), `${label}: invalid archive SHA-256`);
+      requireEqual(
+        dependency.topLevelDirectory,
+        `${dependency.repository.split("/")[1]}-${dependency.revision}`,
+        `${label}: archive root`,
+      );
       if (dependency.name === "brotli") {
         requireEqual(dependency.upstreamTag, "v1.1.0", `${label}: upstreamTag`);
         requireEqual(
@@ -599,11 +910,11 @@ function verifySourceInputs(root, lock, series) {
   requireEqual(inputs.readiness?.activeDependencyCount, expectedActive.length, "source readiness dependency count");
   requireEqual(inputs.readiness?.revisionIdentitiesComplete, true, "source revision readiness");
   requireEqual(inputs.readiness?.prebuiltChecksumsComplete, true, "prebuilt checksum readiness");
-  requireEqual(inputs.readiness?.githubArchiveChecksumsComplete, false, "GitHub archive checksum readiness");
-  requireEqual(inputs.readiness?.allDownloadedBytesLocked, false, "download byte-lock readiness");
+  requireEqual(inputs.readiness?.githubArchiveChecksumsComplete, true, "GitHub archive checksum readiness");
+  requireEqual(inputs.readiness?.allDownloadedBytesLocked, true, "download byte-lock readiness");
   requireNonEmptyString(inputs.readiness?.note, "source readiness note");
 
-  return { active: expectedActive.length, prebuilt };
+  return { active: expectedActive.length, githubArchives, prebuilt };
 }
 
 function verifyDefinitionRecords(records, expectedPaths, label) {
@@ -714,6 +1025,20 @@ function requireSafeRelativePath(value, label) {
   require(!segments.includes(""), `${label} must not contain empty segments`);
 }
 
+function requireSafeFilename(value, label) {
+  requireNonEmptyString(value, label);
+  require(!value.includes("/") && !value.includes("\\") && !value.includes("\0"), `${label} must be a filename`);
+  require(value !== "." && value !== ".." && !value.includes(".."), `${label} must not contain traversal`);
+  require(/^[A-Za-z0-9._-]+$/.test(value), `${label} contains unsupported characters`);
+}
+
+function requireHttpsUrl(value, label, allowedHosts) {
+  requireNonEmptyString(value, label);
+  const url = new URL(value);
+  require(url.protocol === "https:" && url.username === "" && url.password === "", `${label} must use HTTPS without credentials`);
+  require(allowedHosts.has(url.hostname), `${label} has unexpected host ${url.hostname}`);
+}
+
 function sha256(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
@@ -755,11 +1080,20 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     );
     console.log(`OK ${result.downstreamPatchCount} deterministic downstream patches are locked and materialized`);
     console.log(
-      `OK ${result.activeDependencyCount} Android-release dependency identities and ` +
-        `${result.lockedPrebuiltCount} prebuilt SHA-256 values are locked`,
+      `OK ${result.activeDependencyCount} Android-release dependency identities, ` +
+        `${result.lockedGithubArchiveCount} source archives, and ${result.lockedPrebuiltCount} prebuilts are byte-locked`,
+    );
+    console.log(
+      `OK ${result.lockedToolchainDownloadCount} direct toolchain downloads are byte-locked ` +
+        `(${result.lockedToolchainBuildArtifactCount} build artifacts, ` +
+        `${result.lockedToolchainProvenanceCount} provenance documents)`,
+    );
+    console.log(
+      `OK build-network inventory covers ${result.cargoRegistryPackageCount} Cargo registry checksums ` +
+        `and ${result.bunIntegrityEntryCount} Bun registry integrity entries; archive materialization remains open`,
     );
     console.log("OK no runtime/archive artifact is present in the experiment directory");
-    console.log("NOT BUILD READY: remaining downloaded-byte/toolchain locks, build, ELF audit, and device evidence are open");
+    console.log("NOT BUILD READY: the host APT/GCC/LLVM and build-time network closure, build, ELF audit, and device evidence are open");
   } catch (error) {
     console.error(`ERROR ${error.message}`);
     process.exitCode = 1;
