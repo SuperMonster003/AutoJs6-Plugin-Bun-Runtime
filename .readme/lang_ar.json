@@ -27,6 +27,7 @@
   "p_quick_start_intro": "احفظ المحتوى التالي كملف script وشغله للتأكد من أن محرك Bun تولى التنفيذ",
   "p_quick_start_result": "إذا سار كل شيء جيدا, يكون أول سطر في الخرج `Bun {{ bun_version }}` والسطر الثاني `android`.",
   "p_typescript_intro": "تعمل ملفات TypeScript مباشرة أيضا, دون compile مسبق أو إعداد إضافي",
+  "p_more_samples": "توجد في [samples/]({{ samples_url }}) أمثلة إضافية مشروحة وجاهزة للنسخ والتشغيل لطلبات الشبكة, وقراءة الملفات وكتابتها داخل مساحة العمل الخاصة, وstdout/stderr, وأنواع TypeScript. تلتزم كل الأمثلة بحدود المصدر الواحد الحالية و`--no-install`.",
   "h3_compatibility": "التوافق",
   "compatibility_points": [
     "المحرك: Bun الرسمي {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",

@@ -83,6 +83,8 @@ const greeting: Greeting = { name: "AutoJs6" };
 console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ```
 
+More annotated, copy-and-run examples for network requests, private-workspace file I/O, stdout/stderr, and TypeScript types are available in [samples/](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/tree/master/samples). Every example stays within the current single-source and `--no-install` boundaries.
+
 ******
 
 ### Features
@@ -219,6 +221,7 @@ _2026/09/01_
 - `Improvement` Lay the groundwork for future Android 9+ support: establish a precisely replayable Bun source patch plan (6 patches) and lock the build inputs (pinned NDK and container, 22 active Android release dependencies); the patched runtime is not built yet and does not ship in current packages
 - `Improvement` Strengthen package quality checks: every Debug and Release APK verifies 16 KB ZIP alignment, exact ABI contents, and the size and SHA-256 of the pinned Bun payload, with installed payload bytes cross-checked on an Android 13 test device
 - `Improvement` Harden the supply chain: lock the exact bytes of 19 Bun source archives and 17 toolchain downloads, inventory 181 Cargo and 172 Bun registry integrity entries, and add an overwrite-refusing materializer plus a dual-ABI build preflight guarded by the `buildReady` gate
+- `Improvement` Expand the copy-and-run sample library with annotated network fetch, private-workspace file I/O, stdout/stderr streaming, and richer TypeScript examples; add a documentation gate that enforces the first-line `"bun";` directive and the single-source, no-install boundaries
 - `Dependency` Add the Kotlin Parcelize runtime so that R8 in Release builds keeps the shared Parcelable contract class
 
 #### v0.1.0

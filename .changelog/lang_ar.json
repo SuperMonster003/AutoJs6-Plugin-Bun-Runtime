@@ -15,7 +15,8 @@
         "تحديد السبب الجذري لعدم العمل على الإصدارات الأقدم: بدءا من Android 13 يسمح seccomp النظام بالـ raw `close_range` syscall الذي يستدعيه Bun, بينما يثبت فشل جهاز حقيقي على API 31 أن API 28 حتى 32 تتطلب تعديل Bun نفسه, ولا يكفي تغيير manifest وحده",
         "تمهيد لدعم Android 9+ مستقبلا: إنشاء خطة patch لمصدر Bun قابلة لإعادة التطبيق بدقة (6 patch) وتثبيت مدخلات build (تثبيت NDK والحاوية, و 22 dependency نشطة من Android release); لم يتم build للـ runtime المعدل بعد ولن يدخل الحزم الحالية",
         "تعزيز فحوص جودة الحزم: يتحقق كل Debug و Release APK من 16 KB ZIP alignment والمحتوى الدقيق لكل ABI وحجم Bun payload المثبتة و SHA-256 الخاص بها, مع مطابقة بايتات payload المثبتة على جهاز اختبار Android 13",
-        "تقوية سلسلة التوريد: تثبيت البايتات الدقيقة لـ 19 Bun source archive و 17 تنزيل toolchain, وجرد 181 إدخال integrity لـ Cargo و 172 لـ Bun registry, وإضافة materializer يرفض الكتابة فوق الملفات وفحص build مسبق لكلا ABI محمي ببوابة `buildReady`"
+        "تقوية سلسلة التوريد: تثبيت البايتات الدقيقة لـ 19 Bun source archive و 17 تنزيل toolchain, وجرد 181 إدخال integrity لـ Cargo و 172 لـ Bun registry, وإضافة materializer يرفض الكتابة فوق الملفات وفحص build مسبق لكلا ABI محمي ببوابة `buildReady`",
+        "توسيع مكتبة الأمثلة الجاهزة للنسخ والتشغيل بإضافة أمثلة مشروحة لطلبات الشبكة, وقراءة الملفات وكتابتها في مساحة العمل الخاصة, وتدفق stdout/stderr, وأنواع TypeScript, مع بوابة توثيق تتحقق من توجيه `\"bun\";` في السطر الأول وحدود المصدر الواحد ومنع تثبيت الحزم"
       ],
       "dependency": [
         "إضافة Kotlin Parcelize runtime لكي يحتفظ R8 في Release بفئة Parcelable contract المشتركة"

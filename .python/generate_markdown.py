@@ -96,6 +96,23 @@ README_LIST_KEYS = [
 ]
 README_FAQ_KEY = "faq"
 
+EXPECTED_SAMPLE_FILES = {
+    "fetch.bun.js": ("fetch(", "AbortController"),
+    "file-io.bun.js": ("Bun.write", "Bun.file"),
+    "hello.bun.js": ("Bun.version", "process.platform"),
+    "output-streams.bun.js": ("console.log", "console.error", "process.stdout", "process.stderr"),
+    "typescript.bun.ts": ("interface Task", "TaskState"),
+}
+SAMPLE_DIRECTIVE = '"bun";'
+SAMPLE_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*\.bun\.(?:js|ts)$")
+SAMPLE_RELATIVE_IMPORT_PATTERN = re.compile(
+    r"(?:\bfrom\s*|\bimport\s*\(\s*|\bimport\s*)['\"]\.{1,2}(?:/|['\"])",
+)
+SAMPLE_INSTALL_COMMAND_PATTERN = re.compile(
+    r"\b(?:bunx|bun\s+install|npm\s+install|pnpm\s+install|yarn\s+install)\b",
+    re.IGNORECASE,
+)
+
 EXPECTED_ARTIFACT_COUNT = 36
 README_LATEST_RELEASES = 3
 
@@ -209,6 +226,52 @@ def validate_language_source_inventory(root: Path) -> None:
         f"Changelog language source mismatch: missing={sorted(expected_changelog - actual_changelog)} "
         f"extra={sorted(actual_changelog - expected_changelog)}",
     )
+
+
+def validate_sample_source(path: Path, source: str) -> None:
+    require(
+        SAMPLE_NAME_PATTERN.fullmatch(path.name) is not None,
+        f"Sample file name must use <topic>.bun.js or <topic>.bun.ts: {path.name}",
+    )
+    require("\x00" not in source, f"Sample contains a NUL byte: {path.name}")
+    lines = source.splitlines()
+    require(bool(lines) and lines[0] == SAMPLE_DIRECTIVE, f"Sample must start with {SAMPLE_DIRECTIVE}: {path.name}")
+    require(source.endswith("\n"), f"Sample must end with a newline: {path.name}")
+    require(
+        any(line.lstrip().startswith("//") for line in lines[1:]),
+        f"Sample must explain its behavior with comments: {path.name}",
+    )
+    require(
+        SAMPLE_RELATIVE_IMPORT_PATTERN.search(source) is None,
+        f"Sample must remain self-contained and cannot use relative imports: {path.name}",
+    )
+    normalized_commands = re.sub(r"['\"\[\](),]", " ", source)
+    require(
+        SAMPLE_INSTALL_COMMAND_PATTERN.search(normalized_commands) is None,
+        f"Sample cannot install packages or invoke bunx: {path.name}",
+    )
+    for token in EXPECTED_SAMPLE_FILES.get(path.name, ()):
+        require(token in source, f"Sample {path.name} is missing its expected behavior marker {token!r}")
+
+
+def validate_samples(root: Path) -> None:
+    sample_directory = root / "samples"
+    require(sample_directory.is_dir(), f"Missing sample directory: {sample_directory}")
+    require(not sample_directory.is_symlink(), f"Refusing to inspect symlink: {sample_directory}")
+    actual = {
+        path.name
+        for path in sample_directory.iterdir()
+        if path.is_file() and (path.name.endswith(".bun.js") or path.name.endswith(".bun.ts"))
+    }
+    expected = set(EXPECTED_SAMPLE_FILES)
+    require(
+        actual == expected,
+        f"Sample inventory mismatch: expected={sorted(expected)} actual={sorted(actual)}",
+    )
+    for name in sorted(expected):
+        path = sample_directory / name
+        require(not path.is_symlink(), f"Refusing to read sample symlink: {path}")
+        validate_sample_source(path, load_text(path))
 
 
 def shape_of(value: Any) -> Any:
@@ -569,6 +632,7 @@ def build_artifacts(root: Path) -> dict[Path, str]:
     android_changelog_dir = root / "app" / "src" / "main" / "assets" / "doc"
     android_resource_dir = root / "app" / "src" / "main" / "res"
 
+    validate_samples(root)
     languages, changelogs = load_languages(root)
     readme_template = load_text(readme_dir / "template_readme.md")
     instruction_template = load_text(readme_dir / "template_plugin_instruction.md")

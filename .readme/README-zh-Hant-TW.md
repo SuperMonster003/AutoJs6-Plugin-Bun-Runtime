@@ -83,6 +83,8 @@ const greeting: Greeting = { name: "AutoJs6" };
 console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ```
 
+更多附有註解, 可直接複製執行的範例見 [samples/](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/tree/master/samples), 涵蓋網路請求, 私人工作目錄檔案讀寫, stdout/stderr 和 TypeScript 型別. 所有範例均遵守目前的單一原始碼與 `--no-install` 邊界.
+
 ******
 
 ### 功能
@@ -219,6 +221,7 @@ _2026/09/01_
 - `優化` 為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 原始碼補丁方案 (6 個補丁) 並鎖定建置輸入 (固定 NDK 與容器, 22 個 Android release 活躍相依性); 補丁版 runtime 尚未建置, 也不會進入目前安裝套件
 - `優化` 加強安裝套件品質檢查: 每個 Debug 和 Release APK 均驗證 16 KB ZIP alignment, 精確 ABI 內容以及固定 Bun payload 的大小與 SHA-256, 並在 Android 13 測試裝置上核對已安裝的 payload 位元組
 - `優化` 強化供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載檔的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 建置預檢
+- `優化` 擴充可複製執行的範例庫: 新增附有註解的網路 fetch, 私人工作目錄檔案讀寫, stdout/stderr 串流輸出和更完整的 TypeScript 型別範例; 文件門禁會檢查首行 `"bun";` 指令以及單一原始碼和禁止安裝依賴的邊界
 - `相依性` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
 
 #### v0.1.0

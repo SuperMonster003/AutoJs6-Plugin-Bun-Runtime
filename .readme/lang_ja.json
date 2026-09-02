@@ -27,6 +27,7 @@
   "p_quick_start_intro": "次の内容をスクリプトファイルとして保存して実行すると, Bun エンジンが実行を引き継いだことを確認できます",
   "p_quick_start_result": "正常に動作していれば, 出力の 1 行目は `Bun {{ bun_version }}`, 2 行目は `android` です.",
   "p_typescript_intro": "TypeScript ファイルも事前コンパイルや追加設定なしでそのまま実行できます",
+  "p_more_samples": "ネットワークリクエスト, プライベートワークスペースでのファイル入出力, stdout/stderr, TypeScript の型を扱うコメント付きのコピー実行可能な例は [samples/]({{ samples_url }}) にあります. すべての例は現在の単一ソースと `--no-install` の境界内で動作します.",
   "h3_compatibility": "互換性",
   "compatibility_points": [
     "エンジン: 公式 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",

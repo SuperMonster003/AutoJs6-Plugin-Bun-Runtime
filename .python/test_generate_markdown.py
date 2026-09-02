@@ -49,6 +49,38 @@ class MarkdownGenerationTest(unittest.TestCase):
         artifacts = generate_markdown.build_artifacts(ROOT)
         generate_markdown.check_artifacts(ROOT, artifacts)
 
+    def test_sample_library_matches_single_source_contract(self) -> None:
+        generate_markdown.validate_samples(ROOT)
+
+    def test_sample_directive_must_be_the_first_line(self) -> None:
+        source = (
+            "// A comment before the directive is not allowed.\n"
+            '"bun";\n'
+            "console.log(Bun.version, process.platform);\n"
+        )
+        with self.assertRaisesRegex(generate_markdown.MarkdownGenerationError, "must start"):
+            generate_markdown.validate_sample_source(Path("hello.bun.js"), source)
+
+    def test_sample_relative_imports_are_rejected(self) -> None:
+        source = (
+            '"bun";\n'
+            "// Project files are not transferred by the current contract.\n"
+            'import value from "./value.js";\n'
+            "console.log(value, Bun.version, process.platform);\n"
+        )
+        with self.assertRaisesRegex(generate_markdown.MarkdownGenerationError, "relative imports"):
+            generate_markdown.validate_sample_source(Path("hello.bun.js"), source)
+
+    def test_sample_package_install_commands_are_rejected(self) -> None:
+        source = (
+            '"bun";\n'
+            "// Package installation is outside the current product boundary.\n"
+            'Bun.spawn(["bun", "install"]);\n'
+            "console.log(Bun.version, process.platform);\n"
+        )
+        with self.assertRaisesRegex(generate_markdown.MarkdownGenerationError, "install packages"):
+            generate_markdown.validate_sample_source(Path("hello.bun.js"), source)
+
     def test_duplicate_json_keys_are_rejected(self) -> None:
         with self.assertRaises(generate_markdown.MarkdownGenerationError):
             generate_markdown.reject_duplicate_pairs([("same", 1), ("same", 2)])

@@ -124,7 +124,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 ### M1-B: 自动化与设备验证
 
 - [x] (测试) CI 新增 API 33 `x86_64` instrumentation, 并在本地对应 AVD 完成 3/3 测试; 覆盖 discovery, binding, metadata, prewarm, JS, TS, Unicode stdout/stderr, 真实 `Bun.spawn`, 私有目录文件 I/O, timeout, output limit, cancellation 和无效请求. (2026-09-01, G1/G2)
-- [x] (测试) 保留 API 35 `x86_64` CI 回归, 不以 API 33 job 替代当前平台测试; 另在 API 35 arm64 真机完成相同 3/3 套件. (2026-09-01, G1/G2)
+- [x] (测试) 保留 API 35 `x86_64` CI 回归, 不以 API 33 job 替代当前平台测试; API 35 arm64 真机已在 2026-09-02 完成扩展后的 5/5 套件, 新增安装后 payload 摘要和仓库原始示例执行均通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-01/02, G1/G2)
 - [x] (设备) Sony XQ-DQ72 API 33 `arm64-v8a` 已重新安装 `minSdk=33` 的 v0.2.0 构建并完成完整 instrumentation; 环境与范围见 `docs/compatibility/2026-09-01-m1.json`. (2026-09-01, G2)
 - [ ] (设备) 补一台不同 OEM 或 Pixel/AOSP 类 API 33 arm64 环境; 记录 fingerprint, kernel, page size 和完整测试范围.
 - [ ] (发布) 验证从 v0.1.0 覆盖升级, 全新安装, Wake 激活, 插件发现和进程重启; 仅在 G3 完成后把 Android 13 写为正式发布兼容范围.
@@ -263,7 +263,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 **背景:** 用户反馈此前的 README 与 changelog 晦涩难懂. 本项目文档由 `.readme` 与 `.changelog` 的 JSON 文案源经 `.python/generate_markdown.py` 生成, 覆盖 10 种语言; 因此所有文案改进都必须落在源文件, 并通过生成器校验与单元测试.
 
 - [x] (发布) 用平实语言重写 README 模板, 插件中心说明与 changelog 的全部 10 语言文案源, 重新生成 36 个文档产物并通过 `--check` 与 Python 单元测试; 术语, 数字与兼容声明和代码事实保持一致. (2026-09-02, G1)
-- [ ] (发布) 扩充 `samples/` 示例库: 在现有 `hello.bun.js` 与 `typescript.bun.ts` 基础上, 增加带注释的常用场景示例 (如 `fetch` 网络请求, 私有目录文件读写, stdout/stderr 行为, TypeScript 类型用法), 每个示例首行含 `"bun";` 且在当前能力边界内可直接运行.
+- [x] (发布/测试) 扩充 `samples/` 示例库: 5 个带注释的示例覆盖引擎确认, `fetch` 网络请求, 私有工作目录文件读写, stdout/stderr 行为和 TypeScript 类型用法; 生成器门禁检查精确清单, 首行 `"bun";`, 注释, 相对导入和依赖安装命令, instrumentation 直接执行仓库中的原始示例资产并以设备本地 HTTP 端点验证 `fetch`, 10 语言 README 与 changelog 均已同步. Sony XQ-DQ72 API 33 与 Xiaomi 23046RP50C API 35 arm64 真机均 5/5 通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G1/G2)
 - [ ] (发布) 新增 `docs/troubleshooting.md` 排错指南: 按 "症状 -> 原因 -> 处理" 组织常见问题 (`"bun";` 指令未被识别, 插件未激活, 运行超时, 输出被截断, Android 版本过低导致的 `SIGSYS`, npm 依赖导入失败), 与 10 语言 README 的常见问题口径一致.
 - [ ] (发布) 把 `docs/compatibility/*.json` 设备报告汇总为人类可读的兼容矩阵 (设备, API, ABI, 页大小, 测试范围, 结论), 并在新增设备报告时同步更新; 优先用脚本从 JSON 生成, 避免手工维护漂移.
 - [ ] (插件/发布) 审计脚本运行失败时用户可见的错误与诊断文案, 确保关键失败场景 (未激活, 超时, 输出超限, 系统版本不支持) 在 10 种语言资源中都有可理解的提示, 并与 `strings.xml` 保持一致.

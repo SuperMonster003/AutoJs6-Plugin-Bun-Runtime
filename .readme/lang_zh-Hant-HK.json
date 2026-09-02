@@ -27,6 +27,7 @@
   "p_quick_start_intro": "把下面的內容儲存為腳本檔案並執行, 即可確認 Bun 引擎已接管執行",
   "p_quick_start_result": "如果一切正常, 輸出第一行為 `Bun {{ bun_version }}`, 第二行為 `android`.",
   "p_typescript_intro": "TypeScript 檔案同樣可以直接執行, 無需預先編譯或額外設定",
+  "p_more_samples": "更多附有註解, 可直接複製執行的範例見 [samples/]({{ samples_url }}), 涵蓋網絡請求, 私人工作目錄檔案讀寫, stdout/stderr 和 TypeScript 類型. 所有範例均遵守目前的單一源碼與 `--no-install` 邊界.",
   "h3_compatibility": "相容性",
   "compatibility_points": [
     "引擎: 官方 Bun {{ bun_version }}, tag `{{ bun_tag }}`, revision `{{ bun_revision }}`, commit [`{{ bun_commit }}`]({{ bun_commit_url }}).",

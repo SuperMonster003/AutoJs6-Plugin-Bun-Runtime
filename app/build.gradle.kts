@@ -139,6 +139,10 @@ android {
         resValues = true
         buildConfig = true
     }
+
+    sourceSets {
+        getByName("androidTest").assets.directories.add(rootProject.file("samples").absolutePath)
+    }
 }
 
 dependencies {

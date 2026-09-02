@@ -83,6 +83,8 @@ const greeting: Greeting = { name: "AutoJs6" };
 console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ```
 
+Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/tree/master/samples): solicitudes de red, archivos del espacio de trabajo privado, stdout/stderr y tipos de TypeScript. Todos respetan los límites actuales de una sola fuente y `--no-install`.
+
 ******
 
 ### Funciones
@@ -219,6 +221,7 @@ _2026/09/01_
 - `Mejora` Preparar el futuro soporte de Android 9+: se establece un plan de parches del código fuente de Bun reproducible con exactitud (6 parches) y se fijan las entradas de build (NDK y contenedor fijados, 22 dependencias activas de Android release); el runtime parcheado aún no está compilado y no se incluye en los paquetes actuales
 - `Mejora` Reforzar los controles de calidad del paquete: cada APK de Debug y Release verifica el ZIP alignment de 16 KB, el contenido ABI exacto y el tamaño y SHA-256 del payload fijado de Bun, y los bytes del payload instalado se cotejan en un dispositivo de prueba con Android 13
 - `Mejora` Endurecer la cadena de suministro: se fijan los bytes exactos de 19 archivos fuente de Bun y 17 descargas de toolchain, se inventarían 181 entradas de integridad de Cargo y 172 del registro de Bun, y se añaden un materializer que rechaza sobrescrituras y una precomprobación de build de doble ABI protegida por la puerta `buildReady`
+- `Mejora` Ampliar la biblioteca de ejemplos listos para copiar y ejecutar con casos comentados de fetch de red, archivos del espacio de trabajo privado, streaming de stdout/stderr y tipos de TypeScript más completos; añadir una puerta de documentación que exige la directiva `"bun";` en la primera línea y los límites de una sola fuente y sin instalación
 - `Dependencia` Añadir el runtime de Kotlin Parcelize para que R8 en Release conserve la clase compartida del contrato Parcelable
 
 #### v0.1.0

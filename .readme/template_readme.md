@@ -69,6 +69,8 @@ const greeting: Greeting = { name: "AutoJs6" };
 console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ```
 
+{{ p_more_samples }}
+
 ******
 
 ### {{ h3_features }}
