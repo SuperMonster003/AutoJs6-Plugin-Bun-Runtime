@@ -1,6 +1,11 @@
-Bun Runtime is a standalone Android plugin that lets AutoJs6 select [Bun](https://bun.sh/) as a separate JavaScript and TypeScript engine. The host sends one source snapshot through a file descriptor, the plugin starts the pinned official Bun Android executable in its own runtime process, and standard output, standard error, completion, timeout, and cancellation events return through Binder. This is real Bun execution and is not an alias for Rhino or Node.js.
+This plugin lets AutoJs6 run JavaScript and TypeScript with the official Bun 1.4.0 engine: put `"bun";` on the first line of a script, and the file is executed by Bun in an isolated plugin process (the actual command is `bun run --no-install <source>`), with output and the final result streamed back to AutoJs6. Each run executes one snapshot of the current file and never installs npm dependencies automatically.
 
-This release launches the official Bun 1.4.0 Android executable in an isolated plugin runtime process with `bun run --no-install <source>`. It accepts one JS or TS source snapshot, never installs missing dependencies automatically, and streams stdout, stderr, and the final status back to AutoJs6.
+### Install and Use
+
+1. Prepare the environment: install AutoJs6 build 5278 (6.8.0) or later on Android 13 (API 33) or later.
+2. Install the plugin: download and install the APK matching the device from [Releases](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases). Choose `arm64-v8a` for most phones and tablets, `x86_64` for emulators or x86_64 devices, or `universal` when unsure (slightly larger, works on both).
+3. Enable the plugin: open the AutoJs6 plugin center and enable Bun Runtime. If the freshly installed plugin shows as stopped, tap the `Activate` action shown by the host.
+4. Run a script: put `"bun";` alone on the first line of a JavaScript or TypeScript file (including the quotes and the semicolon), then run the file from AutoJs6 as usual.
 
 ### Quick Start
 
@@ -11,14 +16,14 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-Expected output begins with `Bun 1.4.0` and then prints `android`.
+If everything works, the first output line is `Bun 1.4.0` and the second line is `android`.
 
-### Version 0.1 Limitations
+### Current Limitations
 
-- One source snapshot only: multi-file project transfer and relative project imports are not implemented in this release.
-- No AutoJs6 globals: Rhino globals, Android automation APIs, and host objects do not appear inside Bun.
-- No Java bridge: Bun cannot directly access Java classes or objects from the AutoJs6 process.
-- No broad toolchain promise: `bunx`, executable output produced on-device, runtime C compilation, and arbitrary native addons are outside the supported scope.
-- Not a security sandbox: a Bun script runs as trusted code under the plugin app UID and can use permissions granted to the plugin.
+- One file per run: the plugin receives and executes a single source snapshot without the project directory, so relative imports such as `import './utils.js'` cannot be resolved. ESM syntax inside the single file is unaffected; when multiple modules are needed, bundle them into one file on a computer first (see the FAQ).
+- No AutoJs6 built-ins: automation APIs such as `click()` and `toast()` and the Rhino globals do not exist inside Bun scripts, so Bun scripts currently suit tasks that do not depend on host capabilities, such as computation, text processing, and network requests.
+- No Java bridge: Bun scripts cannot directly access Java classes or objects in the AutoJs6 process.
+- No full Bun toolchain promise: `bunx`, on-device executable output, runtime C compilation, and arbitrary native addons are outside the supported scope.
+- Not a security sandbox: a Bun script runs as trusted code in the plugin process and can use the permissions granted to the plugin, so only run scripts you trust.
 
-See the [project README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) for compatibility, security, package selection, and the complete version 0.1 limitations.
+See the [project README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) for compatibility, permissions, package selection, and the complete list of current limitations.

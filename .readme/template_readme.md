@@ -34,14 +34,6 @@
 
 ******
 
-### {{ h3_features }}
-
-******
-
-{{ placeholder_features }}
-
-******
-
 ### {{ h3_usage }}
 
 ******
@@ -79,11 +71,11 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-### {{ h3_compatibility }}
+### {{ h3_features }}
 
 ******
 
-{{ placeholder_compatibility_points }}
+{{ placeholder_features }}
 
 ******
 
@@ -95,19 +87,27 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-### {{ h3_security }}
-
-******
-
-{{ placeholder_security_points }}
-
-******
-
 ### {{ h3_faq }}
 
 ******
 
 {{ placeholder_faq }}
+
+******
+
+### {{ h3_compatibility }}
+
+******
+
+{{ placeholder_compatibility_points }}
+
+******
+
+### {{ h3_security }}
+
+******
+
+{{ placeholder_security_points }}
 
 ******
 

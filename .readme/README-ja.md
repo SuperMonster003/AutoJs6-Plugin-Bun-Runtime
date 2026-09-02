@@ -39,19 +39,9 @@
 
 ******
 
-Bun Runtime は AutoJs6 が [Bun](https://bun.sh/) を独立した JavaScript と TypeScript エンジンとして選択できる Android プラグインです. ホストは file descriptor で 1 つの source snapshot を送り, プラグインは固定された公式 Bun Android executable を専用 runtime process で起動します. stdout, stderr, 完了, timeout, cancel event は Binder で戻ります. これは実際の Bun 実行であり, Rhino や Node.js の alias ではありません.
+Bun Runtime は, AutoJs6 に新しい選択肢となるモダンなスクリプトエンジン [Bun](https://bun.sh/) を追加する独立プラグインです. インストールして有効化した後, JavaScript または TypeScript ファイルの 1 行目に `"bun";` と書くだけで, そのファイルは内蔵の Rhino エンジンではなく本物の Bun 1.4.0 エンジンで実行されます. モダンな JavaScript 構文, TypeScript, `fetch` などの Bun 内蔵 API を Android 端末上で直接利用できます.
 
-******
-
-### 機能
-
-******
-
-- 独立エンジン: コードを別の AutoJs6 エンジンへ転送せず, 公式 Bun 1.4.0 Android executable を実行します.
-- JavaScript と TypeScript: 固定 Android build で利用できる ESM syntax と Bun API を含む 1 つの JS または TS source snapshot を Bun が解析して実行します.
-- 観測可能な実行: stdout と stderr をホストへ stream し, 最終結果には exit status, duration, timeout, cancel と上限付き diagnostic が含まれます.
-- 管理された runtime payload: `arm64-v8a` と `x86_64` の binary は tag, commit, size, SHA-256, ELF machine, 最小 PT_LOAD alignment で固定されています.
-- ローカライズ: plugin metadata, plugin center instruction, README, changelog を 1 つの検証済み source set から 10 言語で提供します.
+仕組みはシンプルです. AutoJs6 がスクリプト内容をプラグインへ送り, プラグインは専用の独立プロセスで公式 Bun Android executable を起動してスクリプトを実行し, 出力と実行結果をリアルタイムで AutoJs6 コンソールへ返します. これは正真正銘の Bun であり, Rhino や Node.js の alias やエミュレーション層ではありません.
 
 ******
 
@@ -59,12 +49,12 @@ Bun Runtime は AutoJs6 が [Bun](https://bun.sh/) を独立した JavaScript �
 
 ******
 
-1. Android 13 (API 33) 以降で AutoJs6 build 5278 (6.8.0) 以降を使用します.
-2. 端末 ABI に一致する release APK をインストールします. 多くのスマートフォンとタブレットでは `arm64-v8a`, 対応 emulator または device では `x86_64`, 不明な場合は `universal` を選びます.
-3. AutoJs6 plugin center を開いて Bun Runtime を有効にします. 新規インストール後も停止中の場合はホストに表示される `有効化` action を使用します.
-4. JavaScript または TypeScript file の先頭に独立 directive `"bun";` を置き, AutoJs6 から通常どおり実行します.
+1. 環境を準備: Android 13 (API 33) 以降の端末に AutoJs6 build 5278 (6.8.0) 以降をインストールします.
+2. プラグインをインストール: [Releases](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases) から端末に合う APK をダウンロードしてインストールします. 多くのスマートフォンとタブレットは `arm64-v8a`, emulator や x86_64 端末は `x86_64`, 不明な場合は `universal` (少し大きいが両対応) を選びます.
+3. プラグインを有効化: AutoJs6 の plugin center を開いて Bun Runtime を有効にします. インストール直後に停止中と表示される場合は, ホストに表示される `有効化` action を使用します.
+4. スクリプトを実行: JavaScript または TypeScript ファイルの 1 行目に `"bun";` を単独で書き (引用符とセミコロンを含む), あとは通常どおり AutoJs6 から実行します.
 
-> Version 0.1 は request ごとに `bun run --no-install <source>` で 1 つの immutable source snapshot を実行し, 不足 dependency を自動 install しません. 既存の Rhino または Node.js project を Bun へ移行する前に制限を確認してください.
+> 各実行は現在のファイルの snapshot を 1 つだけ実行します (実際のコマンドは `bun run --no-install <source>`). プラグインは npm dependency を自動インストールせず, プロジェクト内の他のファイルも読み込みません. 既存の Rhino または Node.js プロジェクトを Bun へ移行する前に, 下の現在の制限をお読みください.
 
 ******
 
@@ -72,7 +62,7 @@ Bun Runtime は AutoJs6 が [Bun](https://bun.sh/) を独立した JavaScript �
 
 ******
 
-この file を実行してホストが Bun を選択し Android runtime が起動したことを確認します:
+次の内容をスクリプトファイルとして保存して実行すると, Bun エンジンが実行を引き継いだことを確認できます:
 
 ```javascript
 "bun";
@@ -81,9 +71,9 @@ console.log(`Bun ${Bun.version}`);
 console.log(process.platform);
 ```
 
-期待する出力は `Bun 1.4.0` で始まり, 次の行に `android` と表示されます.
+正常に動作していれば, 出力の 1 行目は `Bun 1.4.0`, 2 行目は `android` です.
 
-Bun が TypeScript を直接処理するため, ホスト側の TypeScript compilation は不要です:
+TypeScript ファイルも事前コンパイルや追加設定なしでそのまま実行できます:
 
 ```typescript
 "bun";
@@ -95,38 +85,28 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-### 互換性
+### 機能
 
 ******
 
-- Runtime: 公式 Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
-- Platform: Android 13 (API 33) 以降. 公式 64-bit payload は `arm64-v8a` と baseline `x86_64` に対応します. API 31 real device では Bun syscall 436 `close_range` が app seccomp `SIGSYS` で失敗しました. AOSP Android 12 以前の app allowlist はこの syscall を含みませんが, Android 13 (T, API 33) は raw syscall を allowlist します. Android 14 は public bionic wrapper を追加しますが, Bun は raw syscall を呼び出すため API 34 libc symbol は不要です. API 33 と API 35 の real runtime test は成功しました. API 28 から 32 は patched Bun runtime が seccomp trap を処理し portable validation を通過するまで未対応です.
-- Host contract: AutoJs6 build 5278 以降と Bun runtime contract version 1.
-- Request limit: source は 16 MiB まで, stdout と stderr の combined streaming budget は 8 MiB まで, default timeout は 60 seconds です.
-- Package: single-ABI APK は小さく, 大きい `universal` APK は対応する 2 つの ABI を含みます.
+- 本物の Bun エンジン: スクリプトは公式 Bun 1.4.0 Android executable が直接実行します. トランスパイルは行わず, 他の AutoJs6 エンジンへ転送することもありません.
+- TypeScript がすぐ使える: TS ファイルはコンパイルや追加設定なしでそのまま実行できます. モダンな JavaScript 構文, 単一ファイル内の ESM 構文, 固定 Android build で利用できる Bun API も使えます.
+- 実行状況がわかりやすい: `console.log` などの出力はリアルタイムで AutoJs6 コンソールへ届き, 終了時には exit status, 所要時間, timeout や cancel の有無が報告されます.
+- 安定して制御できる: 各スクリプトは隔離されたプラグインプロセスで動作し, いつでも cancel でき, timeout で自動終了します. スクリプトが異常でも AutoJs6 本体には影響しません.
+- エンジンの出所を検証可能: 同梱の Bun executable は公式 release とバイト単位で一致し, tag, commit, size, SHA-256, ELF 属性が build と CI で強制検証されます.
+- 完全なローカライズ: plugin metadata, plugin center の説明, README, changelog を 10 言語で提供し, すべて検証済みの 1 つの文案 source から生成します.
 
 ******
 
-### Version 0.1 の制限
+### 現在の制限
 
 ******
 
-- 1 つの source snapshot のみ: multi-file project transfer と relative project import はこの release では未実装です.
-- AutoJs6 globals なし: Rhino globals, Android automation API, host object は Bun 内に現れません.
-- Java bridge なし: Bun は AutoJs6 process の Java class や object に直接 access できません.
-- 完全な toolchain は保証しません: `bunx`, 端末上で生成した executable, runtime C compilation, 任意の native addon は support scope 外です.
-- Security sandbox ではありません: Bun script は plugin app UID の trusted code として動作し, plugin に付与された permission を利用できます.
-
-******
-
-### 権限と整合性
-
-******
-
-- Export された Wake, info, runtime component は `org.autojs.permission.PLUGIN` で保護されます. AutoJs6 は通常の plugin authorization check も行います.
-- Source snapshot は実行ごとの private directory に配置されます. Executable は Android の read-only native library directory から起動され, writable storage へ copy して実行しません.
-- Repository lock は公式 release archive と packaged binary の両方を記録します. CI は build 前に size, SHA-256, ELF type, machine, alignment の drift を拒否します.
-- Trusted Bun script が `fetch` などの network API を使用できるよう plugin は Internet permission を宣言します. Plugin は sandbox ではないため, 信頼できる script だけを実行してください.
+- 実行は 1 ファイルのみ: プラグインは source snapshot を 1 つだけ受け取って実行し, プロジェクトディレクトリは転送しないため, `import './utils.js'` のような相対 import は解決できません. 単一ファイル内の ESM 構文は影響を受けません. 複数モジュールが必要な場合は, まず PC 上で 1 ファイルにバンドルしてください (FAQ 参照).
+- AutoJs6 内蔵関数なし: `click()` や `toast()` などの automation API と Rhino globals は Bun スクリプト内に存在しません. 現在の Bun スクリプトは計算, テキスト処理, ネットワークリクエストなど, ホスト機能に依存しないタスクに向いています.
+- Java bridge なし: Bun スクリプトは AutoJs6 プロセスの Java class や object に直接 access できません.
+- 完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.
+- Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください.
 
 ******
 
@@ -134,21 +114,56 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-#### Bun に AutoJs6 globals がないのはなぜですか?
+#### Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?
 
-Bun は独立 process と JavaScript engine であり, Rhino compatibility layer ではありません. 将来の host bridge は各 automation capability を明示的に公開する必要があり, version 0.1 は意図的に bridge を提供しません.
+Bun は独立プロセスで動く, Rhino とはまったく別の JavaScript エンジンであるため, AutoJs6 の globals は Bun スクリプト内に現れません. Automation 機能を Bun から呼ぶには各機能を明示的に公開する host bridge が必要で, 現在のバージョンは意図的にまだ提供していません. 計画は roadmap を参照してください.
 
-#### Script から別の local project file を import できますか?
+#### npm パッケージは使えますか?
 
-Version 0.1 ではできません. Contract は 1 つの source snapshot だけを転送し project tree はまだ転送しないため, relative project import を解決できません. Single-file ESM syntax は利用できます.
+端末上でのインストールはできません. プラグインは常に `--no-install` で実行し, dependency をダウンロードしません. サードパーティライブラリが必要な場合は, まず PC 上で `bun build` などを使ってスクリプトと pure-JS dependency を 1 ファイルにバンドルし, そのファイルを端末で実行してください. Native addon に依存するパッケージはこの方法では使えません.
 
-#### 16 KB page-size device に対応していますか?
+#### プロジェクト内の他のファイルを `import` できますか?
 
-Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上です. 実際の 16 KB Android runtime test はまだ完了していないため, end-to-end support が検証済みとは表明しません.
+現在はできません. Plugin contract は source snapshot を 1 つだけ転送し, プロジェクトディレクトリは転送しないため, 相対 import は解決できません. 複数ファイルプロジェクトの対応は roadmap にあり, 単一ファイル内の ESM 構文は通常どおり使えます.
+
+#### 最低要件が Android 13 なのはなぜですか?
+
+Bun は Linux の `close_range` system call (syscall 436) を呼び出しますが, Android 12L 以前の app seccomp allowlist はこれを含まないため, Bun プロセスは `SIGSYS` で強制終了します (API 31 実機で再現済み). Android 13 からはこの呼び出しが許可され, API 33 と API 35 の実機テストは成功しています. より古いバージョンの対応には Bun へのパッチが必要で, 進捗は roadmap を参照してください.
+
+#### スクリプトが timeout したり出力が多すぎるとどうなりますか?
+
+1 回の実行は default で 60 seconds に制限され, timeout すると Bun プロセスは終了し, 結果に timeout として記録されます. stdout と stderr の合計出力が 8 MiB を超えると, 実行は silent な切り捨てではなく出力上限 error で終了します. どちらの場合もタスクを分割するか出力量を減らしてください.
+
+#### 16 KB page-size 端末に対応していますか?
+
+Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上ですが, 実際の 16 KB Android 環境での end-to-end テストはまだ完了していないため, このリリースは検証済みの 16 KB 対応を表明しません.
 
 #### どの APK をインストールすればよいですか?
 
-多くの実機 Android device は `arm64-v8a` です. 対応 emulator または x86_64 device では baseline `x86_64` を使います. `universal` は両方を含み, ABI が不明な場合の安全な選択です.
+多くのスマートフォンとタブレットは `arm64-v8a` を使います. Emulator や x86_64 端末は baseline `x86_64` を使ってください. 不明な場合は両方の ABI を含む `universal` をインストールします. 少し大きいですが最も確実な選択です.
+
+******
+
+### 互換性
+
+******
+
+- エンジン: 公式 Bun 1.4.0, tag `bun-v1.4.0`, revision `1.4.0+34cbb9a40`, commit [`34cbb9a40b4bd1bd767d134a7065e66c2432a676`](https://github.com/oven-sh/bun/commit/34cbb9a40b4bd1bd767d134a7065e66c2432a676).
+- システム: Android 13 (API 33) 以降. `arm64-v8a` と baseline `x86_64` の公式 64-bit executable を提供します. Android 9 から 12L (API 28 から 32) は未対応で, 理由は上の FAQ を参照してください. API 33 と API 35 の実機テストは成功しています.
+- ホスト: AutoJs6 build 5278 以降と Bun runtime contract version 1.
+- 実行ごとの上限: source は 16 MiB まで, stdout と stderr の合計出力は 8 MiB まで, default timeout は 60 seconds です.
+- パッケージ: single-ABI APK はサイズが小さく, 大きめの `universal` APK は対応する 2 つの ABI を含みます.
+
+******
+
+### 権限と整合性
+
+******
+
+- Export された有効化 (Wake), info, runtime component は `org.autojs.permission.PLUGIN` で保護され, AutoJs6 側でも通常の plugin authorization check が行われます.
+- スクリプト snapshot は実行ごとの private directory に置かれ, Bun executable は Android の read-only native library directory から起動されます. Writable storage へ copy してから実行することはありません.
+- Repository lock は公式 release archive と APK に同梱する binary の両方を記録します. Size, SHA-256, ELF 属性に差異があれば CI が build 前に拒否します.
+- Trusted Bun スクリプトが `fetch` などの network API を使えるよう, プラグインは Internet permission を宣言します. プラグインは sandbox ではないため, 信頼できるスクリプトだけを実行してください.
 
 ******
 
@@ -156,7 +171,7 @@ Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上です
 
 ******
 
-以下の stable identifier と limit は AutoJs6 host と plugin developer 向けです:
+このセクションは AutoJs6 host と plugin developer 向けです. 一般ユーザーは読み飛ばして構いません. 安定した identifier と limit は次のとおりです:
 
 ```text
 application id: io.github.supermonster003.autojs6.plugin.bun.runtime
@@ -184,7 +199,7 @@ default timeout: 60 seconds
 
 ******
 
-Roadmap は現在の動作と, planned project snapshot, narrow AutoJs6 capability bridge, より広い Android validation, 将来の Bun upgrade を区別します. 未チェック項目は計画であり, 現在の support を示しません.
+Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何をするか. チェック済み項目は現在のバージョンの実際の動作を表します. 未チェック項目 (複数ファイルプロジェクト, AutoJs6 capability bridge, より広い Android バージョン対応, Bun upgrade など) は計画であり, 現在の対応を意味しません.
 
 - [ROADMAP.md を表示](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/ROADMAP.md)
 
@@ -198,29 +213,29 @@ Roadmap は現在の動作と, planned project snapshot, narrow AutoJs6 capabili
 
 _2026/09/01_
 
-- `ヒント` Android 13 (API 33) を正式な minimum target とし, API 28 から 32 は patched Bun runtime が portable validation を通過するまで未対応
-- `改善` 固定済みの公式 Bun 1.4.0 Android payload を維持したまま, 対応する Android の下限を Android 14 (API 34) から Android 13 (API 33) に変更
-- `改善` AOSP T seccomp 境界を明文化: Android 13 は Bun の raw `close_range` syscall を allowlist し, API 31 の失敗から API 28 から 32 には manifest-only change ではなく Bun compatibility patch が必要と確認
-- `改善` 決定的に再現できる 6 patch の Bun source backport, 固定した NDK と container input, Android release で有効な 22 dependency の不変 identity により Android 9+ experiment を準備し, 未 build の runtime は明示的に利用不可のまま維持
-- `改善` すべての Debug と Release APK について 16 KB ZIP alignment, 正確な ABI content, 固定 Bun payload の size と SHA-256 を検証し, Android 13 test device 上の installed payload bytes も検証
-- `改善` 19 個の Bun source archive と 17 個の不変な direct toolchain download の正確な bytes を固定し, Cargo 181 件と Bun 172 件の registry integrity entry を棚卸しし, 上書きを拒否する materializer と `buildReady` gate 付き双 ABI build preflight を追加
-- `依存関係` 共有 Parcelable contract class を Release R8 で保持するために必要な Kotlin Parcelize runtime を追加
+- `ヒント` 本バージョンは最低システム要件を Android 14 から Android 13 (API 33) に引き下げました. Android 9 から 12L (API 28 から 32) は引き続き未対応で, patch 版 Bun runtime が移植性検証を通過するまでお待ちください
+- `改善` 最低システム要件の引き下げ: 固定された公式 Bun 1.4.0 Android payload をそのまま使用し, サポート下限を Android 14 (API 34) から Android 13 (API 33) に緩和してより多くのデバイスをカバー
+- `改善` 旧バージョンで動作しない根本原因を特定: Android 13 以降はシステムの seccomp が Bun の呼び出す raw `close_range` syscall を許可する一方, API 31 実機での失敗により API 28 から 32 は Bun 本体の修正が必要で, manifest の変更だけでは解決できないことが判明
+- `改善` 将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); patch 版 runtime は未ビルドで, 現行パッケージには含まれません
+- `改善` パッケージ品質チェックの強化: すべての Debug および Release APK で 16 KB ZIP alignment, 正確な ABI 内容, 固定 Bun payload のサイズと SHA-256 を検証し, Android 13 テスト端末でインストール済み payload のバイトを照合
+- `改善` サプライチェーンの強化: 19 個の Bun source archive と 17 個の toolchain ダウンロードの正確なバイトを固定し, 181 個の Cargo と 172 個の Bun registry integrity エントリーを棚卸しし, 上書きを拒否する materializer と `buildReady` ゲートで保護されたデュアル ABI ビルド preflight を追加
+- `依存関係` Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加
 
 #### v0.1.0
 
 _2026/09/01_
 
-- `ヒント` 最初の release は 1 つの source snapshot を実行し, AutoJs6 globals, Java bridge, multi-file project, relative project import は提供しません
-- `機能` 公式 Bun 1.4.0 Android executable を独立した `bun` engine として JavaScript と TypeScript を実行し, `"bun";` directive と `bun run --no-install <source>` で選択して dependency の自動 install を回避
-- `機能` Stdout と stderr を bounded oneway Binder callback chunk としてのみ stream し, terminal result は complete output stream を含まず status と diagnostic だけを報告
-- `機能` 隔離された `:bun_runtime` plugin process で explicit cancellation, default 60 秒 timeout, runtime information, prewarming に対応
-- `機能` `arm64-v8a` と baseline `x86_64` の公式 64-bit Android payload, single-ABI package, `universal` package を提供
-- `機能` Plugin discovery, 保護された Wake activation, 完全な PluginInfo metadata, 10 言語の user documentation を提供
-- `改善` Versioned Binder contract と ParcelFileDescriptor source transport を使用し, source limit 16 MiB, combined output limit 8 MiB を設定
-- `改善` Android read-only native library directory から Bun を起動し, 固定 release archive と packaged binary の size, SHA-256, ELF type, machine, alignment を検証
-- `改善` 両 packaged executable の PT_LOAD alignment が 16 KB 以上であることを検証し, 実際の 16 KB Android runtime test が未完了であることを明記
-- `改善` Validated JSON source から README, plugin-center instruction, built-in changelog asset を生成し, build, Markdown, runtime artifact の CI check を追加
-- `改善` API 31 real device で Bun syscall 436 `close_range` が app seccomp `SIGSYS` となったため Android 14 (API 34) を必須化. Sony API 33 device 1 台は予想外に成功したものの portable evidence ではなく, API 35 の JS と TS Binder round trip は成功し, lower version は upstream fallback 待ち
+- `ヒント` 初回リリース: 各実行は独立したスクリプトファイル 1 つを実行します. AutoJs6 の内蔵関数, Java bridge, 複数ファイルのプロジェクト, 相対パス import はまだ利用できません
+- `機能` 独立した `bun` エンジンを追加: スクリプトの 1 行目に `"bun";` と書くだけで公式 Bun 1.4.0 Android executable により JavaScript と TypeScript を実行. 実際のコマンドは `bun run --no-install <source>` で, 依存関係の自動インストールは行いません
+- `機能` 実行出力をリアルタイムで返送: stdout と stderr は有界の oneway Binder callback によりチャンク単位でストリーミングされ, 最終結果は状態と診断情報のみを報告し, 完全な出力ストリームは含みません
+- `機能` 実行を制御可能に: スクリプトは隔離された `:bun_runtime` プラグインプロセスで実行され, 明示的なキャンセル, 60 秒のデフォルト timeout, runtime 情報の照会, prewarming に対応
+- `機能` `arm64-v8a` と baseline `x86_64` の公式 64-bit Android payload, および単一 ABI と `universal` パッケージを提供
+- `機能` 完全なプラグイン体験を提供: プラグイン検出, 権限で保護されたアクティベーション (Wake), 完全な PluginInfo metadata, 10 言語のユーザードキュメント
+- `改善` バージョン管理された Binder contract を採用し, ParcelFileDescriptor でソースを転送. ソース上限 16 MiB, 合計出力上限 8 MiB
+- `改善` Android の読み取り専用 native library ディレクトリーから Bun を起動し, 固定 release archive とパッケージ済み binary のサイズ, SHA-256, ELF 属性を検証
+- `改善` パッケージされた 2 つの executable の PT_LOAD alignment がいずれも 16 KB 以上であることを検証しつつ, 実際の 16 KB Android 環境でのテストが未完了であることを正直に記載
+- `改善` 検証済み JSON ソースから README, プラグインセンター説明, 内蔵 changelog を生成し, ビルド, Markdown, runtime artifact の CI チェックを追加
+- `改善` 最低バージョンを暫定的に Android 14 (API 34) に設定: API 31 実機では Bun の `close_range` syscall が seccomp により `SIGSYS` で強制終了され, Sony 製 API 33 端末 1 台は予想外に通過したものの移植性の証明には不十分で, API 35 実機での JS と TS の Binder 往復テストは通過
 
 ##### その他のリリース履歴
 

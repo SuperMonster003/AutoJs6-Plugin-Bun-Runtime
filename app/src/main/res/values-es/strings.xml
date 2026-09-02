@@ -1,4 +1,4 @@
 <resources>
     <string name="plugin_description">Ejecuta JavaScript y TypeScript con el motor Bun independiente en un proceso Android aislado</string>
-    <string name="plugin_instruction">Pon &quot;bun&quot;; al principio de un archivo JS o TS. La versión 0.1 usa --no-install, ejecuta una instantánea y no ofrece globals de AutoJs6, puente Java ni importaciones relativas.</string>
+    <string name="plugin_instruction">Pon &quot;bun&quot;; solo en la primera línea de un archivo JS o TS y ejecútalo desde AutoJs6 como siempre. Cada ejecución procesa solo ese archivo: las dependencias npm nunca se instalan automáticamente y las funciones integradas de AutoJs6 no están disponibles dentro de Bun.</string>
 </resources>
