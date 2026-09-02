@@ -10,6 +10,7 @@
 
 * `Hint` This release lowers the minimum system requirement from Android 14 to Android 13 (API 33); Android 9 through 12L (API 28 through 32) remains unsupported until a patched Bun runtime passes portability validation
 * `Fix` Identify the installed runtime ABI from the locked payload SHA-256 instead of ABI-table iteration, and make prewarming execute a minimal JavaScript smoke test so an unusable runtime is rejected before user scripts start
+* `Fix` Reject the known-incompatible official x86_64 runtime before process launch when Android uses pages larger than 4 KiB after isolating the failure to pinned JavaScriptCore's 4 KiB page-size ceiling, replacing a deterministic Bun abort with a bounded diagnostic
 * `Improvement` Lower the minimum system requirement: keep the pinned official Bun 1.4.0 Android payload and relax the support floor from Android 14 (API 34) to Android 13 (API 33) to cover more devices
 * `Improvement` Identify the root cause of failures on older Android versions: starting with Android 13 the system seccomp allows the raw `close_range` syscall that Bun invokes, while a real-device failure on API 31 proves that API 28 through 32 require patching Bun itself and cannot be fixed by manifest changes alone
 * `Improvement` Lay the groundwork for future Android 9+ support: establish a precisely replayable Bun source patch plan (6 patches) and lock the build inputs (pinned NDK and container, 22 active Android release dependencies); the patched runtime is not built yet and does not ship in current packages

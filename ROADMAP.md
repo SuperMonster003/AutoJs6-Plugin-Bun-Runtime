@@ -212,6 +212,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - instrumentation 增加了安装后 `nativeLibraryDir/libbun_exec.so` 的字节数与 SHA-256 断言; Sony XQ-DQ72 API 33 arm64 真机已通过更新后的 4/4 instrumentation, 证据见 `docs/compatibility/2026-09-02-m5-payload-integrity.json`.
 - instrumentation 新增可选 `requiredPageSizeBytes` 硬断言; runtime ABI 改为由安装后 payload 的锁定 SHA-256 识别, prewarm 在版本与 revision 后执行最小 `--eval "void 0"` 探针, 避免把只能显示版本但无法执行脚本的 runtime 报告为 ready.
 - Android 16 / API 36 x86_64 16 KB AVD 已完成双路径验证: `arm64-v8a` 单 ABI APK 经 `libndk_translation` 完整 5/5 Binder instrumentation 通过, 原生 `x86_64` 则连 `-e 42` 都稳定以 exit 134 中止; 关闭 regexp JIT, 全部 JIT 或 `--smol` 均无效. 双路径报告见 `docs/compatibility/2026-09-02-m5-16kb-execution.json`.
+- 原生 x86_64 阻断已通过同一 payload 的 API 36 4 KB 对照, 插件 UID/root 对照和双 `strace` 收敛到 pinned WebKit `WTF::pageSize()` 的 4 KB 编译期 ceiling: 4 KB 环境继续创建 `JSJITCode`, 16 KB 环境则在首次 JIT mapping 前主动 abort. prewarm 现对该已知组合在启动 Bun 前返回有界诊断; 根因报告见 `docs/compatibility/2026-09-02-m5-x86-16kb-root-cause.json`.
+- 已安装的 API 36 arm64 16 KB system image 与 AVD 配置完整, 但 Android Emulator 37.1.11 在当前 Intel x86_64 宿主明确拒绝启动 arm64 guest; AVD 保持原样, 原生 arm64 证据仍需 ARM64 宿主或真机.
 - release 安装后摘要, 原生 arm64 16 KB 执行和原生 x86_64 修复仍未完成, 因此 M5 仍在进行中, 不扩大通用 16 KB 支持声明.
 
 条目清单:
@@ -219,8 +221,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建) 当前两个官方 ELF 的所有 `PT_LOAD` segment 至少 16 KB 对齐.
 - [ ] (构建/发布) 对 debug/release 的单 ABI 与 universal APK 执行 `zipalign -c -P 16 4`, 并核对安装后 `nativeLibraryDir` 字节与 lock SHA-256 一致.
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
-- [ ] (设备/x86_64) 修复原生 `x86_64` 在 16 KB 页环境执行最小脚本即 exit 134 的阻断, 再重复完整 Binder instrumentation; `--version` / `--revision` 成功不能替代脚本执行.
-- [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 AVD 上重复完整 instrumentation, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
+- [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
+- [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 ARM64 宿主 AVD 上重复完整 instrumentation; 当前 Intel 宿主无法启动已安装的 arm64 guest, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
 - [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁, 不从官方 payload 的静态结果推断自建产物兼容.
 - [ ] (发布) `appendDigestToReleasedFiles` 验证签名, 预期三类 APK, ABI payload, CRC32 与 SHA-256; Release notes 如实区分静态对齐和端到端执行状态.
 

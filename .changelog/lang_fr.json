@@ -8,7 +8,8 @@
     "v0.2.0": {
       "released_date": "2026/09/01",
       "fix": [
-        "Identifier l'ABI du runtime installé à partir du SHA-256 du payload épinglé plutôt que de l'ordre d'itération de la table ABI, et faire exécuter au préchauffage un test JavaScript minimal afin de rejeter un runtime inutilisable avant le démarrage des scripts utilisateur"
+        "Identifier l'ABI du runtime installé à partir du SHA-256 du payload épinglé plutôt que de l'ordre d'itération de la table ABI, et faire exécuter au préchauffage un test JavaScript minimal afin de rejeter un runtime inutilisable avant le démarrage des scripts utilisateur",
+        "Rejeter le runtime officiel x86_64 incompatible avant le lancement du processus lorsque Android utilise des pages supérieures à 4 KiB, après avoir isolé l'échec au plafond de 4 KiB du JavaScriptCore épinglé, en remplaçant un abort Bun déterministe par un diagnostic borné"
       ],
       "hint": [
         "Cette version abaisse la configuration minimale d'Android 14 à Android 13 (API 33); les versions Android 9 à 12L (API 28 à 32) restent non prises en charge tant qu'un runtime Bun corrigé n'a pas passé la validation de portabilité"

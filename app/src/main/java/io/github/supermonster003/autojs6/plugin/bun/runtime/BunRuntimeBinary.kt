@@ -1,6 +1,8 @@
 package io.github.supermonster003.autojs6.plugin.bun.runtime
 
 import android.content.Context
+import android.system.Os
+import android.system.OsConstants
 import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 import java.io.File
 import java.security.MessageDigest
@@ -20,6 +22,13 @@ internal fun lockedRuntimeAbiForSha256(sha256: String): String? =
         sha256 == expectedSha256
     }?.key
 
+internal fun officialRuntimePageSizeError(abi: String, pageSizeBytes: Long): String? {
+    if (abi != "x86_64" || pageSizeBytes <= OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES) return null
+    return "Official Bun ${BunRuntimeContract.RUNTIME_VERSION} x86_64 runtime is incompatible with " +
+        "$pageSizeBytes-byte process pages because its pinned JavaScriptCore build has a " +
+        "$OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES-byte page-size ceiling"
+}
+
 internal class BunRuntimeBinary(private val context: Context) {
     @Volatile
     private var cachedProbe: BunRuntimeProbe? = null
@@ -37,9 +46,14 @@ internal class BunRuntimeBinary(private val context: Context) {
         return runCatching {
             require(runtime.isFile) { "Bun executable is missing from the native library directory" }
             val actual = sha256(runtime)
-            runtimeAbi = requireNotNull(lockedRuntimeAbiForSha256(actual)) {
+            val abi = requireNotNull(lockedRuntimeAbiForSha256(actual)) {
                 "Bun executable SHA-256 does not match any locked ABI payload"
             }
+            runtimeAbi = abi
+            officialRuntimePageSizeError(
+                abi,
+                Os.sysconf(OsConstants._SC_PAGESIZE),
+            )?.let(::error)
             val version = executeProbe(runtime, "--version")
             require(version == BunRuntimeContract.RUNTIME_VERSION) { "Unexpected Bun version: $version" }
             val revision = executeProbe(runtime, "--revision")
@@ -86,3 +100,5 @@ private val LOCKED_RUNTIME_SHA256_BY_ABI = mapOf(
     "arm64-v8a" to BuildConfig.BUN_RUNTIME_ARM64_V8A_SHA256,
     "x86_64" to BuildConfig.BUN_RUNTIME_X86_64_SHA256,
 )
+
+private const val OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES = 4096L

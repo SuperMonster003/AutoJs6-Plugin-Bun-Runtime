@@ -10,6 +10,7 @@
 
 * `힌트` 이번 버전은 최소 시스템 요구 사항을 Android 14에서 Android 13 (API 33)으로 낮췄습니다. Android 9부터 12L (API 28부터 32)은 patch된 Bun runtime이 이식성 검증을 통과할 때까지 계속 지원되지 않습니다
 * `수정` 설치된 runtime ABI를 ABI table iteration 순서가 아닌 locked payload SHA-256으로 식별하고, prewarming에서 최소 JavaScript smoke test를 실행해 사용할 수 없는 runtime을 user script 시작 전에 거부
+* `수정` Android가 4 KiB보다 큰 page를 사용할 때 pinned JavaScriptCore의 4 KiB page-size ceiling으로 원인이 확인된 호환 불가 공식 x86_64 runtime을 process 시작 전에 거부하고, 결정적인 Bun abort를 제한된 진단으로 대체
 * `개선` 최소 시스템 요구 사항 인하: 고정된 공식 Bun 1.4.0 Android payload를 그대로 사용하면서 지원 하한을 Android 14 (API 34)에서 Android 13 (API 33)으로 완화하여 더 많은 기기를 지원
 * `개선` 구버전에서 동작하지 않는 근본 원인 규명: Android 13부터 시스템 seccomp가 Bun이 호출하는 raw `close_range` syscall을 허용하며, API 31 실제 기기 실패는 API 28부터 32까지는 Bun 자체 수정이 필요하고 manifest 변경만으로는 해결할 수 없음을 증명
 * `개선` 향후 Android 9+ 지원을 위한 기반 마련: 정확히 재현 가능한 Bun 소스 patch 방식 (patch 6개)을 수립하고 빌드 입력을 고정 (NDK와 컨테이너 고정, Android release 활성 의존성 22개); patch된 runtime은 아직 빌드되지 않았으며 현재 패키지에 포함되지 않음

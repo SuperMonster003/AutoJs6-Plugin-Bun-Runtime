@@ -1,0 +1,212 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-02",
+  "milestone": "M5-root-cause",
+  "scope": "official Bun v1.4.0 native x86_64 startup on Android processes with 16 KiB pages",
+  "result": "root cause isolated; deterministic crash replaced by an interim readiness rejection; patched runtime not built",
+  "runtime": {
+    "distribution": "official Android release artifact",
+    "version": "1.4.0",
+    "revision": "1.4.0+34cbb9a40",
+    "bunCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+    "x86_64Sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
+    "installedPathPolicy": "executed directly from the read-only nativeLibraryDir"
+  },
+  "host": {
+    "operatingSystem": "Windows 11 Pro 10.0.26200 x86_64",
+    "processor": "12th Gen Intel Core i5-12400",
+    "emulatorVersion": "37.1.11.0",
+    "emulatorBuildId": "15917651",
+    "hypervisor": "WHPX 10.0.26200 installed and usable"
+  },
+  "arm64AvdStartup": {
+    "avdName": "Android16_16K_AVD_arm64",
+    "systemImage": "system-images;android-36;google_apis_ps16k;arm64-v8a",
+    "systemImageRevision": 7,
+    "apiLevel": 36,
+    "apiExtensionLevel": 17,
+    "configuredAbi": "arm64-v8a",
+    "configurationAndImagePresent": true,
+    "startupResult": "failed before guest boot",
+    "emulatorExitCode": 1,
+    "fatalMessage": "Avd's CPU Architecture 'arm64' is not supported by the QEMU2 emulator on x86_64 host. System image must match the host architecture.",
+    "conclusion": "The downloaded image and AVD configuration are valid, but this Intel host cannot provide native arm64 Android execution. The AVD was preserved unchanged for a future ARM64 host."
+  },
+  "nativeX86ControlComparison": {
+    "controlledFacts": [
+      "Both runs used Android Emulator 37.1.11.0 on the same Intel host.",
+      "Both installed the same x86_64 APK payload and verified the same locked SHA-256.",
+      "Both ran Android 16 and reported API level 36.",
+      "The minimal direct command was the unambiguous argument vector equivalent to bun -e 42."
+    ],
+    "environments": [
+      {
+        "id": "native-x86_64-16k",
+        "serial": "emulator-5554",
+        "avdName": "Android16_16K_AVD",
+        "model": "sdk_gphone16k_x86_64",
+        "systemImage": "system-images;android-36;google_apis_ps16k;x86_64",
+        "systemImageRevision": 7,
+        "pageSizeBytes": 16384,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "appUidDirectExecutionExitCode": 134,
+        "rootDirectExecutionExitCode": 134,
+        "crashKind": "SIGABRT initiated by the runtime",
+        "crashReportUrl": "https://bun.report/1.4.0/la134cbb9aAggggC6uw4F+j7jBu0whkByu017B8hl98B+17t8BovznpD0k207BovznpDyt5prBovznpDonnoR40w1gBopw3gBostvfmt5ufmu4ufg5/hCq8mZAa"
+      },
+      {
+        "id": "native-x86_64-4k-control",
+        "serial": "emulator-5556",
+        "avdName": "AVD_API_36.1",
+        "model": "sdk_gphone64_x86_64",
+        "systemImage": "system-images;android-36.1;google_apis;x86_64",
+        "systemImageRevision": 4,
+        "pageSizeBytes": 4096,
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+        "appUidDirectExecutionExitCode": 0,
+        "result": "minimal JavaScript execution passed"
+      }
+    ],
+    "conclusion": "The official x86_64 payload is functional on the 4 KiB API 36 control and aborts on the 16 KiB API 36 environment even as root. APK bytes, app UID restrictions, API level, and the host emulator version are not sufficient explanations; the process page-size path is the isolated differentiator, with the two system-image kernel builds retained as a secondary uncontrolled variable."
+  },
+  "syscallCorrelation": {
+    "traceTool": "Android userdebug system image strace 4.25",
+    "executionIdentity": "plugin UID, child executable in nativeLibraryDir",
+    "temporaryTracePolicy": "trace files were written only to the exact plugin private files directory, read, and removed",
+    "sixteenKiB": {
+      "traceLines": 1058,
+      "lastExpectedConfigurationReads": [
+        "absolute private bunfig.toml: ENOENT",
+        "relative bunfig.toml: ENOENT"
+      ],
+      "nextAction": "rt_tgsigqueueinfo(SIGABRT)",
+      "failedExecutableMemorySyscall": false,
+      "jsJitCodeMappingAttempted": false
+    },
+    "fourKiB": {
+      "traceLines": 1200,
+      "firstPostConfigurationAction": "open /proc/sys/vm/mmap_min_addr",
+      "jsJitCodeMapping": {
+        "lengthBytes": 1073750016,
+        "protection": "PROT_READ|PROT_WRITE|PROT_EXEC",
+        "name": "JSJITCode",
+        "guardPageBytesAtEachEnd": 4096
+      }
+    },
+    "conclusion": "The 16 KiB process aborts before the first JSC executable-memory reservation. No mmap or mprotect failure supports an alignment-syscall explanation."
+  },
+  "pinnedSourceCorrelation": {
+    "sourceRepository": "https://github.com/oven-sh/WebKit",
+    "sourceCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+    "observations": [
+      {
+        "file": "Source/WTF/wtf/PageBlock.cpp",
+        "lines": "60-67",
+        "fact": "pageSize() reads the runtime system page size and RELEASE_ASSERTs that it does not exceed CeilingOnPageSize before returning."
+      },
+      {
+        "file": "Source/WTF/wtf/PageBlock.h",
+        "lines": "45-60",
+        "fact": "Linux ARM64 selects a 64 KiB ceiling, while x86 and x86_64 select a 4 KiB ceiling unless USE_64KB_PAGE_BLOCK is enabled."
+      },
+      {
+        "file": "Source/WTF/wtf/WTFConfig.cpp",
+        "lines": "143-179",
+        "fact": "WTF::Config::initialize calls pageSize() immediately before opening /proc/sys/vm/mmap_min_addr, matching the observed 16 KiB and 4 KiB trace divergence."
+      },
+      {
+        "file": "Dockerfile.android",
+        "lines": "167-193",
+        "fact": "The pinned Android build does not enable USE_64KB_PAGE_BLOCK."
+      }
+    ],
+    "evaluatedValues": {
+      "runtimePageSizeBytes": 16384,
+      "compiledX86_64CeilingBytes": 4096,
+      "assertion": "runtimePageSizeBytes <= compiledX86_64CeilingBytes",
+      "assertionResult": false
+    },
+    "rootCause": "The pinned JavaScriptCore/WTF x86_64 build has a 4 KiB compile-time page-size ceiling. On the 16 KiB Android process, WTF::pageSize() detects 16384 and aborts during JSC initialization before options or executable-memory allocation.",
+    "confidence": "high: exact pinned source, same-binary 4 KiB control, app-UID/root parity, and syscall ordering all agree; the stripped shipped binary did not expose a symbolized WTF::pageSize frame for an independent debugger confirmation"
+  },
+  "interimPluginGuard": {
+    "behavior": "After identifying the installed locked payload by SHA-256, prewarm rejects official x86_64 when Os.sysconf(_SC_PAGESIZE) exceeds 4096, before starting the Bun process. Other ABIs and 4 KiB x86_64 continue through version, revision, and minimal JavaScript smoke probes.",
+    "diagnostic": "Official Bun 1.4.0 x86_64 runtime is incompatible with 16384-byte process pages because its pinned JavaScriptCore build has a 4096-byte page-size ceiling",
+    "jvmRegressionTest": "passed",
+    "deviceChecks": [
+      {
+        "environment": "native-x86_64-16k",
+        "scope": "focused Binder discovery, getInfo, and prewarm test",
+        "result": "expected readiness assertion failure containing the bounded diagnostic",
+        "durationSeconds": 0.511,
+        "bunCrashSignalsInLogcat": "none",
+        "claimCaveat": "This is an expected negative observation, not a passing instrumentation test."
+      },
+      {
+        "environment": "native-x86_64-4k-control",
+        "scope": "focused Binder discovery, getInfo, prewarm, real JavaScript, and real TypeScript round trips",
+        "result": "passed 1/1",
+        "durationSeconds": 1.388,
+        "bunCrashSignalsInLogcat": "none"
+      }
+    ],
+    "postGuardFullRegression": [
+      {
+        "environment": "native-x86_64-4k-control",
+        "serial": "emulator-5556",
+        "installedApkAbi": "x86_64",
+        "pageSizeBytes": 4096,
+        "scope": "complete BunRuntimeInstrumentedTest 5-test Binder suite",
+        "result": "passed 5/5",
+        "durationSeconds": 15.889
+      },
+      {
+        "environment": "x86_64-16k-with-translated-arm64-payload",
+        "serial": "emulator-5554",
+        "installedApkAbi": "arm64-v8a",
+        "executionMode": "libndk_translation",
+        "pageSizeBytes": 16384,
+        "scope": "complete BunRuntimeInstrumentedTest 5-test Binder suite",
+        "result": "passed 5/5",
+        "durationSeconds": 33.213,
+        "claimCaveat": "This proves that the guard does not reject the locked arm64-v8a payload under translation; it is not native ARM64 execution evidence."
+      }
+    ],
+    "compatibilityEffect": "No new page-size support is claimed. The guard converts a known deterministic child-process crash into truthful readiness metadata."
+  },
+  "patchedRuntimePlan": {
+    "existingWebKitOption": "USE_64KB_PAGE_BLOCK=ON",
+    "optionSource": "Source/cmake/WebKitFeatures.cmake",
+    "importantSideEffects": [
+      "The pinned WebKit build system documents reduced security and performance.",
+      "It changes the default JIT, FTL, allocator, C-loop, and sampling-profiler configuration, especially on non-aarch64 targets.",
+      "The Android build currently forces only part of that matrix, so the generated configuration must be captured and reviewed rather than inferred."
+    ],
+    "requiredExperiment": [
+      "Build the exact pinned WebKit commit for Android x86_64 with the large-page option and fully explicit JIT/FTL/C-loop/allocator settings.",
+      "Run the produced JSC layer in packaged read-only nativeLibraryDir form on both 4 KiB and 16 KiB x86_64 API 36 environments.",
+      "Rebuild Bun against the reviewed WebKit artifact and update all source, archive, binary, and APK locks.",
+      "Repeat the full Binder suite, output limits, timeout, cancellation, spawn, network, and process-restart coverage on both page sizes.",
+      "Measure memory and startup regressions before deciding whether one dual-page x86_64 artifact or separate release artifacts are acceptable."
+    ],
+    "localBuildStatus": "not run",
+    "localBuildBlocker": "The Windows host has sufficient disk and memory but no Docker, Podman, or WSL installation; the pinned WebKit Android build is Docker-based.",
+    "manualRequirement": "Install and start a compatible Linux container backend, or provide an external reproducible builder, before the patched WebKit/Bun experiment can proceed."
+  },
+  "upstreamContext": {
+    "ovenWebKitMainObservedCommit": "491b5cc236e9ed0bf6247bc466d4b17158311e27",
+    "ovenWebKitMainObservationDate": "2026-09-02",
+    "ovenWebKitMainStillUses4KiBX86Ceiling": true,
+    "bunTrackingIssue": "https://github.com/oven-sh/bun/issues/17627",
+    "scopeCaveat": "The open Bun issue tracks non-4 KiB pages on aarch64 Linux and discusses USE_64KB_PAGE_BLOCK. It is supporting context, not a report of this Android x86_64 failure."
+  },
+  "remainingGaps": [
+    "Build and validate a patched native x86_64 WebKit/Bun runtime on both 4 KiB and 16 KiB Android environments.",
+    "Run the official or patched arm64-v8a payload on a native ARM64 16 KiB host or physical device.",
+    "Repeat the final matrix with signed release APKs before making a general 16 KiB support claim."
+  ],
+  "general16KiBSupportClaim": false
+}
