@@ -8,37 +8,37 @@
     "v0.2.0": {
       "released_date": "2026/09/01",
       "hint": [
-        "Android 13 (API 33) est désormais la cible minimale officielle; API 28 à 32 restent non prises en charge jusqu'à ce qu'un runtime Bun corrigé réussisse la validation portable"
+        "Cette version abaisse la configuration minimale d'Android 14 à Android 13 (API 33); les versions Android 9 à 12L (API 28 à 32) restent non prises en charge tant qu'un runtime Bun corrigé n'a pas passé la validation de portabilité"
       ],
       "improvement": [
-        "Abaisser le minimum Android pris en charge d'Android 14 (API 34) à Android 13 (API 33) tout en conservant les payloads Android officiels et épinglés de Bun 1.4.0",
-        "Documenter la limite seccomp d'AOSP T: Android 13 autorise la syscall `close_range` brute de Bun, tandis que l'échec sur API 31 montre qu'API 28 à 32 nécessitent un correctif de compatibilité Bun et non un simple changement de manifest",
-        "Préparer l'expérience Android 9+ avec un backport déterministe en six correctifs du code source Bun, des entrées NDK et conteneur épinglées et des identités immuables pour 22 dépendances actives de la version Android, tout en maintenant explicitement indisponible le runtime non compilé",
-        "Vérifier chaque APK Debug et Release pour l'alignement ZIP de 16 KB, le contenu ABI exact, les tailles et empreintes SHA-256 verrouillées des payloads Bun, puis vérifier les octets installés sur l'appareil de test Android 13",
-        "Verrouiller les octets exacts de 19 archives source Bun et de 17 téléchargements directs immuables de la chaîne d'outils, inventorier 181 entrées d'intégrité Cargo et 172 Bun, puis ajouter des matérialiseurs sans écrasement et un précontrôle de build à deux ABI protégé par `buildReady`"
+        "Abaisser la configuration minimale: le payload Android officiel épinglé de Bun 1.4.0 est conservé et le plancher de prise en charge est assoupli d'Android 14 (API 34) à Android 13 (API 33), couvrant davantage d'appareils",
+        "Identifier la cause racine des échecs sur les anciennes versions: depuis Android 13 le seccomp du système autorise le raw syscall `close_range` invoqué par Bun, tandis qu'un échec sur appareil réel en API 31 prouve que les API 28 à 32 exigent de corriger Bun lui-même, un simple changement de manifest ne suffisant pas",
+        "Préparer la future prise en charge d'Android 9+: un plan de correctifs du code source de Bun rejouable avec précision (6 correctifs) est établi et les entrées de build sont verrouillées (NDK et conteneur épinglés, 22 dépendances actives d'Android release); le runtime corrigé n'est pas encore compilé et n'entre pas dans les paquets actuels",
+        "Renforcer les contrôles de qualité des paquets: chaque APK Debug et Release vérifie le ZIP alignment de 16 KB, le contenu ABI exact ainsi que la taille et le SHA-256 du payload Bun épinglé, et les octets du payload installé sont contrôlés sur un appareil de test Android 13",
+        "Durcir la chaîne d'approvisionnement: les octets exacts de 19 archives sources de Bun et de 17 téléchargements de toolchain sont épinglés, 181 entrées d'intégrité Cargo et 172 du registre Bun sont inventoriées, et un materializer refusant l'écrasement ainsi qu'une prévérification de build double ABI protégée par la porte `buildReady` sont ajoutés"
       ],
       "dependency": [
-        "Ajouter le runtime Kotlin Parcelize requis par Release R8 afin de conserver les classes partagées du contrat Parcelable"
+        "Ajouter le runtime Kotlin Parcelize afin que R8 en Release conserve la classe partagée du contrat Parcelable"
       ]
     },
     "v0.1.0": {
       "released_date": "2026/09/01",
       "hint": [
-        "La première version exécute un seul instantané et n'expose ni globals AutoJs6, ni pont Java, ni projet multifichier, ni imports relatifs au projet"
+        "Première version: chaque exécution traite un seul fichier de script autonome; les fonctions intégrées d'AutoJs6, le pont Java, les projets multifichiers et les imports relatifs ne sont pas encore disponibles"
       ],
       "feature": [
-        "Exécuter JavaScript et TypeScript avec l'exécutable Android officiel de Bun 1.4.0 comme moteur `bun` indépendant sélectionné par `\"bun\";`, avec `bun run --no-install <source>` sans installation automatique des dépendances",
-        "Transmettre stdout et stderr uniquement par fragments bornés via callback oneway Binder, tandis que le résultat terminal rapporte statut et diagnostic sans contenir les streams complets",
-        "Prendre en charge l'annulation explicite, un timeout par défaut de 60 secondes, les informations runtime et le préchauffage dans le processus isolé `:bun_runtime`",
-        "Fournir les binaires Android officiels 64 bits pour `arm64-v8a` et baseline `x86_64`, avec des paquets mono-ABI et `universal`",
-        "Fournir la découverte du plugin, l'activation Wake protégée, des métadonnées PluginInfo complètes et la documentation utilisateur en 10 langues"
+        "Ajouter le moteur `bun` autonome: placez `\"bun\";` sur la première ligne d'un script pour exécuter JavaScript et TypeScript avec l'executable Android officiel de Bun 1.4.0; la commande réelle est `bun run --no-install <source>` et les dépendances ne sont jamais installées automatiquement",
+        "Renvoyer la sortie en temps réel: stdout et stderr sont diffusés par fragments bornés via oneway Binder callback, et le résultat final ne rapporte que le statut et le diagnostic, sans le flux de sortie complet",
+        "Exécution contrôlable: les scripts s'exécutent dans le processus isolé du plugin `:bun_runtime`, avec annulation explicite, timeout par défaut de 60 secondes, consultation des informations du runtime et prewarming",
+        "Fournir les payloads Android 64 bits officiels pour `arm64-v8a` et baseline `x86_64`, ainsi que des paquets mono-ABI et `universal`",
+        "Offrir l'expérience plugin complète: découverte du plugin, activation protégée par permission (Wake), métadonnées PluginInfo complètes et documentation utilisateur en 10 langues"
       ],
       "improvement": [
-        "Utiliser un contrat Binder versionné avec transport de source par ParcelFileDescriptor, limite de source de 16 MiB et limite de sortie combinée de 8 MiB",
-        "Lancer Bun depuis le répertoire natif Android en lecture seule et vérifier tailles, SHA-256, type ELF, machine et alignement des archives officielles et binaires empaquetés",
-        "Vérifier un alignement PT_LOAD d'au moins 16 KB pour les deux exécutables tout en indiquant explicitement qu'aucun test Android 16 KB réel n'a été effectué",
-        "Générer README, instructions du centre de plugins et changelog intégré depuis des JSON validés, avec contrôles CI du build, du Markdown et des artefacts runtime",
-        "Exiger Android 14 (API 34) après un `SIGSYS` app seccomp sur API 31 pour la syscall 436 `close_range` de Bun; un Sony API 33 a réussi de façon inattendue sans prouver la portabilité, tandis que les allers-retours Binder JS et TS ont réussi sur API 35 et les versions inférieures attendent un fallback upstream"
+        "Adopter un contrat Binder versionné transférant la source par ParcelFileDescriptor, avec une limite de 16 MiB pour la source et de 8 MiB pour la sortie combinée",
+        "Lancer Bun depuis le répertoire read-only de native library d'Android et vérifier la taille, le SHA-256 et les propriétés ELF des archives release épinglées et des binaires empaquetés",
+        "Vérifier que les deux executables empaquetés ont un PT_LOAD alignment d'au moins 16 KB, tout en documentant honnêtement que le test dans un environnement Android réel en 16 KB n'est pas encore achevé",
+        "Générer le README, les instructions du centre de plugins et le changelog intégré à partir de sources JSON validées, avec des contrôles CI pour le build, le Markdown et les artefacts du runtime",
+        "Fixer le minimum provisoire à Android 14 (API 34): sur un appareil réel en API 31 le syscall `close_range` de Bun est tué par seccomp avec `SIGSYS`, un appareil Sony en API 33 a réussi de façon inattendue sans prouver la portabilité, et les tests aller-retour Binder JS et TS ont réussi sur un appareil réel en API 35"
       ]
     }
   }
