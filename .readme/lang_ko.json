@@ -75,7 +75,7 @@
     },
     {
       "q": "16 KB page-size 기기를 지원하나요?",
-      "a": "패키징된 두 ELF executable의 PT_LOAD alignment는 모두 16 KB 이상이지만, 실제 16 KB Android 환경에서의 end-to-end 테스트는 아직 완료되지 않았으므로 이 release는 검증된 16 KB 지원을 주장하지 않습니다."
+      "a": "패키징된 두 ELF executable과 모든 APK entry는 16 KB alignment gate를 통과합니다. Android 16 (API 36) 16 KB AVD에서 `arm64-v8a` APK는 `libndk_translation`을 통해 전체 Binder suite 5개를 통과했지만, native `x86_64` payload는 최소 script에서도 exit code 134로 중단되며 native arm64는 아직 검증하지 않았습니다. 이는 부분 증거이므로 이 release는 일반적인 16 KB 지원을 아직 주장하지 않습니다."
     },
     {
       "q": "어떤 APK를 설치해야 하나요?",
@@ -85,7 +85,7 @@
   "h3_plugin_interface": "플러그인 인터페이스",
   "p_plugin_interface": "이 절은 AutoJs6 호스트 및 플러그인 개발자를 위한 내용이며 일반 사용자는 건너뛰어도 됩니다. 안정적인 identifier와 한도는 다음과 같습니다",
   "p_contract": "`BunRuntimeService`는 action `{{ plugin_service_action }}` 및 category `{{ plugin_service_category }}`로 검색됩니다. `ParcelFileDescriptor`로 source를 받고 request로 execution ID를 받은 뒤 synchronous `runScript` call이 active인 동안 `bun run --no-install <source>`를 실행합니다. Stdout과 stderr는 oneway callback을 통해 bounded chunk로만 전송합니다. Returned terminal Bundle과 `finished` event에는 status 및 diagnostic summary field만 포함되고 complete output stream은 포함되지 않으므로 각 Binder transaction이 size limit 아래로 유지됩니다. Service는 explicit cancel과 runtime prewarming을 지원하며 `:bun_runtime`에서 실행됩니다.",
-  "p_16kb_status": "16 KB status: packaged `arm64-v8a` 및 `x86_64` ELF의 PT_LOAD segment는 16 KB alignment requirement를 충족합니다. 실제 16 KB Android device 또는 emulator에서 아직 실행하지 않았으므로 ELF alignment만 검증되었습니다.",
+  "p_16kb_status": "16 KB status: 두 ELF payload와 APK entry는 alignment gate를 통과합니다. Android 16 (API 36) 16 KB AVD에서 `arm64-v8a`는 `libndk_translation`을 통해 Binder test 5개를 모두 통과했지만, native `x86_64`는 최소 script에서도 exit code 134로 중단되며 native arm64는 아직 검증하지 않았습니다. 일반적인 16 KB 지원은 주장하지 않습니다.",
   "h3_roadmap": "로드맵",
   "p_roadmap": "Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다음에 무엇이 오는지. 체크된 항목은 현재 버전의 실제 동작을 설명하며, 체크되지 않은 항목 (다중 파일 프로젝트, AutoJs6 capability bridge, 더 넓은 Android 버전 지원, Bun upgrade 등)은 계획일 뿐 현재 지원을 약속하지 않습니다.",
   "text_link_roadmap": "ROADMAP.md 보기",

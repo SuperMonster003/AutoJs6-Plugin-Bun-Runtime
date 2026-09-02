@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
+import android.system.Os
+import android.system.OsConstants
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.autojs.plugin.bun.runtime.api.BunPluginActions
@@ -42,7 +44,7 @@ class BunRuntimeInstrumentedTest {
     private val instrumentationContext = InstrumentationRegistry.getInstrumentation().context
 
     @Before
-    fun assertInstrumentationApiLevel() {
+    fun assertInstrumentationEnvironment() {
         assertTrue(
             "Bun runtime instrumentation requires Android 13 (API 33) or newer, but ran on API ${Build.VERSION.SDK_INT}",
             Build.VERSION.SDK_INT >= MIN_SUPPORTED_API_LEVEL,
@@ -59,23 +61,40 @@ class BunRuntimeInstrumentedTest {
             requiredApiLevel,
             Build.VERSION.SDK_INT,
         )
+        InstrumentationRegistry.getArguments()
+            .getString(REQUIRED_PAGE_SIZE_BYTES_ARGUMENT)
+            ?.let { requiredPageSizeArgument ->
+                val requiredPageSizeBytes = requireNotNull(requiredPageSizeArgument.toLongOrNull()) {
+                    "Instrumentation runner argument $REQUIRED_PAGE_SIZE_BYTES_ARGUMENT must contain " +
+                        "the expected page size"
+                }
+                val actualPageSizeBytes = Os.sysconf(OsConstants._SC_PAGESIZE)
+                assertEquals(
+                    "Instrumentation ran with PAGE_SIZE=$actualPageSizeBytes, but the workflow required " +
+                        "PAGE_SIZE=$requiredPageSizeBytes",
+                    requiredPageSizeBytes,
+                    actualPageSizeBytes,
+                )
+            }
     }
 
     @Test
     fun installedNativeRuntimeMatchesTheLockedPayload() {
         val packagedAbis = context.packagedRuntimeAbis().toSet()
-        val processAbi = requireNotNull(Build.SUPPORTED_ABIS.firstOrNull(packagedAbis::contains)) {
-            "No installed Bun runtime matches device ABIs ${Build.SUPPORTED_ABIS.contentToString()}"
-        }
-        val expected = when (processAbi) {
-            "arm64-v8a" -> BuildConfig.BUN_RUNTIME_ARM64_V8A_BYTES to BuildConfig.BUN_RUNTIME_ARM64_V8A_SHA256
-            "x86_64" -> BuildConfig.BUN_RUNTIME_X86_64_BYTES to BuildConfig.BUN_RUNTIME_X86_64_SHA256
-            else -> error("Unexpected packaged Bun ABI: $processAbi")
-        }
         val runtime = File(context.applicationInfo.nativeLibraryDir, "libbun_exec.so")
         assertTrue("Installed Bun runtime is missing: $runtime", runtime.isFile)
-        assertEquals("Installed Bun runtime byte count", expected.first, runtime.length())
-        assertEquals("Installed Bun runtime SHA-256", expected.second, runtime.sha256())
+        val actualSha256 = runtime.sha256()
+        val installedAbi = requireNotNull(lockedRuntimeAbiForSha256(actualSha256)) {
+            "Installed Bun runtime SHA-256 does not match any locked ABI payload"
+        }
+        val expectedBytes = when (installedAbi) {
+            "arm64-v8a" -> BuildConfig.BUN_RUNTIME_ARM64_V8A_BYTES
+            "x86_64" -> BuildConfig.BUN_RUNTIME_X86_64_BYTES
+            else -> error("Unexpected installed Bun ABI: $installedAbi")
+        }
+        assertTrue("Installed Bun ABI $installedAbi is absent from the APK", installedAbi in packagedAbis)
+        assertTrue("Installed Bun ABI $installedAbi is unsupported by the device", installedAbi in Build.SUPPORTED_ABIS)
+        assertEquals("Installed Bun runtime byte count", expectedBytes, runtime.length())
     }
 
     @Test
@@ -112,7 +131,12 @@ class BunRuntimeInstrumentedTest {
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT))
 
             val probes = List(PREWARM_REPETITIONS) { runtime.prewarmRuntime() }
-            probes.forEach { probe -> assertRuntimeProbe(probe, packagedAbis) }
+            val installedRuntimeAbi = requireNotNull(
+                lockedRuntimeAbiForSha256(
+                    File(context.applicationInfo.nativeLibraryDir, "libbun_exec.so").sha256(),
+                ),
+            )
+            probes.forEach { probe -> assertRuntimeProbe(probe, packagedAbis, installedRuntimeAbi) }
             assertEquals(
                 probes.first().getString(BunRuntimeContract.KEY_RUNTIME_PATH),
                 probes.last().getString(BunRuntimeContract.KEY_RUNTIME_PATH),
@@ -526,7 +550,11 @@ class BunRuntimeInstrumentedTest {
         }
     }
 
-    private fun assertRuntimeProbe(probe: Bundle, packagedAbis: Set<String>) {
+    private fun assertRuntimeProbe(
+        probe: Bundle,
+        packagedAbis: Set<String>,
+        installedRuntimeAbi: String,
+    ) {
         assertTrue(
             probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty(),
             probe.getBoolean(BunRuntimeContract.KEY_RUNTIME_READY),
@@ -539,7 +567,7 @@ class BunRuntimeInstrumentedTest {
             probe.getStringArray(BunRuntimeContract.KEY_SUPPORTED_ABIS).orEmpty().toSet(),
         )
         assertEquals(
-            Build.SUPPORTED_ABIS.first(packagedAbis::contains),
+            installedRuntimeAbi,
             probe.getString(BunRuntimeContract.KEY_PROCESS_ABI),
         )
         assertEquals(BunRuntimeContract.MAX_SOURCE_BYTES, probe.getLong(BunRuntimeContract.KEY_MAX_SOURCE_BYTES))
@@ -607,6 +635,7 @@ class BunRuntimeInstrumentedTest {
         const val MIN_SUPPORTED_API_LEVEL = Build.VERSION_CODES.TIRAMISU
         const val PREWARM_REPETITIONS = 2
         const val REQUIRED_API_LEVEL_ARGUMENT = "requiredApiLevel"
+        const val REQUIRED_PAGE_SIZE_BYTES_ARGUMENT = "requiredPageSizeBytes"
         const val WORKSPACE_OUTPUT_PREFIX = "workdir="
     }
 }

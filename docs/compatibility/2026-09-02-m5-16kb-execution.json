@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-02",
+  "milestone": "M5-partial",
+  "scope": "official Bun v1.4.0 execution on an Android 16 environment with 16 KiB pages",
+  "plugin": {
+    "versionName": "0.2.0",
+    "minimumSupportedApi": 33
+  },
+  "runtime": {
+    "distribution": "official Android release artifact",
+    "version": "1.4.0",
+    "revision": "1.4.0+34cbb9a40",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "arm64Sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+    "x86_64Sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df"
+  },
+  "environment": {
+    "id": "api36-android16-16k-avd-x86_64",
+    "kind": "avd",
+    "avdName": "Android16_16K_AVD",
+    "manufacturer": "Google",
+    "model": "sdk_gphone16k_x86_64",
+    "androidVersion": "16",
+    "apiLevel": 36,
+    "deviceSerial": "emulator-5554",
+    "nativeAbi": "x86_64",
+    "advertisedAbis": [
+      "x86_64",
+      "arm64-v8a"
+    ],
+    "nativeBridge": "libndk_translation.so",
+    "nativeBridgeExecEnabled": true,
+    "pageSizeBytes": 16384,
+    "pageSizeMeasurement": "Os.sysconf(OsConstants._SC_PAGESIZE) in the instrumentation target process",
+    "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+    "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys"
+  },
+  "staticPrerequisites": {
+    "elfPtLoadAlignment": "passed for arm64-v8a and x86_64",
+    "debugApkZipalign16KiB": "passed for both single-ABI APKs and the universal APK",
+    "installedPayloadDigest": "passed for each single-ABI APK before execution",
+    "evidence": "docs/compatibility/2026-09-02-m5-payload-integrity.json"
+  },
+  "implementationChanges": [
+    "The instrumentation runner now accepts requiredPageSizeBytes and rejects a run unless the in-process page size matches the requested positive power of two.",
+    "The installed runtime ABI is identified from the locked payload SHA-256 instead of iteration order in an ABI digest table.",
+    "Runtime prewarming now executes a minimal JavaScript smoke probe after version and revision checks, so a loadable but unusable runtime is rejected before a user script starts."
+  ],
+  "resolvedAbiSelectionIssue": {
+    "initialResult": "not runtime evidence",
+    "symptom": "The first x86_64 AVD run selected the arm64-v8a expected digest because the digest table listed arm64-v8a first, even though the installed nativeLibraryDir payload was x86_64.",
+    "diagnostics": {
+      "deviceAbiOrder": "x86_64,arm64-v8a",
+      "packagePrimaryCpuAbi": "x86_64",
+      "installedNativeLibraryDirectoryAbi": "x86_64"
+    },
+    "resolution": "Match the installed file's SHA-256 against all locked payload digests and report that matched ABI through runtime information.",
+    "regressionCoverage": [
+      "JVM digest-to-ABI mapping test",
+      "installed payload instrumentation assertion",
+      "runtime information ABI assertion"
+    ]
+  },
+  "executionRuns": [
+    {
+      "id": "native-x86_64",
+      "apk": "app-x86_64-debug.apk",
+      "packagePrimaryCpuAbi": "x86_64",
+      "executionMode": "native",
+      "pageSizeAssertion": "passed",
+      "metadataProbes": {
+        "--version": "passed",
+        "--revision": "passed",
+        "--eval void 0": "failed with exit code 134"
+      },
+      "fullInstrumentation": {
+        "command": "$env:ANDROID_SERIAL='emulator-5554'; .\\gradlew.bat :app:connectedDebugAndroidTest -PrequiredApiLevel=36 -PrequiredPageSizeBytes=16384",
+        "testsPassed": 2,
+        "testsFailed": 3,
+        "passedTests": [
+          "installedNativeRuntimeMatchesTheLockedPayload",
+          "manifestPublishesWakeInfoAndRuntimeContracts"
+        ],
+        "failedPhase": "JavaScript execution",
+        "result": "failed"
+      },
+      "minimalReproduction": {
+        "arguments": [
+          "-e",
+          "42"
+        ],
+        "exitCode": 134,
+        "stderrSummary": "Bun v1.4.0 Android x64 reported panic(main thread): abort() called",
+        "repeatability": "deterministic across the full suite, a focused prewarm test, and direct run-as execution"
+      },
+      "rejectedRuntimeOptions": [
+        "BUN_JSC_useRegExpJIT=0",
+        "BUN_JSC_useJIT=0",
+        "JSC_useJIT=0",
+        "BUN_JSC_useRegExpJIT=0 with BUN_JSC_useJIT=0",
+        "--smol"
+      ],
+      "crash": {
+        "kind": "SIGABRT",
+        "exitCode": 134,
+        "bunReportUrl": "https://bun.report/1.4.0/la134cbb9aAggggC6uw4F+j7jBu0whkByu017B8hl98B+17t8BovznpD0k207BovznpDyt5prBovznpDonnoR40w1gBopw3gBostvfmt5ufmu4ufg5/hCq8mZAa",
+        "symbolizedSummary": "The Bun report includes JavaScriptCore YarrJIT and x86 assembler frames, but this is diagnostic context rather than a proven root cause.",
+        "androidTombstone": "none; Bun handled and reported the abort before Android produced a tombstone"
+      },
+      "compatibilityConclusion": "The official x86_64 payload is not usable for scripts in this native 16 KiB AVD environment."
+    },
+    {
+      "id": "translated-arm64-v8a",
+      "apk": "app-arm64-v8a-debug.apk",
+      "packagePrimaryCpuAbi": "arm64-v8a",
+      "executionMode": "libndk_translation native bridge on the x86_64 AVD",
+      "pageSizeAssertion": "passed",
+      "commands": [
+        "adb -s emulator-5554 install -r --abi arm64-v8a app/build/outputs/apk/debug/app-arm64-v8a-debug.apk",
+        "adb -s emulator-5554 install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+        "adb -s emulator-5554 shell am instrument -w -r -e requiredApiLevel 36 -e requiredPageSizeBytes 16384 io.github.supermonster003.autojs6.plugin.bun.runtime.test/androidx.test.runner.AndroidJUnitRunner"
+      ],
+      "fullInstrumentation": {
+        "testsPassed": 5,
+        "testsFailed": 0,
+        "durationSeconds": 34.002,
+        "covered": [
+          "action and category discovery",
+          "explicit binding and Binder descriptor",
+          "Wake and permission metadata",
+          "PluginInfo and runtime information",
+          "installed payload byte count and SHA-256",
+          "minimal JavaScript prewarm smoke probe",
+          "JavaScript and TypeScript execution",
+          "checked-in samples",
+          "stdout and stderr streaming",
+          "private-workspace file I/O and spawn",
+          "device-local HTTP fetch",
+          "invalid requests",
+          "output limit",
+          "timeout",
+          "cancellation",
+          "repeated binding",
+          "service process restart"
+        ],
+        "result": "passed"
+      },
+      "evidenceLevel": "G2",
+      "compatibilityConclusion": "The official arm64-v8a payload completed the full suite under the AVD's native translation bridge with the target process page size hard-asserted at 16 KiB. This is not native arm64 device evidence."
+    }
+  ],
+  "upstreamContext": {
+    "issue": "https://github.com/oven-sh/bun/issues/17627",
+    "statusObserved": "open on 2026-09-02",
+    "scopeCaveat": "The upstream issue tracks non-4 KiB pages on aarch64 Linux and is contextual evidence only; it does not establish the root cause of this Android x86_64 abort."
+  },
+  "overallResult": "partial",
+  "evidenceLevel": "G2",
+  "compatibilityConclusion": "A real 16 KiB Android execution environment has now been exercised end to end, but only the translated arm64-v8a payload passed. General 16 KiB support remains unclaimed because native x86_64 fails and native arm64-v8a has not yet been tested.",
+  "remainingGaps": [
+    "Fix or replace the official x86_64 runtime path and repeat the complete suite natively on a 16 KiB environment.",
+    "Run the arm64-v8a payload on a native arm64 16 KiB physical device or arm64 AVD.",
+    "Repeat installed-payload and execution validation with signed release APKs.",
+    "Repeat all four M5 layers for the future patched runtime before making any 16 KiB claim for that release line."
+  ]
+}

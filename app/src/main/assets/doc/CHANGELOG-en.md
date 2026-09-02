@@ -9,12 +9,14 @@
 ###### 2026/09/01
 
 * `Hint` This release lowers the minimum system requirement from Android 14 to Android 13 (API 33); Android 9 through 12L (API 28 through 32) remains unsupported until a patched Bun runtime passes portability validation
+* `Fix` Identify the installed runtime ABI from the locked payload SHA-256 instead of ABI-table iteration, and make prewarming execute a minimal JavaScript smoke test so an unusable runtime is rejected before user scripts start
 * `Improvement` Lower the minimum system requirement: keep the pinned official Bun 1.4.0 Android payload and relax the support floor from Android 14 (API 34) to Android 13 (API 33) to cover more devices
 * `Improvement` Identify the root cause of failures on older Android versions: starting with Android 13 the system seccomp allows the raw `close_range` syscall that Bun invokes, while a real-device failure on API 31 proves that API 28 through 32 require patching Bun itself and cannot be fixed by manifest changes alone
 * `Improvement` Lay the groundwork for future Android 9+ support: establish a precisely replayable Bun source patch plan (6 patches) and lock the build inputs (pinned NDK and container, 22 active Android release dependencies); the patched runtime is not built yet and does not ship in current packages
 * `Improvement` Strengthen package quality checks: every Debug and Release APK verifies 16 KB ZIP alignment, exact ABI contents, and the size and SHA-256 of the pinned Bun payload, with installed payload bytes cross-checked on an Android 13 test device
 * `Improvement` Harden the supply chain: lock the exact bytes of 19 Bun source archives and 17 toolchain downloads, inventory 181 Cargo and 172 Bun registry integrity entries, and add an overwrite-refusing materializer plus a dual-ABI build preflight guarded by the `buildReady` gate
 * `Improvement` Expand the copy-and-run sample library with annotated network fetch, private-workspace file I/O, stdout/stderr streaming, and richer TypeScript examples; add a documentation gate that enforces the first-line `"bun";` directive and the single-source, no-install boundaries
+* `Improvement` Validate 16 KB execution on an Android 16 (API 36) AVD with PAGE_SIZE=16384 enforced: the `arm64-v8a` single-ABI APK passes all 5 Binder instrumentation tests through `libndk_translation`, while the native `x86_64` payload aborts with exit code 134 even for a minimal script; general 16 KB support therefore remains unclaimed
 * `Dependency` Add the Kotlin Parcelize runtime so that R8 in Release builds keeps the shared Parcelable contract class
 
 # v0.1.0

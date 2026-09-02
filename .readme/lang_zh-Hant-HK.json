@@ -75,7 +75,7 @@
     },
     {
       "q": "支援 16 KB page size 裝置嗎?",
-      "a": "兩個內置 ELF executable 的 PT_LOAD alignment 均不低於 16 KB, 但尚未在真正 16 KB Android 環境完成 end-to-end 測試, 因此目前版本不聲稱已驗證 16 KB 支援."
+      "a": "兩個內置 ELF executable 與所有 APK entry 均通過 16 KB alignment 門禁. 在 Android 16 (API 36) 16 KB AVD 上, `arm64-v8a` APK 經 `libndk_translation` 完整通過 5 項 Binder 測試, 但原生 `x86_64` payload 連最小 script 也會以 exit code 134 中止; 原生 arm64 尚未驗證. 這只是部分證據, 因此目前版本仍不聲稱普遍支援 16 KB."
     },
     {
       "q": "應該安裝哪個 APK?",
@@ -85,7 +85,7 @@
   "h3_plugin_interface": "插件介面",
   "p_plugin_interface": "本節面向 AutoJs6 宿主和插件開發者, 一般用戶可以跳過. 以下為穩定 identifier 和上限",
   "p_contract": "`BunRuntimeService` 透過 action `{{ plugin_service_action }}` 和 category `{{ plugin_service_category }}` 被發現. 它透過 `ParcelFileDescriptor` 接收源碼, 從 request 接收 execution ID, 並在同步 `runScript` call 維持 active 期間執行 `bun run --no-install <source>`. Stdout 和 stderr 只會以有界 chunk 透過 oneway callback 傳送. 傳回的 terminal Bundle 和 `finished` event 只包含 status 和 diagnostic summary field, 不會攜帶完整 output stream, 令每次 Binder transaction 保持在 size limit 內. Service 支援明確 cancellation 和 runtime prewarming, 並在 `:bun_runtime` 執行.",
-  "p_16kb_status": "16 KB 狀態: 已封裝的 `arm64-v8a` 和 `x86_64` ELF PT_LOAD segment 符合 16 KB alignment 要求. 尚未在真正 16 KB Android 裝置或模擬器執行, 因此目前只驗證 ELF alignment.",
+  "p_16kb_status": "16 KB 狀態: 兩種 ELF payload 及其 APK entry 均通過 alignment 門禁. 在 Android 16 (API 36) 16 KB AVD 上, `arm64-v8a` 經 `libndk_translation` 完整通過 5 項 Binder 測試, 但原生 `x86_64` 連最小 script 也會以 exit code 134 中止; 原生 arm64 尚未驗證. 目前不聲稱普遍支援 16 KB.",
   "h3_roadmap": "路線圖",
   "p_roadmap": "路線圖回答兩個問題: 現在能用甚麼, 接下來做甚麼. 已勾選條目描述目前版本的實際行為; 未勾選條目 (多檔專案, AutoJs6 能力 bridge, 更廣泛的 Android 版本支援, Bun upgrade 等) 是計劃, 不代表目前已支援.",
   "text_link_roadmap": "查看 ROADMAP.md",

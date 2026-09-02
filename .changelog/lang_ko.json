@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.0": {
       "released_date": "2026/09/01",
+      "fix": [
+        "설치된 runtime ABI를 ABI table iteration 순서가 아닌 locked payload SHA-256으로 식별하고, prewarming에서 최소 JavaScript smoke test를 실행해 사용할 수 없는 runtime을 user script 시작 전에 거부"
+      ],
       "hint": [
         "이번 버전은 최소 시스템 요구 사항을 Android 14에서 Android 13 (API 33)으로 낮췄습니다. Android 9부터 12L (API 28부터 32)은 patch된 Bun runtime이 이식성 검증을 통과할 때까지 계속 지원되지 않습니다"
       ],
@@ -16,7 +19,8 @@
         "향후 Android 9+ 지원을 위한 기반 마련: 정확히 재현 가능한 Bun 소스 patch 방식 (patch 6개)을 수립하고 빌드 입력을 고정 (NDK와 컨테이너 고정, Android release 활성 의존성 22개); patch된 runtime은 아직 빌드되지 않았으며 현재 패키지에 포함되지 않음",
         "패키지 품질 검사 강화: 모든 Debug 및 Release APK에서 16 KB ZIP alignment, 정확한 ABI 내용, 고정 Bun payload의 크기와 SHA-256을 검증하고 Android 13 테스트 기기에서 설치된 payload 바이트를 대조",
         "공급망 강화: Bun source archive 19개와 toolchain 다운로드 17개의 정확한 바이트를 고정하고, Cargo 181개와 Bun registry integrity 항목 172개를 목록화하며, 덮어쓰기를 거부하는 materializer와 `buildReady` 게이트로 보호되는 듀얼 ABI 빌드 preflight를 추가",
-        "복사해 바로 실행할 수 있는 예제 모음 확장: 네트워크 fetch, 비공개 작업 공간 파일 입출력, stdout/stderr 스트리밍, 더 실용적인 TypeScript 타입 예제를 주석과 함께 추가하고, 첫 줄 `\"bun\";` 지시문과 단일 소스 및 설치 금지 경계를 문서 게이트로 검증"
+        "복사해 바로 실행할 수 있는 예제 모음 확장: 네트워크 fetch, 비공개 작업 공간 파일 입출력, stdout/stderr 스트리밍, 더 실용적인 TypeScript 타입 예제를 주석과 함께 추가하고, 첫 줄 `\"bun\";` 지시문과 단일 소스 및 설치 금지 경계를 문서 게이트로 검증",
+        "PAGE_SIZE=16384를 강제한 Android 16 (API 36) AVD에서 16 KB execution 검증: `arm64-v8a` single-ABI APK는 `libndk_translation`을 통해 Binder instrumentation 5개를 모두 통과했지만, native `x86_64` payload는 최소 script에서도 exit code 134로 중단되므로 일반적인 16 KB 지원은 주장하지 않음"
       ],
       "dependency": [
         "Release R8이 공유 Parcelable contract class를 유지하도록 Kotlin Parcelize runtime 추가"

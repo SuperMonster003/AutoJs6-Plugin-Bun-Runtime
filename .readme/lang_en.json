@@ -75,7 +75,7 @@
     },
     {
       "q": "Are 16 KB page-size devices supported?",
-      "a": "Both packaged ELF executables have PT_LOAD alignment of at least 16 KB, but an end-to-end test in a real 16 KB Android environment has not been completed yet, so this release does not claim verified 16 KB support."
+      "a": "Both packaged ELF executables and all APK entries pass the 16 KB alignment gates. On an Android 16 (API 36) 16 KB AVD, the `arm64-v8a` APK passed the full Binder suite through `libndk_translation`, but the native `x86_64` payload aborts with exit code 134 even for a minimal script; native arm64 has not been tested. This is partial evidence, so this release still does not claim general 16 KB support."
     },
     {
       "q": "Which APK should I install?",
@@ -85,7 +85,7 @@
   "h3_plugin_interface": "Plugin Interface",
   "p_plugin_interface": "This section is for AutoJs6 host and plugin developers; regular users can skip it. The stable identifiers and limits are",
   "p_contract": "`BunRuntimeService` is discovered by action `{{ plugin_service_action }}` and category `{{ plugin_service_category }}`. It accepts the source through `ParcelFileDescriptor` and an execution ID in the request, then runs `bun run --no-install <source>` while the synchronous `runScript` call remains active. Stdout and stderr are sent only as bounded chunks through the oneway callback. The returned terminal Bundle and `finished` event contain status and diagnostic summary fields, never the complete output streams, which keeps each Binder transaction below its size limit. The service supports explicit cancellation and runtime prewarming and runs in `:bun_runtime`.",
-  "p_16kb_status": "16 KB status: the packaged `arm64-v8a` and `x86_64` ELF PT_LOAD segments meet the 16 KB alignment requirement. No real 16 KB Android device or emulator run has been completed yet, so only ELF alignment is verified.",
+  "p_16kb_status": "16 KB status: both ELF payloads and their APK entries pass the alignment gates. On an Android 16 (API 36) 16 KB AVD, `arm64-v8a` passed all 5 Binder tests through `libndk_translation`, while native `x86_64` aborts with exit code 134 on a minimal script; native arm64 remains untested. General 16 KB support is not claimed.",
   "h3_roadmap": "Roadmap",
   "p_roadmap": "The roadmap answers two questions: what works now and what comes next. Checked items describe the actual behavior of the current version; unchecked items (multi-file projects, an AutoJs6 capability bridge, broader Android version support, Bun upgrades, and more) are plans, not promises of current support.",
   "text_link_roadmap": "View ROADMAP.md",

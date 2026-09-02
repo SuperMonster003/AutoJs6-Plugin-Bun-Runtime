@@ -75,7 +75,7 @@
     },
     {
       "q": "16 KB page-size 端末に対応していますか?",
-      "a": "Packaged ELF executable の PT_LOAD alignment は両方とも 16 KB 以上ですが, 実際の 16 KB Android 環境での end-to-end テストはまだ完了していないため, このリリースは検証済みの 16 KB 対応を表明しません."
+      "a": "Packaged された 2 つの ELF executable とすべての APK entry は 16 KB alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では, `arm64-v8a` APK が `libndk_translation` 経由で Binder suite 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort し, native arm64 は未検証です. これは部分的な証拠であるため, この release は一般的な 16 KB 対応をまだ表明しません."
     },
     {
       "q": "どの APK をインストールすればよいですか?",
@@ -85,7 +85,7 @@
   "h3_plugin_interface": "プラグインインターフェース",
   "p_plugin_interface": "このセクションは AutoJs6 host と plugin developer 向けです. 一般ユーザーは読み飛ばして構いません. 安定した identifier と limit は次のとおりです",
   "p_contract": "`BunRuntimeService` は action `{{ plugin_service_action }}` と category `{{ plugin_service_category }}` で発見されます. `ParcelFileDescriptor` で source を, request で execution ID を受け取り, synchronous `runScript` call が active の間に `bun run --no-install <source>` を実行します. Stdout と stderr は oneway callback で bounded chunk としてのみ送信します. Returned terminal Bundle と `finished` event は status と diagnostic summary field だけを含み, complete output stream を含まないため, 各 Binder transaction は size limit 以下に保たれます. Service は explicit cancel と runtime prewarming に対応し, `:bun_runtime` で動作します.",
-  "p_16kb_status": "16 KB status: packaged `arm64-v8a` と `x86_64` ELF の PT_LOAD segment は 16 KB alignment requirement を満たします. 実際の 16 KB Android device または emulator ではまだ実行していないため, ELF alignment だけが検証済みです.",
+  "p_16kb_status": "16 KB status: 2 つの ELF payload と APK entry は alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では `arm64-v8a` が `libndk_translation` 経由で Binder test 全 5 件に成功しましたが, native `x86_64` は最小 script でも exit code 134 で abort し, native arm64 は未検証です. 一般的な 16 KB 対応は表明しません.",
   "h3_roadmap": "ロードマップ",
   "p_roadmap": "Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何をするか. チェック済み項目は現在のバージョンの実際の動作を表します. 未チェック項目 (複数ファイルプロジェクト, AutoJs6 capability bridge, より広い Android バージョン対応, Bun upgrade など) は計画であり, 現在の対応を意味しません.",
   "text_link_roadmap": "ROADMAP.md を表示",

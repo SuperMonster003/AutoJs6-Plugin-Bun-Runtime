@@ -9,12 +9,14 @@
 ###### 2026/09/01
 
 * `Aviso` Esta versión reduce el requisito mínimo de sistema de Android 14 a Android 13 (API 33); Android 9 a 12L (API 28 a 32) sigue sin soporte hasta que un runtime de Bun parcheado supere la validación de portabilidad
+* `Corrección` Identificar el ABI del runtime instalado mediante el SHA-256 del payload fijado, en vez del orden de iteración de la tabla ABI, y hacer que el precalentamiento ejecute una prueba mínima de JavaScript para rechazar un runtime inutilizable antes de iniciar scripts de usuario
 * `Mejora` Reducir el requisito mínimo de sistema: se conserva el payload Android oficial y fijado de Bun 1.4.0 y se relaja el límite inferior de soporte de Android 14 (API 34) a Android 13 (API 33), cubriendo más dispositivos
 * `Mejora` Identificar la causa raíz de los fallos en versiones antiguas: desde Android 13 el seccomp del sistema permite la syscall raw `close_range` que Bun invoca, mientras que un fallo en dispositivo real con API 31 demuestra que API 28 a 32 requieren parchear el propio Bun y no basta con cambiar el manifest
 * `Mejora` Preparar el futuro soporte de Android 9+: se establece un plan de parches del código fuente de Bun reproducible con exactitud (6 parches) y se fijan las entradas de build (NDK y contenedor fijados, 22 dependencias activas de Android release); el runtime parcheado aún no está compilado y no se incluye en los paquetes actuales
 * `Mejora` Reforzar los controles de calidad del paquete: cada APK de Debug y Release verifica el ZIP alignment de 16 KB, el contenido ABI exacto y el tamaño y SHA-256 del payload fijado de Bun, y los bytes del payload instalado se cotejan en un dispositivo de prueba con Android 13
 * `Mejora` Endurecer la cadena de suministro: se fijan los bytes exactos de 19 archivos fuente de Bun y 17 descargas de toolchain, se inventarían 181 entradas de integridad de Cargo y 172 del registro de Bun, y se añaden un materializer que rechaza sobrescrituras y una precomprobación de build de doble ABI protegida por la puerta `buildReady`
 * `Mejora` Ampliar la biblioteca de ejemplos listos para copiar y ejecutar con casos comentados de fetch de red, archivos del espacio de trabajo privado, streaming de stdout/stderr y tipos de TypeScript más completos; añadir una puerta de documentación que exige la directiva `"bun";` en la primera línea y los límites de una sola fuente y sin instalación
+* `Mejora` Validar la ejecución con 16 KB en un AVD Android 16 (API 36) forzando PAGE_SIZE=16384: el APK de ABI única `arm64-v8a` supera las 5 pruebas de instrumentación Binder mediante `libndk_translation`, mientras que el payload `x86_64` nativo aborta con código de salida 134 incluso con un script mínimo; por ello no se afirma soporte general de 16 KB
 * `Dependencia` Añadir el runtime de Kotlin Parcelize para que R8 en Release conserve la clase compartida del contrato Parcelable
 
 # v0.1.0

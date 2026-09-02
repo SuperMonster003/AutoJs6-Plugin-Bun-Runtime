@@ -25,4 +25,17 @@ class BunExecutionRequestParserTest {
         assertFalse("armeabi-v7a" in DISTRIBUTED_ABIS)
         assertTrue(INSTRUCTION_REFERENCE.startsWith("@raw/"))
     }
+
+    @Test
+    fun installedRuntimeAbiIsIdentifiedByItsLockedDigest() {
+        assertEquals(
+            "arm64-v8a",
+            lockedRuntimeAbiForSha256(BuildConfig.BUN_RUNTIME_ARM64_V8A_SHA256),
+        )
+        assertEquals(
+            "x86_64",
+            lockedRuntimeAbiForSha256(BuildConfig.BUN_RUNTIME_X86_64_SHA256),
+        )
+        assertEquals(null, lockedRuntimeAbiForSha256("0".repeat(64)))
+    }
 }

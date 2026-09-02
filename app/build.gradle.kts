@@ -16,6 +16,8 @@ val androidTestPermissionName = providers.gradleProperty("androidTestPermissionN
     .map(String::trim)
 val requiredApiLevel = providers.gradleProperty("requiredApiLevel")
     .map(String::trim)
+val requiredPageSizeBytes = providers.gradleProperty("requiredPageSizeBytes")
+    .map(String::trim)
 val instrumentationApplicationIdSuffix = providers.gradleProperty("instrumentationApplicationIdSuffix")
     .map(String::trim)
 var isSignsValid = false
@@ -49,6 +51,13 @@ android {
                 "requiredApiLevel must be an integer, but was '$apiLevel'"
             }
             testInstrumentationRunnerArguments["requiredApiLevel"] = apiLevel
+        }
+        requiredPageSizeBytes.orNull?.let { pageSizeBytes ->
+            val pageSize = pageSizeBytes.toIntOrNull()
+            require(pageSize != null && pageSize > 0 && (pageSize and (pageSize - 1)) == 0) {
+                "requiredPageSizeBytes must be a positive power of two, but was '$pageSizeBytes'"
+            }
+            testInstrumentationRunnerArguments["requiredPageSizeBytes"] = pageSizeBytes
         }
         versionCode = versions.appVersionCode
         versionName = versions.appVersionName

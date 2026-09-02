@@ -4,7 +4,6 @@ import android.app.Application
 import android.app.Service
 import android.content.Intent
 import android.os.Bundle
-import android.os.Build
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
@@ -362,7 +361,7 @@ class BunRuntimeService : Service() {
         putString(BunRuntimeContract.KEY_RUNTIME_PATH, probe.path)
         putString(BunRuntimeContract.KEY_ERROR_MESSAGE, probe.error)
         putString(BunRuntimeContract.KEY_PROCESS_NAME, Application.getProcessName())
-        putString(BunRuntimeContract.KEY_PROCESS_ABI, Build.SUPPORTED_ABIS.firstOrNull(packagedAbis::contains))
+        putString(BunRuntimeContract.KEY_PROCESS_ABI, probe.abi)
         putStringArray(BunRuntimeContract.KEY_SUPPORTED_ABIS, packagedAbis)
         putLong(BunRuntimeContract.KEY_MAX_SOURCE_BYTES, BunRuntimeContract.MAX_SOURCE_BYTES)
         putLong(BunRuntimeContract.KEY_MAX_OUTPUT_BYTES, BunRuntimeContract.MAX_OUTPUT_BYTES)

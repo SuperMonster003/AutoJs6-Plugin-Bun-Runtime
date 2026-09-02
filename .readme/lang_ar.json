@@ -75,7 +75,7 @@
     },
     {
       "q": "هل أجهزة page-size بحجم 16 KB مدعومة?",
-      "a": "كلا ELF executable المعبأين لهما PT_LOAD alignment لا يقل عن 16 KB, لكن اختبار end-to-end في بيئة Android حقيقية بحجم 16 KB لم يكتمل بعد, لذلك لا يدعي هذا الإصدار دعم 16 KB متحققا منه."
+      "a": "يجتاز كلا ELF executable المعبأين وجميع إدخالات APK بوابات 16 KB alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز APK لـ `arm64-v8a` مجموعة Binder الكاملة عبر `libndk_translation`, لكن payload `x86_64` الأصلي يتوقف بالـ exit code 134 حتى مع script بسيطة; ولم يتم اختبار arm64 الأصلي بعد. هذه أدلة جزئية, لذلك لا يزال هذا الإصدار لا يدعي دعما عاما لـ 16 KB."
     },
     {
       "q": "أي APK يجب أن أثبت?",
@@ -85,7 +85,7 @@
   "h3_plugin_interface": "واجهة plugin",
   "p_plugin_interface": "هذا القسم موجه لمطوري مضيف AutoJs6 و plugin; يمكن للمستخدمين العاديين تخطيه. المعرفات والحدود الثابتة هي",
   "p_contract": "يتم اكتشاف `BunRuntimeService` عبر action `{{ plugin_service_action }}` و category `{{ plugin_service_category }}`. يستقبل المصدر عبر `ParcelFileDescriptor` و execution ID ضمن الطلب, ثم ينفذ `bun run --no-install <source>` مع بقاء استدعاء `runScript` المتزامن نشطا. يتم إرسال stdout و stderr فقط كـ bounded chunk عبر oneway callback. يحتوي terminal Bundle المعاد و event باسم `finished` على status و diagnostic summary field فقط ولا يحمل complete output stream, مما يبقي كل Binder transaction دون size limit. تدعم service cancellation صريحة و runtime prewarming وتعمل في `:bun_runtime`.",
-  "p_16kb_status": "حالة 16 KB: تستوفي PT_LOAD segment في ELF المضمنة لـ `arm64-v8a` و `x86_64` متطلبات 16 KB alignment. لم يتم التشغيل بعد على جهاز أو محاكي Android حقيقي بحجم 16 KB, لذلك تم التحقق من ELF alignment فقط.",
+  "p_16kb_status": "حالة 16 KB: يجتاز كلا ELF payload وإدخالاتهما في APK بوابات alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز `arm64-v8a` اختبارات Binder الخمسة عبر `libndk_translation`, بينما يتوقف `x86_64` الأصلي بالـ exit code 134 مع script بسيطة; ويبقى arm64 الأصلي غير مختبر. لا يتم ادعاء دعم عام لـ 16 KB.",
   "h3_roadmap": "خريطة الطريق",
   "p_roadmap": "تجيب خريطة الطريق عن سؤالين: ما الذي يعمل الآن وما الذي يأتي لاحقا. تصف العناصر المحددة السلوك الفعلي للإصدار الحالي; أما العناصر غير المحددة (المشاريع متعددة الملفات و AutoJs6 capability bridge ودعم إصدارات Android أوسع وترقيات Bun وغيرها) فهي خطط, وليست وعدا بدعم حالي.",
   "text_link_roadmap": "عرض ROADMAP.md",
