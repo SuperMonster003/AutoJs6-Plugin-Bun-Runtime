@@ -3,7 +3,7 @@
   "identity": {
     "name": "autojs6-bun-api28-patched-experiment",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
-    "status": "source-backport-and-direct-inputs-verified",
+    "status": "source-backport-direct-and-cargo-inputs-verified",
     "officialArtifact": false,
     "runtimeProduced": false,
     "buildReady": false,
@@ -172,7 +172,7 @@
     {
       "id": "toolchain-byte-lock",
       "resolved": false,
-      "description": "The Ubuntu base manifest and all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents are byte-locked. The mutable Ubuntu/PPA/apt.llvm.org package closure and exact LLVM/GCC .deb files remain unresolved; Cargo and Bun lockfile identities are inventoried separately, but their registry archives and offline caches are not yet materialized."
+      "description": "The Ubuntu base manifest and all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents are byte-locked. All 181 Cargo archives and their offline directory source are verified. The mutable Ubuntu/PPA/apt.llvm.org package closure, exact LLVM/GCC .deb files, and Bun registry archive/cache closure remain unresolved."
     },
     {
       "id": "dependency-lock",

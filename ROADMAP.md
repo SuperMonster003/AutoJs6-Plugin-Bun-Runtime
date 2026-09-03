@@ -137,18 +137,19 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 **为什么:** M3 要给 Android 9-12 使用打过补丁的 Bun; 如果补丁和构建过程不可复现, 就无法证明发布的二进制确实来自声称的源码. 注意: M2 本身不承诺 Android 9-12 可用.
 
-**已落地 (进展记录, 2026-09-02, G0/G1):**
+**已落地 (进展记录, 2026-09-03, G0/G1):**
 
 - `tools/bun-runtime/experimental/api28` 已建立独立实验 identity, 与官方产物线分开.
 - 已固定 Bun v1.4.0, PR #39775 的 5 个不可变提交, 以及 22 个 Android-release 依赖 identity.
 - 6 个 downstream patch 可从 release commit 确定性重放: 前 5 个 stable patch ID 与上游一致, 第 6 个把可移动的 Brotli tag 固定为完整 commit; 受影响的兼容代码与固定 PR head 完全一致.
 - 19 个 Bun 实际使用的 GitHub source archive 已真实下载, 并按字节数, SHA-256, 单一顶层目录和 traversal 规则锁定.
 - 17 个不可变直接下载件 (NDK, CMake, bootstrap Bun, Node, Ninja, rustup, 最小 Rust 闭包等) 共 1,024,309,832 bytes 已锁定.
-- 两个 materializer (输入物化工具) 都要求显式输出目录, 拒绝覆盖有漂移的文件, 并支持离线复核; CI 会重新物化 19 个 source archive 与 5 个小型工具链 provenance 文件.
-- 只读 build plan 和完整输入 preflight 已落地; `--execute` 在 `buildReady=false` 时硬拒绝执行.
-- 离线网络清单确认: Cargo.lock 有 181/181 个 crates.io SHA-256, 三个实际 `bun install --frozen-lockfile` 锁文件有 172 个外部 SHA-512 integrity; 但 registry archive, 离线 cache 和 Ubuntu/PPA/apt.llvm.org package closure 尚未物化.
-- 4 个 Node test 文件共 28 个回归测试; CI 仍会在临时 Bun checkout 中重放 patch chain, 并核对 build/dependency definition blob, Brotli patch 前 blob 与无 submodule 事实.
-- 由于主机 package/registry 离线闭包, 双次构建, ELF 审计和设备证据仍为空, `buildReady`, `distributionReady` 与 `runtimeProduced` 三个状态位均保持 `false`.
+- 三个 materializer (输入物化工具) 都要求显式输出目录, 拒绝覆盖有漂移的文件, 并支持离线复核; CI 会重新物化 19 个 source archive, 5 个小型工具链 provenance 文件和完整 Cargo archive/directory-source 闭包.
+- 只读 build plan 和完整输入 preflight 已落地; 预检现同时验证 22 个源码输入, 17 个工具链输入, 181 个 Cargo archive 及其逐文件 checksum; `--execute` 在 `buildReady=false` 时硬拒绝执行.
+- Cargo.lock 的 181/181 个 crates.io archive 已按规范 URL, 精确字节数与 SHA-256 锁定, 合计 26,354,160 bytes; materializer 可仅从 archive 安全重建 versioned directory source, 固定 Cargo 1.99.0-nightly 已在空 `CARGO_HOME` 下以 `--locked --offline` 读取完整 Bun workspace.
+- 三个实际 `bun install --frozen-lockfile` 锁文件仍有 172 个外部 SHA-512 integrity 待解析 Linux x86_64 子集与离线 cache; Ubuntu/PPA/apt.llvm.org package closure 也尚未物化.
+- 5 个 Node test 文件共 35 个回归测试; CI 仍会在临时 Bun checkout 中重放 patch chain, 并核对 build/dependency definition blob, Brotli patch 前 blob 与无 submodule 事实.
+- 由于主机 package 与 Bun registry 离线闭包, 双次构建, ELF 审计和设备证据仍为空, `buildReady`, `distributionReady` 与 `runtimeProduced` 三个状态位均保持 `false`.
 
 条目清单:
 
@@ -156,6 +157,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建) 新增 6 个 versioned downstream patch, 每个 patch 记录来源, 目的, 适用 commit, 摘要, 许可证影响和上游/本项目归属; 清洁重放结果与确定性 commit/tree 均由 CI 验证. (2026-09-02, G1)
 - [x] (构建/测试) 锁定 19 个 GitHub source archive 和 17 个不可变直接工具链下载件, 提供安全, 可离线复核的 source/toolchain materializer, 并把在线重新物化纳入 CI; 滚动 rustup discovery URL 不进入可复现闭包. (2026-09-02, G0/G1)
 - [x] (构建/测试) 新增默认只读的双 ABI build plan, 干净 patched checkout / 完整缓存 / NDK 预检和 `buildReady` 执行闸; 同时单独盘点 Cargo/Bun registry 输入, 未物化 archive 不得标成离线就绪. (2026-09-02, G1)
+- [x] (构建/测试) 锁定并真实物化 Cargo.lock 的 181 个 crates.io archive (26,354,160 bytes), 安全生成带逐文件 checksum 的 directory source, 由固定 Cargo 在空 home 下完成 `--locked --offline` workspace metadata 验证, 并纳入总预检与 CI. (2026-09-03, G1)
 - [ ] (构建) 提供清洁环境可复现的 Android build 入口, 固定 NDK r27c, Rust/LLVM/Bun 构建环境, API 28 target, CPU baseline 和双 ABI 参数.
 - [ ] (构建) 将官方产物和 downstream 产物使用不同的 lock identity, variant 与摘要, 防止把自建二进制误报为官方 release artifact.
 - [ ] (测试) 对 patched runtime 增加静态门禁: ELF64, PIE, interpreter, Android platform note API 28, `DT_NEEDED` allowlist, bionic 符号版本, `PT_LOAD` alignment, 导出/动态符号和 SHA-256.
@@ -299,6 +301,7 @@ node tools/bun-runtime/experimental/api28/verify-experiment.mjs
 node tools/bun-runtime/experimental/api28/build-experiment.mjs
 node --test `
   tools/bun-runtime/experimental/api28/verify-experiment.test.mjs `
+  tools/bun-runtime/experimental/api28/materialize-cargo-inputs.test.mjs `
   tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs `
   tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs `
   tools/bun-runtime/experimental/api28/build-experiment.test.mjs

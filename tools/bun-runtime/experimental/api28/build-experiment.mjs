@@ -3,6 +3,11 @@ import { dirname, isAbsolute, relative, resolve, sep, win32 } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
+import {
+  materializeCargoInputs,
+  verifyCargoDirectorySource,
+  verifyCargoSourceConfig,
+} from "./materialize-cargo-inputs.mjs";
 import { materializeSourceInputs } from "./materialize-source-inputs.mjs";
 import { materializeToolchainInputs } from "./materialize-toolchain-inputs.mjs";
 import { verifyExperiment } from "./verify-experiment.mjs";
@@ -61,12 +66,14 @@ export function createBuildPlan({
 
 export async function preflightBuildInputs(plan, {
   bunRepository,
+  cargoInputDirectory,
   sourcePrefetchDirectory,
   toolchainDirectory,
   androidNdkRoot,
   validateHostTools = false,
 } = {}) {
   const bunRoot = existingRealDirectory(bunRepository, "Bun repository");
+  const cargoRoot = existingRealDirectory(cargoInputDirectory, "Cargo input directory");
   const sourceRoot = existingRealDirectory(sourcePrefetchDirectory, "source prefetch directory");
   const toolchainRoot = existingRealDirectory(toolchainDirectory, "toolchain directory");
   const ndkRoot = existingRealDirectory(androidNdkRoot, "Android NDK root");
@@ -83,15 +90,28 @@ export async function preflightBuildInputs(plan, {
     group: "all",
     offline: true,
   });
-  const environment = buildEnvironment(plan, sourceRoot, ndkRoot);
+  const cargo = await materializeCargoInputs({
+    outputDirectory: cargoRoot,
+    offline: true,
+  });
+  const cargoDirectorySource = await verifyCargoDirectorySource(
+    resolveInside(cargoRoot, "vendor", "Cargo vendor directory"),
+    cargo.artifacts,
+  );
+  const cargoConfigPath = verifyCargoSourceConfig(cargoRoot);
+  const environment = buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot);
   const toolVersions = validateHostTools ? verifyHostTools(environment) : null;
   return Object.freeze({
     bunRepository: bunRoot,
+    cargoInputDirectory: cargoRoot,
     sourcePrefetchDirectory: sourceRoot,
     toolchainDirectory: toolchainRoot,
     androidNdkRoot: ndkRoot,
     sourceInputCount: source.artifacts.length,
     toolchainInputCount: toolchain.artifacts.length,
+    cargoArchiveCount: cargo.artifacts.length,
+    cargoDirectorySource,
+    cargoConfigPath,
     environment,
     toolVersions,
   });
@@ -166,11 +186,13 @@ function verifyHostTools(environment) {
   return Object.freeze(versions);
 }
 
-function buildEnvironment(plan, sourceRoot, ndkRoot) {
+function buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot) {
   return Object.freeze({
     ...process.env,
     ANDROID_NDK_ROOT: ndkRoot,
     BUN_BUILD_PREFETCH_DIR: sourceRoot,
+    CARGO_HOME: resolveInside(cargoRoot, "cargo-home", "Cargo home directory"),
+    CARGO_NET_OFFLINE: "true",
     LANG: plan.locale,
     LC_ALL: plan.locale,
     RUSTUP_TOOLCHAIN: "nightly-2026-07-20",
@@ -259,6 +281,7 @@ function parseArguments(argv) {
   const allowed = new Set([
     "--abi",
     "--bun-repository",
+    "--cargo-input-directory",
     "--source-prefetch-directory",
     "--toolchain-directory",
     "--android-ndk-root",
@@ -266,7 +289,7 @@ function parseArguments(argv) {
   for (const key of Object.keys(values)) require(allowed.has(key), `Unknown argument: ${key}`);
   const mode = execute ? "execute" : preflight ? "preflight" : "plan";
   if (mode !== "plan") {
-    for (const required of ["--bun-repository", "--source-prefetch-directory", "--toolchain-directory", "--android-ndk-root"]) {
+    for (const required of ["--bun-repository", "--cargo-input-directory", "--source-prefetch-directory", "--toolchain-directory", "--android-ndk-root"]) {
       require(values[required], `${required} is required in ${mode} mode`);
     }
   }
@@ -274,6 +297,7 @@ function parseArguments(argv) {
     mode,
     abi: values["--abi"] ?? "all",
     bunRepository: values["--bun-repository"],
+    cargoInputDirectory: values["--cargo-input-directory"],
     sourcePrefetchDirectory: values["--source-prefetch-directory"],
     toolchainDirectory: values["--toolchain-directory"],
     androidNdkRoot: values["--android-ndk-root"],
@@ -303,8 +327,8 @@ function require(condition, message) {
 const USAGE = `
 Usage:
   node build-experiment.mjs [--abi <arm64-v8a|x86_64|all>]
-  node build-experiment.mjs --preflight --bun-repository <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
-  node build-experiment.mjs --execute --bun-repository <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
+  node build-experiment.mjs --preflight --bun-repository <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
+  node build-experiment.mjs --execute --bun-repository <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
 `;
 
 const invokedPath = process.argv[1] === undefined ? null : resolve(process.argv[1]);
@@ -315,7 +339,10 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     printPlan(plan);
     if (options.mode === "preflight") {
       const result = await preflightBuildInputs(plan, options);
-      console.log(`OK ${result.sourceInputCount} source inputs and ${result.toolchainInputCount} toolchain inputs are present and locked`);
+      console.log(
+        `OK ${result.sourceInputCount} source inputs, ${result.toolchainInputCount} toolchain inputs, and ` +
+          `${result.cargoArchiveCount} Cargo archives plus their offline directory source are present and locked`,
+      );
       console.log("NOT BUILD READY: preflight is non-mutating and does not override unresolved blockers");
     } else if (options.mode === "execute") {
       await executeBuildPlan(plan, options);

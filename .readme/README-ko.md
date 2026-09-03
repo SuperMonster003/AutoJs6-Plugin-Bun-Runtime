@@ -225,6 +225,7 @@ _2026/09/01_
 - `개선` 공급망 강화: Bun source archive 19개와 toolchain 다운로드 17개의 정확한 바이트를 고정하고, Cargo 181개와 Bun registry integrity 항목 172개를 목록화하며, 덮어쓰기를 거부하는 materializer와 `buildReady` 게이트로 보호되는 듀얼 ABI 빌드 preflight를 추가
 - `개선` 복사해 바로 실행할 수 있는 예제 모음 확장: 네트워크 fetch, 비공개 작업 공간 파일 입출력, stdout/stderr 스트리밍, 더 실용적인 TypeScript 타입 예제를 주석과 함께 추가하고, 첫 줄 `"bun";` 지시문과 단일 소스 및 설치 금지 경계를 문서 게이트로 검증
 - `개선` PAGE_SIZE=16384를 강제한 Android 16 (API 36) AVD에서 16 KB execution 검증: `arm64-v8a` single-ABI APK는 `libndk_translation`을 통해 Binder instrumentation 5개를 모두 통과했지만, native `x86_64` payload는 최소 script에서도 exit code 134로 중단되므로 일반적인 16 KB 지원은 주장하지 않음
+- `개선` Android 9+ 실험 빌드 공급망의 Cargo 부분 완결: crates.io archive 181개 (총 26,354,160 bytes)를 잠그고 실제로 내려받아 파일별 checksum이 있는 directory source를 생성했으며, 고정 Cargo가 빈 `CARGO_HOME`에서 전체 Bun workspace를 `--locked --offline`으로 읽는 것을 검증; Bun registry 및 host package closure는 아직 미완료
 - `의존성` Release R8이 공유 Parcelable contract class를 유지하도록 Kotlin Parcelize runtime 추가
 
 #### v0.1.0
