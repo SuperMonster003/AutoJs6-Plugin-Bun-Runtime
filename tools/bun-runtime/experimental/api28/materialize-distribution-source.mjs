@@ -21,7 +21,7 @@ export async function materializeDistributionSource({
   require(typeof outputDirectory === "string" && outputDirectory.length > 0, "An output directory is required");
   require(isAbsolute(outputDirectory) || win32.isAbsolute(outputDirectory), "Output directory must be absolute");
   const lock = readJson(lockPath);
-  require(lock?.schemaVersion === 1, "Unsupported distribution-source lock schema");
+  require(lock?.schemaVersion === 2, "Unsupported distribution-source lock schema");
   const artifact = normalizeArtifact(lock.bunSource?.archive);
   const output = prepareOutputDirectory(outputDirectory);
   const target = join(output, artifact.filename);

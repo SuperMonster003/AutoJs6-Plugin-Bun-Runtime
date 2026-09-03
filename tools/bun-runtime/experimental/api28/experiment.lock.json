@@ -194,7 +194,7 @@
       "id": "build-and-runtime-evidence",
       "resolved": false,
       "blocksBuild": false,
-      "description": "Two independent clean builds produced byte-for-byte identical ARM64 and x86_64 executables, the static ELF audit is complete, and exact Bun/WebKit license and corresponding-source inputs are locked. Application-process Binder/device evidence, APK packaging validation, publication of a matching source bundle, and release-specific legal review remain open."
+      "description": "Two independent clean builds produced byte-for-byte identical ARM64 and x86_64 executables, the static ELF audit is complete, exact Bun/WebKit license and corresponding-source inputs are locked, and the same-Release source-asset/SHA-256 publication workflow is implemented. Application-process Binder/device evidence, experimental APK packaging validation, and actual publication of a matching APK/source set remain open; project policy does not require a separate legal-review gate."
     }
   ]
 }

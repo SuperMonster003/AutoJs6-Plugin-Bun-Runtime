@@ -228,7 +228,7 @@ _2026/09/01_
 - `Amélioration` Clore la partie Cargo de la chaîne d'approvisionnement expérimentale Android 9+: verrouiller et matérialiser les 181 archives crates.io (26 354 160 octets), générer une source de répertoire vérifiée par checksums et prouver que la version figée de Cargo charge tout le workspace Bun avec `--locked --offline` et un `CARGO_HOME` vide; ce résultat couvre uniquement les entrées Cargo et ne clôt pas à lui seul les autres entrées de build
 - `Amélioration` Clore la partie registre Bun de cette chaîne: résoudre 172 références du lock en 125 archives npm Linux x64 uniques (31 498 870 octets), reconstruire un cache minimal depuis les tarballs verrouillés et réussir les trois installations frozen dans le conteneur Ubuntu figé, réseau désactivé et cache en lecture seule; `esbuild@0.21.5` est la seule dépendance avec un postinstall approuvé
 - `Amélioration` Achever la porte de build reproductible du runtime patché sans le distribuer: verrouiller 155 archives hôte `.deb` (422 223 096 octets) dans une image OCI reproductible, étendre la clôture Cargo à 206 archives uniques, effectuer deux builds propres sans réseau des deux ABI 64 bits avec des résultats identiques octet par octet, puis verrouiller les audits ELF en Node pur; les sondes shell directes API 28 et 31 réussissent, tandis que les portes APK et processus applicatif restent ouvertes
-- `Amélioration` Verrouiller les entrées de source correspondante du runtime patché sans revendiquer une approbation de publication: figer la source de base Bun par taille et SHA-256, vérifier WebKit/JSC avec le tag, commit, arbre et inventaire exacts de 463 115 fichiers, inclure cinq textes de licence correspondants et recouper 19 archives natives, 206 Cargo et 125 npm; la publication réelle des sources et la revue juridique propre à la version restent obligatoires
+- `Amélioration` Implémenter des assets de Release vérifiables pour les sources correspondantes: séparer les sources des APK dans le même Release; empaqueter les sources Bun/WebKit/JSC exactes, 19 archives native, 206 Cargo et 125 npm, avec patches, instructions de build/relink et avis public de licences; fractionner les gros assets à 1,9 Go, lier les octets APK/runtime/source par un manifest lisible par machine et SHA256SUMS, puis publier le draft seulement après concordance des SHA-256 GitHub; ceci atteste une vérification technique automatisée, pas une approbation juridique
 - `Dépendance` Ajouter le runtime Kotlin Parcelize afin que R8 en Release conserve la classe partagée du contrat Parcelable
 
 #### v0.1.0
@@ -261,6 +261,7 @@ Git LFS doit matérialiser les deux binaires épinglés avant la vérification o
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-Le code du plugin est sous [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). L'exécutable officiel de Bun contient le code Bun sous MIT, JavaScriptCore et WebKit liés statiquement sous LGPL-2, ainsi que d'autres composants sous leurs propres licences. Consultez [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) et le [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) épinglé de Bun.
+Le code du plugin est sous [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). L'exécutable officiel de Bun contient le code Bun sous MIT, JavaScriptCore et WebKit liés statiquement sous LGPL-2, ainsi que d'autres composants sous leurs propres licences. Les Releases concernés publient un avis public de licence/relinking et les assets de sources correspondantes séparément des APK dans le même Release, avec un manifest lisible par machine et SHA256SUMS contrôlés par des vérifications techniques automatisées. Consultez [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) et le [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) épinglé de Bun.
 
 ******
 

@@ -228,7 +228,7 @@ _2026/09/01_
 - `Улучшение` Закрыть Cargo-часть экспериментальной цепочки сборки для Android 9+: зафиксировать и материализовать все 181 архив crates.io (26 354 160 байт), создать directory source с проверяемыми контрольными суммами файлов и доказать, что закреплённый Cargo загружает весь workspace Bun с `--locked --offline` и пустым `CARGO_HOME`; этот результат охватывает только входы Cargo и сам по себе не замыкает остальные входы сборки
 - `Улучшение` Закрыть часть этой цепочки, связанную с реестром Bun: свести 172 ссылки lock к 125 уникальным npm-архивам для Linux x64 (31 498 870 байт), пересобрать минимальный cache из зафиксированных tarball и выполнить все три frozen install в закреплённом контейнере Ubuntu с отключённой сетью и cache только для чтения; `esbuild@0.21.5` — единственная зависимость с доверенным postinstall
 - `Улучшение` Завершить шлюз воспроизводимой сборки исправленного runtime без его поставки: зафиксировать 155 host-архивов `.deb` (422 223 096 байт) в воспроизводимом OCI-образе, расширить замыкание Cargo до 206 уникальных архивов, дважды чисто и без сети собрать обе 64-битные ABI с побайтово идентичным результатом и закрепить ELF-аудит на чистом Node; прямые shell-пробы на API 28 и 31 проходят, а шлюзы APK и процесса приложения остаются открыты
-- `Улучшение` Зафиксировать входы соответствующих исходников исправленного runtime без заявления об одобрении релиза: закрепить базовый исходник Bun по размеру и SHA-256, проверить WebKit/JSC по точным tag, commit, tree и перечню из 463 115 файлов, включить пять совпадающих текстов лицензий и сверить 19 native-, 206 Cargo- и 125 npm-архивов исходников; фактическая публикация исходников и юридическая проверка конкретного релиза по-прежнему обязательны
+- `Улучшение` Реализовать проверяемые assets соответствующих исходников для Release: отделить исходники от APK, сохранив их в одном Release; упаковать точные исходники Bun/WebKit/JSC, 19 native-, 206 Cargo- и 125 npm-архивов, patches, инструкции build/relink и публичное уведомление о лицензиях; делить крупные assets по 1,9 GB, связать байты APK/runtime/source машиночитаемым manifest и SHA256SUMS и публиковать draft только после совпадения всех GitHub SHA-256; это фиксирует автоматизированную техническую проверку, а не юридическое одобрение
 - `Зависимость` Добавить Kotlin Parcelize runtime, чтобы R8 в Release сохранял общий класс контракта Parcelable
 
 #### v0.1.0
@@ -261,6 +261,7 @@ Git LFS должен материализовать оба закрепленн�
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-Код плагина распространяется по [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). Официальный executable Bun содержит код Bun под MIT, статически связанные JavaScriptCore и WebKit под LGPL-2, а также другие компоненты под собственными лицензиями. См. [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) и закрепленный [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) Bun.
+Код плагина распространяется по [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). Официальный executable Bun содержит код Bun под MIT, статически связанные JavaScriptCore и WebKit под LGPL-2, а также другие компоненты под собственными лицензиями. Применимые Releases публикуют публичное уведомление о лицензиях/relinking и совпадающие assets соответствующих исходников отдельно от APK в том же Release, с машиночитаемым manifest и SHA256SUMS, проверенными автоматизированными техническими тестами. См. [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) и закрепленный [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) Bun.
 
 ******
 

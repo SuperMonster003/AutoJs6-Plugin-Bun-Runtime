@@ -25,7 +25,7 @@
         "Android 9+ experimental build の Cargo supply chain を閉じる: crates.io archive 全 181 件 (26,354,160 bytes) を lock して実体化し, file checksum 付き directory source を生成; 固定 Cargo が空の `CARGO_HOME` で Bun workspace 全体を `--locked --offline` で読み込めることを確認しました. この結果は Cargo input のみを対象とし, 他の build input を単独で閉じるものではありません",
         "同 supply chain の Bun registry 部分を閉じる: 172 件の lock reference を Linux x64 用の一意な npm archive 125 件 (31,498,870 bytes) に解決し, 固定 tarball だけから最小 cache を再構築; network 無効かつ cache 読み取り専用の固定 Ubuntu container で 3 回の frozen install をすべて通過しました. 信頼される postinstall を持つ依存は `esbuild@0.21.5` だけです",
         "patched runtime を配布せずに再現可能 build gate を完了: host の `.deb` archive 155 件 (422,223,096 bytes) を再現可能な OCI image として固定し, Cargo closure を一意な archive 206 件へ拡張; 2 つの 64-bit ABI を network 無効の clean 環境で各 2 回 build して byte-for-byte 一致を確認し, pure Node ELF audit も固定しました. API 28/31 の直接 shell probe は成功しましたが, APK と application process の gate は未完了です",
-        "release 承認を主張せずに patched runtime の対応 source input を固定: Bun base source の bytes と SHA-256, WebKit/JSC の正確な tag, commit, tree, 463,115-file inventory を検証し, 一致する license text 5 件を同梱; native 19 件, Cargo 206 件, npm 125 件の source archive も相互確認しました. 実際の source 公開と release ごとの法務 review は引き続き必要です"
+        "検証可能な対応 source の Release assets を実装: source を APK から分離して同じ Release に置き, 正確な Bun/WebKit/JSC, native 19 件, Cargo 206 件, npm 125 件の source archive, patch, build/relink 手順, 公開 license notice を梱包; 大容量 asset は 1.9 GB で分割し, machine-readable manifest と SHA256SUMS で APK/runtime/source の bytes を結合し, GitHub SHA-256 がすべて一致した後だけ draft を公開します; これは自動技術検証の記録であり, 法的承認の主張ではありません"
       ],
       "dependency": [
         "Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加"

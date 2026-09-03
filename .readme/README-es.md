@@ -228,7 +228,7 @@ _2026/09/01_
 - `Mejora` Cerrar la parte de Cargo de la cadena de suministro experimental para Android 9+: bloquear y materializar los 181 archivos de crates.io (26,354,160 bytes), generar un directory source verificado con checksums y demostrar que el Cargo fijado carga todo el workspace de Bun con `--locked --offline` y un `CARGO_HOME` vacío; este resultado cubre solo las entradas de Cargo y no cierra por sí solo las demás entradas de build
 - `Mejora` Cerrar la parte del registro de Bun de esa cadena: resolver 172 referencias del lock en 125 archivos npm únicos para Linux x64 (31,498,870 bytes), reconstruir una cache mínima desde los tarballs bloqueados y superar las tres instalaciones frozen en el contenedor Ubuntu fijado, sin red y con la cache de solo lectura; `esbuild@0.21.5` es la única dependencia con postinstall de confianza
 - `Mejora` Completar la puerta de compilación reproducible del runtime parcheado sin distribuirlo: bloquear 155 archivos `.deb` del host (422,223,096 bytes) en una imagen OCI reproducible, ampliar el cierre de Cargo a 206 archivos únicos, ejecutar dos compilaciones limpias y sin red de ambos ABI de 64 bits con resultados idénticos byte a byte, y fijar auditorías ELF en Node puro; pasan las pruebas directas de shell en API 28 y 31, mientras siguen pendientes las puertas de APK y proceso de aplicación
-- `Mejora` Bloquear las entradas de código fuente correspondiente del runtime parcheado sin afirmar aprobación de lanzamiento: fijar el código base de Bun por bytes y SHA-256, verificar WebKit/JSC con el tag, commit, árbol e inventario exactos de 463,115 archivos, incluir cinco textos de licencia coincidentes y contrastar 19 archivos nativos, 206 de Cargo y 125 de npm; la publicación real del código fuente y la revisión legal específica del lanzamiento siguen siendo obligatorias
+- `Mejora` Implementar assets de Release verificables del código fuente correspondiente: mantener el código separado de los APK en el mismo Release; empaquetar Bun/WebKit/JSC exactos, 19 archivos native, 206 de Cargo y 125 de npm, además de patches, instrucciones de build/relink y un aviso público de licencias; dividir archivos grandes a 1.9 GB, vincular bytes de APK/runtime/source mediante un manifest legible por máquina y SHA256SUMS, y publicar el draft solo tras coincidir todos los SHA-256 de GitHub; esto registra verificación técnica automatizada, no aprobación legal
 - `Dependencia` Añadir el runtime de Kotlin Parcelize para que R8 en Release conserve la clase compartida del contrato Parcelable
 
 #### v0.1.0
@@ -261,6 +261,7 @@ Git LFS debe materializar los dos binarios fijados antes de verificar o empaquet
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-El código del plugin usa [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). El ejecutable oficial de Bun incluye código de Bun bajo MIT, JavaScriptCore y WebKit enlazados estáticamente bajo LGPL-2 y otros componentes con sus propias licencias. Consulta [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) y el [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) fijado de Bun.
+El código del plugin usa [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). El ejecutable oficial de Bun incluye código de Bun bajo MIT, JavaScriptCore y WebKit enlazados estáticamente bajo LGPL-2 y otros componentes con sus propias licencias. Los Releases aplicables publican un aviso de licencia/relinking y los assets de código fuente correspondiente separados de los APK en el mismo Release, con un manifest legible por máquina y SHA256SUMS verificados mediante controles técnicos automatizados. Consulta [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) y el [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md) fijado de Bun.
 
 ******
 

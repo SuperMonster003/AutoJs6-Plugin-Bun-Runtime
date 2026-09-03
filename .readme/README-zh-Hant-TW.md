@@ -228,7 +228,7 @@ _2026/09/01_
 - `優化` 完成 Android 9+ 實驗建置供應鏈的 Cargo 部分: 鎖定並實際物化全部 181 個 crates.io archive (26,354,160 bytes), 產生附逐檔 checksum 的 directory source, 並證明固定 Cargo 可在空的 `CARGO_HOME` 下以 `--locked --offline` 讀取完整 Bun workspace; 此結果僅涵蓋 Cargo 輸入, 本身不會完成其他建置輸入的閉包
 - `優化` 完成該供應鏈的 Bun registry 部分: 將 172 個 lock reference 解析為 Linux x64 的 125 個唯一 npm archive (31,498,870 bytes), 僅從已鎖定 tarball 重建最小 cache, 並在停用網路且 cache 唯讀的固定 Ubuntu container 中通過全部三次 frozen install; `esbuild@0.21.5` 是唯一包含受信任 postinstall 的相依套件
 - `優化` 完成 patched runtime 的可重現建置門禁但不隨套件散布: 將 155 個主機 `.deb` archive (422,223,096 bytes) 鎖定為可重複產生的 OCI image, 把 Cargo 閉包擴展至 206 個唯一 archive, 對兩個 64 位 ABI 各執行兩次停網全新建置並取得逐位元組相同結果, 再鎖定純 Node ELF 稽核; API 28 與 31 的直接 shell 探針已通過, APK 與應用程式處理程序門仍未完成
-- `優化` 鎖定 patched runtime 的對應原始碼輸入但不聲稱發行獲准: 按位元組數與 SHA-256 固定 Bun base source, 以精確 tag, commit, tree 和 463,115-file inventory 驗證 WebKit/JSC, 隨套件加入五份相符授權文本, 並交叉核對 19 個 native, 206 個 Cargo 與 125 個 npm source archive; 實際發布原始碼集及發行級法律複核仍不可省略
+- `優化` 實作可驗證的對應原始碼 Release assets: 原始碼與 APK 分開但置於同一 Release, 封裝精確 Bun/WebKit/JSC, 19 個 native, 206 個 Cargo, 125 個 npm source archive 以及 patch, build/relink 說明與公開授權聲明; 大型檔案按 1.9 GB 分片, 用 machine-readable manifest 和 SHA256SUMS 綁定 APK/runtime/source 位元組, 僅在 GitHub SHA-256 全部相符後公開 draft; 此結果表示自動化技術驗證, 不聲稱法律核准
 - `相依性` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
 
 #### v0.1.0
@@ -261,6 +261,7 @@ _2026/09/01_
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-插件程式碼採用 [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). 隨附官方 Bun executable 包含 Bun 的 MIT licensed code, 以 LGPL-2 靜態連結的 JavaScriptCore 和 WebKit, 以及採用各自 license 的其他 third-party component. 請查看 [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) 和固定版本 Bun [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
+插件程式碼採用 [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). 隨附官方 Bun executable 包含 Bun 的 MIT licensed code, 以 LGPL-2 靜態連結的 JavaScriptCore 和 WebKit, 以及採用各自 license 的其他 third-party component. 適用的 Release 會公開 license/relinking notice, 並將相符的對應原始碼作為與 APK 分開但位於同一 Release 的 assets 發布, 同時提供由自動化技術檢查驗證的 machine-readable manifest 和 SHA256SUMS. 請查看 [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) 和固定版本 Bun [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
 
 ******
 

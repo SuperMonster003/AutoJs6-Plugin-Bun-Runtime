@@ -96,7 +96,7 @@
   "h3_localization": "Локализация и генерация документов",
   "p_localization": "Изменяйте JSON и шаблоны Markdown, затем запускайте `py .python/generate_markdown.py`. Не редактируйте созданные README, changelog или plugin-instruction вручную. `--check` без записи проверяет форму языков, версию, локализованные ресурсы, лишние артефакты и расхождения генерации.",
   "h3_license": "Лицензия",
-  "p_license": "Код плагина распространяется по [Mozilla Public License 2.0]({{ license_url }}). Официальный executable Bun содержит код Bun под MIT, статически связанные JavaScriptCore и WebKit под LGPL-2, а также другие компоненты под собственными лицензиями. См. [Third-Party Notices]({{ third_party_notices_url }}) и закрепленный [LICENSE.md]({{ bun_license_url }}) Bun.",
+  "p_license": "Код плагина распространяется по [Mozilla Public License 2.0]({{ license_url }}). Официальный executable Bun содержит код Bun под MIT, статически связанные JavaScriptCore и WebKit под LGPL-2, а также другие компоненты под собственными лицензиями. Применимые Releases публикуют публичное уведомление о лицензиях/relinking и совпадающие assets соответствующих исходников отдельно от APK в том же Release, с машиночитаемым manifest и SHA256SUMS, проверенными автоматизированными техническими тестами. См. [Third-Party Notices]({{ third_party_notices_url }}) и закрепленный [LICENSE.md]({{ bun_license_url }}) Bun.",
   "h3_links": "Ссылки",
   "text_link_autojs6": "Проект AutoJs6",
   "text_link_bun": "Официальный сайт Bun",

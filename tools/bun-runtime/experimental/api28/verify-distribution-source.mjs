@@ -23,7 +23,10 @@ const REQUIRED_REDISTRIBUTION_FLAGS = Object.freeze([
   "provideBuildAndRelinkInstructions",
   "publishRuntimeAndSourceDigests",
   "doNotRelyOnlyOnUpstreamAvailability",
-  "requireReleaseReview",
+  "publishLicenseAndRelinkingNotice",
+  "requireSameReleaseSourceAssets",
+  "requireSha256Manifest",
+  "requireAutomatedTechnicalValidation",
 ]);
 
 export function verifyDistributionSource({
@@ -108,10 +111,11 @@ export function verifyDistributionSource({
 }
 
 export function verifyDistributionSourceManifest(lock) {
-  requireEqual(lock?.schemaVersion, 1, "distribution-source schemaVersion");
-  requireEqual(lock.identity?.status, "corresponding-source-inputs-locked", "distribution-source status");
+  requireEqual(lock?.schemaVersion, 2, "distribution-source schemaVersion");
+  requireEqual(lock.identity?.status, "corresponding-source-release-workflow-implemented", "distribution-source status");
   requireEqual(lock.identity?.variant, EXPECTED_VARIANT, "distribution-source variant");
   requireEqual(lock.identity?.officialArtifact, false, "distribution-source official-artifact boundary");
+  requireEqual(lock.identity?.sourceClosureReady, true, "distribution-source closure readiness");
   requireEqual(lock.identity?.distributionReady, false, "distribution-source readiness boundary");
   requireEqual(lock.runtimeEvidence, "runtime-evidence.json", "distribution-source runtime evidence path");
   require(Array.isArray(lock.artifacts) && lock.artifacts.length === 2, "distribution-source must identify two runtime artifacts");
@@ -138,16 +142,28 @@ export function verifyDistributionSourceManifest(lock) {
   requireEqual(lock.webkitSource?.commit, EXPECTED_WEBKIT_COMMIT, "WebKit source commit");
   require(SHA1.test(lock.webkitSource?.treeSha1), "WebKit source tree is invalid");
   require(Number.isSafeInteger(lock.webkitSource?.trackedFileCount) && lock.webkitSource.trackedFileCount > 0, "WebKit tracked-file count is invalid");
-  requireEqual(lock.webkitSource?.generatedArchiveAvailable, false, "WebKit generated-archive availability");
-  require(typeof lock.webkitSource?.generatedArchiveObservation === "string" && lock.webkitSource.generatedArchiveObservation.length > 0, "WebKit archive observation is missing");
+  requireEqual(lock.webkitSource?.upstreamGeneratedArchiveAvailable, false, "WebKit upstream generated-archive availability");
+  require(typeof lock.webkitSource?.upstreamGeneratedArchiveObservation === "string" && lock.webkitSource.upstreamGeneratedArchiveObservation.length > 0, "WebKit upstream archive observation is missing");
+  verifyArchiveRecord(lock.webkitSource?.releaseArchive, "WebKit release source archive");
+  requireEqual(lock.webkitSource.releaseArchive.filename, `webkit-${EXPECTED_WEBKIT_COMMIT}.tar.gz`, "WebKit release source filename");
+  requireEqual(lock.webkitSource.releaseArchive.format, "git-archive-tar+gzip-level-9", "WebKit release source format");
+  requireEqual(lock.webkitSource.releaseArchive.archivePrefix, `webkit-${EXPECTED_WEBKIT_COMMIT}/`, "WebKit release source prefix");
+  requireEqual(lock.webkitSource.releaseArchive.generator?.node, "24.3.0", "WebKit release source Node version");
+  requireEqual(lock.webkitSource.releaseArchive.generator?.zlib, "1.3.1-470d3a2", "WebKit release source zlib version");
+  requireEqual(lock.webkitSource.releaseArchive.generator?.compressionLevel, 9, "WebKit release source compression level");
+  requireEqual(lock.webkitSource.releaseArchive.generator?.mtime, 0, "WebKit release source gzip mtime");
+  requireEqual(lock.webkitSource.releaseArchive.independentGenerationCount, 2, "WebKit release source repeat count");
   require(Array.isArray(lock.webkitSource?.licenseFiles) && lock.webkitSource.licenseFiles.length === 4, "WebKit license file set is incomplete");
   for (const license of lock.webkitSource.licenseFiles) verifyLicenseRecord(license, "WebKit license");
   verifyLicenseRecord(lock.bunNotice, "Bun notice");
 
   for (const flag of REQUIRED_REDISTRIBUTION_FLAGS) requireEqual(lock.redistributionRequirements?.[flag], true, `redistribution requirement ${flag}`);
+  requireEqual(lock.redistributionRequirements?.legalReviewRequiredByProjectPolicy, false, "project legal-review policy");
   requireEqual(lock.boundaries?.patchedBinaryStoredInRepository, false, "patched-binary repository boundary");
   requireEqual(lock.boundaries?.patchedBinaryPackaged, false, "patched-binary packaging boundary");
   requireEqual(lock.boundaries?.correspondingSourceBundlePublished, false, "corresponding-source publication boundary");
+  requireEqual(lock.boundaries?.correspondingSourceReleaseWorkflowImplemented, true, "corresponding-source workflow boundary");
+  requireEqual(lock.boundaries?.legalReviewRequiredByProjectPolicy, false, "boundary legal-review policy");
   requireEqual(lock.boundaries?.legalApprovalClaimed, false, "legal-approval boundary");
   requireEqual(lock.boundaries?.distributionReady, false, "distribution boundary");
   require(typeof lock.boundaries?.note === "string" && lock.boundaries.note.length > 0, "distribution boundary note is missing");
@@ -158,6 +174,8 @@ function verifyBuildSourceClosures(root, closures) {
   const native = readJson(resolveInside(root, closures.nativeDependencies.lock, "native source lock"));
   requireEqual(native.activeDependencies.length, closures.nativeDependencies.activeDependencyCount, "active native dependency count");
   requireEqual(native.activeDependencies.filter((dependency) => dependency.kind === "github-archive").length, closures.nativeDependencies.githubSourceArchiveCount, "native source archive count");
+  requireEqual(native.activeDependencies.filter((dependency) => dependency.kind === "prebuilt" && dependency.name === "nodejs").length, closures.nativeDependencies.nodeHeaderSourceArchiveCount, "Node.js header source archive count");
+  requireEqual(closures.nativeDependencies.githubSourceArchiveCount + closures.nativeDependencies.nodeHeaderSourceArchiveCount, closures.nativeDependencies.publishedSourceArchiveCount, "published native/header source archive count");
   const prebuilts = native.activeDependencies.reduce((count, dependency) => {
     if (dependency.kind === "prebuilt") return count + 1;
     if (dependency.kind === "prebuilt-matrix") return count + dependency.variants.length;

@@ -96,7 +96,7 @@
   "h3_localization": "현지화 및 문서 생성",
   "p_localization": "JSON 및 Markdown template를 수정한 뒤 `py .python/generate_markdown.py`를 실행합니다. 생성된 README, changelog 또는 plugin-instruction file을 직접 수정하지 마세요. `--check`는 file을 쓰지 않고 language shape, version alignment, localized resource, orphan artifact 및 generated-file drift를 검증합니다.",
   "h3_license": "라이선스",
-  "p_license": "Plugin code는 [Mozilla Public License 2.0]({{ license_url }})을 사용합니다. Bundled official Bun executable에는 MIT licensed Bun code, LGPL-2로 statically linked된 JavaScriptCore와 WebKit, 그리고 자체 license를 사용하는 다른 third-party component가 포함됩니다. [Third-Party Notices]({{ third_party_notices_url }}) 및 pinned Bun [LICENSE.md]({{ bun_license_url }})를 확인하세요.",
+  "p_license": "Plugin code는 [Mozilla Public License 2.0]({{ license_url }})을 사용합니다. Bundled official Bun executable에는 MIT licensed Bun code, LGPL-2로 statically linked된 JavaScriptCore와 WebKit, 그리고 자체 license를 사용하는 다른 third-party component가 포함됩니다. 해당 Release는 공개 license/relinking notice와 일치하는 대응 source assets를 APK와 분리하되 같은 Release에 두고, 자동화 기술 검사로 검증된 machine-readable manifest와 SHA256SUMS를 제공합니다. [Third-Party Notices]({{ third_party_notices_url }}) 및 pinned Bun [LICENSE.md]({{ bun_license_url }})를 확인하세요.",
   "h3_links": "링크",
   "text_link_autojs6": "AutoJs6 project",
   "text_link_bun": "Bun 공식 사이트",

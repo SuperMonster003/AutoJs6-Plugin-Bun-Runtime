@@ -8,8 +8,10 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > `buildReady` is true. Two independent
 > clean builds produced byte-for-byte identical ARM64 and x86_64 executables,
 > and both passed the locked static ELF audit. The experiment remains
-> `distributionReady: false`; no patched executable is stored or packaged here,
-> and the unmodified official Bun artifacts remain the plugin's only payloads.
+> `distributionReady: false` until a matching experimental APK passes its
+> application-process gates and is actually published; no patched executable
+> is stored or packaged here, and the unmodified official Bun artifacts remain
+> the plugin's only payloads.
 
 ## Safety boundary
 
@@ -23,10 +25,10 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
   the official plugin payload path.
 - Built executables remain outside this repository. `runtime-evidence.json`
   records the experimental variant, two-run hashes, build IDs, and ELF facts,
-  but is not an APK lock or release approval. Packaging still requires a
-  separately named experimental output, publication of the matching source
-  set, release-specific legal review, and API 28-32 application-process
-  evidence.
+  but is not an APK lock. Packaging still requires a separately named
+  experimental output, same-Release publication of the matching source set,
+  automated APK/source/digest verification, and API 28-32 application-process
+  evidence. These are technical gates and do not claim a legal conclusion.
 
 ## Pinned facts
 
@@ -141,8 +143,11 @@ JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
 notice. The full WebKit checkout was verified at 463,115 tracked files; GitHub
 codeload refuses to generate an archive for that tree, so the source verifier
 uses the immutable Git tag and tree rather than inventing an archive digest.
-This closes the auditable input inventory, not the release gate: no matching
-source bundle has been published and no legal approval is claimed.
+This closes the auditable input inventory. The same-Release source-asset,
+SHA-256 manifest, draft-upload, and GitHub digest-verification workflow now
+lives under `tools/bun-runtime/release`; no matching patched APK/source set has
+yet been published, and automated technical validation does not claim a legal
+conclusion.
 
 ## Directory contract
 
@@ -370,9 +375,70 @@ api28/
    The verifier checks the Bun archive bytes/root/license, WebKit remote/tag/
    commit/tree/cleanliness/file count, source license hashes, packaged license
    copies, downstream patch licensing records, runtime hashes, and the exact
-   native/Cargo/npm source closures. A release process must additionally copy
-   or publish the complete matching source set; passing this command alone is
-   not legal approval.
+   native/Cargo/npm source closures. The release tools additionally publish the
+   complete matching set beside all three APKs, bind it with `SHA256SUMS`, and
+   compare GitHub's asset digests. These automated checks are technical
+   verification, not a legal opinion or approval.
+
+## Assemble, verify, and publish Release assets
+
+Use Linux or WSL to materialize the locked WebKit archive because its exact
+checkout must preserve Unix paths and file identities. After the archive hash
+is locked, the final assembler can run on Windows, Linux, or WSL. It requires a
+clean project checkout, exactly three signed APKs, Java, and `apksigner.jar`.
+Choose
+`official` for the unmodified Bun payload or `api28-patched-experimental` for a
+separately identified prerelease whose APKs contain the two hashes in
+`runtime-evidence.json`.
+
+```bash
+node tools/bun-runtime/release/materialize-webkit-source-archive.mjs \
+  --output-directory /absolute/path/to/empty-webkit-archive-dir \
+  --bun-source-archive /absolute/path/to/bun-base-source.tar.gz \
+  --webkit-repository /absolute/path/to/clean-webkit-checkout
+
+node tools/bun-runtime/release/assemble-corresponding-source.mjs \
+  --profile api28-patched-experimental \
+  --version 0.2.0 \
+  --tag v0.2.0-api28-experimental.1 \
+  --repository SuperMonster003/AutoJs6-Plugin-Bun-Runtime \
+  --apk-directory /absolute/path/to/signed-apks \
+  --bun-source-archive /absolute/path/to/bun-base-source.tar.gz \
+  --webkit-source-archive /absolute/path/to/locked-webkit-source.tar.gz \
+  --native-source-cache /absolute/path/to/source-prefetch \
+  --cargo-source-cache /absolute/path/to/cargo-inputs \
+  --bun-registry-source-cache /absolute/path/to/bun-inputs \
+  --output-directory /absolute/path/to/empty-release-assets \
+  --java-executable /absolute/path/to/java \
+  --apksigner-jar /absolute/path/to/apksigner.jar
+
+node tools/bun-runtime/release/verify-corresponding-source-release.mjs \
+  --asset-directory /absolute/path/to/release-assets \
+  --java-executable /absolute/path/to/java \
+  --apksigner-jar /absolute/path/to/apksigner.jar
+
+# Read-only remote/tag preflight; omit --publish until the tag is pushed.
+node tools/bun-runtime/release/publish-github-release.mjs \
+  --asset-directory /absolute/path/to/release-assets \
+  --java-executable /absolute/path/to/java \
+  --apksigner-jar /absolute/path/to/apksigner.jar
+
+# Explicitly authorized publication: draft -> upload -> remote SHA-256 check -> public.
+node tools/bun-runtime/release/publish-github-release.mjs \
+  --asset-directory /absolute/path/to/release-assets \
+  --java-executable /absolute/path/to/java \
+  --apksigner-jar /absolute/path/to/apksigner.jar \
+  --publish
+```
+
+The output directory contains the three APKs, six logical source components,
+the public license/relinking notice, the machine-readable binding manifest,
+and `SHA256SUMS`. Logical components over 1,900,000,000 bytes are split into
+ordered parts. Reassemble them by concatenating the part files in numeric order;
+the manifest records both each part digest and the digest of the complete
+logical archive. The publisher refuses an absent/mismatched remote tag, a dirty
+checkout, a non-draft existing Release, an extra asset, or any local/remote
+size or SHA-256 difference.
 
 ## Gates that remain open
 
@@ -380,10 +446,11 @@ The experiment now has `buildReady: true`, `runtimeProduced: true`, and
 `distributionReady: false`. Build-input closure, two-run binary reproducibility,
 and static ELF auditing are complete. At minimum, later work must:
 
-- publish or accompany the patched binary with the already locked matching
-  Bun/WebKit/JSC and dependency source set, downstream patches, license texts,
-  and complete build instructions, then perform a release-specific legal
-  review;
+- publish the patched binary with the already locked matching Bun/WebKit/JSC
+  and dependency source set, downstream patches, license texts, build/relink
+  instructions, machine-readable manifest, and `SHA256SUMS` in the same
+  Release; the implemented publisher keeps the Release in draft until every
+  GitHub asset digest agrees;
 - create a separately identified experimental APK without replacing or
   relabeling the official runtime;
 - run installed-payload and full Binder instrumentation from the application

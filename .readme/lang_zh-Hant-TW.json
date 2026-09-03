@@ -96,7 +96,7 @@
   "h3_localization": "本地化和文件產生",
   "p_localization": "編輯 JSON 和 Markdown template 後執行 `py .python/generate_markdown.py`. 不要手動編輯產生的 README, changelog 或 plugin-instruction file. `--check` 會在不寫入檔案的情況下驗證 language shape, version alignment, localized resource, orphan artifact 和 generated-file drift.",
   "h3_license": "授權",
-  "p_license": "插件程式碼採用 [Mozilla Public License 2.0]({{ license_url }}). 隨附官方 Bun executable 包含 Bun 的 MIT licensed code, 以 LGPL-2 靜態連結的 JavaScriptCore 和 WebKit, 以及採用各自 license 的其他 third-party component. 請查看 [Third-Party Notices]({{ third_party_notices_url }}) 和固定版本 Bun [LICENSE.md]({{ bun_license_url }}).",
+  "p_license": "插件程式碼採用 [Mozilla Public License 2.0]({{ license_url }}). 隨附官方 Bun executable 包含 Bun 的 MIT licensed code, 以 LGPL-2 靜態連結的 JavaScriptCore 和 WebKit, 以及採用各自 license 的其他 third-party component. 適用的 Release 會公開 license/relinking notice, 並將相符的對應原始碼作為與 APK 分開但位於同一 Release 的 assets 發布, 同時提供由自動化技術檢查驗證的 machine-readable manifest 和 SHA256SUMS. 請查看 [Third-Party Notices]({{ third_party_notices_url }}) 和固定版本 Bun [LICENSE.md]({{ bun_license_url }}).",
   "h3_links": "連結",
   "text_link_autojs6": "AutoJs6 專案",
   "text_link_bun": "Bun 官方網站",

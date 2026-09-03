@@ -228,7 +228,7 @@ _2026/09/01_
 - `개선` Android 9+ 실험 빌드 공급망의 Cargo 부분 완결: crates.io archive 181개 (총 26,354,160 bytes)를 잠그고 실제로 내려받아 파일별 checksum이 있는 directory source를 생성했으며, 고정 Cargo가 빈 `CARGO_HOME`에서 전체 Bun workspace를 `--locked --offline`으로 읽는 것을 검증; 이 결과는 Cargo 입력만 다루며 나머지 빌드 입력을 단독으로 완결하지 않음
 - `개선` 동일 공급망의 Bun registry 부분 완결: lock reference 172개를 Linux x64용 고유 npm archive 125개 (총 31,498,870 bytes)로 해석하고, 잠긴 tarball만으로 최소 cache를 재구성했으며, network가 차단되고 cache가 읽기 전용인 고정 Ubuntu container에서 세 번의 frozen install을 모두 통과; 신뢰되는 postinstall 의존성은 `esbuild@0.21.5` 하나뿐
 - `개선` patched runtime을 배포하지 않은 채 재현 가능한 build gate 완결: host `.deb` archive 155개 (422,223,096 bytes)를 반복 생성 가능한 OCI image로 잠그고, Cargo closure를 고유 archive 206개로 확장했으며, 두 64-bit ABI를 network 차단 clean 환경에서 각각 두 번 build해 byte-for-byte 동일한 결과를 확인하고 pure Node ELF audit도 잠금; API 28과 31의 직접 shell probe는 통과했지만 APK와 application process gate는 아직 열려 있음
-- `개선` release 승인을 주장하지 않고 patched runtime의 대응 source input 잠금: Bun base source의 bytes와 SHA-256, WebKit/JSC의 정확한 tag, commit, tree 및 463,115-file inventory를 검증하고, 일치하는 license text 5개를 포함했으며, native 19개, Cargo 206개, npm 125개의 source archive를 교차 확인; 실제 source 공개와 release별 법률 검토는 여전히 필요함
+- `개선` 검증 가능한 대응 source Release assets 구현: source를 APK와 분리하되 같은 Release에 두고, 정확한 Bun/WebKit/JSC, native 19개, Cargo 206개, npm 125개 source archive와 patch, build/relink 지침, 공개 license notice를 패키징; 대용량 asset은 1.9 GB로 분할하고 machine-readable manifest와 SHA256SUMS로 APK/runtime/source bytes를 결합하며, GitHub SHA-256이 모두 일치한 뒤에만 draft를 공개; 이는 자동화 기술 검증 기록이며 법적 승인을 주장하지 않음
 - `의존성` Release R8이 공유 Parcelable contract class를 유지하도록 Kotlin Parcelize runtime 추가
 
 #### v0.1.0
@@ -261,6 +261,7 @@ Verification 또는 Gradle packaging 전에 Git LFS가 고정된 runtime binary 
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-Plugin code는 [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE)을 사용합니다. Bundled official Bun executable에는 MIT licensed Bun code, LGPL-2로 statically linked된 JavaScriptCore와 WebKit, 그리고 자체 license를 사용하는 다른 third-party component가 포함됩니다. [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) 및 pinned Bun [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md)를 확인하세요.
+Plugin code는 [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE)을 사용합니다. Bundled official Bun executable에는 MIT licensed Bun code, LGPL-2로 statically linked된 JavaScriptCore와 WebKit, 그리고 자체 license를 사용하는 다른 third-party component가 포함됩니다. 해당 Release는 공개 license/relinking notice와 일치하는 대응 source assets를 APK와 분리하되 같은 Release에 두고, 자동화 기술 검사로 검증된 machine-readable manifest와 SHA256SUMS를 제공합니다. [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) 및 pinned Bun [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md)를 확인하세요.
 
 ******
 
