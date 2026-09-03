@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "status": "corresponding-source-inputs-locked",
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "officialArtifact": false,
+    "distributionReady": false
+  },
+  "runtimeEvidence": "runtime-evidence.json",
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "bytes": 87923304,
+      "sha256": "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6"
+    },
+    {
+      "abi": "x86_64",
+      "bytes": 90449696,
+      "sha256": "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036"
+    }
+  ],
+  "bunSource": {
+    "repository": "https://github.com/oven-sh/bun",
+    "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "baseTreeSha1": "61453622872e362c02b43a1ec0dc778a9b4a7285",
+    "archive": {
+      "id": "bun-source-34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+      "filename": "bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676.tar.gz",
+      "url": "https://github.com/oven-sh/bun/archive/34cbb9a40b4bd1bd767d134a7065e66c2432a676.tar.gz",
+      "bytes": 64069192,
+      "sha256": "d44cad3fc8a3ab2e59308af42b022d2401b3425b98ffde535bfc02387dac4771",
+      "archiveRoot": "bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676"
+    },
+    "patchSeries": "patches/series.lock.json",
+    "downstreamCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+    "downstreamTreeSha1": "8cfb6a060e87fcdbbf1191b344387291f1476cf4",
+    "downstreamPatchCount": 6,
+    "licenseSourcePath": "LICENSE.md",
+    "licenseSourceBytes": 5613,
+    "licenseSourceSha256": "b9caf52728691b4057e371232c221a132883198be2f3d2ddf92c90404c984b1a"
+  },
+  "webkitSource": {
+    "repository": "https://github.com/oven-sh/WebKit",
+    "tag": "autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b",
+    "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+    "treeSha1": "e9590edf1ab6c32e20f83b70daec7314e0bfe261",
+    "trackedFileCount": 463115,
+    "sourceMethod": "git clone --depth 1 --single-branch --branch autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b https://github.com/oven-sh/WebKit.git",
+    "generatedArchiveAvailable": false,
+    "generatedArchiveObservation": "GitHub codeload returned HTTP 422 with 'Content creation is blocked'; use and verify the immutable Git tag/commit instead of claiming a source-archive digest.",
+    "licenseFiles": [
+      {
+        "sourcePath": "Source/JavaScriptCore/COPYING.LIB",
+        "sourceBytes": 25584,
+        "sourceSha256": "5094ecb9c9dcd0eadc34f3c11511d9b5535063032bc150164ecd1a5d5a445547",
+        "packagedPath": "app/src/main/assets/doc/licenses/WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
+        "packagedBytes": 25585,
+        "packagedSha256": "2f4345f29dc139686637dac2ca7f92d47dc36da2ce19a681314d9dd8026be649",
+        "normalization": "packaged copy adds one final LF"
+      },
+      {
+        "sourcePath": "Source/WebCore/LICENSE-LGPL-2",
+        "sourceBytes": 25378,
+        "sourceSha256": "7555fa34bc131a75ca56d65c40cc1ea8f9515d23e353d4c15d58573a042f7805",
+        "packagedPath": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2",
+        "packagedBytes": 25379,
+        "packagedSha256": "40a06e4454e7b332faf03b0ffb214bd8cb1a273b41290d87742c7ef93d3614e1",
+        "normalization": "packaged copy adds one final LF"
+      },
+      {
+        "sourcePath": "Source/WebCore/LICENSE-LGPL-2.1",
+        "sourceBytes": 26536,
+        "sourceSha256": "f2b3bd09663381deb99721109d22b47af1213bb43007a8b56a06c6375c8050ce",
+        "packagedPath": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2.1",
+        "packagedBytes": 26537,
+        "packagedSha256": "c058901ca17b2c0977e31919e016b838a2d546169cfdaea468a1bf877d8d712f",
+        "normalization": "packaged copy adds one final LF"
+      },
+      {
+        "sourcePath": "Source/WebCore/LICENSE-APPLE",
+        "sourceBytes": 1313,
+        "sourceSha256": "0b5d3a7cc325942567373b0ecd757d07c132e0ebd7c97bfc63f7e1a76094edb4",
+        "packagedPath": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-APPLE",
+        "packagedBytes": 1314,
+        "packagedSha256": "f306398704cb2a73bc038b1be2845640d05037e0aaa03fba8fdcde8b5ac7ceb2",
+        "normalization": "packaged copy adds one final LF"
+      }
+    ]
+  },
+  "bunNotice": {
+    "sourcePath": "LICENSE.md",
+    "sourceBytes": 5613,
+    "sourceSha256": "b9caf52728691b4057e371232c221a132883198be2f3d2ddf92c90404c984b1a",
+    "packagedPath": "app/src/main/assets/doc/licenses/BUN-LICENSE.md",
+    "packagedBytes": 5614,
+    "packagedSha256": "51402e15bdab948668eb5bcca05c096bc8c47beaf96f0db4b41777faf546ba4f",
+    "normalization": "packaged copy adds one final LF",
+    "coverage": "The pinned upstream notice identifies Bun's MIT license, LGPL-covered WebKit/JavaScriptCore, other statically linked libraries, embedded polyfills, and the upstream relinking workflow."
+  },
+  "lockedBuildSourceClosures": {
+    "nativeDependencies": {
+      "lock": "source-inputs.lock.json",
+      "activeDependencyCount": 22,
+      "githubSourceArchiveCount": 19,
+      "prebuiltCount": 3
+    },
+    "cargo": {
+      "lock": "cargo-inputs.lock.json",
+      "registryReferenceCount": 211,
+      "uniqueArchiveCount": 206,
+      "archiveBytes": 28919277
+    },
+    "bunRegistry": {
+      "lock": "bun-inputs.lock.json",
+      "integrityReferenceCount": 172,
+      "selectedLinuxX64ArchiveCount": 125,
+      "archiveBytes": 31498870
+    },
+    "directToolchain": {
+      "lock": "toolchain-inputs.lock.json",
+      "downloadCount": 17
+    },
+    "hostPackages": {
+      "lock": "host-package-inputs.lock.json",
+      "archiveCount": 155,
+      "archiveBytes": 422223096
+    }
+  },
+  "redistributionRequirements": {
+    "includeBunNotice": true,
+    "includeWebKitLicenseFiles": true,
+    "provideExactBunBaseSource": true,
+    "provideAllDownstreamPatches": true,
+    "provideExactWebKitSource": true,
+    "provideLockedNativeAndRegistrySources": true,
+    "provideBuildAndRelinkInstructions": true,
+    "publishRuntimeAndSourceDigests": true,
+    "doNotRelyOnlyOnUpstreamAvailability": true,
+    "requireReleaseReview": true
+  },
+  "boundaries": {
+    "patchedBinaryStoredInRepository": false,
+    "patchedBinaryPackaged": false,
+    "correspondingSourceBundlePublished": false,
+    "legalApprovalClaimed": false,
+    "distributionReady": false,
+    "note": "This lock makes the exact license and source inputs auditable. A distributor must still publish or accompany the matching source set and complete a release-specific legal review; this file is not legal advice or distribution approval."
+  }
+}

@@ -220,13 +220,15 @@ _2026/09/01_
 - `修復` 當 Android 使用超過 4 KiB 的頁面時, 在啟動 process 前拒絕已知不相容的官方 x86_64 runtime; 已將故障收斂到 pinned JavaScriptCore 的 4 KiB page-size ceiling, 以有界診斷取代確定性的 Bun abort
 - `優化` 降低最低系統要求: 繼續使用固定的官方 Bun 1.4.0 Android payload, 將支援下限從 Android 14 (API 34) 放寬至 Android 13 (API 33), 涵蓋更多裝置
 - `優化` 查明低版本無法使用的根本原因: Android 13 起系統 seccomp 放行 Bun 呼叫的 raw `close_range` syscall, 而 API 31 實機失敗證明 API 28 到 32 需要修改 Bun 本身, 僅修改 manifest 無法解決
-- `優化` 為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 原始碼補丁方案 (6 個補丁) 並鎖定建置輸入 (固定 NDK 與容器, 22 個 Android release 活躍相依性); 補丁版 runtime 尚未建置, 也不會進入目前安裝套件
+- `優化` 為未來支援 Android 9+ 打好基礎: 建立可精確重放的 Bun 原始碼補丁方案 (6 個補丁) 並鎖定建置輸入 (固定 NDK 與容器, 22 個 Android release 活躍相依性); 此工作建立獨立實驗線, 不會變更目前安裝套件中的官方 runtime
 - `優化` 加強安裝套件品質檢查: 每個 Debug 和 Release APK 均驗證 16 KB ZIP alignment, 精確 ABI 內容以及固定 Bun payload 的大小與 SHA-256, 並在 Android 13 測試裝置上核對已安裝的 payload 位元組
 - `優化` 強化供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載檔的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 建置預檢
 - `優化` 擴充可複製執行的範例庫: 新增附有註解的網路 fetch, 私人工作目錄檔案讀寫, stdout/stderr 串流輸出和更完整的 TypeScript 型別範例; 文件門禁會檢查首行 `"bun";` 指令以及單一原始碼和禁止安裝依賴的邊界
 - `優化` 在強制 PAGE_SIZE=16384 的 Android 16 (API 36) AVD 驗證 16 KB 執行: `arm64-v8a` 單 ABI APK 經 `libndk_translation` 完整通過 5 項 Binder instrumentation, 但原生 `x86_64` payload 連最小 script 也會以 exit code 134 中止, 因此仍不聲稱普遍支援 16 KB
-- `優化` 完成 Android 9+ 實驗建置供應鏈的 Cargo 部分: 鎖定並實際物化全部 181 個 crates.io archive (26,354,160 bytes), 產生附逐檔 checksum 的 directory source, 並證明固定 Cargo 可在空的 `CARGO_HOME` 下以 `--locked --offline` 讀取完整 Bun workspace; host package closure 仍未完成
+- `優化` 完成 Android 9+ 實驗建置供應鏈的 Cargo 部分: 鎖定並實際物化全部 181 個 crates.io archive (26,354,160 bytes), 產生附逐檔 checksum 的 directory source, 並證明固定 Cargo 可在空的 `CARGO_HOME` 下以 `--locked --offline` 讀取完整 Bun workspace; 此結果僅涵蓋 Cargo 輸入, 本身不會完成其他建置輸入的閉包
 - `優化` 完成該供應鏈的 Bun registry 部分: 將 172 個 lock reference 解析為 Linux x64 的 125 個唯一 npm archive (31,498,870 bytes), 僅從已鎖定 tarball 重建最小 cache, 並在停用網路且 cache 唯讀的固定 Ubuntu container 中通過全部三次 frozen install; `esbuild@0.21.5` 是唯一包含受信任 postinstall 的相依套件
+- `優化` 完成 patched runtime 的可重現建置門禁但不隨套件散布: 將 155 個主機 `.deb` archive (422,223,096 bytes) 鎖定為可重複產生的 OCI image, 把 Cargo 閉包擴展至 206 個唯一 archive, 對兩個 64 位 ABI 各執行兩次停網全新建置並取得逐位元組相同結果, 再鎖定純 Node ELF 稽核; API 28 與 31 的直接 shell 探針已通過, APK 與應用程式處理程序門仍未完成
+- `優化` 鎖定 patched runtime 的對應原始碼輸入但不聲稱發行獲准: 按位元組數與 SHA-256 固定 Bun base source, 以精確 tag, commit, tree 和 463,115-file inventory 驗證 WebKit/JSC, 隨套件加入五份相符授權文本, 並交叉核對 19 個 native, 206 個 Cargo 與 125 個 npm source archive; 實際發布原始碼集及發行級法律複核仍不可省略
 - `相依性` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
 
 #### v0.1.0

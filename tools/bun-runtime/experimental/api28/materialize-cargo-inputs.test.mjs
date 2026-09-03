@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import {
   collectCargoArtifacts,
   materializeCargoInputs,
+  mergeCargoRegistryPackages,
   parseCargoLock,
 } from "./materialize-cargo-inputs.mjs";
 
@@ -43,10 +44,25 @@ test("Cargo.lock parsing inventories Git sources so resolution can reject them",
   assert.equal(parsed.registryPackages.length, 0);
 });
 
+test("Cargo registry packages from the workspace and Rust standard library form a checksum-consistent union", () => {
+  const shared = { name: "shared", version: "1.0.0", sha256: "a".repeat(64) };
+  const merged = mergeCargoRegistryPackages(
+    [shared, { name: "workspace", version: "2.0.0", sha256: "b".repeat(64) }],
+    [shared, { name: "rust-std", version: "3.0.0", sha256: "c".repeat(64) }],
+  );
+  assert.equal(merged.referenceCount, 4);
+  assert.equal(merged.sharedIdentityCount, 1);
+  assert.deepEqual(merged.registryPackages.map(({ name }) => name), ["rust-std", "shared", "workspace"]);
+  assert.throws(
+    () => mergeCargoRegistryPackages([shared], [{ ...shared, sha256: "d".repeat(64) }]),
+    /disagree on the registry checksum/,
+  );
+});
+
 test("the checked-in Cargo archive lock is complete, canonical, and byte-locked", () => {
   const lock = JSON.parse(readFileSync(resolve(experimentRoot, "cargo-inputs.lock.json"), "utf8"));
   const artifacts = collectCargoArtifacts(lock);
-  assert.equal(artifacts.length, 181);
+  assert.equal(artifacts.length, 206);
   assert.equal(artifacts.reduce((total, artifact) => total + artifact.bytes, 0), lock.totalArchiveBytes);
 });
 
@@ -141,7 +157,7 @@ async function withFixture(callback) {
     };
     const lockPath = resolve(root, "cargo-inputs.lock.json");
     writeFileSync(lockPath, `${JSON.stringify({
-      schemaVersion: 1,
+      schemaVersion: 2,
       snapshotDate: "2026-09-03",
       bunCommit: "778ce669a38888457c36cab0f2231c3f25592b7d",
       cargoLock: {
@@ -153,13 +169,25 @@ async function withFixture(callback) {
         registryPackageCount: 1,
         gitSourceCount: 0,
       },
+      rustStdCargoLock: {
+        path: "lib/rustlib/src/rust/library/Cargo.lock",
+        bytes: 9835,
+        sha256: "9e87d1ac04edbf5fa61e27cb21984a83566573a007767713868965fba70acb6d",
+        packageCount: 1,
+        registryPackageCount: 1,
+        gitSourceCount: 0,
+        sourceArtifactId: "rust-src-nightly-2026-07-20",
+        sourceArtifactSha256: "d4ffe57cc99d8846761bdbefc631bfd8f06fc001d7208576887e381c5709341a",
+      },
       registrySource: "registry+https://github.com/rust-lang/crates.io-index",
       archiveUrlPattern: "https://static.crates.io/crates/{name}/{name}-{version}.crate",
+      registryPackageReferenceCount: 2,
+      sharedRegistryPackageCount: 1,
       archiveCount: 1,
       totalArchiveBytes: bytes.length,
       archives: [artifact],
       readiness: {
-        archiveIdentitiesLockedByCargo: true,
+        archiveIdentitiesLockedByCargoLocks: true,
         archiveByteCountsLockedByProject: true,
         archivesMaterializedAndVerified: true,
         offlineSourceReplacementReady: false,
@@ -212,7 +240,7 @@ async function withCrateFixture(callback) {
 
 function createFixtureLock(artifact) {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     snapshotDate: "2026-09-03",
     bunCommit: "778ce669a38888457c36cab0f2231c3f25592b7d",
     cargoLock: {
@@ -224,13 +252,25 @@ function createFixtureLock(artifact) {
       registryPackageCount: 1,
       gitSourceCount: 0,
     },
+    rustStdCargoLock: {
+      path: "lib/rustlib/src/rust/library/Cargo.lock",
+      bytes: 9835,
+      sha256: "9e87d1ac04edbf5fa61e27cb21984a83566573a007767713868965fba70acb6d",
+      packageCount: 1,
+      registryPackageCount: 1,
+      gitSourceCount: 0,
+      sourceArtifactId: "rust-src-nightly-2026-07-20",
+      sourceArtifactSha256: "d4ffe57cc99d8846761bdbefc631bfd8f06fc001d7208576887e381c5709341a",
+    },
     registrySource: "registry+https://github.com/rust-lang/crates.io-index",
     archiveUrlPattern: "https://static.crates.io/crates/{name}/{name}-{version}.crate",
+    registryPackageReferenceCount: 2,
+    sharedRegistryPackageCount: 1,
     archiveCount: 1,
     totalArchiveBytes: artifact.bytes,
     archives: [artifact],
     readiness: {
-      archiveIdentitiesLockedByCargo: true,
+      archiveIdentitiesLockedByCargoLocks: true,
       archiveByteCountsLockedByProject: true,
       archivesMaterializedAndVerified: true,
       offlineSourceReplacementReady: false,

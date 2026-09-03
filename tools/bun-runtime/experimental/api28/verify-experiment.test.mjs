@@ -11,7 +11,7 @@ const experimentRoot = dirname(fileURLToPath(import.meta.url));
 
 test("the checked-in API 28 experiment backport passes offline verification", () => {
   const result = verifyExperiment(experimentRoot);
-  assert.equal(result.buildReady, false);
+  assert.equal(result.buildReady, true);
   assert.equal(result.distributionReady, false);
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
@@ -21,11 +21,24 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.lockedToolchainDownloadCount, 17);
   assert.equal(result.lockedToolchainBuildArtifactCount, 12);
   assert.equal(result.lockedToolchainProvenanceCount, 5);
-  assert.equal(result.cargoRegistryPackageCount, 181);
-  assert.equal(result.lockedCargoArchiveBytes, 26354160);
+  assert.equal(result.lockedHostPackageCount, 155);
+  assert.equal(result.lockedHostPackageBytes, 422223096);
+  assert.equal(result.hostImageManifestDigest, "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa");
+  assert.equal(result.cargoRegistryPackageCount, 206);
+  assert.equal(result.lockedCargoArchiveBytes, 28919277);
   assert.equal(result.bunIntegrityEntryCount, 172);
   assert.equal(result.bunRegistryPackageCount, 125);
   assert.equal(result.lockedBunArchiveBytes, 31498870);
+  assert.equal(result.reproducibleRuntimeArtifactCount, 2);
+  assert.deepEqual(
+    result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
+    [
+      ["arm64-v8a", "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6"],
+      ["x86_64", "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036"],
+    ],
+  );
+  assert.equal(result.packagedLicenseCount, 5);
+  assert.equal(result.lockedDistributionSourceArchiveCount, 351);
 });
 
 test("a moving PR patch URL is rejected", () => {
@@ -38,11 +51,11 @@ test("a moving PR patch URL is rejected", () => {
   });
 });
 
-test("buildReady cannot be enabled while build and runtime blockers remain", () => {
+test("buildReady cannot be disabled after every build-input blocker is resolved", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "experiment.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));
-    lock.identity.buildReady = true;
+    lock.identity.buildReady = false;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /identity\.buildReady/);
   });
@@ -145,13 +158,11 @@ test("a direct toolchain download cannot have a pending SHA-256", () => {
   });
 });
 
-test("the mutable host package layer cannot be reported as complete", () => {
+test("the locked host package layer cannot regress to unresolved", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "toolchain-inputs.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));
-    lock.hostPackageLayer.status = "locked";
-    lock.readiness.hostPackageLayerLocked = true;
-    lock.readiness.complete = true;
+    lock.hostPackageLayer.status = "unresolved";
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /host package layer status/);
   });
@@ -167,13 +178,31 @@ test("every Cargo registry package must retain a Cargo.lock checksum", () => {
   });
 });
 
-test("the full build-network closure cannot be reported complete before configure and Ninja", () => {
+test("the completed build-network closure cannot lose its configure and Ninja evidence", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "build-network-inputs.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));
-    lock.readiness.complete = true;
+    lock.readiness.offlineBuildNetworkTestPassed = false;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
-    assert.throws(() => verifyExperiment(copy), /build network lock completeness/);
+    assert.throws(() => verifyExperiment(copy), /offline network test readiness/);
+  });
+});
+
+test("a locked host deb cannot lose its SHA-256", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "host-package-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.packages[0].sha256 = "pending";
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /invalid SHA-256/);
+  });
+});
+
+test("host image evidence rejects drift in an input script", () => {
+  withExperimentCopy((copy) => {
+    const installerPath = resolve(copy, "install-host-packages.sh");
+    writeFileSync(installerPath, `${readFileSync(installerPath, "utf8")}\n`);
+    assert.throws(() => verifyExperiment(copy), /install-host-packages\.sh: host image input byte count/);
   });
 });
 
@@ -184,6 +213,16 @@ test("Bun registry closure requires its locked network-disabled replay", () => {
     lock.readiness.networkDisabledReplayPassed = false;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /network-disabled replay has not passed/);
+  });
+});
+
+test("runtime evidence requires two identical clean-build digests", () => {
+  withExperimentCopy((copy) => {
+    const evidencePath = resolve(copy, "runtime-evidence.json");
+    const evidence = JSON.parse(readFileSync(evidencePath, "utf8"));
+    evidence.artifacts[0].repeatSha256[1] = "0".repeat(64);
+    writeFileSync(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /repeat SHA-256 evidence drifted/);
   });
 });
 

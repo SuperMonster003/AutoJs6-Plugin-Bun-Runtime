@@ -17,13 +17,15 @@
       "improvement": [
         "最低システム要件の引き下げ: 固定された公式 Bun 1.4.0 Android payload をそのまま使用し, サポート下限を Android 14 (API 34) から Android 13 (API 33) に緩和してより多くのデバイスをカバー",
         "旧バージョンで動作しない根本原因を特定: Android 13 以降はシステムの seccomp が Bun の呼び出す raw `close_range` syscall を許可する一方, API 31 実機での失敗により API 28 から 32 は Bun 本体の修正が必要で, manifest の変更だけでは解決できないことが判明",
-        "将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); patch 版 runtime は未ビルドで, 現行パッケージには含まれません",
+        "将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); これは独立した experimental line を確立するもので, 現行パッケージの official runtime は変更しません",
         "パッケージ品質チェックの強化: すべての Debug および Release APK で 16 KB ZIP alignment, 正確な ABI 内容, 固定 Bun payload のサイズと SHA-256 を検証し, Android 13 テスト端末でインストール済み payload のバイトを照合",
         "サプライチェーンの強化: 19 個の Bun source archive と 17 個の toolchain ダウンロードの正確なバイトを固定し, 181 個の Cargo と 172 個の Bun registry integrity エントリーを棚卸しし, 上書きを拒否する materializer と `buildReady` ゲートで保護されたデュアル ABI ビルド preflight を追加",
         "コピーして実行できるサンプル集を拡充: ネットワーク fetch, プライベートワークスペースのファイル入出力, stdout/stderr ストリーミング, より実用的な TypeScript 型のコメント付きサンプルを追加し, 先頭行の `\"bun\";` ディレクティブと単一ソースおよびインストール禁止の境界を文書ゲートで検証",
         "PAGE_SIZE=16384 を強制した Android 16 (API 36) AVD で 16 KB execution を検証: `arm64-v8a` single-ABI APK は `libndk_translation` 経由で Binder instrumentation 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort するため, 一般的な 16 KB 対応は表明しません",
-        "Android 9+ experimental build の Cargo supply chain を閉じる: crates.io archive 全 181 件 (26,354,160 bytes) を lock して実体化し, file checksum 付き directory source を生成; 固定 Cargo が空の `CARGO_HOME` で Bun workspace 全体を `--locked --offline` で読み込めることを確認しました. host package の closure は引き続き未完了です",
-        "同 supply chain の Bun registry 部分を閉じる: 172 件の lock reference を Linux x64 用の一意な npm archive 125 件 (31,498,870 bytes) に解決し, 固定 tarball だけから最小 cache を再構築; network 無効かつ cache 読み取り専用の固定 Ubuntu container で 3 回の frozen install をすべて通過しました. 信頼される postinstall を持つ依存は `esbuild@0.21.5` だけです"
+        "Android 9+ experimental build の Cargo supply chain を閉じる: crates.io archive 全 181 件 (26,354,160 bytes) を lock して実体化し, file checksum 付き directory source を生成; 固定 Cargo が空の `CARGO_HOME` で Bun workspace 全体を `--locked --offline` で読み込めることを確認しました. この結果は Cargo input のみを対象とし, 他の build input を単独で閉じるものではありません",
+        "同 supply chain の Bun registry 部分を閉じる: 172 件の lock reference を Linux x64 用の一意な npm archive 125 件 (31,498,870 bytes) に解決し, 固定 tarball だけから最小 cache を再構築; network 無効かつ cache 読み取り専用の固定 Ubuntu container で 3 回の frozen install をすべて通過しました. 信頼される postinstall を持つ依存は `esbuild@0.21.5` だけです",
+        "patched runtime を配布せずに再現可能 build gate を完了: host の `.deb` archive 155 件 (422,223,096 bytes) を再現可能な OCI image として固定し, Cargo closure を一意な archive 206 件へ拡張; 2 つの 64-bit ABI を network 無効の clean 環境で各 2 回 build して byte-for-byte 一致を確認し, pure Node ELF audit も固定しました. API 28/31 の直接 shell probe は成功しましたが, APK と application process の gate は未完了です",
+        "release 承認を主張せずに patched runtime の対応 source input を固定: Bun base source の bytes と SHA-256, WebKit/JSC の正確な tag, commit, tree, 463,115-file inventory を検証し, 一致する license text 5 件を同梱; native 19 件, Cargo 206 件, npm 125 件の source archive も相互確認しました. 実際の source 公開と release ごとの法務 review は引き続き必要です"
       ],
       "dependency": [
         "Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加"

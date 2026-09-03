@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-09-03",
+  "milestone": "M2-partial",
+  "scope": "reproducible patched Bun ARM64 executable smoke-tested directly from the Android adb shell domain",
+  "runtime": {
+    "distribution": "locally built experimental artifact; not packaged and not approved for distribution",
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "version": "1.4.0",
+    "revision": "1.4.0+778ce669a",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "downstreamHeadCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+    "abi": "arm64-v8a",
+    "bytes": 87923304,
+    "sha256": "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6",
+    "buildId": "834a94e930e6b69968e295be8de5cd9c42055440",
+    "minimumPtLoadAlignmentBytes": 16384,
+    "repositoryPayloadChanged": false
+  },
+  "reproducibilityPrerequisite": {
+    "evidence": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+    "cleanBuilds": 2,
+    "byteForByteIdentical": true,
+    "hostImageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+    "network": "none",
+    "result": "passed"
+  },
+  "executionBoundary": {
+    "uid": 2000,
+    "user": "shell",
+    "selinuxContext": "u:r:shell:s0",
+    "launchLocation": "/data/local/tmp/autojs6-bun-api28-patched-locked-arm64",
+    "commandShape": "<runtime> run --no-install <single-source-file>",
+    "applicationZygoteDomain": false,
+    "binderContractExercised": false,
+    "installedNativeLibraryDirectoryExercised": false,
+    "apkPackagingExercised": false
+  },
+  "probes": [
+    {
+      "id": "version",
+      "arguments": [
+        "--version"
+      ],
+      "expectedStdout": "1.4.0"
+    },
+    {
+      "id": "revision",
+      "arguments": [
+        "--revision"
+      ],
+      "expectedStdout": "1.4.0+778ce669a"
+    },
+    {
+      "id": "javascript-single-source",
+      "source": "samples/hello.bun.js",
+      "arguments": [
+        "run",
+        "--no-install",
+        "<device-source>"
+      ],
+      "expectedStdout": "Hello from Bun 1.4.0 on android"
+    },
+    {
+      "id": "typescript-single-source",
+      "source": "samples/typescript.bun.ts",
+      "arguments": [
+        "run",
+        "--no-install",
+        "<device-source>"
+      ],
+      "expectedStdout": "Completed 1 of 2 typed tasks"
+    },
+    {
+      "id": "stdout-stderr",
+      "source": "samples/output-streams.bun.js",
+      "arguments": [
+        "run",
+        "--no-install",
+        "<device-source>"
+      ],
+      "expectedLinesWithoutCrossStreamOrder": [
+        "stdout: a normal result",
+        "stderr: a diagnostic message",
+        "stdout: written without console.log",
+        "stderr: written without console.error"
+      ]
+    }
+  ],
+  "environments": [
+    {
+      "id": "api28-sony-g8441-arm64-shell",
+      "kind": "physical-device",
+      "manufacturer": "Sony",
+      "model": "G8441",
+      "androidVersion": "9",
+      "apiLevel": 28,
+      "advertisedAbis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "pageSizeBytes": 4096,
+      "pageSizeMeasurement": "first KernelPageSize entry in /proc/self/smaps because getconf is unavailable",
+      "kernel": "4.4.148-perf+",
+      "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+      "deviceSelection": "adb -s selected this device explicitly; the hardware serial is intentionally omitted",
+      "probeCount": 5,
+      "exitCodes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": "passed"
+    },
+    {
+      "id": "api31-sony-xq-at72-arm64-shell",
+      "kind": "physical-device",
+      "manufacturer": "Sony",
+      "model": "XQ-AT72",
+      "androidVersion": "12",
+      "apiLevel": 31,
+      "advertisedAbis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "pageSizeBytes": 4096,
+      "pageSizeMeasurement": "getconf PAGE_SIZE in the adb shell domain",
+      "kernel": "4.19.157-perf+",
+      "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+      "deviceSelection": "adb -s selected this device explicitly; the hardware serial is intentionally omitted",
+      "probeCount": 5,
+      "exitCodes": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "result": "passed"
+    }
+  ],
+  "overallResult": "passed-with-explicit-boundary",
+  "evidenceLevel": "G2-limited-shell-domain",
+  "compatibilityConclusion": "The reproducible ARM64 artifact starts and runs the selected JavaScript and TypeScript probes on these API 28 and API 31 physical devices in the adb shell SELinux domain. This does not establish plugin compatibility on API 28-32 because Android application zygote seccomp inheritance, nativeLibraryDir execution, Binder streaming, cancellation, timeout, packaging, and process recovery were not exercised.",
+  "remainingGaps": [
+    "Package the experimental payload under a separately named non-release variant without replacing the official runtime.",
+    "Run the complete Binder instrumentation suite from the plugin application process on API 28, 29, 30, 31, and 32.",
+    "Exercise x86_64 on each target API and both ABIs in a native 16 KiB environment before making corresponding compatibility claims.",
+    "Complete license, corresponding-source, notice, and build-instruction review before distributing any patched executable."
+  ]
+}

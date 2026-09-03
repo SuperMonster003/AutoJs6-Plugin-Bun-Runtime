@@ -16,8 +16,9 @@ corresponding upstream reference patches. After the complete series is applied,
 all five compatibility-affected source and test paths are byte-identical to the pinned PR head
 `d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c`.
 
-This proves source-level applicability only. It does not prove that Bun builds,
-that the resulting ELF is portable to API 28-32, or that the runtime is ready
-for distribution. The experiment must remain `buildReady: false` until all
-remaining toolchain, dependency, build, ELF, license, reproducibility, and
-device gates are complete.
+This file proves source-level applicability only. Separate locked evidence now
+shows that the full series builds reproducibly for both 64-bit ABIs and passes
+the static ELF gate, so the experiment is `buildReady: true`. Neither this
+patch record nor the build evidence proves application-process portability to
+API 28-32 or distribution readiness; license/source obligations, packaging,
+Binder execution, lifecycle, and device-matrix gates remain separate.

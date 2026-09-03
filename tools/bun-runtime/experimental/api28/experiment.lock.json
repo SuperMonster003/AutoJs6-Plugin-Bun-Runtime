@@ -3,10 +3,10 @@
   "identity": {
     "name": "autojs6-bun-api28-patched-experiment",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
-    "status": "source-backport-direct-and-registry-inputs-verified",
+    "status": "reproducible-runtime-static-audit-complete",
     "officialArtifact": false,
-    "runtimeProduced": false,
-    "buildReady": false,
+    "runtimeProduced": true,
+    "buildReady": true,
     "distributionReady": false
   },
   "upstream": {
@@ -16,13 +16,17 @@
     "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
     "license": "MIT",
     "licenseFile": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/LICENSE.md",
-    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series. Direct source/toolchain downloads and the Cargo/Bun registry inputs are byte-locked; the host package layer and complete network-disabled configure/Ninja run must also be immutable before buildReady may become true."
+    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series. Direct source/toolchain downloads, Cargo/Bun registry inputs, and the reproducible host package image are byte-locked; builds must run with Docker networking disabled and may write only to the experimental Bun checkout."
   },
   "patchSeries": "patches/series.lock.json",
   "sourceInputLock": "source-inputs.lock.json",
   "toolchainInputLock": "toolchain-inputs.lock.json",
   "buildNetworkInputLock": "build-network-inputs.lock.json",
+  "hostImageEvidence": "host-image-evidence.json",
+  "runtimeEvidence": "runtime-evidence.json",
+  "distributionSourceLock": "distribution-source.lock.json",
   "buildEntry": "build-experiment.mjs",
+  "containerBuildEntry": "run-locked-build.mjs",
   "toolchain": {
     "host": {
       "os": "linux",
@@ -30,7 +34,9 @@
       "containerBase": "ubuntu:20.04",
       "containerDigest": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
       "linuxAmd64ManifestDigest": "sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a",
-      "status": "base-image-locked",
+      "buildImageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+      "buildImageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b",
+      "status": "host-image-locked-and-reproducible",
       "snapshotDate": "2026-09-02",
       "registryManifestUrl": "https://registry-1.docker.io/v2/library/ubuntu/manifests/20.04"
     },
@@ -45,8 +51,10 @@
       "officialChecksumSource": "https://github.com/android/ndk/wiki/Home/24fe2d7ee3591346e0e8ae615977a15c0a4fba40#ndk-r27c-2024-lts"
     },
     "llvm": {
-      "version": "21.1.8",
-      "status": "host-package-layer-pending"
+      "upstreamRequestedVersion": "21.1.8",
+      "resolvedVersion": "21.1.5",
+      "packageVersion": "1:21.1.5~++20251023083255+45afac62e373-1~exp1~20251023083404.50",
+      "status": "host-package-locked"
     },
     "rust": {
       "channel": "nightly-2026-07-20",
@@ -117,7 +125,7 @@
     "sourceDateEpoch": 1788278400,
     "timezone": "UTC",
     "locale": "C.UTF-8",
-    "networkPolicy": "Build execution must remain disabled until every build-time input is locked and the eventual build runs with network access disabled."
+    "networkPolicy": "Build execution uses the digest-locked host image with network access disabled, immutable inputs mounted read-only, and only the clean patched Bun checkout writable."
   },
   "sourceEvidence": [
     {
@@ -167,22 +175,26 @@
     {
       "id": "v1.4.0-backport",
       "resolved": true,
+      "blocksBuild": true,
       "description": "Five deterministic compatibility patches apply cleanly to exact Bun v1.4.0, match the upstream stable patch IDs, and produce byte-identical affected paths to the pinned PR head; a sixth deterministic patch pins Brotli by full commit."
     },
     {
       "id": "toolchain-byte-lock",
-      "resolved": false,
-      "description": "The Ubuntu base manifest, all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents, all 181 Cargo archives plus their offline directory source, and all 125 selected Bun registry archives plus their read-only offline cache are verified. The mutable Ubuntu/PPA/apt.llvm.org package closure and exact LLVM/GCC .deb files remain unresolved."
+      "resolved": true,
+      "blocksBuild": true,
+      "description": "The Ubuntu base, all 17 immutable direct downloads, the 206-archive Cargo union, all 125 selected Bun registry archives, and all 155 exact host .deb archives are verified. Two no-cache host-image builds produced the same OCI manifest, config, and rootfs diff IDs."
     },
     {
       "id": "dependency-lock",
       "resolved": true,
+      "blocksBuild": true,
       "description": "All 22 Android-release dependency identities are expanded from the pinned source. A project-owned patch replaces the movable Brotli tag with its full commit; all 19 generated GitHub source archives, Node.js headers, and both Android WebKit prebuilts have byte-count and SHA-256 locks."
     },
     {
       "id": "build-and-runtime-evidence",
       "resolved": false,
-      "description": "No patched executable, repeat build comparison, ELF audit, or API 28-32 device result has been produced."
+      "blocksBuild": false,
+      "description": "Two independent clean builds produced byte-for-byte identical ARM64 and x86_64 executables, the static ELF audit is complete, and exact Bun/WebKit license and corresponding-source inputs are locked. Application-process Binder/device evidence, APK packaging validation, publication of a matching source bundle, and release-specific legal review remain open."
     }
   ]
 }

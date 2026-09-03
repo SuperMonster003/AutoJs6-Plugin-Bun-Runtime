@@ -1,4 +1,5 @@
-import { existsSync, lstatSync, readFileSync, realpathSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, lstatSync, readFileSync, readlinkSync, realpathSync } from "node:fs";
 import { dirname, isAbsolute, relative, resolve, sep, win32 } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -52,13 +53,15 @@ export function createBuildPlan({
   });
   const openBlockers = lock.knownBlockers
     .filter((blocker) => !blocker.resolved)
-    .map((blocker) => Object.freeze({ id: blocker.id, description: blocker.description }));
+    .map((blocker) => Object.freeze({ id: blocker.id, blocksBuild: blocker.blocksBuild, description: blocker.description }));
+  const buildBlocking = openBlockers.filter((blocker) => blocker.blocksBuild);
   return Object.freeze({
     experimentDirectory: root,
     variant: verified.variant,
     upstreamCommit: verified.upstreamCommit,
     downstreamHeadCommit: readJson(resolve(root, lock.patchSeries)).downstreamBackport.headCommit,
-    executionAllowed: lock.identity.buildReady === true && openBlockers.length === 0,
+    hostImageManifestDigest: lock.toolchain.host.buildImageManifestDigest,
+    executionAllowed: lock.identity.buildReady === true && buildBlocking.length === 0,
     buildReady: lock.identity.buildReady,
     sourceDateEpoch: lock.reproducibility.sourceDateEpoch,
     timezone: lock.reproducibility.timezone,
@@ -114,7 +117,9 @@ export async function preflightBuildInputs(plan, {
     bunInputs.artifacts,
   );
   const environment = buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot, bunInputRoot);
-  const toolVersions = validateHostTools ? verifyHostTools(environment) : null;
+  const toolVersions = validateHostTools
+    ? verifyHostTools(plan.experimentDirectory, environment, ndkRoot)
+    : null;
   return Object.freeze({
     bunRepository: bunRoot,
     bunInputDirectory: bunInputRoot,
@@ -135,7 +140,7 @@ export async function preflightBuildInputs(plan, {
 }
 
 export async function executeBuildPlan(plan, options = {}) {
-  require(plan.executionAllowed, "Build execution is locked because experiment.lock.json is not buildReady and unresolved blockers remain");
+  require(plan.executionAllowed, "Build execution is locked because build inputs are not ready or a build-blocking gate remains open");
   require(process.platform === "linux" && process.arch === "x64", "Build execution requires a Linux x86_64 host");
   const preflight = await preflightBuildInputs(plan, { ...options, validateHostTools: true });
   for (const command of plan.commands) {
@@ -180,7 +185,8 @@ function verifyNdk(ndkRoot) {
   require(/^Pkg\.Revision\s*=\s*27\.2\.12479018\s*$/m.test(properties), "Android NDK revision must be 27.2.12479018 (r27c)");
 }
 
-function verifyHostTools(environment) {
+function verifyHostTools(experimentDirectory, environment, ndkRoot) {
+  const hostLock = readJson(resolveInside(experimentDirectory, "host-package-inputs.lock.json", "host-package lock"));
   const versions = {
     node: runCaptured(process.execPath, ["--version"], environment, "Node.js version"),
     bun: runCaptured("bun", ["--version"], environment, "bootstrap Bun version"),
@@ -189,18 +195,41 @@ function verifyHostTools(environment) {
     clang: runCaptured("clang", ["--version"], environment, "Clang version").split(/\r?\n/, 1)[0],
     rustc: runCaptured("rustc", ["--version"], environment, "Rust version"),
     cargo: runCaptured("cargo", ["--version"], environment, "Cargo version"),
+    gcc: runCaptured("gcc-13", ["--version"], environment, "GCC version").split(/\r?\n/, 1)[0],
   };
   require(versions.node === "v24.3.0", `Node.js must be v24.3.0, found ${versions.node}`);
   require(versions.bun === "1.3.13", `bootstrap Bun must be 1.3.13, found ${versions.bun}`);
   require(versions.cmake === "cmake version 3.30.5", `CMake must be 3.30.5, found ${versions.cmake}`);
   require(versions.ninja === "1.13.2", `Ninja must be 1.13.2, found ${versions.ninja}`);
-  require(versions.clang.includes("21.1.8"), `Clang must report 21.1.8, found ${versions.clang}`);
+  require(versions.clang === hostLock.resolutionEnvironment.toolVersions.clang, `Clang does not match the locked host image: ${versions.clang}`);
+  require(versions.gcc === hostLock.resolutionEnvironment.toolVersions.gcc, `GCC does not match the locked host image: ${versions.gcc}`);
   require(
     versions.rustc === "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
     `Rust must be the pinned nightly, found ${versions.rustc}`,
   );
   require(versions.cargo.startsWith("cargo 1.99.0-nightly "), `Cargo must be the pinned nightly, found ${versions.cargo}`);
-  return Object.freeze(versions);
+  const installedPackages = normalizePackageManifest(
+    runCaptured("dpkg-query", ["-W"], environment, "installed package manifest"),
+  );
+  const packageManifestSha256 = createHash("sha256").update(installedPackages).digest("hex");
+  const packageCount = installedPackages.split("\n").filter(Boolean).length;
+  require(packageCount === hostLock.resolutionEnvironment.provisionedManifest.packageCount, `Locked host image must contain ${hostLock.resolutionEnvironment.provisionedManifest.packageCount} packages, found ${packageCount}`);
+  require(packageManifestSha256 === hostLock.resolutionEnvironment.provisionedManifest.sha256, `Host package manifest does not match ${hostLock.resolutionEnvironment.provisionedManifest.sha256}`);
+  require(samePath(ndkRoot, hostLock.containerLayout.androidNdkRoot), `Android NDK must be mounted at ${hostLock.containerLayout.androidNdkRoot}`);
+  for (const link of hostLock.containerLayout.compilerRuntimeLinks) {
+    const stat = lstatSync(link.path);
+    require(stat.isSymbolicLink(), `Compiler runtime path must be a symbolic link: ${link.path}`);
+    require(readlinkSync(link.path) === link.target, `Compiler runtime link target drifted: ${link.path}`);
+    require(existsSync(link.target), `Compiler runtime link target is absent: ${link.target}`);
+  }
+  return Object.freeze({ ...versions, packageCount, packageManifestSha256 });
+}
+
+function normalizePackageManifest(text) {
+  const lines = text.split(/\r?\n/).filter(Boolean);
+  for (const [index, line] of lines.entries()) require(/^\S+\t\S+$/.test(line), `Invalid installed package manifest line ${index + 1}`);
+  lines.sort((left, right) => Buffer.from(left).compare(Buffer.from(right)));
+  return `${lines.join("\n")}\n`;
 }
 
 function buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot, bunInputRoot) {
@@ -213,6 +242,7 @@ function buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot, bunInputRoot) {
     CARGO_NET_OFFLINE: "true",
     LANG: plan.locale,
     LC_ALL: plan.locale,
+    PYTHONHASHSEED: "0",
     RUSTUP_TOOLCHAIN: "nightly-2026-07-20",
     SOURCE_DATE_EPOCH: String(plan.sourceDateEpoch),
     TZ: plan.timezone,
@@ -325,14 +355,18 @@ function parseArguments(argv) {
 }
 
 function printPlan(plan) {
-  console.log(`OK build plan ${plan.variant}; source ${plan.upstreamCommit}; patched head ${plan.downstreamHeadCommit}`);
+  console.log(`OK build plan ${plan.variant}; source ${plan.upstreamCommit}; patched head ${plan.downstreamHeadCommit}; host ${plan.hostImageManifestDigest}`);
   for (const command of plan.commands) {
     console.log(`PLAN ${command.abi}: ${formatCommand(command.configure)}`);
     console.log(`PLAN ${command.abi}: ${formatCommand(command.build)}`);
   }
+  for (const blocker of plan.openBlockers) {
+    console.log(`${blocker.blocksBuild ? "BLOCKED" : "OPEN EVIDENCE GATE"} ${blocker.id}: ${blocker.description}`);
+  }
   if (!plan.executionAllowed) {
-    for (const blocker of plan.openBlockers) console.log(`BLOCKED ${blocker.id}: ${blocker.description}`);
     console.log("NOT BUILD READY: plan generation is read-only; --execute remains locked");
+  } else {
+    console.log("BUILD READY: all immutable input gates are closed; open evidence gates do not block a clean experimental build");
   }
 }
 
@@ -364,7 +398,7 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
           `${result.cargoArchiveCount} Cargo archives plus their offline directory source, and ` +
           `${result.bunArchiveCount} Bun registry archives plus their offline cache are present and locked`,
       );
-      console.log("NOT BUILD READY: preflight is non-mutating and does not override unresolved blockers");
+      console.log("OK BUILD PREFLIGHT: immutable inputs are complete; --execute remains an explicit operation");
     } else if (options.mode === "execute") {
       await executeBuildPlan(plan, options);
     }

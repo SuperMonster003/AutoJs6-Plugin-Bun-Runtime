@@ -1,19 +1,19 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-更新日期: 2026-09-02
+更新日期: 2026-09-03
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (进行中), "Android 9 至 12L 实验支持" (等待前置工作), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (进行中), "Android 9 至 12L 实验支持" (可复现 patched runtime 已就绪, 等待合规与应用进程验证), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | Android 13 的发布级收尾验证 (M1), 可复现的 patched Bun 构建链 (M2), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
-| 尚未开始 | Android 9-12L 实验支持 (M3, 等待 M2), Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 最大障碍 | Android 12 及更低版本的系统 seccomp 会拦截 Bun 的 `close_range` 系统调用并终止进程; 解决它需要构建打过补丁的 Bun 运行时, 这正是 M2 与 M3 的主线 |
+| 正在推进 | Android 13 的发布级收尾验证 (M1), patched Bun 的许可证/源码分发收尾 (M2), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
+| 尚未开始 | Android 9-12L 实验 APK 与应用进程矩阵 (M3, 等待 M2 合规门), Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
+| 最大障碍 | patched runtime 已可逐字节复现并通过静态审计, 但 adb shell 成功不等于应用 zygote/seccomp/Binder 成功; API 28-32 分版本、双 ABI 的应用进程证据与许可证/对应源码分发仍为空 |
 
 ## 如何阅读这份路线图
 
@@ -75,8 +75,8 @@
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | 进行中 | 官方 Bun 保持不变, 最低版本降至 API 33 并补齐发布级验证 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 进行中 | 建立可审计, 可重放的 Bun 补丁构建链 (Android 9-12 的前提); 源码链与工具链下载已锁定, 离线闭包/构建/产物尚未就绪 | 上游/构建/测试 |
-| M3 Android 9-12L 实验支持 | 等待 M2 | 用 patched runtime 覆盖 API 28-32 的安装, 探测, 执行与诊断, 全程标注实验性 | 插件/测试/设备/发布 |
+| M2 patched Bun 可复现构建 | 进行中 (构建与静态门禁完成) | 两轮双 ABI 清洁构建已逐字节一致; 许可证、对应源码、NOTICE 与分发说明仍待闭环 | 上游/构建/测试/发布 |
+| M3 Android 9-12L 实验支持 | 等待 M2 合规门 | 用 patched runtime 覆盖 API 28-32 的安装, 应用进程探测, Binder 执行与诊断, 全程标注实验性 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 进行中 | ELF, APK ZIP, 安装后 payload 和真实 16 KB 执行四层验证 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -137,20 +137,25 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 **为什么:** M3 要给 Android 9-12 使用打过补丁的 Bun; 如果补丁和构建过程不可复现, 就无法证明发布的二进制确实来自声称的源码. 注意: M2 本身不承诺 Android 9-12 可用.
 
-**已落地 (进展记录, 2026-09-03, G0/G1):**
+**已落地 (进展记录, 2026-09-03, G0/G1; 另有明确受限的 G2 shell-domain 证据):**
 
 - `tools/bun-runtime/experimental/api28` 已建立独立实验 identity, 与官方产物线分开.
 - 已固定 Bun v1.4.0, PR #39775 的 5 个不可变提交, 以及 22 个 Android-release 依赖 identity.
 - 6 个 downstream patch 可从 release commit 确定性重放: 前 5 个 stable patch ID 与上游一致, 第 6 个把可移动的 Brotli tag 固定为完整 commit; 受影响的兼容代码与固定 PR head 完全一致.
 - 19 个 Bun 实际使用的 GitHub source archive 已真实下载, 并按字节数, SHA-256, 单一顶层目录和 traversal 规则锁定.
 - 17 个不可变直接下载件 (NDK, CMake, bootstrap Bun, Node, Ninja, rustup, 最小 Rust 闭包等) 共 1,024,309,832 bytes 已锁定.
-- 四个 materializer (输入物化工具) 都要求显式输出目录, 拒绝覆盖有漂移的文件, 并支持离线复核; CI 会重新物化 19 个 source archive, 5 个小型工具链 provenance 文件, 完整 Cargo archive/directory-source 闭包及完整 Bun registry archive/cache 闭包.
-- 只读 build plan 和完整输入 preflight 已落地; 预检现同时验证 22 个源码输入, 17 个工具链输入, 181 个 Cargo archive 及其逐文件 checksum, 以及 125 个 Bun registry archive 与逐文件树摘要; `--execute` 在 `buildReady=false` 时硬拒绝执行.
-- Cargo.lock 的 181/181 个 crates.io archive 已按规范 URL, 精确字节数与 SHA-256 锁定, 合计 26,354,160 bytes; materializer 可仅从 archive 安全重建 versioned directory source, 固定 Cargo 1.99.0-nightly 已在空 `CARGO_HOME` 下以 `--locked --offline` 读取完整 Bun workspace.
+- 六个 materializer (输入物化工具) 都要求显式输出目录, 拒绝覆盖有漂移的文件, 并支持离线复核; CI 会重新物化 19 个 native source archive, 5 个小型工具链 provenance 文件, 完整 Cargo archive/directory-source, Bun registry archive/cache 与 Bun base source archive. 体积更大的 155 个 host `.deb` 由独立 materializer, 离线 lock 验证和两轮 host-image 证据覆盖.
+- 只读 build plan 和完整输入 preflight 已落地; 预检同时验证 22 个源码输入, 17 个直接工具链输入, 206 个 Cargo archive 及其逐文件 checksum, 125 个 Bun registry archive 与逐文件树摘要, NDK r27c 和精确工具版本; 所有 build-input blocker 关闭后 `buildReady=true`.
+- Bun workspace 与固定 Rust 标准库两个 Cargo.lock 的 211 个引用已合并为 206 个唯一 crates.io archive (28,919,277 bytes), 按规范 URL, 精确字节数与 SHA-256 锁定; materializer 仅从 archive 安全重建 versioned directory source, 两个 lockfile 均由固定 Cargo 1.99.0-nightly 在空 `CARGO_HOME` 和 `--network none` 下以 `--locked --offline` 验证.
 - 三个实际 `bun install --frozen-lockfile` 的 172 个外部引用已解析为 164 个唯一 identity; Linux x64 排除 39 个其他平台包后, 125 个 canonical npm tarball 共 31,498,870 bytes 已由 lock SHA-512, 项目 SHA-256, 字节数, archive root, 文件树摘要和 Bun cache path 联合锁定. 仅 `esbuild@0.21.5` 有受信任的 postinstall.
 - 从上述 tarball 在保留权限位的 WSL2 ext4 文件系统中重建的无 alias 最小 cache 已只读挂载到锁定的 Ubuntu 20.04 容器; 在 `--network none` 下, 新 checkout 的三次原始 frozen install 分别报告 42/1/103 packages, 精确可执行权限与 lock/Git tree 不变, esbuild 0.21.5 探针通过.
-- 6 个 Node test 文件共 42 个回归测试; CI 仍会在临时 Bun checkout 中重放 patch chain, 并核对 build/dependency definition blob, Brotli patch 前 blob 与无 submodule 事实.
-- 由于主机 Ubuntu/PPA/apt.llvm.org package 闭包, 双次构建, ELF 审计和设备证据仍为空, `buildReady`, `distributionReady` 与 `runtimeProduced` 三个状态位均保持 `false`.
+- Ubuntu/PPA/apt.llvm.org 层已固定为 155 个 `.deb` archive (422,223,096 bytes); 离线安装结果的 243-package manifest 已锁定. 两次禁用 cache 的清洁镜像构建得到相同 manifest/config/rootfs diff IDs, 最终 Linux amd64 host image manifest 为 `sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa`.
+- `run-locked-build.mjs` 固定本地 image ID, 禁止 pull/network, 使用只读 rootfs 与输入 mount, 丢弃 capabilities, 启用 `no-new-privileges`, 禁用 ccache, 固定 `/work/bun`, 且仅允许 clean patched checkout 写入. 两个独立 checkout 均完成双 ABI build.
+- 两轮 ARM64 产物逐字节相同 (87,923,304 bytes, SHA-256 `37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6`); 两轮 x86_64 也逐字节相同 (90,449,696 bytes, SHA-256 `b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036`). 自建 ELF 保持在仓库外, 未替换官方 payload.
+- 纯 Node ELF auditor 对两种 ABI 锁定 ELF64/PIE/interpreter, Android API 28 + NDK r27c note, `DT_NEEDED`, Android RELR, bionic symbol version, 动态符号与 `.symtab` 指纹, non-exec stack, 无 W+X `PT_LOAD`, GNU build-id, 无 debug section 及最低 16 KB alignment; `runtime-evidence.json` 可用四个外部文件重验重复构建与完整静态事实.
+- 正式 ARM64 自建产物在 Sony API 28 与 API 31 真机的 adb shell 域完成 version/revision/JS/TS/stdout+stderr 5/5 探针, 报告见 `docs/compatibility/2026-09-03-m2-patched-runtime-shell-smoke.json`; 该 G2 证据不覆盖应用 zygote seccomp, Binder, `nativeLibraryDir`, APK 或插件生命周期.
+- Bun base source archive 已按 64,069,192 bytes 与 SHA-256 锁定; WebKit/JSC 以 immutable autobuild tag, commit, tree, 463,115-file inventory 和四份原始许可证锁定, 五份 Bun/WebKit 许可证文本进入 APK 文档资产. `distribution-source.lock.json` 将两种 runtime 摘要、6 个补丁、19 个 native source、206 个 Cargo 与 125 个 npm archive 串成可机器复核的对应源码输入链; 匹配源码包的实际发布和发行级法律复核仍未完成.
+- 12 个 Node test 文件共 63 个回归测试覆盖 source/toolchain/Cargo/Bun/host-package/分发源码闭包, host image, build plan, locked container, runtime evidence 与 ELF parser; `buildReady=true`, `runtimeProduced=true`, 但发布源码包、合规复核和应用进程门未完成, 因此 `distributionReady=false`.
 
 条目清单:
 
@@ -158,13 +163,15 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建) 新增 6 个 versioned downstream patch, 每个 patch 记录来源, 目的, 适用 commit, 摘要, 许可证影响和上游/本项目归属; 清洁重放结果与确定性 commit/tree 均由 CI 验证. (2026-09-02, G1)
 - [x] (构建/测试) 锁定 19 个 GitHub source archive 和 17 个不可变直接工具链下载件, 提供安全, 可离线复核的 source/toolchain materializer, 并把在线重新物化纳入 CI; 滚动 rustup discovery URL 不进入可复现闭包. (2026-09-02, G0/G1)
 - [x] (构建/测试) 新增默认只读的双 ABI build plan, 干净 patched checkout / 完整缓存 / NDK 预检和 `buildReady` 执行闸; 同时单独盘点 Cargo/Bun registry 输入, 未物化 archive 不得标成离线就绪. (2026-09-02, G1)
-- [x] (构建/测试) 锁定并真实物化 Cargo.lock 的 181 个 crates.io archive (26,354,160 bytes), 安全生成带逐文件 checksum 的 directory source, 由固定 Cargo 在空 home 下完成 `--locked --offline` workspace metadata 验证, 并纳入总预检与 CI. (2026-09-03, G1)
+- [x] (构建/测试) 锁定并真实物化 Bun workspace 与 Rust 标准库 lockfile 合并后的 206 个唯一 crates.io archive (28,919,277 bytes), 安全生成带逐文件 checksum 的 directory source, 由固定 Cargo 在空 home 与禁网容器中完成 `--locked --offline` metadata 验证, 并纳入总预检与 CI. (2026-09-03, G1)
 - [x] (构建/测试) 将 172 个 Bun registry 引用解析为 Linux x64 的 125 个唯一 npm archive (31,498,870 bytes), 在 WSL2 ext4 上安全重建保留精确权限位的最小 cache, 并在 digest-locked Ubuntu 20.04 的 `--network none`/只读 cache 下完成三次 frozen install, lock/Git tree 与 esbuild lifecycle 探针均通过; 已纳入总预检与 CI. (2026-09-03, G1)
-- [ ] (构建) 提供清洁环境可复现的 Android build 入口, 固定 NDK r27c, Rust/LLVM/Bun 构建环境, API 28 target, CPU baseline 和双 ABI 参数.
-- [ ] (构建) 将官方产物和 downstream 产物使用不同的 lock identity, variant 与摘要, 防止把自建二进制误报为官方 release artifact.
-- [ ] (测试) 对 patched runtime 增加静态门禁: ELF64, PIE, interpreter, Android platform note API 28, `DT_NEEDED` allowlist, bionic 符号版本, `PT_LOAD` alignment, 导出/动态符号和 SHA-256.
-- [ ] (测试) 对相同源码, 工具链和补丁执行至少两次清洁构建并比较可解释差异; 若尚未达到 byte-for-byte reproducible, 必须固定全部非确定字段并记录差异来源.
-- [ ] (发布) 同步 Bun/WebKit/JSC 及其他第三方许可证, 源码提供义务, NOTICE 和构建说明; 不得仅分发 patched binary 而缺少对应源码与补丁.
+- [x] (构建/测试) 固定 155 个 host `.deb` 与其安装 manifest, 两次清洁构建得到相同 OCI manifest/config/rootfs; 新增禁 pull/network, 只读 root/input, 固定路径且禁用 ccache 的容器 build 入口, 固定 NDK r27c, Rust/LLVM/Bun, API 28 target, CPU baseline 与双 ABI 参数. (2026-09-03, G1)
+- [x] (构建) 官方产物继续由 `runtime.lock.json` 管理; downstream 使用独立的 `bun-1.4.0-android-api28-patched-experimental` identity, `runtime-evidence.json`, 文件名与摘要, 仓库和插件 payload 均不包含自建 ELF. (2026-09-03, G0/G1)
+- [x] (测试) 对 patched runtime 增加纯 Node 静态门禁: ELF64, PIE, interpreter, Android API 28/NDK note, `DT_NEEDED` allowlist, Android RELR, bionic 符号版本, `PT_LOAD`/stack 权限与 alignment, build-id, 动态/静态符号表指纹和 SHA-256. (2026-09-03, G1)
+- [x] (测试) 相同固定源码, 工具链, host image, 补丁与 canonical 容器路径完成两轮独立清洁双 ABI 构建; ARM64 和 x86_64 均 byte-for-byte reproducible, 四个外部产物由证据清单复验通过. (2026-09-03, G1)
+- [ ] (发布) Bun/WebKit/JSC 的五份许可证文本、精确 Bun/WebKit 与依赖源码输入、NOTICE、补丁和重放说明已锁定并由 verifier 交叉核对; 仍须在任何 patched binary 发行时实际随附或发布匹配源码集, 并完成发行级法律复核, 不得仅分发 binary. (2026-09-03, G1 部分完成)
+
+**当前升阶阻断:** 构建、复现、静态门禁与对应源码输入锁已完成; M2 仍因匹配源码集尚未实际发布/随附且发行级法律复核未完成而保持进行中. API 28/31 的直接 shell 探针只用于提前发现二进制级问题, 应用进程与 Binder 证据属于 M3, 不用于提前通过本升阶门.
 
 **M2 升阶门:** 任意维护者可在无开发机绝对路径, 无未记录缓存的环境中, 从固定上游输入生成两个 ABI 的同一受控产物; lock, 补丁, 工具链, 许可证和最终哈希可互相追溯.
 
@@ -227,7 +234,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
 - [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
 - [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 ARM64 宿主 AVD 上重复完整 instrumentation; 当前 Intel 宿主无法启动已安装的 arm64 guest, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁, 不从官方 payload 的静态结果推断自建产物兼容.
+- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 两轮 ELF 已逐字节复现并通过独立静态审计; ZIP, 安装后 payload 和原生 16 KB 应用进程执行仍未完成, 不从官方 payload 或 adb shell 结果推断自建产物兼容.
 - [ ] (发布) `appendDigestToReleasedFiles` 验证签名, 预期三类 APK, ABI payload, CRC32 与 SHA-256; Release notes 如实区分静态对齐和端到端执行状态.
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.
@@ -307,7 +314,13 @@ node --test `
   tools/bun-runtime/experimental/api28/materialize-cargo-inputs.test.mjs `
   tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs `
   tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs `
-  tools/bun-runtime/experimental/api28/build-experiment.test.mjs
+  tools/bun-runtime/experimental/api28/materialize-host-package-inputs.test.mjs `
+  tools/bun-runtime/experimental/api28/materialize-distribution-source.test.mjs `
+  tools/bun-runtime/experimental/api28/build-host-image.test.mjs `
+  tools/bun-runtime/experimental/api28/build-experiment.test.mjs `
+  tools/bun-runtime/experimental/api28/run-locked-build.test.mjs `
+  tools/bun-runtime/experimental/api28/verify-built-runtime.test.mjs `
+  tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs
 py .python/generate_markdown.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 .\gradlew.bat :app:testDebugUnitTest
