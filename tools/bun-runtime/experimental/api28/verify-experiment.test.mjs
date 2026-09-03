@@ -24,6 +24,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.cargoRegistryPackageCount, 181);
   assert.equal(result.lockedCargoArchiveBytes, 26354160);
   assert.equal(result.bunIntegrityEntryCount, 172);
+  assert.equal(result.bunRegistryPackageCount, 125);
+  assert.equal(result.lockedBunArchiveBytes, 31498870);
 });
 
 test("a moving PR patch URL is rejected", () => {
@@ -165,13 +167,23 @@ test("every Cargo registry package must retain a Cargo.lock checksum", () => {
   });
 });
 
-test("the remaining Bun build-network closure cannot be reported complete", () => {
+test("the full build-network closure cannot be reported complete before configure and Ninja", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "build-network-inputs.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));
     lock.readiness.complete = true;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /build network lock completeness/);
+  });
+});
+
+test("Bun registry closure requires its locked network-disabled replay", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "bun-inputs.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.readiness.networkDisabledReplayPassed = false;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /network-disabled replay has not passed/);
   });
 });
 

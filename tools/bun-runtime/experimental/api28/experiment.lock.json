@@ -3,7 +3,7 @@
   "identity": {
     "name": "autojs6-bun-api28-patched-experiment",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
-    "status": "source-backport-direct-and-cargo-inputs-verified",
+    "status": "source-backport-direct-and-registry-inputs-verified",
     "officialArtifact": false,
     "runtimeProduced": false,
     "buildReady": false,
@@ -16,7 +16,7 @@
     "releasePage": "https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0",
     "license": "MIT",
     "licenseFile": "https://github.com/oven-sh/bun/blob/34cbb9a40b4bd1bd767d134a7065e66c2432a676/LICENSE.md",
-    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series. Direct source and toolchain downloads are byte-locked; the host package and complete build-time network closure must also be immutable before buildReady may become true."
+    "dependencyPolicy": "Use only the Android-release dependency and WebKit identities expanded in source-inputs.lock.json after replaying the locked downstream series. Direct source/toolchain downloads and the Cargo/Bun registry inputs are byte-locked; the host package layer and complete network-disabled configure/Ninja run must also be immutable before buildReady may become true."
   },
   "patchSeries": "patches/series.lock.json",
   "sourceInputLock": "source-inputs.lock.json",
@@ -172,7 +172,7 @@
     {
       "id": "toolchain-byte-lock",
       "resolved": false,
-      "description": "The Ubuntu base manifest and all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents are byte-locked. All 181 Cargo archives and their offline directory source are verified. The mutable Ubuntu/PPA/apt.llvm.org package closure, exact LLVM/GCC .deb files, and Bun registry archive/cache closure remain unresolved."
+      "description": "The Ubuntu base manifest, all 17 immutable direct NDK/CMake/Bun/Node/Ninja/Rust downloads and provenance documents, all 181 Cargo archives plus their offline directory source, and all 125 selected Bun registry archives plus their read-only offline cache are verified. The mutable Ubuntu/PPA/apt.llvm.org package closure and exact LLVM/GCC .deb files remain unresolved."
     },
     {
       "id": "dependency-lock",

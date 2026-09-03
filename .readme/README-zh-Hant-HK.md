@@ -225,7 +225,8 @@ _2026/09/01_
 - `優化` 加固供應鏈: 鎖定 19 個 Bun source archive 與 17 個工具鏈下載件的精確位元組, 盤點 181 個 Cargo 和 172 個 Bun registry integrity 條目, 新增拒絕覆寫的 materializer 和受 `buildReady` 閘門保護的雙 ABI 構建預檢
 - `優化` 擴充可複製執行的範例庫: 新增附有註解的網絡 fetch, 私人工作目錄檔案讀寫, stdout/stderr 串流輸出和更完整的 TypeScript 類型範例; 文件門禁會檢查首行 `"bun";` 指令以及單一源碼和禁止安裝依賴的邊界
 - `優化` 在強制 PAGE_SIZE=16384 的 Android 16 (API 36) AVD 驗證 16 KB 執行: `arm64-v8a` 單 ABI APK 經 `libndk_translation` 完整通過 5 項 Binder instrumentation, 但原生 `x86_64` payload 連最小 script 也會以 exit code 134 中止, 因此仍不聲稱普遍支援 16 KB
-- `優化` 完成 Android 9+ 實驗構建供應鏈的 Cargo 部分: 鎖定並實際物化全部 181 個 crates.io archive (26,354,160 bytes), 產生附逐檔 checksum 的 directory source, 並證明固定 Cargo 可在空白 `CARGO_HOME` 下以 `--locked --offline` 讀取完整 Bun workspace; Bun registry 與 host package closure 仍未完成
+- `優化` 完成 Android 9+ 實驗構建供應鏈的 Cargo 部分: 鎖定並實際物化全部 181 個 crates.io archive (26,354,160 bytes), 產生附逐檔 checksum 的 directory source, 並證明固定 Cargo 可在空白 `CARGO_HOME` 下以 `--locked --offline` 讀取完整 Bun workspace; host package closure 仍未完成
+- `優化` 完成該供應鏈的 Bun registry 部分: 將 172 個 lock reference 解析為 Linux x64 的 125 個唯一 npm archive (31,498,870 bytes), 僅從已鎖定 tarball 重建最小 cache, 並在停用網絡且 cache 唯讀的固定 Ubuntu container 中通過全部三次 frozen install; `esbuild@0.21.5` 是唯一包含受信任 postinstall 的依賴
 - `依賴` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
 
 #### v0.1.0

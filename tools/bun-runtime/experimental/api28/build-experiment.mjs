@@ -8,6 +8,10 @@ import {
   verifyCargoDirectorySource,
   verifyCargoSourceConfig,
 } from "./materialize-cargo-inputs.mjs";
+import {
+  materializeBunInputs,
+  verifyBunCache,
+} from "./materialize-bun-inputs.mjs";
 import { materializeSourceInputs } from "./materialize-source-inputs.mjs";
 import { materializeToolchainInputs } from "./materialize-toolchain-inputs.mjs";
 import { verifyExperiment } from "./verify-experiment.mjs";
@@ -66,6 +70,7 @@ export function createBuildPlan({
 
 export async function preflightBuildInputs(plan, {
   bunRepository,
+  bunInputDirectory,
   cargoInputDirectory,
   sourcePrefetchDirectory,
   toolchainDirectory,
@@ -73,6 +78,7 @@ export async function preflightBuildInputs(plan, {
   validateHostTools = false,
 } = {}) {
   const bunRoot = existingRealDirectory(bunRepository, "Bun repository");
+  const bunInputRoot = existingRealDirectory(bunInputDirectory, "Bun input directory");
   const cargoRoot = existingRealDirectory(cargoInputDirectory, "Cargo input directory");
   const sourceRoot = existingRealDirectory(sourcePrefetchDirectory, "source prefetch directory");
   const toolchainRoot = existingRealDirectory(toolchainDirectory, "toolchain directory");
@@ -99,10 +105,19 @@ export async function preflightBuildInputs(plan, {
     cargo.artifacts,
   );
   const cargoConfigPath = verifyCargoSourceConfig(cargoRoot);
-  const environment = buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot);
+  const bunInputs = await materializeBunInputs({
+    outputDirectory: bunInputRoot,
+    offline: true,
+  });
+  const bunCache = await verifyBunCache(
+    resolveInside(bunInputRoot, "cache", "Bun cache directory"),
+    bunInputs.artifacts,
+  );
+  const environment = buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot, bunInputRoot);
   const toolVersions = validateHostTools ? verifyHostTools(environment) : null;
   return Object.freeze({
     bunRepository: bunRoot,
+    bunInputDirectory: bunInputRoot,
     cargoInputDirectory: cargoRoot,
     sourcePrefetchDirectory: sourceRoot,
     toolchainDirectory: toolchainRoot,
@@ -110,6 +125,8 @@ export async function preflightBuildInputs(plan, {
     sourceInputCount: source.artifacts.length,
     toolchainInputCount: toolchain.artifacts.length,
     cargoArchiveCount: cargo.artifacts.length,
+    bunArchiveCount: bunInputs.artifacts.length,
+    bunCache,
     cargoDirectorySource,
     cargoConfigPath,
     environment,
@@ -186,11 +203,12 @@ function verifyHostTools(environment) {
   return Object.freeze(versions);
 }
 
-function buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot) {
+function buildEnvironment(plan, sourceRoot, ndkRoot, cargoRoot, bunInputRoot) {
   return Object.freeze({
     ...process.env,
     ANDROID_NDK_ROOT: ndkRoot,
     BUN_BUILD_PREFETCH_DIR: sourceRoot,
+    BUN_INSTALL_CACHE_DIR: resolveInside(bunInputRoot, "cache", "Bun cache directory"),
     CARGO_HOME: resolveInside(cargoRoot, "cargo-home", "Cargo home directory"),
     CARGO_NET_OFFLINE: "true",
     LANG: plan.locale,
@@ -281,6 +299,7 @@ function parseArguments(argv) {
   const allowed = new Set([
     "--abi",
     "--bun-repository",
+    "--bun-input-directory",
     "--cargo-input-directory",
     "--source-prefetch-directory",
     "--toolchain-directory",
@@ -289,7 +308,7 @@ function parseArguments(argv) {
   for (const key of Object.keys(values)) require(allowed.has(key), `Unknown argument: ${key}`);
   const mode = execute ? "execute" : preflight ? "preflight" : "plan";
   if (mode !== "plan") {
-    for (const required of ["--bun-repository", "--cargo-input-directory", "--source-prefetch-directory", "--toolchain-directory", "--android-ndk-root"]) {
+    for (const required of ["--bun-repository", "--bun-input-directory", "--cargo-input-directory", "--source-prefetch-directory", "--toolchain-directory", "--android-ndk-root"]) {
       require(values[required], `${required} is required in ${mode} mode`);
     }
   }
@@ -297,6 +316,7 @@ function parseArguments(argv) {
     mode,
     abi: values["--abi"] ?? "all",
     bunRepository: values["--bun-repository"],
+    bunInputDirectory: values["--bun-input-directory"],
     cargoInputDirectory: values["--cargo-input-directory"],
     sourcePrefetchDirectory: values["--source-prefetch-directory"],
     toolchainDirectory: values["--toolchain-directory"],
@@ -327,8 +347,8 @@ function require(condition, message) {
 const USAGE = `
 Usage:
   node build-experiment.mjs [--abi <arm64-v8a|x86_64|all>]
-  node build-experiment.mjs --preflight --bun-repository <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
-  node build-experiment.mjs --execute --bun-repository <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
+  node build-experiment.mjs --preflight --bun-repository <absolute-dir> --bun-input-directory <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
+  node build-experiment.mjs --execute --bun-repository <absolute-dir> --bun-input-directory <absolute-dir> --cargo-input-directory <absolute-dir> --source-prefetch-directory <absolute-dir> --toolchain-directory <absolute-dir> --android-ndk-root <absolute-dir> [--abi <...>]
 `;
 
 const invokedPath = process.argv[1] === undefined ? null : resolve(process.argv[1]);
@@ -340,8 +360,9 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     if (options.mode === "preflight") {
       const result = await preflightBuildInputs(plan, options);
       console.log(
-        `OK ${result.sourceInputCount} source inputs, ${result.toolchainInputCount} toolchain inputs, and ` +
-          `${result.cargoArchiveCount} Cargo archives plus their offline directory source are present and locked`,
+        `OK ${result.sourceInputCount} source inputs, ${result.toolchainInputCount} toolchain inputs, ` +
+          `${result.cargoArchiveCount} Cargo archives plus their offline directory source, and ` +
+          `${result.bunArchiveCount} Bun registry archives plus their offline cache are present and locked`,
       );
       console.log("NOT BUILD READY: preflight is non-mutating and does not override unresolved blockers");
     } else if (options.mode === "execute") {
