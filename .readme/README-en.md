@@ -228,7 +228,7 @@ _2026/09/01_
 - `Improvement` Close the Cargo portion of the experimental Android 9+ build supply chain: lock and materialize all 181 crates.io archives (26,354,160 bytes), generate a checksum-verified directory source, and prove pinned Cargo can load the full Bun workspace with `--locked --offline` and an empty `CARGO_HOME`; this result covers Cargo inputs only and does not by itself close the other build inputs
 - `Improvement` Close the Bun-registry portion of that supply chain: resolve 172 lock references to 125 unique Linux x64 npm archives (31,498,870 bytes), rebuild a minimal cache from the locked tarballs, and pass all three frozen installs in the locked Ubuntu container with networking disabled and the cache read-only; `esbuild@0.21.5` is the only trusted postinstall dependency
 - `Improvement` Complete the reproducible patched-runtime build gate without shipping it: lock 155 host `.deb` archives (422,223,096 bytes) into a repeatable OCI image, expand the Cargo closure to 206 unique archives, run two clean networkless builds of both 64-bit ABIs with byte-identical results, and lock pure-Node ELF audits; direct API 28 and 31 shell probes pass, while APK and application-process gates remain open
-- `Improvement` Lock the patched runtime's corresponding-source inputs without claiming release approval: pin the Bun base source by bytes and SHA-256, verify WebKit/JSC at the exact tag, commit, tree, and 463,115-file inventory, bundle five matching license texts, and cross-check 19 native, 206 Cargo, and 125 npm source archives; actual source publication and release-specific legal review are still required
+- `Improvement` Implement verifiable corresponding-source Release assets: keep sources separate from APKs in the same Release; package exact Bun/WebKit/JSC, 19 native, 206 Cargo, and 125 npm source archives plus patches, build/relink instructions, and a public license notice; split large assets at 1.9 GB, bind APK/runtime/source bytes with a machine-readable manifest and SHA256SUMS, and publish the draft only after GitHub SHA-256 digests match; this records automated technical verification, not legal approval
 - `Dependency` Add the Kotlin Parcelize runtime so that R8 in Release builds keeps the shared Parcelable contract class
 
 #### v0.1.0
@@ -261,6 +261,7 @@ Git LFS must materialize both pinned runtime binaries before verification or Gra
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```
@@ -292,7 +293,7 @@ app/src/main/res/raw*/plugin_instruction.md
 
 ******
 
-Plugin code is licensed under the [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). The bundled official Bun executable contains Bun's MIT-licensed code plus statically linked JavaScriptCore and WebKit under LGPL-2 and other third-party components under their own licenses. See [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) and Bun's pinned [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
+Plugin code is licensed under the [Mozilla Public License 2.0](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/LICENSE). The bundled official Bun executable contains Bun's MIT-licensed code plus statically linked JavaScriptCore and WebKit under LGPL-2 and other third-party components under their own licenses. Applicable Releases publish a public license/relinking notice and the matching corresponding-source assets separately from the APKs in the same Release, with a machine-readable manifest and SHA256SUMS verified by automated technical checks. See [Third-Party Notices](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md) and Bun's pinned [LICENSE.md](https://github.com/oven-sh/bun/blob/bun-v1.4.0/LICENSE.md).
 
 ******
 

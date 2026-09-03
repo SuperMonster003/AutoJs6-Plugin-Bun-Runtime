@@ -1,6 +1,6 @@
 # Third-Party Notices
 
-AutoJs6 Plugin Bun Runtime redistributes unmodified official Bun Android executables. The plugin project license does not replace the licenses of Bun or any component linked into those executables. A separately identified patched runtime is under reproducibility and compatibility review but is not stored in this repository, packaged by the plugin, or approved for distribution.
+AutoJs6 Plugin Bun Runtime redistributes unmodified official Bun Android executables. The plugin project license does not replace the licenses of Bun or any component linked into those executables. A separately identified patched runtime is under application-process compatibility review but is not stored in this repository or packaged by the current plugin.
 
 ## Bun 1.4.0
 
@@ -59,9 +59,9 @@ The exact Bun base source is locked as the 64,069,192-byte commit archive with S
 
 The matching WebKit/JavaScriptCore source is the `oven-sh/WebKit` tag `autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b`, commit `0f966e81b78c84bb23213e391bc679c4ef83e56b`, tree `e9590edf1ab6c32e20f83b70daec7314e0bfe261`. GitHub does not generate a codeload archive for this tree, so the verifier requires a clean Git checkout at that exact tag, commit, tree, and 463,115-file inventory. The four matching JavaScriptCore/WebCore license files are bundled alongside Bun's pinned notice.
 
-The source lock also traces all build inputs that can contribute source or generated code: 19 fixed native dependency archives, 206 unique Cargo archives, and 125 selected Bun registry archives. Those exact inputs, the WebKit checkout, the Bun base archive, and all downstream patches must accompany or be published with any future patched binary; a distributor must not rely only on continued availability of upstream links. Toolchain and host-package locks remain part of the reproducible build record.
+The source lock also traces all build inputs that can contribute source or generated code: 19 fixed native dependency archives, the pinned Node.js header archive, 206 unique Cargo archives, and 125 selected Bun registry archives. Those exact inputs, the WebKit checkout, the Bun base archive, and all downstream patches must accompany or be published with any future patched binary; a distributor must not rely only on continued availability of upstream links. Toolchain and host-package locks remain part of the reproducible build record.
 
-`distribution-source.lock.json` is a mechanical provenance and completeness gate, not legal approval. A future release still requires a published corresponding-source set, release-specific legal review, APK/payload verification, and application-process device evidence before `distributionReady` may become true.
+`distribution-source.lock.json` is a mechanical provenance and completeness gate. Project policy does not make a separate legal-review step a prerequisite for publishing; it instead requires the public notices, matching source assets, build/relink instructions, APK/payload binding, and automated digest checks described below. Those technical checks do not claim a legal opinion or approval. The patched profile remains `distributionReady=false` until a matching patched APK is actually published with all source assets and passes its application-process release gates.
 
 ## Corresponding source and relinking information
 
@@ -86,7 +86,9 @@ bun sync-webkit-source
 bun run build:local
 ```
 
-The authoritative build configuration, dependency revisions, and platform profiles are in the pinned Bun source tree. Anyone redistributing a release should preserve this notice, the bundled upstream license, the machine-readable runtime lock, and the corresponding-source links.
+The authoritative build configuration, dependency revisions, and platform profiles are in the pinned Bun source tree. Bun's upstream notice explains that recipients must be able to relink modified LGPL-covered WebKit/JavaScriptCore code; because Bun's application code is itself available as source, this project publishes that exact application source, the matching WebKit/JSC source, all locked source inputs, downstream patches when applicable, and the complete rebuild/relink instructions rather than relying only on upstream links.
+
+For each applicable plugin release, `tools/bun-runtime/release/assemble-corresponding-source.mjs` emits these materials as assets separate from the APKs but destined for the same GitHub Release. A machine-readable manifest binds the three signed APK hashes and the runtime payload hashes found inside them to every logical source archive and split part. `SHA256SUMS` covers the exact Release asset set. `verify-corresponding-source-release.mjs` performs the offline checks; `publish-github-release.mjs` uploads to a draft, requires GitHub's returned `sha256:` digest to match every local asset, rejects missing or extra files, and publishes only after the full set agrees. The standalone `CORRESPONDING_SOURCE_NOTICE.md` makes this license and relinking information visible on the Release page.
 
 ## Project code
 

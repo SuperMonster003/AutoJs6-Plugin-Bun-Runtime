@@ -28,7 +28,7 @@ test("an exact Bun source archive is accepted offline and byte drift is rejected
     const data = readFileSync(archive);
     const lockPath = resolve(root, "distribution-source.lock.json");
     const lock = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       bunSource: {
         archive: {
           id: "bun-source-fixture",
@@ -56,7 +56,7 @@ test("an exact Bun source archive is accepted offline and byte drift is rejected
       /expected \d+ bytes, found/,
     );
 
-    writeFileSync(lockPath, `${JSON.stringify({ ...lock, schemaVersion: 2 }, null, 2)}\n`);
+    writeFileSync(lockPath, `${JSON.stringify({ ...lock, schemaVersion: 3 }, null, 2)}\n`);
     await assert.rejects(
       materializeDistributionSource({ outputDirectory: output, offline: true, lockPath }),
       /Unsupported distribution-source lock schema/,

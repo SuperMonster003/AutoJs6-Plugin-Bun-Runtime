@@ -1420,7 +1420,7 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     console.log("OK no runtime/archive artifact is present in the experiment directory");
     console.log("BUILD READY: immutable input gates and the network-disabled dependency closure are complete");
     console.log("STATIC RUNTIME GATE: two clean builds are byte-for-byte identical and both ABI ELF audits are locked");
-    console.log("OPEN DISTRIBUTION GATE: application-process device, APK packaging, source-bundle publication, and release legal review remain open");
+    console.log("OPEN DISTRIBUTION GATE: application-process device, experimental APK packaging, and matching same-Release APK/source publication remain open");
   } catch (error) {
     console.error(`ERROR ${error.message}`);
     process.exitCode = 1;

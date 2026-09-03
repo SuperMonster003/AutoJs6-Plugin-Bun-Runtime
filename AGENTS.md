@@ -77,6 +77,8 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - Keep AIDL and `resValue` build features enabled. `app_name` and stable identity strings must remain non-translatable build resources.
 - Keep native library extraction enabled and legacy JNI packaging configured so Android installs the PIE executable into `nativeLibraryDir` without changing its bytes.
 - Release outputs must include the two single-ABI APKs and one `universal` APK, use valid release signing, and use stable version, ABI, and digest file names.
+- Applicable releases must publish the matching corresponding-source set as assets separate from the APKs in the same GitHub Release. Keep every part below 2 GiB, publish the machine-readable binding manifest and `SHA256SUMS`, and make the public Bun/WebKit license and relinking notice easy to find.
+- Use the release publisher's draft-first flow. It must bind APK hashes and contained runtime hashes to the exact Bun, WebKit/JSC, native, Cargo, npm, project, patch, and build-instruction sources, reject missing/extra/drifted assets, and compare GitHub's returned SHA-256 digests before publication. Describe this as automated technical verification, not a legal opinion or approval; a separate legal-review step is not a project release prerequisite.
 - Never commit signing secrets, `local.properties`, APK build outputs, or release artifacts unless an established release workflow explicitly tracks them.
 
 ## Localization and generated documentation
@@ -111,6 +113,7 @@ Run the smallest sufficient set first, then the complete relevant set before del
 ```powershell
 node tools/bun-runtime/verify-runtime.mjs
 node --test tools/bun-runtime/verify-apk-runtime.test.mjs
+node --test tools/bun-runtime/release/release-asset-common.test.mjs
 py .python/generate_markdown.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 .\gradlew.bat :app:testDebugUnitTest

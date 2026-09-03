@@ -222,10 +222,11 @@ tasks.matching { it.name.startsWith("merge") && it.name.endsWith("NativeLibs") }
 }
 
 tasks.register<Copy>("appendDigestToReleasedFiles") {
-    description = "Collects signed ABI and universal APKs with CRC32 in each name."
+    description = "Replaces prior candidates with signed ABI and universal APKs carrying CRC32 in each name."
     val ext = utils.FILE_EXTENSION_APK
     val src = layout.buildDirectory.dir("outputs/apk/release")
     val dst = layout.projectDirectory.dir("releases")
+    val releasePrefix = "${rootProject.name}-v${versions.appVersionName}"
     val expected = setOf(
         "app-arm64-v8a-release.$ext",
         "app-universal-release.$ext",
@@ -233,6 +234,7 @@ tasks.register<Copy>("appendDigestToReleasedFiles") {
     )
     dependsOn("assembleRelease")
     dependsOn(verifyReleaseApkRuntimeIntegrity)
+    outputs.upToDateWhen { false }
     doFirst {
         check(isSignsValid) {
             "Release signing configuration is missing or incomplete; refusing to collect unsigned APKs"
@@ -240,13 +242,18 @@ tasks.register<Copy>("appendDigestToReleasedFiles") {
         val actual = src.get().asFile.listFiles { file -> file.isFile && file.extension == ext }
             .orEmpty().mapTo(mutableSetOf()) { it.name }
         check(actual == expected) { "Expected exactly ${expected.sorted()}, but found ${actual.sorted()}" }
+        dst.asFile.listFiles { file ->
+            file.isFile && file.extension == ext && file.name.startsWith("$releasePrefix-")
+        }.orEmpty().forEach { file ->
+            check(file.delete()) { "Cannot remove superseded release candidate: ${file.absolutePath}" }
+        }
     }
     from(src)
     into(dst)
     include("*.$ext")
     rename { name ->
         val abi = name.replace(Regex("^app-(.+?)-release(\\.$ext)$"), "$1")
-        val prefix = "${rootProject.name}-v${versions.appVersionName}-$abi"
+        val prefix = "$releasePrefix-$abi"
         "$prefix-${utils.digestCRC32(src.get().file(name).asFile)}.$ext"
     }
 }

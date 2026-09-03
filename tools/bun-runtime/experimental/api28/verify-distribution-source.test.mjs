@@ -23,11 +23,19 @@ test("the checked-in corresponding-source and packaged-license closure is consis
   assert.equal(result.distributionReady, false);
 });
 
-test("a source lock cannot relax a redistribution requirement", () => {
+test("a source lock cannot relax the same-Release source-asset requirement", () => {
   const lock = JSON.parse(readFileSync(resolve(experimentRoot, "distribution-source.lock.json"), "utf8"));
-  lock.redistributionRequirements.provideExactWebKitSource = false;
+  lock.redistributionRequirements.requireSameReleaseSourceAssets = false;
   assert.throws(
     () => verifyDistributionSourceManifest(lock),
-    /redistribution requirement provideExactWebKitSource/,
+    /redistribution requirement requireSameReleaseSourceAssets/,
   );
+});
+
+test("automated validation remains a technical statement rather than legal approval", () => {
+  const lock = JSON.parse(readFileSync(resolve(experimentRoot, "distribution-source.lock.json"), "utf8"));
+  assert.equal(lock.redistributionRequirements.legalReviewRequiredByProjectPolicy, false);
+  assert.equal(lock.boundaries.legalApprovalClaimed, false);
+  lock.boundaries.legalApprovalClaimed = true;
+  assert.throws(() => verifyDistributionSourceManifest(lock), /legal-approval boundary/);
 });

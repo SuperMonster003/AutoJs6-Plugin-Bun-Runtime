@@ -171,6 +171,7 @@ default timeout: {{ default_timeout }}
 
 ```powershell
 node tools\bun-runtime\verify-runtime.mjs
+node --test tools\bun-runtime\release\release-asset-common.test.mjs
 py .python\generate_markdown.py --check
 .\gradlew.bat :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:lintDebug
 ```

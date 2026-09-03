@@ -96,7 +96,7 @@
   "h3_localization": "Localización y generación de documentos",
   "p_localization": "Edita los JSON y las plantillas Markdown y ejecuta `py .python/generate_markdown.py`. No edites a mano los README, changelog o archivos de instrucciones generados. `--check` valida sin escribir la forma de los idiomas, la versión, los recursos, los artefactos huérfanos y las diferencias de generación.",
   "h3_license": "Licencia",
-  "p_license": "El código del plugin usa [Mozilla Public License 2.0]({{ license_url }}). El ejecutable oficial de Bun incluye código de Bun bajo MIT, JavaScriptCore y WebKit enlazados estáticamente bajo LGPL-2 y otros componentes con sus propias licencias. Consulta [Third-Party Notices]({{ third_party_notices_url }}) y el [LICENSE.md]({{ bun_license_url }}) fijado de Bun.",
+  "p_license": "El código del plugin usa [Mozilla Public License 2.0]({{ license_url }}). El ejecutable oficial de Bun incluye código de Bun bajo MIT, JavaScriptCore y WebKit enlazados estáticamente bajo LGPL-2 y otros componentes con sus propias licencias. Los Releases aplicables publican un aviso de licencia/relinking y los assets de código fuente correspondiente separados de los APK en el mismo Release, con un manifest legible por máquina y SHA256SUMS verificados mediante controles técnicos automatizados. Consulta [Third-Party Notices]({{ third_party_notices_url }}) y el [LICENSE.md]({{ bun_license_url }}) fijado de Bun.",
   "h3_links": "Enlaces",
   "text_link_autojs6": "Proyecto AutoJs6",
   "text_link_bun": "Sitio oficial de Bun",

@@ -96,7 +96,7 @@
   "h3_localization": "ローカライズと文書生成",
   "p_localization": "JSON と Markdown template を編集してから `py .python/generate_markdown.py` を実行します. 生成済み README, changelog, plugin-instruction file は直接編集しないでください. `--check` は file を書き込まずに language shape, version alignment, localized resource, orphan artifact, generated-file drift を検証します.",
   "h3_license": "ライセンス",
-  "p_license": "Plugin code は [Mozilla Public License 2.0]({{ license_url }}) です. Bundled official Bun executable は MIT licensed Bun code, LGPL-2 で statically linked された JavaScriptCore と WebKit, および個別 license の third-party component を含みます. [Third-Party Notices]({{ third_party_notices_url }}) と pinned Bun [LICENSE.md]({{ bun_license_url }}) を確認してください.",
+  "p_license": "Plugin code は [Mozilla Public License 2.0]({{ license_url }}) です. Bundled official Bun executable は MIT licensed Bun code, LGPL-2 で statically linked された JavaScriptCore と WebKit, および個別 license の third-party component を含みます. 該当 Release では公開 license/relinking notice と一致する対応 source assets を APK とは分離して同じ Release に置き, 自動技術検証済みの machine-readable manifest と SHA256SUMS を提供します. [Third-Party Notices]({{ third_party_notices_url }}) と pinned Bun [LICENSE.md]({{ bun_license_url }}) を確認してください.",
   "h3_links": "リンク",
   "text_link_autojs6": "AutoJs6 project",
   "text_link_bun": "Bun 公式サイト",

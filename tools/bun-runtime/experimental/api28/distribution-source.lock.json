@@ -1,9 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "identity": {
-    "status": "corresponding-source-inputs-locked",
+    "status": "corresponding-source-release-workflow-implemented",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
     "officialArtifact": false,
+    "sourceClosureReady": true,
     "distributionReady": false
   },
   "runtimeEvidence": "runtime-evidence.json",
@@ -46,8 +47,24 @@
     "treeSha1": "e9590edf1ab6c32e20f83b70daec7314e0bfe261",
     "trackedFileCount": 463115,
     "sourceMethod": "git clone --depth 1 --single-branch --branch autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b https://github.com/oven-sh/WebKit.git",
-    "generatedArchiveAvailable": false,
-    "generatedArchiveObservation": "GitHub codeload returned HTTP 422 with 'Content creation is blocked'; use and verify the immutable Git tag/commit instead of claiming a source-archive digest.",
+    "upstreamGeneratedArchiveAvailable": false,
+    "upstreamGeneratedArchiveObservation": "GitHub codeload returned HTTP 422 with 'Content creation is blocked'; this project therefore generates and locks its own Git archive from the verified immutable tag/commit.",
+    "releaseArchive": {
+      "id": "webkit-source-0f966e81b78c84bb23213e391bc679c4ef83e56b",
+      "filename": "webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b.tar.gz",
+      "format": "git-archive-tar+gzip-level-9",
+      "archivePrefix": "webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b/",
+      "bytes": 1939469975,
+      "sha256": "e8874ec756ee751c0757a7211b29de7d4adae3da36b188cb93aaaab2cd354831",
+      "generator": {
+        "node": "24.3.0",
+        "zlib": "1.3.1-470d3a2",
+        "compressionLevel": 9,
+        "mtime": 0
+      },
+      "independentGenerationCount": 2,
+      "note": "Generated twice from the verified clean WebKit checkout with git archive and Node zlib; both runs must have identical bytes before this record is accepted. The release assembler splits this logical archive at 1,900,000,000 bytes."
+    },
     "licenseFiles": [
       {
         "sourcePath": "Source/JavaScriptCore/COPYING.LIB",
@@ -102,6 +119,8 @@
       "lock": "source-inputs.lock.json",
       "activeDependencyCount": 22,
       "githubSourceArchiveCount": 19,
+      "nodeHeaderSourceArchiveCount": 1,
+      "publishedSourceArchiveCount": 20,
       "prebuiltCount": 3
     },
     "cargo": {
@@ -136,14 +155,20 @@
     "provideBuildAndRelinkInstructions": true,
     "publishRuntimeAndSourceDigests": true,
     "doNotRelyOnlyOnUpstreamAvailability": true,
-    "requireReleaseReview": true
+    "publishLicenseAndRelinkingNotice": true,
+    "requireSameReleaseSourceAssets": true,
+    "requireSha256Manifest": true,
+    "requireAutomatedTechnicalValidation": true,
+    "legalReviewRequiredByProjectPolicy": false
   },
   "boundaries": {
     "patchedBinaryStoredInRepository": false,
     "patchedBinaryPackaged": false,
     "correspondingSourceBundlePublished": false,
+    "correspondingSourceReleaseWorkflowImplemented": true,
+    "legalReviewRequiredByProjectPolicy": false,
     "legalApprovalClaimed": false,
     "distributionReady": false,
-    "note": "This lock makes the exact license and source inputs auditable. A distributor must still publish or accompany the matching source set and complete a release-specific legal review; this file is not legal advice or distribution approval."
+    "note": "This lock and the release workflow make the exact license/source inputs and same-Release SHA-256 asset set mechanically auditable. Automated technical verification does not claim a legal opinion or approval. Distribution remains false until a matching patched APK and all source assets are actually published together and pass the application-process release gates."
   }
 }

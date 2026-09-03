@@ -96,7 +96,7 @@
   "h3_localization": "الترجمة وتوليد المستندات",
   "p_localization": "عدل JSON و Markdown template ثم شغل `py .python/generate_markdown.py`. لا تعدل README أو changelog أو plugin-instruction file المولدة يدويا. يتحقق `--check` من language shape و version alignment و localized resource و orphan artifact و generated-file drift دون كتابة ملفات.",
   "h3_license": "الترخيص",
-  "p_license": "كود plugin مرخص بموجب [Mozilla Public License 2.0]({{ license_url }}). تتضمن Bun executable الرسمية كود Bun المرخص بـ MIT و JavaScriptCore و WebKit المرتبطين statically بموجب LGPL-2 ومكونات أخرى بتراخيصها الخاصة. راجع [Third-Party Notices]({{ third_party_notices_url }}) و [LICENSE.md]({{ bun_license_url }}) المثبت لـ Bun.",
+  "p_license": "كود plugin مرخص بموجب [Mozilla Public License 2.0]({{ license_url }}). تتضمن Bun executable الرسمية كود Bun المرخص بـ MIT و JavaScriptCore و WebKit المرتبطين statically بموجب LGPL-2 ومكونات أخرى بتراخيصها الخاصة. تنشر Releases المنطبقة إشعارا عاما للترخيص/relinking وassets المصدر المطابق منفصلة عن ملفات APK في Release نفسه, مع manifest قابل للقراءة آليا وSHA256SUMS تم التحقق منهما بفحوص تقنية آلية. راجع [Third-Party Notices]({{ third_party_notices_url }}) و [LICENSE.md]({{ bun_license_url }}) المثبت لـ Bun.",
   "h3_links": "روابط",
   "text_link_autojs6": "مشروع AutoJs6",
   "text_link_bun": "موقع Bun الرسمي",

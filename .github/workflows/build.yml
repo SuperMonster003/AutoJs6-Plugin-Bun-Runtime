@@ -51,7 +51,8 @@ jobs:
             tools/bun-runtime/experimental/api28/build-experiment.test.mjs \
             tools/bun-runtime/experimental/api28/run-locked-build.test.mjs \
             tools/bun-runtime/experimental/api28/verify-built-runtime.test.mjs \
-            tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs
+            tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs \
+            tools/bun-runtime/release/release-asset-common.test.mjs
 
       - name: Re-materialize immutable Bun experiment inputs
         run: |
