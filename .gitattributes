@@ -2,8 +2,14 @@
 *.aar binary
 *.png binary
 *.zip binary
+.gitattributes text eol=lf
 *.bat text eol=crlf
 *.sh text eol=lf
+*.mjs text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.Dockerfile text eol=lf
 *.kt text eol=lf
 *.kts text eol=lf
 *.java text eol=lf
@@ -11,3 +17,4 @@
 *.md text eol=lf
 *.json text eol=lf
 *.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
+app/src/main/assets/doc/licenses/* text eol=lf whitespace=-blank-at-eol,-blank-at-eof

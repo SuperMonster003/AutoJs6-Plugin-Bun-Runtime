@@ -16,24 +16,36 @@
   ],
   "cargo": {
     "archiveLock": "cargo-inputs.lock.json",
-    "lockfile": {
+    "bunLockfile": {
       "path": "Cargo.lock",
       "bytes": 70318,
       "gitBlobSha1": "28c08e1b7bc188aa32a7d5ba3fc7647f616fe749",
       "sha256": "819a552d52819d4d33897df69e16b698d703cec4e9009c2d132791931ab40856"
     },
-    "packageCount": 284,
-    "registryPackageCount": 181,
-    "registrySha256Count": 181,
+    "rustStdLockfile": {
+      "path": "lib/rustlib/src/rust/library/Cargo.lock",
+      "bytes": 9835,
+      "sha256": "9e87d1ac04edbf5fa61e27cb21984a83566573a007767713868965fba70acb6d",
+      "sourceArtifactId": "rust-src-nightly-2026-07-20",
+      "sourceArtifactSha256": "d4ffe57cc99d8846761bdbefc631bfd8f06fc001d7208576887e381c5709341a"
+    },
+    "bunPackageCount": 284,
+    "bunRegistryPackageCount": 181,
+    "rustStdPackageCount": 49,
+    "rustStdRegistryPackageCount": 30,
+    "registryPackageReferenceCount": 211,
+    "sharedRegistryPackageCount": 5,
+    "uniqueRegistryPackageCount": 206,
+    "registrySha256Count": 206,
     "gitSourceCount": 0,
     "registrySource": "registry+https://github.com/rust-lang/crates.io-index",
     "archiveUrlPattern": "https://static.crates.io/crates/{name}/{name}-{version}.crate",
-    "archiveIdentitiesLockedByCargo": true,
+    "archiveIdentitiesLockedByCargoLocks": true,
     "archiveByteCountsLockedByProject": true,
     "archivesMaterializedByProject": true,
-    "archiveBytes": 26354160,
+    "archiveBytes": 28919277,
     "offlineSourceReplacementReady": true,
-    "note": "Cargo.lock supplies a SHA-256 for every crates.io package and contains no Git source. All 181 canonical .crate files are project-locked by URL, byte count, and SHA-256; the materializer can reproduce their versioned directory source, and pinned Cargo accepted the full Bun workspace with --locked --offline and an empty CARGO_HOME."
+    "note": "The Bun workspace and pinned Rust standard-library Cargo.lock files contain 211 checksummed crates.io references, no Git sources, and a checksum-consistent union of 206 unique archives. All canonical .crate files are project-locked by URL, byte count, and SHA-256; the materializer reproduced their versioned directory source, both lockfiles passed pinned Cargo metadata with Docker networking disabled, and the read-only source completed first-pass ARM64 and x86_64 Ninja probes in the not-yet-locked host image."
   },
   "bunInstall": {
     "command": "bun install --frozen-lockfile",
@@ -102,8 +114,8 @@
     "cargoArchiveClosureComplete": true,
     "bunArchiveClosureComplete": true,
     "offlineBunInstallReplayPassed": true,
-    "offlineBuildNetworkTestPassed": false,
-    "complete": false,
-    "resolutionGate": "Lock the mutable Ubuntu/PPA/apt.llvm.org host package layer, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
+    "offlineBuildNetworkTestPassed": true,
+    "complete": true,
+    "resolution": "Both ARM64 and x86_64 configure plus complete Ninja graphs finished with Docker networking disabled, the Cargo directory source and Bun cache mounted read-only, and no unrecorded fetch. The host package layer is independently byte-locked and reproducible in host-package-inputs.lock.json and host-image-evidence.json."
   }
 }

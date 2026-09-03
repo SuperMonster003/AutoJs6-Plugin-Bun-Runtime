@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-03",
+  "purpose": "Repeated clean construction evidence for the byte-locked Linux x86_64 Bun Android build host",
+  "inputs": {
+    "baseImage": {
+      "reference": "ubuntu:20.04",
+      "indexDigest": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
+      "linuxAmd64ManifestDigest": "sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a"
+    },
+    "files": [
+      {
+        "path": "host-package-inputs.lock.json",
+        "bytes": 82278,
+        "sha256": "5919960d0ab374fbf0d50a6c2dc3e63b818cbcef1ec8fef6b6a38e602ec46def"
+      },
+      {
+        "path": "host-package.Dockerfile",
+        "bytes": 1496,
+        "sha256": "5d109f18751085d1d3b151029cc6abb02bf8b6f77eb9d38e2216a8f2825c588a"
+      },
+      {
+        "path": "install-host-packages.sh",
+        "bytes": 4064,
+        "sha256": "ed16012cbbca946eb8ca61b6774dad0a5d08e5c4a153a5dfa0c16c10c681cc9d"
+      },
+      {
+        "path": "normalize-host-python-bytecode.py",
+        "bytes": 1053,
+        "sha256": "5da57596e187cdbb45224abf8f5a248221ee3c0c41e41c095a79bd73a969658e"
+      },
+      {
+        "path": "build-host-image.mjs",
+        "bytes": 8438,
+        "sha256": "df95ba673cc3b74e24492519dade15732ff4e90a259f07bc85f95bf9e9b832a8"
+      }
+    ],
+    "packageArchiveCount": 155,
+    "packageArchiveBytes": 422223096,
+    "packageManifestCount": 243,
+    "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+  },
+  "buildEnvironment": {
+    "host": "WSL2 Ubuntu 24.04 LTS",
+    "kernel": "Linux 6.18.33.2-microsoft-standard-WSL2 x86_64 GNU/Linux",
+    "dockerClient": "29.7.2",
+    "dockerServer": "29.7.2",
+    "dockerBuildx": "v0.37.0 ac30b249211430b85fb8f37b6e7154b5c47ba0b6",
+    "sourceDateEpoch": 1788278400,
+    "cacheDisabled": true,
+    "packageMaterializerOffline": true,
+    "buildRunNetwork": "none",
+    "basePullAllowed": false,
+    "externalDockerfileFrontend": false,
+    "layerTimestampRewrite": true,
+    "automaticProvenanceAttestation": false
+  },
+  "output": {
+    "os": "linux",
+    "architecture": "amd64",
+    "created": "2026-09-01T16:00:00Z",
+    "imageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+    "imageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b",
+    "unpackedBytes": 1089362029,
+    "rootfsDiffIds": [
+      "sha256:470b66ea5123c93b0d5606e4213bf9e47d3d426b640d32472e4ac213186c4bb6",
+      "sha256:bf0fe30c3a28497800ad8681613532fab5f3ba8db1cf3bf5a566aeba86691eb5",
+      "sha256:5f14bbc60cbacadd75289d330b72a9b039b059af5b0768cdf663b57bdef14f3e",
+      "sha256:03ce9c25de63df99fd06aecf3a60c706a20f7a49c9f05929e6c15ecec292997a",
+      "sha256:bef0cc789847bd13f6a7ea20b79cad5e834d8d7ce31584f6baf5e8246d2446f4"
+    ],
+    "toolVersions": {
+      "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+      "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0"
+    },
+    "compilerRuntimeLinkCount": 8
+  },
+  "repeatedBuilds": [
+    {
+      "ordinal": 1,
+      "localTag": "autojs6/bun-host-locked:20260903-b7",
+      "imageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+      "imageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b"
+    },
+    {
+      "ordinal": 2,
+      "localTag": "autojs6/bun-host-locked:20260903-b8",
+      "imageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+      "imageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b"
+    }
+  ],
+  "result": {
+    "cleanBuildCount": 2,
+    "imageManifestDigestMatch": true,
+    "imageConfigDigestMatch": true,
+    "rootfsDiffIdsMatch": true,
+    "installedPackageManifestMatch": true,
+    "hostImageReproducible": true,
+    "runtimeReproducibilityProven": false,
+    "note": "This closes the host package and host image layer only. Repeated patched Bun builds, final ELF audit, and application-process device evidence remain separate gates."
+  }
+}

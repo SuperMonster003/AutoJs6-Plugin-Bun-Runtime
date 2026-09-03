@@ -45,7 +45,13 @@ jobs:
             tools/bun-runtime/experimental/api28/materialize-cargo-inputs.test.mjs \
             tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs \
             tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs \
-            tools/bun-runtime/experimental/api28/build-experiment.test.mjs
+            tools/bun-runtime/experimental/api28/materialize-host-package-inputs.test.mjs \
+            tools/bun-runtime/experimental/api28/materialize-distribution-source.test.mjs \
+            tools/bun-runtime/experimental/api28/build-host-image.test.mjs \
+            tools/bun-runtime/experimental/api28/build-experiment.test.mjs \
+            tools/bun-runtime/experimental/api28/run-locked-build.test.mjs \
+            tools/bun-runtime/experimental/api28/verify-built-runtime.test.mjs \
+            tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs
 
       - name: Re-materialize immutable Bun experiment inputs
         run: |
@@ -61,6 +67,8 @@ jobs:
           node tools/bun-runtime/experimental/api28/materialize-bun-inputs.mjs \
             --output-directory "$RUNNER_TEMP/bun-api28-bun-registry" \
             --prepare-cache
+          node tools/bun-runtime/experimental/api28/materialize-distribution-source.mjs \
+            --output-directory "$RUNNER_TEMP/bun-api28-distribution-source"
 
       - name: Replay the Bun v1.4.0 downstream source series
         run: |

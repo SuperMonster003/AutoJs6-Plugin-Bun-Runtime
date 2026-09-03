@@ -224,19 +224,27 @@
     "exclusionReason": "The API 28 release configs disable LTO and only compile the two Android targets; excluded developer and unrelated cross-target components are not build inputs for this experiment."
   },
   "hostPackageLayer": {
-    "status": "unresolved",
+    "status": "locked-and-reproducible",
+    "archiveLock": "host-package-inputs.lock.json",
+    "imageEvidence": "host-image-evidence.json",
     "containerBase": "ubuntu:20.04",
     "containerIndexDigest": "sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214",
     "linuxAmd64ManifestDigest": "sha256:c664f8f86ed5a386b0a340d981b8f81714e21a8b9c73f658c4bea56aa179d54a",
     "requiredVersionFacts": {
-      "llvm": "21.1.8",
-      "gcc": "13"
+      "upstreamRequestedLlvm": "21.1.8",
+      "resolvedLlvm": "21.1.5",
+      "resolvedLlvmPackage": "1:21.1.5~++20251023083255+45afac62e373-1~exp1~20251023083404.50",
+      "resolvedGcc": "13.1.0",
+      "resolvedGccPackage": "13.1.0-8ubuntu1~20.04.2"
     },
-    "mutableInputs": [
-      "Ubuntu 20.04 apt indexes and package files",
-      "ppa:ubuntu-toolchain-r/test indexes and GCC 13 package files",
-      "https://apt.llvm.org/llvm.sh and the apt.llvm.org LLVM 21 package closure"
-    ],
+    "packageCount": 155,
+    "packageArchiveBytes": 422223096,
+    "installedPackageCount": 243,
+    "installedPackageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b",
+    "hostImageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+    "hostImageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b",
+    "cleanImageBuildCount": 2,
+    "imageDigestMatch": true,
     "requiredPackages": [
       "apt-transport-https",
       "bison",
@@ -263,15 +271,16 @@
       "wget",
       "xz-utils"
     ],
-    "resolutionGate": "Build an amd64 host image from snapshot-pinned repository metadata and exact .deb hashes, or replace the package layer with equivalently verified immutable archives, then lock the resulting OCI manifest digest."
+    "resolution": "All packages added or upgraded relative to the digest-pinned Ubuntu base are locked by exact .deb URL, bytes, and SHA-256. Two no-cache builds with network disabled for RUN steps and normalized timestamps produced the same OCI image manifest, config, and rootfs diff IDs."
   },
   "readiness": {
     "directDownloadCount": 17,
     "buildArtifactCount": 12,
     "provenanceDocumentCount": 5,
     "directDownloadBytesLocked": true,
-    "hostPackageLayerLocked": false,
-    "complete": false,
-    "note": "Every direct NDK, CMake, bootstrap Bun, Node, Ninja, rustup, and minimal Rust download is locked by byte count and SHA-256. The mutable APT/GCC/LLVM host package closure remains unresolved, so the experiment is not build ready."
+    "hostPackageLayerLocked": true,
+    "hostImageReproducible": true,
+    "complete": true,
+    "note": "Every direct toolchain download and all 155 host package archives are byte-locked. The 243-package host manifest and repeated OCI image digest match, so the Linux x86_64 toolchain input layer is complete."
   }
 }

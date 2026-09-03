@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "snapshotDate": "2026-09-03",
   "bunCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
   "cargoLock": {
@@ -11,11 +11,39 @@
     "registryPackageCount": 181,
     "gitSourceCount": 0
   },
+  "rustStdCargoLock": {
+    "path": "lib/rustlib/src/rust/library/Cargo.lock",
+    "bytes": 9835,
+    "sha256": "9e87d1ac04edbf5fa61e27cb21984a83566573a007767713868965fba70acb6d",
+    "packageCount": 49,
+    "registryPackageCount": 30,
+    "gitSourceCount": 0,
+    "sourceArtifactId": "rust-src-nightly-2026-07-20",
+    "sourceArtifactSha256": "d4ffe57cc99d8846761bdbefc631bfd8f06fc001d7208576887e381c5709341a"
+  },
   "registrySource": "registry+https://github.com/rust-lang/crates.io-index",
   "archiveUrlPattern": "https://static.crates.io/crates/{name}/{name}-{version}.crate",
-  "archiveCount": 181,
-  "totalArchiveBytes": 26354160,
+  "registryPackageReferenceCount": 211,
+  "sharedRegistryPackageCount": 5,
+  "archiveCount": 206,
+  "totalArchiveBytes": 28919277,
   "archives": [
+    {
+      "name": "addr2line",
+      "version": "0.27.0",
+      "filename": "addr2line-0.27.0.crate",
+      "url": "https://static.crates.io/crates/addr2line/addr2line-0.27.0.crate",
+      "bytes": 43507,
+      "sha256": "efe1709241908a54ef1925c6018f41d3f523d0cfe174719761eb39e7b7bf086a"
+    },
+    {
+      "name": "adler2",
+      "version": "2.0.1",
+      "filename": "adler2-2.0.1.crate",
+      "url": "https://static.crates.io/crates/adler2/adler2-2.0.1.crate",
+      "bytes": 13366,
+      "sha256": "320119579fcad9c21884f5c4861d16174d0e06250625266f50fe6898340abefa"
+    },
     {
       "name": "aho-corasick",
       "version": "1.1.4",
@@ -175,6 +203,14 @@
       "url": "https://static.crates.io/crates/cast/cast-0.3.0.crate",
       "bytes": 11452,
       "sha256": "37b2a672a2cb129a2e41c10b1224bb368f9f37a2b16b612598138befd7b37eb5"
+    },
+    {
+      "name": "cc",
+      "version": "1.2.0",
+      "filename": "cc-1.2.0.crate",
+      "url": "https://static.crates.io/crates/cc/cc-1.2.0.crate",
+      "bytes": 92640,
+      "sha256": "1aeb932158bd710538c73702db6945cb68a8fb08c519e6e12706b94263b36db8"
     },
     {
       "name": "cfg-if",
@@ -393,6 +429,14 @@
       "sha256": "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
     },
     {
+      "name": "dlmalloc",
+      "version": "0.2.13",
+      "filename": "dlmalloc-0.2.13.crate",
+      "url": "https://static.crates.io/crates/dlmalloc/dlmalloc-0.2.13.crate",
+      "bytes": 27636,
+      "sha256": "9f5b01c17f85ee988d832c40e549a64bd89ab2c9f8d8a613bdf5122ae507e294"
+    },
+    {
       "name": "dtoa",
       "version": "1.0.11",
       "filename": "dtoa-1.0.11.crate",
@@ -505,6 +549,14 @@
       "sha256": "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
     },
     {
+      "name": "fortanix-sgx-abi",
+      "version": "0.6.1",
+      "filename": "fortanix-sgx-abi-0.6.1.crate",
+      "url": "https://static.crates.io/crates/fortanix-sgx-abi/fortanix-sgx-abi-0.6.1.crate",
+      "bytes": 13691,
+      "sha256": "5efc85edd5b83e8394f4371dd0da6859dff63dd387dab8568fece6af4cde6f84"
+    },
+    {
       "name": "futures-core",
       "version": "0.3.32",
       "filename": "futures-core-0.3.32.crate",
@@ -537,12 +589,28 @@
       "sha256": "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
     },
     {
+      "name": "getopts",
+      "version": "0.2.24",
+      "filename": "getopts-0.2.24.crate",
+      "url": "https://static.crates.io/crates/getopts/getopts-0.2.24.crate",
+      "bytes": 21467,
+      "sha256": "cfe4fbac503b8d1f88e6676011885f34b7174f46e59956bba534ba83abded4df"
+    },
+    {
       "name": "getrandom",
       "version": "0.4.2",
       "filename": "getrandom-0.4.2.crate",
       "url": "https://static.crates.io/crates/getrandom/getrandom-0.4.2.crate",
       "bytes": 53905,
       "sha256": "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
+    },
+    {
+      "name": "gimli",
+      "version": "0.34.0",
+      "filename": "gimli-0.34.0.crate",
+      "url": "https://static.crates.io/crates/gimli/gimli-0.34.0.crate",
+      "bytes": 335386,
+      "sha256": "1033caf0b349c518623b5396bfb2cf0bddf44f0306d543a250e5743297aafd10"
     },
     {
       "name": "half",
@@ -575,6 +643,14 @@
       "url": "https://static.crates.io/crates/hashbrown/hashbrown-0.17.0.crate",
       "bytes": 154597,
       "sha256": "4f467dd6dccf739c208452f8014c75c18bb8301b050ad1cfb27153803edb0f51"
+    },
+    {
+      "name": "hashbrown",
+      "version": "0.17.1",
+      "filename": "hashbrown-0.17.1.crate",
+      "url": "https://static.crates.io/crates/hashbrown/hashbrown-0.17.1.crate",
+      "bytes": 155512,
+      "sha256": "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
     },
     {
       "name": "heck",
@@ -690,6 +766,14 @@
     },
     {
       "name": "libc",
+      "version": "0.2.185",
+      "filename": "libc-0.2.185.crate",
+      "url": "https://static.crates.io/crates/libc/libc-0.2.185.crate",
+      "bytes": 821775,
+      "sha256": "52ff2c0fe9bc6cb6b14a0592c2ff4fa9ceb83eea9db979b0487cd054946a2b8f"
+    },
+    {
+      "name": "libc",
       "version": "0.2.186",
       "filename": "libc-0.2.186.crate",
       "url": "https://static.crates.io/crates/libc/libc-0.2.186.crate",
@@ -714,6 +798,14 @@
     },
     {
       "name": "memchr",
+      "version": "2.7.6",
+      "filename": "memchr-2.7.6.crate",
+      "url": "https://static.crates.io/crates/memchr/memchr-2.7.6.crate",
+      "bytes": 97616,
+      "sha256": "f52b00d39961fc5b2736ea853c9cc86238e165017a493d1d5c8eac6bdc4cc273"
+    },
+    {
+      "name": "memchr",
       "version": "2.8.0",
       "filename": "memchr-2.8.0.crate",
       "url": "https://static.crates.io/crates/memchr/memchr-2.8.0.crate",
@@ -727,6 +819,22 @@
       "url": "https://static.crates.io/crates/mime/mime-0.3.17.crate",
       "bytes": 15712,
       "sha256": "6877bb514081ee2a7ff5ef9de3281f14a4dd4bceac4c09388074a6b5df8a139a"
+    },
+    {
+      "name": "miniz_oxide",
+      "version": "0.9.1",
+      "filename": "miniz_oxide-0.9.1.crate",
+      "url": "https://static.crates.io/crates/miniz_oxide/miniz_oxide-0.9.1.crate",
+      "bytes": 70519,
+      "sha256": "b63fbc4a50860e98e7b2aa7804ded1db5cbc3aff9193adaff57a6931bf7c4b4c"
+    },
+    {
+      "name": "moto-rt",
+      "version": "0.16.0",
+      "filename": "moto-rt-0.16.0.crate",
+      "url": "https://static.crates.io/crates/moto-rt/moto-rt-0.16.0.crate",
+      "bytes": 25412,
+      "sha256": "29aea9f7dfeb258e030a84e0ec38a9c2ec2063d4f45eb2db31445cfc40b3dba1"
     },
     {
       "name": "new_debug_unreachable",
@@ -743,6 +851,14 @@
       "url": "https://static.crates.io/crates/num-traits/num-traits-0.2.19.crate",
       "bytes": 51631,
       "sha256": "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
+    },
+    {
+      "name": "object",
+      "version": "0.39.1",
+      "filename": "object-0.39.1.crate",
+      "url": "https://static.crates.io/crates/object/object-0.39.1.crate",
+      "bytes": 360376,
+      "sha256": "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
     },
     {
       "name": "once_cell",
@@ -882,11 +998,51 @@
     },
     {
       "name": "r-efi",
+      "version": "5.3.0",
+      "filename": "r-efi-5.3.0.crate",
+      "url": "https://static.crates.io/crates/r-efi/r-efi-5.3.0.crate",
+      "bytes": 64532,
+      "sha256": "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
+    },
+    {
+      "name": "r-efi",
       "version": "6.0.0",
       "filename": "r-efi-6.0.0.crate",
       "url": "https://static.crates.io/crates/r-efi/r-efi-6.0.0.crate",
       "bytes": 65303,
       "sha256": "f8dcc9c7d52a811697d2151c701e0d08956f92b0e24136cf4cf27b57a6a0d9bf"
+    },
+    {
+      "name": "r-efi-alloc",
+      "version": "2.1.0",
+      "filename": "r-efi-alloc-2.1.0.crate",
+      "url": "https://static.crates.io/crates/r-efi-alloc/r-efi-alloc-2.1.0.crate",
+      "bytes": 14475,
+      "sha256": "dc2f58ef3ca9bb0f9c44d9aa8537601bcd3df94cc9314a40178cadf7d4466354"
+    },
+    {
+      "name": "rand",
+      "version": "0.9.2",
+      "filename": "rand-0.9.2.crate",
+      "url": "https://static.crates.io/crates/rand/rand-0.9.2.crate",
+      "bytes": 99930,
+      "sha256": "6db2770f06117d490610c7488547d543617b21bfa07796d7a12f6f1bd53850d1"
+    },
+    {
+      "name": "rand_core",
+      "version": "0.9.3",
+      "filename": "rand_core-0.9.3.crate",
+      "url": "https://static.crates.io/crates/rand_core/rand_core-0.9.3.crate",
+      "bytes": 24543,
+      "sha256": "99d9a13982dcf210057a8a78572b2217b667c3beacbf3a0d8b454f6f82837d38"
+    },
+    {
+      "name": "rand_xorshift",
+      "version": "0.4.0",
+      "filename": "rand_xorshift-0.4.0.crate",
+      "url": "https://static.crates.io/crates/rand_xorshift/rand_xorshift-0.4.0.crate",
+      "bytes": 10262,
+      "sha256": "513962919efc330f829edb2535844d1b912b0fbe2ca165d613e4e8788bb05a5a"
     },
     {
       "name": "rayon",
@@ -937,12 +1093,28 @@
       "sha256": "6c20b6793b5c2fa6553b250154b78d6d0db37e72700ae35fad9387a46f487c97"
     },
     {
+      "name": "rustc-demangle",
+      "version": "0.1.28",
+      "filename": "rustc-demangle-0.1.28.crate",
+      "url": "https://static.crates.io/crates/rustc-demangle/rustc-demangle-0.1.28.crate",
+      "bytes": 30857,
+      "sha256": "b74b56ffa8bb2830709a538c2cbcae9aa062db0d2a42563bfb09bdaae44020eb"
+    },
+    {
       "name": "rustc-hash",
       "version": "2.1.2",
       "filename": "rustc-hash-2.1.2.crate",
       "url": "https://static.crates.io/crates/rustc-hash/rustc-hash-2.1.2.crate",
       "bytes": 14754,
       "sha256": "94300abf3f1ae2e2b8ffb7b58043de3d399c73fa6f4b73826402a5c457614dbe"
+    },
+    {
+      "name": "rustc-literal-escaper",
+      "version": "0.0.8",
+      "filename": "rustc-literal-escaper-0.0.8.crate",
+      "url": "https://static.crates.io/crates/rustc-literal-escaper/rustc-literal-escaper-0.0.8.crate",
+      "bytes": 14104,
+      "sha256": "bfe6f213fb658c8fb95baabd5420393438cf5a98d707f5dd701d9197c705f71e"
     },
     {
       "name": "rustc_version",
@@ -1047,6 +1219,14 @@
       "url": "https://static.crates.io/crates/sha3/sha3-0.10.9.crate",
       "bytes": 859930,
       "sha256": "77fd7028345d415a4034cf8777cd4f8ab1851274233b45f84e3d955502d93874"
+    },
+    {
+      "name": "shlex",
+      "version": "1.3.0",
+      "filename": "shlex-1.3.0.crate",
+      "url": "https://static.crates.io/crates/shlex/shlex-1.3.0.crate",
+      "bytes": 18713,
+      "sha256": "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
     },
     {
       "name": "siphasher",
@@ -1169,6 +1349,14 @@
       "sha256": "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
     },
     {
+      "name": "unwinding",
+      "version": "0.2.10",
+      "filename": "unwinding-0.2.10.crate",
+      "url": "https://static.crates.io/crates/unwinding/unwinding-0.2.10.crate",
+      "bytes": 29566,
+      "sha256": "4b134ada16dda9e435abe2a6d76a01d497bc60707357845a15f9b0ed42dc88ce"
+    },
+    {
       "name": "version_check",
       "version": "0.9.5",
       "filename": "version_check-0.9.5.crate",
@@ -1177,12 +1365,28 @@
       "sha256": "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
     },
     {
+      "name": "vex-sdk",
+      "version": "0.27.1",
+      "filename": "vex-sdk-0.27.1.crate",
+      "url": "https://static.crates.io/crates/vex-sdk/vex-sdk-0.27.1.crate",
+      "bytes": 11762,
+      "sha256": "79e5fe15afde1305478b35e2cb717fff59f485428534cf49cfdbfa4723379bf6"
+    },
+    {
       "name": "walkdir",
       "version": "2.5.0",
       "filename": "walkdir-2.5.0.crate",
       "url": "https://static.crates.io/crates/walkdir/walkdir-2.5.0.crate",
       "bytes": 23951,
       "sha256": "29790946404f91d9c5d06f9874efddea1dc06c5efe94541a7d6863108e3a5e4b"
+    },
+    {
+      "name": "wasip1",
+      "version": "1.0.0",
+      "filename": "wasip1-1.0.0.crate",
+      "url": "https://static.crates.io/crates/wasip1/wasip1-1.0.0.crate",
+      "bytes": 26437,
+      "sha256": "b5e26842486624357dbeb8f0381cf1fb42f022291fd787d4a816768fec8cc760"
     },
     {
       "name": "wasip2",
@@ -1199,6 +1403,14 @@
       "url": "https://static.crates.io/crates/wasip3/wasip3-0.4.0+wasi-0.3.0-rc-2026-01-06.crate",
       "bytes": 123354,
       "sha256": "5428f8bf88ea5ddc08faddef2ac4a67e390b88186c703ce6dbd955e1c145aca5"
+    },
+    {
+      "name": "wasip3",
+      "version": "0.6.0+wasi-0.3.0-rc-2026-03-15",
+      "filename": "wasip3-0.6.0+wasi-0.3.0-rc-2026-03-15.crate",
+      "url": "https://static.crates.io/crates/wasip3/wasip3-0.6.0+wasi-0.3.0-rc-2026-03-15.crate",
+      "bytes": 141033,
+      "sha256": "ed83456dd6a0b8581998c0365e4651fa2997e5093b49243b7f35391afaa7a3d9"
     },
     {
       "name": "wasm-bindgen",
@@ -1465,6 +1677,13 @@
       "sha256": "b8848ee67ecc8aedbaf3e4122217aff892639231befc6a1b58d29fff4c2cabaa"
     }
   ],
+  "readiness": {
+    "archiveIdentitiesLockedByCargoLocks": true,
+    "archiveByteCountsLockedByProject": true,
+    "archivesMaterializedAndVerified": true,
+    "offlineSourceReplacementReady": true,
+    "note": "All 206 unique crates.io archives from the Bun workspace and pinned Rust standard-library Cargo.lock files were verified by checksum, canonical URL, and exact bytes. The materializer reproduced a checksum-verified directory source; both lockfiles passed pinned Cargo metadata with Docker networking disabled, and the same read-only source completed first-pass ARM64 and x86_64 Ninja probes in the not-yet-locked host image."
+  },
   "directorySource": {
     "layout": "versioned-directories",
     "directoryName": "vendor",
@@ -1481,14 +1700,12 @@
       "date": "2026-09-03",
       "cargoVersion": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
       "command": "cargo metadata --locked --offline --format-version 1",
-      "emptyCargoHome": true
+      "emptyCargoHome": true,
+      "lockfiles": [
+        "Bun workspace Cargo.lock",
+        "pinned Rust standard-library Cargo.lock"
+      ],
+      "networkDisabledDualAbiNinjaProbePassed": true
     }
-  },
-  "readiness": {
-    "archiveIdentitiesLockedByCargo": true,
-    "archiveByteCountsLockedByProject": true,
-    "archivesMaterializedAndVerified": true,
-    "offlineSourceReplacementReady": true,
-    "note": "All crates.io archives were downloaded and verified against Cargo.lock, then locked by canonical URL, exact byte count, and SHA-256. The materializer reproduced a checksummed Cargo directory source from only those archives, and pinned Cargo accepted the full Bun workspace with --locked --offline and an empty CARGO_HOME."
   }
 }

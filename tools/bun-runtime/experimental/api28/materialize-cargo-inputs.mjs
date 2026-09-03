@@ -37,6 +37,16 @@ const EXPECTED_CARGO_LOCK = Object.freeze({
   registryPackageCount: 181,
   gitSourceCount: 0,
 });
+const EXPECTED_RUST_STD_CARGO_LOCK = Object.freeze({
+  path: "lib/rustlib/src/rust/library/Cargo.lock",
+  bytes: 9835,
+  sha256: "9e87d1ac04edbf5fa61e27cb21984a83566573a007767713868965fba70acb6d",
+  packageCount: 49,
+  registryPackageCount: 30,
+  gitSourceCount: 0,
+  sourceArtifactId: "rust-src-nightly-2026-07-20",
+  sourceArtifactSha256: "d4ffe57cc99d8846761bdbefc631bfd8f06fc001d7208576887e381c5709341a",
+});
 const REGISTRY_SOURCE = "registry+https://github.com/rust-lang/crates.io-index";
 const ARCHIVE_URL_PATTERN = "https://static.crates.io/crates/{name}/{name}-{version}.crate";
 const SHA1 = /^[0-9a-f]{40}$/;
@@ -194,23 +204,47 @@ export function verifyCargoSourceConfig(cargoInputDirectory) {
 
 export function collectCargoArtifacts(lock) {
   requireRecord(lock, "Cargo input lock");
-  require(lock.schemaVersion === 1, "Unsupported Cargo input lock schema");
+  require(lock.schemaVersion === 2, "Unsupported Cargo input lock schema");
   require(typeof lock.snapshotDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(lock.snapshotDate), "Cargo input snapshot date is invalid");
   require(SHA1.test(lock.bunCommit), "Cargo input Bun commit is invalid");
   require(lock.bunCommit === EXPECTED_BUN_COMMIT, "Cargo input Bun commit does not match the downstream backport");
-  verifyCargoLockIdentity(lock.cargoLock);
+  verifyCargoLockIdentity(lock.cargoLock, EXPECTED_CARGO_LOCK, { requireGitBlob: true });
+  verifyCargoLockIdentity(lock.rustStdCargoLock, EXPECTED_RUST_STD_CARGO_LOCK, { requireGitBlob: false });
+  require(
+    lock.rustStdCargoLock.sourceArtifactId === EXPECTED_RUST_STD_CARGO_LOCK.sourceArtifactId,
+    "Rust standard-library Cargo.lock source artifact is invalid",
+  );
+  require(
+    lock.rustStdCargoLock.sourceArtifactSha256 === EXPECTED_RUST_STD_CARGO_LOCK.sourceArtifactSha256,
+    "Rust standard-library Cargo.lock source artifact SHA-256 is invalid",
+  );
   require(lock.registrySource === REGISTRY_SOURCE, "Cargo registry source is invalid");
   require(lock.archiveUrlPattern === ARCHIVE_URL_PATTERN, "Cargo archive URL pattern is invalid");
   require(Array.isArray(lock.archives), "Cargo input lock has no archives array");
 
   const artifacts = lock.archives.map(normalizeLockedArtifact);
   require(lock.archiveCount === artifacts.length, "Cargo archive count does not match the archive list");
-  require(lock.archiveCount === lock.cargoLock.registryPackageCount, "Cargo archive count does not match Cargo.lock");
+  require(
+    Number.isSafeInteger(lock.registryPackageReferenceCount) && lock.registryPackageReferenceCount > 0,
+    "Cargo registry package reference count is invalid",
+  );
+  require(
+    lock.registryPackageReferenceCount === lock.cargoLock.registryPackageCount + lock.rustStdCargoLock.registryPackageCount,
+    "Cargo registry package reference count does not match the two Cargo.lock files",
+  );
+  require(
+    Number.isSafeInteger(lock.sharedRegistryPackageCount) && lock.sharedRegistryPackageCount >= 0,
+    "Cargo shared registry package count is invalid",
+  );
+  require(
+    lock.archiveCount === lock.registryPackageReferenceCount - lock.sharedRegistryPackageCount,
+    "Cargo archive count does not match the unique union of both Cargo.lock files",
+  );
   require(
     lock.totalArchiveBytes === artifacts.reduce((total, artifact) => total + artifact.bytes, 0),
     "Cargo total archive byte count does not match the archive list",
   );
-  require(lock.readiness?.archiveIdentitiesLockedByCargo === true, "Cargo archive identities are not locked");
+  require(lock.readiness?.archiveIdentitiesLockedByCargoLocks === true, "Cargo archive identities are not locked by both Cargo.lock files");
   require(lock.readiness?.archiveByteCountsLockedByProject === true, "Cargo archive byte counts are not locked");
   require(lock.readiness?.archivesMaterializedAndVerified === true, "Cargo archives are not recorded as materialized and verified");
   require(typeof lock.readiness?.offlineSourceReplacementReady === "boolean", "Cargo offline source replacement readiness is invalid");
@@ -279,28 +313,75 @@ export function parseCargoLock(contents) {
   return { packages, registryPackages, gitSourceCount };
 }
 
+export function mergeCargoRegistryPackages(...packageSets) {
+  require(packageSets.length > 0, "At least one Cargo registry package set is required");
+  const packagesByIdentity = new Map();
+  let referenceCount = 0;
+  for (const packageSet of packageSets) {
+    require(Array.isArray(packageSet), "Cargo registry package set must be an array");
+    const identitiesInSet = new Set();
+    for (const cargoPackage of packageSet) {
+      const identity = createArchiveIdentity(cargoPackage);
+      require(!identitiesInSet.has(identity.id), `Duplicate Cargo registry package in one lockfile: ${identity.id}`);
+      identitiesInSet.add(identity.id);
+      referenceCount += 1;
+      const previous = packagesByIdentity.get(identity.id);
+      require(
+        previous === undefined || previous.sha256 === identity.sha256,
+        `${identity.id}: Cargo.lock files disagree on the registry checksum`,
+      );
+      if (previous === undefined) packagesByIdentity.set(identity.id, cargoPackage);
+    }
+  }
+  const registryPackages = [...packagesByIdentity.values()].sort(compareCrateIdentity);
+  return {
+    registryPackages,
+    referenceCount,
+    sharedIdentityCount: referenceCount - registryPackages.length,
+  };
+}
+
 export async function resolveCargoInputs({
   bunRepository,
+  rustToolchain,
   outputDirectory,
   offline = false,
   onProgress = () => {},
 } = {}) {
   require(typeof bunRepository === "string" && bunRepository.length > 0, "A Bun repository is required");
+  require(typeof rustToolchain === "string" && rustToolchain.length > 0, "A Rust toolchain is required");
   require(typeof outputDirectory === "string" && outputDirectory.length > 0, "An output directory is required");
   require(typeof onProgress === "function", "onProgress must be a function");
   const repository = verifyBunRepository(bunRepository);
+  const rustToolchainRoot = verifyRustToolchain(rustToolchain);
   const cargoLockPath = resolve(repository, EXPECTED_CARGO_LOCK.path);
   const cargoLockBytes = readFileSync(cargoLockPath);
   const parsed = parseCargoLock(cargoLockBytes.toString("utf8"));
   require(parsed.packages.length === EXPECTED_CARGO_LOCK.packageCount, "Cargo.lock package count changed during resolution");
   require(parsed.registryPackages.length === EXPECTED_CARGO_LOCK.registryPackageCount, "Cargo.lock registry package count changed during resolution");
   require(parsed.gitSourceCount === EXPECTED_CARGO_LOCK.gitSourceCount, "Cargo.lock gained a Git source during resolution");
+  const rustStdCargoLockPath = resolve(rustToolchainRoot, EXPECTED_RUST_STD_CARGO_LOCK.path);
+  const rustStdCargoLockBytes = readFileSync(rustStdCargoLockPath);
+  const rustStdParsed = parseCargoLock(rustStdCargoLockBytes.toString("utf8"));
+  require(
+    rustStdParsed.packages.length === EXPECTED_RUST_STD_CARGO_LOCK.packageCount,
+    "Rust standard-library Cargo.lock package count changed during resolution",
+  );
+  require(
+    rustStdParsed.registryPackages.length === EXPECTED_RUST_STD_CARGO_LOCK.registryPackageCount,
+    "Rust standard-library Cargo.lock registry package count changed during resolution",
+  );
+  require(
+    rustStdParsed.gitSourceCount === EXPECTED_RUST_STD_CARGO_LOCK.gitSourceCount,
+    "Rust standard-library Cargo.lock gained a Git source during resolution",
+  );
+  const merged = mergeCargoRegistryPackages(parsed.registryPackages, rustStdParsed.registryPackages);
 
   const outputRoot = prepareOutputDirectory(outputDirectory);
   const archiveDirectory = prepareOutputDirectory(join(outputRoot, "archives"));
   const archives = [];
-  for (let index = 0; index < parsed.registryPackages.length; index += 1) {
-    const cargoPackage = parsed.registryPackages[index];
+  for (let index = 0; index < merged.registryPackages.length; index += 1) {
+    const cargoPackage = merged.registryPackages[index];
     const identity = createArchiveIdentity(cargoPackage);
     const target = join(archiveDirectory, identity.filename);
     let source;
@@ -322,25 +403,28 @@ export async function resolveCargoInputs({
       bytes,
       sha256: identity.sha256,
     });
-    onProgress({ index: index + 1, total: parsed.registryPackages.length, artifact: identity, bytes, source });
+    onProgress({ index: index + 1, total: merged.registryPackages.length, artifact: identity, bytes, source });
   }
 
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     snapshotDate: "2026-09-03",
     bunCommit: EXPECTED_BUN_COMMIT,
     cargoLock: { ...EXPECTED_CARGO_LOCK },
+    rustStdCargoLock: { ...EXPECTED_RUST_STD_CARGO_LOCK },
     registrySource: REGISTRY_SOURCE,
     archiveUrlPattern: ARCHIVE_URL_PATTERN,
+    registryPackageReferenceCount: merged.referenceCount,
+    sharedRegistryPackageCount: merged.sharedIdentityCount,
     archiveCount: archives.length,
     totalArchiveBytes: archives.reduce((total, archive) => total + archive.bytes, 0),
     archives,
     readiness: {
-      archiveIdentitiesLockedByCargo: true,
+      archiveIdentitiesLockedByCargoLocks: true,
       archiveByteCountsLockedByProject: true,
       archivesMaterializedAndVerified: true,
       offlineSourceReplacementReady: false,
-      note: "All crates.io archives were downloaded and verified against Cargo.lock, then locked by canonical URL, exact byte count, and SHA-256. An unpacked Cargo directory source and offline Cargo invocation are still pending.",
+      note: "All crates.io archives were downloaded and verified against the Bun workspace and pinned Rust standard-library Cargo.lock files, then locked by canonical URL, exact byte count, and SHA-256. An unpacked Cargo directory source and offline Cargo invocation are still pending.",
     },
   };
 }
@@ -361,6 +445,21 @@ function verifyBunRepository(path) {
   require(sha256(bytes) === EXPECTED_CARGO_LOCK.sha256, "Cargo.lock SHA-256 does not match the locked identity");
   require(runGit(repository, ["hash-object", EXPECTED_CARGO_LOCK.path]) === EXPECTED_CARGO_LOCK.gitBlobSha1, "Cargo.lock Git blob does not match the locked identity");
   return repository;
+}
+
+function verifyRustToolchain(path) {
+  require(isAbsolute(path), "The Rust toolchain path must be absolute");
+  const requested = resolve(path);
+  const stat = lstatSync(requested);
+  require(stat.isDirectory() && !stat.isSymbolicLink(), "The Rust toolchain must be a real directory");
+  const toolchain = realpathSync(requested);
+  const cargoLockPath = resolve(toolchain, EXPECTED_RUST_STD_CARGO_LOCK.path);
+  require(cargoLockPath.startsWith(`${toolchain}/`) || cargoLockPath.startsWith(`${toolchain}\\`), "Rust standard-library Cargo.lock escapes the toolchain");
+  verifyRegularFile(cargoLockPath, "Rust standard-library Cargo.lock");
+  const bytes = readFileSync(cargoLockPath);
+  require(bytes.length === EXPECTED_RUST_STD_CARGO_LOCK.bytes, "Rust standard-library Cargo.lock byte count does not match the locked identity");
+  require(sha256(bytes) === EXPECTED_RUST_STD_CARGO_LOCK.sha256, "Rust standard-library Cargo.lock SHA-256 does not match the locked identity");
+  return toolchain;
 }
 
 function runGit(repository, arguments_) {
@@ -545,16 +644,13 @@ function writeResolvedLock(path, lock) {
   return target;
 }
 
-function verifyCargoLockIdentity(identity) {
+function verifyCargoLockIdentity(identity, expected, { requireGitBlob }) {
   requireRecord(identity, "Cargo.lock identity");
-  for (const [key, expected] of Object.entries({
-    path: EXPECTED_CARGO_LOCK.path,
-    bytes: EXPECTED_CARGO_LOCK.bytes,
-    gitBlobSha1: EXPECTED_CARGO_LOCK.gitBlobSha1,
-    sha256: EXPECTED_CARGO_LOCK.sha256,
-  })) {
-    require(identity[key] === expected, `Cargo.lock ${key} does not match the expected identity`);
+  for (const key of ["path", "bytes", "sha256"]) {
+    require(identity[key] === expected[key], `Cargo.lock ${key} does not match the expected identity`);
   }
+  if (requireGitBlob) require(identity.gitBlobSha1 === expected.gitBlobSha1, "Cargo.lock gitBlobSha1 does not match the expected identity");
+  else require(identity.gitBlobSha1 === undefined, "Non-Git Cargo.lock identity must not claim a Git blob");
   require(Number.isSafeInteger(identity.packageCount) && identity.packageCount > 0, "Cargo.lock package count is invalid");
   require(Number.isSafeInteger(identity.registryPackageCount) && identity.registryPackageCount > 0, "Cargo.lock registry package count is invalid");
   require(identity.registryPackageCount <= identity.packageCount, "Cargo.lock registry package count exceeds the package count");
@@ -624,18 +720,21 @@ function parseArguments(argv) {
     values[key] = value;
     index += 1;
   }
-  const allowed = new Set(["--output-directory", "--bun-repository", "--resolved-lock-output"]);
+  const allowed = new Set(["--output-directory", "--lock-path", "--bun-repository", "--rust-toolchain", "--resolved-lock-output"]);
   for (const key of Object.keys(values)) require(allowed.has(key), `Unknown argument: ${key}`);
   require(values["--output-directory"], USAGE.trim());
   if (resolveMode) {
-    require(values["--bun-repository"] && values["--resolved-lock-output"], USAGE.trim());
+    require(values["--bun-repository"] && values["--rust-toolchain"] && values["--resolved-lock-output"], USAGE.trim());
+    require(values["--lock-path"] === undefined, "--lock-path cannot be used with --resolve");
     require(!prepareDirectorySource, "--prepare-directory-source requires the checked-in Cargo input lock");
   } else {
-    require(values["--bun-repository"] === undefined && values["--resolved-lock-output"] === undefined, USAGE.trim());
+    require(values["--bun-repository"] === undefined && values["--rust-toolchain"] === undefined && values["--resolved-lock-output"] === undefined, USAGE.trim());
   }
   return {
     outputDirectory: values["--output-directory"],
+    lockPath: values["--lock-path"],
     bunRepository: values["--bun-repository"],
+    rustToolchain: values["--rust-toolchain"],
     resolvedLockOutput: values["--resolved-lock-output"],
     offline,
     prepareDirectorySource,
@@ -653,8 +752,8 @@ function require(condition, message) {
 
 const USAGE = `
 Usage:
-  node materialize-cargo-inputs.mjs --output-directory <dir> [--offline] [--prepare-directory-source]
-  node materialize-cargo-inputs.mjs --resolve --bun-repository <dir> --output-directory <dir> --resolved-lock-output <file> [--offline]
+  node materialize-cargo-inputs.mjs --output-directory <dir> [--lock-path <file>] [--offline] [--prepare-directory-source]
+  node materialize-cargo-inputs.mjs --resolve --bun-repository <dir> --rust-toolchain <dir> --output-directory <dir> --resolved-lock-output <file> [--offline]
 `;
 
 const invokedPath = process.argv[1] === undefined ? null : resolve(process.argv[1]);
@@ -664,6 +763,7 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     if (options.resolveMode) {
       const lock = await resolveCargoInputs({
         bunRepository: options.bunRepository,
+        rustToolchain: options.rustToolchain,
         outputDirectory: options.outputDirectory,
         offline: options.offline,
         onProgress({ index, total, artifact, bytes, source }) {
