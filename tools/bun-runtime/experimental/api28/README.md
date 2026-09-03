@@ -3,11 +3,11 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-> Status: source backport, Android-release dependency bytes, and immutable
-> direct toolchain downloads verified; not build ready. No patched Bun binary
-> has been built, validated, or approved for distribution from this directory.
-> The unmodified official Bun artifacts remain the only runtime artifacts used
-> by the plugin.
+> Status: source backport, Android-release dependency bytes, immutable direct
+> toolchain downloads, and Cargo/Bun registry inputs verified; not build ready.
+> No patched Bun binary has been built, validated, or approved for distribution
+> from this directory. The unmodified official Bun artifacts remain the only
+> runtime artifacts used by the plugin.
 
 ## Safety boundary
 
@@ -76,11 +76,27 @@ exact byte count, and Cargo.lock SHA-256, totalling 26,354,160 bytes. Its
 materializer safely reproduces a versioned Cargo directory source with
 per-file checksums. Pinned Cargo 1.99.0-nightly loaded the full Bun workspace
 with `--locked --offline`, that source replacement, and an otherwise empty
-Cargo home. The three frozen Bun installs used by code generation still contain
-172 unresolved external SHA-512 integrity entries. Their Linux x86_64 platform
-selection, registry URLs, archive bytes, lifecycle-script behavior, and offline
-cache remain open, as do the mutable Ubuntu/PPA/apt.llvm.org package closure and
-exact GCC/LLVM package files.
+Cargo home.
+
+`bun-inputs.lock.json` resolves the three frozen Bun installs from 172 external
+lock references to 164 unique identities, then selects exactly 125 unique npm
+archives for Linux x64 after excluding 39 platform-only packages. Those
+archives total 31,498,870 bytes and are locked by the Bun lockfiles' SHA-512,
+project-recorded SHA-256, exact bytes, safe archive root, extracted file-tree
+digest, and Bun 1.3.13 cache directory. Both x64 GNU and musl oxlint bindings
+are retained because Bun's lockfile records OS and CPU but no libc condition.
+Only `esbuild@0.21.5` has an install lifecycle script; Bun reports it as
+default-trusted and reports no untrusted scripted dependencies.
+
+The materializer reproduced a minimal cache containing only those 125 version
+directories and no alias symlinks. A fresh detached checkout completed all
+three exact `bun install --frozen-lockfile` commands in the digest-locked
+Ubuntu 20.04 container under `--network none`, with that cache mounted
+read-only from a mode-preserving WSL2 ext4 filesystem. Exact executable modes,
+all three lockfiles, and the Git tree remained unchanged, and the installed
+esbuild reported `0.21.5`. The mutable Ubuntu/PPA/apt.llvm.org package closure
+and exact GCC/LLVM package files remain open, as does a full network-disabled
+configure and Ninja run.
 
 ## Directory contract
 
@@ -92,6 +108,7 @@ api28/
   toolchain-inputs.lock.json        direct toolchain bytes and host-package gap
   build-network-inputs.lock.json    Cargo/Bun lockfile closure and offline gap
   cargo-inputs.lock.json            exact crates.io archive and directory-source lock
+  bun-inputs.lock.json              exact npm archives and minimal Bun cache lock
   config/*.configure.json           pinned Bun configure inputs for two ABIs
   patches/series.lock.json          immutable PR snapshot and downstream chain
   patches/upstream-reference/       verified immutable upstream patch evidence
@@ -100,6 +117,7 @@ api28/
   materialize-source-inputs.mjs     exact Bun prefetch-layout source fetcher
   materialize-toolchain-inputs.mjs  exact direct-toolchain download fetcher
   materialize-cargo-inputs.mjs      Cargo archive and offline directory-source tool
+  materialize-bun-inputs.mjs        npm archive and minimal offline-cache tool
   materialize-upstream-patches.ps1  online, immutable-source patch fetcher
   verify-experiment.mjs             offline static verifier
   *.test.mjs                        verifier/materializer/build-gate regressions
@@ -115,15 +133,16 @@ api28/
    node tools/bun-runtime/experimental/api28/build-experiment.mjs
    node --test `
      tools/bun-runtime/experimental/api28/verify-experiment.test.mjs `
+     tools/bun-runtime/experimental/api28/materialize-bun-inputs.test.mjs `
      tools/bun-runtime/experimental/api28/materialize-cargo-inputs.test.mjs `
      tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs `
      tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs `
      tools/bun-runtime/experimental/api28/build-experiment.test.mjs
    ```
 
-2. Materialize immutable source, direct-toolchain, and Cargo inputs only into
-   explicit cache directories. Existing files are accepted only after exact
-   verification and are never overwritten:
+2. Materialize immutable source, direct-toolchain, Cargo, and Bun registry
+   inputs only into explicit cache directories. Existing files are accepted
+   only after exact verification and are never overwritten:
 
    ```powershell
    node tools/bun-runtime/experimental/api28/materialize-source-inputs.mjs `
@@ -137,22 +156,32 @@ api28/
    node tools/bun-runtime/experimental/api28/materialize-cargo-inputs.mjs `
      --output-directory <absolute-cargo-input-directory> `
      --prepare-directory-source
+
+   wsl node tools/bun-runtime/experimental/api28/materialize-bun-inputs.mjs `
+     --output-directory <absolute-bun-input-directory> `
+     --prepare-cache
    ```
 
    Source groups are `github-archives`, `source-prebuilts`, and `all-source`.
    Toolchain groups are `bootstrap`, `android-ndk`, `build`, `provenance`, and
    `all`. Add `--offline` to prove that a previously populated cache is
    complete without making a network request. Source inputs use Bun's exact
-   `by-url/<first-32-URL-SHA256>` prefetch layout. The Cargo tool rejects unsafe
-   tar paths, links, and special files, creates `vendor/<name>-<version>` plus
-   `.cargo-checksum.json`, and writes a relative source-replacement config under
-   `cargo-home/config.toml`. None of these tools writes to a plugin runtime
-   directory.
+   `by-url/<first-32-URL-SHA256>` prefetch layout. The Cargo and Bun tools reject
+   unsafe tar paths, links, and special files. The Cargo tool creates
+   `vendor/<name>-<version>` plus `.cargo-checksum.json` and writes a relative
+   source-replacement config under `cargo-home/config.toml`. Bun cache creation
+   requires a mode-preserving Linux filesystem (for WSL, use the distro
+   filesystem such as `/home/...`, not DrvFS `/mnt/<drive>`); it creates only
+   the locked version directories under `cache/`. None of these tools writes to
+   a plugin runtime directory.
 
-   When intentionally refreshing the Cargo lock after an upstream change, the
+   When intentionally refreshing a registry lock after an upstream change, the
    explicit `--resolve` mode requires a clean checkout at the deterministic
    downstream commit and writes its candidate lock to a new caller-selected
-   path. Review that external candidate before updating the checked-in lock.
+   path. Bun resolution additionally requires a cache populated once by the
+   pinned bootstrap Bun so every extracted archive can be compared with Bun's
+   observed cache layout. Review that external candidate and repeat the
+   network-disabled replay before updating the checked-in lock.
 
 3. Re-materialize upstream review evidence from immutable `oven-sh/bun` commit
    URLs when auditing a fresh checkout:
@@ -191,12 +220,14 @@ api28/
 6. The same entry has a non-mutating full-input preflight. It requires a clean
    Bun checkout at the deterministic downstream head, no existing experimental
    build root, all 22 source inputs, all 17 direct toolchain inputs, all 181
-   Cargo archives and their checksum-verified directory source, and an installed
-   NDK r27c:
+   Cargo archives and their checksum-verified directory source, all 125 Bun
+   registry archives and their verified minimal cache, and an installed NDK
+   r27c:
 
    ```powershell
    node tools/bun-runtime/experimental/api28/build-experiment.mjs --preflight `
      --bun-repository <absolute-clean-patched-bun-repository> `
+     --bun-input-directory <absolute-bun-input-directory> `
      --cargo-input-directory <absolute-cargo-input-directory> `
      --source-prefetch-directory <absolute-source-prefetch-directory> `
      --toolchain-directory <absolute-toolchain-directory> `
@@ -207,9 +238,9 @@ api28/
    CMake, Ninja, Clang, Rust, and Cargo versions before it can configure or run
    Ninja. It is hard-locked while `buildReady` is false, so no current command
    can accidentally turn this incomplete supply chain into an untracked Bun
-   executable. The future execution path sets the locked source prefetch, Cargo
-   home and offline policy, NDK, Rust toolchain, `SOURCE_DATE_EPOCH`, locale,
-   and timezone for both ABIs.
+   executable. The future execution path sets the locked source prefetch, Bun
+   install cache, Cargo home and offline policy, NDK, Rust toolchain,
+   `SOURCE_DATE_EPOCH`, locale, and timezone for both ABIs.
 
 ## Gates that remain open
 
@@ -218,8 +249,6 @@ At minimum, later work must:
 
 - snapshot-pin every Ubuntu/PPA/apt.llvm.org package and the exact GCC/LLVM
   package closure, then lock the resulting Linux amd64 OCI image;
-- resolve and materialize the exact Linux x86_64 subset of 172 Bun registry
-  entries into a verified offline cache;
 - run the full preflight and prove configure plus Ninja make no unrecorded
   network request;
 - build both ABIs twice and explain every binary difference;

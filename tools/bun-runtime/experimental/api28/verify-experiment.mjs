@@ -4,6 +4,7 @@ import { dirname, extname, isAbsolute, relative, resolve, sep, win32 } from "nod
 import { fileURLToPath } from "node:url";
 
 import { collectCargoArtifacts } from "./materialize-cargo-inputs.mjs";
+import { collectBunArtifacts } from "./materialize-bun-inputs.mjs";
 
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const SHA1 = /^[0-9a-f]{40}$/;
@@ -68,7 +69,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   requireEqual(lock.schemaVersion, 1, "experiment.lock.json: schemaVersion");
   requireRecord(lock.identity, "experiment.lock.json: identity");
   requireEqual(lock.identity.variant, "bun-1.4.0-android-api28-patched-experimental", "identity.variant");
-  requireEqual(lock.identity.status, "source-backport-direct-and-cargo-inputs-verified", "identity.status");
+  requireEqual(lock.identity.status, "source-backport-direct-and-registry-inputs-verified", "identity.status");
   requireEqual(lock.identity.officialArtifact, false, "identity.officialArtifact");
   requireEqual(lock.identity.runtimeProduced, false, "identity.runtimeProduced");
   requireEqual(lock.identity.buildReady, false, "identity.buildReady");
@@ -107,6 +108,8 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
     cargoRegistryPackageCount: buildNetworkInputResult.cargoRegistryPackages,
     lockedCargoArchiveBytes: buildNetworkInputResult.cargoArchiveBytes,
     bunIntegrityEntryCount: buildNetworkInputResult.bunIntegrityEntries,
+    bunRegistryPackageCount: buildNetworkInputResult.bunRegistryPackages,
+    lockedBunArchiveBytes: buildNetworkInputResult.bunArchiveBytes,
     buildReady: lock.identity.buildReady,
     distributionReady: lock.identity.distributionReady,
   };
@@ -365,6 +368,10 @@ function verifyBuildNetworkInputs(root, experiment, series) {
 
   requireRecord(lock.bunInstall, "build network Bun install closure");
   requireEqual(lock.bunInstall.command, "bun install --frozen-lockfile", "Bun install command");
+  requireEqual(lock.bunInstall.archiveLock, "bun-inputs.lock.json", "Bun archive lock path");
+  const bunArchiveLockPath = resolveInside(root, lock.bunInstall.archiveLock, "Bun archive lock path");
+  const bunArchiveLock = readJson(bunArchiveLockPath);
+  const bunArtifacts = collectBunArtifacts(bunArchiveLock);
   requireSameArray(
     lock.bunInstall.directories,
     [".", "packages/bun-error", "src/node-fallbacks"],
@@ -412,15 +419,33 @@ function verifyBuildNetworkInputs(root, experiment, series) {
   requireEqual(lock.bunInstall.packageEntryCount, 174, "Bun package entry count");
   requireEqual(lock.bunInstall.sha512IntegrityCount, 172, "Bun SHA-512 integrity count");
   requireEqual(lock.bunInstall.workspaceEntryCount, 2, "Bun workspace entry count");
+  requireEqual(lock.bunInstall.uniqueExternalPackageCount, 164, "Bun unique external package count");
+  requireEqual(lock.bunInstall.selectedReferenceCount, 133, "Bun selected reference count");
+  requireEqual(lock.bunInstall.selectedUniquePackageCount, 125, "Bun selected package count");
+  requireEqual(lock.bunInstall.excludedPlatformPackageCount, 39, "Bun excluded platform package count");
+  requireEqual(lock.bunInstall.archiveBytes, 31498870, "Bun archive bytes");
   for (const field of [
     "platformSelectionResolved",
     "registryTarballUrlsLockedByProject",
     "archiveByteCountsLockedByProject",
     "archivesMaterializedByProject",
     "offlineCacheReady",
+    "networkDisabledReplayPassed",
   ]) {
-    requireEqual(lock.bunInstall[field], false, `Bun install ${field}`);
+    requireEqual(lock.bunInstall[field], true, `Bun install ${field}`);
   }
+  requireEqual(bunArchiveLock.bunCommit, lock.bunCommit, "Bun archive lock commit");
+  requireEqual(bunArchiveLock.command, lock.bunInstall.command, "Bun archive lock command");
+  requireEqual(bunArchiveLock.archiveCount, lock.bunInstall.selectedUniquePackageCount, "Bun archive lock count");
+  requireEqual(bunArchiveLock.totalArchiveBytes, lock.bunInstall.archiveBytes, "Bun archive byte cross-lock");
+  requireEqual(bunArchiveLock.selection.packageEntryCount, lock.bunInstall.packageEntryCount, "Bun archive package entry cross-lock");
+  requireEqual(bunArchiveLock.selection.externalReferenceCount, lock.bunInstall.sha512IntegrityCount, "Bun archive reference cross-lock");
+  requireEqual(bunArchiveLock.selection.workspaceReferenceCount, lock.bunInstall.workspaceEntryCount, "Bun archive workspace cross-lock");
+  requireEqual(bunArchiveLock.selection.uniqueExternalPackageCount, lock.bunInstall.uniqueExternalPackageCount, "Bun archive unique package cross-lock");
+  requireEqual(bunArchiveLock.selection.selectedReferenceCount, lock.bunInstall.selectedReferenceCount, "Bun archive selected reference cross-lock");
+  requireEqual(bunArchiveLock.selection.selectedUniquePackageCount, lock.bunInstall.selectedUniquePackageCount, "Bun archive selected package cross-lock");
+  requireEqual(bunArchiveLock.selection.excludedUniquePackageCount, lock.bunInstall.excludedPlatformPackageCount, "Bun archive excluded package cross-lock");
+  requireEqual(bunArtifacts.length, lock.bunInstall.selectedUniquePackageCount, "Bun locked archive count");
   requireNonEmptyString(lock.bunInstall.note, "Bun install closure note");
 
   requireRecord(lock.targetExclusions, "build network target exclusions");
@@ -429,7 +454,8 @@ function verifyBuildNetworkInputs(root, experiment, series) {
   requireNonEmptyString(lock.targetExclusions.reason, "network target exclusion reason");
   requireEqual(lock.readiness?.lockfileIdentitiesComplete, true, "network lockfile identity readiness");
   requireEqual(lock.readiness?.cargoArchiveClosureComplete, true, "Cargo archive closure readiness");
-  requireEqual(lock.readiness?.bunArchiveClosureComplete, false, "Bun archive closure readiness");
+  requireEqual(lock.readiness?.bunArchiveClosureComplete, true, "Bun archive closure readiness");
+  requireEqual(lock.readiness?.offlineBunInstallReplayPassed, true, "offline Bun install replay readiness");
   requireEqual(lock.readiness?.offlineBuildNetworkTestPassed, false, "offline network test readiness");
   requireEqual(lock.readiness?.complete, false, "build network lock completeness");
   requireNonEmptyString(lock.readiness?.resolutionGate, "build network resolution gate");
@@ -437,6 +463,8 @@ function verifyBuildNetworkInputs(root, experiment, series) {
     cargoRegistryPackages: lock.cargo.registryPackageCount,
     cargoArchiveBytes: lock.cargo.archiveBytes,
     bunIntegrityEntries: lock.bunInstall.sha512IntegrityCount,
+    bunRegistryPackages: lock.bunInstall.selectedUniquePackageCount,
+    bunArchiveBytes: lock.bunInstall.archiveBytes,
   };
 }
 
@@ -1110,11 +1138,15 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
     );
     console.log(
       `OK ${result.cargoRegistryPackageCount} Cargo archives are byte-locked ` +
-        `(${result.lockedCargoArchiveBytes} bytes) with a verified offline directory source; ` +
-        `${result.bunIntegrityEntryCount} Bun registry integrity entries remain to be materialized`,
+        `(${result.lockedCargoArchiveBytes} bytes) with a verified offline directory source`,
+    );
+    console.log(
+      `OK ${result.bunIntegrityEntryCount} Bun registry references resolve to ` +
+        `${result.bunRegistryPackageCount} locked archives (${result.lockedBunArchiveBytes} bytes) ` +
+        "and a network-disabled read-only cache replay",
     );
     console.log("OK no runtime/archive artifact is present in the experiment directory");
-    console.log("NOT BUILD READY: the host APT/GCC/LLVM and build-time network closure, build, ELF audit, and device evidence are open");
+    console.log("NOT BUILD READY: the host APT/GCC/LLVM closure, full network-disabled configure/Ninja run, build, ELF audit, and device evidence are open");
   } catch (error) {
     console.error(`ERROR ${error.message}`);
     process.exitCode = 1;

@@ -37,6 +37,7 @@
   },
   "bunInstall": {
     "command": "bun install --frozen-lockfile",
+    "archiveLock": "bun-inputs.lock.json",
     "directories": [
       ".",
       "packages/bun-error",
@@ -74,12 +75,18 @@
     "packageEntryCount": 174,
     "sha512IntegrityCount": 172,
     "workspaceEntryCount": 2,
-    "platformSelectionResolved": false,
-    "registryTarballUrlsLockedByProject": false,
-    "archiveByteCountsLockedByProject": false,
-    "archivesMaterializedByProject": false,
-    "offlineCacheReady": false,
-    "note": "All external entries carry SHA-512 integrity in their pinned Bun lockfile. The exact Linux x86_64 install subset, canonical registry tarball URLs, byte counts, lifecycle-script behavior, and a reusable offline Bun cache still require materialization."
+    "uniqueExternalPackageCount": 164,
+    "selectedReferenceCount": 133,
+    "selectedUniquePackageCount": 125,
+    "excludedPlatformPackageCount": 39,
+    "archiveBytes": 31498870,
+    "platformSelectionResolved": true,
+    "registryTarballUrlsLockedByProject": true,
+    "archiveByteCountsLockedByProject": true,
+    "archivesMaterializedByProject": true,
+    "offlineCacheReady": true,
+    "networkDisabledReplayPassed": true,
+    "note": "The Linux x64 selection resolves 172 external references to 125 unique archives after deduplication and 39 platform exclusions. All canonical npm tarballs are locked by Bun SHA-512, project SHA-256, and exact byte count; a minimal 125-directory cache with exact executable modes was reproduced on WSL2 ext4 and passed all three frozen installs with the cache read-only in the locked Ubuntu container under --network none."
   },
   "targetExclusions": {
     "excludedDownloaders": [
@@ -93,9 +100,10 @@
   "readiness": {
     "lockfileIdentitiesComplete": true,
     "cargoArchiveClosureComplete": true,
-    "bunArchiveClosureComplete": false,
+    "bunArchiveClosureComplete": true,
+    "offlineBunInstallReplayPassed": true,
     "offlineBuildNetworkTestPassed": false,
     "complete": false,
-    "resolutionGate": "Resolve and materialize the exact Linux x86_64 Bun registry subset into a project-owned offline cache, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
+    "resolutionGate": "Lock the mutable Ubuntu/PPA/apt.llvm.org host package layer, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
   }
 }
