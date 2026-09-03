@@ -22,6 +22,7 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.lockedToolchainBuildArtifactCount, 12);
   assert.equal(result.lockedToolchainProvenanceCount, 5);
   assert.equal(result.cargoRegistryPackageCount, 181);
+  assert.equal(result.lockedCargoArchiveBytes, 26354160);
   assert.equal(result.bunIntegrityEntryCount, 172);
 });
 
@@ -164,7 +165,7 @@ test("every Cargo registry package must retain a Cargo.lock checksum", () => {
   });
 });
 
-test("the unmaterialized build-network closure cannot be reported complete", () => {
+test("the remaining Bun build-network closure cannot be reported complete", () => {
   withExperimentCopy((copy) => {
     const lockPath = resolve(copy, "build-network-inputs.lock.json");
     const lock = JSON.parse(readFileSync(lockPath, "utf8"));

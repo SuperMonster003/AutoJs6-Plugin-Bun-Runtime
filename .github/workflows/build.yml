@@ -41,6 +41,7 @@ jobs:
           node tools/bun-runtime/experimental/api28/build-experiment.mjs
           node --test \
             tools/bun-runtime/experimental/api28/verify-experiment.test.mjs \
+            tools/bun-runtime/experimental/api28/materialize-cargo-inputs.test.mjs \
             tools/bun-runtime/experimental/api28/materialize-source-inputs.test.mjs \
             tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.test.mjs \
             tools/bun-runtime/experimental/api28/build-experiment.test.mjs
@@ -53,6 +54,9 @@ jobs:
           node tools/bun-runtime/experimental/api28/materialize-toolchain-inputs.mjs \
             --output-directory "$RUNNER_TEMP/bun-api28-toolchain-provenance" \
             --group provenance
+          node tools/bun-runtime/experimental/api28/materialize-cargo-inputs.mjs \
+            --output-directory "$RUNNER_TEMP/bun-api28-cargo" \
+            --prepare-directory-source
 
       - name: Replay the Bun v1.4.0 downstream source series
         run: |

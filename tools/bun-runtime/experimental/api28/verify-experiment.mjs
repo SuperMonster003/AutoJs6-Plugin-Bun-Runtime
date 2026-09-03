@@ -3,6 +3,8 @@ import { existsSync, lstatSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, extname, isAbsolute, relative, resolve, sep, win32 } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { collectCargoArtifacts } from "./materialize-cargo-inputs.mjs";
+
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const SHA1 = /^[0-9a-f]{40}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
@@ -66,7 +68,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   requireEqual(lock.schemaVersion, 1, "experiment.lock.json: schemaVersion");
   requireRecord(lock.identity, "experiment.lock.json: identity");
   requireEqual(lock.identity.variant, "bun-1.4.0-android-api28-patched-experimental", "identity.variant");
-  requireEqual(lock.identity.status, "source-backport-and-direct-inputs-verified", "identity.status");
+  requireEqual(lock.identity.status, "source-backport-direct-and-cargo-inputs-verified", "identity.status");
   requireEqual(lock.identity.officialArtifact, false, "identity.officialArtifact");
   requireEqual(lock.identity.runtimeProduced, false, "identity.runtimeProduced");
   requireEqual(lock.identity.buildReady, false, "identity.buildReady");
@@ -103,6 +105,7 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
     lockedToolchainBuildArtifactCount: toolchainInputResult.buildArtifacts,
     lockedToolchainProvenanceCount: toolchainInputResult.provenanceDocuments,
     cargoRegistryPackageCount: buildNetworkInputResult.cargoRegistryPackages,
+    lockedCargoArchiveBytes: buildNetworkInputResult.cargoArchiveBytes,
     bunIntegrityEntryCount: buildNetworkInputResult.bunIntegrityEntries,
     buildReady: lock.identity.buildReady,
     distributionReady: lock.identity.distributionReady,
@@ -298,7 +301,7 @@ function verifyBuildNetworkInputs(root, experiment, series) {
   const lockPath = resolveInside(root, experiment.buildNetworkInputLock, "buildNetworkInputLock");
   const lock = readJson(lockPath);
   requireEqual(lock.schemaVersion, 1, "build-network-inputs.lock.json: schemaVersion");
-  requireEqual(lock.snapshotDate, "2026-09-02", "build-network-inputs.lock.json: snapshotDate");
+  requireEqual(lock.snapshotDate, "2026-09-03", "build-network-inputs.lock.json: snapshotDate");
   requireEqual(lock.bunCommit, series.downstreamBackport.headCommit, "build network Bun commit");
   verifyDefinitionRecords(
     lock.buildMachinery,
@@ -318,6 +321,10 @@ function verifyBuildNetworkInputs(root, experiment, series) {
   );
 
   requireRecord(lock.cargo, "build network Cargo closure");
+  requireEqual(lock.cargo.archiveLock, "cargo-inputs.lock.json", "Cargo archive lock path");
+  const cargoArchiveLockPath = resolveInside(root, lock.cargo.archiveLock, "Cargo archive lock path");
+  const cargoArchiveLock = readJson(cargoArchiveLockPath);
+  const cargoArtifacts = collectCargoArtifacts(cargoArchiveLock);
   verifyLockfileIdentity(lock.cargo.lockfile, {
     path: "Cargo.lock",
     bytes: 70318,
@@ -339,9 +346,21 @@ function verifyBuildNetworkInputs(root, experiment, series) {
     "Cargo archive URL pattern",
   );
   requireEqual(lock.cargo.archiveIdentitiesLockedByCargo, true, "Cargo archive identity readiness");
-  requireEqual(lock.cargo.archiveByteCountsLockedByProject, false, "Cargo archive byte readiness");
-  requireEqual(lock.cargo.archivesMaterializedByProject, false, "Cargo archive materialization readiness");
-  requireEqual(lock.cargo.offlineSourceReplacementReady, false, "Cargo offline source readiness");
+  requireEqual(lock.cargo.archiveByteCountsLockedByProject, true, "Cargo archive byte readiness");
+  requireEqual(lock.cargo.archivesMaterializedByProject, true, "Cargo archive materialization readiness");
+  requireEqual(lock.cargo.archiveBytes, 26354160, "Cargo archive bytes");
+  requireEqual(lock.cargo.offlineSourceReplacementReady, true, "Cargo offline source readiness");
+  requireEqual(cargoArchiveLock.cargoLock.path, lock.cargo.lockfile.path, "Cargo archive source lock path");
+  requireEqual(cargoArchiveLock.cargoLock.bytes, lock.cargo.lockfile.bytes, "Cargo archive source lock bytes");
+  requireEqual(cargoArchiveLock.cargoLock.gitBlobSha1, lock.cargo.lockfile.gitBlobSha1, "Cargo archive source lock blob");
+  requireEqual(cargoArchiveLock.cargoLock.sha256, lock.cargo.lockfile.sha256, "Cargo archive source lock SHA-256");
+  requireEqual(cargoArchiveLock.cargoLock.packageCount, lock.cargo.packageCount, "Cargo archive source package count");
+  requireEqual(cargoArchiveLock.cargoLock.registryPackageCount, lock.cargo.registryPackageCount, "Cargo archive source registry count");
+  requireEqual(cargoArchiveLock.cargoLock.gitSourceCount, lock.cargo.gitSourceCount, "Cargo archive source Git count");
+  requireEqual(cargoArchiveLock.registrySource, lock.cargo.registrySource, "Cargo archive registry source");
+  requireEqual(cargoArchiveLock.archiveUrlPattern, lock.cargo.archiveUrlPattern, "Cargo archive URL pattern cross-lock");
+  requireEqual(cargoArchiveLock.totalArchiveBytes, lock.cargo.archiveBytes, "Cargo archive byte cross-lock");
+  requireEqual(cargoArtifacts.length, lock.cargo.registryPackageCount, "Cargo locked archive count");
   requireNonEmptyString(lock.cargo.note, "Cargo closure note");
 
   requireRecord(lock.bunInstall, "build network Bun install closure");
@@ -409,13 +428,14 @@ function verifyBuildNetworkInputs(root, experiment, series) {
   requireEqual(lock.targetExclusions.excludedDownloaders.length, 4, "excluded network downloader count");
   requireNonEmptyString(lock.targetExclusions.reason, "network target exclusion reason");
   requireEqual(lock.readiness?.lockfileIdentitiesComplete, true, "network lockfile identity readiness");
-  requireEqual(lock.readiness?.cargoArchiveClosureComplete, false, "Cargo archive closure readiness");
+  requireEqual(lock.readiness?.cargoArchiveClosureComplete, true, "Cargo archive closure readiness");
   requireEqual(lock.readiness?.bunArchiveClosureComplete, false, "Bun archive closure readiness");
   requireEqual(lock.readiness?.offlineBuildNetworkTestPassed, false, "offline network test readiness");
   requireEqual(lock.readiness?.complete, false, "build network lock completeness");
   requireNonEmptyString(lock.readiness?.resolutionGate, "build network resolution gate");
   return {
     cargoRegistryPackages: lock.cargo.registryPackageCount,
+    cargoArchiveBytes: lock.cargo.archiveBytes,
     bunIntegrityEntries: lock.bunInstall.sha512IntegrityCount,
   };
 }
@@ -1089,8 +1109,9 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
         `${result.lockedToolchainProvenanceCount} provenance documents)`,
     );
     console.log(
-      `OK build-network inventory covers ${result.cargoRegistryPackageCount} Cargo registry checksums ` +
-        `and ${result.bunIntegrityEntryCount} Bun registry integrity entries; archive materialization remains open`,
+      `OK ${result.cargoRegistryPackageCount} Cargo archives are byte-locked ` +
+        `(${result.lockedCargoArchiveBytes} bytes) with a verified offline directory source; ` +
+        `${result.bunIntegrityEntryCount} Bun registry integrity entries remain to be materialized`,
     );
     console.log("OK no runtime/archive artifact is present in the experiment directory");
     console.log("NOT BUILD READY: the host APT/GCC/LLVM and build-time network closure, build, ELF audit, and device evidence are open");

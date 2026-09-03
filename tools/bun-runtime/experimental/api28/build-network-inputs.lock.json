@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "snapshotDate": "2026-09-02",
+  "snapshotDate": "2026-09-03",
   "bunCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
   "buildMachinery": [
     {
@@ -15,6 +15,7 @@
     }
   ],
   "cargo": {
+    "archiveLock": "cargo-inputs.lock.json",
     "lockfile": {
       "path": "Cargo.lock",
       "bytes": 70318,
@@ -28,10 +29,11 @@
     "registrySource": "registry+https://github.com/rust-lang/crates.io-index",
     "archiveUrlPattern": "https://static.crates.io/crates/{name}/{name}-{version}.crate",
     "archiveIdentitiesLockedByCargo": true,
-    "archiveByteCountsLockedByProject": false,
-    "archivesMaterializedByProject": false,
-    "offlineSourceReplacementReady": false,
-    "note": "Cargo.lock supplies a SHA-256 for every crates.io package and contains no Git source. The project has not yet materialized the 181 .crate files, recorded their byte counts, or generated a verified offline Cargo source replacement."
+    "archiveByteCountsLockedByProject": true,
+    "archivesMaterializedByProject": true,
+    "archiveBytes": 26354160,
+    "offlineSourceReplacementReady": true,
+    "note": "Cargo.lock supplies a SHA-256 for every crates.io package and contains no Git source. All 181 canonical .crate files are project-locked by URL, byte count, and SHA-256; the materializer can reproduce their versioned directory source, and pinned Cargo accepted the full Bun workspace with --locked --offline and an empty CARGO_HOME."
   },
   "bunInstall": {
     "command": "bun install --frozen-lockfile",
@@ -90,10 +92,10 @@
   },
   "readiness": {
     "lockfileIdentitiesComplete": true,
-    "cargoArchiveClosureComplete": false,
+    "cargoArchiveClosureComplete": true,
     "bunArchiveClosureComplete": false,
     "offlineBuildNetworkTestPassed": false,
     "complete": false,
-    "resolutionGate": "Materialize and verify the exact Cargo and Bun registry archives, prepare project-owned offline caches/source replacement, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
+    "resolutionGate": "Resolve and materialize the exact Linux x86_64 Bun registry subset into a project-owned offline cache, then run configure and Ninja with network disabled and prove that no unrecorded fetch occurs."
   }
 }
