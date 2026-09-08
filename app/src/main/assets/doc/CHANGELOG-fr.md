@@ -12,6 +12,7 @@
 * `Amélioration` Ajouter un constructeur d'APK isolé réservé aux tests et un lanceur ciblant explicitement un appareil pour Bun modifié reproductible, avec vérification exacte des sources/APK/runtime, signature de test temporaire et rapports machine bornés
 * `Amélioration` Consigner les tests en processus applicatif arm64 natif sur API 28, 31, 33 et 35: chaque appareil réussit 10 tests sur 12 lors de deux passages; les tests de délai et de sortie excessive échouent si SIGTERM est ignoré, donc la terminaison forcée reste bloquante pour la publication
 * `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.0 et les validations des paquets signés sur appareils, sans réécrire le tag publié ni étendre la compatibilité Android ou 16 KB
+* `Dépendance` Mettre à jour le plugin de compilation en ligne autojs6-platform-versions de 1.7.3 vers 1.7.4 et synchroniser la version exigée par le dépôt
 
 # v0.2.0
 

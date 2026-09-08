@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.1": {
       "released_date": "2026/09/08",
+      "dependency": [
+        "온라인 빌드 플러그인 autojs6-platform-versions를 1.7.3에서 1.7.4로 업데이트하고 저장소의 버전 요구 사항 동기화"
+      ],
       "hint": [
         "아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함"
       ],

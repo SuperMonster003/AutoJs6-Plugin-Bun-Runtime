@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.1": {
       "released_date": "2026/09/08",
+      "dependency": [
+        "將線上建構外掛程式 autojs6-platform-versions 從 1.7.3 升級至 1.7.4, 並同步儲存庫規則中的版本要求"
+      ],
       "hint": [
         "尚未發佈的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更高版本"
       ],

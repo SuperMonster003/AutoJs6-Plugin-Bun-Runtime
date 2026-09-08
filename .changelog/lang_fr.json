@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.1": {
       "released_date": "2026/09/08",
+      "dependency": [
+        "Mettre à jour le plugin de compilation en ligne autojs6-platform-versions de 1.7.3 vers 1.7.4 et synchroniser la version exigée par le dépôt"
+      ],
       "hint": [
         "Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure"
       ],
