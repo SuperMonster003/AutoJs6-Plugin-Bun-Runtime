@@ -5,6 +5,17 @@
   "changelog_label_improvement": "优化",
   "changelog_label_dependency": "依赖",
   "$data": {
+    "v0.2.1": {
+      "released_date": "2026/09/08",
+      "hint": [
+        "尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本"
+      ],
+      "improvement": [
+        "为可复现的 patched Bun 新增独立 test-only APK 构建器和显式设备运行工具, 校验源码/APK/runtime 精确摘要, 使用临时测试签名, 输出有界的机器可读报告",
+        "记录 API 28, 31, 33, 35 原生 arm64 应用进程测试: 各设备两轮均为 12 项通过 10 项; 忽略 SIGTERM 的超时和输出超限终止测试失败, 强制终止仍是发布阻断项",
+        "归档已发布 v0.2.0 的 APK/对应源码资产验证与最终签名包设备验收证据, 不改写已发布标签, 不扩大 Android 或 16 KB 兼容声明"
+      ]
+    },
     "v0.2.0": {
       "released_date": "2026/09/08",
       "fix": [

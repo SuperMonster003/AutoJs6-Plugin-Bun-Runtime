@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe">
+    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="36" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <application
+        android:allowBackup="false"
+        android:debuggable="false"
+        android:extractNativeLibs="true"
+        android:label="Bun Runtime API 28 Probe"
+        android:testOnly="true"
+        android:usesCleartextTraffic="true" />
+    <instrumentation
+        android:name="io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe.ProbeInstrumentation"
+        android:label="Patched runtime application-process tests, not an AutoJs6 plugin"
+        android:targetPackage="io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe" />
+</manifest>

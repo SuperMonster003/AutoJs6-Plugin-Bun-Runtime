@@ -9,9 +9,18 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > clean builds produced byte-for-byte identical ARM64 and x86_64 executables,
 > and both passed the locked static ELF audit. The experiment remains
 > `distributionReady: false` until a matching experimental APK passes its
-> application-process gates and is actually published; no patched executable
-> is stored or packaged here, and the unmodified official Bun artifacts remain
-> the plugin's only payloads.
+> application-process gates and is actually published. Patched executables stay
+> outside Git; the opt-in [test-only app probe](app-probe/README.md) packages them
+> only into external test APKs. The unmodified official Bun artifacts remain
+> the production plugin's only payloads.
+
+The official v0.2.0 Release now contains the APKs and corresponding-source set,
+with all 13 asset digests verified before and after publication. That is not a
+patched-runtime release. The separate application-process probe has recorded
+native arm64, 4 KiB-page results on API 28/31/33/35: each device passes 10 of 12
+probes in both rounds, but SIGTERM-ignoring timeout/output-limit cases fail.
+Forcible termination remains an explicit blocker; see the
+[device report](../../../../docs/compatibility/2026-09-08-m3-application-probe.json).
 
 ## Safety boundary
 

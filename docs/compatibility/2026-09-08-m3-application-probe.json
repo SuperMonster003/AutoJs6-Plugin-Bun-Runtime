@@ -1,0 +1,1351 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-08",
+  "milestone": "M3",
+  "scope": "Installed test-only patched runtime, native arm64-v8a application-process probes; not AutoJs6 Binder or general Android 9 support.",
+  "status": "application-process-functional-probes-pass-forcible-termination-blocked",
+  "officialPluginMinimumApi": 33,
+  "distributionReady": false,
+  "pluginBinderExercised": false,
+  "upstreamBunCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+  "downstreamBunCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
+  "bunVersion": "1.4.0",
+  "bunRevision": "1.4.0+778ce669a",
+  "build": {
+    "schemaVersion": 1,
+    "kind": "test-only-application-process-probe",
+    "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+    "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe/io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe.ProbeInstrumentation",
+    "testOnly": true,
+    "minSdk": 28,
+    "targetSdk": 36,
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "inputs": [
+      {
+        "path": "AndroidManifest.xml",
+        "bytes": 914,
+        "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+      },
+      {
+        "path": "ProbeInstrumentation.java",
+        "bytes": 14264,
+        "sha256": "45d6123fdc104358c38a7c5c057343365f1f641250091e6f1baea050047de658"
+      },
+      {
+        "path": "probes.json",
+        "bytes": 4006,
+        "sha256": "128ee742b467cfd57f2725d674de0cd401987453dcfab30ef73d352a69082b68"
+      },
+      {
+        "path": "probe-common.mjs",
+        "bytes": 12494,
+        "sha256": "ba0a4cb630b4f7f4a9c42f9e8164f81d6d48e3787314fc7dd35fc85a6a98103c"
+      },
+      {
+        "path": "build-probe.mjs",
+        "bytes": 7701,
+        "sha256": "930162514c53d0911601056f52e1a9fd4a6f47a59f61053e00380c24bec3ba7b"
+      },
+      {
+        "path": "run-probe.mjs",
+        "bytes": 8386,
+        "sha256": "b8985bfcb341acbe2cf73833f8333e84e2388177238f0a87f9ce3a6c0305ba48"
+      }
+    ],
+    "runtimes": {
+      "arm64-v8a": {
+        "bytes": 87923304,
+        "sha256": "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6"
+      },
+      "x86_64": {
+        "bytes": 90449696,
+        "sha256": "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036"
+      }
+    },
+    "tools": {
+      "buildToolsVersion": "37.0.0",
+      "androidJar": {
+        "bytes": 27768026,
+        "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+      },
+      "javacVersion": "javac 21.0.12.1",
+      "aapt2Version": "",
+      "d8": {
+        "bytes": 20528803,
+        "sha256": "a26ee56252adcff6752c379ae255a0ad538ebec60189e078ec6855487107637d"
+      },
+      "apksigner": {
+        "bytes": 1181416,
+        "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+      }
+    },
+    "apks": [
+      {
+        "abi": "arm64-v8a",
+        "filename": "bun-api28-probe-arm64-v8a.apk",
+        "bytes": 35234608,
+        "sha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "e4ff3f1e2881d4e22a73db2738517fa3ba588b36ce3cef570e2e14b50447a3b9"
+        }
+      },
+      {
+        "abi": "x86_64",
+        "filename": "bun-api28-probe-x86_64.apk",
+        "bytes": 36627245,
+        "sha256": "3203a431fe7dd81fb5fdc387370cad512c724054e77d1d5cd7d117fc56d4729e",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "e4ff3f1e2881d4e22a73db2738517fa3ba588b36ce3cef570e2e14b50447a3b9"
+        }
+      }
+    ]
+  },
+  "devices": [
+    {
+      "capturedAt": "2026-09-08T04:39:35.828Z",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "apiLevel": 28,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "4.4.148-perf+",
+        "pageSizeBytes": 4096,
+        "uid": 10706,
+        "selinuxContext": "u:r:untrusted_app:s0:c194,c258,c512,c768",
+        "seccomp": 2
+      },
+      "passed": false,
+      "rounds": [
+        {
+          "round": 1,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 42,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10706,\"context\":\"u:r:untrusted_app:s0:c194,c258,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 42,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 42,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 124,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 289,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 46,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 52,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 46,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 90,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10706,\"context\":\"u:r:untrusted_app:s0:c194,c258,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 47,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 211,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 85,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 340,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 52,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        }
+      ],
+      "lifecycle": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "uninstalled": true
+      },
+      "postUninstallUidProcessInventory": {
+        "command": "adb shell ps -A -n -o UID,PID,PPID,NAME",
+        "exitCode": 0,
+        "matchingProcesses": 0
+      }
+    },
+    {
+      "capturedAt": "2026-09-08T04:39:35.739Z",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-AT72",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "apiLevel": 31,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "4.19.157-perf+",
+        "pageSizeBytes": 4096,
+        "uid": 15088,
+        "selinuxContext": "u:r:untrusted_app:s0:c224,c275,c512,c768",
+        "seccomp": 2
+      },
+      "passed": false,
+      "rounds": [
+        {
+          "round": 1,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":15088,\"context\":\"u:r:untrusted_app:s0:c224,c275,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 168,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 336,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 48,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 49,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 47,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":15088,\"context\":\"u:r:untrusted_app:s0:c224,c275,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 170,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 89,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 337,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 47,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        }
+      ],
+      "lifecycle": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "uninstalled": true
+      },
+      "postUninstallUidProcessInventory": {
+        "command": "adb shell ps -A -n -o UID,PID,PPID,NAME",
+        "exitCode": 0,
+        "matchingProcesses": 0
+      }
+    },
+    {
+      "capturedAt": "2026-09-08T04:39:35.815Z",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "apiLevel": 33,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "pageSizeBytes": 4096,
+        "uid": 10484,
+        "selinuxContext": "u:r:untrusted_app:s0:c228,c257,c512,c768",
+        "seccomp": 2
+      },
+      "passed": false,
+      "rounds": [
+        {
+          "round": 1,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 83,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10484,\"context\":\"u:r:untrusted_app:s0:c228,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 84,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 252,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 88,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 335,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 85,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10484,\"context\":\"u:r:untrusted_app:s0:c228,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 252,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 129,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 294,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        }
+      ],
+      "lifecycle": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "uninstalled": true
+      },
+      "postUninstallUidProcessInventory": {
+        "command": "adb shell ps -A -n -o UID,PID,PPID,NAME",
+        "exitCode": 0,
+        "matchingProcesses": 0
+      }
+    },
+    {
+      "capturedAt": "2026-09-08T04:39:35.819Z",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "apiLevel": 35,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "pageSizeBytes": 4096,
+        "uid": 10970,
+        "selinuxContext": "u:r:untrusted_app:s0:c202,c259,c512,c768",
+        "seccomp": 2
+      },
+      "passed": false,
+      "rounds": [
+        {
+          "round": 1,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 43,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 42,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 85,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10970,\"context\":\"u:r:untrusted_app:s0:c202,c259,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 42,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 169,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 86,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 294,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 46,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "passed": false,
+          "installedPayloadVerified": true,
+          "installedApkSha256": "9770e7fb9adcb715a7b9ca459c48916eb2ecc9bd3287eb7f95eb4b9648787839",
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 44,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 46,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+778ce669a\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 85,
+              "capturedBytes": 112,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10970,\"context\":\"u:r:untrusted_app:s0:c202,c259,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 88,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 254,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 87,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 88,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 335,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "bounded-output",
+              "passed": false,
+              "error": "java.lang.IllegalStateException: bounded process termination"
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "elapsedMillis": 45,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ]
+        }
+      ],
+      "lifecycle": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "uninstalled": true
+      },
+      "postUninstallUidProcessInventory": {
+        "command": "adb shell ps -A -n -o UID,PID,PPID,NAME",
+        "exitCode": 0,
+        "matchingProcesses": 0
+      }
+    }
+  ],
+  "knownBlockers": [
+    {
+      "id": "android-forcible-process-termination",
+      "observed": "On all four devices, both rounds pass 10 of 12 probes. Scripts that ignore SIGTERM survive destroy() followed by destroyForcibly() and the bounded wait. The timeout and output-limit probes fail; the tool correctly exits nonzero.",
+      "sourceEvidence": "Installed Android SDK sources for API 28, 31 and 35 show Process.destroyForcibly() delegating to destroy(), and UNIXProcess not overriding it. This is consistent with the observed failure, not a separate syscall-level trace.",
+      "sourceReference": "https://developer.android.com/reference/java/lang/Process#destroyForcibly()",
+      "productionFollowup": "BunRuntimeService.ExecutionState uses the same Java method. Reproduce through the official plugin's Binder contract before claiming an official-payload failure, then implement an API-compatible, identity-safe forcible termination mechanism and add regression tests.",
+      "disposition": "Do not lower minSdk or publish a patched experimental plugin before lifecycle gates are closed."
+    }
+  ],
+  "limits": [
+    "No native x86_64 execution: only its test APK, signature, exact payload and ZIP alignment were verified.",
+    "No API 29, 30 or 32 application-process evidence.",
+    "No native 16 KiB execution evidence; every device here has PAGE_SIZE=4096.",
+    "Spawn and ordinary SIGSYS tests are not a forced-syscall matrix or proof of complete FD/CLOEXEC isolation.",
+    "No plugin discovery, activation, Binder cancellation or relinking/distribution approval is implied by this test-only package."
+  ],
+  "testHarnessCorrection": "An initial run used Android's noncanonical private-cache alias and failed cleanup path validation. The final harness canonicalizes the parent before creating its exact owned job root; the archived rounds have no cleanup errors. The final probe packages and their private data were uninstalled, and no process remained under any probe UID."
+}
