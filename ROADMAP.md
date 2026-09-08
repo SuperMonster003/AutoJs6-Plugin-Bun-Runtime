@@ -4,7 +4,7 @@
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 升级验证待补), "Android 9 至 12L 实验支持" (独立应用进程探针已落地, 功能探针通过但强制终止门禁失败), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (独立探针已有功能证据, 新监督器接入和复测待补), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
@@ -13,7 +13,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L 应用进程矩阵与强制终止修复 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 最大障碍 | patched runtime 已在 API 28/31/33/35 原生 arm64 应用进程通过 10 项功能探针, 但忽略 SIGTERM 的超时/输出超限进程不能被当前 Java 终止路径有界回收; 完整 Binder、API 29/30/32、x86_64 与 patched paired APK/source Release 仍待完成 |
+| 最大障碍 | 正式插件已用独立监督器修复忽略 SIGTERM 的真实进程回收, 但 patched 独立探针尚未接入和重跑, 原 10/12 失败记录仍有效; 完整实验 Binder、API 29/30/32、x86_64 与 patched paired APK/source Release 仍待完成 |
 
 ## 如何阅读这份路线图
 
@@ -129,7 +129,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (设备) Redmi 22120RN86C API 33 `arm64-v8a` 真机已作为第二 OEM 环境完成扩展后的 5/5 instrumentation; fingerprint, kernel, 4 KiB page size, 完整范围以及先前签名权限冲突的解决过程见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G2)
 - [x] (发布/设备) 官方 v0.2.0 已公开发布, 13 个 APK/source/notice/manifest/checksum 资产全部通过 GitHub SHA-256 对照及发布后 CI. 最终签名 APK 在 Redmi API 33 (arm64-only) 与 Xiaomi API 35 (universal) 各通过 8/8 黑盒验收及 force-stop 后 8/8 重跑, 包含安装后摘要、Wake、发现与 Binder 执行. 证据见 [v0.2.0 发布报告](docs/compatibility/2026-09-08-v0.2.0-release.json). (2026-09-08, G1/G2/发布资产 G3)
 - [ ] (发布) 补齐从 v0.1.0 覆盖升级与独立的全新安装场景; 不把同一 v0.2.0 APK 的重装/重启验收等同于跨版本升级证明.
-- [ ] (插件/测试) 通过正式插件 Binder 重现并修复忽略 SIGTERM 的脚本终止路径; M3 独立探针已暴露同一 Java 方法的局限, 之前的合作式 timeout/cancellation 验收不覆盖该场景.
+- [x] (插件/构建/测试) 通过正式 Binder 在 Xiaomi API 35 复现 3 秒超时返回后 Bun PID 仍存在、exitCode=-1. 新增约 7 KB/ABI 的独立只读监督器, 以私有控制管道、200 ms SIGTERM 宽限、SIGKILL 和唯一父进程 waitpid 回收替代 Java 的伪强制终止, 同时保留输出排空. API 33/35 原生 arm64 与 API 36 / 16 KiB arm64 翻译路径已通过扩展后的 8/8 套件, 覆盖处理器就绪后取消、超时、输出超限、PID 消失、工作目录删除与后续执行. Bun/API/minSdk 不变, 详见 [M1 监督器报告](docs/compatibility/2026-09-08-m1-supervised-termination.json). (2026-09-08, G1/G2, v0.2.1 开发版, 非新 Release)
+- [x] (构建/发布工具) 监督器 C 源码、NDK 29.0.14206865 和双 ABI Git LFS 字节独立落锁, 两轮 Windows 干净构建一致; debug/release 三类 APK 校验完整 native entry 清单、helper/runtime 摘要与 16 KiB 对齐. 对应源码 manifest schema 2 绑定监督器并逐文件核对项目源码压缩包, 新版本不能降级 schema 绕过, v0.2.0 发布资产不变. (2026-09-08, G1; 本轮未发布)
 
 **M1 升阶门:** G0/G1 全绿; API 33 `x86_64` AOSP/Google APIs AVD 与至少一台 API 33 `arm64-v8a` 真机完成真实 Bun Binder 往返; API 35 回归无失败. 若某 OEM API 33 因不同 seccomp/SELinux 策略失败, 先记录并诊断, 不通过隐藏错误或伪造 probe 成功来扩大支持声明.
 
@@ -188,7 +189,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (构建/测试/设备) 新增独立 test-only APK 工具 [app-probe](tools/bun-runtime/experimental/api28/app-probe/README.md), 不注册为 AutoJs6 插件、不使用正式签名或替换官方 payload. 输入两轮锁定 ELF, 输出双 ABI 单包, 核验真实 Manifest、APK 签名、16 KB ZIP 对齐及精确 payload. Sony G8441 API 28、Sony XQ-AT72 API 31、Redmi 22120RN86C API 33、Xiaomi 23046RP50C API 35 均在原生 arm64 / 4096-byte 页、普通应用 UID、untrusted_app、seccomp=2 下从只读 nativeLibraryDir 执行. (2026-09-08, G1/G2)
 - [x] (设备) 上述四台真机各运行两轮: version/revision、子进程应用域、JS/TS/Unicode/stdout+stderr、spawn/spawnSync、文件 I/O、loopback fetch、普通用户 SIGSYS 与终止后新执行这 10 项通过. 每轮 12 项中强制终止的 2 项失败, 总体结果明确为 failed; force-stop 与探针卸载后已确认无探针 UID 残留进程. 完整证据见 [M3 应用进程报告](docs/compatibility/2026-09-08-m3-application-probe.json). (2026-09-08, G2, 不是完整 Binder 通过)
-- [ ] (插件/测试, 下一优先项) 修复忽略 SIGTERM 时的真正强制终止: 四台设备的 timeout/output-limit 探针均在 destroy() -> destroyForcibly() -> 有界 wait 后仍未退出. 本地 API 28/31/35 SDK 源码显示 Process 的默认 destroyForcibly() 仍委托 destroy(), UNIXProcess 未覆盖该方法, 与观测一致. 必须建立可靠的进程身份与回收机制, 不能通过删除 SIGTERM handler、延长等待或放宽测试制造通过; 同时为正式插件补充 Binder 回归.
+- [ ] (插件/测试, 下一优先项) 将 M1 已验证的监督器和共享 Java 控制包装器接入独立 patched app-probe, 重新生成绑定源码/双 ABI/helper 的收据, 再在 API 28/31/33/35 原生 arm64 各重跑两轮. 原探针仍使用旧 Java 终止路径, 不能用正式 API 33/35 Binder 通过替代这项证据, 也不能删除 SIGTERM handler 或放宽回收上限制造通过. 原始失败报告保留不变.
 
 - [ ] (上游/插件) 在 Bun 第一次 raw syscall 前安全处理 Android `SECCOMP_RET_TRAP`, 仅将 `SYS_SECCOMP` trap 转换为 `-ENOSYS`, 让已有 fallback 执行; 普通用户发送的 `SIGSYS` 仍保持可预期语义.
 - [ ] (测试) 为启动和 spawn child 的 `close_range` 验证真实 fallback, 并证明 `CLOSE_RANGE_CLOEXEC` 的文件描述符隔离语义没有被无操作替代.
@@ -313,6 +314,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ```powershell
 node tools/bun-runtime/verify-runtime.mjs
+node tools/bun-runtime/supervisor/verify-supervisor.mjs
+node --test tools/bun-runtime/supervisor/supervisor-common.test.mjs
 node tools/verify-api-artifacts.mjs
 node tools/bun-runtime/experimental/api28/verify-experiment.mjs
 node tools/bun-runtime/experimental/api28/build-experiment.mjs

@@ -162,6 +162,7 @@ La plupart des téléphones et tablettes utilisent `arm64-v8a`. Utilisez `x86_64
 
 ******
 
+- Un superviseur distinct, verrouillé et en lecture seule gère les délais, annulations et limites de sortie, même si le script ignore SIGTERM. Il récupère le processus Bun direct; ce n'est ni un bac à sable ni un gestionnaire de tous les descendants détachés.
 - Les composants exportés d'activation (Wake), info et runtime sont protégés par `org.autojs.permission.PLUGIN`, et AutoJs6 effectue toujours ses contrôles habituels d'autorisation des plugins.
 - L'instantané du script est placé dans un répertoire privé propre à chaque exécution, et l'exécutable Bun démarre depuis le répertoire de bibliothèques natives Android en lecture seule au lieu d'être copié vers un stockage inscriptible.
 - Le lock du dépôt consigne à la fois les archives officielles et les binaires empaquetés dans l'APK; la CI refuse toute dérive de taille, SHA-256 ou propriétés ELF avant le build.
@@ -216,6 +217,8 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 _2026/09/08_
 
 - `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
+- `Correctif` Corriger le nettoyage après expiration, annulation et dépassement de sortie dans le plugin officiel avec un superviseur verrouillé en lecture seule: escalade de SIGTERM ignoré vers SIGKILL, attente de la fin du processus Bun direct et vidage de la sortie préservée; Bun 1.4.0 et le minimum Android 13 restent inchangés
+- `Amélioration` Lier les sources du superviseur, les instructions de compilation avec NDK fixe et les empreintes par ABI dans le schéma 2 de corresponding-source, avec contrôle exact des fichiers sources archivés et sans modifier les ressources v0.2.0
 - `Amélioration` Ajouter un constructeur d'APK isolé réservé aux tests et un lanceur ciblant explicitement un appareil pour Bun modifié reproductible, avec vérification exacte des sources/APK/runtime, signature de test temporaire et rapports machine bornés
 - `Amélioration` Consigner les tests en processus applicatif arm64 natif sur API 28, 31, 33 et 35: chaque appareil réussit 10 tests sur 12 lors de deux passages; les tests de délai et de sortie excessive échouent si SIGTERM est ignoré, donc la terminaison forcée reste bloquante pour la publication
 - `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.0 et les validations des paquets signés sur appareils, sans réécrire le tag publié ni étendre la compatibilité Android ou 16 KB

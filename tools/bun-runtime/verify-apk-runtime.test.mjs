@@ -1,14 +1,41 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { deflateRawSync } from "node:zlib";
 
 import { inspectApkRuntime } from "./verify-apk-runtime.mjs";
+import { root, supervisorArtifacts, verifySupervisorSource } from "./supervisor/supervisor-common.mjs";
 
 const RUNTIME_NAME = "libbun_exec.so";
+
+test("supervised APKs bind exact helper bytes, ABI coverage and ELF alignment", () => {
+  verifySupervisorSource();
+  const runtime = Buffer.from("Bun fixture");
+  const helper = readFileSync(join(root, supervisorArtifacts.get("arm64-v8a").binaryPath));
+  withApk([
+    { name: "lib/arm64-v8a/libbun_exec.so", payload: runtime, method: 0 },
+    { name: "lib/arm64-v8a/libbun_supervisor.so", payload: helper, method: 8 },
+  ], (apk) => {
+    const inspected = inspectApkRuntime(apk, ["arm64-v8a"], artifactMap({ "arm64-v8a": runtime }), supervisorArtifacts);
+    assert.equal(inspected[0].supervisor.sha256, supervisorArtifacts.get("arm64-v8a").binarySha256);
+    assert.throws(() => inspectApkRuntime(apk, ["arm64-v8a"], artifactMap({ "arm64-v8a": runtime })), /native entries/);
+  });
+});
+
+test("missing, extra-ABI, corrupt and unrecognized native helpers are rejected", () => {
+  const runtime = Buffer.from("Bun fixture");
+  const helper = readFileSync(join(root, supervisorArtifacts.get("arm64-v8a").binaryPath));
+  const base = { name: "lib/arm64-v8a/libbun_exec.so", payload: runtime, method: 0 };
+  const valid = { name: "lib/arm64-v8a/libbun_supervisor.so", payload: helper, method: 0 };
+  for (const helpers of [[], [valid, { ...valid, name: "lib/x86_64/libbun_supervisor.so" }],
+    [{ ...valid, payload: Buffer.alloc(helper.length) }], [valid, { ...valid, name: "lib/arm64-v8a/libextra.so" }]]) {
+    withApk([base, ...helpers], (apk) => assert.throws(() => inspectApkRuntime(apk, ["arm64-v8a"],
+      artifactMap({ "arm64-v8a": runtime }), supervisorArtifacts), /native entries|supervisor SHA-256/));
+  }
+});
 
 test("stored and deflated runtime entries match the locked ABI payloads", () => {
   const arm64 = Buffer.from("locked arm64 runtime payload");

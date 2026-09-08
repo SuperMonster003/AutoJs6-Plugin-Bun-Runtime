@@ -34,6 +34,7 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - The executable must run directly from the read-only `nativeLibraryDir`. Never copy an executable into `filesDir`, `cacheDir`, or another writable app directory and execute it there.
 - Treat `tools/bun-runtime/runtime.lock.json` as the machine-readable source of truth for release URLs, archive sizes and hashes, binary sizes and hashes, ELF machines, and minimum PT_LOAD alignment.
 - Runtime binaries are Git LFS objects. Use `tools/bun-runtime/materialize-runtime.ps1` to reproduce them from official archives and `node tools/bun-runtime/verify-runtime.mjs` to verify checked-in bytes.
+- The separate first-party `libbun_supervisor.so` payloads are also read-only PIE executables, never JNI libraries. Their C source, fixed NDK build and per-ABI bytes are locked in `tools/bun-runtime/supervisor/supervisor.lock.json`; verify with `node tools/bun-runtime/supervisor/verify-supervisor.mjs`. They do not change the official Bun lock or variant.
 - Any Bun upgrade must update the lock, binaries, variant, shared contract constants, tests, README, changelog, and `THIRD_PARTY_NOTICES.md` in one reviewed change.
 - Preserve the bundled upstream notice at `app/src/main/assets/doc/licenses/BUN-LICENSE.md`. Bun includes MIT code, statically linked JavaScriptCore and WebKit under LGPL-2, and other third-party components under their own licenses.
 
@@ -59,6 +60,7 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - The default timeout is 60 seconds, the maximum source size is 16 MiB, and the maximum combined stdout and stderr streaming budget is 8 MiB. Keep request, argument, environment, and name limits synchronized with `BunRuntimeContract`.
 - Send stdout and stderr only as bounded chunks through the oneway callback. The returned terminal Bundle and the `finished` event contain status and diagnostic summaries and must never carry complete output streams, so Binder transactions remain below the platform limit.
 - Keep cancellation deterministic: destroy the process, apply the bounded forcible fallback, close descriptors, remove execution state, and clean only the exact private job directory.
+- Launch probes and scripts through `SupervisedProcess`: its private control-pipe EOF makes the supervisor send SIGTERM, wait 200 ms, send SIGKILL if needed, and reap its owned immediate Bun child. Do not revert to Android's inherited `Process.destroyForcibly()`, guess a PID, or close output readers before requesting termination. Arbitrary detached descendants are not supervised.
 - A Bun child process is isolation for lifecycle and crashes, not a security sandbox. Run scripts as trusted code under the plugin UID.
 
 ## Binder, activation, and metadata
@@ -79,6 +81,7 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - Release outputs must include the two single-ABI APKs and one `universal` APK, use valid release signing, and use stable version, ABI, and digest file names.
 - Applicable releases must publish the matching corresponding-source set as assets separate from the APKs in the same GitHub Release. Keep every part below 2 GiB, publish the machine-readable binding manifest and `SHA256SUMS`, and make the public Bun/WebKit license and relinking notice easy to find.
 - Use the release publisher's draft-first flow. It must bind APK hashes and contained runtime hashes to the exact Bun, WebKit/JSC, native, Cargo, npm, project, patch, and build-instruction sources, reject missing/extra/drifted assets, and compare GitHub's returned SHA-256 digests before publication. Describe this as automated technical verification, not a legal opinion or approval; a separate legal-review step is not a project release prerequisite.
+- New corresponding-source manifests use schema 2 and additionally bind supervisor source/toolchain and per-ABI helpers, checking their exact source members in the project archive. Schema 1 is legacy-only and must not bypass the helper gate for v0.2.1 or later.
 - Never commit signing secrets, `local.properties`, APK build outputs, or release artifacts unless an established release workflow explicitly tracks them.
 
 ## Localization and generated documentation
@@ -112,6 +115,7 @@ Run the smallest sufficient set first, then the complete relevant set before del
 
 ```powershell
 node tools/bun-runtime/verify-runtime.mjs
+node tools/bun-runtime/supervisor/verify-supervisor.mjs
 node --test tools/bun-runtime/verify-apk-runtime.test.mjs
 node --test tools/bun-runtime/release/release-asset-common.test.mjs
 py .python/generate_markdown.py --check

@@ -38,7 +38,18 @@ jobs:
 
       - name: Verify checked-in payloads
         shell: pwsh
-        run: node tools/bun-runtime/verify-runtime.mjs
+        run: |
+          node tools/bun-runtime/verify-runtime.mjs
+          node tools/bun-runtime/supervisor/verify-supervisor.mjs
+
+      - name: Reproduce the first-party supervisor with the pinned NDK
+        shell: pwsh
+        run: |
+          & "$env:ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager.bat" "ndk;29.0.14206865"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node tools/bun-runtime/supervisor/build-supervisor.mjs `
+            --ndk "$env:ANDROID_HOME/ndk/29.0.14206865" `
+            --output-directory "$env:RUNNER_TEMP/bun-supervisor-reproduction"
 
       - name: Download and reproduce official release payloads
         shell: pwsh

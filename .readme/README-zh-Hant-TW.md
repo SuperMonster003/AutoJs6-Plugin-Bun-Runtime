@@ -162,6 +162,7 @@ Bun 會呼叫 Linux 的 `close_range` 系統呼叫 (syscall 436), 而 Android 12
 
 ******
 
+- 獨立鎖定的唯讀監督器負責逾時, 取消和輸出超限, 也能處理忽略 SIGTERM 的指令碼. 它負責回收直接 Bun 子處理程序, 不是安全沙箱, 也不負責管理任意脫離執行的後代處理程序.
 - 對外匯出的啟用 (Wake), info 和 runtime component 均受 `org.autojs.permission.PLUGIN` 保護, AutoJs6 側仍會執行一般的插件 authorization 檢查.
 - 腳本快照存放在每次執行專用的 private directory 中, Bun executable 從 Android read-only native library directory 啟動, 不會複製到 writable storage 後再執行.
 - Repository lock 同時記錄官方 release archive 和封裝進 APK 的 binary, size, SHA-256 或 ELF 屬性一旦出現偏差, CI 會在 build 前拒絕.
@@ -216,6 +217,8 @@ default timeout: 60 seconds
 _2026/09/08_
 
 - `提示` 尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本
+- `修復` 修正正式外掛在逾時, 取消和輸出超限時的處理程序回收: 使用摘要鎖定的唯讀監督器, 將被忽略的 SIGTERM 升級為 SIGKILL, 等待直接 Bun 子處理程序結束並保留待排空的輸出; Bun 1.4.0 和 Android 13 最低需求不變
+- `優化` 將監督器原始碼, 固定 NDK 建置說明和各 ABI 摘要綁定至 schema 2 對應原始碼 manifest, 精確驗證原始碼壓縮檔內的檔案, 不改動已發布的 v0.2.0 資產
 - `優化` 為可重現的 patched Bun 新增獨立 test-only APK 建置器及明確指定裝置的執行工具, 核對原始碼/APK/runtime 精確摘要, 使用暫時測試簽章, 輸出有界的機器可讀報告
 - `優化` 記錄 API 28, 31, 33, 35 原生 arm64 應用程式處理程序測試: 各裝置兩輪均為 12 項通過 10 項; 忽略 SIGTERM 的逾時及輸出超限終止測試失敗, 強制終止仍是發布阻礙
 - `優化` 封存已發布 v0.2.0 的 APK/對應原始碼資產驗證及最終簽署套件裝置驗收證據, 不改寫已發布標籤, 不擴大 Android 或 16 KB 相容性聲明

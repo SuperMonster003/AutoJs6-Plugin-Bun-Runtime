@@ -36,6 +36,9 @@ internal class BunRuntimeBinary(private val context: Context) {
     val file: File
         get() = File(context.applicationInfo.nativeLibraryDir, FILE_NAME)
 
+    val supervisor: File
+        get() = File(context.applicationInfo.nativeLibraryDir, SupervisedProcess.SUPERVISOR_NAME)
+
     fun probe(): BunRuntimeProbe = cachedProbe ?: synchronized(this) {
         cachedProbe ?: inspect().also { cachedProbe = it }
     }
@@ -50,6 +53,14 @@ internal class BunRuntimeBinary(private val context: Context) {
                 "Bun executable SHA-256 does not match any locked ABI payload"
             }
             runtimeAbi = abi
+            val expectedSupervisor = when (abi) {
+                "arm64-v8a" -> BuildConfig.BUN_SUPERVISOR_ARM64_V8A_SHA256
+                "x86_64" -> BuildConfig.BUN_SUPERVISOR_X86_64_SHA256
+                else -> error("Unexpected Bun ABI: $abi")
+            }
+            require(supervisor.isFile && sha256(supervisor) == expectedSupervisor) {
+                "Bun supervisor SHA-256 does not match the locked ABI payload"
+            }
             officialRuntimePageSizeError(
                 abi,
                 Os.sysconf(OsConstants._SC_PAGESIZE),
@@ -67,14 +78,24 @@ internal class BunRuntimeBinary(private val context: Context) {
 
     private fun executeProbe(runtime: File, vararg arguments: String): String {
         val label = arguments.joinToString(" ")
-        val process = ProcessBuilder(listOf(runtime.path) + arguments).redirectErrorStream(true).start()
-        if (!process.waitFor(PROBE_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+        val process = SupervisedProcess.start(
+            ProcessBuilder(listOf(runtime.path) + arguments).redirectErrorStream(true), supervisor,
+        )
+        return try {
+            if (!process.waitFor(PROBE_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                process.destroyForcibly()
+                require(process.waitFor(2, TimeUnit.SECONDS)) { "Bun $label probe could not be reaped" }
+                error("Bun $label probe timed out")
+            }
+            val output = process.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }.trim()
+            require(process.exitValue() == 0) { "Bun $label probe failed: $output" }
+            output
+        } finally {
             process.destroyForcibly()
-            error("Bun $label probe timed out")
+            runCatching { process.waitFor(2, TimeUnit.SECONDS) }
+            runCatching { process.inputStream.close() }
+            runCatching { process.errorStream.close() }
         }
-        val output = process.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }.trim()
-        require(process.exitValue() == 0) { "Bun $label probe failed: $output" }
-        return output
     }
 
     private fun sha256(file: File): String {

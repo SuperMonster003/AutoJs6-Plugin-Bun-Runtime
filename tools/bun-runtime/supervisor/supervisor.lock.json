@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "name": "bun-lifecycle-supervisor",
+  "source": "tools/bun-runtime/supervisor/supervisor.c",
+  "sourceSha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8",
+  "ndkVersion": "29.0.14206865",
+  "androidApi": 28,
+  "flags": ["-std=c11", "-Oz", "-Wall", "-Wextra", "-Werror", "-fPIE", "-pie", "-fstack-protector-strong", "-D_FORTIFY_SOURCE=2", "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384", "-Wl,--build-id=sha1", "-Wl,--strip-all"],
+  "artifacts": [
+    { "abi": "arm64-v8a", "target": "aarch64-linux-android", "elfMachine": 183, "binaryPath": "app/src/main/jniLibs/arm64-v8a/libbun_supervisor.so", "binaryBytes": 7440, "binarySha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537" },
+    { "abi": "x86_64", "target": "x86_64-linux-android", "elfMachine": 62, "binaryPath": "app/src/main/jniLibs/x86_64/libbun_supervisor.so", "binaryBytes": 7304, "binarySha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5" }
+  ]
+}

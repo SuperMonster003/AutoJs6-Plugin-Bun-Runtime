@@ -46,6 +46,7 @@
   ],
   "h3_security": "الأذونات والتكامل",
   "security_points": [
+    "يتولى مشرف منفصل مثبت للقراءة فقط المهلة والإلغاء وحدود الإخراج, حتى عندما يتجاهل البرنامج SIGTERM. ينتظر خروج عملية Bun المباشرة; وليس بيئة معزولة أو مديرا لكل العمليات التابعة المنفصلة.",
     "تتم حماية مكونات التنشيط (Wake) و info و runtime المصدرة بواسطة `org.autojs.permission.PLUGIN`, ويواصل AutoJs6 فحوص authorization المعتادة للـ plugin.",
     "توضع script snapshot في private directory خاصة بكل تشغيل, ويتم تشغيل Bun executable من read-only native library directory في Android بدلا من نسخها إلى writable storage.",
     "يسجل repository lock كلا من official release archive و binary المعبأة في APK; ترفض CI أي انحراف في الحجم أو SHA-256 أو خصائص ELF قبل build.",

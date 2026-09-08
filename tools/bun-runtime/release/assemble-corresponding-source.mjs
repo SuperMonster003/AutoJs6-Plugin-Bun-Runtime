@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 import { createGzip } from "node:zlib";
 
 import { inspectApkRuntime } from "../verify-apk-runtime.mjs";
+import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../supervisor/supervisor-common.mjs";
 import { collectBunArtifacts } from "../experimental/api28/materialize-bun-inputs.mjs";
 import { collectCargoArtifacts } from "../experimental/api28/materialize-cargo-inputs.mjs";
 import {
@@ -213,6 +214,7 @@ export async function assembleCorrespondingSourceRelease(options = {}) {
         sourceDateEpoch: project.sourceDateEpoch,
       },
       runtime: runtimeIdentity,
+      supervisor: supervisorLock,
       apkAssets: apkRecords,
       sourceComponents: components,
       notice,
@@ -224,6 +226,7 @@ export async function assembleCorrespondingSourceRelease(options = {}) {
         sourcePartMaximumBytes: normalized.maxPartBytes,
         checks: [
           "APK file SHA-256 and contained runtime SHA-256",
+          "first-party supervisor source/toolchain lock and per-ABI executable SHA-256",
           "source component and per-part SHA-256",
           "exact Bun archive identity",
           "WebKit Git archive commit identity",
@@ -286,7 +289,8 @@ async function collectApks({ apkDirectory, outputDirectory, runtimeIdentity, ver
       filename === `${projectAssetPrefix}-v${version}-${variant}-${crc32}.apk`,
       `${filename}: release filename does not contain its exact CRC32 ${crc32}`,
     );
-    const runtimes = inspectApkRuntime(source, abis, artifacts);
+    verifySupervisorSource();
+    const runtimes = inspectApkRuntime(source, abis, artifacts, supervisorArtifacts);
     const signing = verifyApkSignature(source, javaExecutable, apksignerJar);
     const target = join(outputDirectory, filename);
     copyFileSync(source, target, fsConstants.COPYFILE_EXCL);

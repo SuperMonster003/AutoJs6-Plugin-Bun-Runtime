@@ -162,6 +162,7 @@ La mayoría de teléfonos y tabletas usan `arm64-v8a`. Usa `x86_64` baseline par
 
 ******
 
+- Un supervisor separado, fijado y de solo lectura gestiona el tiempo máximo, la cancelación y los límites de salida, incluso si el script ignora SIGTERM. Recoge el proceso Bun directo; no es una zona aislada ni un gestor de todos los descendientes desconectados.
 - Los componentes exportados de activación (Wake), info y runtime están protegidos por `org.autojs.permission.PLUGIN`, y AutoJs6 sigue realizando sus comprobaciones normales de autorización de plugins.
 - La instantánea del script se guarda en un directorio privado por ejecución, y el ejecutable Bun se inicia desde el directorio de bibliotecas nativas de solo lectura de Android en lugar de copiarse a almacenamiento escribible.
 - El lock del repositorio registra tanto los archivos oficiales de la versión como los binarios empaquetados en el APK; CI rechaza cualquier desviación de tamaño, SHA-256 o propiedades ELF antes de compilar.
@@ -216,6 +217,8 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 _2026/09/08_
 
 - `Aviso` Versión de desarrollo aún no publicada; el plugin oficial sigue requiriendo Android 13 (API 33) o posterior
+- `Corrección` Corregir la limpieza por tiempo agotado, cancelación y límite de salida del complemento oficial con un supervisor fijado de solo lectura: escalar SIGTERM ignorado a SIGKILL, esperar la salida del proceso Bun directo y conservar la salida pendiente; Bun 1.4.0 y el mínimo Android 13 no cambian
+- `Mejora` Vincular el código del supervisor, las instrucciones con NDK fijo y sus hashes por ABI en el esquema 2 de corresponding-source, verificando los archivos exactos del paquete fuente sin modificar los recursos de v0.2.0
 - `Mejora` Añadir herramientas para compilar un APK aislado solo de prueba y ejecutarlo en un dispositivo explícito con Bun modificado reproducible, verificaciones exactas de fuentes/APK/runtime, firma temporal y reportes acotados legibles por máquina
 - `Mejora` Registrar pruebas en procesos de aplicación arm64 nativos con API 28, 31, 33 y 35: cada dispositivo supera 10 de 12 pruebas en dos rondas; fallan la terminación por tiempo y por salida excesiva cuando se ignora SIGTERM, por lo que la terminación forzada sigue bloqueando la publicación
 - `Mejora` Archivar la verificación de APK y fuentes publicados con v0.2.0 y la aceptación de paquetes firmados en dispositivos, sin reescribir la etiqueta publicada ni ampliar la compatibilidad con Android o páginas de 16 KB

@@ -22,26 +22,26 @@ const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const rootDirectory = resolve(toolDirectory, "../..");
 const lock = JSON.parse(readFileSync(resolve(toolDirectory, "runtime.lock.json"), "utf8"));
 
-verifyLockSchema(lock);
-
-for (const artifact of lock.artifacts) {
-  const file = resolveWithinRoot(artifact.binaryPath, `${artifact.abi}: binaryPath`);
-  const stat = statSync(file);
-  if (stat.size !== artifact.binaryBytes) {
-    throw new Error(`${artifact.abi}: expected ${artifact.binaryBytes} bytes, found ${stat.size}`);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  verifyLockSchema(lock);
+  for (const artifact of lock.artifacts) {
+    const file = resolveWithinRoot(artifact.binaryPath, `${artifact.abi}: binaryPath`);
+    const stat = statSync(file);
+    if (stat.size !== artifact.binaryBytes) {
+      throw new Error(`${artifact.abi}: expected ${artifact.binaryBytes} bytes, found ${stat.size}`);
+    }
+    const digest = await sha256(file);
+    if (digest !== artifact.binarySha256) {
+      throw new Error(`${artifact.abi}: SHA-256 mismatch: ${digest}`);
+    }
+    const elf = verifyElf(file, artifact);
+    console.log(
+      `${artifact.abi}: ${digest} (${stat.size} bytes, Android API ${elf.androidIdentApi}, ` +
+        `${elf.interpreter}, NEEDED ${elf.neededLibraries.join(", ")}, ELF alignment OK)`,
+    );
   }
-  const digest = await sha256(file);
-  if (digest !== artifact.binarySha256) {
-    throw new Error(`${artifact.abi}: SHA-256 mismatch: ${digest}`);
-  }
-  const elf = verifyElf(file, artifact);
-  console.log(
-    `${artifact.abi}: ${digest} (${stat.size} bytes, Android API ${elf.androidIdentApi}, ` +
-      `${elf.interpreter}, NEEDED ${elf.neededLibraries.join(", ")}, ELF alignment OK)`,
-  );
+  verifyMinimumApiAlignment(lock.androidBuild);
 }
-
-verifyMinimumApiAlignment(lock.androidBuild);
 
 function sha256(file) {
   return new Promise((resolveDigest, reject) => {
@@ -54,7 +54,10 @@ function sha256(file) {
 }
 
 function verifyElf(file, artifact) {
-  const data = readFileSync(file);
+  return verifyElfBuffer(readFileSync(file), artifact);
+}
+
+export function verifyElfBuffer(data, artifact) {
   requireRange(data, 0, ELF_HEADER_BYTES, `${artifact.abi}: ELF header`);
   if (data[0] !== 0x7f || data.toString("ascii", 1, 4) !== "ELF") {
     throw new Error(`${artifact.abi}: not an ELF file`);

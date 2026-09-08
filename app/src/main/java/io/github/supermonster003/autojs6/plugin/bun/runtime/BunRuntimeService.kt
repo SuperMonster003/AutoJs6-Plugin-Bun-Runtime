@@ -182,7 +182,7 @@ class BunRuntimeService : Service() {
             put("BUN_DISABLE_UPDATE_CHECK", "1")
         }
         val process = try {
-            processBuilder.start()
+            SupervisedProcess.start(processBuilder, runtimeBinary.supervisor)
         } catch (error: Throwable) {
             return failureWithCallback(
                 callback,
@@ -509,16 +509,19 @@ class BunRuntimeService : Service() {
 
         fun terminateAndReap() {
             val activeProcess = process ?: return
+            // Close the private control channel before joining/closing readers.
+            // The real child's stdout/stderr must remain drainable until exit.
+            if (activeProcess.isAlive) {
+                runCatching { activeProcess.destroy() }
+                val exited = runCatching { activeProcess.waitFor(1, TimeUnit.SECONDS) }.getOrDefault(false)
+                if (!exited && activeProcess.isAlive) {
+                    runCatching { activeProcess.destroyForcibly() }
+                    runCatching { activeProcess.waitFor(2, TimeUnit.SECONDS) }
+                }
+            }
             runCatching { activeProcess.outputStream.close() }
             runCatching { activeProcess.inputStream.close() }
             runCatching { activeProcess.errorStream.close() }
-            if (!activeProcess.isAlive) return
-            runCatching { activeProcess.destroy() }
-            val exited = runCatching { activeProcess.waitFor(1, TimeUnit.SECONDS) }.getOrDefault(false)
-            if (!exited && activeProcess.isAlive) {
-                runCatching { activeProcess.destroyForcibly() }
-                runCatching { activeProcess.waitFor(2, TimeUnit.SECONDS) }
-            }
         }
     }
 

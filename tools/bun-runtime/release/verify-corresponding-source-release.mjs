@@ -8,12 +8,14 @@ import {
   rmSync,
 } from "node:fs";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { basename, dirname, isAbsolute, join, resolve, win32 } from "node:path";
 import { finished } from "node:stream/promises";
 import { fileURLToPath } from "node:url";
 
 import { inspectApkRuntime } from "../verify-apk-runtime.mjs";
+import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../supervisor/supervisor-common.mjs";
 import { collectBunArtifacts } from "../experimental/api28/materialize-bun-inputs.mjs";
 import { collectCargoArtifacts } from "../experimental/api28/materialize-cargo-inputs.mjs";
 import {
@@ -86,6 +88,7 @@ export async function verifyCorrespondingSourceRelease({
   requireCondition(checksumStat.bytes < GITHUB_MAX_ASSET_BYTES, `${checksumNames[0]} exceeds GitHub's release-asset limit`);
 
   const runtimeArtifacts = verifyRuntimeBinding(manifest);
+  const supervisors = verifySupervisorBinding(manifest);
   const apkResults = [];
   for (const apk of manifest.apkAssets) {
     const apkPath = join(directory, apk.filename);
@@ -94,7 +97,7 @@ export async function verifyCorrespondingSourceRelease({
     const signing = verifyApkSignature(apkPath, java, signerJar);
     requireCondition(JSON.stringify(signing) === JSON.stringify(apk.signing), `${apk.filename}: signing identity differs from release manifest`);
     const expectedAbis = apk.runtimes.map((runtime) => runtime.abi);
-    const inspected = inspectApkRuntime(apkPath, expectedAbis, runtimeArtifacts);
+    const inspected = inspectApkRuntime(apkPath, expectedAbis, runtimeArtifacts, supervisors);
     requireCondition(JSON.stringify(inspected) === JSON.stringify(apk.runtimes), `${apk.filename}: runtime inspection differs from release manifest`);
     apkResults.push({ filename: apk.filename, runtimes: inspected.length });
   }
@@ -112,6 +115,11 @@ export async function verifyCorrespondingSourceRelease({
       else if (component.id === "webkit-source") await verifyGitSourceComponent(logicalPath, component, "WebKit");
       else if (component.id === "project-source-and-build-instructions") {
         await verifyGitSourceComponent(logicalPath, component, "project", manifest.projectSource);
+        if (manifest.schemaVersion >= 2) {
+          const prefix = `autojs6-plugin-bun-runtime-${manifest.projectSource.commit}/`;
+          requireCondition(component.provenance.gitArchivePrefix === prefix, "project source prefix drifted");
+          verifySupervisorSourceArchive(logicalPath, prefix);
+        }
       }
       else await verifySourcePack(logicalPath, component);
     }
@@ -137,7 +145,8 @@ export async function verifyCorrespondingSourceRelease({
 }
 
 function verifyManifestShape(manifest, manifestName, checksumName) {
-  requireCondition(manifest?.schemaVersion === RELEASE_MANIFEST_SCHEMA_VERSION, "unsupported corresponding-source release manifest schema");
+  requireCondition(manifest?.schemaVersion === RELEASE_MANIFEST_SCHEMA_VERSION || manifest?.schemaVersion === 1,
+    "unsupported corresponding-source release manifest schema");
   requireCondition(manifest.identity?.project === "AutoJs6 Plugin Bun Runtime", "release project identity drifted");
   requireCondition(manifest.identity?.repository === EXPECTED_REPOSITORY, "release repository identity drifted");
   requireCondition(/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(manifest.identity?.version ?? ""), "release version is invalid");
@@ -235,6 +244,44 @@ function verifyRuntimeBinding(manifest) {
     binaryBytes: artifact.bytes,
     binarySha256: artifact.sha256,
   }]));
+}
+
+export function verifySupervisorBinding(manifest) {
+  if (manifest.schemaVersion === 1) {
+    requireCondition(["0.1.0", "0.2.0"].includes(manifest.identity?.version),
+      "new releases cannot omit the supervisor binding by downgrading the manifest schema");
+    requireCondition(manifest.supervisor === undefined, "legacy manifest contains an unverified supervisor");
+    return undefined;
+  }
+  requireCondition(manifest.schemaVersion === RELEASE_MANIFEST_SCHEMA_VERSION, "unsupported supervisor binding schema");
+  verifySupervisorSource();
+  requireCondition(JSON.stringify(manifest.supervisor) === JSON.stringify(supervisorLock),
+    "supervisor/source/toolchain binding differs from the repository lock");
+  return supervisorArtifacts;
+}
+
+export const SUPERVISOR_SOURCE_PATHS = [
+  "tools/bun-runtime/supervisor/supervisor.c",
+  "tools/bun-runtime/supervisor/supervisor.lock.json",
+  "tools/bun-runtime/supervisor/build-supervisor.mjs",
+  "tools/bun-runtime/supervisor/supervisor-common.mjs",
+  "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+  "tools/bun-runtime/supervisor/README.md",
+  "tools/bun-runtime/verify-runtime.mjs",
+  "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+];
+
+export function verifySupervisorSourceArchive(archive, prefix) {
+  requireCondition(/^autojs6-plugin-bun-runtime-[0-9a-f]{40}\/$/.test(prefix), "invalid project source prefix");
+  for (const path of SUPERVISOR_SOURCE_PATHS) {
+    // Read only exact members to stdout; never extract into the filesystem.
+    const archived = execFileSync("tar", ["-xOf", archive, `${prefix}${path}`], {
+      maxBuffer: 1024 * 1024, timeout: 30_000, windowsHide: true,
+    });
+    const expected = Buffer.from(readFileSync(resolve(repositoryRoot, path), "utf8").replace(/\r\n/g, "\n"));
+    requireCondition(archived.equals(expected),
+      `project source archive has missing/drifted supervisor source: ${path}`);
+  }
 }
 
 function verifyBunSourceComponent(component) {

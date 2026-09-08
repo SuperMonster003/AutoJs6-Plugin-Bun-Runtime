@@ -20,6 +20,12 @@ Bun itself is MIT-licensed. The official Bun executable statically links JavaScr
 
 The executable is not a JNI shared library and is never loaded with `System.loadLibrary`. It remains a separable child-process program and is not relinked with plugin code.
 
+## First-party lifecycle supervisor
+
+Starting with the v0.2.1 development line, the plugin also packages a separate first-party `libbun_supervisor.so` for each ABI. Its source is covered by the project's [MPL-2.0 license](LICENSE), not Bun's license. It forks and directly execs the unmodified Bun executable and manages termination/reaping through a private control pipe; it is not linked into Bun or loaded as JNI. The fixed NDK 29 build, source digest and helper digests are recorded in [the supervisor lock](tools/bun-runtime/supervisor/supervisor.lock.json), with [reproduction and lifecycle documentation](tools/bun-runtime/supervisor/README.md). The resulting helper dynamically uses Android's system bionic libraries.
+
+Corresponding-source manifest schema 2 includes the supervisor binding. Its C source, Java control wrapper and exact build instructions are verified inside the same Release's project-source archive, alongside the existing Bun/WebKit dependency sources. This is automated technical verification, not a legal opinion or approval. Published v0.2.0 assets remain unchanged.
+
 ## Android runtime compatibility
 
 Although the official Bun Android build targets Android API 28 at link time, that does not make it executable under every Android app seccomp policy. On a real API 31 device, Bun 1.4.0 was terminated with `SIGSYS` when it invoked syscall 436, `close_range`. AOSP Android 12 and earlier app syscall allowlists lack `close_range`, while Android 13 (T, API 33) allowlists the raw syscall. Android 14 (U, API 34) adds the public bionic `close_range` wrapper, but Bun invokes the raw syscall and does not require that API 34 libc symbol. A real Sony API 33 runtime run passed consistently with this AOSP boundary, and a real API 35 device completed JavaScript and TypeScript Binder round trips successfully.

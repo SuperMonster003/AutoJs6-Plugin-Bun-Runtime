@@ -162,6 +162,7 @@ Most phones and tablets use `arm64-v8a`. Use baseline `x86_64` for emulators or 
 
 ******
 
+- A separately locked, read-only supervisor handles timeout, cancellation and output limits, including scripts that ignore SIGTERM. It reaps the direct Bun child; it is not a sandbox or a manager for arbitrary detached descendants.
 - The exported activation (Wake), info, and runtime components are protected by `org.autojs.permission.PLUGIN`, and AutoJs6 still performs its normal plugin authorization checks.
 - The script snapshot is staged in a private per-run directory, and the Bun executable is launched from Android's read-only native library directory instead of being copied to writable storage.
 - The repository lock records both the official release archives and the binaries packaged into the APK; CI rejects any drift in size, SHA-256, or ELF properties before building.
@@ -216,6 +217,8 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 _2026/09/08_
 
 - `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
+- `Fix` Fix timeout, cancellation and output-limit cleanup in the official plugin with a locked read-only supervisor: escalate ignored SIGTERM to SIGKILL, wait for the direct Bun child to exit, and preserve output for draining; Bun 1.4.0 and the Android 13 minimum are unchanged
+- `Improvement` Bind the supervisor source, fixed NDK build instructions and per-ABI helper hashes in corresponding-source manifest schema 2, with exact archive-member checks and legacy v0.2.0 assets left unchanged
 - `Improvement` Add an isolated test-only APK builder and explicit-device runner for the reproducible patched Bun runtime, with exact source/APK/runtime checks, temporary test signing and bounded machine-readable reports
 - `Improvement` Record native arm64 application-process tests on API 28, 31, 33 and 35: each device passes 10 of 12 probes in two rounds; SIGTERM-ignoring timeout and output-limit tests fail, so forcible termination remains a release blocker
 - `Improvement` Archive the published v0.2.0 APK/source asset verification and signed-device acceptance evidence, without rewriting the released tag or expanding Android/16 KB compatibility
