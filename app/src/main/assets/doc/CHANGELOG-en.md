@@ -4,6 +4,15 @@
 
 ******
 
+# v0.2.1
+
+###### 2026/09/08
+
+* `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
+* `Improvement` Add an isolated test-only APK builder and explicit-device runner for the reproducible patched Bun runtime, with exact source/APK/runtime checks, temporary test signing and bounded machine-readable reports
+* `Improvement` Record native arm64 application-process tests on API 28, 31, 33 and 35: each device passes 10 of 12 probes in two rounds; SIGTERM-ignoring timeout and output-limit tests fail, so forcible termination remains a release blocker
+* `Improvement` Archive the published v0.2.0 APK/source asset verification and signed-device acceptance evidence, without rewriting the released tag or expanding Android/16 KB compatibility
+
 # v0.2.0
 
 ###### 2026/09/08

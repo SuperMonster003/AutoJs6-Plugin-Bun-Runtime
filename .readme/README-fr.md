@@ -211,6 +211,15 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.2.1
+
+_2026/09/08_
+
+- `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
+- `Amélioration` Ajouter un constructeur d'APK isolé réservé aux tests et un lanceur ciblant explicitement un appareil pour Bun modifié reproductible, avec vérification exacte des sources/APK/runtime, signature de test temporaire et rapports machine bornés
+- `Amélioration` Consigner les tests en processus applicatif arm64 natif sur API 28, 31, 33 et 35: chaque appareil réussit 10 tests sur 12 lors de deux passages; les tests de délai et de sortie excessive échouent si SIGTERM est ignoré, donc la terminaison forcée reste bloquante pour la publication
+- `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.0 et les validations des paquets signés sur appareils, sans réécrire le tag publié ni étendre la compatibilité Android ou 16 KB
+
 #### v0.2.0
 
 _2026/09/08_

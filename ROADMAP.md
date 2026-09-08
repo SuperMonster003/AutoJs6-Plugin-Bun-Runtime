@@ -1,19 +1,19 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-更新日期: 2026-09-03
+更新日期: 2026-09-08
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (进行中), "Android 9 至 12L 实验支持" (可复现 patched runtime 与对应源码发布管线已就绪, 等待 APK 与应用进程验证), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 升级验证待补), "Android 9 至 12L 实验支持" (独立应用进程探针已落地, 功能探针通过但强制终止门禁失败), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | Android 13 的发布级收尾验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L 实验 APK 与应用进程矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
+| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L 应用进程矩阵与强制终止修复 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 最大障碍 | patched runtime 已可逐字节复现, 通过静态审计且具备自动化源码发布门禁, 但 adb shell 成功不等于应用 zygote/seccomp/Binder 成功; API 28-32 分版本、双 ABI 的应用进程证据与实际 paired APK/source Release 仍为空 |
+| 最大障碍 | patched runtime 已在 API 28/31/33/35 原生 arm64 应用进程通过 10 项功能探针, 但忽略 SIGTERM 的超时/输出超限进程不能被当前 Java 终止路径有界回收; 完整 Binder、API 29/30/32、x86_64 与 patched paired APK/source Release 仍待完成 |
 
 ## 如何阅读这份路线图
 
@@ -74,9 +74,9 @@
 | 里程碑 | 状态 | 一句话目标 | 主要落点 |
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
-| M1 Android 13 正式基线 | 进行中 | 官方 Bun 保持不变, 最低版本降至 API 33 并补齐发布级验证 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 进行中 (构建、静态门禁与源码发布流程完成) | 两轮双 ABI 清洁构建逐字节一致; 同 Release 源码资产、SHA-256 manifest 与 draft 发布验证已实现, 等待首个 matching APK/source Release | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 可开始 | 用 patched runtime 覆盖 API 28-32 的安装, 应用进程探测, Binder 执行与诊断, 全程标注实验性 | 插件/测试/设备/发布 |
+| M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
+| M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
+| M3 Android 9-12L 实验支持 | 进行中, 强制终止阻断 | 独立应用进程探针已有真机证据, 完整插件/Binder 与剩余设备矩阵仍待完成 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 进行中 | ELF, APK ZIP, 安装后 payload 和真实 16 KB 执行四层验证 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -127,7 +127,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (测试) 保留 API 35 `x86_64` CI 回归, 不以 API 33 job 替代当前平台测试; API 35 arm64 真机已在 2026-09-02 完成扩展后的 5/5 套件, 新增安装后 payload 摘要和仓库原始示例执行均通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-01/02, G1/G2)
 - [x] (设备) Sony XQ-DQ72 API 33 `arm64-v8a` 已重新安装 `minSdk=33` 的 v0.2.0 构建并完成完整 instrumentation; 环境与范围见 `docs/compatibility/2026-09-01-m1.json`. (2026-09-01, G2)
 - [x] (设备) Redmi 22120RN86C API 33 `arm64-v8a` 真机已作为第二 OEM 环境完成扩展后的 5/5 instrumentation; fingerprint, kernel, 4 KiB page size, 完整范围以及先前签名权限冲突的解决过程见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G2)
-- [ ] (发布) 验证从 v0.1.0 覆盖升级, 全新安装, Wake 激活, 插件发现和进程重启; 仅在 G3 完成后把 Android 13 写为正式发布兼容范围.
+- [x] (发布/设备) 官方 v0.2.0 已公开发布, 13 个 APK/source/notice/manifest/checksum 资产全部通过 GitHub SHA-256 对照及发布后 CI. 最终签名 APK 在 Redmi API 33 (arm64-only) 与 Xiaomi API 35 (universal) 各通过 8/8 黑盒验收及 force-stop 后 8/8 重跑, 包含安装后摘要、Wake、发现与 Binder 执行. 证据见 [v0.2.0 发布报告](docs/compatibility/2026-09-08-v0.2.0-release.json). (2026-09-08, G1/G2/发布资产 G3)
+- [ ] (发布) 补齐从 v0.1.0 覆盖升级与独立的全新安装场景; 不把同一 v0.2.0 APK 的重装/重启验收等同于跨版本升级证明.
+- [ ] (插件/测试) 通过正式插件 Binder 重现并修复忽略 SIGTERM 的脚本终止路径; M3 独立探针已暴露同一 Java 方法的局限, 之前的合作式 timeout/cancellation 验收不覆盖该场景.
 
 **M1 升阶门:** G0/G1 全绿; API 33 `x86_64` AOSP/Google APIs AVD 与至少一台 API 33 `arm64-v8a` 真机完成真实 Bun Binder 往返; API 35 回归无失败. 若某 OEM API 33 因不同 seccomp/SELinux 策略失败, 先记录并诊断, 不通过隐藏错误或伪造 probe 成功来扩大支持声明.
 
@@ -184,6 +186,10 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ### M3-A: seccomp 与 syscall fallback
 
+- [x] (构建/测试/设备) 新增独立 test-only APK 工具 [app-probe](tools/bun-runtime/experimental/api28/app-probe/README.md), 不注册为 AutoJs6 插件、不使用正式签名或替换官方 payload. 输入两轮锁定 ELF, 输出双 ABI 单包, 核验真实 Manifest、APK 签名、16 KB ZIP 对齐及精确 payload. Sony G8441 API 28、Sony XQ-AT72 API 31、Redmi 22120RN86C API 33、Xiaomi 23046RP50C API 35 均在原生 arm64 / 4096-byte 页、普通应用 UID、untrusted_app、seccomp=2 下从只读 nativeLibraryDir 执行. (2026-09-08, G1/G2)
+- [x] (设备) 上述四台真机各运行两轮: version/revision、子进程应用域、JS/TS/Unicode/stdout+stderr、spawn/spawnSync、文件 I/O、loopback fetch、普通用户 SIGSYS 与终止后新执行这 10 项通过. 每轮 12 项中强制终止的 2 项失败, 总体结果明确为 failed; force-stop 与探针卸载后已确认无探针 UID 残留进程. 完整证据见 [M3 应用进程报告](docs/compatibility/2026-09-08-m3-application-probe.json). (2026-09-08, G2, 不是完整 Binder 通过)
+- [ ] (插件/测试, 下一优先项) 修复忽略 SIGTERM 时的真正强制终止: 四台设备的 timeout/output-limit 探针均在 destroy() -> destroyForcibly() -> 有界 wait 后仍未退出. 本地 API 28/31/35 SDK 源码显示 Process 的默认 destroyForcibly() 仍委托 destroy(), UNIXProcess 未覆盖该方法, 与观测一致. 必须建立可靠的进程身份与回收机制, 不能通过删除 SIGTERM handler、延长等待或放宽测试制造通过; 同时为正式插件补充 Binder 回归.
+
 - [ ] (上游/插件) 在 Bun 第一次 raw syscall 前安全处理 Android `SECCOMP_RET_TRAP`, 仅将 `SYS_SECCOMP` trap 转换为 `-ENOSYS`, 让已有 fallback 执行; 普通用户发送的 `SIGSYS` 仍保持可预期语义.
 - [ ] (测试) 为启动和 spawn child 的 `close_range` 验证真实 fallback, 并证明 `CLOSE_RANGE_CLOEXEC` 的文件描述符隔离语义没有被无操作替代.
 - [ ] (测试) 分别强制 trap 或在目标设备覆盖 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2`, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD.
@@ -226,17 +232,18 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - Android 16 / API 36 x86_64 16 KB AVD 已完成双路径验证: `arm64-v8a` 单 ABI APK 经 `libndk_translation` 完整 5/5 Binder instrumentation 通过, 原生 `x86_64` 则连 `-e 42` 都稳定以 exit 134 中止; 关闭 regexp JIT, 全部 JIT 或 `--smol` 均无效. 双路径报告见 `docs/compatibility/2026-09-02-m5-16kb-execution.json`.
 - 原生 x86_64 阻断已通过同一 payload 的 API 36 4 KB 对照, 插件 UID/root 对照和双 `strace` 收敛到 pinned WebKit `WTF::pageSize()` 的 4 KB 编译期 ceiling: 4 KB 环境继续创建 `JSJITCode`, 16 KB 环境则在首次 JIT mapping 前主动 abort. prewarm 现对该已知组合在启动 Bun 前返回有界诊断; 根因报告见 `docs/compatibility/2026-09-02-m5-x86-16kb-root-cause.json`.
 - 已安装的 API 36 arm64 16 KB system image 与 AVD 配置完整, 但 Android Emulator 37.1.11 在当前 Intel x86_64 宿主明确拒绝启动 arm64 guest; AVD 保持原样, 原生 arm64 证据仍需 ARM64 宿主或真机.
-- release 安装后摘要, 原生 arm64 16 KB 执行和原生 x86_64 修复仍未完成, 因此 M5 仍在进行中, 不扩大通用 16 KB 支持声明.
+- 2026-09-08 已补齐官方 v0.2.0 release 的 arm64-only/universal 安装后 APK 与原生 arm64 payload 摘要, 以及 13 个公开资产的完整性验证. 原生 arm64 16 KB 执行和原生 x86_64 large-page 修复仍未完成, 因此 M5 不扩大通用 16 KB 支持声明.
 
 条目清单:
 
 - [x] (构建) 当前两个官方 ELF 的所有 `PT_LOAD` segment 至少 16 KB 对齐.
-- [ ] (构建/发布) 对 debug/release 的单 ABI 与 universal APK 执行 `zipalign -c -P 16 4`, 并核对安装后 `nativeLibraryDir` 字节与 lock SHA-256 一致.
+- [x] (构建/发布) debug/release 三类 APK 均通过 `zipalign -c -P 16 4` 与包内摘要验证; 最终 v0.2.0 arm64-only/universal 的原生 arm64 安装后 `nativeLibraryDir` 摘要已通过真机验证, 见 [发布报告](docs/compatibility/2026-09-08-v0.2.0-release.json). (2026-09-08, G1/G2)
+- [ ] (设备/发布) 补齐最终签名 x86_64 APK 的安装后摘要与完整原生执行验收, 不用 debug CI 代替最终签名产物测试.
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
 - [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
 - [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 ARM64 宿主 AVD 上重复完整 instrumentation; 当前 Intel 宿主无法启动已安装的 arm64 guest, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 两轮 ELF 已逐字节复现并通过独立静态审计; ZIP, 安装后 payload 和原生 16 KB 应用进程执行仍未完成, 不从官方 payload 或 adb shell 结果推断自建产物兼容.
-- [ ] (发布) `appendDigestToReleasedFiles` 验证签名, 预期三类 APK, ABI payload, CRC32 与 SHA-256; Release notes 如实区分静态对齐和端到端执行状态.
+- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证和 4 KB arm64 安装后摘要已完成, 但完整生命周期、x86_64 应用进程和原生 16 KB 执行仍未完成.
+- [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.
 

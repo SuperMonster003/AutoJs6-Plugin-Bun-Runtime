@@ -1,0 +1,77 @@
+[
+  {
+    "id": "version",
+    "arguments": ["--version"],
+    "stdout": "1.4.0",
+    "termination": "exited"
+  },
+  {
+    "id": "revision",
+    "arguments": ["--revision"],
+    "stdout": "1.4.0+778ce669a",
+    "termination": "exited"
+  },
+  {
+    "id": "application-domain",
+    "source": "import { readFileSync } from 'node:fs'; const context=readFileSync('/proc/self/attr/current','utf8').replace(/\\0/g,'').trim(); const status=readFileSync('/proc/self/status','utf8'); if (process.getuid()!==Number(process.env.PROBE_UID) || !/^u:r:untrusted_app/.test(context) || !/^Seccomp:\\s+2$/m.test(status)) throw new Error('not an app seccomp domain'); console.log(JSON.stringify({uid:process.getuid(),context,seccomp:2,arch:process.arch,version:Bun.version}));",
+    "stdout": "\"seccomp\":2",
+    "termination": "exited"
+  },
+  {
+    "id": "javascript-unicode-streams",
+    "source": "console.log('JavaScript 中文 😀 '+Bun.version); console.error('stderr-ok'); await Promise.resolve();",
+    "stdout": "JavaScript 中文 😀 1.4.0",
+    "stderr": "stderr-ok",
+    "termination": "exited"
+  },
+  {
+    "id": "typescript",
+    "extension": "ts",
+    "source": "const answer: number=42; console.log('typescript='+answer);",
+    "stdout": "typescript=42",
+    "termination": "exited"
+  },
+  {
+    "id": "spawn-and-spawn-sync",
+    "source": "import { writeFileSync } from 'node:fs'; writeFileSync('child.js',\"console.log('child-ok');console.error('child-stderr');\"); const args=[process.execPath,'run','--no-install',process.cwd()+'/child.js']; const sync=Bun.spawnSync(args,{stdout:'pipe',stderr:'pipe'}); if(sync.exitCode!==0 || !sync.stdout.toString().includes('child-ok') || !sync.stderr.toString().includes('child-stderr')) throw new Error('spawnSync failed'); const child=Bun.spawn(args,{stdout:'pipe',stderr:'pipe'}); const [out,err,exit]=await Promise.all([new Response(child.stdout).text(),new Response(child.stderr).text(),child.exited]); if(exit!==0 || !out.includes('child-ok') || !err.includes('child-stderr')) throw new Error('spawn failed'); console.log('spawn+spawnSync-ok');",
+    "stdout": "spawn+spawnSync-ok",
+    "termination": "exited"
+  },
+  {
+    "id": "file-io",
+    "source": "import { writeFile,readFile,copyFile,rename,unlink } from 'node:fs/promises'; await writeFile('input.txt','file-中文'); await copyFile('input.txt','copy.txt'); await rename('copy.txt','moved.txt'); if(await readFile('moved.txt','utf8')!=='file-中文') throw new Error('file content drift'); await unlink('input.txt'); await unlink('moved.txt'); console.log('file-io-ok');",
+    "stdout": "file-io-ok",
+    "termination": "exited"
+  },
+  {
+    "id": "fetch-loopback",
+    "source": "const server=Bun.serve({hostname:'127.0.0.1',port:0,fetch(){return new Response('fetch-ok');}}); try {const response=await fetch('http://127.0.0.1:'+server.port+'/probe'); if(response.status!==200 || await response.text()!=='fetch-ok') throw new Error('fetch failed'); console.log('fetch-loopback-ok');} finally {server.stop(true);}",
+    "stdout": "fetch-loopback-ok",
+    "termination": "exited"
+  },
+  {
+    "id": "user-sigsys-handler",
+    "source": "let received=0; process.on('SIGSYS',()=>received++); process.kill(process.pid,'SIGSYS'); await Bun.sleep(250); if(received!==1) throw new Error('ordinary SIGSYS not delivered'); console.log('user-sigsys-ok');",
+    "stdout": "user-sigsys-ok",
+    "termination": "exited"
+  },
+  {
+    "id": "timeout-forcible-cleanup",
+    "source": "process.on('SIGTERM',()=>{}); console.log('timeout-started'); setInterval(()=>{},1000);",
+    "stdout": "timeout-started",
+    "timeoutMillis": 1500,
+    "termination": "timeout"
+  },
+  {
+    "id": "bounded-output",
+    "source": "process.on('SIGTERM',()=>{}); setInterval(()=>console.log('x'.repeat(4096)),1);",
+    "outputBytes": 1024,
+    "termination": "output-limit"
+  },
+  {
+    "id": "recovery-after-termination",
+    "source": "console.log('recovery-ok');",
+    "stdout": "recovery-ok",
+    "termination": "exited"
+  }
+]

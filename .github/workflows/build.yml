@@ -52,6 +52,7 @@ jobs:
             tools/bun-runtime/experimental/api28/run-locked-build.test.mjs \
             tools/bun-runtime/experimental/api28/verify-built-runtime.test.mjs \
             tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/probe-common.test.mjs \
             tools/bun-runtime/release/release-asset-common.test.mjs
 
       - name: Re-materialize immutable Bun experiment inputs
@@ -92,6 +93,20 @@ jobs:
             :app:assembleDebugAndroidTest \
             :app:lintDebug \
             --stacktrace
+
+      - name: Compile the isolated API 28 application-process probe
+        run: |
+          node --input-type=module -e '
+            import { mkdtempSync } from "node:fs";
+            import { join } from "node:path";
+            import { compileProbe } from "./tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs";
+            const classes = compileProbe({
+              jdk: process.env.JAVA_HOME,
+              sdk: process.env.ANDROID_HOME,
+              outputDirectory: mkdtempSync(join(process.env.RUNNER_TEMP, "bun-api28-probe-classes-"))
+            });
+            if (classes.length === 0) throw new Error("No probe classes generated");
+          '
 
       - name: Upload debug and test APKs
         uses: actions/upload-artifact@v7
