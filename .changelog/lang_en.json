@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.1": {
       "released_date": "2026/09/08",
+      "dependency": [
+        "Upgrade the online autojs6-platform-versions build plugin from 1.7.3 to 1.7.4 and synchronize the repository's version requirement"
+      ],
       "hint": [
         "Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later"
       ],

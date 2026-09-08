@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-08",
+  "scope": "Regression verification of the online autojs6-platform-versions build plugin upgrade from 1.7.3 to 1.7.4; no runtime or product compatibility change.",
+  "plugin": {
+    "id": "io.github.supermonster003.autojs6-platform-versions",
+    "version": "1.7.4",
+    "source": "https://plugins.gradle.org/plugin/io.github.supermonster003.autojs6-platform-versions/1.7.4",
+    "resolvedByGradle": true
+  },
+  "application": {
+    "versionName": "0.2.1",
+    "versionCode": 6,
+    "published": false,
+    "minSdk": 33,
+    "compileSdk": 36,
+    "targetSdk": 36
+  },
+  "toolchain": {
+    "jdk": 21,
+    "gradle": "9.5.0",
+    "androidGradlePlugin": "9.3.2",
+    "kotlinGradlePlugin": "2.3.20",
+    "ksp": "2.3.11",
+    "r8": "8.13.19",
+    "selectionChangedByUpgrade": false
+  },
+  "buildInputsAndTestApks": [
+    {
+      "path": "settings.gradle.kts",
+      "bytes": 576,
+      "sha256": "157118858f6f6485430c739becba34511df654c5d65271cab05e579e962d70b6"
+    },
+    {
+      "path": "app/build/outputs/apk/debug/app-arm64-v8a-debug.apk",
+      "bytes": 40853597,
+      "sha256": "13117d1eae0e5dbc66c7af8c4d48da92da4890ede16fe15a3be7b9f5272e14b8"
+    },
+    {
+      "path": "app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
+      "bytes": 2262616,
+      "sha256": "215e0e26e6a71ed41b4c24fb98988ee8bd98f3b135095787e485c674fb2473e9"
+    }
+  ],
+  "verification": {
+    "nodeTests": 86,
+    "pythonTests": 11,
+    "jvmUnitTests": 4,
+    "failures": 0,
+    "generatedMarkdownLanguages": 10,
+    "generatedMarkdownArtifacts": 36,
+    "debugApkVariants": [
+      "arm64-v8a",
+      "x86_64",
+      "universal"
+    ],
+    "debugRuntimeIntegrity": true,
+    "debugZipAlignmentBytes": 16384,
+    "debugAndroidTestAssembled": true,
+    "lintDebug": "passed"
+  },
+  "device": {
+    "type": "AVD",
+    "model": "sdk_gphone16k_x86_64",
+    "apiLevel": 36,
+    "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+    "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+    "primaryAbi": "x86_64",
+    "packagedRuntimeAbi": "arm64-v8a",
+    "nativeBridge": "libndk_translation",
+    "nativeArm64Execution": false,
+    "pageSizeBytes": 16384,
+    "pageSizeHardAsserted": true,
+    "installedRuntimeSha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+    "instrumentation": {
+      "runner": "androidx.test.runner.AndroidJUnitRunner",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "elapsedSeconds": 46.261,
+      "testNames": [
+        "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+        "installedNativeRuntimeMatchesTheLockedPayload",
+        "checkedInSamplesExecuteWithinPublishedBoundaries",
+        "manifestPublishesWakeInfoAndRuntimeContracts",
+        "timeoutCancellationAndInvalidRequestAreBounded"
+      ]
+    },
+    "cleanup": {
+      "packagesAbsentBeforeValidation": true,
+      "temporaryPluginUninstalled": true,
+      "temporaryTestPackageUninstalled": true,
+      "matchingPackagesAfterValidation": 0
+    }
+  },
+  "limits": [
+    "This is translated arm64 execution on an x86_64 16 KiB AVD, not native arm64 16 KiB evidence.",
+    "The existing Binder suite uses cooperative timeout/cancellation scripts; this does not close the separate SIGTERM-ignoring forcible-termination blocker.",
+    "No physical-device packages were changed. No new Release was published, and v0.2.0 assets/tag were not changed.",
+    "This report covers local validation; it does not assert a new GitHub Actions run."
+  ]
+}
