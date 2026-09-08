@@ -46,6 +46,7 @@
   ],
   "h3_security": "权限和完整性",
   "security_points": [
+    "独立锁定的只读监督器负责超时, 取消和输出超限, 也能处理忽略 SIGTERM 的脚本. 它负责回收直接 Bun 子进程, 不是安全沙箱, 也不负责管理任意脱离运行的后代进程.",
     "对外导出的激活 (Wake), 信息和运行组件均受 `org.autojs.permission.PLUGIN` 权限保护, AutoJs6 侧仍会执行常规的插件授权检查.",
     "脚本快照存放在每次运行专用的私有目录中, Bun 可执行文件从 Android 只读 native library 目录启动, 不会复制到可写存储后再执行.",
     "仓库 lock 文件同时记录官方 release archive 和打包进 APK 的 binary, 大小, SHA-256 或 ELF 属性一旦发生偏差, CI 会在构建前拒绝.",

@@ -10,6 +10,7 @@ import {
 import { inflateRawSync } from "node:zlib";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { supervisorArtifacts, verifySupervisorBytes, verifySupervisorSource } from "./supervisor/supervisor-common.mjs";
 
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const runtimeLockPath = resolve(toolDirectory, "runtime.lock.json");
@@ -41,6 +42,7 @@ export function verifyApkRuntimeSet({ apkDirectory, variant, zipalignPath } = {}
   requireSameArray(actualApks, [...expectedApks.keys()].sort(), "APK set");
 
   const artifacts = new Map(runtimeLock.artifacts.map((artifact) => [artifact.abi, artifact]));
+  verifySupervisorSource();
   const zipalign = resolveZipalign(zipalignPath);
   const results = [];
   for (const [name, expectedAbis] of expectedApks) {
@@ -48,13 +50,13 @@ export function verifyApkRuntimeSet({ apkDirectory, variant, zipalignPath } = {}
     const stat = lstatSync(apkPath);
     require(stat.isFile() && !stat.isSymbolicLink(), `${name}: APK must be a regular file`);
     verifyZipalign(zipalign, apkPath);
-    const inspected = inspectApkRuntime(apkPath, expectedAbis, artifacts);
+    const inspected = inspectApkRuntime(apkPath, expectedAbis, artifacts, supervisorArtifacts);
     results.push({ name, bytes: stat.size, runtimes: inspected });
   }
   return { variant, zipalign, apks: results };
 }
 
-export function inspectApkRuntime(apkPath, expectedAbis, artifacts) {
+export function inspectApkRuntime(apkPath, expectedAbis, artifacts, supervisors) {
   const apk = readFileSync(apkPath);
   const entries = readCentralDirectory(apk, basename(apkPath));
   const runtimeEntries = [...entries.values()].filter(
@@ -62,6 +64,10 @@ export function inspectApkRuntime(apkPath, expectedAbis, artifacts) {
   );
   const expectedNames = expectedAbis.map((abi) => `lib/${abi}/${RUNTIME_NAME}`).sort();
   requireSameArray(runtimeEntries.map((entry) => entry.name).sort(), expectedNames, `${basename(apkPath)} runtime entries`);
+  const expectedNative = [...expectedNames,
+    ...(supervisors ? expectedAbis.map((abi) => `lib/${abi}/libbun_supervisor.so`) : [])].sort();
+  requireSameArray([...entries.keys()].filter((name) => name.startsWith("lib/") && !name.endsWith("/")).sort(),
+    expectedNative, `${basename(apkPath)} native entries`);
 
   return runtimeEntries.map((entry) => {
     const abi = entry.name.split("/")[1];
@@ -79,8 +85,20 @@ export function inspectApkRuntime(apkPath, expectedAbis, artifacts) {
       compression: entry.method === ZIP_STORED ? "stored" : "deflated",
       bytes: payload.length,
       sha256: digest,
+      ...(supervisors ? { supervisor: inspectSupervisor(apk, entries, abi, supervisors, basename(apkPath)) } : {}),
     };
   });
+}
+
+function inspectSupervisor(apk, entries, abi, supervisors, label) {
+  const name = `lib/${abi}/libbun_supervisor.so`;
+  const entry = entries.get(name);
+  const artifact = supervisors.get(abi);
+  require(entry && artifact, `${label}: supervisor entry or lock missing for ${abi}`);
+  const payload = extractEntry(apk, entry, label);
+  requireEqual(crc32(payload), entry.crc32, `${label}: supervisor CRC32`);
+  return { entry: name, compression: entry.method === ZIP_STORED ? "stored" : "deflated",
+    ...verifySupervisorBytes(payload, artifact) };
 }
 
 function readCentralDirectory(apk, label) {

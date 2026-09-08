@@ -162,6 +162,7 @@ Packaged された 2 つの ELF executable とすべての APK entry は 16 KB a
 
 ******
 
+- 個別に固定された読み取り専用の監督プロセスが, SIGTERM を無視するスクリプトも含めてタイムアウト, キャンセル, 出力上限を処理します. 対象は直接の Bun 子プロセスであり, セキュリティサンドボックスや任意の切り離された子孫プロセスの管理機構ではありません.
 - Export された有効化 (Wake), info, runtime component は `org.autojs.permission.PLUGIN` で保護され, AutoJs6 側でも通常の plugin authorization check が行われます.
 - スクリプト snapshot は実行ごとの private directory に置かれ, Bun executable は Android の read-only native library directory から起動されます. Writable storage へ copy してから実行することはありません.
 - Repository lock は公式 release archive と APK に同梱する binary の両方を記録します. Size, SHA-256, ELF 属性に差異があれば CI が build 前に拒否します.
@@ -216,6 +217,8 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 _2026/09/08_
 
 - `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
+- `修正` 公式プラグインのタイムアウト, キャンセル, 出力上限時の後処理を, 固定された読み取り専用の監督プロセスで修正: 無視された SIGTERM を SIGKILL にエスカレートし, 直接の Bun 子プロセスの終了を待って残りの出力を回収; Bun 1.4.0 と Android 13 の最低要件は変更なし
+- `改善` corresponding-source manifest の schema 2 で監督プロセスのソース, 固定 NDK のビルド手順, ABI ごとのハッシュを結び付け, ソースアーカイブ内のファイルを厳密に検証; v0.2.0 の公開アセットは変更なし
 - `改善` 再現可能な patched Bun 用に独立したテスト専用 APK ビルダーと端末明示型ランナーを追加. ソース/APK/runtime の厳密な検証, 一時テスト署名, サイズ制限付き機械可読レポートに対応
 - `改善` API 28, 31, 33, 35 のネイティブ arm64 アプリプロセスで検証. 各端末で 2 回とも 12 項目中 10 項目が成功. SIGTERM を無視するタイムアウトと出力超過の終了テストは失敗し, 強制終了は公開前の未解決課題として維持
 - `改善` 公開済み v0.2.0 の APK/ソース資産検証と署名済み端末受け入れ結果を記録. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない

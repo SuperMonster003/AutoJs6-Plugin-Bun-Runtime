@@ -14,7 +14,7 @@ import { basename, join } from "node:path";
 import { finished } from "node:stream/promises";
 import { createGunzip } from "node:zlib";
 
-export const RELEASE_MANIFEST_SCHEMA_VERSION = 1;
+export const RELEASE_MANIFEST_SCHEMA_VERSION = 2;
 export const DEFAULT_MAX_PART_BYTES = 1_900_000_000;
 export const GITHUB_MAX_ASSET_BYTES = 2_147_483_648;
 export const SHA256_PATTERN = /^[0-9a-f]{64}$/;

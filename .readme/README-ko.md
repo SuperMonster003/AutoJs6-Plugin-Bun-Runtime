@@ -162,6 +162,7 @@ Bun은 Linux의 `close_range` system call (syscall 436)을 호출하는데, Andr
 
 ******
 
+- 별도로 고정된 읽기 전용 감독 프로세스가 SIGTERM을 무시하는 스크립트의 시간 초과, 취소 및 출력 한도도 처리합니다. 직접 생성한 Bun 자식을 회수하며, 보안 샌드박스나 임의의 분리된 하위 프로세스 관리자는 아닙니다.
 - Export된 활성화 (Wake), info, runtime component는 `org.autojs.permission.PLUGIN`으로 보호되며, AutoJs6는 일반적인 plugin authorization check도 계속 수행합니다.
 - 스크립트 snapshot은 실행별 private directory에 저장되고, Bun executable은 쓰기 가능한 저장소로 복사되는 대신 Android의 read-only native library directory에서 시작됩니다.
 - Repository lock은 공식 release archive와 APK에 패키징된 binary를 모두 기록하며, CI는 build 전에 크기, SHA-256, ELF 속성의 어떤 변동도 거부합니다.
@@ -216,6 +217,8 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 _2026/09/08_
 
 - `힌트` 아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
+- `수정` 고정된 읽기 전용 감독 프로세스로 공식 플러그인의 시간 초과, 취소 및 출력 한도 정리를 수정: 무시된 SIGTERM을 SIGKILL로 승격하고 직접 생성한 Bun 자식의 종료를 기다리며 남은 출력을 보존; Bun 1.4.0과 Android 13 최소 요구 사항은 유지
+- `개선` corresponding-source manifest schema 2에 감독 프로세스 소스, 고정 NDK 빌드 지침 및 ABI별 해시를 연결하고 소스 아카이브의 정확한 파일을 검증; v0.2.0 공개 자산은 변경하지 않음
 - `개선` 재현 가능한 patched Bun을 위한 독립 테스트 전용 APK 빌더와 명시적 기기 실행 도구 추가. 소스/APK/runtime의 정확한 검증, 임시 테스트 서명, 크기가 제한된 기계 판독 보고서 제공
 - `개선` API 28, 31, 33, 35의 네이티브 arm64 앱 프로세스 테스트 기록. 각 기기는 두 차례 모두 12개 중 10개 통과. SIGTERM을 무시하는 시간 초과 및 출력 초과 종료 테스트가 실패하여 강제 종료는 출시 전 해결 과제로 유지
 - `개선` 게시된 v0.2.0 APK/소스 자산 검증과 서명된 패키지의 기기 검증 근거 보관. 게시된 태그를 다시 쓰거나 Android/16 KB 호환 범위를 확대하지 않음

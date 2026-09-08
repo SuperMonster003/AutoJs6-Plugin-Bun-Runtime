@@ -25,6 +25,10 @@ val bunRuntimeLockFile = rootProject.file("tools/bun-runtime/runtime.lock.json")
 @Suppress("UNCHECKED_CAST")
 val bunRuntimeArtifacts = ((JsonSlurper().parse(bunRuntimeLockFile) as Map<String, Any>)["artifacts"] as List<Map<String, Any>>)
     .associateBy { artifact -> artifact.getValue("abi") as String }
+val bunSupervisorLockFile = rootProject.file("tools/bun-runtime/supervisor/supervisor.lock.json")
+@Suppress("UNCHECKED_CAST")
+val bunSupervisorArtifacts = ((JsonSlurper().parse(bunSupervisorLockFile) as Map<String, Any>)["artifacts"] as List<Map<String, Any>>)
+    .associateBy { artifact -> artifact.getValue("abi") as String }
 
 fun runtimeLockString(abi: String, key: String): String =
     bunRuntimeArtifacts.getValue(abi).getValue(key) as String
@@ -61,6 +65,10 @@ android {
         }
         versionCode = versions.appVersionCode
         versionName = versions.appVersionName
+        bunSupervisorArtifacts.forEach { (abi, artifact) ->
+            buildConfigField("String", "BUN_SUPERVISOR_${abi.uppercase().replace('-', '_')}_SHA256",
+                "\"${artifact.getValue("binarySha256")}\"")
+        }
 
         resValue("string", "app_name", "Bun Runtime")
         resValue("string", "plugin_author", "SuperMonster003")
@@ -140,6 +148,7 @@ android {
         jniLibs {
             useLegacyPackaging = true
             keepDebugSymbols += "**/libbun_exec.so"
+            keepDebugSymbols += "**/libbun_supervisor.so"
         }
     }
 
@@ -193,6 +202,15 @@ tasks.register<Exec>("verifyApiArtifacts") {
     commandLine("node", rootProject.file("tools/verify-api-artifacts.mjs"))
 }
 
+tasks.register<Exec>("verifyBunSupervisorArtifacts") {
+    group = "verification"
+    description = "Verifies first-party Bun supervisor source, hashes and aligned PIE executables."
+    inputs.files(rootProject.fileTree("tools/bun-runtime/supervisor"))
+    inputs.file(rootProject.file("tools/bun-runtime/verify-runtime.mjs"))
+    inputs.files(bunSupervisorArtifacts.values.map { rootProject.file(it.getValue("binaryPath") as String) })
+    commandLine("node", rootProject.file("tools/bun-runtime/supervisor/verify-supervisor.mjs"))
+}
+
 fun registerApkRuntimeVerification(variant: String) =
     tasks.register<Exec>("verify${variant.replaceFirstChar(Char::uppercase)}ApkRuntimeIntegrity") {
         group = "verification"
@@ -218,6 +236,7 @@ val verifyReleaseApkRuntimeIntegrity = registerApkRuntimeVerification("release")
 
 tasks.matching { it.name.startsWith("merge") && it.name.endsWith("NativeLibs") }.configureEach {
     dependsOn("verifyBunRuntimeArtifacts")
+    dependsOn("verifyBunSupervisorArtifacts")
     dependsOn("verifyApiArtifacts")
 }
 

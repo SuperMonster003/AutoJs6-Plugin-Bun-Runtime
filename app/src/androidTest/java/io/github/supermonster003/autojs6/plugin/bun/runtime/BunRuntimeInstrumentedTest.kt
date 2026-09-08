@@ -261,6 +261,103 @@ class BunRuntimeInstrumentedTest {
     }
 
     @Test
+    fun sigtermIgnoringTimeoutReapsTheChild() {
+        withBoundRuntime { runtime ->
+            assertTrue(runtime.prewarmRuntime().getBoolean(BunRuntimeContract.KEY_RUNTIME_READY))
+            // Translation may take longer than the default fixture deadline to
+            // install its signal handler. This changes script runtime only,
+            // never the supervisor grace or the five-second cleanup assertion.
+            val fixtureTimeout = InstrumentationRegistry.getArguments()
+                .getString("sigtermIgnoringTimeoutMillis")?.toLong() ?: 3_000L
+            require(fixtureTimeout in 3_000L..30_000L)
+            val startedAt = SystemClock.elapsedRealtime()
+            val captured = runSource(
+                runtime = runtime,
+                sourceName = "uncooperative-timeout.bun.js",
+                sourceText = uncooperativeSource(),
+                timeoutMillis = fixtureTimeout,
+            )
+            assertReaped(captured, BunRuntimeContract.ERROR_TIMEOUT)
+            assertTrue("Timeout cleanup exceeded its bound", SystemClock.elapsedRealtime() - startedAt < fixtureTimeout + 5_000L)
+            assertTrue(runSource(runtime, "recovery.js", "console.log('recovered');")
+                .result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+        }
+    }
+
+    @Test
+    fun sigtermIgnoringCancellationAfterReadinessReapsTheChild() {
+        withBoundRuntime { runtime ->
+            assertTrue(runtime.prewarmRuntime().getBoolean(BunRuntimeContract.KEY_RUNTIME_READY))
+            repeat(3) {
+                val ready = CountDownLatch(1)
+                val executionId = "ready-cancel-${UUID.randomUUID()}"
+                val executor = Executors.newSingleThreadExecutor()
+                try {
+                    val future = executor.submit<CapturedRun> {
+                        runSource(runtime, "uncooperative-cancel.js", uncooperativeSource(),
+                            executionId = executionId, timeoutMillis = 30_000L, stdoutReadySignal = ready)
+                    }
+                    assertTrue("SIGTERM handler was not ready", ready.await(15, TimeUnit.SECONDS))
+                    val startedAt = SystemClock.elapsedRealtime()
+                    assertTrue(runtime.cancelScript(executionId))
+                    val captured = future.get(8, TimeUnit.SECONDS)
+                    assertReaped(captured, BunRuntimeContract.ERROR_CANCELLED)
+                    assertTrue(captured.result.getBoolean(BunRuntimeContract.KEY_CANCELLED))
+                    assertTrue("Cancellation cleanup exceeded its bound", SystemClock.elapsedRealtime() - startedAt < 5_000L)
+                } finally {
+                    executor.shutdownNow()
+                }
+            }
+            assertTrue(runSource(runtime, "cancel-recovery.js", "console.log('recovered');")
+                .result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+        }
+    }
+
+    @Test
+    fun sigtermIgnoringOutputLimitReapsTheChild() {
+        withBoundRuntime { runtime ->
+            assertTrue(runtime.prewarmRuntime().getBoolean(BunRuntimeContract.KEY_RUNTIME_READY))
+            val startedAt = SystemClock.elapsedRealtime()
+            val captured = runSource(runtime, "uncooperative-output.js",
+                uncooperativeSource("await Bun.sleep(500); writeSync(1, 'x'.repeat(4096));"),
+                timeoutMillis = 30_000L, outputByteLimit = 1_024L)
+            assertReaped(captured, BunRuntimeContract.ERROR_OUTPUT_LIMIT)
+            assertTrue(captured.stdout.toByteArray(Charsets.UTF_8).size <= 1_024)
+            assertTrue("Output limit waited for script timeout", SystemClock.elapsedRealtime() - startedAt < 8_000L)
+            assertTrue(runSource(runtime, "output-recovery.js", "console.log('recovered');")
+                .result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+        }
+    }
+
+    private fun uncooperativeSource(afterReady: String = "") = """
+        import { writeSync } from 'node:fs';
+        process.on('SIGTERM', () => {});
+        writeSync(1, 'ready-pid=' + process.pid + '\nworkdir=' + process.cwd() + '\n');
+        $afterReady
+        setInterval(() => {}, 1000);
+    """.trimIndent()
+
+    private fun assertReaped(captured: CapturedRun, expectedError: String) {
+        assertEquals(expectedError, captured.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+        assertTrue("Handler readiness was not observed; result=${captured.result}; stdout=${captured.stdout}; stderr=${captured.stderr}",
+            captured.stdout.contains("ready-pid="))
+        val childPid = captured.stdout.lineSequence()
+            .single { it.startsWith("ready-pid=") }.removePrefix("ready-pid=").toInt()
+        assertTrue("Bun child $childPid survived terminal $expectedError; result=${captured.result}",
+            !File("/proc/$childPid").exists())
+        assertTrue("Terminal result has no reaped exit status", captured.result.getInt(BunRuntimeContract.KEY_EXIT_CODE) != -1)
+        val workspace = File(captured.stdout.lineSequence()
+            .single { it.startsWith(WORKSPACE_OUTPUT_PREFIX) }.removePrefix(WORKSPACE_OUTPUT_PREFIX)).canonicalFile
+        assertEquals(File(context.cacheDir, "bun-executions").canonicalFile, workspace.parentFile)
+        assertTrue("Private execution workspace survived $expectedError", !workspace.exists())
+        InstrumentationRegistry.getInstrumentation().sendStatus(0, Bundle().apply {
+            putString("stream", "\nBUN_LIFECYCLE error=$expectedError childPid=$childPid reaped=true " +
+                "exitCode=${captured.result.getInt(BunRuntimeContract.KEY_EXIT_CODE)} " +
+                "durationMillis=${captured.result.getLong(BunRuntimeContract.KEY_DURATION_MILLIS)} workspaceRemoved=true\n")
+        })
+    }
+
+    @Test
     fun timeoutCancellationAndInvalidRequestAreBounded() {
         withBoundRuntime { runtime ->
             val timedOut = runSource(
@@ -418,6 +515,7 @@ class BunRuntimeInstrumentedTest {
         outputByteLimit: Long = 1024L * 1024L,
         environment: Map<String, String> = emptyMap(),
         startedSignal: CountDownLatch? = null,
+        stdoutReadySignal: CountDownLatch? = null,
         expectStarted: Boolean = true,
     ): CapturedRun {
         val sourceFile = File.createTempFile("bun-test-", sourceName.substringAfterLast('.', ".js"), context.cacheDir)
@@ -439,6 +537,7 @@ class BunRuntimeInstrumentedTest {
                     BunRuntimeContract.EVENT_STARTED -> startedSignal?.countDown()
                     BunRuntimeContract.EVENT_STDOUT -> synchronized(stdout) {
                         stdout.append(event.getString(BunRuntimeContract.KEY_TEXT).orEmpty())
+                        if (stdout.contains("ready-pid=") && stdout.contains("\nworkdir=")) stdoutReadySignal?.countDown()
                     }
                     BunRuntimeContract.EVENT_STDERR -> synchronized(stderr) {
                         stderr.append(event.getString(BunRuntimeContract.KEY_TEXT).orEmpty())
@@ -469,7 +568,7 @@ class BunRuntimeInstrumentedTest {
                 assertTrue("Finished callback was not delivered", finished.await(10, TimeUnit.SECONDS))
                 synchronized(events) {
                     assertEquals(expectStarted, BunRuntimeContract.EVENT_STARTED in events)
-                    assertTrue(BunRuntimeContract.EVENT_FINISHED in events)
+                    assertEquals("Exactly one finished event is required", 1, events.count { it == BunRuntimeContract.EVENT_FINISHED })
                 }
             }.let { result ->
                 CapturedRun(

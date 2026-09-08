@@ -8,7 +8,7 @@ import {
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import test from "node:test";
 
 import {
@@ -23,7 +23,45 @@ import {
   writeDeterministicTar,
 } from "./release-asset-common.mjs";
 import { createGitArchive, parseApkSignerOutput } from "./assemble-corresponding-source.mjs";
-import { verifyWebKitSourceRecord } from "./verify-corresponding-source-release.mjs";
+import { SUPERVISOR_SOURCE_PATHS, verifySupervisorBinding, verifySupervisorSourceArchive, verifyWebKitSourceRecord } from "./verify-corresponding-source-release.mjs";
+import { root as repositoryRoot, supervisorLock } from "../supervisor/supervisor-common.mjs";
+
+test("new source manifests bind the supervisor and cannot downgrade away its source lock", () => {
+  assert.equal(verifySupervisorBinding({ schemaVersion: 2, supervisor: supervisorLock }).size, 2);
+  assert.equal(verifySupervisorBinding({ schemaVersion: 1, identity: { version: "0.2.0" } }), undefined);
+  assert.throws(() => verifySupervisorBinding({ schemaVersion: 1, identity: { version: "0.2.1" } }), /downgrading/);
+  assert.throws(() => verifySupervisorBinding({ schemaVersion: 2 }), /binding differs/);
+  const drifted = structuredClone(supervisorLock);
+  drifted.sourceSha256 = "0".repeat(64);
+  assert.throws(() => verifySupervisorBinding({ schemaVersion: 2, supervisor: drifted }), /binding differs/);
+});
+
+test("project source archives must include the exact helper source, lock and build instructions", async () => {
+  await withTemporaryDirectory(async (root) => {
+    const repo = join(root, "project");
+    mkdirSync(repo);
+    for (const path of SUPERVISOR_SOURCE_PATHS) {
+      mkdirSync(dirname(join(repo, path)), { recursive: true });
+      writeFileSync(join(repo, path), readFileSync(resolve(repositoryRoot, path), "utf8").replace(/\r\n/g, "\n"));
+    }
+    const git = (...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8", windowsHide: true }).trim();
+    git("init", "--quiet");
+    git("config", "core.autocrlf", "false");
+    git("add", "--all");
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgSign=false", "commit", "--quiet", "-m", "test: source fixture");
+    const commit = git("rev-parse", "HEAD");
+    const prefix = `autojs6-plugin-bun-runtime-${commit}/`;
+    const archive = join(root, "project.tar.gz");
+    await createGitArchive({ repository: repo, commit, prefix, target: archive });
+    verifySupervisorSourceArchive(archive, prefix);
+    writeFileSync(join(repo, supervisorLock.source), "drifted helper source\n");
+    git("add", "--all");
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "-c", "commit.gpgSign=false", "commit", "--quiet", "-m", "test: corrupt source fixture");
+    const corrupt = join(root, "corrupt.tar.gz");
+    await createGitArchive({ repository: repo, commit: git("rev-parse", "HEAD"), prefix, target: corrupt });
+    assert.throws(() => verifySupervisorSourceArchive(corrupt, prefix), /drifted supervisor source/);
+  });
+});
 
 test("streaming CRC32 matches the canonical release-filename check vector", async () => {
   await withTemporaryDirectory(async (root) => {

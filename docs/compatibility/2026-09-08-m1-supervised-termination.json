@@ -1,0 +1,623 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-08",
+  "milestone": "M1 supervised immediate-child termination",
+  "project": "AutoJs6-Plugin-Bun-Runtime",
+  "developmentVersion": "0.2.1",
+  "versionCode": 6,
+  "baseCommit": "c084cfc98f642617313fdac714cf1dd6f7847f15",
+  "status": "passed-for-recorded-scope",
+  "releasePublished": false,
+  "officialMinimumApi": 33,
+  "officialBunVersion": "1.4.0",
+  "variant": "bun-1.4.0-android",
+  "baseline": {
+    "model": "23046RP50C",
+    "api": 35,
+    "installedAbi": "arm64-v8a",
+    "pageSizeBytes": 4096,
+    "build": "Official service at baseCommit plus the initial regression fixture; this initial APK was not retained",
+    "scriptTimeoutMillis": 3000,
+    "sigtermHandlerReadinessObserved": true,
+    "childPid": 15762,
+    "terminalErrorCode": "TIMEOUT",
+    "terminalExitCode": -1,
+    "childStillPresentAfterReturn": true,
+    "elapsedMillis": 9058,
+    "assertion": "Bun child 15762 survived the terminal timeout result; exitCode=-1; elapsedMillis=9058",
+    "debugger": {
+      "skill": "ij-debugger",
+      "attempted": true,
+      "logpointEvidenceObtained": false,
+      "reason": "The IDE-started test debug session ended without service tracepoint events; diagnosis uses actual Android Binder assertions and the platform source instead.",
+      "agentBreakpointsRemoved": true,
+      "userBreakpointsPreserved": true
+    }
+  },
+  "implementation": {
+    "control": "Private pipe EOF; no shell or Java/script-supplied PID lookup",
+    "graceMillis": 200,
+    "escalation": "SIGTERM -> SIGKILL -> owned-child waitpid",
+    "stdoutAndStderr": "Remain open for bounded draining",
+    "scope": "Immediate Bun child only, not arbitrary detached descendants",
+    "bunPayloadChanged": false,
+    "sharedApiAarsChanged": false,
+    "sourceTextNormalization": "UTF-8 with CRLF normalized to LF (Git eol=lf)",
+    "sourceBindings": [
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.c",
+        "bytes": 4394,
+        "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+        "bytes": 1018,
+        "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+        "bytes": 2128,
+        "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+      },
+      {
+        "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+        "bytes": 3727,
+        "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+      },
+      {
+        "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeBinary.kt",
+        "bytes": 5224,
+        "sha256": "ee84e0e64df96bf4b05556714d1be72c242177d6529756edfa2b59112b02b937"
+      },
+      {
+        "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeService.kt",
+        "bytes": 24019,
+        "sha256": "8fafd85f55066a4adc45e524bf14a2490aff37230c977c3c3c8a96c2dd59e348"
+      },
+      {
+        "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt",
+        "bytes": 37227,
+        "sha256": "04d2ea75d3ec466abbe5a6cdbe9f0be5b5618a2bb41d6e59187910d46d5f60c6"
+      }
+    ],
+    "supervisorBuild": {
+      "ndkVersion": "29.0.14206865",
+      "clangVersion": "21.0.0",
+      "androidLinkApi": 28,
+      "host": "Windows x86_64",
+      "cleanBuildsWithIdenticalOutputs": 2,
+      "minimumPtLoadAlignmentBytes": 16384,
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "bytes": 7440,
+          "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+        },
+        {
+          "abi": "x86_64",
+          "bytes": 7304,
+          "sha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+        }
+      ]
+    }
+  },
+  "testedBuild": {
+    "applicationId": "io.github.supermonster003.autojs6.plugin.bun.runtime.terminationtest",
+    "testApplicationId": "io.github.supermonster003.autojs6.plugin.bun.runtime.terminationtest.test",
+    "buildType": "debug",
+    "applicationIdSuffix": ".terminationtest",
+    "retainedLocalDirectoryName": "bun-supervisor-binder-20260908-final-r2",
+    "apks": [
+      {
+        "filename": "app-arm64-v8a-debug.apk",
+        "bytes": 40864725,
+        "sha256": "616b1ab8df858099efa209ce6e11e23467e2c549fc7ac5790df267d9fd000dea"
+      },
+      {
+        "filename": "app-debug-androidTest.apk",
+        "bytes": 2271356,
+        "sha256": "8d3d2f7d6e8ee082706c6a7baff20e537aa20e8a2c1edd35e78091e955b80711"
+      }
+    ],
+    "officialAppNotReplaced": true,
+    "runner": "androidx.test.runner.AndroidJUnitRunner",
+    "testClass": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest"
+  },
+  "testScope": [
+    "Action/category discovery, explicit binding and Binder descriptor",
+    "Wake/info/runtime permission and metadata",
+    "PluginInfo and exact installed Bun payload; prewarming validates the supervisor ABI hash",
+    "Real JS/TS, Unicode, stdout/stderr and checked-in samples",
+    "Single bounded terminal event, invalid/oversized requests, pre-dispatch cancellation",
+    "SIGTERM-ignoring cancellation after readiness (three repetitions per round)",
+    "SIGTERM-ignoring timeout and output-limit termination",
+    "Actual child PID absence, non-sentinel exit status, exact workspace removal and recovery execution",
+    "Force-stop/restart of only the isolated test app before each round"
+  ],
+  "fixtureTiming": {
+    "nativeTimeoutMillis": 3000,
+    "translatedTimeoutMillis": 10000,
+    "prewarmOutsideLifecycleMeasurement": true,
+    "timeoutCleanupAdditionalBoundMillis": 5000,
+    "cancellationAfterReadinessBoundMillis": 5000,
+    "outputLimitTotalAfterPrewarmBoundMillis": 8000,
+    "productionTimeoutAndReapBudgetsChanged": false,
+    "preliminaryAvdFailures": [
+      {
+        "scope": "Initial translated full suite",
+        "tests": 8,
+        "failures": 2,
+        "reason": "The three-second fixture expired before handler installation (exit 143), and cold prewarming was included in the output-limit timing assertion despite a reaped exit 137."
+      },
+      {
+        "scope": "Prewarmed three-second timeout fixture",
+        "tests": 2,
+        "failures": 1,
+        "reason": "Handler readiness still was not observed before the fixture expired; exit 143, not evidence of ignored-SIGTERM termination."
+      },
+      {
+        "scope": "Ten-second timeout fixture, cancellation not prewarmed yet",
+        "tests": 8,
+        "failures": 1,
+        "reason": "Cancellation readiness wait included cold prewarm and exceeded 15 seconds; timeout and output-limit reaping passed."
+      }
+    ],
+    "resolution": "Prewarm before all three lifecycle fixtures, keep the readiness/real-reap assertions, and use the explicit 10-second script timeout only on the translated AVD. Production grace/reap bounds and the five-second cleanup assertion are unchanged."
+  },
+  "devices": [
+    {
+      "id": "redmi-api33",
+      "model": "22120RN86C",
+      "api": 33,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "pageSizeBytes": 4096,
+      "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+      "kernel": "4.19.191-perf-g2f9faa927855",
+      "nativeExecution": true,
+      "installedAbi": "arm64-v8a",
+      "runnerArguments": {
+        "requiredApiLevel": 33,
+        "requiredPageSizeBytes": 4096,
+        "sigtermIgnoringTimeoutMillis": 3000
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 13.761,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32341,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 320,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32356,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 310,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32371,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 412,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 32431,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3304,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 32460,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 915,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "Performing Streamed Install\r\nSuccess\r\nPerforming Streamed Install\r\nSuccess\r\n\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=32341 reaped=true exitCode=137 durationMillis=320 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=32356 reaped=true exitCode=137 durationMillis=310 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=32371 reaped=true exitCode=137 durationMillis=412 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=32431 reaped=true exitCode=137 durationMillis=3304 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=32460 reaped=true exitCode=137 durationMillis=915 workspaceRemoved=true\r\n....\r\n\r\nTime: 13.761\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        },
+        {
+          "round": 2,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 13.781,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32673,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 318,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32721,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 411,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 32742,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 413,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 405,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3303,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 487,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 816,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=32673 reaped=true exitCode=137 durationMillis=318 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=32721 reaped=true exitCode=137 durationMillis=411 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=32742 reaped=true exitCode=137 durationMillis=413 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=405 reaped=true exitCode=137 durationMillis=3303 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=487 reaped=true exitCode=137 durationMillis=816 workspaceRemoved=true\r\n....\r\n\r\nTime: 13.781\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        }
+      ],
+      "cleanup": {
+        "testApkUninstalled": true,
+        "isolatedAppUninstalled": true,
+        "remainingPackageCount": 0,
+        "remainingUidProcessCount": 0
+      }
+    },
+    {
+      "id": "xiaomi-api35",
+      "model": "23046RP50C",
+      "api": 35,
+      "abis": [
+        "arm64-v8a",
+        "armeabi-v7a",
+        "armeabi"
+      ],
+      "pageSizeBytes": 4096,
+      "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+      "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+      "nativeExecution": true,
+      "installedAbi": "arm64-v8a",
+      "runnerArguments": {
+        "requiredApiLevel": 35,
+        "requiredPageSizeBytes": 4096,
+        "sigtermIgnoringTimeoutMillis": 3000
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 11.885,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 24656,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 323,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 24676,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 417,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 24692,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 316,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 24751,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3310,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 24779,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 924,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "Performing Streamed Install\r\nSuccess\r\nPerforming Streamed Install\r\nSuccess\r\n\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=24656 reaped=true exitCode=137 durationMillis=323 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=24676 reaped=true exitCode=137 durationMillis=417 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=24692 reaped=true exitCode=137 durationMillis=316 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=24751 reaped=true exitCode=137 durationMillis=3310 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=24779 reaped=true exitCode=137 durationMillis=924 workspaceRemoved=true\r\n....\r\n\r\nTime: 11.885\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        },
+        {
+          "round": 2,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 11.669,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 25104,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 314,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 25124,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 316,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 25137,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 314,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 25203,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3314,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 25231,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 826,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=25104 reaped=true exitCode=137 durationMillis=314 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=25124 reaped=true exitCode=137 durationMillis=316 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=25137 reaped=true exitCode=137 durationMillis=314 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=25203 reaped=true exitCode=137 durationMillis=3314 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=25231 reaped=true exitCode=137 durationMillis=826 workspaceRemoved=true\r\n....\r\n\r\nTime: 11.669\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        }
+      ],
+      "cleanup": {
+        "testApkUninstalled": true,
+        "isolatedAppUninstalled": true,
+        "remainingPackageCount": 0,
+        "remainingUidProcessCount": 0
+      }
+    },
+    {
+      "id": "avd-api36-arm64-translation",
+      "model": "sdk_gphone16k_x86_64",
+      "api": 36,
+      "abis": [
+        "x86_64",
+        "arm64-v8a"
+      ],
+      "pageSizeBytes": 16384,
+      "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+      "nativeExecution": false,
+      "translation": "libndk_translation on x86_64",
+      "installedAbi": "arm64-v8a",
+      "runnerArguments": {
+        "requiredApiLevel": 36,
+        "requiredPageSizeBytes": 16384,
+        "sigtermIgnoringTimeoutMillis": 10000
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 83.583,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22440,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 5722,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22450,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 9391,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22462,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 5016,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 22520,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 10310,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 22543,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3688,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "Performing Streamed Install\r\nSuccess\r\nPerforming Streamed Install\r\nSuccess\r\n\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=22440 reaped=true exitCode=137 durationMillis=5722 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=22450 reaped=true exitCode=137 durationMillis=9391 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=22462 reaped=true exitCode=137 durationMillis=5016 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=22520 reaped=true exitCode=137 durationMillis=10310 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=22543 reaped=true exitCode=137 durationMillis=3688 workspaceRemoved=true\r\n....\r\n\r\nTime: 83.583\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        },
+        {
+          "round": 2,
+          "processRestartBeforeRound": true,
+          "tests": 8,
+          "failures": 0,
+          "passed": true,
+          "durationSeconds": 65.681,
+          "lifecycleCases": [
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22698,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 2693,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22709,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 2896,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "CANCELLED",
+              "childPid": 22720,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3522,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "TIMEOUT",
+              "childPid": 22777,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 10319,
+              "workspaceRemoved": true
+            },
+            {
+              "errorCode": "OUTPUT_LIMIT",
+              "childPid": 22801,
+              "reaped": true,
+              "exitCode": 137,
+              "durationMillis": 3814,
+              "workspaceRemoved": true
+            }
+          ],
+          "instrumentationOutput": "\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nBUN_LIFECYCLE error=CANCELLED childPid=22698 reaped=true exitCode=137 durationMillis=2693 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=22709 reaped=true exitCode=137 durationMillis=2896 workspaceRemoved=true\r\n\r\nBUN_LIFECYCLE error=CANCELLED childPid=22720 reaped=true exitCode=137 durationMillis=3522 workspaceRemoved=true\r\n...\r\nBUN_LIFECYCLE error=TIMEOUT childPid=22777 reaped=true exitCode=137 durationMillis=10319 workspaceRemoved=true\r\n.\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=22801 reaped=true exitCode=137 durationMillis=3814 workspaceRemoved=true\r\n....\r\n\r\nTime: 65.681\r\n\r\nOK (8 tests)\r\n\r\n\r\n"
+        }
+      ],
+      "cleanup": {
+        "testApkUninstalled": true,
+        "isolatedAppUninstalled": true,
+        "remainingPackageCount": 0,
+        "remainingUidProcessCount": 0
+      }
+    }
+  ],
+  "localVerification": {
+    "nodeTests": {
+      "passed": 93,
+      "failed": 0
+    },
+    "documentationTests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "generatedMarkdown": {
+      "languages": 10,
+      "artifacts": 36,
+      "checkPassed": true
+    },
+    "jvmUnitTests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "linuxHostProtocolTests": {
+      "passed": 8,
+      "failed": 0,
+      "environment": "Existing locked Ubuntu build-host container; network disabled; temporary host GCC-13 executable",
+      "androidEvidence": false
+    },
+    "lintDebug": {
+      "errors": 0,
+      "warnings": 39
+    },
+    "apkIntegrity": {
+      "variants": [
+        "debug",
+        "release"
+      ],
+      "apks": 6,
+      "exactRuntimeAndSupervisorEntries": true,
+      "sha256AndElf": true,
+      "zipalignPageSizeBytes": 16384
+    },
+    "releaseSigning": {
+      "apks": 3,
+      "verifiedSchemes": [
+        "v2"
+      ],
+      "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213",
+      "deviceAcceptanceForTheseReleaseApks": false
+    },
+    "sourceReleaseTools": {
+      "manifestSchema": 2,
+      "helperBindingAndArchiveMemberTestsPassed": true,
+      "legacySchemaDowngradeRejected": true,
+      "fullReleaseSourceSetAssembledThisTurn": false,
+      "githubPublicationThisTurn": false
+    },
+    "remoteCiRunForThisChange": false
+  },
+  "limitations": [
+    "The official plugin still requires Android 13/API 33; no API 28-32 support is added.",
+    "The separate patched app-probe still uses the old Java process path. Its historical 10/12 results remain failed until supervisor integration and fresh per-device runs.",
+    "No native Android x86_64 execution of this new helper/plugin build was performed in this session.",
+    "The 16 KiB result is arm64 through x86_64 translation, not native arm64. Official native x86_64 16 KiB Bun remains blocked.",
+    "The helper owns only its immediate Bun child; it does not implement a security sandbox or arbitrary detached-descendant cleanup.",
+    "No v0.2.1 Release was published; v0.2.0 tag/assets were not rewritten."
+  ],
+  "nextStep": "Integrate the shared supervisor/control wrapper into the isolated patched app-probe, reseal source/APK/helper receipts and repeat native arm64 API 28/31/33/35 probes."
+}

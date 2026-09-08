@@ -36,7 +36,10 @@ jobs:
       - name: Verify Bun runtime supply-chain inputs
         run: |
           node tools/bun-runtime/verify-runtime.mjs
+          node tools/bun-runtime/supervisor/verify-supervisor.mjs
+          node --test tools/bun-runtime/supervisor/supervisor-common.test.mjs
           node --test tools/bun-runtime/verify-apk-runtime.test.mjs
+          python3 -B tools/bun-runtime/supervisor/test_supervisor.py
           node tools/bun-runtime/experimental/api28/verify-experiment.mjs
           node tools/bun-runtime/experimental/api28/build-experiment.mjs
           node --test \

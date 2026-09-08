@@ -46,6 +46,7 @@
   ],
   "h3_security": "Permissions and Integrity",
   "security_points": [
+    "A separately locked, read-only supervisor handles timeout, cancellation and output limits, including scripts that ignore SIGTERM. It reaps the direct Bun child; it is not a sandbox or a manager for arbitrary detached descendants.",
     "The exported activation (Wake), info, and runtime components are protected by `org.autojs.permission.PLUGIN`, and AutoJs6 still performs its normal plugin authorization checks.",
     "The script snapshot is staged in a private per-run directory, and the Bun executable is launched from Android's read-only native library directory instead of being copied to writable storage.",
     "The repository lock records both the official release archives and the binaries packaged into the APK; CI rejects any drift in size, SHA-256, or ELF properties before building.",
