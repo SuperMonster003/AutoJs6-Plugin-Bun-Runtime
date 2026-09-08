@@ -312,8 +312,8 @@ export function parseApkSignerOutput(output, label = "APK") {
   const v2 = /Verified using v2 scheme \(APK Signature Scheme v2\): true/.test(output);
   const v3 = /Verified using v3(?:\.1|\.2)? scheme \(APK Signature Scheme v3(?:\.1|\.2)?\): true/.test(output);
   requireCondition(v2 || v3, `${label}: neither APK Signature Scheme v2 nor v3 verified`);
-  requireCondition(/Number of signers: 1/.test(output), `${label}: expected exactly one APK signer`);
-  const certificates = [...output.matchAll(/V[23](?:\.1|\.2)? Signer: certificate SHA-256 digest: ([0-9a-f]{64})/g)]
+  requireCondition(/^Number of signers: 1\r?$/m.test(output), `${label}: expected exactly one APK signer`);
+  const certificates = [...output.matchAll(/^(?:V[23](?:\.1|\.2)? Signer:|Signer #1) certificate SHA-256 digest: ([0-9a-f]{64})\r?$/gm)]
     .map((match) => match[1]);
   requireCondition(certificates.length > 0, `${label}: signer certificate SHA-256 is missing`);
   requireCondition(new Set(certificates).size === 1, `${label}: APK schemes report different signing certificates`);

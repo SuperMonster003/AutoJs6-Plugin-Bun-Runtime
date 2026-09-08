@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import {
   mkdirSync,
   mkdtempSync,
+  readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
@@ -22,6 +23,7 @@ import {
   writeDeterministicTar,
 } from "./release-asset-common.mjs";
 import { createGitArchive, parseApkSignerOutput } from "./assemble-corresponding-source.mjs";
+import { verifyWebKitSourceRecord } from "./verify-corresponding-source-release.mjs";
 
 test("streaming CRC32 matches the canonical release-filename check vector", async () => {
   await withTemporaryDirectory(async (root) => {
@@ -123,6 +125,25 @@ test("apksigner output requires one signer and a modern verified scheme", () => 
   });
   assert.throws(() => parseApkSignerOutput(output.replace("v2): true", "v2): false")), /neither APK Signature Scheme/);
   assert.throws(() => parseApkSignerOutput(output.replace("Number of signers: 1", "Number of signers: 2")), /exactly one/);
+  assert.throws(() => parseApkSignerOutput(output.replace("Number of signers: 1", "Number of signers: 10")), /exactly one/);
+  assert.deepEqual(parseApkSignerOutput(output.replace("V2 Signer:", "Signer #1")), parseApkSignerOutput(output));
+});
+
+test("a self-consistent release manifest cannot substitute an unlocked WebKit archive", () => {
+  const { webkitSource: source } = JSON.parse(readFileSync(new URL("../experimental/api28/distribution-source.lock.json", import.meta.url), "utf8"));
+  const component = {
+    logicalBytes: source.releaseArchive.bytes,
+    logicalSha256: source.releaseArchive.sha256,
+    provenance: {
+      repository: source.repository, tag: source.tag, commit: source.commit,
+      treeSha1: source.treeSha1, trackedFileCount: source.trackedFileCount,
+      gitArchivePrefix: source.releaseArchive.archivePrefix,
+    },
+  };
+  verifyWebKitSourceRecord(component, source);
+  assert.throws(() => verifyWebKitSourceRecord({ ...component, logicalSha256: "0".repeat(64) }, source), /SHA-256 differs from lock/);
+  assert.throws(() => verifyWebKitSourceRecord({ ...component, logicalBytes: component.logicalBytes + 1 }, source), /byte count differs from lock/);
+  assert.throws(() => verifyWebKitSourceRecord({ ...component, provenance: { ...component.provenance, commit: "0".repeat(40) } }, source), /commit differs from lock/);
 });
 
 async function withTemporaryDirectory(callback) {
