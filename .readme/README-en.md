@@ -214,13 +214,14 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 #### v0.2.1
 
-_2026/09/08_
+_2026/09/09_
 
 - `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
 - `Fix` Fix timeout, cancellation and output-limit cleanup in the official plugin with a locked read-only supervisor: escalate ignored SIGTERM to SIGKILL, wait for the direct Bun child to exit, and preserve output for draining; Bun 1.4.0 and the Android 13 minimum are unchanged
+- `Fix` Fix the isolated patched Bun probe's termination by compiling the shared SupervisedProcess wrapper and packaging the locked supervisor; bind source/toolchain/helper bytes in schema-2 receipts and keep output readers open until termination
 - `Improvement` Bind the supervisor source, fixed NDK build instructions and per-ABI helper hashes in corresponding-source manifest schema 2, with exact archive-member checks and legacy v0.2.0 assets left unchanged
 - `Improvement` Add an isolated test-only APK builder and explicit-device runner for the reproducible patched Bun runtime, with exact source/APK/runtime checks, temporary test signing and bounded machine-readable reports
-- `Improvement` Record native arm64 application-process tests on API 28, 31, 33 and 35: each device passes 10 of 12 probes in two rounds; SIGTERM-ignoring timeout and output-limit tests fail, so forcible termination remains a release blocker
+- `Improvement` Pass all 13 application-process probes twice on native arm64 devices with API 28, 31, 33 and 35: 24 SIGTERM-ignoring timeout, output-limit and readiness-triggered cancellation cases confirm child/parent exit and workspace cleanup; preserve the original 10/12 failure report without claiming full experimental Binder or broader Android support
 - `Improvement` Archive the published v0.2.0 APK/source asset verification and signed-device acceptance evidence, without rewriting the released tag or expanding Android/16 KB compatibility
 - `Dependency` Upgrade the online autojs6-platform-versions build plugin from 1.7.3 to 1.7.4 and synchronize the repository's version requirement
 

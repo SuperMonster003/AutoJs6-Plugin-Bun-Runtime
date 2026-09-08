@@ -4,16 +4,16 @@
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (独立探针已有功能证据, 新监督器接入和复测待补), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (监督器已接入独立探针, API 28/31/33/35 两轮 13/13 通过, 完整 Binder 与 syscall/FD 矩阵待补), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L 应用进程矩阵与强制终止修复 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
+| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与完整实验 Binder 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 最大障碍 | 正式插件已用独立监督器修复忽略 SIGTERM 的真实进程回收, 但 patched 独立探针尚未接入和重跑, 原 10/12 失败记录仍有效; 完整实验 Binder、API 29/30/32、x86_64 与 patched paired APK/source Release 仍待完成 |
+| 最大障碍 | patched 独立探针的强制终止阻断已在四台原生 arm64 真机上消除, 原 10/12 失败记录作为历史证据保留; syscall/FD-CLOEXEC 专项、完整实验 Binder、API 29/30/32、x86_64 与 patched paired APK/source Release 仍待完成 |
 
 ## 如何阅读这份路线图
 
@@ -76,7 +76,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 进行中, 强制终止阻断 | 独立应用进程探针已有真机证据, 完整插件/Binder 与剩余设备矩阵仍待完成 | 插件/测试/设备/发布 |
+| M3 Android 9-12L 实验支持 | 进行中, 独立探针 13/13 通过 | 原生 arm64 四台设备各两轮; syscall/FD、完整插件/Binder 与剩余设备矩阵仍待完成 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 进行中 | ELF, APK ZIP, 安装后 payload 和真实 16 KB 执行四层验证 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -189,12 +189,12 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (构建/测试/设备) 新增独立 test-only APK 工具 [app-probe](tools/bun-runtime/experimental/api28/app-probe/README.md), 不注册为 AutoJs6 插件、不使用正式签名或替换官方 payload. 输入两轮锁定 ELF, 输出双 ABI 单包, 核验真实 Manifest、APK 签名、16 KB ZIP 对齐及精确 payload. Sony G8441 API 28、Sony XQ-AT72 API 31、Redmi 22120RN86C API 33、Xiaomi 23046RP50C API 35 均在原生 arm64 / 4096-byte 页、普通应用 UID、untrusted_app、seccomp=2 下从只读 nativeLibraryDir 执行. (2026-09-08, G1/G2)
 - [x] (设备) 上述四台真机各运行两轮: version/revision、子进程应用域、JS/TS/Unicode/stdout+stderr、spawn/spawnSync、文件 I/O、loopback fetch、普通用户 SIGSYS 与终止后新执行这 10 项通过. 每轮 12 项中强制终止的 2 项失败, 总体结果明确为 failed; force-stop 与探针卸载后已确认无探针 UID 残留进程. 完整证据见 [M3 应用进程报告](docs/compatibility/2026-09-08-m3-application-probe.json). (2026-09-08, G2, 不是完整 Binder 通过)
-- [ ] (插件/测试, 下一优先项) 将 M1 已验证的监督器和共享 Java 控制包装器接入独立 patched app-probe, 重新生成绑定源码/双 ABI/helper 的收据, 再在 API 28/31/33/35 原生 arm64 各重跑两轮. 原探针仍使用旧 Java 终止路径, 不能用正式 API 33/35 Binder 通过替代这项证据, 也不能删除 SIGTERM handler 或放宽回收上限制造通过. 原始失败报告保留不变.
+- [x] (插件/构建/测试/设备) 将 M1 锁定监督器和原文件编译的共享 `SupervisedProcess` 接入 patched app-probe, schema 2 收据绑定 Git-canonical 源码、固定 NDK、双 ABI helper/runtime 和测试 APK, 拒绝旧收据及缺失/漂移 native entries. 四台 API 28/31/33/35 原生 arm64 / 4096-byte 页设备各两轮 13/13 通过, 共 104 项; 24 次忽略 SIGTERM 的超时、输出超限和就绪后取消均核验实际父子关系、exit 137、双 PID 消失与工作目录删除, 终止请求至监督器退出为 301-307 ms. 未放宽原 1500 ms 超时及 2000 ms 回收上限, 每轮 force-stop 和最终卸载后对应 UID 进程数为 0. 新增 [M3 监督器复测报告](docs/compatibility/2026-09-09-m3-supervised-application-probe.json), 原始失败报告保留不变. (2026-09-09, G1/G2, 非完整 Binder, 未发布)
 
 - [ ] (上游/插件) 在 Bun 第一次 raw syscall 前安全处理 Android `SECCOMP_RET_TRAP`, 仅将 `SYS_SECCOMP` trap 转换为 `-ENOSYS`, 让已有 fallback 执行; 普通用户发送的 `SIGSYS` 仍保持可预期语义.
-- [ ] (测试) 为启动和 spawn child 的 `close_range` 验证真实 fallback, 并证明 `CLOSE_RANGE_CLOEXEC` 的文件描述符隔离语义没有被无操作替代.
+- [ ] (测试, 下一优先项) 为启动和 spawn child 的 `close_range` 验证真实 fallback, 并证明 `CLOSE_RANGE_CLOEXEC` 的文件描述符隔离语义没有被无操作替代; 先扩展独立专项探针, 再接入完整实验 Binder.
 - [ ] (测试) 分别强制 trap 或在目标设备覆盖 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2`, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD.
-- [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建.
+- [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 独立探针已通过普通用户 SIGSYS、spawn/spawnSync、超时/取消/输出超限及 force-stop 后重启, 不替代剩余语义和完整插件/Binder 测试.
 
 ### M3-B: 插件诊断与实验分发
 

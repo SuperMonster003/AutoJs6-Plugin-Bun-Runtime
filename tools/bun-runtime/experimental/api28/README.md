@@ -12,15 +12,20 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > application-process gates and is actually published. Patched executables stay
 > outside Git; the opt-in [test-only app probe](app-probe/README.md) packages them
 > only into external test APKs. The unmodified official Bun artifacts remain
-> the production plugin's only payloads.
+> the production plugin's only Bun payloads; its separately locked first-party
+> supervisor is also reused by the test-only probe.
 
 The official v0.2.0 Release now contains the APKs and corresponding-source set,
 with all 13 asset digests verified before and after publication. That is not a
 patched-runtime release. The separate application-process probe has recorded
-native arm64, 4 KiB-page results on API 28/31/33/35: each device passes 10 of 12
-probes in both rounds, but SIGTERM-ignoring timeout/output-limit cases fail.
-Forcible termination remains an explicit blocker; see the
-[device report](../../../../docs/compatibility/2026-09-08-m3-application-probe.json).
+native arm64, 4 KiB-page results on API 28/31/33/35: after reusing the locked
+supervisor and shared Java wrapper, each device passes 13/13 probes in two rounds,
+including SIGTERM-ignoring timeout/output-limit and readiness-triggered cancellation.
+All 24 lifecycle cases verify actual child/parent disappearance and workspace
+cleanup; see the [2026-09-09 report](../../../../docs/compatibility/2026-09-09-m3-supervised-application-probe.json).
+The [original 10/12 failure report](../../../../docs/compatibility/2026-09-08-m3-application-probe.json)
+remains unchanged. Full experimental Binder, syscall/FD-CLOEXEC semantics and
+the remaining API/ABI matrix are still open; this is not stable Android 9 support.
 
 ## Safety boundary
 

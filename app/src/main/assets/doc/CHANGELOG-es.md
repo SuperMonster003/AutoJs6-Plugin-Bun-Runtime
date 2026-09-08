@@ -6,13 +6,14 @@
 
 # v0.2.1
 
-###### 2026/09/08
+###### 2026/09/09
 
 * `Aviso` Versión de desarrollo aún no publicada; el plugin oficial sigue requiriendo Android 13 (API 33) o posterior
 * `Corrección` Corregir la limpieza por tiempo agotado, cancelación y límite de salida del complemento oficial con un supervisor fijado de solo lectura: escalar SIGTERM ignorado a SIGKILL, esperar la salida del proceso Bun directo y conservar la salida pendiente; Bun 1.4.0 y el mínimo Android 13 no cambian
+* `Corrección` Corregir la terminación de la sonda aislada de Bun modificado compilando el contenedor compartido SupervisedProcess e incluyendo el supervisor fijado; vincular fuentes, herramientas y supervisor en recibos de esquema 2 y mantener abiertos los lectores de salida hasta la terminación
 * `Mejora` Vincular el código del supervisor, las instrucciones con NDK fijo y sus hashes por ABI en el esquema 2 de corresponding-source, verificando los archivos exactos del paquete fuente sin modificar los recursos de v0.2.0
 * `Mejora` Añadir herramientas para compilar un APK aislado solo de prueba y ejecutarlo en un dispositivo explícito con Bun modificado reproducible, verificaciones exactas de fuentes/APK/runtime, firma temporal y reportes acotados legibles por máquina
-* `Mejora` Registrar pruebas en procesos de aplicación arm64 nativos con API 28, 31, 33 y 35: cada dispositivo supera 10 de 12 pruebas en dos rondas; fallan la terminación por tiempo y por salida excesiva cuando se ignora SIGTERM, por lo que la terminación forzada sigue bloqueando la publicación
+* `Mejora` Superar las 13 pruebas de proceso de aplicación dos veces en dispositivos arm64 nativos con API 28, 31, 33 y 35: 24 casos que ignoran SIGTERM por tiempo agotado, límite de salida o cancelación tras estar listos confirman la salida del hijo y del supervisor y la limpieza del directorio; conservar el informe original 10/12 sin afirmar compatibilidad Binder experimental completa ni ampliar el soporte Android
 * `Mejora` Archivar la verificación de APK y fuentes publicados con v0.2.0 y la aceptación de paquetes firmados en dispositivos, sin reescribir la etiqueta publicada ni ampliar la compatibilidad con Android o páginas de 16 KB
 * `Dependencia` Actualizar el plugin de compilación en línea autojs6-platform-versions de 1.7.3 a 1.7.4 y sincronizar el requisito de versión del repositorio
 

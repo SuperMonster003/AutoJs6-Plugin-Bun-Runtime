@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { verifyApkSignature } from "../../../release/assemble-corresponding-source.mjs";
-import { ABIS, HERE, ROOT, PACKAGE, RUNNER, fileFacts, inputFacts, json, lockedEvidence,
+import { supervisorArtifacts, supervisorLock, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
+import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, fileFacts, inputFacts, json, lockedEvidence,
   newOutputDirectory, parseOptions, requireFile, validateProbes, validateReceipt,
   validateManifestDump, verifyProbeApk, verifyRuntimePair } from "./probe-common.mjs";
 
@@ -26,7 +27,7 @@ export function compileProbe({ jdk, sdk, outputDirectory }) {
   const javac = requireFile(join(jdk, "bin", "javac" + exe));
   const androidJar = requireFile(join(sdk, "platforms", "android-36", "android.jar"));
   run(javac, ["-encoding", "UTF-8", "-source", "8", "-target", "8", "-bootclasspath", androidJar,
-    "-d", outputDirectory, join(HERE, "ProbeInstrumentation.java")]);
+    "-d", outputDirectory, join(HERE, "ProbeInstrumentation.java"), join(ROOT, SHARED_PROCESS)]);
   return classFiles(outputDirectory);
 }
 
@@ -46,13 +47,21 @@ export function buildProbe(options) {
   const d8 = requireFile(join(buildTools, "lib", "d8.jar"));
   const androidJar = requireFile(join(sdk, "platforms", "android-36", "android.jar"));
   const evidence = lockedEvidence();
+  verifySupervisorSource();
+  const helpers = ABIS.map(abi => {
+    const artifact = supervisorArtifacts.get(abi);
+    const path = requireFile(join(ROOT, artifact.binaryPath));
+    verifySupervisorBytes(readFileSync(path), artifact);
+    return path;
+  });
   validateProbes(json(join(HERE, "probes.json")));
   const sources = evidence.artifacts.map((artifact, index) => verifyRuntimePair(
     options[index === 0 ? "--arm64" : "--x86"], options[index === 0 ? "--repeat-arm64" : "--repeat-x86"], artifact));
   const receipt = {
-    schemaVersion: 1, kind: "test-only-application-process-probe", packageName: PACKAGE, runner: RUNNER,
+    schemaVersion: 2, kind: "test-only-application-process-probe", packageName: PACKAGE, runner: RUNNER,
     testOnly: true, minSdk: 28, targetSdk: 36, variant: evidence.identity.variant,
-    inputs: inputFacts(), runtimes: Object.fromEntries(evidence.artifacts.map(a => [a.abi, { bytes: a.bytes, sha256: a.sha256 }])),
+    inputEncoding: "utf8-lf", inputs: inputFacts(), supervisor: supervisorLock,
+    runtimes: Object.fromEntries(evidence.artifacts.map(a => [a.abi, { bytes: a.bytes, sha256: a.sha256 }])),
     tools: { buildToolsVersion, androidJar: fileFacts(androidJar),
       javacVersion: run(requireFile(join(jdk, "bin", "javac" + exe)), ["--version"]),
       aapt2Version: run(aapt2, ["version"]), d8: fileFacts(d8), apksigner: fileFacts(apksigner) },
@@ -70,6 +79,7 @@ export function buildProbe(options) {
       "WEBKIT-WEBCORE-LICENSE-LGPL-2", "WEBKIT-WEBCORE-LICENSE-LGPL-2.1", "WEBKIT-WEBCORE-LICENSE-APPLE"]) {
       copyFileSync(join(ROOT, "app/src/main/assets/doc/licenses", filename), join(staging, "assets", filename));
     }
+    copyFileSync(join(ROOT, "LICENSE"), join(staging, "assets", "PROJECT-LICENSE.txt"));
     // Ephemeral testing identity only. Never reads the project's release signing configuration.
     const keystore = join(staging, "probe-test-only.p12"), password = "test-only-not-release";
     run(keytool, ["-genkeypair", "-keystore", keystore, "-storetype", "PKCS12", "-alias", "probe",
@@ -79,6 +89,7 @@ export function buildProbe(options) {
       const abi = ABIS[i], stage = join(staging, abi);
       mkdirSync(join(stage, "lib", abi), { recursive: true });
       copyFileSync(sources[i], join(stage, "lib", abi, "libbun_exec.so"));
+      copyFileSync(helpers[i], join(stage, "lib", abi, "libbun_supervisor.so"));
       const unsigned = join(stage, "unsigned.apk"), aligned = join(stage, "aligned.apk");
       run(aapt2, ["link", "--manifest", join(HERE, "AndroidManifest.xml"), "--min-sdk-version", "28",
         "--target-sdk-version", "36", "--version-code", "1", "--version-name", "0.0.0-api28-probe",
@@ -95,7 +106,7 @@ export function buildProbe(options) {
       run(zipalign, ["-c", "-P", "16", "4", apkPath]);
       validateManifestDump(run(aapt2, ["dump", "xmltree", "--file", "AndroidManifest.xml", apkPath]));
       const apk = { abi, filename, ...fileFacts(apkPath), signing: verifyApkSignature(apkPath, java, apksigner) };
-      verifyProbeApk(apkPath, apk, receipt.runtimes);
+      verifyProbeApk(apkPath, apk, receipt.runtimes, receipt.supervisor);
       receipt.apks.push(apk);
       console.log("Verified test-only APK: " + abi + " " + apk.sha256);
     }

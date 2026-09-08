@@ -97,7 +97,7 @@ jobs:
             :app:lintDebug \
             --stacktrace
 
-      - name: Compile the isolated API 28 application-process probe
+      - name: Compile the isolated API 28 probe with the shared lifecycle wrapper
         run: |
           node --input-type=module -e '
             import { mkdtempSync } from "node:fs";
@@ -108,7 +108,8 @@ jobs:
               sdk: process.env.ANDROID_HOME,
               outputDirectory: mkdtempSync(join(process.env.RUNNER_TEMP, "bun-api28-probe-classes-"))
             });
-            if (classes.length === 0) throw new Error("No probe classes generated");
+            if (!classes.some(path => path.endsWith("/SupervisedProcess.class")))
+              throw new Error("Shared supervised process wrapper was not compiled");
           '
 
       - name: Upload debug and test APKs

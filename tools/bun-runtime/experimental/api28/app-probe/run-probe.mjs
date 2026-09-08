@@ -5,7 +5,8 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { verifyApkSignature } from "../../../release/assemble-corresponding-source.mjs";
 import { HERE, PACKAGE, RUNNER, ABIS, json, newOutputDirectory, parseOptions, requireFile,
-  validateProbes, validateReceipt, validateManifestDump, verifyProbeApk, parseInstrumentation, validateReport } from "./probe-common.mjs";
+  validateProbes, validateReceipt, validateManifestDump, verifyProbeApk, parseInstrumentation, validateReport,
+  parsePackageUid, countUidProcesses } from "./probe-common.mjs";
 
 function command(executable, args, timeout = 60000) {
   return new Promise((resolveResult, reject) => {
@@ -43,7 +44,8 @@ export async function runProbe(options) {
   const probes = validateProbes(json(join(HERE, "probes.json")));
   const apk = receipt.apks.find(item => item.abi === abi);
   const apkPath = requireFile(join(options["--apk-directory"], apk.filename));
-  verifyProbeApk(apkPath, apk, receipt.runtimes);
+  verifyProbeApk(apkPath, apk, receipt.runtimes, receipt.supervisor);
+  const supervisor = receipt.supervisor.artifacts.find(item => item.abi === abi);
   assert(/^\d+\.\d+\.\d+$/.test(options["--build-tools"]), "invalid build-tools version");
   const exe = process.platform === "win32" ? ".exe" : "";
   const buildTools = join(options["--sdk"], "build-tools", options["--build-tools"]);
@@ -71,16 +73,20 @@ export async function runProbe(options) {
     "refusing to replace a pre-existing probe package, or package preflight failed");
   mkdirSync(output);
   const result = {
-    schemaVersion: 1, kind: "test-only-application-process-probe-runs", capturedAt: new Date().toISOString(),
+    schemaVersion: 2, kind: "test-only-application-process-probe-runs", capturedAt: new Date().toISOString(),
     pluginBinderExercised: false, distributionReady: false, build: receipt, runs: [],
-    lifecycle: { installedByThisRun: false, forceStopVerified: false, uninstalled: false }, passed: false,
+    lifecycle: { installedByThisRun: false, forceStopVerified: false, rounds: [], uninstalled: false }, passed: false,
   };
   let installed = false;
+  let installedUid;
+  const uidProcessCount = async () => countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), installedUid);
   try {
     console.log("Installing isolated test-only probe for API " + api + " " + abi);
     const install = await checked("install", "-t", apkPath);
     assert(install.includes("Success"), "installation did not report success");
     installed = true; result.lifecycle.installedByThisRun = true;
+    installedUid = parsePackageUid(await checked("shell", "pm", "list", "packages", "-U", PACKAGE));
+    result.lifecycle.installedUid = installedUid;
     for (let index = 0; index < 2; index++) {
       const instrument = await command(adb, ["-s", serial, "shell", "am", "instrument", "-w", "-r",
         "-e", "expectedAbi", abi, "-e", "requiredApiLevel", String(api),
@@ -94,7 +100,8 @@ export async function runProbe(options) {
       result.runs.push(report);
       try {
         assert.equal(instrument.status, 0, "adb instrumentation failed");
-        validateReport(report, { abi, api, pageSize, apk, runtime: receipt.runtimes[abi], variant: receipt.variant, probes });
+        validateReport(report, { abi, api, pageSize, apk, runtime: receipt.runtimes[abi], supervisor, variant: receipt.variant, probes });
+        assert.equal(report.environment.uid, installedUid, "instrumentation UID differs from installed package");
         parseInstrumentation(instrument.stdout);
       } catch (error) {
         (result.validationErrors ??= []).push("Round " + (index + 1) + ": " + error.message);
@@ -104,6 +111,9 @@ export async function runProbe(options) {
       await checked("shell", "am", "force-stop", PACKAGE);
       const pids = await adbCall("shell", "pidof", PACKAGE);
       assert(pids.status === 1 && !pids.stdout.trim() && !pids.stderr.trim(), "probe PID survived force-stop");
+      const count = await uidProcessCount();
+      result.lifecycle.rounds.push({ round: index + 1, packageProcessAbsent: true, uidProcessCount: count });
+      assert.equal(count, 0, "probe UID has surviving child processes after force-stop");
       result.lifecycle.forceStopVerified = true;
     }
     result.passed = !result.validationErrors;
@@ -119,6 +129,10 @@ export async function runProbe(options) {
         assert((remaining.status === 0 || remaining.status === 1) && !remaining.stdout.trim() && !remaining.stderr.trim(),
           "probe package remains after uninstall");
         result.lifecycle.uninstalled = true;
+        if (installedUid !== undefined) {
+          result.lifecycle.finalUidProcessCount = await uidProcessCount();
+          assert.equal(result.lifecycle.finalUidProcessCount, 0, "probe UID processes remain after uninstall");
+        }
       } catch (error) { result.passed = false; result.cleanupError = error.message; }
     }
     writeFileSync(join(output, "probe-result.json"), JSON.stringify(result, null, 2) + "\n", { flag: "wx" });
