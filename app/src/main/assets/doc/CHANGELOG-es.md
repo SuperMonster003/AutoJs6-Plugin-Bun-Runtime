@@ -6,9 +6,10 @@
 
 # v0.2.0
 
-###### 2026/09/01
+###### 2026/09/08
 
 * `Aviso` Esta versión reduce el requisito mínimo de sistema de Android 14 a Android 13 (API 33); Android 9 a 12L (API 28 a 32) sigue sin soporte hasta que un runtime de Bun parcheado supere la validación de portabilidad
+* `Corrección` Reforzar la verificación de los recursos de Release: comprobar el tamaño y SHA-256 del archivo de WebKit frente al registro fijado y admitir los distintos formatos de salida de apksigner
 * `Corrección` Identificar el ABI del runtime instalado mediante el SHA-256 del payload fijado, en vez del orden de iteración de la tabla ABI, y hacer que el precalentamiento ejecute una prueba mínima de JavaScript para rechazar un runtime inutilizable antes de iniciar scripts de usuario
 * `Corrección` Rechazar el runtime oficial x86_64 incompatible antes de iniciar el proceso cuando Android usa páginas mayores de 4 KiB, tras aislar el fallo en el límite de 4 KiB de JavaScriptCore fijado, sustituyendo un aborto determinista de Bun por un diagnóstico acotado
 * `Mejora` Reducir el requisito mínimo de sistema: se conserva el payload Android oficial y fijado de Bun 1.4.0 y se relaja el límite inferior de soporte de Android 14 (API 34) a Android 13 (API 33), cubriendo más dispositivos

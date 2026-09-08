@@ -6,8 +6,9 @@
   "changelog_label_dependency": "Dépendance",
   "$data": {
     "v0.2.0": {
-      "released_date": "2026/09/01",
+      "released_date": "2026/09/08",
       "fix": [
+        "Renforcer la vérification des fichiers de Release: comparer directement la taille et le SHA-256 de l'archive WebKit aux valeurs verrouillées et accepter les différents formats de sortie d'apksigner",
         "Identifier l'ABI du runtime installé à partir du SHA-256 du payload épinglé plutôt que de l'ordre d'itération de la table ABI, et faire exécuter au préchauffage un test JavaScript minimal afin de rejeter un runtime inutilisable avant le démarrage des scripts utilisateur",
         "Rejeter le runtime officiel x86_64 incompatible avant le lancement du processus lorsque Android utilise des pages supérieures à 4 KiB, après avoir isolé l'échec au plafond de 4 KiB du JavaScriptCore épinglé, en remplaçant un abort Bun déterministe par un diagnostic borné"
       ],

@@ -6,8 +6,9 @@
   "changelog_label_dependency": "依赖",
   "$data": {
     "v0.2.0": {
-      "released_date": "2026/09/01",
+      "released_date": "2026/09/08",
       "fix": [
+        "强化 Release 资产验证: 将 WebKit 归档的大小和 SHA-256 直接与锁定值比较, 并兼容 apksigner 的不同证书输出格式",
         "不再按 ABI 表的遍历顺序猜测已安装 runtime, 改用锁定 payload 的 SHA-256 识别实际 ABI; prewarm 还会执行最小 JavaScript smoke test, 在用户脚本启动前拒绝无法执行的 runtime",
         "当 Android 使用超过 4 KiB 的页面时, 在启动 process 前拒绝已知不兼容的官方 x86_64 runtime; 已将故障收敛到 pinned JavaScriptCore 的 4 KiB page-size ceiling, 以有界诊断取代确定性的 Bun abort"
       ],

@@ -6,8 +6,9 @@
   "changelog_label_dependency": "依存関係",
   "$data": {
     "v0.2.0": {
-      "released_date": "2026/09/01",
+      "released_date": "2026/09/08",
       "fix": [
+        "Release アセット検証を強化: WebKit アーカイブのサイズと SHA-256 をロック値と直接照合し, apksigner の出力形式の違いに対応",
         "インストール済み runtime の ABI を ABI table の iteration 順ではなく locked payload の SHA-256 から識別し, prewarming で最小 JavaScript smoke test を実行して使用不能な runtime を user script 開始前に拒否",
         "Android が 4 KiB を超える page を使用する場合, pinned JavaScriptCore の 4 KiB page-size ceiling に原因を特定した既知の非互換な公式 x86_64 runtime を process 起動前に拒否し, 決定的な Bun abort を有界診断に置換"
       ],

@@ -213,9 +213,10 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 #### v0.2.0
 
-_2026/09/01_
+_2026/09/08_
 
 - `힌트` 이번 버전은 최소 시스템 요구 사항을 Android 14에서 Android 13 (API 33)으로 낮췄습니다. Android 9부터 12L (API 28부터 32)은 patch된 Bun runtime이 이식성 검증을 통과할 때까지 계속 지원되지 않습니다
+- `수정` Release 자산 검증 강화: WebKit 아카이브의 크기와 SHA-256을 잠긴 값과 직접 대조하고 apksigner 출력 형식 차이 지원
 - `수정` 설치된 runtime ABI를 ABI table iteration 순서가 아닌 locked payload SHA-256으로 식별하고, prewarming에서 최소 JavaScript smoke test를 실행해 사용할 수 없는 runtime을 user script 시작 전에 거부
 - `수정` Android가 4 KiB보다 큰 page를 사용할 때 pinned JavaScriptCore의 4 KiB page-size ceiling으로 원인이 확인된 호환 불가 공식 x86_64 runtime을 process 시작 전에 거부하고, 결정적인 Bun abort를 제한된 진단으로 대체
 - `개선` 최소 시스템 요구 사항 인하: 고정된 공식 Bun 1.4.0 Android payload를 그대로 사용하면서 지원 하한을 Android 14 (API 34)에서 Android 13 (API 33)으로 완화하여 더 많은 기기를 지원

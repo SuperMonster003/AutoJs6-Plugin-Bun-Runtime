@@ -51,9 +51,10 @@ jobs:
       - name: Download every Release asset
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
         run: |
           mkdir "$RUNNER_TEMP/release-assets"
-          gh release download "${{ steps.release.outputs.tag }}" \
+          gh release download "$RELEASE_TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --dir "$RUNNER_TEMP/release-assets"
 
@@ -63,7 +64,7 @@ jobs:
         run: |
           apksigner_jar="$(find "$ANDROID_HOME/build-tools" -path '*/lib/apksigner.jar' -type f -print | sort -V | tail -n 1)"
           test -n "$apksigner_jar"
-          java_executable="$(command -v java)"
+          java_executable="$(realpath "$(command -v java)")"
           node tools/bun-runtime/release/verify-corresponding-source-release.mjs \
             --asset-directory "$RUNNER_TEMP/release-assets" \
             --local-repository "$GITHUB_WORKSPACE" \

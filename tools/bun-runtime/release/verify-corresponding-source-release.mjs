@@ -250,13 +250,22 @@ async function verifyGitSourceComponent(path, component, label, expectedProjectS
   requireCondition(commit === component.provenance.commit, `${label} Git archive commit: expected ${component.provenance.commit}, found ${commit}`);
   if (component.id === "webkit-source") {
     const lock = readJson(resolve(experimentDirectory, "distribution-source.lock.json"));
-    requireCondition(component.provenance.tag === lock.webkitSource.tag, "WebKit tag differs from lock");
-    requireCondition(component.provenance.treeSha1 === lock.webkitSource.treeSha1, "WebKit tree differs from lock");
-    requireCondition(component.provenance.trackedFileCount === lock.webkitSource.trackedFileCount, "WebKit file count differs from lock");
+    verifyWebKitSourceRecord(component, lock.webkitSource);
   } else {
     requireCondition(component.provenance.commit === expectedProjectSource.commit, "project source commit differs from manifest");
     requireCondition(component.provenance.treeSha1 === expectedProjectSource.treeSha1, "project source tree differs from manifest");
   }
+}
+
+export function verifyWebKitSourceRecord(component, source) {
+  requireCondition(component.logicalBytes === source.releaseArchive.bytes, "WebKit source archive byte count differs from lock");
+  requireCondition(component.logicalSha256 === source.releaseArchive.sha256, "WebKit source archive SHA-256 differs from lock");
+  requireCondition(component.provenance.commit === source.commit, "WebKit commit differs from lock");
+  requireCondition(component.provenance.repository === source.repository, "WebKit repository differs from lock");
+  requireCondition(component.provenance.tag === source.tag, "WebKit tag differs from lock");
+  requireCondition(component.provenance.treeSha1 === source.treeSha1, "WebKit tree differs from lock");
+  requireCondition(component.provenance.trackedFileCount === source.trackedFileCount, "WebKit file count differs from lock");
+  requireCondition(component.provenance.gitArchivePrefix === source.releaseArchive.archivePrefix, "WebKit archive prefix differs from lock");
 }
 
 async function verifySourcePack(path, component) {

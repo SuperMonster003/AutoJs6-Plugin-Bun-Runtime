@@ -192,6 +192,12 @@ function buildReleaseNotes(manifest) {
   return [
     `Bun Runtime ${manifest.identity.version}${manifest.identity.prerelease ? " (API 28 patched experimental)" : ""}.`,
     "",
+    ...(manifest.identity.profile === "official" ? [
+      "Requires Android 13 (API 33) or later and AutoJs6 build 5278 or later. Bundles the unmodified official Bun 1.4.0 runtime for arm64-v8a and baseline x86_64; Android API 28-32 remains unsupported.",
+      "Run one JavaScript or TypeScript source snapshot with the standalone `\"bun\";` directive. Execution uses `bun run --no-install`; relative project imports, AutoJs6 globals, and a Java bridge are not available. stdout/stderr use bounded Binder callback chunks.",
+      "All APKs pass 16 KB ZIP alignment and both ELF payloads meet at least 16 KB PT_LOAD alignment. General 16 KB execution support is unverified: the official native x86_64 runtime is rejected on pages larger than 4 KiB, and native arm64 has not been tested on 16 KB pages. The arm64 payload passed on a 16 KB x86_64 AVD through libndk_translation only.",
+      "",
+    ] : []),
     "The three signed APKs and their complete corresponding-source asset set are published separately in this same Release.",
     `Verify every asset with \`${manifest.checksumAsset}\`; the machine-readable source/APK binding is in the corresponding-source manifest.`,
     "Bun is MIT-licensed; the executable statically links JavaScriptCore/WebKit components covered by LGPL-2-family terms and contains other third-party components under their respective licenses.",

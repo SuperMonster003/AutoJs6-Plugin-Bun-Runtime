@@ -6,8 +6,9 @@
   "changelog_label_dependency": "تبعية",
   "$data": {
     "v0.2.0": {
-      "released_date": "2026/09/01",
+      "released_date": "2026/09/08",
       "fix": [
+        "تعزيز التحقق من أصول الإصدار: ربط أرشيف WebKit مباشرة بحجم الملف وملخص SHA-256 المقفلين, ودعم صيغ مخرجات apksigner المختلفة",
         "تحديد ABI للـ runtime المثبتة من SHA-256 للـ payload المقفلة بدلا من ترتيب iteration في جدول ABI, وجعل prewarming ينفذ JavaScript smoke test مصغرة لرفض runtime غير القابلة للاستخدام قبل بدء scripts المستخدم",
         "رفض runtime الرسمية x86_64 المعروفة بعدم التوافق قبل تشغيل process عندما يستخدم Android صفحات أكبر من 4 KiB, بعد حصر العطل في page-size ceiling بحجم 4 KiB داخل JavaScriptCore المقفلة, واستبدال Bun abort الحتمي بتشخيص محدود"
       ],

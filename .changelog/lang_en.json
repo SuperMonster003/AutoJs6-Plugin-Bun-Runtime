@@ -6,8 +6,9 @@
   "changelog_label_dependency": "Dependency",
   "$data": {
     "v0.2.0": {
-      "released_date": "2026/09/01",
+      "released_date": "2026/09/08",
       "fix": [
+        "Harden Release asset verification by checking the WebKit archive directly against its locked size and SHA-256, and accepting the certificate output formats of supported apksigner versions",
         "Identify the installed runtime ABI from the locked payload SHA-256 instead of ABI-table iteration, and make prewarming execute a minimal JavaScript smoke test so an unusable runtime is rejected before user scripts start",
         "Reject the known-incompatible official x86_64 runtime before process launch when Android uses pages larger than 4 KiB after isolating the failure to pinned JavaScriptCore's 4 KiB page-size ceiling, replacing a deterministic Bun abort with a bounded diagnostic"
       ],
