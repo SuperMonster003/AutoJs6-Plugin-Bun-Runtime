@@ -5,6 +5,7 @@ import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "nod
 import { fileURLToPath } from "node:url";
 import { inspectElfBuffer, verifyRuntimeEvidenceManifest } from "../verify-built-runtime.mjs";
 import { inspectApkRuntime } from "../../../verify-apk-runtime.mjs";
+import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../../../supervisor/supervisor-common.mjs";
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../../../../..");
@@ -12,15 +13,31 @@ export const PACKAGE = "io.github.supermonster003.autojs6.plugin.bun.runtime.api
 export const RUNNER = PACKAGE + "/" + PACKAGE + ".ProbeInstrumentation";
 export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
-export const INPUTS = ["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json",
-  "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"];
+export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
+export const INPUTS = [
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+    .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
+  SHARED_PROCESS,
+  ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
+    .map(path => "tools/bun-runtime/supervisor/" + path),
+  "tools/bun-runtime/verify-runtime.mjs", "tools/bun-runtime/verify-apk-runtime.mjs",
+  "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+  "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+];
+export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
+  "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
+  "bounded-output", "cancel-after-ready", "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
   const bytes = readFileSync(path);
   return { bytes: bytes.length, sha256: hash(bytes) };
 };
-export const inputFacts = () => INPUTS.map((path) => ({ path, ...fileFacts(join(HERE, path)) }));
+// Git-canonical text bytes keep source receipts comparable across Windows/Linux.
+export const inputFacts = () => INPUTS.map((path) => {
+  const bytes = Buffer.from(readFileSync(join(ROOT, path), "utf8").replace(/\r\n/g, "\n"));
+  return { path, bytes: bytes.length, sha256: hash(bytes) };
+});
 
 export function requireFile(path) {
   assert(typeof path === "string" && isAbsolute(path), "an absolute regular-file path is required");
@@ -80,12 +97,25 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 }
 
 export function validateProbes(probes) {
-  assert(Array.isArray(probes) && probes.length === 12, "exact 12-probe inventory required");
+  assert(Array.isArray(probes), "probe array required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 13-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(/^[a-z][a-z0-9-]{0,63}$/.test(probe.id) && !ids.has(probe.id), "unsafe or duplicate probe ID");
     ids.add(probe.id);
-    assert(["exited", "timeout", "output-limit"].includes(probe.termination), "invalid termination");
+    assert(["exited", "timeout", "output-limit", "cancelled"].includes(probe.termination), "invalid termination");
+    const expectedTermination = { "timeout-forcible-cleanup": "timeout", "bounded-output": "output-limit",
+      "cancel-after-ready": "cancelled" }[probe.id] ?? "exited";
+    assert.equal(probe.termination, expectedTermination, "lifecycle fixture cannot be weakened");
+    if (probe.termination !== "exited") {
+      assert.equal(probe.requiresReady, true, "SIGTERM-handler readiness required");
+      assert(probe.source.includes("process.on('SIGTERM',()=>{});") &&
+        probe.source.includes("console.log('PROBE_READY='+process.pid);"), "fixed signal/readiness fixture required");
+      assert.equal(probe.stdout, "PROBE_READY=");
+    } else assert.equal(probe.requiresReady, undefined);
+    assert.equal(probe.cancelAfterReadyMillis, probe.termination === "cancelled" ? 100 : undefined);
+    assert.equal(probe.timeoutMillis, probe.id === "timeout-forcible-cleanup" ? 1500 : undefined, "fixed timeout budget required");
+    assert.equal(probe.outputBytes, probe.id === "bounded-output" ? 1024 : undefined, "fixed output budget required");
     assert(Number.isInteger(probe.timeoutMillis ?? 15000) && (probe.timeoutMillis ?? 15000) >= 500 &&
       (probe.timeoutMillis ?? 15000) <= 15000, "invalid timeout");
     assert(Number.isInteger(probe.outputBytes ?? 16384) && (probe.outputBytes ?? 16384) >= 1024 &&
@@ -104,7 +134,7 @@ export function validateProbes(probes) {
 
 export function validateReceipt(receipt) {
   const evidence = lockedEvidence();
-  assert.equal(receipt.schemaVersion, 1);
+  assert.equal(receipt.schemaVersion, 2);
   assert.equal(receipt.kind, "test-only-application-process-probe");
   assert.equal(receipt.packageName, PACKAGE);
   assert.equal(receipt.runner, RUNNER);
@@ -112,7 +142,10 @@ export function validateReceipt(receipt) {
   assert.equal(receipt.minSdk, 28);
   assert.equal(receipt.targetSdk, 36);
   assert.equal(receipt.variant, evidence.identity.variant);
+  assert.equal(receipt.inputEncoding, "utf8-lf");
   assert.deepEqual(receipt.inputs, inputFacts(), "probe source inputs changed; rebuild before running");
+  verifySupervisorSource();
+  assert.deepEqual(receipt.supervisor, supervisorLock, "supervisor source/toolchain/payload receipt drift");
   assert.deepEqual(receipt.runtimes, Object.fromEntries(evidence.artifacts.map(a =>
     [a.abi, { bytes: a.bytes, sha256: a.sha256 }])), "runtime receipt drift");
   assert.deepEqual(receipt.apks.map(a => a.abi), ABIS, "exact ordered APK inventory required");
@@ -121,15 +154,19 @@ export function validateReceipt(receipt) {
     assert(SHA256.test(apk.sha256) && SHA256.test(apk.signing.certificateSha256), "invalid APK digest");
     assert(Number.isSafeInteger(apk.bytes) && apk.bytes > 0, "invalid APK byte count");
     assert.equal(apk.signing.certificateSha256, receipt.apks[0].signing.certificateSha256, "signers differ");
+    assert.deepEqual(apk.signing.verifiedSchemes, ["v2"]);
+    assert.equal(apk.signing.signerCount, 1);
   }
   return receipt;
 }
 
-export function verifyProbeApk(path, apk, runtimes) {
+export function verifyProbeApk(path, apk, runtimes, supervisor) {
+  verifySupervisorSource();
+  assert.deepEqual(supervisor, supervisorLock, "supervisor binding is required");
   assert.deepEqual(fileFacts(requireFile(path)), { bytes: apk.bytes, sha256: apk.sha256 }, "APK bytes drifted");
   return inspectApkRuntime(path, [apk.abi], new Map(ABIS.map(abi => [abi, {
     binaryBytes: runtimes[abi].bytes, binarySha256: runtimes[abi].sha256,
-  }])));
+  }])), supervisorArtifacts);
 }
 
 export function validateManifestDump(output) {
@@ -172,8 +209,8 @@ export function validateManifestDump(output) {
   return true;
 }
 
-export function validateReport(report, { abi, api, pageSize, apk, runtime, variant, probes }) {
-  assert.equal(report.schemaVersion, 1);
+export function validateReport(report, { abi, api, pageSize, apk, runtime, supervisor, variant, probes }) {
+  assert.equal(report.schemaVersion, 2);
   assert.equal(report.kind, "test-only-application-process-probe");
   assert.equal(report.pluginBinderExercised, false);
   assert.equal(report.variant, variant);
@@ -181,6 +218,10 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, varia
   assert.equal(report.runtimeSha256, runtime.sha256);
   assert.equal(report.runtimeBytes, runtime.bytes);
   assert.equal(report.installedPayloadVerified, true);
+  assert.equal(report.supervisorSha256, supervisor.binarySha256);
+  assert.equal(report.supervisorBytes, supervisor.binaryBytes);
+  assert.equal(report.installedSupervisorVerified, true);
+  assert.equal(report.privateJobRemoved, true);
   assert(!report.environmentError && !report.cleanupError, "probe setup or cleanup failed");
   const env = report.environment;
   assert.equal(env.apiLevel, api);
@@ -198,13 +239,32 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, varia
     assert(!result.error && !result.streamError, expected.id + " stream/process error");
     assert.equal(result.termination, expected.termination);
     assert.equal(result.outputLimitBytes, expected.outputBytes ?? 16384);
+    assert.equal(result.processReaped, true, expected.id + " process not reaped");
+    assert.equal(result.workspaceRemoved, true, expected.id + " workspace remains");
     assert(Number.isInteger(result.capturedBytes) && result.capturedBytes >= 0 &&
       result.capturedBytes <= result.outputLimitBytes, "output budget exceeded");
     assert(Number.isInteger(result.elapsedMillis) && result.elapsedMillis >= 0 &&
       result.elapsedMillis < (expected.timeoutMillis ?? 15000) + 4000, "unbounded process lifecycle");
     if (expected.termination === "exited") assert.equal(result.exitCode, 0);
-    if (expected.termination === "timeout") assert.equal(result.forciblyTerminated, true, "forcible timeout fallback not exercised");
+    if (expected.termination !== "exited") {
+      assert.equal(result.forciblyTerminated, true, "forcible fallback not exercised");
+      assert.equal(result.exitCode, 137, "SIGTERM-ignoring child must exit through SIGKILL");
+      for (const field of ["readyObserved", "parentageVerified", "childGone", "supervisorGone"])
+        assert.equal(result[field], true, expected.id + " missing " + field);
+      for (const field of ["childPid", "supervisorPid"])
+        assert(Number.isInteger(result[field]) && result[field] > 1, "invalid observed PID");
+      assert.notEqual(result.childPid, result.supervisorPid);
+      assert(Number.isInteger(result.readinessMillis) && result.readinessMillis >= 0 &&
+        result.readinessMillis < (expected.timeoutMillis ?? 15000), "handler not ready before timeout");
+      assert(Number.isInteger(result.terminationToExitMillis) && result.terminationToExitMillis >= 0 &&
+        result.terminationToExitMillis < 2000, "unbounded forcible reaping");
+      assert(Number.isInteger(result.terminationRequestedAfterReadyMillis) && result.terminationRequestedAfterReadyMillis >= 0,
+        "termination preceded handler readiness");
+      if (expected.termination === "cancelled") assert(result.terminationRequestedAfterReadyMillis >= 100 &&
+        result.terminationRequestedAfterReadyMillis < 2000, "cancellation was not prompt after readiness");
+    } else assert.equal(result.forciblyTerminated, false);
     if (expected.termination === "output-limit") assert.equal(result.capturedBytes, result.outputLimitBytes);
+    if (expected.termination === "output-limit") assert(result.elapsedMillis < 10000, "unbounded output-limit cleanup");
     for (const channel of ["stdout", "stderr"]) {
       assert(typeof result[channel] === "string" && result[channel].length <= 2059, "unbounded stream summary");
       if (expected[channel]) assert(result[channel].includes(expected[channel]), expected.id + " missing " + channel);
@@ -212,6 +272,27 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, varia
   }
   assert.equal(report.passed, true);
   return report;
+}
+
+export function parsePackageUid(output) {
+  const lines = output.trim().split(/\r?\n/);
+  assert.equal(lines.length, 1, "exact installed probe UID required");
+  const match = lines[0].match(/^package:([^ ]+) uid:(\d+)$/);
+  assert(match && match[1] === PACKAGE, "unexpected installed package/UID record");
+  const uid = Number(match[2]);
+  assert(Number.isSafeInteger(uid) && uid >= 10000 && uid % 100000 !== 2000, "ordinary probe application UID required");
+  return uid;
+}
+
+export function countUidProcesses(output, uid) {
+  assert(Number.isSafeInteger(uid) && uid >= 10000, "application UID required");
+  const lines = output.trim().split(/\r?\n/);
+  assert.equal(lines.shift().trim().replace(/\s+/g, " "), "UID PID NAME", "unexpected ps columns");
+  return lines.filter(line => {
+    const match = line.trim().match(/^(\d+)\s+(\d+)\s+.+$/);
+    assert(match, "unparseable ps entry");
+    return Number(match[1]) === uid;
+  }).length;
 }
 
 export function parseInstrumentation(output) {

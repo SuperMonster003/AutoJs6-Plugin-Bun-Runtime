@@ -57,16 +57,27 @@
   },
   {
     "id": "timeout-forcible-cleanup",
-    "source": "process.on('SIGTERM',()=>{}); console.log('timeout-started'); setInterval(()=>{},1000);",
-    "stdout": "timeout-started",
+    "source": "process.on('SIGTERM',()=>{}); console.log('PROBE_READY='+process.pid); setInterval(()=>{},1000);",
+    "stdout": "PROBE_READY=",
+    "requiresReady": true,
     "timeoutMillis": 1500,
     "termination": "timeout"
   },
   {
     "id": "bounded-output",
-    "source": "process.on('SIGTERM',()=>{}); setInterval(()=>console.log('x'.repeat(4096)),1);",
+    "source": "process.on('SIGTERM',()=>{}); console.log('PROBE_READY='+process.pid); setInterval(()=>console.log('x'.repeat(4096)),1);",
+    "stdout": "PROBE_READY=",
+    "requiresReady": true,
     "outputBytes": 1024,
     "termination": "output-limit"
+  },
+  {
+    "id": "cancel-after-ready",
+    "source": "process.on('SIGTERM',()=>{}); console.log('PROBE_READY='+process.pid); setInterval(()=>{},1000);",
+    "stdout": "PROBE_READY=",
+    "requiresReady": true,
+    "cancelAfterReadyMillis": 100,
+    "termination": "cancelled"
   },
   {
     "id": "recovery-after-termination",

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.system.Os;
 import android.system.OsConstants;
+import io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcess;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.*;
@@ -15,11 +16,14 @@ import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/** Deliberately independent of AutoJs6 and the production plugin's implementation. */
+/** No plugin/Binder dependencies; shares only the production process-control wrapper. */
 public final class ProbeInstrumentation extends Instrumentation {
     private Bundle arguments;
     private File runtime;
+    private File supervisor;
     private File job;
     private final JSONObject report = new JSONObject();
     private final JSONArray outcomes = new JSONArray();
@@ -35,6 +39,7 @@ public final class ProbeInstrumentation extends Instrumentation {
         try {
             Context context = getTargetContext();
             JSONObject facts = new JSONObject(asset("build-facts.json"));
+            check(facts.getInt("schemaVersion") == 2, "supervisor-aware build receipt required");
             String abi = required("expectedAbi");
             JSONObject expected = facts.getJSONObject("runtimes").getJSONObject(abi);
             int api = Integer.parseInt(required("requiredApiLevel"));
@@ -55,14 +60,28 @@ public final class ProbeInstrumentation extends Instrumentation {
             runtime = new File(context.getApplicationInfo().nativeLibraryDir, "libbun_exec.so");
             check(runtime.isFile() && runtime.canExecute() && !runtime.canWrite(), "read-only installed executable");
             check(runtime.length() == expected.getLong("bytes") && sha256(runtime).equals(expected.getString("sha256")), "installed patched payload bytes");
+            JSONObject helper = null;
+            JSONArray helpers = facts.getJSONObject("supervisor").getJSONArray("artifacts");
+            for (int index = 0; index < helpers.length(); index++) {
+                JSONObject candidate = helpers.getJSONObject(index);
+                if (candidate.getString("abi").equals(abi)) { check(helper == null, "duplicate helper ABI"); helper = candidate; }
+            }
+            check(helper != null, "installed helper ABI is locked");
+            supervisor = new File(context.getApplicationInfo().nativeLibraryDir, SupervisedProcess.SUPERVISOR_NAME);
+            check(supervisor.isFile() && supervisor.canExecute() && !supervisor.canWrite(), "read-only installed supervisor");
+            check(supervisor.length() == helper.getLong("binaryBytes") &&
+                    sha256(supervisor).equals(helper.getString("binarySha256")), "installed supervisor bytes");
             check(sha256(new File(context.getApplicationInfo().sourceDir)).equals(required("requiredApkSha256")), "installed probe APK SHA-256");
-            report.put("schemaVersion", 1);
+            report.put("schemaVersion", 2);
             report.put("kind", "test-only-application-process-probe");
             report.put("pluginBinderExercised", false);
             report.put("variant", facts.getString("variant"));
             report.put("runtimeSha256", expected.getString("sha256"));
             report.put("runtimeBytes", expected.getLong("bytes"));
             report.put("installedPayloadVerified", true);
+            report.put("supervisorSha256", helper.getString("binarySha256"));
+            report.put("supervisorBytes", helper.getLong("binaryBytes"));
+            report.put("installedSupervisorVerified", true);
             report.put("installedApkSha256", required("requiredApkSha256"));
             report.put("environment", new JSONObject()
                     .put("manufacturer", Build.MANUFACTURER).put("model", Build.MODEL)
@@ -96,7 +115,11 @@ public final class ProbeInstrumentation extends Instrumentation {
             try { report.put("environmentError", bounded(error.toString())); } catch (Exception ignored) { }
         } finally {
             if (job != null) {
-                try { deleteOwned(job, job.getCanonicalPath(), 0, new int[] {0}); }
+                try {
+                    deleteOwned(job, job.getCanonicalPath(), 0, new int[] {0});
+                    check(!job.exists(), "private job root remains");
+                    report.put("privateJobRemoved", true);
+                }
                 catch (Exception error) {
                     success = false;
                     try { report.put("cleanupError", bounded(error.toString())); } catch (Exception ignored) { }
@@ -130,7 +153,7 @@ public final class ProbeInstrumentation extends Instrumentation {
         ProcessBuilder builder = new ProcessBuilder(command).directory(work);
         builder.environment().put("PROBE_UID", Integer.toString(uid));
         long started = SystemClock.elapsedRealtime();
-        java.lang.Process process = builder.start();
+        java.lang.Process process = SupervisedProcess.start(builder, supervisor);
         process.getOutputStream().close();
         AtomicReference<String> termination = new AtomicReference<>("running");
         AtomicReference<String> streamError = new AtomicReference<>();
@@ -142,42 +165,96 @@ public final class ProbeInstrumentation extends Instrumentation {
         Future<?> stderr = streams.submit(new Runnable() {
             @Override public void run() { capture.pump(process.getErrorStream(), capture.stderr, streamError); }
         });
-        boolean forced = false;
+        boolean requiresReady = probe.optBoolean("requiresReady", false);
+        int childPid = -1, supervisorPid = -1;
+        long readyAt = -1, terminationAt = -1, exitedAt;
         int exitCode;
         try {
             while (!process.waitFor(40, TimeUnit.MILLISECONDS)) {
-                if (SystemClock.elapsedRealtime() - started >= timeout) termination.compareAndSet("running", "timeout");
+                if (requiresReady && childPid < 0) {
+                    int observed = capture.readyPid();
+                    if (observed > 0) {
+                        // These PIDs are observations only. All termination goes through
+                        // the private control pipe, never through a script-reported PID.
+                        supervisorPid = verifyParentage(observed, uid);
+                        childPid = observed;
+                        readyAt = SystemClock.elapsedRealtime();
+                    }
+                }
+                long now = SystemClock.elapsedRealtime();
+                if (probe.has("cancelAfterReadyMillis") && readyAt >= 0 && now - readyAt >= probe.getLong("cancelAfterReadyMillis"))
+                    termination.compareAndSet("running", "cancelled");
+                if (now - started >= timeout) termination.compareAndSet("running", "timeout");
                 if (!termination.get().equals("running")) {
+                    terminationAt = SystemClock.elapsedRealtime();
                     process.destroy();
-                    if (!process.waitFor(500, TimeUnit.MILLISECONDS)) { forced = true; process.destroyForcibly(); }
-                    check(process.waitFor(1500, TimeUnit.MILLISECONDS), "bounded process termination");
+                    check(process.waitFor(2000, TimeUnit.MILLISECONDS), "bounded supervised process termination");
                     break;
                 }
             }
+            exitedAt = SystemClock.elapsedRealtime();
             exitCode = process.exitValue();
             termination.compareAndSet("running", "exited");
             stdout.get(2, TimeUnit.SECONDS); stderr.get(2, TimeUnit.SECONDS);
         } finally {
-            if (process.isAlive()) { process.destroyForcibly(); process.waitFor(1500, TimeUnit.MILLISECONDS); }
+            if (process.isAlive()) { process.destroy(); process.waitFor(1500, TimeUnit.MILLISECONDS); }
             process.getInputStream().close(); process.getErrorStream().close();
             streams.shutdownNow();
         }
         long elapsed = SystemClock.elapsedRealtime() - started;
         String out = capture.stdout.toString("UTF-8"), err = capture.stderr.toString("UTF-8");
         String reason = termination.get();
+        boolean childGone = childPid > 1 && !new File("/proc/" + childPid).exists();
+        boolean supervisorGone = supervisorPid > 1 && !new File("/proc/" + supervisorPid).exists();
         boolean passed = reason.equals(probe.getString("termination")) && streamError.get() == null;
         if (reason.equals("exited")) passed &= exitCode == 0;
         if (probe.has("stdout")) passed &= out.contains(probe.getString("stdout"));
         if (probe.has("stderr")) passed &= err.contains(probe.getString("stderr"));
         if (reason.equals("timeout")) passed &= elapsed < timeout + 4000;
         if (reason.equals("output-limit")) passed &= elapsed < 10000;
+        if (requiresReady) passed &= readyAt >= started && readyAt - started < timeout && terminationAt >= readyAt &&
+                exitCode == 137 && childGone && supervisorGone && exitedAt - terminationAt < 2000;
+        if (reason.equals("cancelled")) passed &= terminationAt - readyAt >= probe.getLong("cancelAfterReadyMillis") &&
+                terminationAt - readyAt < 2000;
+        deleteOwned(work, work.getCanonicalPath(), 0, new int[] {0});
+        check(!work.exists(), "per-probe workspace remains");
         JSONObject result = new JSONObject().put("id", id).put("passed", passed)
-                .put("exitCode", exitCode).put("termination", reason).put("forciblyTerminated", forced)
+                .put("exitCode", exitCode).put("termination", reason).put("forciblyTerminated", requiresReady && exitCode == 137)
+                .put("processReaped", !process.isAlive()).put("workspaceRemoved", true)
                 .put("elapsedMillis", elapsed).put("capturedBytes", capture.used)
                 .put("outputLimitBytes", outputLimit).put("stdout", bounded(out)).put("stderr", bounded(err));
+        if (requiresReady) result.put("readyObserved", readyAt >= 0).put("parentageVerified", supervisorPid > 1)
+                .put("childPid", childPid).put("supervisorPid", supervisorPid)
+                .put("childGone", childGone).put("supervisorGone", supervisorGone)
+                .put("readinessMillis", readyAt < 0 ? -1 : readyAt - started)
+                .put("terminationRequestedAfterReadyMillis", readyAt < 0 || terminationAt < 0 ? -1 : terminationAt - readyAt)
+                .put("terminationToExitMillis", terminationAt < 0 ? -1 : exitedAt - terminationAt);
         if (streamError.get() != null) result.put("streamError", bounded(streamError.get()));
         if (exitCode >= 128 && exitCode <= 192) result.put("possibleSignalFromExitConvention", exitCode - 128);
         return result;
+    }
+
+    private int verifyParentage(int childPid, int uid) throws Exception {
+        check(childPid > 1 && childPid != android.os.Process.myPid(), "distinct ready child PID");
+        String childStatus = read(new File("/proc/" + childPid + "/status"), 16384);
+        int parent = processParent(childStatus, uid);
+        check(parent > 1 && parent != childPid && parent != android.os.Process.myPid(), "separate supervisor parent");
+        check(processParent(read(new File("/proc/" + parent + "/status"), 16384), uid) == android.os.Process.myPid(),
+                "supervisor belongs to this instrumentation process");
+        check(read(new File("/proc/" + childPid + "/cmdline"), 16384).split("\0", -1)[0].equals(runtime.getAbsolutePath()),
+                "observed child executes the installed Bun path");
+        check(read(new File("/proc/" + parent + "/cmdline"), 16384).split("\0", -1)[0].equals(supervisor.getAbsolutePath()),
+                "observed parent executes the installed supervisor path");
+        return parent;
+    }
+
+    private static int processParent(String status, int uid) {
+        Matcher user = Pattern.compile("(?m)^Uid:[ \\t]+(\\d+)[ \\t]+(\\d+)[ \\t]+(\\d+)[ \\t]+(\\d+)[ \\t]*$").matcher(status);
+        check(user.find(), "observable process UID");
+        for (int index = 1; index <= 4; index++) check(Integer.parseInt(user.group(index)) == uid, "same application UID");
+        Matcher parent = Pattern.compile("(?m)^PPid:[ \\t]+(\\d+)[ \\t]*$").matcher(status);
+        check(parent.find(), "observable parent PID");
+        return Integer.parseInt(parent.group(1));
     }
 
     private static final class Capture {
@@ -187,6 +264,10 @@ public final class ProbeInstrumentation extends Instrumentation {
         final AtomicReference<String> termination;
         int used;
         Capture(int limit, AtomicReference<String> termination) { this.limit = limit; this.termination = termination; }
+        synchronized int readyPid() throws IOException {
+            Matcher matcher = Pattern.compile("(?:^|\\n)PROBE_READY=(\\d+)\\r?\\n").matcher(stdout.toString("UTF-8"));
+            return matcher.find() ? Integer.parseInt(matcher.group(1)) : -1;
+        }
         void pump(InputStream input, ByteArrayOutputStream destination, AtomicReference<String> error) {
             try (InputStream stream = input) {
                 byte[] buffer = new byte[4096];
@@ -195,8 +276,10 @@ public final class ProbeInstrumentation extends Instrumentation {
                         int accepted = Math.min(count, limit - used);
                         destination.write(buffer, 0, accepted); used += accepted;
                         if (accepted < count) {
-                            if (!termination.get().equals("timeout")) termination.set("output-limit");
-                            return;
+                            termination.compareAndSet("running", "output-limit");
+                            // Keep draining/discarding until termination closes the child.
+                            // Closing a reader first can cause EPIPE/SIGPIPE instead of
+                            // exercising the requested SIGTERM -> SIGKILL lifecycle.
                         }
                     }
                 }

@@ -6,13 +6,14 @@
 
 # v0.2.1
 
-###### 2026/09/08
+###### 2026/09/09
 
 * `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
 * `Correctif` Corriger le nettoyage après expiration, annulation et dépassement de sortie dans le plugin officiel avec un superviseur verrouillé en lecture seule: escalade de SIGTERM ignoré vers SIGKILL, attente de la fin du processus Bun direct et vidage de la sortie préservée; Bun 1.4.0 et le minimum Android 13 restent inchangés
+* `Correctif` Corriger la terminaison de la sonde isolée de Bun modifié en compilant le wrapper partagé SupervisedProcess et en embarquant le superviseur verrouillé; lier sources, outils et superviseur dans les reçus de schéma 2 et garder les lecteurs de sortie ouverts jusqu'à la terminaison
 * `Amélioration` Lier les sources du superviseur, les instructions de compilation avec NDK fixe et les empreintes par ABI dans le schéma 2 de corresponding-source, avec contrôle exact des fichiers sources archivés et sans modifier les ressources v0.2.0
 * `Amélioration` Ajouter un constructeur d'APK isolé réservé aux tests et un lanceur ciblant explicitement un appareil pour Bun modifié reproductible, avec vérification exacte des sources/APK/runtime, signature de test temporaire et rapports machine bornés
-* `Amélioration` Consigner les tests en processus applicatif arm64 natif sur API 28, 31, 33 et 35: chaque appareil réussit 10 tests sur 12 lors de deux passages; les tests de délai et de sortie excessive échouent si SIGTERM est ignoré, donc la terminaison forcée reste bloquante pour la publication
+* `Amélioration` Réussir les 13 tests de processus applicatif deux fois sur des appareils arm64 natifs avec API 28, 31, 33 et 35: 24 cas ignorant SIGTERM lors du délai, du dépassement de sortie ou de l'annulation après disponibilité confirment la fin du fils et du superviseur et le nettoyage du répertoire; conserver le rapport d'échec initial 10/12 sans revendiquer un Binder expérimental complet ni élargir le support Android
 * `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.0 et les validations des paquets signés sur appareils, sans réécrire le tag publié ni étendre la compatibilité Android ou 16 KB
 * `Dépendance` Mettre à jour le plugin de compilation en ligne autojs6-platform-versions de 1.7.3 vers 1.7.4 et synchroniser la version exigée par le dépôt
 
