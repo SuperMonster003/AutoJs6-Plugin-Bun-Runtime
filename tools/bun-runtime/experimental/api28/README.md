@@ -29,8 +29,14 @@ to 18. Those four arm64 devices plus an API 33 native x86_64 AVD (all 4 KiB)
 each scored 17/18 twice: spawn isolation and signal interactions passed, but
 same-PID re-exec consistently exposed a missing startup CLOEXEC fallback.
 The [FD semantics report](../../../../docs/compatibility/2026-09-10-m3-fd-semantics.json)
-preserves all 10 failures. The next step is a source-locked startup fix and two
-clean builds per ABI, not removal of the failed assertion. Full experimental
+preserves all 10 failures. The subsequent source-locked startup fix at
+`c240d6c68` now passes the unchanged assertion in all 10 rounds: each of those
+five environments scores 18/18 twice, totaling 180/180. Both ABIs reproduce
+byte-for-byte across two clean builds. The 30 forcible termination cases still
+pass at 301-305 ms, and every probe package was uninstalled with zero UID
+processes remaining. The owned AVD was shut down. See the
+[startup fix report](../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json).
+Full experimental
 Binder, other syscall semantics and the remaining API/ABI matrix are still open;
 this is not stable Android 9 support.
 
@@ -63,9 +69,17 @@ to head `d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c`. The release commit is an
 ancestor of the PR base and is four commits behind it. All five immutable
 compatibility commits were nevertheless found to apply cleanly to exact Bun
 v1.4.0. Their deterministic downstream patch IDs match upstream, and the five
-affected compatibility paths match the fixed PR head exactly. A sixth,
+affected compatibility paths at the five-patch prefix match the fixed PR head
+exactly. A sixth,
 project-owned patch replaces Bun's movable Brotli `v1.1.0` input with resolved
 commit `ed738e842d2fbdf2d6459e39267a633c4a9b2f5d`.
+
+Project-owned patch 7 adds the MIT-licensed [startup CLOEXEC fallback](startup-cloexec/README.md).
+The final head is `c240d6c6895db4241dc324f260ee3ee4d0da9889`; its startup code
+intentionally differs from the upstream PR. The replay verifier checks every
+patch's actual affected paths and the exact final commit/tree while retaining
+the complete upstream equivalence check at prefix
+`373d612de197f05bb5a7abdbd09d421ea0e8c02c`. No upstream comparison path is dropped.
 
 The Bun source at the pinned release commit supplies the initial toolchain and
 target facts:
@@ -140,11 +154,24 @@ filesystem read-only, drops capabilities, enables `no-new-privileges`, mounts
 every immutable input read-only, disables ccache, fixes the hostname and
 `/work/bun` path, and allows writes only to the clean patched checkout. Two
 independent checkouts completed both ABI builds. The outputs were identical
-across runs: ARM64 is 87,923,304 bytes with SHA-256
-`37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6`;
-x86_64 is 90,449,696 bytes with SHA-256
-`b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036`.
+across runs: ARM64 is 87,923,312 bytes with SHA-256
+`b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d`;
+x86_64 is 90,449,712 bytes with SHA-256
+`da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d`.
 The executables remain external evidence and are not copied into `jniLibs`.
+
+Build preparation uses `verifyBuildInputs`, which checks the source, patch,
+toolchain and offline-input gates but explicitly returns
+`runtimeEvidenceVerified: false`. It cannot approve a runtime or distribution.
+The default `verifyExperiment` additionally requires completed, current
+two-build evidence and its matching distribution-source binding.
+
+When changing source, set `runtimeProduced: false` and status
+`source-locked-awaiting-runtime-evidence` until both independent ABI builds
+finish and their actual bytes and ELF audits agree. Archive the previous
+evidence rather than rebinding old binaries to the new source. Only then
+update `runtime-evidence.json`, `distribution-source.lock.json`, the experimental
+revision and acceptance tests, and restore the completed runtime status.
 
 `verify-built-runtime.mjs` independently parses ELF64 bytes without relying on
 host `readelf`. It enforces PIE, the Android linker, non-executable stack, no
@@ -152,12 +179,14 @@ writable/executable load segment, Android API 28/NDK r27c notes, the exact
 `libc.so`/`libm.so`/`libdl.so` dependency order, bionic symbol versions,
 Android RELR, 16 KiB minimum `PT_LOAD` alignment, build IDs, dynamic-symbol
 fingerprints, retained symbol-table fingerprints, and absence of debug
-sections. Both reproducible outputs passed. The ARM64 output also passed five
-limited direct-shell probes on real API 28 and API 31 devices; that evidence is
-explicitly not a Binder or Android application-process result.
+sections. Both reproducible outputs passed. The prior six-patch ARM64 output
+also passed five limited direct-shell probes on API 28 and API 31; those older
+observations are not execution evidence for the new startup-fix revision.
+The [previous reproducible build record](../../../../docs/compatibility/2026-09-03-m2-runtime-evidence.json)
+is retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all six downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all seven downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
@@ -192,6 +221,7 @@ api28/
   patches/series.lock.json          immutable PR snapshot and downstream chain
   patches/upstream-reference/       verified immutable upstream patch evidence
   patches/downstream/               reviewed v1.4.0 source and supply-chain patches
+  startup-cloexec/                  exact-patch Linux native fallback regressions
   build-experiment.mjs              read-only plan, offline preflight, gated build
   build-host-image.mjs              locked host-image builder and evidence recorder
   run-locked-build.mjs              isolated digest-locked container build entry

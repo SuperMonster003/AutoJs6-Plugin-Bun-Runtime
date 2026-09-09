@@ -41,3 +41,10 @@ test("the checked-in runtime evidence satisfies the non-distribution schema", ()
   const evidence = JSON.parse(readFileSync(resolve(toolDirectory, "runtime-evidence.json"), "utf8"));
   assert.equal(verifyRuntimeEvidenceManifest(evidence), evidence);
 });
+
+test("the previous reproducible runtime cannot be accepted for the startup-fix source", () => {
+  const previous = JSON.parse(readFileSync(
+    resolve(repositoryRoot, "docs/compatibility/2026-09-03-m2-runtime-evidence.json"), "utf8"));
+  assert.equal(previous.build.byteForByteIdentical, true);
+  assert.throws(() => verifyRuntimeEvidenceManifest(previous), /runtime evidence downstream commit drifted/);
+});

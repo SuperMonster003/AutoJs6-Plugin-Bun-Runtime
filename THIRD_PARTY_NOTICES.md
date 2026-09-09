@@ -51,17 +51,17 @@ The source-build experiment under `tools/bun-runtime/experimental/api28` uses a 
 |---|---|
 | Variant | `bun-1.4.0-android-api28-patched-experimental` |
 | Upstream base | `34cbb9a40b4bd1bd767d134a7065e66c2432a676` |
-| Deterministic downstream head | `778ce669a38888457c36cab0f2231c3f25592b7d` |
-| Downstream tree | `8cfb6a060e87fcdbbf1191b344387291f1476cf4` |
-| Patch series | Five byte-equivalent backports from fixed Bun commits plus one project-owned dependency-pin patch; all six are stored and hashed in [`patches/series.lock.json`](tools/bun-runtime/experimental/api28/patches/series.lock.json) |
-| ARM64 reproducible output | 87,923,304 bytes; SHA-256 `37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6` |
-| x86_64 reproducible output | 90,449,696 bytes; SHA-256 `b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036` |
+| Deterministic downstream head | `c240d6c6895db4241dc324f260ee3ee4d0da9889` |
+| Downstream tree | `e7740b5decafdfa2ec4a5804057190e31e3c4820` |
+| Patch series | Five byte-equivalent backports at the compatibility prefix, one project-owned dependency pin and one MIT startup CLOEXEC fix; all seven are stored and hashed in [`patches/series.lock.json`](tools/bun-runtime/experimental/api28/patches/series.lock.json) |
+| ARM64 reproducible output | 87,923,312 bytes; SHA-256 `b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d` |
+| x86_64 reproducible output | 90,449,712 bytes; SHA-256 `da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d` |
 | Runtime evidence | [`runtime-evidence.json`](tools/bun-runtime/experimental/api28/runtime-evidence.json) |
 | Source and license lock | [`distribution-source.lock.json`](tools/bun-runtime/experimental/api28/distribution-source.lock.json) |
 | Reproducible build and relink instructions | [`experimental/api28/README.md`](tools/bun-runtime/experimental/api28/README.md) |
-| Distribution status | Not ready; no patched executable is included in the repository or APK |
+| Distribution status | Not ready; patched executables remain outside Git and production APKs, and are packaged only in external test-only probe APKs |
 
-The exact Bun base source is locked as the 64,069,192-byte commit archive with SHA-256 `d44cad3fc8a3ab2e59308af42b022d2401b3425b98ffde535bfc02387dac4771`. Applying the checked-in six-patch series produces the recorded downstream commit and tree. The first five patches preserve the MIT license of their pinned upstream commits; the sixth changes only the Brotli dependency reference from its movable tag to the same MIT-licensed source revision by immutable commit.
+The exact Bun base source is locked as the 64,069,192-byte commit archive with SHA-256 `d44cad3fc8a3ab2e59308af42b022d2401b3425b98ffde535bfc02387dac4771`. Applying the checked-in seven-patch series produces the recorded downstream commit and tree. The first five patches preserve the MIT license of their pinned upstream commits; the sixth changes only the Brotli dependency reference from its movable tag to the same MIT-licensed source revision by immutable commit. The seventh adds project-owned MIT-licensed startup CLOEXEC handling. Upstream byte-equivalence is checked at the five-patch prefix, not claimed for the final startup code. The previous six-patch build evidence is retained in the [historical record](docs/compatibility/2026-09-03-m2-runtime-evidence.json).
 
 The matching WebKit/JavaScriptCore source is the `oven-sh/WebKit` tag `autobuild-0f966e81b78c84bb23213e391bc679c4ef83e56b`, commit `0f966e81b78c84bb23213e391bc679c4ef83e56b`, tree `e9590edf1ab6c32e20f83b70daec7314e0bfe261`. GitHub does not generate a codeload archive for this tree, so the verifier requires a clean Git checkout at that exact tag, commit, tree, and 463,115-file inventory. The four matching JavaScriptCore/WebCore license files are bundled alongside Bun's pinned notice.
 
@@ -98,6 +98,6 @@ For each applicable plugin release, `tools/bun-runtime/release/assemble-correspo
 
 ## Project code
 
-Code written specifically for AutoJs6 Plugin Bun Runtime is licensed under the repository's Mozilla Public License 2.0. No statement in this file grants additional rights to Bun, WebKit, JavaScriptCore, or their bundled dependencies.
+Code written specifically for AutoJs6 Plugin Bun Runtime is licensed under the repository's Mozilla Public License 2.0 unless a file explicitly states otherwise. The project-owned Bun startup changes in downstream patch 7, its `SPDX-License-Identifier: MIT` header, and the matching standalone C++ test fixture are provided under Bun's MIT license. The Java wrapper and lifecycle supervisor remain MPL-2.0. No statement in this file grants additional rights to Bun, WebKit, JavaScriptCore, or their bundled dependencies.
 
 This notice is provided for attribution and reproducibility and is not legal advice.

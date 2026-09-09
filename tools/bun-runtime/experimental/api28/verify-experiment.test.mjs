@@ -5,7 +5,7 @@ import { dirname, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { verifyExperiment } from "./verify-experiment.mjs";
+import { verifyBuildInputs, verifyExperiment } from "./verify-experiment.mjs";
 
 const experimentRoot = dirname(fileURLToPath(import.meta.url));
 
@@ -16,7 +16,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
-  assert.equal(result.downstreamPatchCount, 6);
+  assert.equal(result.downstreamPatchCount, 7);
+  assert.equal(result.runtimeEvidenceVerified, true);
   assert.equal(result.lockedGithubArchiveCount, 19);
   assert.equal(result.lockedToolchainDownloadCount, 17);
   assert.equal(result.lockedToolchainBuildArtifactCount, 12);
@@ -33,8 +34,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.deepEqual(
     result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
     [
-      ["arm64-v8a", "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6"],
-      ["x86_64", "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036"],
+      ["arm64-v8a", "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d"],
+      ["x86_64", "da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d"],
     ],
   );
   assert.equal(result.packagedLicenseCount, 5);
@@ -236,3 +237,59 @@ function withExperimentCopy(callback) {
     rmSync(parent, { force: true, recursive: true });
   }
 }
+
+test("build-input verification never presents old or missing binaries as verified evidence", () => {
+  withExperimentCopy((copy) => {
+    const lockPath = resolve(copy, "experiment.lock.json");
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    lock.identity.status = "source-locked-awaiting-runtime-evidence";
+    lock.identity.runtimeProduced = false;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    for (const name of ["runtime-evidence.json", "distribution-source.lock.json"]) rmSync(resolve(copy, name));
+    const inputs = verifyBuildInputs(copy);
+    assert.equal(inputs.buildReady, true);
+    assert.equal(inputs.distributionReady, false);
+    assert.equal(inputs.runtimeEvidenceVerified, false);
+    assert.equal(Object.hasOwn(inputs, "reproducibleRuntimeArtifacts"), false);
+    assert.throws(() => verifyExperiment(copy), /identity.status/);
+    lock.identity.status = "reproducible-runtime-static-audit-complete";
+    lock.identity.runtimeProduced = true;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyExperiment(copy), /runtime-evidence.json/);
+  });
+});
+
+test("build-input verification still rejects source, toolchain and boundary drift", () => {
+  for (const mutation of ["patch", "toolchain", "distribution", "identity"]) {
+    withExperimentCopy((copy) => {
+      if (mutation === "patch") {
+        const series = JSON.parse(readFileSync(resolve(copy, "patches/series.lock.json"), "utf8"));
+        const path = resolve(copy, "patches", series.downstreamBackport.patches.at(-1).path);
+        writeFileSync(path, `${readFileSync(path, "utf8")}\n`);
+      } else {
+        const path = resolve(copy, "experiment.lock.json");
+        const lock = JSON.parse(readFileSync(path, "utf8"));
+        if (mutation === "toolchain") lock.toolchain.host.buildImageManifestDigest = "sha256:" + "0".repeat(64);
+        if (mutation === "distribution") lock.identity.distributionReady = true;
+        if (mutation === "identity") lock.identity.runtimeProduced = "false";
+        writeFileSync(path, `${JSON.stringify(lock, null, 2)}\n`);
+      }
+      assert.throws(() => verifyBuildInputs(copy), /byte count|buildImageManifestDigest|distributionReady|runtimeProduced/);
+    });
+  }
+});
+
+test("upstream equivalence must cover every upstream path at the exact compatibility prefix", () => {
+  for (const mutation of ["path", "prefix", "scope"]) {
+    withExperimentCopy((copy) => {
+      const path = resolve(copy, "patches/series.lock.json");
+      const series = JSON.parse(readFileSync(path, "utf8"));
+      const equivalence = series.downstreamBackport.upstreamEquivalence;
+      if (mutation === "path") equivalence.comparisonPaths = equivalence.comparisonPaths.filter((p) => !p.endsWith("c-bindings.cpp"));
+      if (mutation === "prefix") equivalence.downstreamPrefixHeadCommit = series.downstreamBackport.headCommit;
+      if (mutation === "scope") equivalence.scope = "final-tree";
+      writeFileSync(path, `${JSON.stringify(series, null, 2)}\n`);
+      assert.throws(() => verifyBuildInputs(copy), /comparisonPaths|prefix head|equivalence scope/);
+    });
+  }
+});

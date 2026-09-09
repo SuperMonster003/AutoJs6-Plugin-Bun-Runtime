@@ -1,0 +1,132 @@
+From c240d6c6895db4241dc324f260ee3ee4d0da9889 Mon Sep 17 00:00:00 2001
+From: SuperMonster003 <30370009+SuperMonster003@users.noreply.github.com>
+Date: Thu, 10 Sep 2026 00:00:00 +0800
+Subject: [PATCH] fix: mark inherited fds cloexec when startup close_range
+ fails
+
+---
+ src/jsc/bindings/bun-startup-cloexec.h | 86 ++++++++++++++++++++++++++
+ src/jsc/bindings/c-bindings.cpp        |  9 +--
+ 2 files changed, 91 insertions(+), 4 deletions(-)
+ create mode 100644 src/jsc/bindings/bun-startup-cloexec.h
+
+diff --git a/src/jsc/bindings/bun-startup-cloexec.h b/src/jsc/bindings/bun-startup-cloexec.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..ab4ce149842735a21695acd932a8ecbe97e9bab4
+--- /dev/null
++++ b/src/jsc/bindings/bun-startup-cloexec.h
+@@ -0,0 +1,86 @@
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <dirent.h>
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <stdlib.h>
++#include <string.h>
++
++static inline int bun_startup_fcntl(int fd, int command, int argument)
++{
++    int result;
++    unsigned retries = 0;
++    do {
++        result = fcntl(fd, command, argument);
++    } while (result < 0 && errno == EINTR && retries++ < 8);
++    return result;
++}
++
++// Startup only: libc directory iteration is not safe in a signal handler or vfork child.
++static inline int bun_mark_inherited_fds_cloexec(unsigned first)
++{
++    DIR* directory;
++    unsigned retries = 0;
++    do {
++        directory = opendir("/proc/self/fd");
++    } while (!directory && errno == EINTR && retries++ < 8);
++    if (!directory)
++        return -1;
++
++    // All fallible work returns to the single closedir below; no descriptor is closed here.
++    const int error = [&]() -> int {
++        const int directoryFd = dirfd(directory);
++        if (directoryFd < 0)
++            return errno;
++
++        // Bound work, not descriptor numbers (an inherited fd may exceed the current rlimit).
++        constexpr unsigned maxDirectoryEntries = 1U << 20;
++        unsigned entries = 0;
++        for (;;) {
++            dirent* entry;
++            retries = 0;
++            do {
++                errno = 0;
++                entry = readdir(directory);
++            } while (!entry && errno == EINTR && retries++ < 8);
++            if (!entry)
++                return errno;
++            if (entries++ == maxDirectoryEntries)
++                return E2BIG;
++            if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
++                continue;
++
++            char* end = nullptr;
++            errno = 0;
++            const long parsed = strtol(entry->d_name, &end, 10);
++            if (errno || entry->d_name[0] < '0' || entry->d_name[0] > '9'
++                || *end || parsed < 0 || parsed > INT_MAX)
++                return EIO;
++            const int fd = static_cast<int>(parsed);
++            if (static_cast<unsigned>(fd) < first || fd == directoryFd)
++                continue;
++
++            const int flags = bun_startup_fcntl(fd, F_GETFD, 0);
++            if (flags < 0) {
++                if (errno == EBADF)
++                    continue;
++                return errno;
++            }
++            if (!(flags & FD_CLOEXEC) && bun_startup_fcntl(fd, F_SETFD, flags | FD_CLOEXEC) < 0) {
++                if (errno == EBADF)
++                    continue;
++                return errno;
++            }
++        }
++    }();
++
++    // Linux close may have released the fd on EINTR; never retry and close a reused number.
++    const int closeResult = closedir(directory);
++    if (error) {
++        errno = error;
++        return -1;
++    }
++    return closeResult;
++}
+diff --git a/src/jsc/bindings/c-bindings.cpp b/src/jsc/bindings/c-bindings.cpp
+index c285e9b4a150a6396c714782e5a63490ba42cc29..771b520f84a28a4ffb583054af9dabd8711eae9a 100644
+--- a/src/jsc/bindings/c-bindings.cpp
++++ b/src/jsc/bindings/c-bindings.cpp
+@@ -260,6 +260,7 @@ extern "C" void windows_enable_stdio_inheritance()
+ #endif
+ 
+ #if OS(LINUX)
++#include "bun-startup-cloexec.h"
+ #ifndef __NR_close_range
+ // True for architectures we support:
+ // - arch/arm64/include/asm/unistd32.h
+@@ -689,11 +690,11 @@ extern "C" void bun_initialize_process()
+     // Before bun_close_range: a seccomp policy may trap it.
+     installSIGSYSHandler();
+ 
+-    // Prevent leaking inherited file descriptors on Linux
+-    // This is less of an issue for macOS due to posix_spawn
+-    // This is best effort, not all linux kernels support close_range or CLOSE_RANGE_CLOEXEC
+     // To avoid breaking --watch, we skip stdin, stdout, stderr and IPC.
+-    bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC);
++    if (bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC) < 0 && bun_mark_inherited_fds_cloexec(4) < 0) {
++        fprintf(stderr, "Bun: cannot mark inherited file descriptors close-on-exec (errno %d)\n", errno);
++        _exit(1);
++    }
+ #endif
+ 
+ #if OS(LINUX) || OS(DARWIN) || OS(FREEBSD)

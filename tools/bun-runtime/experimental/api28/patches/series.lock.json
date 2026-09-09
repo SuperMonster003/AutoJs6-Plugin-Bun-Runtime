@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "778ce669a38888457c36cab0f2231c3f25592b7d",
-    "headTreeSha1": "8cfb6a060e87fcdbbf1191b344387291f1476cf4",
+    "headCommit": "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+    "headTreeSha1": "e7740b5decafdfa2ec4a5804057190e31e3c4820",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -137,9 +137,11 @@
         "--binary",
         "--no-signature"
       ],
-      "verifiedDate": "2026-09-02"
+      "verifiedDate": "2026-09-10"
     },
     "upstreamEquivalence": {
+      "scope": "upstream-compatibility-prefix",
+      "downstreamPrefixHeadCommit": "373d612de197f05bb5a7abdbd09d421ea0e8c02c",
       "upstreamHeadCommit": "d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c",
       "affectedPathsMatchExactly": true,
       "comparisonPaths": [
@@ -253,8 +255,25 @@
           "scripts/build/deps/brotli.ts"
         ],
         "licenseImpact": "No license change; the same MIT-licensed Brotli v1.1.0 source revision is selected by immutable commit rather than a movable tag."
+      },
+      {
+        "order": 7,
+        "commit": "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+        "parent": "778ce669a38888457c36cab0f2231c3f25592b7d",
+        "origin": "autojs6-startup-cloexec",
+        "sourceCommit": null,
+        "stablePatchId": "f377e4b936027feab3fb6dfe55445d3113b01a62",
+        "path": "downstream/0007-fix-mark-inherited-fds-cloexec-when-startup-close_ra.patch",
+        "bytes": 4898,
+        "sha256": "50089be9b748490684c0311a9e65f8523a6762038760846f81dfcf41b1b3dcfb",
+        "purpose": "Mark actual inherited descriptors CLOEXEC at Linux startup when close_range fails, preserving fds 0-3 and returning a bounded startup failure if enumeration or marking fails. No change to the vfork spawn fallback or watch/reload path.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-startup-cloexec.h",
+          "src/jsc/bindings/c-bindings.cpp"
+        ],
+        "licenseImpact": "No license change; project-owned Bun startup changes and the new SPDX-MIT header are provided under Bun's MIT license."
       }
     ],
-    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic downstream stable patch IDs match the corresponding upstream commits, and all compatibility-affected paths match the pinned upstream PR head exactly. A sixth project-owned patch replaces Bun's movable Brotli v1.1.0 tag with its audited full commit for reproducible dependency resolution."
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR."
   }
 }

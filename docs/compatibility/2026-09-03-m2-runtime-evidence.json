@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "status": "reproducible-static-audit-complete",
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "officialArtifact": false,
+    "distributionReady": false
+  },
+  "source": {
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "downstreamHeadCommit": "778ce669a38888457c36cab0f2231c3f25592b7d"
+  },
+  "build": {
+    "evidenceDate": "2026-09-03",
+    "hostImageManifestDigest": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+    "hostImageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b",
+    "entry": "run-locked-build.mjs",
+    "cleanBuildCount": 2,
+    "bothRunsExitCode": 0,
+    "byteForByteIdentical": true,
+    "containerPolicy": {
+      "pull": "never",
+      "network": "none",
+      "rootFilesystem": "read-only",
+      "immutableInputs": "read-only",
+      "ccache": "disabled",
+      "canonicalWorkDirectory": "/work/bun"
+    },
+    "repositoryInputs": [
+      {
+        "path": "run-locked-build.mjs",
+        "bytes": 10512,
+        "sha256": "5f244b4c2767380295e56f4899dd33ba5e9805a70202daaae775c33389b14792"
+      },
+      {
+        "path": "build-experiment.mjs",
+        "bytes": 18888,
+        "sha256": "7d167cfdae6d2d17245d43b3704548286fb0002e268b1d7cc2fce1cc7e66171b"
+      },
+      {
+        "path": "config/arm64-v8a.configure.json",
+        "bytes": 262,
+        "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+      },
+      {
+        "path": "config/x86_64.configure.json",
+        "bytes": 254,
+        "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+      },
+      {
+        "path": "source-inputs.lock.json",
+        "bytes": 15880,
+        "sha256": "b8ddb01e36c91a40580f5f12bee21244439c01b10f1d6cb68c0fdae76a13958a"
+      },
+      {
+        "path": "toolchain-inputs.lock.json",
+        "bytes": 11636,
+        "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+      },
+      {
+        "path": "build-network-inputs.lock.json",
+        "bytes": 5633,
+        "sha256": "3f6c932e811394a0b581dccb55fb7a7faad3b2b416b6133318d71dbf471aea77"
+      },
+      {
+        "path": "cargo-inputs.lock.json",
+        "bytes": 64745,
+        "sha256": "e0709e5a727000f555194aa46de0af685345ccd7d971a0b8994b043f239117a0"
+      },
+      {
+        "path": "bun-inputs.lock.json",
+        "bytes": 124300,
+        "sha256": "c394ef6a559beb7af9d6d06397dcee02dd84ce2bab8466fb2365d05e322e94ca"
+      },
+      {
+        "path": "patches/series.lock.json",
+        "bytes": 12895,
+        "sha256": "799abcb9e18e80e6dbdaf8b6880da5fa340bc6e17d6f6f64bd87f38e8e123bc2"
+      }
+    ],
+    "notes": "Each ABI was built twice from an independent clean patched checkout. Both runs used the same digest-locked host image and canonical in-container path; only the Bun checkout was writable. The repeated output bytes are identical."
+  },
+  "artifacts": [
+    {
+      "abi": "arm64-v8a",
+      "filename": "bun-arm64-v8a",
+      "bytes": 87923304,
+      "sha256": "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6",
+      "mode": "0755",
+      "repeatSha256": [
+        "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6",
+        "37bb5553c999ba8bc981199dadc5e3cfd9a476a2d4ebb8565132db83728a2dc6"
+      ],
+      "elf": {
+        "class": "ELF64",
+        "data": "little-endian",
+        "osAbi": "System V",
+        "type": "ET_DYN",
+        "machine": 183,
+        "machineName": "AArch64",
+        "entryPoint": "0x173200",
+        "programHeaderCount": 8,
+        "sectionHeaderCount": 33,
+        "interpreter": "/system/bin/linker64",
+        "loadAlignments": [
+          16384,
+          65536
+        ],
+        "minimumLoadAlignment": 16384,
+        "writableExecutableLoad": false,
+        "executableStack": false,
+        "neededLibraries": [
+          "libc.so",
+          "libm.so",
+          "libdl.so"
+        ],
+        "flags1": "0x8000000",
+        "pie": true,
+        "androidRelr": {
+          "address": "0xfc80",
+          "bytes": 19824,
+          "entryBytes": 8
+        },
+        "androidIdent": {
+          "api": 28,
+          "ndkVersion": "r27c",
+          "ndkBuildNumber": "12479018"
+        },
+        "buildId": "834a94e930e6b69968e295be8de5cd9c42055440",
+        "versionDefinitions": [
+          {
+            "index": 1,
+            "name": "bun-profile",
+            "base": true
+          },
+          {
+            "index": 2,
+            "name": "BUN_1.2",
+            "base": false
+          }
+        ],
+        "versionNeeds": [
+          {
+            "file": "libc.so",
+            "names": [
+              "LIBC",
+              "LIBC_N",
+              "LIBC_O",
+              "LIBC_P"
+            ]
+          },
+          {
+            "file": "libm.so",
+            "names": [
+              "LIBC"
+            ]
+          },
+          {
+            "file": "libdl.so",
+            "names": [
+              "LIBC"
+            ]
+          }
+        ],
+        "dynamicSymbols": {
+          "entryCount": 1065,
+          "definedCount": 672,
+          "undefinedCount": 392,
+          "tableSha256": "a8696ab8889ee723953ab34f7906d62a6e9974e0d50a7158a0913c226ca92829",
+          "recordsSha256": "646dcb187b5e54f5f4a32e100e8a0a9f4f57b2853ba7e23a44593e1f25c0e4b4",
+          "definedRecordsSha256": "4a764c2823511488974b9f40f005408db0cd94ca672e4907e599bb88b7c5ba2a",
+          "undefinedRecordsSha256": "75a259cfd47059caaedec5faa886f45aa3a298e2c7a35672d3d69440068297ea"
+        },
+        "symbolTable": {
+          "present": true,
+          "entryCount": 1686,
+          "bytes": 40464,
+          "sha256": "ff837457d82709abba0f66389b683feafd97e7a2c09e6e83eee9b3cd629dff75"
+        },
+        "debugSections": []
+      }
+    },
+    {
+      "abi": "x86_64",
+      "filename": "bun-x86_64",
+      "bytes": 90449696,
+      "sha256": "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036",
+      "mode": "0755",
+      "repeatSha256": [
+        "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036",
+        "b079388f098c8f40cb14be7a6d343cf8fcb56d3d6694885e1b301f2cf7f89036"
+      ],
+      "elf": {
+        "class": "ELF64",
+        "data": "little-endian",
+        "osAbi": "System V",
+        "type": "ET_DYN",
+        "machine": 62,
+        "machineName": "Advanced Micro Devices X86-64",
+        "entryPoint": "0x107600",
+        "programHeaderCount": 8,
+        "sectionHeaderCount": 33,
+        "interpreter": "/system/bin/linker64",
+        "loadAlignments": [
+          16384,
+          16384
+        ],
+        "minimumLoadAlignment": 16384,
+        "writableExecutableLoad": false,
+        "executableStack": false,
+        "neededLibraries": [
+          "libc.so",
+          "libm.so",
+          "libdl.so"
+        ],
+        "flags1": "0x8000000",
+        "pie": true,
+        "androidRelr": {
+          "address": "0x10cb0",
+          "bytes": 19896,
+          "entryBytes": 8
+        },
+        "androidIdent": {
+          "api": 28,
+          "ndkVersion": "r27c",
+          "ndkBuildNumber": "12479018"
+        },
+        "buildId": "73c4308bef322aecf7bd5a03608731433c8e6040",
+        "versionDefinitions": [
+          {
+            "index": 1,
+            "name": "bun-profile",
+            "base": true
+          },
+          {
+            "index": 2,
+            "name": "BUN_1.2",
+            "base": false
+          }
+        ],
+        "versionNeeds": [
+          {
+            "file": "libc.so",
+            "names": [
+              "LIBC",
+              "LIBC_N",
+              "LIBC_O",
+              "LIBC_P"
+            ]
+          },
+          {
+            "file": "libm.so",
+            "names": [
+              "LIBC"
+            ]
+          },
+          {
+            "file": "libdl.so",
+            "names": [
+              "LIBC"
+            ]
+          }
+        ],
+        "dynamicSymbols": {
+          "entryCount": 1064,
+          "definedCount": 672,
+          "undefinedCount": 391,
+          "tableSha256": "8178fd3ffab86dd47f3fca0dee3dd5ce58a0b9e29dd1a5558ed72f26600f7625",
+          "recordsSha256": "28df82ef0d4965bbc7e43a2fcebbdae029bed9c5dc608ee399bebe9988bae9a8",
+          "definedRecordsSha256": "86a0b779fed0a436cadf4e5b2d01d35ae2a2738357837e53b69a3a571404b262",
+          "undefinedRecordsSha256": "04a6070c0c9ef9721263a4ef10677f05b543030aece23c386fcb6ff1f17dc396"
+        },
+        "symbolTable": {
+          "present": true,
+          "entryCount": 1708,
+          "bytes": 40992,
+          "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+        },
+        "debugSections": []
+      }
+    }
+  ],
+  "boundaries": {
+    "storedBinaryInRepository": false,
+    "officialRuntimeReplaced": false,
+    "packagingValidated": false,
+    "applicationProcessValidated": false,
+    "api28Through32SupportClaimed": false,
+    "licenseAndSourceDistributionComplete": false,
+    "note": "This manifest records reproducibility and static ELF facts only. It is not an APK lock, a release approval, or evidence that the binaries execute under an Android application zygote/seccomp domain."
+  }
+}
