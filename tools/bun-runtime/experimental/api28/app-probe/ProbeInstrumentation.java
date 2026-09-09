@@ -216,6 +216,18 @@ public final class ProbeInstrumentation extends Instrumentation {
                 exitCode == 137 && childGone && supervisorGone && exitedAt - terminationAt < 2000;
         if (reason.equals("cancelled")) passed &= terminationAt - readyAt >= probe.getLong("cancelAfterReadyMillis") &&
                 terminationAt - readyAt < 2000;
+        JSONObject fdEvidence = null;
+        String evidenceError = null;
+        if (probe.has("sourceFile")) {
+            try {
+                String line = out.trim();
+                check(line.startsWith("FD_PROBE_RESULT=") && !line.contains("\n") && line.length() <= 2048,
+                        "exactly one bounded FD evidence record");
+                fdEvidence = new JSONObject(line.substring("FD_PROBE_RESULT=".length()));
+                passed &= fdEvidence.getInt("schemaVersion") == 1 && fdEvidence.getBoolean("passed") &&
+                        fdEvidence.getString("mode").equals(probe.getString("mode"));
+            } catch (Exception error) { passed = false; evidenceError = bounded(error.toString()); }
+        }
         deleteOwned(work, work.getCanonicalPath(), 0, new int[] {0});
         check(!work.exists(), "per-probe workspace remains");
         JSONObject result = new JSONObject().put("id", id).put("passed", passed)
@@ -223,6 +235,8 @@ public final class ProbeInstrumentation extends Instrumentation {
                 .put("processReaped", !process.isAlive()).put("workspaceRemoved", true)
                 .put("elapsedMillis", elapsed).put("capturedBytes", capture.used)
                 .put("outputLimitBytes", outputLimit).put("stdout", bounded(out)).put("stderr", bounded(err));
+        if (fdEvidence != null) result.put("fdEvidence", fdEvidence);
+        if (evidenceError != null) result.put("evidenceError", evidenceError);
         if (requiresReady) result.put("readyObserved", readyAt >= 0).put("parentageVerified", supervisorPid > 1)
                 .put("childPid", childPid).put("supervisorPid", supervisorPid)
                 .put("childGone", childGone).put("supervisorGone", supervisorGone)

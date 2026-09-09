@@ -90,7 +90,8 @@ export async function runProbe(options) {
     for (let index = 0; index < 2; index++) {
       const instrument = await command(adb, ["-s", serial, "shell", "am", "instrument", "-w", "-r",
         "-e", "expectedAbi", abi, "-e", "requiredApiLevel", String(api),
-        "-e", "requiredPageSizeBytes", String(pageSize), "-e", "requiredApkSha256", apk.sha256, RUNNER], 240000);
+        "-e", "requiredPageSizeBytes", String(pageSize), "-e", "requiredApkSha256", apk.sha256, RUNNER],
+      30000 + probes.reduce((total, probe) => total + (probe.timeoutMillis ?? 15000) + 4000, 0));
       writeFileSync(join(output, "instrumentation-" + (index + 1) + ".txt"),
         instrument.stdout + instrument.stderr, { flag: "wx" });
       // Preserve failed reports too; success validation below must not discard diagnostics.

@@ -24,8 +24,15 @@ including SIGTERM-ignoring timeout/output-limit and readiness-triggered cancella
 All 24 lifecycle cases verify actual child/parent disappearance and workspace
 cleanup; see the [2026-09-09 report](../../../../docs/compatibility/2026-09-09-m3-supervised-application-probe.json).
 The [original 10/12 failure report](../../../../docs/compatibility/2026-09-08-m3-application-probe.json)
-remains unchanged. Full experimental Binder, syscall/FD-CLOEXEC semantics and
-the remaining API/ABI matrix are still open; this is not stable Android 9 support.
+remains unchanged. On 2026-09-10, five new FD/SIGSYS fixtures expanded the suite
+to 18. Those four arm64 devices plus an API 33 native x86_64 AVD (all 4 KiB)
+each scored 17/18 twice: spawn isolation and signal interactions passed, but
+same-PID re-exec consistently exposed a missing startup CLOEXEC fallback.
+The [FD semantics report](../../../../docs/compatibility/2026-09-10-m3-fd-semantics.json)
+preserves all 10 failures. The next step is a source-locked startup fix and two
+clean builds per ABI, not removal of the failed assertion. Full experimental
+Binder, other syscall semantics and the remaining API/ABI matrix are still open;
+this is not stable Android 9 support.
 
 ## Safety boundary
 

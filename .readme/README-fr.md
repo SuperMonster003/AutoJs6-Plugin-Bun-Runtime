@@ -214,11 +214,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 #### v0.2.1
 
-_2026/09/09_
+_2026/09/10_
 
 - `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
 - `Correctif` Corriger le nettoyage après expiration, annulation et dépassement de sortie dans le plugin officiel avec un superviseur verrouillé en lecture seule: escalade de SIGTERM ignoré vers SIGKILL, attente de la fin du processus Bun direct et vidage de la sortie préservée; Bun 1.4.0 et le minimum Android 13 restent inchangés
 - `Correctif` Corriger la terminaison de la sonde isolée de Bun modifié en compilant le wrapper partagé SupervisedProcess et en embarquant le superviseur verrouillé; lier sources, outils et superviseur dans les reçus de schéma 2 et garder les lecteurs de sortie ouverts jusqu'à la terminaison
+- `Amélioration` Ajouter cinq tests FD/SIGSYS: quatre appareils arm64 natifs (API 28/31/33/35) et un AVD x86_64 natif sous API 33 obtiennent chacun 17/18 sur deux passages. L'isolation des descripteurs lors du lancement des fils et les tests de signaux réussissent, mais les 10 passages révèlent un repli CLOEXEC absent au démarrage; conserver ce blocage sans modifier les octets officiels ni le minimum Android 13
 - `Amélioration` Lier les sources du superviseur, les instructions de compilation avec NDK fixe et les empreintes par ABI dans le schéma 2 de corresponding-source, avec contrôle exact des fichiers sources archivés et sans modifier les ressources v0.2.0
 - `Amélioration` Ajouter un constructeur d'APK isolé réservé aux tests et un lanceur ciblant explicitement un appareil pour Bun modifié reproductible, avec vérification exacte des sources/APK/runtime, signature de test temporaire et rapports machine bornés
 - `Amélioration` Réussir les 13 tests de processus applicatif deux fois sur des appareils arm64 natifs avec API 28, 31, 33 et 35: 24 cas ignorant SIGTERM lors du délai, du dépassement de sortie ou de l'annulation après disponibilité confirment la fin du fils et du superviseur et le nettoyage du répertoire; conserver le rapport d'échec initial 10/12 sans revendiquer un Binder expérimental complet ni élargir le support Android

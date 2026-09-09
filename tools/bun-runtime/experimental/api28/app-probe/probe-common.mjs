@@ -15,7 +15,7 @@ export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
 export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
 export const INPUTS = [
-  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
     .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
   SHARED_PROCESS,
   ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
@@ -24,9 +24,13 @@ export const INPUTS = [
   "tools/bun-runtime/experimental/api28/runtime-evidence.json",
   "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
 ];
+export const FD_MODES = {
+  "fd-spawn-native": "spawn-native", "fd-spawn-trap": "spawn-trap", "fd-spawn-blocked-sigsys": "blocked-sigsys",
+  "fd-startup-trap": "startup-trap", "sigsys-listener-trap": "sigsys-listener",
+};
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
-  "bounded-output", "cancel-after-ready", "recovery-after-termination"];
+  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
@@ -98,7 +102,7 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 13-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 18-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(/^[a-z][a-z0-9-]{0,63}$/.test(probe.id) && !ids.has(probe.id), "unsafe or duplicate probe ID");
@@ -120,7 +124,13 @@ export function validateProbes(probes) {
       (probe.timeoutMillis ?? 15000) <= 15000, "invalid timeout");
     assert(Number.isInteger(probe.outputBytes ?? 16384) && (probe.outputBytes ?? 16384) >= 1024 &&
       (probe.outputBytes ?? 16384) <= 16384, "invalid output bound");
-    if (probe.arguments) {
+    if (Object.hasOwn(FD_MODES, probe.id)) {
+      assert.equal(probe.sourceFile, "fd-probes.mjs", "only the fixed FD fixture is allowed");
+      assert.equal(probe.mode, FD_MODES[probe.id], "fixed FD mode required");
+      assert.equal(probe.stdout, "FD_PROBE_RESULT=");
+      for (const key of ["source", "arguments", "extension"])
+        assert(!Object.hasOwn(probe, key), "ambiguous FD fixture: " + key);
+    } else if (probe.arguments) {
       assert(!Object.hasOwn(probe, "source"), "ambiguous command");
       assert.deepEqual(probe.arguments, [probe.id === "version" ? "--version" : "--revision"]);
       assert(["version", "revision"].includes(probe.id), "only metadata argument probes are allowed");
@@ -128,8 +138,91 @@ export function validateProbes(probes) {
       assert(typeof probe.source === "string" && Buffer.byteLength(probe.source) <= 8192, "invalid source");
       assert(["js", "ts"].includes(probe.extension ?? "js"), "invalid source extension");
     }
+    if (!Object.hasOwn(FD_MODES, probe.id)) {
+      assert(!Object.hasOwn(probe, "sourceFile") && !Object.hasOwn(probe, "mode"), "unexpected source fixture");
+    }
   }
   return probes;
+}
+
+export function materializeProbes(probes) {
+  validateProbes(probes);
+  const source = readFileSync(requireFile(join(HERE, "fd-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
+  const result = probes.map(probe => {
+    if (!probe.sourceFile) return { ...probe };
+    const inline = "const FD_MODE = " + JSON.stringify(probe.mode) + ";\n" + source;
+    // Only this checked-in, source-bound fixture gets 16 KiB. Existing inline
+    // probes retain 8 KiB; execution time and output limits are unchanged.
+    assert(Buffer.byteLength(inline) <= 16384, "fixed FD fixture exceeds 16 KiB");
+    return { ...probe, source: inline };
+  });
+  assert(Buffer.byteLength(JSON.stringify(result)) <= 131072, "probe asset exceeds reader limit");
+  return result;
+}
+
+// Independent expected bytecode digest: runtime evidence must identify the
+// exact ABI-specific policy, not merely claim that some filter was installed.
+export function fdFilterSha256(abi) {
+  assert(ABIS.includes(abi));
+  const arm = abi === "arm64-v8a";
+  const instructions = [
+    [0x20, 0, 0, 4], [0x15, 1, 0, arm ? 0xc00000b7 : 0xc000003e], [0x06, 0, 0, 0x80000000],
+    [0x20, 0, 0, 0], [0x15, 4, 0, 436], [0x15, 0, 4, arm ? 167 : 157],
+    [0x20, 0, 0, 16], [0x15, 1, 0, 0x41554a36], [0x06, 0, 0, 0x7fff0000],
+    [0x06, 0, 0, 0x00030000], [0x06, 0, 0, 0x7fff0000],
+  ];
+  const bytes = Buffer.alloc(instructions.length * 8);
+  instructions.forEach(([code, jt, jf, k], i) => {
+    bytes.writeUInt16LE(code, i * 8); bytes[i * 8 + 2] = jt; bytes[i * 8 + 3] = jf;
+    bytes.writeUInt32LE(k, i * 8 + 4);
+  });
+  return hash(bytes);
+}
+
+export function validateFdEvidence(proof, mode, abi) {
+  assert(proof && Object.values(FD_MODES).includes(mode), "FD evidence required");
+  assert.equal(proof.schemaVersion, 1);
+  assert.equal(proof.mode, mode);
+  assert.equal(proof.arch, abi === "arm64-v8a" ? "arm64" : "x64");
+  assert.equal(proof.passed, true, "FD semantics failed");
+  assert(!proof.error, "FD probe error");
+  const enosys = call => assert.deepEqual(call, { result: -1, errno: 38 }, "TRAP must become ENOSYS");
+  const trapped = trap => { assert(trap, "TRAP proof required"); enosys(trap.marker); enosys(trap.closeRange); };
+  assert(Number.isInteger(proof.before?.fd) && proof.before.fd >= 256 && proof.before.fd < 512, "bounded sentinel FD");
+  assert.equal(proof.before.open, true);
+  assert.equal(proof.before.cloexec, false);
+  const call = proof.nativeCloseRange;
+  assert(call && ((call.result === 0 && call.errno === 0) ||
+    (call.result === -1 && [22, 38].includes(call.errno))), "raw close_range evidence");
+  assert.equal(proof.nativeStillOpen, true, "CLOEXEC must not close immediately");
+  assert.equal(proof.nativeCloexec, call.result === 0);
+  if (mode !== "spawn-native") {
+    assert.equal(proof.policy?.installed, true);
+    assert.equal(proof.policy.filterSha256, fdFilterSha256(abi), "exact ABI-specific TRAP policy");
+    assert.deepEqual(proof.policy.before, { result: -1, errno: 22 }, "pre-filter control must be EINVAL");
+    enosys(proof.policy.after);
+    trapped(proof.trap);
+  } else assert(!proof.policy && !proof.trap, "native control cannot install a test filter");
+  if (mode === "startup-trap") {
+    assert.deepEqual(proof.startup, { samePid: true, inheritedOpen: true, cloexec: true, sentinelIdentity: true });
+    return proof;
+  }
+  assert.deepEqual(proof.after, { parentOpen: true, parentCloexec: false, sentinelIdentity: true });
+  if (mode === "sigsys-listener") {
+    assert.equal(proof.listener?.delivered, 1, "ordinary SIGSYS must reach JS exactly once");
+    trapped(proof.listener.during); trapped(proof.listener.after);
+  } else {
+    assert.equal(proof.control?.exitCode, 0, "readlink positive control required");
+    assert.equal(proof.control.stderrEmpty, true);
+    assert(typeof proof.control.stdoutTarget === "string" && proof.control.stdoutTarget.length <= 128 &&
+      /^(?:(?:pipe|socket):\[\d+\]|\/memfd:spawn_stdio_stdout \(deleted\))$/.test(proof.control.stdoutTarget),
+    "readlink must observe a real child stdout FD");
+    for (const name of ["sync", "async"])
+      assert.deepEqual(proof[name], { sentinelAbsent: true, exitCode: 1 }, name + " child inherited sentinel");
+    assert.equal(proof.maskRestored, true);
+    if (mode === "blocked-sigsys") assert.deepEqual(proof.mask, { childBlocked: true, callerStillBlocked: true });
+  }
+  return proof;
 }
 
 export function validateReceipt(receipt) {
@@ -236,7 +329,7 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
   for (let i = 0; i < probes.length; i++) {
     const expected = probes[i], result = report.probes[i];
     assert.equal(result.passed, true, expected.id + " failed");
-    assert(!result.error && !result.streamError, expected.id + " stream/process error");
+    assert(!result.error && !result.streamError && !result.evidenceError, expected.id + " stream/process/evidence error");
     assert.equal(result.termination, expected.termination);
     assert.equal(result.outputLimitBytes, expected.outputBytes ?? 16384);
     assert.equal(result.processReaped, true, expected.id + " process not reaped");
@@ -269,6 +362,13 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
       assert(typeof result[channel] === "string" && result[channel].length <= 2059, "unbounded stream summary");
       if (expected[channel]) assert(result[channel].includes(expected[channel]), expected.id + " missing " + channel);
     }
+    if (expected.sourceFile) {
+      validateFdEvidence(result.fdEvidence, expected.mode, abi);
+      const lines = result.stdout.trim().split(/\r?\n/);
+      assert.equal(lines.length, 1, "exactly one bounded FD result required");
+      assert(lines[0].startsWith("FD_PROBE_RESULT="));
+      assert.deepEqual(JSON.parse(lines[0].slice("FD_PROBE_RESULT=".length)), result.fdEvidence, "FD evidence/output drift");
+    } else assert(!result.fdEvidence, "unexpected FD evidence");
   }
   assert.equal(report.passed, true);
   return report;

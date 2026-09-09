@@ -15,6 +15,31 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+On 2026-09-10, the suite expanded to 18 probes. The same four native arm64
+devices listed below plus `AVD_API_33` (Google `sdk_gphone64_x86_64`, API 33,
+native x86_64), all with 4096-byte pages, each scored **17/18 in two rounds**.
+The 40 new spawn-native, spawn-trap, blocked-SIGSYS and listener cases passed.
+All 10 `fd-startup-trap` cases failed: a same-PID re-exec retained the sentinel
+FD but Bun did not set `FD_CLOEXEC` after the trapped startup `close_range`.
+The runner correctly exits nonzero; this is not a passing release gate.
+
+The [FD semantics report](../../../../../docs/compatibility/2026-09-10-m3-fd-semantics.json)
+binds all 18 source inputs, both APKs and unchanged runtime/helper bytes, and
+retains every bounded result, including failures. All 30 SIGTERM-ignoring
+lifecycle cases still passed, with 301-319 ms termination-to-exit measurements;
+all test packages were uninstalled with no processes left under their UIDs.
+The AVD started for this run was shut down without saving a snapshot or wiping
+its data. No physical-device serials or local signing secrets are archived.
+
+The pinned startup code ignores the result of
+`bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC)`; unlike `bun-spawn.cpp`, it does
+not call a loop-based fallback. Fixing that path, locking the patch and new
+experimental identity, rebuilding each ABI twice and passing the unchanged
+assertion are the next gates. These tests do not establish an actual production
+Binder/PFD leak; neither the official payload nor the patched bytes were changed.
+
+### Previous lifecycle baseline
+
 On 2026-09-09, Sony G8441 (API 28), Sony XQ-AT72 (API 31), Redmi 22120RN86C
 (API 33) and Xiaomi 23046RP50C (API 35) each passed all 13 probes in two rounds.
 All four used native arm64, 4096-byte pages, ordinary application UIDs,
@@ -41,11 +66,53 @@ The official plugin's separate Binder reproduction/fix is documented in the
 [M1 report](../../../../../docs/compatibility/2026-09-08-m1-supervised-termination.json);
 it is not a substitute for this patched-runtime result, or vice versa.
 
-Full experimental plugin/Binder execution, forced-syscall/FD-CLOEXEC semantics,
-blocked SIGSYS masks, watch/reload, API 29/30/32, native x86_64 and native 16 KiB
-execution remain unproven. Only the immediate Bun child is supervised, not
+Full experimental plugin/Binder execution, the startup CLOEXEC fix, other
+forced-syscall paths, watch/reload, API 29/30/32 and native 16 KiB execution
+remain unproven. Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.
 `distributionReady` remains false. Nothing here is published as a Release asset.
+
+## FD and SIGSYS fixture design
+
+`probes.json` names only the fixed `fd-probes.mjs` source and five exact modes.
+The builder inlines a constant mode plus canonical UTF-8/LF source into the
+APK, rejecting arbitrary paths, mixed source/arguments and oversized assets.
+The fixed fixture has a 16 KiB source cap; existing inline fixtures keep their
+8 KiB cap. Timeouts, output limits and production execution limits are unchanged.
+
+The fixture uses built-in `bun:ffi` to call libc; it does not install an npm
+dependency, package another native helper or invoke a shell:
+
+- Duplicate a private sentinel to a bounded FD in `[256, 512)` without CLOEXEC.
+  Observe the raw CLOEXEC result, verify that the FD stays open, then clear its
+  flag before testing child isolation. On the x86_64 AVD, the unfiltered call
+  succeeds and sets the flag; older tested kernels return ENOSYS or EINVAL.
+- Add a thread-local, ABI-checked seccomp BPF filter that traps syscall 436 and
+  one invalid `prctl` option. The latter changes from EINVAL to ENOSYS, proving
+  that a real TRAP is handled even when `close_range` already returns ENOSYS.
+  The report binds the exact ABI-specific filter digest. This adds restrictions
+  to the Bun calling thread and inherited children; it does not weaken Android
+  policy, change pre-existing sibling threads or affect the supervisor.
+- Check the sentinel with a non-Bun `/system/bin/toybox readlink` child through
+  both spawn APIs. A positive child stdout-FD control supports Bun's pipe,
+  socketpair and memfd implementations; the sentinel must be absent while the
+  parent's descriptor and identity remain intact.
+- Block SIGSYS on the spawning thread, verify spawnSync child/caller masks,
+  then restore the original mask before the asynchronous case. Register and
+  remove a JavaScript SIGSYS listener around forced traps, separately checking
+  exactly one ordinary user-signal delivery.
+- Re-exec the installed read-only Bun at the same PID under the filter and
+  inspect the inherited FD's startup flag. It must remain open **and** acquire
+  CLOEXEC. Returning ENOSYS without that marking fails the test.
+
+Java accepts exactly one bounded JSON evidence line, and the host validator
+checks mode, ABI, positive controls, syscall results, masks, flags and stream
+consistency. A `passed` boolean alone is insufficient. This is evidence for
+these sentinel paths, not for FD values at/above the existing 65536 spawn-loop
+ceiling, `CLOSE_RANGE_UNSHARE`, every thread, blocked asynchronous spawn, all
+signal defaults or detached descendants. The distinction between marking a
+descriptor and immediately closing it follows the
+[Linux close_range contract](https://man7.org/linux/man-pages/man2/close_range.2.html).
 
 ## Build outside the repository
 
