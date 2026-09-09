@@ -15,7 +15,20 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
-On 2026-09-10, the suite expanded to 18 probes. The same four native arm64
+The startup-fix revision `1.4.0+c240d6c68` now passes **18/18 twice on each of
+five environments**, totaling 180/180: native arm64 API 28/31/33/35 and native
+x86_64 API 33, all with 4096-byte pages. The unchanged same-PID startup assertion
+now confirms a retained sentinel with CLOEXEC in all 10 rounds. All 30 forcible
+termination cases also pass at 301-305 ms. Every test package was uninstalled
+with no UID processes remaining, and the owned API 33 AVD was shut down.
+The [new report](../../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json)
+binds the two-clean-build runtime pair, APKs, sources, helpers and all bounded
+results. This remains test-only application evidence, not full plugin Binder
+or general Android 9/16 KiB support.
+
+### Previous FD failure baseline
+
+Earlier on 2026-09-10, the suite expanded to 18 probes. The same four native arm64
 devices listed below plus `AVD_API_33` (Google `sdk_gphone64_x86_64`, API 33,
 native x86_64), all with 4096-byte pages, each scored **17/18 in two rounds**.
 The 40 new spawn-native, spawn-trap, blocked-SIGSYS and listener cases passed.
@@ -31,12 +44,13 @@ all test packages were uninstalled with no processes left under their UIDs.
 The AVD started for this run was shut down without saving a snapshot or wiping
 its data. No physical-device serials or local signing secrets are archived.
 
-The pinned startup code ignores the result of
-`bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC)`; unlike `bun-spawn.cpp`, it does
-not call a loop-based fallback. Fixing that path, locking the patch and new
-experimental identity, rebuilding each ABI twice and passing the unchanged
-assertion are the next gates. These tests do not establish an actual production
-Binder/PFD leak; neither the official payload nor the patched bytes were changed.
+The previous `1.4.0+778ce669a` startup code ignored the result of
+`bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC)`; unlike `bun-spawn.cpp`, it did
+not call a fallback. Project-owned patch 7 now enumerates actual open fds and
+marks them CLOEXEC, or fails startup if it cannot complete that operation;
+see the [native regression tests and scope](../startup-cloexec/README.md).
+The old failure record remains unchanged. Neither the old failure nor the new
+pass establishes an actual production Binder/PFD leak, and official bytes remain unchanged.
 
 ### Previous lifecycle baseline
 
@@ -66,7 +80,7 @@ The official plugin's separate Binder reproduction/fix is documented in the
 [M1 report](../../../../../docs/compatibility/2026-09-08-m1-supervised-termination.json);
 it is not a substitute for this patched-runtime result, or vice versa.
 
-Full experimental plugin/Binder execution, the startup CLOEXEC fix, other
+Full experimental plugin/Binder execution, other
 forced-syscall paths, watch/reload, API 29/30/32 and native 16 KiB execution
 remain unproven. Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.

@@ -67,14 +67,39 @@ const ALLOWED_TOOLCHAIN_HOSTS = new Set([
 ]);
 
 export function verifyExperiment(baseDirectory = toolDirectory) {
+  const inputs = verifyBuildInputs(baseDirectory);
+  const root = resolve(baseDirectory);
+  const lock = readJson(resolveInside(root, "experiment.lock.json", "experiment lock"));
+  requireEqual(lock.identity.status, "reproducible-runtime-static-audit-complete", "identity.status");
+  requireEqual(lock.identity.runtimeProduced, true, "identity.runtimeProduced");
+  const runtimeEvidenceResult = verifyRuntimeEvidence(root, lock);
+  requireEqual(lock.distributionSourceLock, "distribution-source.lock.json", "distributionSourceLock");
+  const distributionSourceResult = verifyDistributionSource({ baseDirectory: root });
+  return {
+    ...inputs,
+    runtimeEvidenceVerified: true,
+    reproducibleRuntimeArtifactCount: runtimeEvidenceResult.artifacts.length,
+    reproducibleRuntimeArtifacts: runtimeEvidenceResult.artifacts,
+    packagedLicenseCount: distributionSourceResult.packagedLicenseCount,
+    lockedDistributionSourceArchiveCount:
+      distributionSourceResult.nativeSourceArchiveCount +
+      distributionSourceResult.cargoArchiveCount +
+      distributionSourceResult.bunRegistryArchiveCount + 1,
+  };
+}
+
+// Building a new source revision cannot require evidence from binaries not yet built.
+// This result authorizes only the locked build; consumers of binaries use verifyExperiment.
+export function verifyBuildInputs(baseDirectory = toolDirectory) {
   const root = resolve(baseDirectory);
   const lock = readJson(resolveInside(root, "experiment.lock.json", "experiment lock"));
   requireEqual(lock.schemaVersion, 1, "experiment.lock.json: schemaVersion");
   requireRecord(lock.identity, "experiment.lock.json: identity");
   requireEqual(lock.identity.variant, "bun-1.4.0-android-api28-patched-experimental", "identity.variant");
-  requireEqual(lock.identity.status, "reproducible-runtime-static-audit-complete", "identity.status");
+  require(typeof lock.identity.runtimeProduced === "boolean", "identity.runtimeProduced must be boolean");
+  requireEqual(lock.identity.status, lock.identity.runtimeProduced
+    ? "reproducible-runtime-static-audit-complete" : "source-locked-awaiting-runtime-evidence", "identity.status");
   requireEqual(lock.identity.officialArtifact, false, "identity.officialArtifact");
-  requireEqual(lock.identity.runtimeProduced, true, "identity.runtimeProduced");
   requireEqual(lock.identity.buildReady, true, "identity.buildReady");
   requireEqual(lock.identity.distributionReady, false, "identity.distributionReady");
 
@@ -91,13 +116,11 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
   const sourceInputResult = verifySourceInputs(root, lock, series);
   const toolchainInputResult = verifyToolchainInputs(root, lock);
   const buildNetworkInputResult = verifyBuildNetworkInputs(root, lock, series);
-  const runtimeEvidenceResult = verifyRuntimeEvidence(root, lock);
-  requireEqual(lock.distributionSourceLock, "distribution-source.lock.json", "distributionSourceLock");
-  const distributionSourceResult = verifyDistributionSource({ baseDirectory: root });
   verifyBlockers(lock.knownBlockers, lock.identity);
   verifyNoRuntimeArtifacts(root);
 
   return {
+    runtimeEvidenceVerified: false,
     variant: lock.identity.variant,
     upstreamCommit: lock.upstream.commit,
     abiCount: abiResults.length,
@@ -119,14 +142,6 @@ export function verifyExperiment(baseDirectory = toolDirectory) {
     bunIntegrityEntryCount: buildNetworkInputResult.bunIntegrityEntries,
     bunRegistryPackageCount: buildNetworkInputResult.bunRegistryPackages,
     lockedBunArchiveBytes: buildNetworkInputResult.bunArchiveBytes,
-    reproducibleRuntimeArtifactCount: runtimeEvidenceResult.artifacts.length,
-    reproducibleRuntimeArtifacts: runtimeEvidenceResult.artifacts,
-    packagedLicenseCount: distributionSourceResult.packagedLicenseCount,
-    lockedDistributionSourceArchiveCount:
-      distributionSourceResult.nativeSourceArchiveCount +
-      distributionSourceResult.cargoArchiveCount +
-      distributionSourceResult.bunRegistryArchiveCount +
-      1,
     buildReady: lock.identity.buildReady,
     distributionReady: lock.identity.distributionReady,
   };
@@ -974,7 +989,10 @@ function verifyPatchSeries(patchRoot, lock, series) {
   );
 
   requireArray(downstream.patches, "downstreamBackport.patches");
-  requireEqual(downstream.patches.length, pr.commitCount + 1, "downstreamBackport.patches length");
+  requireEqual(downstream.patches.length, pr.commitCount + 2, "downstreamBackport.patches length");
+  requireEqual(downstream.upstreamEquivalence.downstreamPrefixHeadCommit,
+    downstream.patches[pr.commitCount - 1].commit, "upstream equivalence prefix head");
+  requireEqual(downstream.upstreamEquivalence.scope, "upstream-compatibility-prefix", "upstream equivalence scope");
   const listedDownstreamPaths = new Set();
   expectedParent = downstream.baseCommit;
   for (let index = 0; index < downstream.patches.length; index += 1) {
@@ -985,7 +1003,13 @@ function verifyPatchSeries(patchRoot, lock, series) {
     requireEqual(patch.order, index + 1, `${label}: order`);
     require(SHA1.test(patch.commit), `${label}: commit must be a full lowercase SHA-1`);
     requireEqual(patch.parent, expectedParent, `${label}: parent`);
-    if (upstreamPatch === undefined) {
+    if (index === pr.commitCount + 1) {
+      requireEqual(patch.origin, "autojs6-startup-cloexec", `${label}: origin`);
+      requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
+      require(SHA1.test(patch.stablePatchId), `${label}: invalid stablePatchId`);
+      requireSameArray(patch.affectedPaths,
+        ["src/jsc/bindings/bun-startup-cloexec.h", "src/jsc/bindings/c-bindings.cpp"], `${label}: affectedPaths`);
+    } else if (upstreamPatch === undefined) {
       requireEqual(patch.origin, "autojs6-supply-chain", `${label}: origin`);
       requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
       require(SHA1.test(patch.stablePatchId), `${label}: stablePatchId must be a full lowercase SHA-1`);
@@ -1262,7 +1286,6 @@ function verifyBlockers(blockers, identity) {
   }
   requireEqual(unresolved, 1, "unresolved blocker count");
   requireEqual(unresolvedBuildBlocking, 0, "unresolved build-blocking count");
-  requireEqual(identity.runtimeProduced, true, "identity.runtimeProduced with reproducible artifacts");
   requireEqual(identity.buildReady, true, "identity.buildReady with all build-input blockers resolved");
   requireEqual(identity.distributionReady, false, "identity.distributionReady with unresolved blockers");
 }

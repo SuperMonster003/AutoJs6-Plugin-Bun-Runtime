@@ -44,7 +44,7 @@ export function verifyBackport(bunRepository) {
     const downstreamPatchId = patchId(repository, downstreamPath);
     require(downstreamPatchId === patch.stablePatchId, `${patch.commit}: downstream stable patch ID mismatch`);
     if (patch.sourceCommit === null) {
-      require(patch.origin === "autojs6-supply-chain", `${patch.commit}: unrecognized project-owned patch origin`);
+      require(["autojs6-supply-chain", "autojs6-startup-cloexec"].includes(patch.origin), `${patch.commit}: unrecognized project-owned patch origin`);
     } else {
       const upstream = upstreamByCommit.get(patch.sourceCommit);
       require(upstream !== undefined, `${patch.commit}: unknown source commit ${patch.sourceCommit}`);
@@ -94,18 +94,29 @@ export function verifyBackport(bunRepository) {
       JSON.stringify(commits) === JSON.stringify(downstream.patches.map((patch) => patch.commit)),
       "Replayed commit chain differs from the lock",
     );
+    for (const patch of downstream.patches) {
+      const changedPaths = git(worktree, ["diff", "--name-only", patch.parent, patch.commit])
+        .stdout.trim().split("\n").filter(Boolean).sort();
+      require(JSON.stringify(changedPaths) === JSON.stringify([...patch.affectedPaths].sort()),
+        `${patch.commit}: replayed changes differ from the declared affected paths`);
+    }
 
     const comparisonPaths = downstream.upstreamEquivalence?.comparisonPaths;
     require(Array.isArray(comparisonPaths) && comparisonPaths.length > 0, "No upstream comparison paths are locked");
+    const prefixHead = downstream.patches[series.upstreamReferencePatches.length - 1].commit;
+    require(downstream.upstreamEquivalence.scope === "upstream-compatibility-prefix", "Invalid upstream equivalence scope");
+    require(downstream.upstreamEquivalence.downstreamPrefixHeadCommit === prefixHead, "Invalid upstream equivalence prefix head");
+    const expectedPaths = [...new Set(series.upstreamReferencePatches.flatMap((patch) => patch.affectedPaths))].sort();
+    require(JSON.stringify([...comparisonPaths].sort()) === JSON.stringify(expectedPaths), "Incomplete upstream comparison paths");
     const comparison = git(
       worktree,
-      ["diff", "--quiet", downstream.headCommit, upstreamHead, "--", ...comparisonPaths],
+      ["diff", "--quiet", prefixHead, upstreamHead, "--", ...comparisonPaths],
       { allowExitCodes: [0, 1] },
     );
     if (comparison.status !== 0) {
       const changed = git(
         worktree,
-        ["diff", "--name-status", downstream.headCommit, upstreamHead, "--", ...comparisonPaths],
+        ["diff", "--name-status", prefixHead, upstreamHead, "--", ...comparisonPaths],
       ).stdout.trim();
       throw new Error(`Replayed affected paths differ from the pinned upstream head: ${changed}`);
     }
@@ -117,6 +128,7 @@ export function verifyBackport(bunRepository) {
       patchCount: downstream.patches.length,
       upstreamCompatibilityPatchCount: series.upstreamReferencePatches.length,
       upstreamHeadCommit: upstreamHead,
+      upstreamEquivalentPrefixHead: prefixHead,
       affectedPathsMatchExactly: true,
       sourceBlobCount,
     };
@@ -249,7 +261,7 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
         `(${result.upstreamCompatibilityPatchCount} upstream compatibility patches)`,
     );
     console.log(`OK deterministic head ${result.headCommit}; tree ${result.headTreeSha1}`);
-    console.log(`OK affected paths are byte-identical to upstream ${result.upstreamHeadCommit}`);
+    console.log(`OK affected paths at prefix ${result.upstreamEquivalentPrefixHead} are byte-identical to upstream ${result.upstreamHeadCommit}`);
     console.log(`OK ${result.sourceBlobCount} locked source-definition blobs match the replayed tree`);
   } catch (error) {
     console.error(`ERROR ${error.message}`);

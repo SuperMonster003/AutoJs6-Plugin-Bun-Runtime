@@ -3,7 +3,7 @@ import { dirname, isAbsolute, resolve, win32 } from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { verifyExperiment } from "./verify-experiment.mjs";
+import { verifyBuildInputs } from "./verify-experiment.mjs";
 
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const CONTAINER_PATHS = Object.freeze({
@@ -54,7 +54,7 @@ export function createLockedContainerBuildPlan({
   require(typeof dockerExecutable === "string" && dockerExecutable.length > 0, "A Docker executable is required");
 
   const experimentRoot = existingRealDirectory(experimentDirectory, "experiment directory");
-  const verified = verifyExperiment(experimentRoot);
+  const verified = verifyBuildInputs(experimentRoot);
   const experiment = readJson(resolve(experimentRoot, "experiment.lock.json"));
   const imageDigest = experiment.toolchain?.host?.buildImageManifestDigest;
   require(/^sha256:[0-9a-f]{64}$/.test(imageDigest ?? ""), "The locked host image digest is invalid");

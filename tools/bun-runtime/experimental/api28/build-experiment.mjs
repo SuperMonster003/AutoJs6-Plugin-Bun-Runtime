@@ -15,7 +15,7 @@ import {
 } from "./materialize-bun-inputs.mjs";
 import { materializeSourceInputs } from "./materialize-source-inputs.mjs";
 import { materializeToolchainInputs } from "./materialize-toolchain-inputs.mjs";
-import { verifyExperiment } from "./verify-experiment.mjs";
+import { verifyBuildInputs } from "./verify-experiment.mjs";
 
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const ABI_VALUES = new Set(["arm64-v8a", "x86_64", "all"]);
@@ -27,7 +27,7 @@ export function createBuildPlan({
 } = {}) {
   require(ABI_VALUES.has(abi), `Unknown ABI selection: ${JSON.stringify(abi)}`);
   const root = resolve(experimentDirectory);
-  const verified = verifyExperiment(root);
+  const verified = verifyBuildInputs(root);
   const lock = readJson(resolve(root, "experiment.lock.json"));
   const selectedAbis = lock.target.abis.filter((target) => abi === "all" || target.androidAbi === abi);
   require(selectedAbis.length > 0, `No build target selected for ${abi}`);

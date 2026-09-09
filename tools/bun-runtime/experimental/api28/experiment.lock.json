@@ -176,7 +176,7 @@
       "id": "v1.4.0-backport",
       "resolved": true,
       "blocksBuild": true,
-      "description": "Five deterministic compatibility patches apply cleanly to exact Bun v1.4.0, match the upstream stable patch IDs, and produce byte-identical affected paths to the pinned PR head; a sixth deterministic patch pins Brotli by full commit."
+      "description": "Seven deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, and project-owned patch seven fixes startup CLOEXEC fallback with separately audited source differences."
     },
     {
       "id": "toolchain-byte-lock",
@@ -194,7 +194,7 @@
       "id": "build-and-runtime-evidence",
       "resolved": false,
       "blocksBuild": false,
-      "description": "Two independent clean builds produced byte-for-byte identical ARM64 and x86_64 executables, the static ELF audit is complete, exact Bun/WebKit license and corresponding-source inputs are locked, and the same-Release source-asset/SHA-256 publication workflow is implemented. Application-process Binder/device evidence, experimental APK packaging validation, and actual publication of a matching APK/source set remain open; project policy does not require a separate legal-review gate."
+      "description": "Two clean builds per ABI of the c240d6c68 startup-fix source are byte-for-byte identical and pass the new static ELF audit. Historical 778ce669a artifacts remain separate. Full experimental Binder/device acceptance and matching APK/source publication remain open; project policy does not require a separate legal-review gate."
     }
   ]
 }
