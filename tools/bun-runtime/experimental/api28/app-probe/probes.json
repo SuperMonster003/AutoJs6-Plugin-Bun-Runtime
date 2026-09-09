@@ -80,6 +80,41 @@
     "termination": "cancelled"
   },
   {
+    "id": "fd-spawn-native",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "spawn-native",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-spawn-trap",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "spawn-trap",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-spawn-blocked-sigsys",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "blocked-sigsys",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-startup-trap",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "startup-trap",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "sigsys-listener-trap",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "sigsys-listener",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

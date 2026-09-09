@@ -1,15 +1,32 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { supervisorLock } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lockedEvidence, newOutputDirectory,
   outsideRepository, parseInstrumentation, parseOptions, validateManifestDump, validateProbes, validateReceipt, validateReport,
-  parsePackageUid, countUidProcesses } from "./probe-common.mjs";
+  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, validateFdEvidence, fdFilterSha256 } from "./probe-common.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
+function fdFixture(mode, abi = "arm64-v8a") {
+  const enosys = { result: -1, errno: 38 };
+  const trap = { marker: enosys, closeRange: enosys };
+  const base = { schemaVersion: 1, mode, arch: abi === "arm64-v8a" ? "arm64" : "x64", passed: true };
+  return structuredClone({ ...base, before: { fd: 256, open: true, cloexec: false },
+    nativeCloseRange: enosys, nativeStillOpen: true, nativeCloexec: false,
+    after: { parentOpen: true, parentCloexec: false, sentinelIdentity: true },
+    ...(mode !== "spawn-native" ? { policy: { installed: true, before: { result: -1, errno: 22 },
+      after: enosys, filterSha256: fdFilterSha256(abi) }, trap } : {}),
+    ...(mode === "startup-trap" ? { startup: { samePid: true, inheritedOpen: true, cloexec: true, sentinelIdentity: true } } :
+      mode === "sigsys-listener" ? { listener: { during: trap, after: trap, delivered: 1 } } : {
+      control: { exitCode: 0, stdoutTarget: "/memfd:spawn_stdio_stdout (deleted)", stderrEmpty: true }, maskRestored: true,
+      sync: { sentinelAbsent: true, exitCode: 1 }, async: { sentinelAbsent: true, exitCode: 1 },
+      ...(mode === "blocked-sigsys" ? { mask: { childBlocked: true, callerStillBlocked: true } } : {}),
+    }),
+  });
+}
 function receipt() {
   return {
     schemaVersion: 2, kind: "test-only-application-process-probe", packageName: PACKAGE, runner: RUNNER,
@@ -39,7 +56,10 @@ function fixture() {
       elapsedMillis: 2000, stdout: probe.stdout ?? "bounded output", stderr: probe.stderr ?? "",
       ...(probe.requiresReady ? { readyObserved: true, parentageVerified: true, childGone: true, supervisorGone: true,
         childPid: 1001, supervisorPid: 1002, readinessMillis: 200, terminationToExitMillis: 250,
-        terminationRequestedAfterReadyMillis: 200 } : {}) })),
+        terminationRequestedAfterReadyMillis: 200 } : {}),
+      ...(probe.sourceFile ? { fdEvidence: fdFixture(probe.mode),
+        stdout: "FD_PROBE_RESULT=" + JSON.stringify(fdFixture(probe.mode)) + "\n" } : {}),
+    })),
   } };
 }
 
@@ -53,10 +73,76 @@ test("probe definitions reject traversal, duplication, arbitrary arguments, and 
     p => { p[9].requiresReady = false; }, p => { p[9].source = "setInterval(()=>{},1000);"; },
     p => { p[10].termination = "exited"; }, p => { p[11].cancelAfterReadyMillis = 10000; },
     p => { p[9].timeoutMillis = 15000; }, p => { p[10].outputBytes = 16384; },
+    p => { p[12].sourceFile = "../fd-probes.mjs"; }, p => { p[12].sourceFile = "missing.mjs"; },
+    p => { p[12].source = "console.log('fake')"; }, p => { p[12].mode = "startup-trap"; },
+    p => { p[12].stdout = ""; }, p => { p[12].arguments = ["--version"]; },
+    p => { delete p[12].sourceFile; }, p => { p[2].sourceFile = "fd-probes.mjs"; },
   ]) {
     const changed = structuredClone(probes); change(changed);
     assert.throws(() => validateProbes(changed));
   }
+});
+test("fixed FD fixtures are materialized deterministically with canonical source and bounded assets", () => {
+  const materialized = materializeProbes(probes);
+  const source = readFileSync(join(HERE, "fd-probes.mjs"), "utf8").replace(/\r\n/g, "\n");
+  assert(Buffer.byteLength(JSON.stringify(materialized)) <= 131072);
+  for (let i = 0; i < probes.length; i++) {
+    const probe = probes[i], actual = materialized[i];
+    if (probe.sourceFile) {
+      assert.equal(actual.source, "const FD_MODE = " + JSON.stringify(probe.mode) + ";\n" + source);
+      assert(Buffer.byteLength(actual.source) <= 16384);
+      assert(!Object.hasOwn(probe, "source"), "definitions may not be mutated");
+    } else assert.deepEqual(actual, probe);
+  }
+  assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
+  assert(inputFacts().some(input => input.path.endsWith("/fd-probes.mjs")));
+});
+test("all FD modes require concrete CLOEXEC, filter, child and listener observations on both ABIs", () => {
+  for (const abi of ABIS) for (const mode of Object.values(FD_MODES)) {
+    const proof = fdFixture(mode, abi);
+    assert.equal(validateFdEvidence(proof, mode, abi), proof);
+    if (mode !== "startup-trap") {
+      proof.nativeCloseRange = { result: 0, errno: 0 }; proof.nativeCloexec = true;
+      validateFdEvidence(proof, mode, abi);
+      proof.nativeCloseRange = { result: -1, errno: 22 }; proof.nativeCloexec = false;
+      validateFdEvidence(proof, mode, abi);
+    }
+  }
+});
+test("child stdout positive control supports Bun memfd, socketpair and pipe without accepting failed readlink", () => {
+  for (const target of ["/memfd:spawn_stdio_stdout (deleted)", "socket:[123]", "pipe:[456]"]) {
+    const proof = fdFixture("spawn-native"); proof.control.stdoutTarget = target;
+    validateFdEvidence(proof, "spawn-native", "arm64-v8a");
+  }
+  for (const target of ["", "No such file or directory", "sentinel.txt", "pipe:[123]\nfake", "x".repeat(129)]) {
+    const proof = fdFixture("spawn-native"); proof.control.stdoutTarget = target;
+    assert.throws(() => validateFdEvidence(proof, "spawn-native", "arm64-v8a"));
+  }
+});
+test("FD evidence cannot hide no-op fallback, missing controls, wrong policy or lost signal masks", () => {
+  const cases = [
+    ["spawn-native", p => { p.before.cloexec = true; }], ["spawn-native", p => { p.before.fd = 65536; }],
+    ["spawn-native", p => { p.nativeCloexec = true; }], ["spawn-native", p => { p.nativeStillOpen = false; }],
+    ["spawn-native", p => { p.nativeCloseRange.errno = 1; }], ["spawn-native", p => { p.after.parentOpen = false; }],
+    ["spawn-native", p => { p.after.parentCloexec = true; }], ["spawn-native", p => { delete p.control; }],
+    ["spawn-native", p => { p.control.exitCode = 1; }], ["spawn-native", p => { p.sync.sentinelAbsent = false; }],
+    ["spawn-trap", p => { p.async.exitCode = 0; }], ["spawn-trap", p => { p.policy.installed = false; }],
+    ["spawn-trap", p => { p.policy.before.errno = 38; }], ["spawn-trap", p => { p.policy.after.errno = 22; }],
+    ["spawn-trap", p => { p.policy.filterSha256 = fdFilterSha256("x86_64"); }],
+    ["spawn-trap", p => { p.trap.closeRange = { result: 0, errno: 0 }; }],
+    ["blocked-sigsys", p => { p.mask.childBlocked = false; }],
+    ["blocked-sigsys", p => { p.mask.callerStillBlocked = false; }],
+    ["blocked-sigsys", p => { p.maskRestored = false; }],
+    ["startup-trap", p => { p.startup.cloexec = false; }], ["startup-trap", p => { p.startup.inheritedOpen = false; }],
+    ["startup-trap", p => { p.startup.samePid = false; }], ["startup-trap", p => { delete p.trap; }],
+    ["sigsys-listener", p => { p.listener.delivered = 0; }],
+    ["sigsys-listener", p => { p.listener.after.marker.errno = 22; }],
+  ];
+  for (const [mode, change] of cases) {
+    const proof = fdFixture(mode); change(proof);
+    assert.throws(() => validateFdEvidence(proof, mode, "arm64-v8a"));
+  }
+  assert.throws(() => validateFdEvidence(undefined, "spawn-native", "arm64-v8a"));
 });
 test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
   assert.deepEqual(parseOptions(["--serial", "a"], ["--serial"]), { "--serial": "a" });
@@ -84,6 +170,7 @@ test("receipts reject production identity, source drift, paths and ABI/hash drif
     r => { r.supervisor.sourceSha256 = "0".repeat(64); }, r => { r.supervisor.ndkVersion = "27.2.12479018"; },
     r => { r.supervisor.artifacts[0].binarySha256 = "0".repeat(64); },
     r => { r.inputs = r.inputs.filter(input => input.path !== SHARED_PROCESS); },
+    r => { r.inputs = r.inputs.filter(input => !input.path.endsWith("/fd-probes.mjs")); },
     r => { r.apks[0].signing.verifiedSchemes = []; }, r => { r.inputEncoding = "raw"; },
   ]) {
     const changed = receipt(); change(changed); assert.throws(() => validateReceipt(changed));
@@ -122,6 +209,10 @@ test("reported success cannot hide missing probes, wrong bytes, output leaks or 
     r => { r.probes[10].capturedBytes = 0; }, r => { r.probes[10].elapsedMillis = 10000; },
     r => { r.probes[11].terminationRequestedAfterReadyMillis = 0; },
     r => { r.probes[11].terminationRequestedAfterReadyMillis = 2000; },
+    r => { delete r.probes[12].fdEvidence; }, r => { r.probes[12].fdEvidence.passed = false; },
+    r => { r.probes[12].fdEvidence.mode = "spawn-trap"; }, r => { r.probes[12].evidenceError = "bad JSON"; },
+    r => { r.probes[12].stdout += r.probes[12].stdout; }, r => { r.probes[12].stdout = "FD_PROBE_RESULT={}"; },
+    r => { r.probes[0].fdEvidence = fdFixture("spawn-native"); },
   ]) {
     const { report, options } = fixture(); change(report);
     assert.throws(() => validateReport(report, options));
