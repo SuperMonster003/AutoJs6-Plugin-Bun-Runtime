@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "c240d6c6895db4241dc324f260ee3ee4d0da9889",
-    "headTreeSha1": "e7740b5decafdfa2ec4a5804057190e31e3c4820",
+    "headCommit": "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
+    "headTreeSha1": "8941ba13cd240647b059d1155d455c1d273a7e10",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -272,8 +272,28 @@
           "src/jsc/bindings/c-bindings.cpp"
         ],
         "licenseImpact": "No license change; project-owned Bun startup changes and the new SPDX-MIT header are provided under Bun's MIT license."
+      },
+      {
+        "order": 8,
+        "commit": "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
+        "parent": "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+        "origin": "autojs6-spawn-fd",
+        "sourceCommit": null,
+        "stablePatchId": "14c84ba8cf4be358c781325ccc86857d7d2c4371",
+        "path": "downstream/0008-fix-enumerate-live-spawn-fds-without-allocating.patch",
+        "bytes": 10386,
+        "sha256": "ae8972ed25455cf2a5b1219a12ab43f09132585f1adee46abb44737a0f1aaa30",
+        "purpose": "Enumerate actual Linux spawn descriptors using fixed-stack getdents64 and raw syscalls, independent of soft/hard limits; propagate errors before exec and avoid allocation or locks in the vfork child.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-spawn-fd.h",
+          "src/jsc/bindings/bun-spawn.cpp"
+        ],
+        "formatPatchAdditionalOptions": [
+          "--unified=20"
+        ],
+        "licenseImpact": "No license change; project-owned Bun spawn changes and the new SPDX-MIT header are provided under Bun's MIT license."
       }
     ],
-    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR."
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix."
   }
 }

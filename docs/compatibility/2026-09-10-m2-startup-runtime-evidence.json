@@ -8,7 +8,7 @@
   },
   "source": {
     "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "downstreamHeadCommit": "a260ef3085eccca9076569b1fd5d32fbb3e8c87d"
+    "downstreamHeadCommit": "c240d6c6895db4241dc324f260ee3ee4d0da9889"
   },
   "build": {
     "evidenceDate": "2026-09-10",
@@ -50,7 +50,7 @@
       {
         "path": "source-inputs.lock.json",
         "bytes": 15880,
-        "sha256": "f3268293695b6b6c56167e3442f013d8487896d2ca28b813e0f1a4c9462b1577"
+        "sha256": "e09f5b82d4ee7effdc7ee0bda088b1617ca265817e8ee61ae6c313a7e352ee84"
       },
       {
         "path": "toolchain-inputs.lock.json",
@@ -60,36 +60,36 @@
       {
         "path": "build-network-inputs.lock.json",
         "bytes": 5633,
-        "sha256": "78237ebb6475d1896922324ca72f72edd66919f25349a0af21ae1f0ee99fda6e"
+        "sha256": "32039c0f2f5aa94e98749457877a14e9201b28b1464c8455141cc112e6dd41d5"
       },
       {
         "path": "cargo-inputs.lock.json",
         "bytes": 64745,
-        "sha256": "5da141ef6831173205cf7abaafb68a0f2344442fb7106c83abd37c8a688ca96d"
+        "sha256": "2cfc3ce145958a1725c31a94224d870b7fcf44db52fabe1165d2522d19d11602"
       },
       {
         "path": "bun-inputs.lock.json",
         "bytes": 124300,
-        "sha256": "74438b6608e6858e2628a62f588e41465ce6d2e46c5b1f694c873f3ee7f66201"
+        "sha256": "e544d595ce1bcb3d26b7cdc02613b2dbd1cfded41b55ca053d967d9a3543f1ee"
       },
       {
         "path": "patches/series.lock.json",
-        "bytes": 15347,
-        "sha256": "e7524a281180aa2ac48f669a26576bb7c936c6496ac28dfeb97b95b889d68dad"
+        "bytes": 14109,
+        "sha256": "d556fd3ce1a34481e9eae0e5cc10a3372d6f3c311d767eecee6c86964de15a70"
       }
     ],
-    "notes": "Two independent clean shallow checkouts of the replay-verified a260ef3085eccca9076569b1fd5d32fbb3e8c87d source completed both ABI builds with exit 0 and clean tracked source trees. The locked host image, offline inputs, canonical /work/bun path and disabled ccache are unchanged. Both pairs are byte-for-byte identical and pass the complete static ELF audit. Previous six-patch and seven-patch runtime evidence is archived separately; no previous device result is reassigned to this source."
+    "notes": "Two independent clean shallow checkouts of the replay-verified c240d6c6895db4241dc324f260ee3ee4d0da9889 source completed both ABI builds with exit 0 and clean tracked source trees afterwards. The digest-locked container ran with network=none, read-only inputs/root and ccache disabled at the same /work/bun path. Both pairs are byte-for-byte identical and passed the full ELF audit. Dependency and toolchain bytes are unchanged and were reverified by each offline preflight. The previous 778ce669a evidence is preserved separately in docs/compatibility/2026-09-03-m2-runtime-evidence.json and is not evidence for this revision."
   },
   "artifacts": [
     {
       "abi": "arm64-v8a",
       "filename": "bun-arm64-v8a",
       "bytes": 87923312,
-      "sha256": "186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333",
+      "sha256": "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d",
       "mode": "0755",
       "repeatSha256": [
-        "186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333",
-        "186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333"
+        "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d",
+        "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d"
       ],
       "elf": {
         "class": "ELF64",
@@ -126,7 +126,7 @@
           "ndkVersion": "r27c",
           "ndkBuildNumber": "12479018"
         },
-        "buildId": "23ccea1adaa723627232e2cff6145298a8e926df",
+        "buildId": "e90fc518c07fedf766c17f798da953f78e9470ea",
         "versionDefinitions": [
           {
             "index": 1,
@@ -166,10 +166,10 @@
           "entryCount": 1066,
           "definedCount": 672,
           "undefinedCount": 393,
-          "tableSha256": "b364c97c2ca008f49fcc87fe847a0d769566d337c3d96af4b93fabaee4119302",
-          "recordsSha256": "aaad09e57062a287a23a44091484da695cbe455875c88506c7414b09cd2ce4e7",
-          "definedRecordsSha256": "0307992ffae252986497b8d7d740b1b738b80985fe88baa15a62770f431a4fec",
-          "undefinedRecordsSha256": "d31be121e1d3733520f8b68db7ff8f0aea3ad543692de5585f4465b8874dce40"
+          "tableSha256": "5ede4d1eef5bbe7a2a01bdaca1c7d82f71fb20d8bd4e3d790aecde795186806b",
+          "recordsSha256": "c1f9642876361be1eeab514428e77caab9a9a25fc85bdf0ef70ec100cd8bdaf4",
+          "definedRecordsSha256": "606f6b2662321369bd4e7afa831d31d10c22765bcd1f6b2c197bf25fc6eb1c44",
+          "undefinedRecordsSha256": "c8990b11f04782cd04dee91c01a589e836fc73fe011a86b4f363b3dd99c7c4c6"
         },
         "symbolTable": {
           "present": true,
@@ -184,11 +184,11 @@
       "abi": "x86_64",
       "filename": "bun-x86_64",
       "bytes": 90449712,
-      "sha256": "f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3",
+      "sha256": "da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d",
       "mode": "0755",
       "repeatSha256": [
-        "f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3",
-        "f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3"
+        "da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d",
+        "da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d"
       ],
       "elf": {
         "class": "ELF64",
@@ -225,7 +225,7 @@
           "ndkVersion": "r27c",
           "ndkBuildNumber": "12479018"
         },
-        "buildId": "b294fce5d783f0b195ce4c6ebfe128ab796ec355",
+        "buildId": "7f0306009df73154bf10ba92ab870c92ab4b942f",
         "versionDefinitions": [
           {
             "index": 1,
@@ -265,10 +265,10 @@
           "entryCount": 1065,
           "definedCount": 672,
           "undefinedCount": 392,
-          "tableSha256": "ba75844d179bfd5f24117cf9b7177841ca4623e479f37b0d064b523c6e68bfe1",
-          "recordsSha256": "571424f1eb35087ab3d19558438843a6c31c239c5a59b8af20ec66fe4ebad556",
-          "definedRecordsSha256": "b46c6ca4b232e58ae7d3ec2a90ac537ac067c7d19799f5fc4478d7a60facfea6",
-          "undefinedRecordsSha256": "f40e7b75bec966866fdcc92b0e1ba4a53ef44eeab8ccbac41c3e5319a1ef989d"
+          "tableSha256": "01803fc9a8ca68c1f080c4877a6a56c3786584f82cab9284fb7d7bb6a53d58d6",
+          "recordsSha256": "553fffda92ad9cf4665c03ed52bd7e3e75b0883234f514040918258ca1957ac8",
+          "definedRecordsSha256": "2087bd9ab4f2a755ea74c625f28db42d339abe8ba776adda3a267eab8442e089",
+          "undefinedRecordsSha256": "7a2e5bb8f6bc5c92ffba044a79eca821f33ec6261165cdda0f2ce5496f4b6763"
         },
         "symbolTable": {
           "present": true,

@@ -1,0 +1,306 @@
+From a260ef3085eccca9076569b1fd5d32fbb3e8c87d Mon Sep 17 00:00:00 2001
+From: SuperMonster003 <30370009+SuperMonster003@users.noreply.github.com>
+Date: Thu, 10 Sep 2026 12:00:00 +0800
+Subject: [PATCH] fix: enumerate live spawn fds without allocating in the vfork
+ child
+
+---
+ src/jsc/bindings/bun-spawn-fd.h | 129 ++++++++++++++++++++++++++++++++
+ src/jsc/bindings/bun-spawn.cpp  |  24 +++---
+ 2 files changed, 144 insertions(+), 9 deletions(-)
+ create mode 100644 src/jsc/bindings/bun-spawn-fd.h
+
+diff --git a/src/jsc/bindings/bun-spawn-fd.h b/src/jsc/bindings/bun-spawn-fd.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..34444285ab151464767e13893ce0c7ae618ae969
+--- /dev/null
++++ b/src/jsc/bindings/bun-spawn-fd.h
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <errno.h>
++#include <fcntl.h>
++#include <limits.h>
++#include <stddef.h>
++#include <stdint.h>
++#include <sys/syscall.h>
++#include <unistd.h>
++
++// Linux vfork child only: no allocator, libc directory stream or shared fd table.
++static inline long bun_spawn_retry_syscall(long number, long a, long b, long c = 0, long d = 0)
++{
++    long result;
++    unsigned retries = 0;
++    do {
++        result = syscall(number, a, b, c, d);
++    } while (result < 0 && errno == EINTR && retries++ < 8);
++    return result;
++}
++
++struct BunSpawnDirent64 {
++    uint64_t ino;
++    int64_t offset;
++    uint16_t length;
++    uint8_t type;
++    char name[1];
++};
++static_assert(offsetof(BunSpawnDirent64, name) == 19);
++
++// Enumerate actual fds: even the hard limit can be lowered below an open fd.
++static inline int bun_spawn_fd_fallback(int first, int last, bool cloexec)
++{
++    if (first < 0 || last < first) {
++        errno = EINVAL;
++        return -1;
++    }
++    int directory = static_cast<int>(bun_spawn_retry_syscall(SYS_openat, AT_FDCWD,
++        reinterpret_cast<long>("/proc/self/fd"), O_RDONLY | O_DIRECTORY | O_CLOEXEC, 0));
++    if (directory < 0)
++        return -1;
++
++    int error = 0;
++    unsigned entries = 0;
++    constexpr unsigned entryLimit = 1048576;
++    constexpr size_t nameOffset = offsetof(BunSpawnDirent64, name);
++    alignas(BunSpawnDirent64) unsigned char buffer[4096];
++    while (!error) {
++        long count = bun_spawn_retry_syscall(SYS_getdents64, directory, reinterpret_cast<long>(buffer), sizeof(buffer));
++        if (count < 0) {
++            error = errno;
++            break;
++        }
++        if (count == 0)
++            break;
++        if (static_cast<unsigned long>(count) > sizeof(buffer)) {
++            error = EIO;
++            break;
++        }
++        size_t position = 0;
++        while (position < static_cast<size_t>(count)) {
++            if (static_cast<size_t>(count) - position < nameOffset + 1) {
++                error = EIO;
++                break;
++            }
++            const auto* entry = reinterpret_cast<const BunSpawnDirent64*>(buffer + position);
++            size_t length = entry->length;
++            if (length < nameOffset + 1 || length % alignof(BunSpawnDirent64)
++                || length > static_cast<size_t>(count) - position) {
++                error = EIO;
++                break;
++            }
++            if (entries++ == entryLimit) {
++                error = E2BIG;
++                break;
++            }
++            size_t nameLength = 0;
++            const char* name = reinterpret_cast<const char*>(buffer + position + nameOffset);
++            while (nameLength < length - nameOffset && name[nameLength])
++                ++nameLength;
++            if (nameLength == 0 || nameLength == length - nameOffset) {
++                error = EIO;
++                break;
++            }
++            if (!(nameLength == 1 && name[0] == '.') && !(nameLength == 2 && name[0] == '.' && name[1] == '.')) {
++                unsigned fd = 0;
++                for (size_t i = 0; i < nameLength; ++i) {
++                    if (name[i] < '0' || name[i] > '9') {
++                        error = EIO;
++                        break;
++                    }
++                    unsigned digit = static_cast<unsigned>(name[i] - '0');
++                    if (fd > (static_cast<unsigned>(INT_MAX) - digit) / 10) {
++                        error = EOVERFLOW;
++                        break;
++                    }
++                    fd = fd * 10 + digit;
++                }
++                if (error)
++                    break;
++                if (fd != static_cast<unsigned>(directory) && fd >= static_cast<unsigned>(first) && fd <= static_cast<unsigned>(last)) {
++                    if (cloexec) {
++                        long flags = bun_spawn_retry_syscall(SYS_fcntl, fd, F_GETFD);
++                        if (flags < 0) {
++                            if (errno != EBADF)
++                                error = errno;
++                        } else if (!(flags & FD_CLOEXEC) && bun_spawn_retry_syscall(SYS_fcntl, fd, F_SETFD, flags | FD_CLOEXEC) < 0 && errno != EBADF) {
++                            error = errno;
++                        }
++                    } else if (syscall(SYS_close, static_cast<long>(fd)) < 0 && errno != EBADF) {
++                        error = errno;
++                    }
++                    if (error)
++                        break;
++                }
++            }
++            position += length;
++        }
++    }
++    // Linux releases a close() fd even on EINTR; never retry a reused number.
++    if (syscall(SYS_close, static_cast<long>(directory)) < 0 && !error)
++        error = errno;
++    if (error) {
++        errno = error;
++        return -1;
++    }
++    return 0;
++}
+diff --git a/src/jsc/bindings/bun-spawn.cpp b/src/jsc/bindings/bun-spawn.cpp
+index 2e309413c062ed447ffe948904941eae403ec409..8a24df2f4f3d8e09934815aca31ac74c51919d71 100644
+--- a/src/jsc/bindings/bun-spawn.cpp
++++ b/src/jsc/bindings/bun-spawn.cpp
+@@ -2,97 +2,101 @@
+ 
+ #if OS(LINUX) || OS(DARWIN) || OS(FREEBSD)
+ 
+ #include <fcntl.h>
+ #include <atomic>
+ #include <cstring>
+ #include <signal.h>
+ #include <unistd.h>
+ #include <sys/stat.h>
+ #include <sys/wait.h>
+ #include <sys/ioctl.h>
+ #include <fcntl.h>
+ #include <signal.h>
+ #include <sys/resource.h>
+ #include <grp.h>
+ 
+ #if OS(LINUX)
+ #include <sys/syscall.h>
+ #include <sys/prctl.h>
+ #include <sched.h>
++#include "bun-spawn-fd.h"
+ #endif
+ 
+ extern char** environ;
+ 
+ #ifndef CLOSE_RANGE_CLOEXEC
+ #define CLOSE_RANGE_CLOEXEC (1U << 2)
+ #endif
+ 
+ #if OS(LINUX)
+ extern "C" ssize_t bun_close_range(unsigned int start, unsigned int end, unsigned int flags);
+ #endif
+ 
+-// Helper: get max fd from system, clamped to sane limits and optionally to 'end' parameter
++#if !OS(LINUX)
++// Non-Linux fallback; Linux must enumerate actual fds, not the current limit.
+ static inline int getMaxFd(int start, int end)
+ {
+-#if OS(LINUX)
+-    int maxfd = static_cast<int>(sysconf(_SC_OPEN_MAX));
+-#elif OS(DARWIN) || OS(FREEBSD)
++#if OS(DARWIN) || OS(FREEBSD)
+     int maxfd = getdtablesize();
+ #else
+     int maxfd = 1024;
+ #endif
+     if (maxfd < 0 || maxfd > 65536) maxfd = 65536;
+     // Respect the end parameter if it's a valid bound (not INT_MAX sentinel)
+     if (end >= start && end < INT_MAX) {
+         maxfd = std::min(maxfd, end + 1); // +1 because end is inclusive
+     }
+     return maxfd;
+ }
+ 
+ // Loop-based fallback for closing/cloexec fds
+ static inline void closeRangeLoop(int start, int end, bool cloexec_only)
+ {
+     int maxfd = getMaxFd(start, end);
+     for (int fd = start; fd < maxfd; fd++) {
+         if (cloexec_only) {
+             int current_flags = fcntl(fd, F_GETFD);
+             if (current_flags >= 0) {
+                 fcntl(fd, F_SETFD, current_flags | FD_CLOEXEC);
+             }
+         } else {
+             close(fd);
+         }
+     }
+ }
+ 
++#endif
++
+ // Platform-specific close range implementation
+-static inline void closeRangeOrLoop(int start, int end, bool cloexec_only)
++static inline int closeRangeOrLoop(int start, int end, bool cloexec_only)
+ {
+ #if OS(LINUX)
+     unsigned int flags = cloexec_only ? CLOSE_RANGE_CLOEXEC : 0;
+     if (bun_close_range(start, end, flags) == 0) {
+-        return;
++        return 0;
+     }
+-    // Fallback for older kernels or when close_range fails
+-#endif
++    return bun_spawn_fd_fallback(start, end, cloexec_only);
++#else
+     closeRangeLoop(start, end, cloexec_only);
++    return 0;
++#endif
+ }
+ 
+ enum FileActionType : uint8_t {
+     None,
+     Close,
+     Dup2,
+     Open,
+ };
+ 
+ typedef struct bun_spawn_request_file_action_t {
+     FileActionType type;
+     const char* path;
+     int fds[2];
+     int flags;
+     int mode;
+ } bun_spawn_request_file_action_t;
+ 
+ typedef struct bun_spawn_file_action_list_t {
+     const bun_spawn_request_file_action_t* ptr;
+     size_t len;
+@@ -440,41 +444,43 @@ extern "C" ssize_t posix_spawn_bun(
+             return childFailed();
+         }
+         // The kernel clears PR_SET_PDEATHSIG when the effective uid/gid changes
+         // (prctl(2)), so re-arm it after dropping credentials.
+         if (request->linux_pdeathsig != 0 && (request->set_uid || request->set_gid)) {
+             prctl(PR_SET_PDEATHSIG, request->linux_pdeathsig, 0, 0, 0);
+         }
+ #else
+         if (request->set_gid && setgid((gid_t)request->gid) != 0) {
+             return childFailed();
+         }
+         if (request->set_uid && setuid((uid_t)request->uid) != 0) {
+             return childFailed();
+         }
+ #endif
+ 
+         if (!envp)
+             envp = environ;
+ 
+         // Close all fds > current_max_fd, preferring cloexec if available
+-        closeRangeOrLoop(current_max_fd + 1, INT_MAX, true);
++        if (current_max_fd < INT_MAX && closeRangeOrLoop(current_max_fd + 1, INT_MAX, true) != 0) {
++            return childFailed();
++        }
+ 
+         // After close_range(): the caller's mask may block SIGSYS. execve keeps the mask.
+         sigprocmask(SIG_SETMASK, &childmask, 0);
+ #if OS(LINUX)
+         sigaction(SIGSYS, &sa, 0);
+ #endif
+         if (execve(path, argv, envp) == -1) {
+             return childFailed();
+         }
+         rawExit(127);
+ 
+         // should never be reached.
+         return -1;
+     };
+ 
+ #if OS(LINUX)
+     if (request->cgroup_fd >= 0 && clone3Unavailable.load(std::memory_order_relaxed)) {
+         join_cgroup_in_child = true;
+     } else if (request->cgroup_fd >= 0) {
+         // cgroup v2: the child is created inside the cgroup. Migrating it after

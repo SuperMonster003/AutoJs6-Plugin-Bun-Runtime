@@ -14,7 +14,7 @@ The native fast path is unchanged. On failure, the startup-only helper opens
 owned directory fd. It marks descriptors; it does not close them. Only its
 own directory is closed, exactly once, including error paths.
 
-The helper does not use `_SC_OPEN_MAX` or the spawn helper's 65536 ceiling.
+The helper does not use `_SC_OPEN_MAX` or the old spawn helper's 65536 ceiling.
 An inherited fd can remain open above a subsequently lowered `RLIMIT_NOFILE`.
 Work is bounded to 1,048,576 directory entries and at most eight EINTR retries
 per open/read/fcntl call. Disappearing fds with EBADF are tolerated; other
@@ -23,11 +23,13 @@ diagnostic. `closedir` is not retried after EINTR, because Linux may already
 have released that descriptor number.
 
 This is early startup handling, not an atomic all-thread operation or a
-security sandbox. The existing vfork spawn fallback and watch/reload path
-are deliberately unchanged. Directory iteration may allocate and must not
-be reused inside a signal handler or vfork child. Spawn fds at/above 65536,
-`CLOSE_RANGE_UNSHARE`, watch/reload and other syscall fallbacks remain separate
-validation work. No 16 KiB execution claim follows from these host tests.
+security sandbox. Patch 7 leaves the spawn fallback and watch/reload unchanged.
+Directory iteration may allocate and must not be reused inside a signal handler
+or vfork child. The subsequent, separate [patch 8 spawn helper](../spawn-fd/README.md)
+uses fixed-stack raw syscall enumeration with its own high-FD host tests.
+Android high-FD coverage, `CLOSE_RANGE_UNSHARE`, watch/reload and other syscall
+fallbacks remain separate validation work. No 16 KiB execution claim follows
+from these host tests.
 
 ## Run the exact locked code
 
@@ -66,6 +68,6 @@ Three test groups cover 27 scenarios:
   fails, before continuation into user code.
 
 The Android counterpart remains the unchanged `fd-startup-trap` assertion
-in the [18-probe application suite](../app-probe/README.md). It execs the
+in the [20-probe application suite](../app-probe/README.md). It execs the
 installed read-only Bun at the same PID under a real seccomp TRAP filter;
 passing standalone host tests does not replace that device gate.

@@ -159,7 +159,7 @@ async function withFixture(callback) {
     writeFileSync(lockPath, `${JSON.stringify({
       schemaVersion: 2,
       snapshotDate: "2026-09-03",
-      bunCommit: "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+      bunCommit: "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
       cargoLock: {
         path: "Cargo.lock",
         bytes: 70318,
@@ -242,7 +242,7 @@ function createFixtureLock(artifact) {
   return {
     schemaVersion: 2,
     snapshotDate: "2026-09-03",
-    bunCommit: "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+    bunCommit: "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
     cargoLock: {
       path: "Cargo.lock",
       bytes: 70318,

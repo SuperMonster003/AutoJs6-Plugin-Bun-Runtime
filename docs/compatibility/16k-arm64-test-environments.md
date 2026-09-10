@@ -8,8 +8,8 @@
 
 - Android 16 / API 36, `arm64-v8a`, `aarch64`, `PAGE_SIZE=16384`, native bridge 和 QEMU 标记均为 0.
 - 正式 Bun + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK, 完整 Binder 套件两轮 8/8, 第二轮前重启插件进程. 安装后 payload 摘要与 10 次忽略 SIGTERM 的生命周期回收均通过. 见 [M5 原生 ARM64 报告](2026-09-10-m5-native-arm64-16k.json).
-- 未改动的实验 runtime 两轮 19/20, 仅已知的 forced-TRAP 降低软限制 spawn 用例失败. 见 [M3 原生 ARM64 报告](2026-09-10-m3-native-arm64-16k.json). 不将正式 Binder 通过代替实验运行时验收.
-- 三个测试包均已卸载, 最终对应 UID 进程数均为 0. 账户登录、预约和 RDB 接入由用户完成; 没有操作其他应用、购买配额或代替用户结束预约.
+- 旧实验 runtime `1.4.0+c240d6c68` 两轮 19/20, 仅 forced-TRAP 降低软限制 spawn 用例失败. [原 M3 报告](2026-09-10-m3-native-arm64-16k.json) 保留不变. 随后的八补丁 `1.4.0+a260ef308` 在同一原生 16 KiB 真机上以不放宽断言的测试 APK 完成两轮 20/20, 见 [spawn 修复与复测报告](2026-09-10-m3-spawn-fd-fix.json). 这证明新的应用进程探针通过, 不等于完整实验 Binder 或最终 Release APK 验收.
+- 上述各轮测试包均已卸载, 最终对应 UID 进程数均为 0. 账户登录、预约和 RDB 接入由用户完成; 没有操作其他应用、购买配额或代替用户结束预约.
 
 因此这条路线已从资料候选变为本项目实际用过的原生 ARM64 16 KiB 执行环境. 该结果仍限于上述设备、版本和测试范围, 不等于已发布 Release APK 或所有 16 KiB ABI/设备通过.
 
