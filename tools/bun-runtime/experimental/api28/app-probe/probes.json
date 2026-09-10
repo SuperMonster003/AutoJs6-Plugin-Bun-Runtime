@@ -115,6 +115,20 @@
     "termination": "exited"
   },
   {
+    "id": "fd-spawn-lowered-native",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "lowered-native",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-spawn-lowered-trap",
+    "sourceFile": "fd-probes.mjs",
+    "mode": "lowered-trap",
+    "stdout": "FD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

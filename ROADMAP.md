@@ -4,7 +4,7 @@
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC 回退已修复, 双 ABI 各两轮清洁构建一致, 四台 arm64 真机和一台原生 x86_64 AVD 各两轮 18/18), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC 已修复; 新增降低 fd 软限制测试后, 四台 arm64 真机各两轮 18/20, 原生 x86_64 AVD 各两轮 19/20, 已定位另一处 spawn 回退缺陷), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
@@ -13,7 +13,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与完整实验 Binder 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 最大障碍 | 启动 CLOEXEC 缺口已由源码补丁和双 ABI 10 轮复测闭环; 其他 syscall、spawn 高位 FD/UNSHARE 等语义边界、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成 |
+| 最大障碍 | spawn 回退使用当前 fd 软限制作为扫描上界, 会漏过降低限制前已打开的 fd; 新增 20 次观测中 18 次失败. 原有 180 项仍通过, 但此缺陷、其他 syscall/高位 FD/UNSHARE、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成 |
 
 ## 如何阅读这份路线图
 
@@ -76,7 +76,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 进行中, 专项探针 18/18, 完整 Binder 未验收 | 四台 arm64 真机和 API 33 原生 x86_64 AVD 各两轮通过; 继续扩展 FD/syscall 语义、完整 Binder 与设备矩阵 | 插件/测试/设备/发布 |
+| M3 Android 9-12L 实验支持 | 进行中, 新增 spawn 软限制回退阻断 | 四台 arm64 真机各两轮 18/20, API 33 原生 x86_64 AVD 各两轮 19/20; 先修复降低 RLIMIT_NOFILE 后的 FD 继承, 再推进其他 syscall 与完整 Binder | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 进行中 | ELF, APK ZIP, 安装后 payload 和真实 16 KB 执行四层验证 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -198,7 +198,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [ ] (上游/插件) 在 Bun 第一次 raw syscall 前安全处理 Android `SECCOMP_RET_TRAP`, 仅将 `SYS_SECCOMP` trap 转换为 `-ENOSYS`, 让已有 fallback 执行; 普通用户发送的 `SIGSYS` 仍保持可预期语义.
 - [x] (上游/构建/测试/设备) 修复 pinned Bun 启动路径忽略 `bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC)` 失败的问题: 第 7 个 MIT 补丁枚举实际打开的 FD, 保留 fd 0-3 并补上 CLOEXEC, 失败时明确退出; 目录项和 EINTR 重试有界, 不沿用 spawn 的 fd 编号上限. 原生 3 组 27 个场景通过, 包括创建 FD 70000 后降低 RLIMIT_NOFILE 到 1024 及真实 exec 验证. 双 ABI 各两轮清洁构建一致后, 四台 API 28/31/33/35 arm64 真机及 API 33 原生 x86_64 AVD 各两轮 18/18, 合计 180/180; 未改动原启动断言, 10 次均保留 sentinel 并观察到 CLOEXEC=true. 30 次强制终止仍在 301-305 ms 内回收, 测试包全部卸载且 UID 进程数归零, 本轮启动的 AVD 已关闭. 原 17/18 失败记录保持不变. 见 [M3 启动修复报告](docs/compatibility/2026-09-10-m3-startup-cloexec.json). (2026-09-10, G1/G2, 非完整 Binder, 未发布)
-- [ ] (测试, 下一优先项) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. 当前已通过所测 sentinel 的启动标记、spawn/spawnSync 隔离、父 FD 保留与原生 CLOEXEC 正对照; Linux 主机另有启动 FD 70000 证据, 但 Android spawn 高于现有 65536 循环上界的 FD、UNSHARE、watch/reload 等边界和完整实验 Binder 尚未覆盖.
+- [x] (测试/设备) 新增 native/TRAP 两个降低 `RLIMIT_NOFILE` 的对照, 独立探针扩为 20 项. 同一 `c240d6c68` 运行时在四台 API 28/31/33/35 arm64 真机各两轮 18/20, API 33 原生 x86_64 AVD 各两轮 19/20 (均为 4096-byte 页). 原有 180 项仍通过; 新增 20 次观测中 18 次发现 fd 256 在 soft limit 从 32768 降至 128 后被 `spawnSync` 和 `spawn` 的非 Bun 子进程继承, 共 36 次子 FD 泄漏观测. x86_64 原生调用对照通过, 强制 TRAP 后失败, 与 `bun-spawn.cpp` 按当前 `sysconf(_SC_OPEN_MAX)` 扫描的源码一致. 每次均恢复原 soft/hard limit, 30 次强制终止仍在 301-306 ms 内回收, 全部测试包卸载且 UID 进程数归零, 本轮 AVD 已关闭. 见 [M3 spawn 软限制报告](docs/compatibility/2026-09-10-m3-spawn-nofile.json). 复核现有双轮 ELF, 未重新构建或修改 runtime. (2026-09-10, G1/G2, 阻断已复现, 非兼容性通过)
+- [ ] (上游/构建/测试, 下一优先项) 修复 spawn 回退漏过降低软限制前已打开 FD 的问题, 保持有界、失败可控和 vfork-safe, 不能直接复用会分配内存的启动枚举 helper. 新补丁落锁后双 ABI 各两轮清洁构建并重跑当前 20 项门禁; 在全部通过前不发布该实验运行时.
+- [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Linux 主机已有启动 FD 70000 证据, 但 Android 所测 hard limit 为 32768, 不能据此声称 Android spawn 高于现有 65536 循环上界的 FD 已覆盖; UNSHARE、watch/reload 等边界和完整实验 Binder 仍未完成.
 - [ ] (测试) 分别强制 trap 或在目标设备覆盖 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2`, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD.
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 独立探针已通过 spawnSync 的 caller/child mask 保留、注册/移除监听器期间的强制 trap、普通用户 SIGSYS 恰好一次送达, 以及生命周期复测; async spawn 在恢复 mask 后执行, 不推断 blocked async、watch/reload、其他线程或完整插件/Binder 通过.
 
@@ -249,7 +251,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
 - [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
 - [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 ARM64 宿主 AVD 上重复完整 instrumentation; 当前 Intel 宿主无法启动已安装的 arm64 guest, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 新启动补丁的双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KB 双 ABI 安装后摘要及监督生命周期已完成. 2026-09-10 四台 arm64 真机和原生 x86_64 API 33 AVD 各两轮 18/18; 完整实验 Binder 与原生 16 KB 执行仍未完成.
+- [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB, 可优先核实会话权限与可用设备; 尚未登录、预约、上传 APK 或完成远程验收, 不勾选原生 ARM64 设备门禁. (2026-09-10, 官方资料与本机只读检查, 非 G2 设备通过)
+- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 新启动补丁的双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KB 双 ABI 安装后摘要及监督生命周期已完成. 2026-09-10 扩展至 20 项后, 四台 arm64 真机各两轮 18/20, 原生 x86_64 API 33 AVD 各两轮 19/20, 新增 spawn 软限制阻断; 完整实验 Binder 与原生 16 KB 执行仍未完成.
 - [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.

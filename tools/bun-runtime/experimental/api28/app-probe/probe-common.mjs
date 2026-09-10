@@ -27,6 +27,7 @@ export const INPUTS = [
 export const FD_MODES = {
   "fd-spawn-native": "spawn-native", "fd-spawn-trap": "spawn-trap", "fd-spawn-blocked-sigsys": "blocked-sigsys",
   "fd-startup-trap": "startup-trap", "sigsys-listener-trap": "sigsys-listener",
+  "fd-spawn-lowered-native": "lowered-native", "fd-spawn-lowered-trap": "lowered-trap",
 };
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
@@ -102,7 +103,7 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 18-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 20-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(/^[a-z][a-z0-9-]{0,63}$/.test(probe.id) && !ids.has(probe.id), "unsafe or duplicate probe ID");
@@ -196,7 +197,8 @@ export function validateFdEvidence(proof, mode, abi) {
     (call.result === -1 && [22, 38].includes(call.errno))), "raw close_range evidence");
   assert.equal(proof.nativeStillOpen, true, "CLOEXEC must not close immediately");
   assert.equal(proof.nativeCloexec, call.result === 0);
-  if (mode !== "spawn-native") {
+  const lowered = mode === "lowered-native" || mode === "lowered-trap";
+  if (mode !== "spawn-native" && mode !== "lowered-native") {
     assert.equal(proof.policy?.installed, true);
     assert.equal(proof.policy.filterSha256, fdFilterSha256(abi), "exact ABI-specific TRAP policy");
     assert.deepEqual(proof.policy.before, { result: -1, errno: 22 }, "pre-filter control must be EINVAL");
@@ -218,8 +220,22 @@ export function validateFdEvidence(proof, mode, abi) {
       /^(?:(?:pipe|socket):\[\d+\]|\/memfd:spawn_stdio_stdout \(deleted\))$/.test(proof.control.stdoutTarget),
     "readlink must observe a real child stdout FD");
     for (const name of ["sync", "async"])
-      assert.deepEqual(proof[name], { sentinelAbsent: true, exitCode: 1 }, name + " child inherited sentinel");
-    assert.equal(proof.maskRestored, true);
+      assert.deepEqual(proof[name], { sentinelAbsent: true, ...(lowered ? { sentinelIdentity: false } : {}), exitCode: 1 },
+        name + " child inherited sentinel");
+    if (lowered) {
+      const limit = proof.limit;
+      assert(limit && limit.restored === true, "nofile restoration required");
+      for (const value of [limit.before?.soft, limit.before?.hard])
+        assert(Number.isSafeInteger(value) && value >= 512 && value <= 0x7fffffff, "bounded original nofile");
+      assert(limit.before.hard >= limit.before.soft, "invalid original nofile");
+      assert.equal(limit.before.openMax, limit.before.soft, "original sysconf and rlimit differ");
+      assert.deepEqual(limit.during, { soft: 128, hard: limit.before.hard, openMax: 128 }, "lowered soft limit required");
+      assert.deepEqual(limit.after, limit.before, "original limit must be restored");
+      assert(!proof.maskRestored && !proof.mask, "lowered-limit probe does not test a blocked signal mask");
+    } else {
+      assert(!proof.limit, "unexpected nofile evidence");
+      assert.equal(proof.maskRestored, true);
+    }
     if (mode === "blocked-sigsys") assert.deepEqual(proof.mask, { childBlocked: true, callerStillBlocked: true });
   }
   return proof;

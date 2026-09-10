@@ -30,15 +30,30 @@ each scored 17/18 twice: spawn isolation and signal interactions passed, but
 same-PID re-exec consistently exposed a missing startup CLOEXEC fallback.
 The [FD semantics report](../../../../docs/compatibility/2026-09-10-m3-fd-semantics.json)
 preserves all 10 failures. The subsequent source-locked startup fix at
-`c240d6c68` now passes the unchanged assertion in all 10 rounds: each of those
+`c240d6c68` passed the unchanged assertion in all 10 rounds: each of those
 five environments scores 18/18 twice, totaling 180/180. Both ABIs reproduce
 byte-for-byte across two clean builds. The 30 forcible termination cases still
 pass at 301-305 ms, and every probe package was uninstalled with zero UID
 processes remaining. The owned AVD was shut down. See the
 [startup fix report](../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json).
-Full experimental
-Binder, other syscall semantics and the remaining API/ABI matrix are still open;
-this is not stable Android 9 support.
+
+The latest suite adds two lowered-`RLIMIT_NOFILE` cases, for **20 probes**.
+The unchanged runtime now scores **18/20 twice on each of the four arm64 devices
+and 19/20 twice on the x86_64 AVD**: all original 180 observations still pass,
+but 18 of the 20 new observations expose a spawn fallback that misses live fd
+256 after the soft limit is lowered to 128. Non-Bun children created by both
+spawn APIs inherit the sentinel in each failure; native x86_64 `close_range`
+is the passing control.
+All limits are restored, all test packages uninstalled with zero UID processes,
+and the owned AVD shut down. Existing clean-build pairs were reverified, not
+rebuilt. The [new failure report](../../../../docs/compatibility/2026-09-10-m3-spawn-nofile.json)
+retains all results and binds sources/APKs without altering earlier reports.
+The next source fix must respect the spawn child's vfork constraints; do not
+reuse the allocating startup helper there. Full experimental Binder, other
+syscall semantics and the remaining API/ABI matrix are still open; this is not
+stable Android 9 support. Native ARM64 16 KiB environment options are documented
+in the [x64 Windows guide](../../../../docs/compatibility/16k-arm64-test-environments.md),
+not claimed as completed device acceptance.
 
 ## Safety boundary
 

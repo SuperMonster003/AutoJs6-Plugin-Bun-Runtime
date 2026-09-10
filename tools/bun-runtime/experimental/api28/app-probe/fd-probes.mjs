@@ -5,6 +5,8 @@ import { dlopen, ptr, read } from "bun:ffi";
 import { openSync, closeSync, readlinkSync, writeFileSync } from "node:fs";
 
 const mode = FD_MODE;
+const loweredLimit = mode === "lowered-native" || mode === "lowered-trap";
+const nativeControl = mode === "spawn-native" || mode === "lowered-native";
 const libc = dlopen("libc.so", {
   fcntl: { args: ["i32", "i32", "i32"], returns: "i32" },
   prctl: { args: ["i32", "u64", "u64", "u64", "u64"], returns: "i32" },
@@ -12,6 +14,9 @@ const libc = dlopen("libc.so", {
   __errno: { args: [], returns: "ptr" },
   sigprocmask: { args: ["i32", "ptr", "ptr"], returns: "i32" },
   execve: { args: ["ptr", "ptr", "ptr"], returns: "i32" },
+  getrlimit: { args: ["i32", "ptr"], returns: "i32" },
+  setrlimit: { args: ["i32", "ptr"], returns: "i32" },
+  sysconf: { args: ["i32"], returns: "i64" },
 });
 const c = libc.symbols, errnoPointer = c.__errno();
 const F_GETFD = 1, F_SETFD = 2, FD_CLOEXEC = 1, CLOEXEC = 4;
@@ -79,6 +84,41 @@ function reexec(fd) {
   c.execve(ptr(argv.buffers[0]), ptr(argv.pointers), ptr(env.pointers));
   throw Error("same-PID execve failed: " + read.i32(errnoPointer));
 }
+function nofile() {
+  const limits = new BigUint64Array(2);
+  check(c.getrlimit(7, ptr(limits)) === 0, "query RLIMIT_NOFILE");
+  const values = [...limits].map(Number);
+  check(values.every(value => Number.isSafeInteger(value) && value >= 0 && value <= 0x7fffffff), "bounded rlimit values");
+  // Android bionic _SC_OPEN_MAX is 0x000b, not the glibc enum value.
+  return { soft: values[0], hard: values[1], openMax: Number(c.sysconf(0x000b)) };
+}
+async function spawnAboveLoweredLimit(fd, args) {
+  const before = nofile(), original = new BigUint64Array([BigInt(before.soft), BigInt(before.hard)]);
+  check(before.soft >= 512 && before.hard >= before.soft && before.openMax === before.soft, "original nofile precondition");
+  proof.limit = { before, restored: false };
+  const target = readlinkSync("/proc/self/fd/" + fd);
+  const observed = (exitCode, out, err) => {
+    check(out.length < 1024 && err.length < 1024, "bounded child readlink output");
+    return { sentinelAbsent: exitCode === 1 && out === "", sentinelIdentity: out.trim() === target, exitCode };
+  };
+  try {
+    const lower = new BigUint64Array([128n, BigInt(before.hard)]);
+    check(c.setrlimit(7, ptr(lower)) === 0, "lower only the Bun child's soft limit");
+    proof.limit.during = nofile();
+    check(proof.limit.during.soft === 128 && proof.limit.during.hard === before.hard &&
+      proof.limit.during.openMax === 128 && flags(fd) === 0, "open sentinel above the lowered soft limit");
+    const sync = Bun.spawnSync(args, { stdout: "pipe", stderr: "pipe" });
+    proof.sync = observed(sync.exitCode, sync.stdout.toString(), sync.stderr.toString());
+    const child = Bun.spawn(args, { stdout: "pipe", stderr: "pipe" });
+    const [out, err, exit] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
+    proof.async = observed(exit, out, err);
+  } finally {
+    check(c.setrlimit(7, ptr(original)) === 0, "restore original nofile limit");
+    proof.limit.after = nofile();
+    proof.limit.restored = JSON.stringify(proof.limit.after) === JSON.stringify(before);
+    check(proof.limit.restored, "verify nofile restoration");
+  }
+}
 
 let fd = -1;
 try {
@@ -107,7 +147,7 @@ try {
     proof.nativeCloexec = (flags(fd) & FD_CLOEXEC) !== 0;
     check(proof.nativeCloexec === (proof.nativeCloseRange.result === 0), "raw CLOEXEC semantics");
     check(c.fcntl(fd, F_SETFD, 0) === 0 && flags(fd) === 0, "clear sentinel CLOEXEC for isolation test");
-    if (mode !== "spawn-native") {
+    if (!nativeControl) {
       proof.policy = installTrap(); proof.trap = trapProof(fd);
       check(flags(fd) === 0, "trapped close_range must not masquerade as success");
     }
@@ -133,33 +173,39 @@ try {
         stderrEmpty: control.stderr.length === 0 };
       check(proof.control.exitCode === 0 && proof.control.stderrEmpty &&
         /^(?:(?:pipe|socket):\[\d+\]|\/memfd:spawn_stdio_stdout \(deleted\))$/.test(target), "child readlink positive control");
-      const saved = mask(), blocked = mode === "blocked-sigsys";
-      if (blocked) {
-        const set = new BigUint64Array(16); set[0] = SIGSYS_BIT;
-        check(c.sigprocmask(0, ptr(set), null) === 0, "block SIGSYS on spawning thread");
-        check((mask()[0] & SIGSYS_BIT) !== 0n, "SIGSYS is blocked");
-      }
-      try {
-        const sync = Bun.spawnSync(args, { stdout: "pipe", stderr: "pipe" });
-        proof.sync = { sentinelAbsent: sync.exitCode === 1 && sync.stdout.length === 0, exitCode: sync.exitCode };
-        check(proof.sync.sentinelAbsent, "spawnSync leaked sentinel or failed unexpectedly");
+      if (loweredLimit) {
+        await spawnAboveLoweredLimit(fd, args);
+      } else {
+        const saved = mask(), blocked = mode === "blocked-sigsys";
         if (blocked) {
-          const child = Bun.spawnSync(["/system/bin/toybox", "cat", "/proc/self/status"], { stdout: "pipe", stderr: "pipe" });
-          const bits = child.stdout.toString().match(/^SigBlk:\s*([0-9a-f]+)$/m);
-          proof.mask = { childBlocked: child.exitCode === 0 && !!bits && (BigInt("0x" + bits[1]) & SIGSYS_BIT) !== 0n,
-            callerStillBlocked: (mask()[0] & SIGSYS_BIT) !== 0n };
-          check(proof.mask.childBlocked && proof.mask.callerStillBlocked, "spawn must preserve the caller/child mask");
+          const set = new BigUint64Array(16); set[0] = SIGSYS_BIT;
+          check(c.sigprocmask(0, ptr(set), null) === 0, "block SIGSYS on spawning thread");
+          check((mask()[0] & SIGSYS_BIT) !== 0n, "SIGSYS is blocked");
         }
-      } finally { check(c.sigprocmask(2, ptr(saved), null) === 0, "restore original signal mask"); }
-      proof.maskRestored = mask()[0] === saved[0];
-      const child = Bun.spawn(args, { stdout: "pipe", stderr: "pipe" });
-      const [out, err, exit] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
-      proof.async = { sentinelAbsent: exit === 1 && out === "", exitCode: exit };
-      check(proof.async.sentinelAbsent && err.length < 1024, "spawn leaked sentinel or failed unexpectedly");
+        try {
+          const sync = Bun.spawnSync(args, { stdout: "pipe", stderr: "pipe" });
+          proof.sync = { sentinelAbsent: sync.exitCode === 1 && sync.stdout.length === 0, exitCode: sync.exitCode };
+          check(proof.sync.sentinelAbsent, "spawnSync leaked sentinel or failed unexpectedly");
+          if (blocked) {
+            const child = Bun.spawnSync(["/system/bin/toybox", "cat", "/proc/self/status"], { stdout: "pipe", stderr: "pipe" });
+            const bits = child.stdout.toString().match(/^SigBlk:\s*([0-9a-f]+)$/m);
+            proof.mask = { childBlocked: child.exitCode === 0 && !!bits && (BigInt("0x" + bits[1]) & SIGSYS_BIT) !== 0n,
+              callerStillBlocked: (mask()[0] & SIGSYS_BIT) !== 0n };
+            check(proof.mask.childBlocked && proof.mask.callerStillBlocked, "spawn must preserve the caller/child mask");
+          }
+        } finally { check(c.sigprocmask(2, ptr(saved), null) === 0, "restore original signal mask"); }
+        proof.maskRestored = mask()[0] === saved[0];
+        const child = Bun.spawn(args, { stdout: "pipe", stderr: "pipe" });
+        const [out, err, exit] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
+        proof.async = { sentinelAbsent: exit === 1 && out === "", exitCode: exit };
+        check(proof.async.sentinelAbsent && err.length < 1024, "spawn leaked sentinel or failed unexpectedly");
+      }
     }
     proof.after = { parentOpen: flags(fd) >= 0, parentCloexec: (flags(fd) & FD_CLOEXEC) !== 0,
       sentinelIdentity: readlinkSync("/proc/self/fd/" + fd).endsWith("/sentinel.txt") };
     check(proof.after.parentOpen && !proof.after.parentCloexec && proof.after.sentinelIdentity, "child cleanup altered parent FD");
+    if (loweredLimit) check(proof.sync.sentinelAbsent && proof.async.sentinelAbsent,
+      "spawnSync/spawn leaked sentinel above lowered RLIMIT_NOFILE");
   }
   proof.passed = true;
 } catch (error) { proof.error = String(error).slice(0, 256); process.exitCode = 1; }
