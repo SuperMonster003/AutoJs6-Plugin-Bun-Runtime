@@ -8,7 +8,7 @@
   {
     "id": "revision",
     "arguments": ["--revision"],
-    "stdout": "1.4.0+a260ef308",
+    "stdout": "1.4.0+7b9ac2668",
     "termination": "exited"
   },
   {

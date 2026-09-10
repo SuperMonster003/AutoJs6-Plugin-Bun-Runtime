@@ -1,0 +1,344 @@
+From 7b9ac266888abda7ee6ec0b8ac11a74236420030 Mon Sep 17 00:00:00 2001
+From: SuperMonster003 <30370009+SuperMonster003@users.noreply.github.com>
+Date: Thu, 10 Sep 2026 11:22:57 +0000
+Subject: [PATCH] fix: preserve directory confinement without openat2
+
+---
+ src/jsc/bindings/bun-scoped-open.h | 175 +++++++++++++++++++++++++++++
+ src/jsc/bindings/c-bindings.cpp    |   8 ++
+ src/sys/lib.rs                     |  17 ++-
+ 3 files changed, 197 insertions(+), 3 deletions(-)
+ create mode 100644 src/jsc/bindings/bun-scoped-open.h
+
+diff --git a/src/jsc/bindings/bun-scoped-open.h b/src/jsc/bindings/bun-scoped-open.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..126e7bd1e89094d238b444af9b9cd73c1babf899
+--- /dev/null
++++ b/src/jsc/bindings/bun-scoped-open.h
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: MIT
++// Read-only directory-route fallback, not a general openat2 implementation.
++#pragma once
++#include <cerrno>
++#include <cstddef>
++#include <cstdio>
++#include <cstring>
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/vfs.h>
++#include <unistd.h>
++
++namespace BunScopedOpen {
++constexpr size_t pathLimit = 4096;
++constexpr size_t depthLimit = pathLimit / 2 + 1;
++constexpr unsigned linkLimit = 40;
++constexpr unsigned stepLimit = 8192;
++constexpr long procMagic = 0x9fa0;
++
++struct LinuxOps {
++    static int open(int dir, const char* path, int flags) { return ::openat(dir, path, flags, 0); }
++    static int stat(int fd, struct stat* st) { return ::fstat(fd, st); }
++    static int fsstat(int fd, struct statfs* st) { return ::fstatfs(fd, st); }
++    static ssize_t link(int fd, char* bytes, size_t size) { return ::readlinkat(fd, "", bytes, size); }
++    static int close(int fd) { return ::close(fd); }
++};
++
++template<typename F> inline auto retry(F call)
++{
++    decltype(call()) result;
++    unsigned interrupted = 0;
++    do {
++        result = call();
++    } while (result < 0 && errno == EINTR && interrupted++ < 8);
++    return result;
++}
++
++inline int error(int code) { errno = code; return -1; }
++inline bool same(const struct stat& a, const struct stat& b)
++{
++    return a.st_dev == b.st_dev && a.st_ino == b.st_ino && (a.st_mode & S_IFMT) == (b.st_mode & S_IFMT);
++}
++
++template<typename Ops> struct OwnedFd {
++    int value;
++    explicit OwnedFd(int fd = -1) : value(fd) { }
++    OwnedFd(const OwnedFd&) = delete;
++    OwnedFd& operator=(const OwnedFd&) = delete;
++    ~OwnedFd()
++    {
++        const int saved = errno;
++        if (value >= 0) Ops::close(value); // Never retry close after EINTR.
++        errno = saved;
++    }
++    int take() { const int fd = value; value = -1; return fd; }
++};
++
++template<typename Ops> struct Walk {
++    int dirs[depthLimit];
++    size_t depth = 0;
++    Walk() = default;
++    Walk(const Walk&) = delete;
++    Walk& operator=(const Walk&) = delete;
++    ~Walk() { while (depth) pop(); }
++    void pop()
++    {
++        const int saved = errno;
++        Ops::close(dirs[--depth]);
++        errno = saved;
++    }
++    // Detect a pinned directory moved away from its pinned parent. Never use
++    // the filesystem's mutable '..' to implement user-controlled traversal.
++    bool unchanged()
++    {
++        for (size_t i = depth; i > 1; --i) {
++            OwnedFd<Ops> parent(retry([&] { return Ops::open(dirs[i - 1], "..", O_PATH | O_DIRECTORY | O_CLOEXEC); }));
++            struct stat actual, expected;
++            if (parent.value < 0 || retry([&] { return Ops::stat(parent.value, &actual); }) < 0
++                || retry([&] { return Ops::stat(dirs[i - 2], &expected); }) < 0)
++                return false;
++            if (!same(actual, expected)) { error(EAGAIN); return false; }
++        }
++        return true;
++    }
++};
++
++template<typename Ops> int reopen(int pinned, int flags, Walk<Ops>& walk)
++{
++    struct stat before, after;
++    if (retry([&] { return Ops::stat(pinned, &before); }) < 0) return -1;
++    // DirectoryRoute only serves regular files/directories. Do not activate
++    // devices, sockets or FIFOs while finding out that they cannot be served.
++    if (!S_ISREG(before.st_mode) && !S_ISDIR(before.st_mode)) return error(EOPNOTSUPP);
++    if ((flags & O_DIRECTORY) && !S_ISDIR(before.st_mode)) return error(ENOTDIR);
++    if (!walk.unchanged()) return -1;
++    OwnedFd<Ops> proc(retry([&] { return Ops::open(AT_FDCWD, "/proc/self/fd", O_PATH | O_DIRECTORY | O_CLOEXEC); }));
++    struct statfs fs;
++    if (proc.value < 0 || retry([&] { return Ops::fsstat(proc.value, &fs); }) < 0) return -1;
++    if (fs.f_type != procMagic) return error(EOPNOTSUPP);
++    char name[32];
++    const int length = snprintf(name, sizeof(name), "%d", pinned);
++    if (length <= 0 || static_cast<size_t>(length) >= sizeof(name)) return error(EOVERFLOW);
++    // This is an internally owned, still-open descriptor, not a user path.
++    // Reopening the original name would reintroduce a final-component race.
++    OwnedFd<Ops> result(retry([&] { return Ops::open(proc.value, name, flags | O_CLOEXEC | O_NONBLOCK); }));
++    if (result.value < 0 || retry([&] { return Ops::stat(result.value, &after); }) < 0) return -1;
++    if (!same(before, after)) return error(EAGAIN);
++    if (!walk.unchanged()) return -1;
++    return result.take();
++}
++
++template<typename Ops = LinuxOps> int resolve(int root, const char* path, int flags, unsigned mode)
++{
++    // This helper has exactly one read-only DirectoryRoute caller. Do not
++    // silently approximate create/write/truncate or unrelated resolve flags.
++    if (root < 0) return error(EBADF);
++    if (!path || mode || (flags & ~(O_CLOEXEC | O_NONBLOCK | O_DIRECTORY))) return error(EINVAL);
++    const size_t initial = strnlen(path, pathLimit);
++    if (!initial) return error(ENOENT);
++    if (initial >= pathLimit) return error(ENAMETOOLONG);
++    char pending[pathLimit], target[pathLimit], component[256];
++    memcpy(pending, path, initial + 1);
++    Walk<Ops> walk;
++    const int rootCopy = retry([&] { return Ops::open(root, ".", O_PATH | O_DIRECTORY | O_CLOEXEC); });
++    if (rootCopy < 0) return -1;
++    walk.dirs[walk.depth++] = rootCopy;
++    unsigned links = 0, steps = 0;
++    size_t cursor = 0;
++    for (;;) {
++        if (++steps > stepLimit) return error(ELOOP);
++        while (pending[cursor] == '/') ++cursor;
++        if (!pending[cursor]) return reopen<Ops>(walk.dirs[walk.depth - 1], flags, walk);
++        const size_t start = cursor;
++        while (pending[cursor] && pending[cursor] != '/') ++cursor;
++        const size_t length = cursor - start;
++        if (length >= sizeof(component)) return error(ENAMETOOLONG);
++        memcpy(component, pending + start, length); component[length] = 0;
++        if (!strcmp(component, ".")) continue;
++        if (!strcmp(component, "..")) {
++            if (!walk.unchanged()) return -1;
++            if (walk.depth > 1) walk.pop(); // Clamp at the saved root.
++            continue;
++        }
++        OwnedFd<Ops> child(retry([&] { return Ops::open(walk.dirs[walk.depth - 1], component, O_PATH | O_NOFOLLOW | O_CLOEXEC); }));
++        struct stat st;
++        if (child.value < 0 || retry([&] { return Ops::stat(child.value, &st); }) < 0) return -1;
++        if (S_ISLNK(st.st_mode)) {
++            if (++links > linkLimit) return error(ELOOP);
++            struct statfs fs;
++            if (retry([&] { return Ops::fsstat(child.value, &fs); }) < 0) return -1;
++            // Conservatively reject procfs links (including magic links).
++            // The kernel never follows a user-supplied link in this walk.
++            if (fs.f_type == procMagic) return error(ELOOP);
++            const ssize_t size = retry([&] { return Ops::link(child.value, target, sizeof(target)); });
++            if (size < 0) return -1;
++            if (!size) return error(ENOENT);
++            if (static_cast<size_t>(size) >= sizeof(target)) return error(ENAMETOOLONG);
++            const size_t rest = strlen(pending + cursor);
++            if (static_cast<size_t>(size) + rest >= sizeof(pending)) return error(ENAMETOOLONG);
++            memmove(pending + size, pending + cursor, rest + 1);
++            memcpy(pending, target, size);
++            if (target[0] == '/') while (walk.depth > 1) walk.pop();
++            cursor = 0;
++            continue;
++        }
++        if (pending[cursor] == '/') {
++            if (!S_ISDIR(st.st_mode)) return error(ENOTDIR);
++            if (walk.depth >= depthLimit) return error(ENAMETOOLONG);
++            walk.dirs[walk.depth++] = child.take();
++            continue;
++        }
++        return reopen<Ops>(child.value, flags, walk);
++    }
++}
++} // namespace BunScopedOpen
+diff --git a/src/jsc/bindings/c-bindings.cpp b/src/jsc/bindings/c-bindings.cpp
+index 771b520f84a28a4ffb583054af9dabd8711eae9a..fcc96d8712da400690a589ead3f43c9e85281772 100644
+--- a/src/jsc/bindings/c-bindings.cpp
++++ b/src/jsc/bindings/c-bindings.cpp
+@@ -6,40 +6,48 @@
+ #include <wtf/WTFConfig.h>
+ #include <sys/resource.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
+ #include <signal.h>
+ #include <unistd.h>
+ #include <cstring>
+ #include <csignal>
+ #include <cstdint>
+ #include <cstdlib>
+ #include <termios.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
+ #else
+ #include <uv.h>
+ #include <windows.h>
+ #include <corecrt_io.h>
+ #endif // !OS(WINDOWS)
+ #include <lshpack.h>
+ 
++#if OS(LINUX)
++#include "bun-scoped-open.h"
++extern "C" int bun_open_in_root_readonly(int root, const char* path, int flags, unsigned mode)
++{
++    return BunScopedOpen::resolve(root, path, flags, mode);
++}
++#endif
++
+ // Error condition is encoded as max int32_t.
+ // The only error in this function is ESRCH (no process found)
+ extern "C" int32_t get_process_priority(int32_t pid)
+ {
+ #if OS(WINDOWS)
+     int priority = 0;
+     if (uv_os_getpriority(pid, &priority))
+         return std::numeric_limits<int32_t>::max();
+     return priority;
+ #else
+     errno = 0;
+     int priority = getpriority(PRIO_PROCESS, pid);
+     if (priority == -1 && errno != 0)
+         return std::numeric_limits<int32_t>::max();
+     return priority;
+ #endif // OS(WINDOWS)
+ }
+ 
+ extern "C" int32_t set_process_priority(int32_t pid, int32_t priority)
+ {
+diff --git a/src/sys/lib.rs b/src/sys/lib.rs
+index cd3d67c1feaa521632051183a2960354a91dfd2f..2bb7db16680e68962f6796fe13ea3c3aee013178 100644
+--- a/src/sys/lib.rs
++++ b/src/sys/lib.rs
+@@ -1924,78 +1924,89 @@ mod posix_impl {
+             super::linux_syscall::openat(dir, path, flags, mode)
+                 .map_err(|e| Error::from_code_int(e, Tag::open).with_path(path.as_bytes()))
+         }
+         #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "android")))]
+         {
+             let rc = check_p!(
+                 unsafe { sys_openat(dir.native(), path.as_ptr(), flags, mode as libc::c_uint) },
+                 Tag::open,
+                 path
+             );
+             Ok(Fd::from_native(rc))
+         }
+     }
+     #[cfg(any(target_os = "linux", target_os = "android"))]
+     pub fn openat2_beneath(dir: impl AsFd, path: &ZStr, flags: i32, mode: Mode) -> Maybe<Fd> {
+         let dir = dir.as_fd();
+         super::linux_syscall::openat2_beneath(dir, path, flags, mode)
+             .map_err(|e| Error::from_code_int(e, Tag::open).with_path(path.as_bytes()))
+     }
+     /// `openat2(RESOLVE_IN_ROOT | RESOLVE_NO_MAGICLINKS)`: resolves `path` as
+-    /// if `dir` were `/`. Falls back to plain `openat` on kernels without
+-    /// `openat2` (or when seccomp blocks it), caching the unavailability.
++    /// if `dir` were `/`. The read-only DirectoryRoute fallback pins path
++    /// components and interprets links relative to the saved root; it never
++    /// substitutes unconstrained `openat` when the kernel call is unavailable.
+     #[cfg(any(target_os = "linux", target_os = "android"))]
+     pub fn openat2_in_root(dir: impl AsFd, path: &ZStr, flags: i32, mode: Mode) -> Maybe<Fd> {
+         use core::sync::atomic::{AtomicBool, Ordering};
+         static UNAVAILABLE: AtomicBool = AtomicBool::new(false);
+ 
+         let dir = dir.as_fd();
+         if !UNAVAILABLE.load(Ordering::Relaxed) {
+             match super::linux_syscall::openat2_in_root(dir, path, flags, mode) {
+                 Ok(fd) => return Ok(fd),
+                 Err(e @ (libc::ENOSYS | libc::EPERM | libc::EINVAL | libc::E2BIG)) => {
+                     let probe = super::linux_syscall::openat2_in_root(
+                         dir,
+                         bun_core::zstr!("."),
+                         O::PATH | O::DIRECTORY | O::CLOEXEC,
+                         0,
+                     );
+                     match probe {
+                         Err(libc::ENOSYS | libc::EPERM | libc::EINVAL | libc::E2BIG) => {
+                             UNAVAILABLE.store(true, Ordering::Relaxed);
+                         }
+                         other => {
+                             if let Ok(fd) = other {
+                                 let _ = close(fd);
+                             }
+                             return Err(
+                                 Error::from_code_int(e, Tag::open).with_path(path.as_bytes())
+                             );
+                         }
+                     }
+                 }
+                 Err(e) => {
+                     return Err(Error::from_code_int(e, Tag::open).with_path(path.as_bytes()));
+                 }
+             }
+         }
+-        openat(dir, path, flags, mode)
++        unsafe extern "C" {
++            fn bun_open_in_root_readonly(root: i32, path: *const libc::c_char, flags: i32, mode: u32) -> i32;
++        }
++        // SAFETY: dir is live and path is a NUL-terminated ZStr. The helper
++        // borrows dir, returns a new CLOEXEC fd, and closes its own temporaries.
++        let rc = unsafe { bun_open_in_root_readonly(dir.native(), path.as_ptr(), flags, mode as u32) };
++        if rc < 0 {
++            Err(Error::from_code_int(last_errno(), Tag::open).with_path(path.as_bytes()))
++        } else {
++            Ok(Fd::from_native(rc))
++        }
+     }
+     pub fn close(fd: Fd) -> Maybe<()> {
+         // Call close ONCE; never retry on EINTR (Linux may have already
+         // released the fd, retrying would close someone else's). Only EBADF surfaces.
+         // Darwin uses `close$NOCANCEL` (avoid pthread cancellation point).
+         #[cfg(any(target_os = "linux", target_os = "android"))]
+         {
+             return match super::linux_syscall::close(fd.native()) {
+                 Err(e) if e == libc::EBADF => {
+                     Err(Error::from_code_int(libc::EBADF, Tag::close).with_fd(fd))
+                 }
+                 _ => Ok(()),
+             };
+         }
+         #[cfg(not(any(target_os = "linux", target_os = "android")))]
+         {
+             #[cfg(target_os = "macos")]
+             let rc = super::nocancel::close(fd.native());
+             #[cfg(not(target_os = "macos"))]
+             let rc = safe_libc::close(fd.native());
+

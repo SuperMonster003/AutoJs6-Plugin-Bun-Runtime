@@ -5,9 +5,10 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
 > Status: the complete source, direct-toolchain, Cargo/Bun registry, host-package,
 > host-image, license, and corresponding-source input closure is locked and
-> `buildReady` is true. Two independent
-> clean builds produced byte-for-byte identical ARM64 and x86_64 executables,
-> and both passed the locked static ELF audit. The experiment remains
+> `buildReady` is true. The nine-patch source is replay-verified and produces
+> identical bytes in two clean builds per ABI, with complete ELF audits. Its
+> unchanged 24-probe suite passes twice in five native 4 KiB environments.
+> Historical eight-patch binary pairs cannot satisfy the new source gate. The experiment remains
 > `distributionReady: false` until a matching experimental APK passes its
 > application-process gates and is actually published. Patched executables stay
 > outside Git; the opt-in [test-only app probe](app-probe/README.md) packages them
@@ -15,15 +16,32 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > the production plugin's only Bun payloads; its separately locked first-party
 > supervisor is also reused by the test-only probe.
 
-The latest [directory-confinement probe](../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md)
-exposes a new blocker in the unchanged eight-patch runtime: five native 4 KiB
+The selected option 2 is implemented by project-owned MIT patch 9: a bounded
+read-only descriptor-relative fallback for static directory routes. It keeps
+ordinary directory serving and root-contained links, without adding a permissive
+mode, restricting general file APIs or introducing a third-party dependency.
+The exact helper and C bridge pass four groups / 20 named cases with both GCC 13
+and Clang 21, including native openat2 comparisons, replacement/error controls
+and FD cleanup. See the [implementation and limits](scoped-open/README.md).
+The new revision `1.4.0+7b9ac2668` passes the unchanged 24-probe Android suite
+twice on native arm64 API 28/31/33/35 and x86_64 API 33 (all 4096-byte pages),
+totaling 240/240. All 240 directory-path assertions pass, including rejection
+of the 60 formerly failing outside-root sentinel reads. Packages and UID
+processes are cleaned up and the owned AVD is closed. See the
+[new scoped-open report](../../../../docs/compatibility/2026-09-10-m3-scoped-open-fix.md).
+These new bytes and fixtures still need native ARM64 16 KiB, full experimental
+Binder and the remaining syscall/API matrix; distribution remains false.
+
+The historical [directory-confinement probe](../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md)
+exposes a blocker in the eight-patch runtime: five native 4 KiB
 environments each score 23/24 twice. All original 23 probes pass, but
 relative/absolute/magic links escape the configured static-directory root
 when openat2 is unavailable, producing 60 failed path assertions. The gate
-is failed, no native fix is applied, and experimental distribution remains
-blocked. The earlier successful narrower suites below remain historical evidence.
+remains a failed baseline with no native fix applied in that report. Neither it
+nor the earlier successful narrower suites is reassigned to the new source.
+Experimental distribution remains blocked.
 
-The current eight-patch revision `1.4.0+a260ef308` fixes the Linux spawn FD
+The previous eight-patch revision `1.4.0+a260ef308` fixes the Linux spawn FD
 fallback independently of the startup helper. Two clean builds per ABI reproduce
 identical bytes. The unchanged **20-probe suite passes twice in all six native
 environments, totaling 240/240**: arm64 API 28/31/33/35 and x86_64 API 33 with
@@ -131,8 +149,9 @@ commit `ed738e842d2fbdf2d6459e39267a633c4a9b2f5d`.
 
 Project-owned patch 7 adds the MIT-licensed [startup CLOEXEC fallback](startup-cloexec/README.md).
 Patch 8 adds a separate MIT-licensed, allocation-free [spawn FD fallback](spawn-fd/README.md).
-The final head is `a260ef3085eccca9076569b1fd5d32fbb3e8c87d`; its startup and
-spawn code intentionally differ from the upstream PR. The replay verifier checks every
+Patch 9 implements the selected bounded, read-only [directory-confinement fallback](scoped-open/README.md).
+The final head is `7b9ac266888abda7ee6ec0b8ac11a74236420030`; its startup,
+spawn and scoped-open code intentionally differ from the upstream PR. The replay verifier checks every
 patch's actual affected paths and the exact final commit/tree while retaining
 the complete upstream equivalence check at prefix
 `373d612de197f05bb5a7abdbd09d421ea0e8c02c`. No upstream comparison path is dropped.
@@ -243,7 +262,7 @@ and [seven-patch startup-fix record](../../../../docs/compatibility/2026-09-10-m
 are retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all eight downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all nine downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream

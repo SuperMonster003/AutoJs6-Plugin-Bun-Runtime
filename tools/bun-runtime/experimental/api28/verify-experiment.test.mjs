@@ -16,7 +16,7 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
-  assert.equal(result.downstreamPatchCount, 8);
+  assert.equal(result.downstreamPatchCount, 9);
   assert.equal(result.runtimeEvidenceVerified, true);
   assert.equal(result.lockedGithubArchiveCount, 19);
   assert.equal(result.lockedToolchainDownloadCount, 17);
@@ -34,8 +34,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.deepEqual(
     result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
     [
-      ["arm64-v8a", "186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333"],
-      ["x86_64", "f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3"],
+      ["arm64-v8a", "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"],
+      ["x86_64", "83df7d535e4deab9484941a9e8cabc46be3ab6462ccc43c86b76f55325459130"],
     ],
   );
   assert.equal(result.packagedLicenseCount, 5);
@@ -294,6 +294,21 @@ test("upstream equivalence must cover every upstream path at the exact compatibi
   }
 });
 
+test("the scoped-open fix requires its reviewed origin and all three source paths", () => {
+  for (const mutation of ["origin", "path", "missing"]) {
+    withExperimentCopy(copy => {
+      const path = resolve(copy, "patches/series.lock.json");
+      const series = JSON.parse(readFileSync(path, "utf8"));
+      const patch = series.downstreamBackport.patches[8];
+      if (mutation === "origin") patch.origin = "autojs6-spawn-fd";
+      if (mutation === "path") patch.affectedPaths = patch.affectedPaths.slice(0, 2);
+      if (mutation === "missing") series.downstreamBackport.patches.pop();
+      writeFileSync(path, JSON.stringify(series, null, 2) + "\n");
+      assert.throws(() => verifyBuildInputs(copy), /origin|affectedPaths|patches length/);
+    });
+  }
+});
+
 test("the spawn fix requires its reviewed origin and both exact source paths", () => {
   for (const mutation of ["origin", "path", "missing"]) {
     withExperimentCopy((copy) => {
@@ -302,7 +317,7 @@ test("the spawn fix requires its reviewed origin and both exact source paths", (
       const patch = series.downstreamBackport.patches[7];
       if (mutation === "origin") patch.origin = "autojs6-startup-cloexec";
       if (mutation === "path") patch.affectedPaths = ["src/jsc/bindings/bun-spawn-fd.h"];
-      if (mutation === "missing") series.downstreamBackport.patches.pop();
+      if (mutation === "missing") series.downstreamBackport.patches.splice(7, 1);
       writeFileSync(path, `${JSON.stringify(series, null, 2)}\n`);
       assert.throws(() => verifyBuildInputs(copy), /origin|affectedPaths|patches length/);
     });

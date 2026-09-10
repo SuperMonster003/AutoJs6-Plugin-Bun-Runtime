@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
-    "headTreeSha1": "8941ba13cd240647b059d1155d455c1d273a7e10",
+    "headCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+    "headTreeSha1": "05f05ce5787a20f2af4d642fb0ada38f68674187",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -292,8 +292,29 @@
           "--unified=20"
         ],
         "licenseImpact": "No license change; project-owned Bun spawn changes and the new SPDX-MIT header are provided under Bun's MIT license."
+      },
+      {
+        "order": 9,
+        "commit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+        "parent": "a260ef3085eccca9076569b1fd5d32fbb3e8c87d",
+        "origin": "autojs6-scoped-open",
+        "sourceCommit": null,
+        "bytes": 14932,
+        "sha256": "f5cf0b410d5e87dc64cb46c95c3fba680cb0388fa09abb3ce1a1828b49003db4",
+        "stablePatchId": "1c315900415365b66b661d1eee504793d6070645",
+        "path": "downstream/0009-fix-preserve-directory-confinement-without-openat2.patch",
+        "purpose": "Preserve read-only directory routes without openat2 using pinned O_PATH descriptors, scoped symlink interpretation, bounded traversal and owned-fd reopening; reject unsupported modes and detected parent changes.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-scoped-open.h",
+          "src/jsc/bindings/c-bindings.cpp",
+          "src/sys/lib.rs"
+        ],
+        "formatPatchAdditionalOptions": [
+          "--unified=20"
+        ],
+        "licenseImpact": "No license change; project-owned read-only directory fallback and its SPDX-MIT header are provided under Bun's MIT license."
       }
     ],
-    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix."
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged."
   }
 }

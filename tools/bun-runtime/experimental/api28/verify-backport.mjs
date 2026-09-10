@@ -44,7 +44,7 @@ export function verifyBackport(bunRepository) {
     const downstreamPatchId = patchId(repository, downstreamPath);
     require(downstreamPatchId === patch.stablePatchId, `${patch.commit}: downstream stable patch ID mismatch`);
     if (patch.sourceCommit === null) {
-      require(["autojs6-supply-chain", "autojs6-startup-cloexec", "autojs6-spawn-fd"].includes(patch.origin), `${patch.commit}: unrecognized project-owned patch origin`);
+      require(["autojs6-supply-chain", "autojs6-startup-cloexec", "autojs6-spawn-fd", "autojs6-scoped-open"].includes(patch.origin), `${patch.commit}: unrecognized project-owned patch origin`);
     } else {
       const upstream = upstreamByCommit.get(patch.sourceCommit);
       require(upstream !== undefined, `${patch.commit}: unknown source commit ${patch.sourceCommit}`);

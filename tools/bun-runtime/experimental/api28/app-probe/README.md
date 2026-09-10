@@ -15,13 +15,27 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
-The latest suite contains **24 probes** and fails at **23/24 twice in each of
+The new nine-patch runtime passes the same **24 probes twice in five native
+4 KiB environments (240/240)**, changing only the expected revision to `1.4.0+7b9ac2668`. Fixture
+sources, validators, HTTP/path assertions and all resource bounds are unchanged.
+The selected [descriptor-relative fallback](../scoped-open/README.md) preserves
+normal directory serving; it does not change ordinary Bun.file/node:fs access.
+Both ABIs reproduce in two clean builds. All 240 directory-path assertions pass,
+including the 60 formerly failing escape assertions; 30 forcible lifecycle cases
+complete in 300-306 ms. All test packages are uninstalled with zero UID processes,
+and the owned AVD is closed. See the [new source/APK/device evidence](../../../../../docs/compatibility/2026-09-10-m3-scoped-open-fix.md).
+Native ARM64 16 KiB for these new bytes/fixtures, full experimental Binder and
+remaining syscall/API gates stay open. Previous results are never reassigned.
+
+### Previous failed 24-probe baseline
+
+The preceding `1.4.0+a260ef308` suite fails at **23/24 twice in each of
 five native 4 KiB environments**. The unchanged original 23 probes pass, but
 directory routes return a synthetic outside-root sentinel through relative,
 absolute and magic symlinks, before and after adding TRAP. All 10 confinement
 probes fail, with 60 failed path assertions. See the [openat2 blocker report](../../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md).
-Runtime bytes are unchanged; no native fix or Release is included. Historical
-success below is narrower coverage and must not override this failed gate.
+That report used unchanged runtime bytes and included no native fix or Release.
+Historical success below is narrower coverage and must not override that failure.
 
 ### Previous 23-probe syscall baseline
 

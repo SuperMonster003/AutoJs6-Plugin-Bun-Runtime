@@ -1,6 +1,6 @@
 # Downstream backport patches
 
-This directory contains a deterministic eight-patch series reviewed against exact
+This directory contains a deterministic nine-patch series reviewed against exact
 Bun commit `34cbb9a40b4bd1bd767d134a7065e66c2432a676`.
 
 The first five patches replay the immutable upstream compatibility commits
@@ -17,11 +17,18 @@ additional `--unified=20` export context lets the native regression harness
 compile the exact new wrapper/call site and the old failing loop. The locked
 stable patch ID is calculated from that exact exported patch.
 
+Project-owned MIT patch 0009 replaces only the unconstrained directory-route
+fallback with a bounded, read-only descriptor-relative resolver. Its
+`--unified=20` context binds the Rust call site and C bridge; the
+[native harness](../../scoped-open/README.md) extracts and compiles the exact
+new header and bridge. It preserves ordinary directory serving without adding
+a dependency or a permissive switch, and does not restrict general script I/O.
+
 The stable patch IDs of compatibility patches 0001-0005 equal their
 corresponding upstream reference patches. At that five-patch prefix,
 all five compatibility-affected source and test paths are byte-identical to the pinned PR head
 `d6171ce7e2efa4f3eb3e6f5a099da922df15bc0c`.
-The final startup and spawn code intentionally differs and is bound by the
+The final startup, spawn and directory-open code intentionally differs and is bound by the
 project-owned patches; no upstream comparison path is omitted.
 
 This file proves source-level applicability only. Separate locked evidence now

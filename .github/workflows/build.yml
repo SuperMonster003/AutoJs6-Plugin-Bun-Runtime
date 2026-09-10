@@ -42,6 +42,7 @@ jobs:
           python3 -B tools/bun-runtime/supervisor/test_supervisor.py
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/startup-cloexec/test_startup_cloexec.py)
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/spawn-fd/test_spawn_fd.py)
+          python3 -B tools/bun-runtime/experimental/api28/scoped-open/test_scoped_open.py
           node tools/bun-runtime/experimental/api28/verify-experiment.mjs
           node tools/bun-runtime/experimental/api28/build-experiment.mjs
           node --test \
