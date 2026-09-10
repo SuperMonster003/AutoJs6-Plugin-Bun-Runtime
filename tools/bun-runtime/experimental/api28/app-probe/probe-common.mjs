@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { inspectElfBuffer, verifyRuntimeEvidenceManifest } from "../verify-built-runtime.mjs";
 import { inspectApkRuntime } from "../../../verify-apk-runtime.mjs";
 import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../../../supervisor/supervisor-common.mjs";
+import { SYSCALL_MODES, validateSyscallEvidence } from "./syscall-evidence.mjs";
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../../../../..");
@@ -15,7 +16,7 @@ export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
 export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
 export const INPUTS = [
-  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
     .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
   SHARED_PROCESS,
   ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
@@ -31,7 +32,7 @@ export const FD_MODES = {
 };
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
-  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), "recovery-after-termination"];
+  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
@@ -103,7 +104,7 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 20-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 23-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(/^[a-z][a-z0-9-]{0,63}$/.test(probe.id) && !ids.has(probe.id), "unsafe or duplicate probe ID");
@@ -125,10 +126,11 @@ export function validateProbes(probes) {
       (probe.timeoutMillis ?? 15000) <= 15000, "invalid timeout");
     assert(Number.isInteger(probe.outputBytes ?? 16384) && (probe.outputBytes ?? 16384) >= 1024 &&
       (probe.outputBytes ?? 16384) <= 16384, "invalid output bound");
-    if (Object.hasOwn(FD_MODES, probe.id)) {
-      assert.equal(probe.sourceFile, "fd-probes.mjs", "only the fixed FD fixture is allowed");
-      assert.equal(probe.mode, FD_MODES[probe.id], "fixed FD mode required");
-      assert.equal(probe.stdout, "FD_PROBE_RESULT=");
+    const fixedFd = Object.hasOwn(FD_MODES, probe.id), fixedSyscall = Object.hasOwn(SYSCALL_MODES, probe.id);
+    if (fixedFd || fixedSyscall) {
+      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : "syscall-probes.mjs", "only the fixed source fixture is allowed");
+      assert.equal(probe.mode, (fixedFd ? FD_MODES : SYSCALL_MODES)[probe.id], "fixed mode required");
+      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=");
       for (const key of ["source", "arguments", "extension"])
         assert(!Object.hasOwn(probe, key), "ambiguous FD fixture: " + key);
     } else if (probe.arguments) {
@@ -139,7 +141,7 @@ export function validateProbes(probes) {
       assert(typeof probe.source === "string" && Buffer.byteLength(probe.source) <= 8192, "invalid source");
       assert(["js", "ts"].includes(probe.extension ?? "js"), "invalid source extension");
     }
-    if (!Object.hasOwn(FD_MODES, probe.id)) {
+    if (!fixedFd && !fixedSyscall) {
       assert(!Object.hasOwn(probe, "sourceFile") && !Object.hasOwn(probe, "mode"), "unexpected source fixture");
     }
   }
@@ -148,10 +150,11 @@ export function validateProbes(probes) {
 
 export function materializeProbes(probes) {
   validateProbes(probes);
-  const source = readFileSync(requireFile(join(HERE, "fd-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
   const result = probes.map(probe => {
     if (!probe.sourceFile) return { ...probe };
-    const inline = "const FD_MODE = " + JSON.stringify(probe.mode) + ";\n" + source;
+    const source = readFileSync(requireFile(join(HERE, probe.sourceFile)), "utf8").replace(/\r\n/g, "\n");
+    const inline = "const " + (probe.sourceFile === "fd-probes.mjs" ? "FD_MODE" : "SYSCALL_MODE") +
+      " = " + JSON.stringify(probe.mode) + ";\n" + source;
     // Only this checked-in, source-bound fixture gets 16 KiB. Existing inline
     // probes retain 8 KiB; execution time and output limits are unchanged.
     assert(Buffer.byteLength(inline) <= 16384, "fixed FD fixture exceeds 16 KiB");
@@ -378,13 +381,20 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
       assert(typeof result[channel] === "string" && result[channel].length <= 2059, "unbounded stream summary");
       if (expected[channel]) assert(result[channel].includes(expected[channel]), expected.id + " missing " + channel);
     }
-    if (expected.sourceFile) {
+    if (expected.sourceFile === "fd-probes.mjs") {
       validateFdEvidence(result.fdEvidence, expected.mode, abi);
       const lines = result.stdout.trim().split(/\r?\n/);
       assert.equal(lines.length, 1, "exactly one bounded FD result required");
       assert(lines[0].startsWith("FD_PROBE_RESULT="));
       assert.deepEqual(JSON.parse(lines[0].slice("FD_PROBE_RESULT=".length)), result.fdEvidence, "FD evidence/output drift");
     } else assert(!result.fdEvidence, "unexpected FD evidence");
+    if (expected.sourceFile === "syscall-probes.mjs") {
+      validateSyscallEvidence(result.syscallEvidence, expected.mode, abi);
+      assert.equal(result.syscallEvidence.kernel, env.kernel, "syscall kernel must match Android's independent uname observation");
+      const line = result.stdout.trim();
+      assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("SYSCALL_PROBE_RESULT="), "bounded syscall record required");
+      assert.deepEqual(JSON.parse(line.slice("SYSCALL_PROBE_RESULT=".length)), result.syscallEvidence, "syscall evidence/output drift");
+    } else assert(!result.syscallEvidence, "unexpected syscall evidence");
   }
   assert.equal(report.passed, true);
   return report;

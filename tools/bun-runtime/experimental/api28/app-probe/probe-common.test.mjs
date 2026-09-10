@@ -6,7 +6,9 @@ import test from "node:test";
 import { supervisorLock } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lockedEvidence, newOutputDirectory,
   outsideRepository, parseInstrumentation, parseOptions, validateManifestDump, validateProbes, validateReceipt, validateReport,
-  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, validateFdEvidence, fdFilterSha256 } from "./probe-common.mjs";
+  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
+import { SYSCALL_MODES } from "./syscall-evidence.mjs";
+import { syscallFixture } from "./syscall-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
@@ -52,7 +54,7 @@ function fixture() {
     runtimeBytes: options.runtime.bytes, installedPayloadVerified: true, passed: true,
     supervisorSha256: options.supervisor.binarySha256, supervisorBytes: options.supervisor.binaryBytes,
     installedSupervisorVerified: true, privateJobRemoved: true,
-    environment: { apiLevel: 28, abi: "arm64-v8a", pageSizeBytes: 4096, kernelMachine: "aarch64",
+    environment: { apiLevel: 28, abi: "arm64-v8a", pageSizeBytes: 4096, kernelMachine: "aarch64", kernel: "5.10.0-test",
       uid: 10001, selinuxContext: "u:r:untrusted_app:s0:c1,c2", seccomp: 2 },
     probes: probes.map(probe => ({ id: probe.id, passed: true, termination: probe.termination,
       exitCode: probe.termination === "exited" ? 0 : 137, forciblyTerminated: probe.termination !== "exited",
@@ -62,8 +64,10 @@ function fixture() {
       ...(probe.requiresReady ? { readyObserved: true, parentageVerified: true, childGone: true, supervisorGone: true,
         childPid: 1001, supervisorPid: 1002, readinessMillis: 200, terminationToExitMillis: 250,
         terminationRequestedAfterReadyMillis: 200 } : {}),
-      ...(probe.sourceFile ? { fdEvidence: fdFixture(probe.mode),
+      ...(probe.sourceFile === "fd-probes.mjs" ? { fdEvidence: fdFixture(probe.mode),
         stdout: "FD_PROBE_RESULT=" + JSON.stringify(fdFixture(probe.mode)) + "\n" } : {}),
+      ...(probe.sourceFile === "syscall-probes.mjs" ? { syscallEvidence: syscallFixture(probe.mode),
+        stdout: "SYSCALL_PROBE_RESULT=" + JSON.stringify(syscallFixture(probe.mode)) + "\n" } : {}),
     })),
   } };
 }
@@ -93,10 +97,14 @@ test("fixed FD fixtures are materialized deterministically with canonical source
   assert(Buffer.byteLength(JSON.stringify(materialized)) <= 131072);
   for (let i = 0; i < probes.length; i++) {
     const probe = probes[i], actual = materialized[i];
-    if (probe.sourceFile) {
+    if (probe.sourceFile === "fd-probes.mjs") {
       assert.equal(actual.source, "const FD_MODE = " + JSON.stringify(probe.mode) + ";\n" + source);
       assert(Buffer.byteLength(actual.source) <= 16384);
       assert(!Object.hasOwn(probe, "source"), "definitions may not be mutated");
+    } else if (probe.sourceFile === "syscall-probes.mjs") {
+      const syscallSource = readFileSync(join(HERE, "syscall-probes.mjs"), "utf8").replace(/\r\n/g, "\n");
+      assert.equal(actual.source, "const SYSCALL_MODE = " + JSON.stringify(probe.mode) + ";\n" + syscallSource);
+      assert(Buffer.byteLength(actual.source) <= 16384);
     } else assert.deepEqual(actual, probe);
   }
   assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
@@ -171,7 +179,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 20);
+    assert.equal(report.probes.length, 23);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);
@@ -184,6 +192,37 @@ test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
   assert.deepEqual(parseOptions(["--serial", "a"], ["--serial"]), { "--serial": "a" });
   for (const args of [[], ["--serial"], ["--serial", "--bad"], ["--bad", "x"],
     ["--serial", "a", "--serial", "b"]]) assert.throws(() => parseOptions(args, ["--serial"]));
+});
+
+test("syscall additions preserve every original 20-probe definition and assertion byte-for-byte", () => {
+  const original = probes.filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id));
+  assert.equal(original.length, 20);
+  assert.equal(hash(JSON.stringify(original)), "8e1450d608cc8694ffac9988ecf6677c70fb576cb4eb64dd9ea130ca3fb254fb");
+  for (const path of ["/syscall-probes.mjs", "/syscall-evidence.mjs"])
+    assert(inputFacts().some(input => input.path.endsWith(path)));
+});
+
+test("syscall reports reject missing, mismatched, forged, duplicated or unbound evidence", () => {
+  for (const change of [r => { delete r.probes[19].syscallEvidence; }, r => { r.probes[19].syscallEvidence.calls.pop(); },
+    r => { r.probes[20].syscallEvidence.errorControl = "not-observable"; },
+    r => { r.probes[21].stdout += r.probes[21].stdout; }, r => { r.probes[19].stdout = "SYSCALL_PROBE_RESULT={}"; },
+    r => { r.probes[0].syscallEvidence = syscallFixture("raw-controls"); },
+    r => { r.probes[19].fdEvidence = fdFixture("spawn-native"); }]) {
+    const { report, options } = fixture(); change(report);
+    assert.throws(() => validateReport(report, options));
+  }
+  for (const change of [p => { p[19].sourceFile = "../syscall-probes.mjs"; }, p => { p[19].mode = "pidfd"; },
+    p => { p[19].stdout = "FD_PROBE_RESULT="; }, p => { p[19].source = "console.log('fake')"; }]) {
+    const changed = structuredClone(probes); change(changed); assert.throws(() => validateProbes(changed));
+  }
+});
+
+test("a forged old-kernel label cannot turn required semantic reachability into a gated pass", () => {
+  const { report, options } = fixture();
+  const forged = syscallFixture("copy-range", "arm64-v8a", "4.4.1");
+  report.probes[20].syscallEvidence = forged;
+  report.probes[20].stdout = "SYSCALL_PROBE_RESULT=" + JSON.stringify(forged) + "\n";
+  assert.throws(() => validateReport(report, options), /independent uname observation/);
 });
 test("outputs cannot overwrite a directory or target the repository/ancestors", () => {
   for (const path of [ROOT, join(ROOT, "app"), join(ROOT, "..")]) assert.throws(() => outsideRepository(path));

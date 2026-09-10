@@ -15,6 +15,19 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The suite now contains **23 probes**, preserving all original 20 definitions
+and assertions. The unchanged `1.4.0+a260ef308` bytes pass twice in five native
+4 KiB environments (arm64 API 28/31/33/35 and x86_64 API 33), totaling **230/230**.
+The three new syscall fixtures verify 60 raw TRAP-to-ENOSYS calls and 16
+EIO-controlled copy/wait fallbacks; four API 28 kernel/policy-gated observations
+are explicitly excluded from semantic reachability. All 30 forcible lifecycle
+cases pass at 301-307 ms, packages are removed with zero UID processes, and the
+owned AVD is shut down. See the [syscall report and scope](../../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md).
+The new fixtures have not run on native ARM64 16 KiB; full six-syscall semantics
+and experimental Binder acceptance remain open.
+
+### Previous six-environment spawn-fix baseline
+
 The source-locked spawn fix `1.4.0+a260ef308` passes the unchanged **20 probes
 twice in all six native environments (240/240)**: arm64 API 28/31/33/35 and
 x86_64 API 33 at 4096-byte pages, plus Samsung SM-A566B arm64 API 36 at
@@ -150,14 +163,14 @@ it is not a substitute for this patched-runtime result, or vice versa.
 
 Full experimental plugin/Binder execution, other
 forced-syscall paths, watch/reload, API 29/30/32 and complete native 16 KiB
-acceptance remain open despite the current 20/20-twice application results.
+acceptance remain open despite the scoped application results above.
 Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.
 `distributionReady` remains false. Nothing here is published as a Release asset.
 
 ## FD and SIGSYS fixture design
 
-`probes.json` names only the fixed `fd-probes.mjs` source and seven exact modes.
+The FD entries in `probes.json` name only the fixed `fd-probes.mjs` source and seven exact modes.
 The builder inlines a constant mode plus canonical UTF-8/LF source into the
 APK, rejecting arbitrary paths, mixed source/arguments and oversized assets.
 The fixed fixture has a 16 KiB source cap; existing inline fixtures keep their
@@ -206,6 +219,14 @@ descriptor and immediately closing it follows the
 [Linux close_range contract](https://man7.org/linux/man-pages/man2/close_range.2.html).
 
 ## Build outside the repository
+
+The three additional `syscall-probes.mjs` modes are `raw-controls`, `copy-range`
+and `pidfd`. They use a separate bounded `SYSCALL_PROBE_RESULT` record and
+independently checked ABI-specific filter hashes. Raw controls never imply
+high-level semantic coverage; copy/wait require an EIO error control before
+TRAP fallback can be claimed. Old-kernel/policy gates are explicit non-coverage,
+not skipped successes. Both source files and the independent syscall verifier
+are bound in the receipt. See the [fixture design and source-path review](../../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md).
 
 Use Node.js, JDK 21, Android platform 36 and installed Android build tools
 (validated locally with 37.0.0). JDK paths are explicit so an older Java on PATH

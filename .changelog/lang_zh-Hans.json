@@ -20,6 +20,7 @@
         "尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本"
       ],
       "improvement": [
+        "不改实验运行时字节, 将 syscall 探针扩为 23 项: 五个原生 4 KiB 环境各两轮通过 (230/230), 包含 60 次 raw TRAP→ENOSYS 及 16 次 EIO 对照证明调用路径后的复制/等待回退; 明确排除四次 API 28 内核/策略门控观测的分支触达结论, 保留原有全部断言与历史证据, 清理测试包和本轮 AVD. 完整 syscall/Binder 与新夹具原生 16 KiB 验收仍未完成",
         "在六个原生环境验证 spawn 修复: arm64 API 28/31/33/35 与 x86_64 API 33 (4 KiB), 以及三星 arm64 API 36 (16 KiB) 均以不放宽断言的 20 项探针完成两轮 20/20, 合计 240/240; 双 ABI 各两轮清洁构建一致, 36 次强制回收全部通过, 测试包已卸载且本轮 AVD 已关闭. 旧失败记录保留, 完整实验 Binder 与 Release 门禁仍待完成",
         "在 Samsung Remote Test Lab SM-A566B (API 36) 完成原生 ARM64 16 KiB 执行验证: 官方 Bun 与锁定监督器组成的 v0.2.1 开发版 arm64-only APK 两轮通过全部 8 项 Binder 测试, 包含进程重启, 安装后摘要及 10 次强制生命周期回收; 归档源码/APK/日志绑定并卸载测试包, 最终 Release 与 x86_64 门禁仍单独保留",
         "先前失败基线 (c240d6c68): 在同一原生 ARM64 16 KiB 真机记录未改动实验 runtime 的两轮 19/20: 原生 close_range, 启动标记和生命周期通过, 已知 forced-TRAP 降低 RLIMIT_NOFILE 后的 spawn fd 继承缺陷仍存在; 保留两次失败, 不声称完整实验 Binder 或运行时验收通过",
