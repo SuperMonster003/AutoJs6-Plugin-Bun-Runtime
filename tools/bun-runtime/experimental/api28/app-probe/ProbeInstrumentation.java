@@ -216,16 +216,22 @@ public final class ProbeInstrumentation extends Instrumentation {
                 exitCode == 137 && childGone && supervisorGone && exitedAt - terminationAt < 2000;
         if (reason.equals("cancelled")) passed &= terminationAt - readyAt >= probe.getLong("cancelAfterReadyMillis") &&
                 terminationAt - readyAt < 2000;
-        JSONObject fdEvidence = null;
+        JSONObject fixtureEvidence = null;
+        String evidenceKey = null;
         String evidenceError = null;
         if (probe.has("sourceFile")) {
             try {
+                String sourceFile = probe.getString("sourceFile");
+                check(sourceFile.equals("fd-probes.mjs") || sourceFile.equals("syscall-probes.mjs"), "fixed fixture source");
+                boolean fd = sourceFile.equals("fd-probes.mjs");
+                String prefix = fd ? "FD_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=";
+                evidenceKey = fd ? "fdEvidence" : "syscallEvidence";
                 String line = out.trim();
-                check(line.startsWith("FD_PROBE_RESULT=") && !line.contains("\n") && line.length() <= 2048,
-                        "exactly one bounded FD evidence record");
-                fdEvidence = new JSONObject(line.substring("FD_PROBE_RESULT=".length()));
-                passed &= fdEvidence.getInt("schemaVersion") == 1 && fdEvidence.getBoolean("passed") &&
-                        fdEvidence.getString("mode").equals(probe.getString("mode"));
+                check(line.startsWith(prefix) && !line.contains("\n") && line.length() <= 2048,
+                        "exactly one bounded fixture evidence record");
+                fixtureEvidence = new JSONObject(line.substring(prefix.length()));
+                passed &= fixtureEvidence.getInt("schemaVersion") == 1 && fixtureEvidence.getBoolean("passed") &&
+                        fixtureEvidence.getString("mode").equals(probe.getString("mode"));
             } catch (Exception error) { passed = false; evidenceError = bounded(error.toString()); }
         }
         deleteOwned(work, work.getCanonicalPath(), 0, new int[] {0});
@@ -235,7 +241,7 @@ public final class ProbeInstrumentation extends Instrumentation {
                 .put("processReaped", !process.isAlive()).put("workspaceRemoved", true)
                 .put("elapsedMillis", elapsed).put("capturedBytes", capture.used)
                 .put("outputLimitBytes", outputLimit).put("stdout", bounded(out)).put("stderr", bounded(err));
-        if (fdEvidence != null) result.put("fdEvidence", fdEvidence);
+        if (fixtureEvidence != null) result.put(evidenceKey, fixtureEvidence);
         if (evidenceError != null) result.put("evidenceError", evidenceError);
         if (requiresReady) result.put("readyObserved", readyAt >= 0).put("parentageVerified", supervisorPid > 1)
                 .put("childPid", childPid).put("supervisorPid", supervisorPid)

@@ -129,6 +129,27 @@
     "termination": "exited"
   },
   {
+    "id": "syscall-trap-controls",
+    "sourceFile": "syscall-probes.mjs",
+    "mode": "raw-controls",
+    "stdout": "SYSCALL_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "syscall-copy-range-trap",
+    "sourceFile": "syscall-probes.mjs",
+    "mode": "copy-range",
+    "stdout": "SYSCALL_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "syscall-pidfd-trap",
+    "sourceFile": "syscall-probes.mjs",
+    "mode": "pidfd",
+    "stdout": "SYSCALL_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

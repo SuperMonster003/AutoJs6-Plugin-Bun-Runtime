@@ -29,6 +29,14 @@ stable Android 9 support, native x86_64 16 KiB support or a published patched AP
 
 ### Historical application evidence
 
+The latest [scoped syscall follow-up](../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md)
+keeps those runtime bytes unchanged and expands the fixture suite to 23.
+Five native 4 KiB environments pass two rounds, totaling 230/230, including
+60 raw TRAP-to-ENOSYS observations and 16 EIO-controlled copy/wait fallbacks.
+Four API 28 kernel/policy-gated observations do not count as semantic
+reachability. All original 20 assertions remain unchanged. This follow-up
+does not add native 16 KiB, full six-syscall semantics or Binder acceptance.
+
 The official v0.2.0 Release now contains the APKs and corresponding-source set,
 with all 13 asset digests verified before and after publication. That is not a
 patched-runtime release. The separate application-process probe has recorded
