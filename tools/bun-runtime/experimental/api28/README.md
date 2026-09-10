@@ -15,6 +15,20 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > the production plugin's only Bun payloads; its separately locked first-party
 > supervisor is also reused by the test-only probe.
 
+The current eight-patch revision `1.4.0+a260ef308` fixes the Linux spawn FD
+fallback independently of the startup helper. Two clean builds per ABI reproduce
+identical bytes. The unchanged **20-probe suite passes twice in all six native
+environments, totaling 240/240**: arm64 API 28/31/33/35 and x86_64 API 33 with
+4096-byte pages, plus Samsung SM-A566B arm64 API 36 with 16384-byte pages.
+All 24 lowered-limit cases now isolate the sentinel in both child APIs; all
+36 forcible lifecycle cases pass at 301-329 ms. Packages were uninstalled with
+zero UID processes, and the owned AVD was shut down. The pre-existing user AVD
+was left running. See the [spawn fix report](../../../../docs/compatibility/2026-09-10-m3-spawn-fd-fix.json).
+This is scoped test-only application evidence, not full experimental Binder,
+stable Android 9 support, native x86_64 16 KiB support or a published patched APK.
+
+### Historical application evidence
+
 The official v0.2.0 Release now contains the APKs and corresponding-source set,
 with all 13 asset digests verified before and after publication. That is not a
 patched-runtime release. The separate application-process probe has recorded
@@ -37,8 +51,8 @@ pass at 301-305 ms, and every probe package was uninstalled with zero UID
 processes remaining. The owned AVD was shut down. See the
 [startup fix report](../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json).
 
-The latest suite adds two lowered-`RLIMIT_NOFILE` cases, for **20 probes**.
-The unchanged runtime now scores **18/20 twice on each of the four arm64 devices
+Before patch 8, the suite added two lowered-`RLIMIT_NOFILE` cases, for **20 probes**.
+The then-unchanged `c240d6c68` runtime scored **18/20 twice on each of the four arm64 devices
 and 19/20 twice on the x86_64 AVD**: all original 180 observations still pass,
 but 18 of the 20 new observations expose a spawn fallback that misses live fd
 256 after the soft limit is lowered to 128. Non-Bun children created by both
@@ -48,20 +62,21 @@ All limits are restored, all test packages uninstalled with zero UID processes,
 and the owned AVD shut down. Existing clean-build pairs were reverified, not
 rebuilt. The [new failure report](../../../../docs/compatibility/2026-09-10-m3-spawn-nofile.json)
 retains all results and binds sources/APKs without altering earlier reports.
-The next source fix must respect the spawn child's vfork constraints; do not
-reuse the allocating startup helper there. Full experimental Binder, other
+Patch 8 addresses this separately under the spawn child's vfork constraints;
+it does not reuse the allocating startup helper. Full experimental Binder, other
 syscall semantics and the remaining API/ABI matrix are still open; this is not
 stable Android 9 support.
 
-The same unchanged experimental APK subsequently scored **19/20 twice** on a
+The same old experimental APK subsequently scored **19/20 twice** on a
 Samsung Remote Test Lab SM-A566B physical device (API 36, native arm64-v8a,
 16384-byte pages, no translation). The native lowered-limit control passes;
 only its forced-TRAP counterpart still leaks the sentinel through both child
 APIs. All six forcible lifecycle cases pass, and the package was uninstalled
 with zero UID processes. See the [native 16 KiB application report](../../../../docs/compatibility/2026-09-10-m3-native-arm64-16k.json).
-This establishes specific 16 KiB execution observations, not full experimental
-runtime or Binder acceptance. The official runtime's separate 8/8-twice Binder
-result does not close this failure. The working remote-device route is described
+Those historical failures remain unchanged. The new revision's 20/20-twice
+result is recorded separately above; neither observation is full experimental
+Binder acceptance. The official runtime's separate 8/8-twice Binder result
+cannot replace experimental testing. The working remote-device route is described
 in the [x64 Windows guide](../../../../docs/compatibility/16k-arm64-test-environments.md).
 
 ## Safety boundary
@@ -99,8 +114,9 @@ project-owned patch replaces Bun's movable Brotli `v1.1.0` input with resolved
 commit `ed738e842d2fbdf2d6459e39267a633c4a9b2f5d`.
 
 Project-owned patch 7 adds the MIT-licensed [startup CLOEXEC fallback](startup-cloexec/README.md).
-The final head is `c240d6c6895db4241dc324f260ee3ee4d0da9889`; its startup code
-intentionally differs from the upstream PR. The replay verifier checks every
+Patch 8 adds a separate MIT-licensed, allocation-free [spawn FD fallback](spawn-fd/README.md).
+The final head is `a260ef3085eccca9076569b1fd5d32fbb3e8c87d`; its startup and
+spawn code intentionally differ from the upstream PR. The replay verifier checks every
 patch's actual affected paths and the exact final commit/tree while retaining
 the complete upstream equivalence check at prefix
 `373d612de197f05bb5a7abdbd09d421ea0e8c02c`. No upstream comparison path is dropped.
@@ -179,9 +195,9 @@ every immutable input read-only, disables ccache, fixes the hostname and
 `/work/bun` path, and allows writes only to the clean patched checkout. Two
 independent checkouts completed both ABI builds. The outputs were identical
 across runs: ARM64 is 87,923,312 bytes with SHA-256
-`b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d`;
+`186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333`;
 x86_64 is 90,449,712 bytes with SHA-256
-`da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d`.
+`f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3`.
 The executables remain external evidence and are not copied into `jniLibs`.
 
 Build preparation uses `verifyBuildInputs`, which checks the source, patch,
@@ -205,12 +221,13 @@ Android RELR, 16 KiB minimum `PT_LOAD` alignment, build IDs, dynamic-symbol
 fingerprints, retained symbol-table fingerprints, and absence of debug
 sections. Both reproducible outputs passed. The prior six-patch ARM64 output
 also passed five limited direct-shell probes on API 28 and API 31; those older
-observations are not execution evidence for the new startup-fix revision.
-The [previous reproducible build record](../../../../docs/compatibility/2026-09-03-m2-runtime-evidence.json)
-is retained unchanged and cannot satisfy the current source gate.
+observations are not execution evidence for the new spawn-fix revision.
+The [six-patch build record](../../../../docs/compatibility/2026-09-03-m2-runtime-evidence.json)
+and [seven-patch startup-fix record](../../../../docs/compatibility/2026-09-10-m2-startup-runtime-evidence.json)
+are retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all seven downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all eight downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
@@ -246,6 +263,7 @@ api28/
   patches/upstream-reference/       verified immutable upstream patch evidence
   patches/downstream/               reviewed v1.4.0 source and supply-chain patches
   startup-cloexec/                  exact-patch Linux native fallback regressions
+  spawn-fd/                        exact-patch vfork FD regressions and old failure controls
   build-experiment.mjs              read-only plan, offline preflight, gated build
   build-host-image.mjs              locked host-image builder and evidence recorder
   run-locked-build.mjs              isolated digest-locked container build entry
@@ -353,7 +371,8 @@ api28/
 
    The verifier rejects a wrong base, missing PR head, patch-ID drift,
    nondeterministic commit/tree output, a dirty replay, or any difference from
-   the upstream head in the five compatibility paths. It also checks the 28
+   the upstream head in all five compatibility paths at the five-patch prefix.
+   It also checks the 28
    locked build/dependency definition blobs against the replayed tree, verifies
    Brotli's pre-patch blob, and confirms that neither endpoint has a
    `.gitmodules` entry.

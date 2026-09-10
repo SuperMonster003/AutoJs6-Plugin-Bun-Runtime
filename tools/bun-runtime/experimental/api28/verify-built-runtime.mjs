@@ -503,7 +503,7 @@ export function verifyRuntimeEvidenceManifest(evidence) {
   require(evidence.identity?.officialArtifact === false, "experimental runtime cannot be an official artifact");
   require(evidence.identity?.distributionReady === false, "experimental runtime cannot be distribution-ready");
   require(evidence.source?.upstreamCommit === "34cbb9a40b4bd1bd767d134a7065e66c2432a676", "runtime evidence upstream commit drifted");
-  require(evidence.source?.downstreamHeadCommit === "c240d6c6895db4241dc324f260ee3ee4d0da9889", "runtime evidence downstream commit drifted");
+  require(evidence.source?.downstreamHeadCommit === "a260ef3085eccca9076569b1fd5d32fbb3e8c87d", "runtime evidence downstream commit drifted");
   require(evidence.build?.hostImageManifestDigest === "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa", "runtime evidence host image drifted");
   require(evidence.build?.hostImageConfigDigest === "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b", "runtime evidence host config drifted");
   require(evidence.build?.entry === "run-locked-build.mjs", "runtime evidence build entry drifted");

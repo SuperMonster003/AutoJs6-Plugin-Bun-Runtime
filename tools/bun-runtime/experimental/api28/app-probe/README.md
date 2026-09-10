@@ -15,7 +15,31 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
-The suite now has **20 probes**. Two new lowered-`RLIMIT_NOFILE` cases expose a
+The source-locked spawn fix `1.4.0+a260ef308` passes the unchanged **20 probes
+twice in all six native environments (240/240)**: arm64 API 28/31/33/35 and
+x86_64 API 33 at 4096-byte pages, plus Samsung SM-A566B arm64 API 36 at
+16384-byte pages, without a native bridge. Only the expected revision changed
+in the probe definitions; no fixture, assertion, timeout or output bound was
+relaxed. All 24 lowered-limit probes exclude the sentinel from both non-Bun
+child APIs while preserving the parent descriptor and restoring the limits.
+
+The [spawn fix report](../../../../../docs/compatibility/2026-09-10-m3-spawn-fd-fix.json)
+binds the new two-clean-build runtime pair, exact source/APK/helper hashes,
+all 240 observations and cleanup. All 36 forcible lifecycle cases pass at
+301-329 ms; all test packages were uninstalled with zero UID processes.
+The owned API 33 AVD was shut down, and the pre-existing API 24 AVD was left
+running. This is full coverage of these **test-only application probes**, not
+the full experimental plugin/Binder contract, a Release APK, stable Android 9
+support or native x86_64 16 KiB acceptance.
+
+Patch 8's [native regression suite](../spawn-fd/README.md) additionally checks
+FD 70000, lowering both soft and hard limits, bounded failure before exec,
+and the exact old implementation as a failing control. Those Linux host tests
+do not add Android high-FD or hard-limit-lowering execution evidence.
+
+### Previous lowered-limit failure baseline
+
+The suite expanded to **20 probes**. Two lowered-`RLIMIT_NOFILE` cases exposed a
 spawn fallback defect in the unchanged startup-fix revision `1.4.0+c240d6c68`:
 native arm64 API 28/31/33/35 each score **18/20 twice**, and the native x86_64
 API 33 AVD scores **19/20 twice**, all with 4096-byte pages. The original
@@ -38,12 +62,12 @@ builder reverified the existing two-clean-build runtime pair; no new Bun build,
 runtime patch or official payload change occurred in this run. All 30 forcible
 termination cases still pass at 301-306 ms. Every test package was uninstalled
 with zero UID processes remaining, and the owned API 33 AVD was shut down.
-The next fix must cover live fds above a lowered soft limit **without violating
-the spawn child's vfork constraints**; the allocating startup helper is not a
-drop-in replacement. Full Binder and native 16 KiB acceptance remain open;
+The fix described above handles live fds above a lowered soft limit **without
+allocating or taking locks in the spawn child**; the startup helper is not a
+drop-in replacement. Full Binder and broader native 16 KiB acceptance remain open;
 see the [x64 Windows environment guide](../../../../../docs/compatibility/16k-arm64-test-environments.md).
 
-### Native ARM64 16 KiB observation
+### Previous native ARM64 16 KiB observation
 
 On 2026-09-10 the same unchanged test APK scored **19/20 twice** on Samsung
 Remote Test Lab SM-A566B (Android 16 / API 36, native arm64-v8a, 16384-byte
@@ -126,7 +150,7 @@ it is not a substitute for this patched-runtime result, or vice versa.
 
 Full experimental plugin/Binder execution, other
 forced-syscall paths, watch/reload, API 29/30/32 and complete native 16 KiB
-acceptance remain open despite the specifically recorded 19/20 observations.
+acceptance remain open despite the current 20/20-twice application results.
 Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.
 `distributionReady` remains false. Nothing here is published as a Release asset.

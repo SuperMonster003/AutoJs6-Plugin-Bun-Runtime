@@ -27,7 +27,7 @@ import {
 
 const toolDirectory = dirname(fileURLToPath(import.meta.url));
 const defaultLockPath = resolve(toolDirectory, "bun-inputs.lock.json");
-const EXPECTED_BUN_COMMIT = "c240d6c6895db4241dc324f260ee3ee4d0da9889";
+const EXPECTED_BUN_COMMIT = "a260ef3085eccca9076569b1fd5d32fbb3e8c87d";
 const EXPECTED_LOCKFILES = Object.freeze([
   Object.freeze({
     directory: ".",
