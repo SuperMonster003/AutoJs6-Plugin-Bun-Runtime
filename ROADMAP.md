@@ -78,7 +78,7 @@
 | M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
 | M3 Android 9-12L 实验支持 | 进行中, 新增 spawn 软限制回退阻断 | 四台 arm64 真机各两轮 18/20, API 33 原生 x86_64 AVD 各两轮 19/20; 先修复降低 RLIMIT_NOFILE 后的 FD 继承, 再推进其他 syscall 与完整 Binder | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
-| M5 16 KB 页与发布完整性 | 进行中 | ELF, APK ZIP, 安装后 payload 和真实 16 KB 执行四层验证 | 构建/测试/设备/发布 |
+| M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
 | M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
@@ -199,6 +199,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [ ] (上游/插件) 在 Bun 第一次 raw syscall 前安全处理 Android `SECCOMP_RET_TRAP`, 仅将 `SYS_SECCOMP` trap 转换为 `-ENOSYS`, 让已有 fallback 执行; 普通用户发送的 `SIGSYS` 仍保持可预期语义.
 - [x] (上游/构建/测试/设备) 修复 pinned Bun 启动路径忽略 `bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC)` 失败的问题: 第 7 个 MIT 补丁枚举实际打开的 FD, 保留 fd 0-3 并补上 CLOEXEC, 失败时明确退出; 目录项和 EINTR 重试有界, 不沿用 spawn 的 fd 编号上限. 原生 3 组 27 个场景通过, 包括创建 FD 70000 后降低 RLIMIT_NOFILE 到 1024 及真实 exec 验证. 双 ABI 各两轮清洁构建一致后, 四台 API 28/31/33/35 arm64 真机及 API 33 原生 x86_64 AVD 各两轮 18/18, 合计 180/180; 未改动原启动断言, 10 次均保留 sentinel 并观察到 CLOEXEC=true. 30 次强制终止仍在 301-305 ms 内回收, 测试包全部卸载且 UID 进程数归零, 本轮启动的 AVD 已关闭. 原 17/18 失败记录保持不变. 见 [M3 启动修复报告](docs/compatibility/2026-09-10-m3-startup-cloexec.json). (2026-09-10, G1/G2, 非完整 Binder, 未发布)
 - [x] (测试/设备) 新增 native/TRAP 两个降低 `RLIMIT_NOFILE` 的对照, 独立探针扩为 20 项. 同一 `c240d6c68` 运行时在四台 API 28/31/33/35 arm64 真机各两轮 18/20, API 33 原生 x86_64 AVD 各两轮 19/20 (均为 4096-byte 页). 原有 180 项仍通过; 新增 20 次观测中 18 次发现 fd 256 在 soft limit 从 32768 降至 128 后被 `spawnSync` 和 `spawn` 的非 Bun 子进程继承, 共 36 次子 FD 泄漏观测. x86_64 原生调用对照通过, 强制 TRAP 后失败, 与 `bun-spawn.cpp` 按当前 `sysconf(_SC_OPEN_MAX)` 扫描的源码一致. 每次均恢复原 soft/hard limit, 30 次强制终止仍在 301-306 ms 内回收, 全部测试包卸载且 UID 进程数归零, 本轮 AVD 已关闭. 见 [M3 spawn 软限制报告](docs/compatibility/2026-09-10-m3-spawn-nofile.json). 复核现有双轮 ELF, 未重新构建或修改 runtime. (2026-09-10, G1/G2, 阻断已复现, 非兼容性通过)
+- [x] (设备) 在 Samsung Remote Test Lab SM-A566B (API 36, 原生 arm64-v8a, PAGE_SIZE=16384, 无 native bridge) 对同一 `c240d6c68` 和原测试 APK 运行两轮 20 项, 均为 19/20. 原生 `close_range` 与降低软限制对照通过, 仅 forced-TRAP 后的 spawn fd 继承仍失败; 两轮各观察两个非 Bun 子进程继承 fd 256, 并完整恢复原限制. 6 次强制回收在 302-306 ms 内通过, 卸载后 UID 进程数为 0. 见 [M3 原生 ARM64 16 KiB 报告](docs/compatibility/2026-09-10-m3-native-arm64-16k.json). 这是原生 16 KiB 部分执行证据, 不以同设备正式 Binder 的 8/8 代替实验运行时验收. (2026-09-10, G2, 未改代码/字节, 未发布)
 - [ ] (上游/构建/测试, 下一优先项) 修复 spawn 回退漏过降低软限制前已打开 FD 的问题, 保持有界、失败可控和 vfork-safe, 不能直接复用会分配内存的启动枚举 helper. 新补丁落锁后双 ABI 各两轮清洁构建并重跑当前 20 项门禁; 在全部通过前不发布该实验运行时.
 - [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Linux 主机已有启动 FD 70000 证据, 但 Android 所测 hard limit 为 32768, 不能据此声称 Android spawn 高于现有 65536 循环上界的 FD 已覆盖; UNSHARE、watch/reload 等边界和完整实验 Binder 仍未完成.
 - [ ] (测试) 分别强制 trap 或在目标设备覆盖 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2`, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD.
@@ -240,8 +241,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - instrumentation 新增可选 `requiredPageSizeBytes` 硬断言; runtime ABI 改为由安装后 payload 的锁定 SHA-256 识别, prewarm 在版本与 revision 后执行最小 `--eval "void 0"` 探针, 避免把只能显示版本但无法执行脚本的 runtime 报告为 ready.
 - Android 16 / API 36 x86_64 16 KB AVD 已完成双路径验证: `arm64-v8a` 单 ABI APK 经 `libndk_translation` 完整 5/5 Binder instrumentation 通过, 原生 `x86_64` 则连 `-e 42` 都稳定以 exit 134 中止; 关闭 regexp JIT, 全部 JIT 或 `--smol` 均无效. 双路径报告见 `docs/compatibility/2026-09-02-m5-16kb-execution.json`.
 - 原生 x86_64 阻断已通过同一 payload 的 API 36 4 KB 对照, 插件 UID/root 对照和双 `strace` 收敛到 pinned WebKit `WTF::pageSize()` 的 4 KB 编译期 ceiling: 4 KB 环境继续创建 `JSJITCode`, 16 KB 环境则在首次 JIT mapping 前主动 abort. prewarm 现对该已知组合在启动 Bun 前返回有界诊断; 根因报告见 `docs/compatibility/2026-09-02-m5-x86-16kb-root-cause.json`.
-- 已安装的 API 36 arm64 16 KB system image 与 AVD 配置完整, 但 Android Emulator 37.1.11 在当前 Intel x86_64 宿主明确拒绝启动 arm64 guest; AVD 保持原样, 原生 arm64 证据仍需 ARM64 宿主或真机.
-- 2026-09-08 已补齐官方 v0.2.0 release 的 arm64-only/universal 安装后 APK 与原生 arm64 payload 摘要, 以及 13 个公开资产的完整性验证. 原生 arm64 16 KB 执行和原生 x86_64 large-page 修复仍未完成, 因此 M5 不扩大通用 16 KB 支持声明.
+- 已安装的 API 36 arm64 16 KB system image 与 AVD 配置完整, 但 Android Emulator 37.1.11 在当前 Intel x86_64 宿主明确拒绝启动 arm64 guest; 本机 AVD 保持原样, 后续改用下述远程 ARM64 真机获得证据.
+- 2026-09-08 已补齐官方 v0.2.0 release 的 arm64-only/universal 安装后 APK 与原生 arm64 payload 摘要, 以及 13 个公开资产的完整性验证. 该次发布记录不包含原生 arm64 16 KB 验收, 保持原样.
+- 2026-09-10 通过用户接入的 Samsung Remote Test Lab SM-A566B, 首次完成官方 Bun + 监督器的 v0.2.1 开发版原生 arm64 / 16 KiB 完整 Binder 两轮 8/8. 相同真机上的实验运行时两轮 19/20, 已知 spawn fallback 失败仍保留. x86_64 large-page、最终 Release APK 与实验完整验收未完成, 因此不扩大通用 16 KB 支持声明.
 
 条目清单:
 
@@ -250,9 +252,10 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [ ] (设备/发布) 补齐最终签名 x86_64 APK 的安装后摘要与完整原生执行验收, 不用 debug CI 代替最终签名产物测试.
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
 - [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
-- [ ] (设备/arm64) 在原生 arm64 16 KB 真机或 ARM64 宿主 AVD 上重复完整 instrumentation; 当前 Intel 宿主无法启动已安装的 arm64 guest, 不从 x86_64 AVD 的 `libndk_translation` 结果推断原生兼容.
-- [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB, 可优先核实会话权限与可用设备; 尚未登录、预约、上传 APK 或完成远程验收, 不勾选原生 ARM64 设备门禁. (2026-09-10, 官方资料与本机只读检查, 非 G2 设备通过)
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 新启动补丁的双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KB 双 ABI 安装后摘要及监督生命周期已完成. 2026-09-10 扩展至 20 项后, 四台 arm64 真机各两轮 18/20, 原生 x86_64 API 33 AVD 各两轮 19/20, 新增 spawn 软限制阻断; 完整实验 Binder 与原生 16 KB 执行仍未完成.
+- [x] (设备/arm64) Samsung Remote Test Lab SM-A566B 真机 (Android 16 / API 36, 原生 arm64-v8a, kernel aarch64, PAGE_SIZE=16384, native bridge=0) 完成官方 Bun 1.4.0 + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK 完整 8 项 Binder 两轮验收. 每项测试前硬断言 API/页大小, 每轮前 force-stop 并重新启动, 安装后双 payload 摘要与可执行权限通过, PluginInfo 与单 ABI 包内容一致; 10 次忽略 SIGTERM 的取消/超时/输出超限均真实回收并删除工作目录. 两个测试包卸载后 UID 进程数为 0, 不从翻译桥推断原生执行. 见 [M5 原生 ARM64 报告](docs/compatibility/2026-09-10-m5-native-arm64-16k.json). (2026-09-10, G1/G2, 开发版, 非已发布 Release APK)
+- [ ] (发布/arm64) 对最终拟发布的签名 APK 在原生 arm64 16 KiB 环境重复匹配范围的验收, 绑定该产物的安装后摘要及同 Release 源码资产; 不将开发版 Debug APK 通过归因给未测试的 Release 文件.
+- [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB; 最初的资料核查只确认候选路线, 不计为设备通过, 随后用户接入的 Samsung 真机已按上方独立条目归档实测结果. (2026-09-10, 环境资料核查; 设备 G2 见独立报告)
+- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 新启动补丁的双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KB 双 ABI 安装后摘要及监督生命周期已完成. 2026-09-10 四台 4 KiB arm64 真机各两轮 18/20, 原生 x86_64 API 33 AVD 各两轮 19/20; 新增 Samsung API 36 原生 arm64 / 16 KiB 真机两轮 19/20, 仅已知 forced-TRAP spawn 软限制用例失败. 已有原生 16 KiB 部分执行证据, 完整实验 Binder/FD 验收仍未完成.
 - [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.

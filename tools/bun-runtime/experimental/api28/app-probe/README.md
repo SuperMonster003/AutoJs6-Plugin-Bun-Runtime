@@ -43,6 +43,20 @@ the spawn child's vfork constraints**; the allocating startup helper is not a
 drop-in replacement. Full Binder and native 16 KiB acceptance remain open;
 see the [x64 Windows environment guide](../../../../../docs/compatibility/16k-arm64-test-environments.md).
 
+### Native ARM64 16 KiB observation
+
+On 2026-09-10 the same unchanged test APK scored **19/20 twice** on Samsung
+Remote Test Lab SM-A566B (Android 16 / API 36, native arm64-v8a, 16384-byte
+pages, no native bridge). Native `close_range` succeeds and the lowered-native
+control passes; only `fd-spawn-lowered-trap` fails, with the known sentinel
+leak in both child APIs. Both rounds restore the original limits. All six
+forcible lifecycle cases pass at 302-306 ms, and uninstall leaves zero UID
+processes. The [16 KiB report](../../../../../docs/compatibility/2026-09-10-m3-native-arm64-16k.json)
+retains all 40 observations and the failed verdict. This is the first native
+ARM64 16 KiB application evidence for these experimental probes, not a passed
+experimental runtime/Binder gate. The official runtime's separate 8/8-twice
+Binder result must not be substituted for this 19/20 result.
+
 ### Previous startup-fix baseline
 
 Before adding the lowered-limit cases, revision `1.4.0+c240d6c68` passed **18/18 twice on each of
@@ -111,8 +125,9 @@ The official plugin's separate Binder reproduction/fix is documented in the
 it is not a substitute for this patched-runtime result, or vice versa.
 
 Full experimental plugin/Binder execution, other
-forced-syscall paths, watch/reload, API 29/30/32 and native 16 KiB execution
-remain unproven. Only the immediate Bun child is supervised, not
+forced-syscall paths, watch/reload, API 29/30/32 and complete native 16 KiB
+acceptance remain open despite the specifically recorded 19/20 observations.
+Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.
 `distributionReady` remains false. Nothing here is published as a Release asset.
 

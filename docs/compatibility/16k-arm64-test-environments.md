@@ -1,6 +1,17 @@
 # x64 Windows 上的 ARM64 / 16 KiB 测试环境
 
-核查日期: 2026-09-10. 本文是环境选择说明, 不是一次新的设备验收报告.
+核查及设备验证日期: 2026-09-10. 本文说明环境选择, 具体执行证据分别保存在下文链接的设备报告中.
+
+## 已验证的远程路线
+
+用户随后通过 RDB 提供了 Samsung Remote Test Lab 的 SM-A566B. 本机 x64 Windows 无需更换架构, 已通过 ADB 完成以下实测:
+
+- Android 16 / API 36, `arm64-v8a`, `aarch64`, `PAGE_SIZE=16384`, native bridge 和 QEMU 标记均为 0.
+- 正式 Bun + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK, 完整 Binder 套件两轮 8/8, 第二轮前重启插件进程. 安装后 payload 摘要与 10 次忽略 SIGTERM 的生命周期回收均通过. 见 [M5 原生 ARM64 报告](2026-09-10-m5-native-arm64-16k.json).
+- 未改动的实验 runtime 两轮 19/20, 仅已知的 forced-TRAP 降低软限制 spawn 用例失败. 见 [M3 原生 ARM64 报告](2026-09-10-m3-native-arm64-16k.json). 不将正式 Binder 通过代替实验运行时验收.
+- 三个测试包均已卸载, 最终对应 UID 进程数均为 0. 账户登录、预约和 RDB 接入由用户完成; 没有操作其他应用、购买配额或代替用户结束预约.
+
+因此这条路线已从资料候选变为本项目实际用过的原生 ARM64 16 KiB 执行环境. 该结果仍限于上述设备、版本和测试范围, 不等于已发布 Release APK 或所有 16 KiB ABI/设备通过.
 
 ## 结论
 
@@ -45,12 +56,12 @@ AOSP 的现成 ARM64 Cuttlefish 16 KiB 指南明确要求 ARM64 Linux 宿主; �
 
 ## 优先建议: 先核实远程真机, 无需立即购买硬件
 
-Android 官方测试指南列出了 Samsung Remote Test Lab 的 16 KiB 设备. Samsung 官方说明该环境使用实际设备, 并提供 Remote Debug Bridge (RDB) 将远程设备连接到开发电脑的 ADB. 这是一条值得先试的路线, 而非已经替本项目完成的远程验收. 见 [Android 16 KiB 测试环境](https://developer.android.com/guide/practices/page-sizes#test), [Samsung 16 KiB 真机说明](https://developer.samsung.com/remote-test-lab/blog/en/2025/07/07/optimize-your-applications-for-16-kb-page-size-compatibility-using-samsungs-remote-test-lab), [RDB 使用说明](https://developer.samsung.com/remote-test-lab/blog/en/2022/07/13/connect-to-devices-on-remote-test-lab-using-rdb-in-android-studio).
+Android 官方测试指南列出了 Samsung Remote Test Lab 的 16 KiB 设备. Samsung 官方说明该环境使用实际设备, 并提供 Remote Debug Bridge (RDB) 将远程设备连接到开发电脑的 ADB. 上文已记录本项目在一台该类设备上的实际测试; 每次新预约仍需重新核实设备和权限. 见 [Android 16 KiB 测试环境](https://developer.android.com/guide/practices/page-sizes#test), [Samsung 16 KiB 真机说明](https://developer.samsung.com/remote-test-lab/blog/en/2025/07/07/optimize-your-applications-for-16-kb-page-size-compatibility-using-samsungs-remote-test-lab), [RDB 使用说明](https://developer.samsung.com/remote-test-lab/blog/en/2022/07/13/connect-to-devices-on-remote-test-lab-using-rdb-in-android-studio).
 
 若采用该路线:
 
 1. 用户在 [Samsung Remote Test Lab](https://developer.samsung.com/remotetestlab/devices/129/16kb-page-size) 自行登录, 查看 16 KiB 分类中的可用设备及当前配额/使用规则. 无需把账户密码发到会话中.
-2. 预约明确标注 16 KiB 的 Android 设备, 按官方说明连接 RDB, 直到本机 `adb devices -l` 能看到它. 本轮没有登录、预约、消耗配额或上传 APK.
+2. 预约明确标注 16 KiB 的 Android 设备, 按官方说明连接 RDB, 直到本机 `adb devices -l` 能看到它. 由用户处理账号和预约; 测试会占用已预约的设备时间, 安装的 APK 应仅包含获准上传的测试代码和资产.
 3. 使用明确的 serial 检查以下事实, 不能只看网站标签:
 
    ```text
@@ -69,4 +80,4 @@ Android 官方测试指南列出了 Samsung Remote Test Lab 的 16 KiB 设备. S
 
 ## 不变的项目边界
 
-正式插件最低要求仍为 Android 13 / API 33. 已有 x86_64 16 KiB AVD 的 ARM native-bridge 通过记录不升级为原生 ARM64 证据. 原生 x86_64 的 pinned JSC large-page 问题、原生 ARM64 16 KiB 的完整验收以及实验 runtime 的 16 KiB 证据, 仍按 [Roadmap](../../ROADMAP.md) 分别跟踪.
+正式插件最低要求仍为 Android 13 / API 33. 已有 x86_64 16 KiB AVD 的 ARM native-bridge 通过记录不升级为原生 ARM64 证据; 新的 Samsung 真机结果单独归档. 原生 x86_64 的 pinned JSC large-page 问题、最终 Release APK 的 16 KiB 验收以及实验 runtime 的完整 Binder/FD 门禁, 仍按 [Roadmap](../../ROADMAP.md) 分别跟踪.

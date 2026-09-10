@@ -138,7 +138,7 @@ Bun은 Linux의 `close_range` system call (syscall 436)을 호출하는데, Andr
 
 #### 16 KB page-size 기기를 지원하나요?
 
-패키징된 두 ELF executable과 모든 APK entry는 16 KB alignment gate를 통과합니다. Android 16 (API 36) 16 KB AVD에서 `arm64-v8a` APK는 `libndk_translation`을 통해 전체 Binder suite 5개를 통과했지만, native `x86_64` payload는 최소 script에서도 exit code 134로 중단되며 native arm64는 아직 검증하지 않았습니다. 이는 부분 증거이므로 이 release는 일반적인 16 KB 지원을 아직 주장하지 않습니다.
+16 KB: ELF와 APK 정렬 검사를 통과합니다. Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384)에서 공식 Bun을 사용하는 v0.2.1 개발용 arm64 전용 APK가 변환 없이 Binder 테스트 8개를 두 차례 모두 통과했습니다. 이전 x86_64 AVD의 ARM64 결과는 여전히 변환 실행 증거이며, 네이티브 x86_64는 최소 스크립트에서도 종료 코드 134로 중단됩니다. 이는 해당 기기와 개발 빌드에 한정된 증거로, 게시된 Release APK 검증이나 일반적인 16 KB 지원을 뜻하지 않습니다.
 
 #### 어떤 APK를 설치해야 하나요?
 
@@ -194,7 +194,7 @@ default timeout: 60 seconds
 
 `BunRuntimeService`는 action `org.autojs.plugin.bun.RUNTIME` 및 category `bun`로 검색됩니다. `ParcelFileDescriptor`로 source를 받고 request로 execution ID를 받은 뒤 synchronous `runScript` call이 active인 동안 `bun run --no-install <source>`를 실행합니다. Stdout과 stderr는 oneway callback을 통해 bounded chunk로만 전송합니다. Returned terminal Bundle과 `finished` event에는 status 및 diagnostic summary field만 포함되고 complete output stream은 포함되지 않으므로 각 Binder transaction이 size limit 아래로 유지됩니다. Service는 explicit cancel과 runtime prewarming을 지원하며 `:bun_runtime`에서 실행됩니다.
 
-16 KB status: 두 ELF payload와 APK entry는 alignment gate를 통과합니다. Android 16 (API 36) 16 KB AVD에서 `arm64-v8a`는 `libndk_translation`을 통해 Binder test 5개를 모두 통과했지만, native `x86_64`는 최소 script에서도 exit code 134로 중단되며 native arm64는 아직 검증하지 않았습니다. 일반적인 16 KB 지원은 주장하지 않습니다.
+16 KB: ELF와 APK 정렬 검사를 통과합니다. Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384)에서 공식 Bun을 사용하는 v0.2.1 개발용 arm64 전용 APK가 변환 없이 Binder 테스트 8개를 두 차례 모두 통과했습니다. 이전 x86_64 AVD의 ARM64 결과는 여전히 변환 실행 증거이며, 네이티브 x86_64는 최소 스크립트에서도 종료 코드 134로 중단됩니다. 이는 해당 기기와 개발 빌드에 한정된 증거로, 게시된 Release APK 검증이나 일반적인 16 KB 지원을 뜻하지 않습니다.
 
 ******
 
@@ -220,6 +220,8 @@ _2026/09/10_
 - `수정` 고정된 MIT 패치로 실험용 Bun의 시작 시 CLOEXEC 대체 경로 수정: fd 번호 상한 없이 열린 디스크립터를 열거하고 fd 0-3을 보존하며 표시를 완료하지 못하면 종료; 네이티브 오류/경계 테스트를 추가하고 빌드 입력 검증과 런타임 검수를 분리. 공식 런타임과 Android 13 최소 요구 사항은 유지
 - `수정` 고정된 읽기 전용 감독 프로세스로 공식 플러그인의 시간 초과, 취소 및 출력 한도 정리를 수정: 무시된 SIGTERM을 SIGKILL로 승격하고 직접 생성한 Bun 자식의 종료를 기다리며 남은 출력을 보존; Bun 1.4.0과 Android 13 최소 요구 사항은 유지
 - `수정` 공유 SupervisedProcess를 원본 소스에서 컴파일하고 고정된 감독 프로세스를 포함하여 patched Bun 독립 프로브의 종료 처리 수정; schema 2 빌드 기록에 소스, 도구 체인 및 감독 프로세스 바이트를 연결하고 종료까지 출력 읽기 유지
+- `개선` Samsung Remote Test Lab SM-A566B (API 36)에서 네이티브 ARM64 16 KiB 실행 검증: 공식 Bun과 고정된 supervisor를 사용하는 v0.2.1 개발용 arm64 전용 APK가 프로세스 재시작, 설치된 파일 해시, 강제 종료 10건을 포함해 Binder 테스트 8개를 두 차례 모두 통과. 소스/APK/로그 연결을 보존하고 테스트 패키지를 제거하며 Release와 x86_64 검증은 별도로 유지
+- `개선` 같은 네이티브 ARM64 16 KiB 기기에서 변경하지 않은 실험용 런타임이 두 차례 19/20임을 기록: 네이티브 close_range, 시작 플래그 설정, 수명 주기 검사는 통과하지만 강제 TRAP과 RLIMIT_NOFILE 감소 시 기존 spawn fd 상속 결함이 남음. 두 실패를 보존하며 전체 실험용 Binder 또는 런타임 검증 완료로 간주하지 않음
 - `개선` RLIMIT_NOFILE을 낮추는 대조 테스트를 추가해 실험용 프로브를 20개로 확장: API 28/31/33/35 네이티브 arm64 실기기 4대는 각각 두 차례 18/20, API 33 네이티브 x86_64 AVD는 두 차례 19/20이며 모두 4 KiB 페이지 사용. 기존 180개 관측은 계속 통과하지만 새 실패 18건에서 soft limit을 128로 낮추면 두 spawn API 모두 fd 256을 자식에게 전달함을 확인. 실패와 제한 복원 및 정리 결과를 보존하며 런타임 바이트 변경이나 수정 완료를 주장하지 않음
 - `개선` x64 Windows의 ARM64 16 KiB 테스트 환경 안내 추가: VMware와 WSL만으로는 네이티브 ARM64 Android를 제공할 수 없음. 전체 시스템 소프트웨어 에뮬레이션을 구분하고 Samsung 원격 16 KiB 실기기와 RDB/ADB를 후보로 제안하되, 실제 가용성과 권한 확인이 필요하며 새 기기 검증 완료로 간주하지 않음
 - `개선` 이전 18개 프로브 결과: FD/SIGSYS 프로브 5개를 추가하고 시작 수정 검증: API 28/31/33/35 네이티브 arm64 실기기 4대와 API 33 네이티브 x86_64 AVD에서 각각 두 차례 18/18, 총 180/180 통과; 두 ABI 모두 두 번의 클린 빌드가 바이트 단위로 일치. 이전 17/18 실패 보고서를 보존하고 공식 런타임과 Android 13 최소 요구 사항은 유지; 전체 실험용 Binder와 네이티브 16 KB 실행 검증은 미완료

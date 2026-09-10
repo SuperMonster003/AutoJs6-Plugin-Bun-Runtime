@@ -1,0 +1,627 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-10",
+  "localVerification": {
+    "nodeTests": {
+      "files": 16,
+      "passed": 104,
+      "failed": 0
+    },
+    "markdown": {
+      "languages": 10,
+      "generatedArtifacts": 36,
+      "checkPassed": true,
+      "pythonTestsPassed": 11
+    },
+    "gradle": {
+      "jdk": "21.0.12.1",
+      "tasks": [
+        ":app:testDebugUnitTest --rerun",
+        ":app:verifyDebugApkRuntimeIntegrity",
+        ":app:assembleDebugAndroidTest",
+        ":app:lintDebug"
+      ],
+      "passed": true,
+      "jvmTestsPassed": 7,
+      "debugApkVariants": [
+        "arm64-v8a",
+        "x86_64",
+        "universal"
+      ],
+      "zipAlignmentBytes": 16384
+    },
+    "runtimeSupervisorSharedApiAndExperimentalLocksPassed": true,
+    "sourceCodeOrRuntimePayloadChanged": false,
+    "note": "Post-documentation local checks are separate from the exact retained APKs used for device acceptance; device reports bind their original hashes and clean source commit."
+  },
+  "milestone": "M5 native ARM64 16 KiB execution",
+  "status": "passed-for-recorded-development-binder-scope",
+  "passed": true,
+  "scope": "Official Bun 1.4.0 and locked supervisor in the v0.2.1 development arm64-only Debug APK, two complete 8-test Binder rounds on a Samsung Remote Test Lab physical device. Not acceptance of a published Release APK or every 16 KiB ABI/device.",
+  "officialMinimumApi": 33,
+  "officialRuntimeAndSupervisorBytesChanged": false,
+  "experimentalRuntimeIncluded": false,
+  "general16KiBSupportClaimed": false,
+  "sourceTree": "fe2f6cdcf77025b3efa0f83f9dabfb1034589092",
+  "sourceTreeCleanAtBuild": true,
+  "sourceBindingsEncoding": "git-canonical utf8-lf",
+  "sourceBindings": [
+    {
+      "path": "app/build.gradle.kts",
+      "bytes": 11679,
+      "sha256": "911485a88a8a2669ec01d22b11a5d0c1f85b0bcee16ebad07ecb050af2f93445"
+    },
+    {
+      "path": "app/src/androidTest/AndroidManifest.xml",
+      "bytes": 735,
+      "sha256": "f261fa80facc6514dd38714961636d54edb45a7cd7014c97de3e96085e027eeb"
+    },
+    {
+      "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt",
+      "bytes": 37227,
+      "sha256": "04d2ea75d3ec466abbe5a6cdbe9f0be5b5618a2bb41d6e59187910d46d5f60c6"
+    },
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "bytes": 2001,
+      "sha256": "4b01c021d8bf396a4b68d0ed72e74ce29efa65352364effcc5de6078f74377f8"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt",
+      "bytes": 4753,
+      "sha256": "b81afdf5a2687fc30a9fcdc70256bd7a8f8240718731d7bb4789e5fb13f19b8e"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginInfoService.kt",
+      "bytes": 774,
+      "sha256": "5778e3ba2ab3c0c18a3ed552d6adf7ad7c2847d5a0cbcc56d956bdadfb296f79"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginMetadata.kt",
+      "bytes": 3013,
+      "sha256": "694e588f64fa94476272a21e3aa01273657ffec84ff0f126b796baf449841be6"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeBinary.kt",
+      "bytes": 5224,
+      "sha256": "ee84e0e64df96bf4b05556714d1be72c242177d6529756edfa2b59112b02b937"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeService.kt",
+      "bytes": 24019,
+      "sha256": "8fafd85f55066a4adc45e524bf14a2490aff37230c977c3c3c8a96c2dd59e348"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+      "bytes": 3727,
+      "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/WakeActivity.kt",
+      "bytes": 275,
+      "sha256": "500179cc07f7f74c520b3357a4ebf4c78ab44e45aecc0127d58f62e2f7ed18a8"
+    },
+    {
+      "path": "libs/api-artifacts.lock.json",
+      "bytes": 503,
+      "sha256": "57a866e6ac55efdbbc3f85f45bbca7b55d00db603762a8d5b5d4117e48a9d041"
+    },
+    {
+      "path": "samples/fetch.bun.js",
+      "bytes": 874,
+      "sha256": "1fa9a61fda1299f3f476f4204de54e3f630658c5cefb8e6e98ab0c405a983bd5"
+    },
+    {
+      "path": "samples/file-io.bun.js",
+      "bytes": 529,
+      "sha256": "86c6ed2c63be36a37bea76255841cd263262993e2b487dd4f3463257ca68b04d"
+    },
+    {
+      "path": "samples/hello.bun.js",
+      "bytes": 226,
+      "sha256": "2843b9c6263da46426584f1d091f5d13c65ef4ec1305f37327acafc6cddb7def"
+    },
+    {
+      "path": "samples/output-streams.bun.js",
+      "bytes": 449,
+      "sha256": "24bcfe22401c2906b52660b5ca56bd5a49288e494a30641fac18010ad3ee3710"
+    },
+    {
+      "path": "samples/typescript.bun.ts",
+      "bytes": 480,
+      "sha256": "e1dd672755c7bdec145b64d4516600bae2ac32c9460295829b0a70b026fa413a"
+    },
+    {
+      "path": "tools/bun-runtime/runtime.lock.json",
+      "bytes": 2424,
+      "sha256": "2deb2543b5874eb098d449ebfba1e209d076bb0664beab5508240f19563dab5d"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+      "bytes": 2128,
+      "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.c",
+      "bytes": 4394,
+      "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+      "bytes": 1018,
+      "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+    },
+    {
+      "path": "version.properties",
+      "bytes": 466,
+      "sha256": "65ff72b7ea7a17ece7efe2bbb7b9468afc6f73e38fc32ed870a7319386f82a97"
+    }
+  ],
+  "runtime": {
+    "version": "1.4.0",
+    "revision": "1.4.0+34cbb9a40",
+    "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "variant": "bun-1.4.0-android"
+  },
+  "runner": {
+    "component": "io.github.supermonster003.autojs6.plugin.bun.runtime.test/androidx.test.runner.AndroidJUnitRunner",
+    "testClass": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+    "arguments": {
+      "requiredApiLevel": 36,
+      "requiredPageSizeBytes": 16384
+    },
+    "defaultSigtermIgnoringTimeoutMillis": 3000,
+    "timeoutOverrideUsed": false,
+    "apiAndPageSizeAssertedBeforeEveryTest": true,
+    "testAssertionsChanged": false
+  },
+  "testScope": [
+    "Exact installed Bun payload and supervisor hashes; arm64-only package and PluginInfo ABI mapping",
+    "Action/category discovery, explicit service binding and Binder descriptor",
+    "Wake/info/runtime permission and metadata",
+    "Runtime version/revision, repeated prewarm and real JS/TS execution",
+    "Unicode stdout/stderr streaming and bounded terminal results",
+    "Five repository samples: JS, TS, file I/O, output and loopback fetch",
+    "Invalid/oversized requests, output limits, pre-dispatch and running cancellation",
+    "SIGTERM-ignoring cancellation after readiness (three per round), timeout and output limit; actual child absence and workspace deletion",
+    "Force-stop before each round followed by fresh instrumentation/Binder execution"
+  ],
+  "rawReport": {
+    "bytes": 18325,
+    "sha256": "44652f6cf64168a5677df1e8b7d92686d60c1b12583891876404e6c6992fa917"
+  },
+  "installedPackageDump": {
+    "bytes": 5172,
+    "sha256": "ecc687eb419d4d68b95560cf831d5f016bab414f3d4e961891df77867b635864"
+  },
+  "startedAt": "2026-09-10T01:40:52.513Z",
+  "baseCommit": "415ba1d019e8adf8d3253104588684cf215db291",
+  "developmentVersion": "0.2.1",
+  "releasePublished": false,
+  "buildType": "debug",
+  "environment": {
+    "provider": "Samsung Remote Test Lab, device endpoint supplied by user",
+    "nativeExecution": true,
+    "manufacturer": "samsung",
+    "model": "SM-A566B",
+    "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+    "api": "36",
+    "abi": "arm64-v8a",
+    "abis": "arm64-v8a",
+    "nativeBridge": "0",
+    "qemu": "0",
+    "hardware": "s5e8855",
+    "kernelMachine": "aarch64",
+    "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+    "pageSizeBytes": 16384
+  },
+  "apks": [
+    {
+      "filename": "app-debug-androidTest.apk",
+      "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.test",
+      "bytes": 2272649,
+      "sha256": "e806ff76c78bbd00dad1d3e39bab27b62759f66286662bb6fd2b920120628552",
+      "signing": {
+        "verifiedSchemes": [
+          "v2"
+        ],
+        "signerCount": 1,
+        "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+      }
+    },
+    {
+      "filename": "app-arm64-v8a-debug.apk",
+      "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+      "bytes": 40887456,
+      "sha256": "d86f51a9d5746f37e9b783e9d78e977f4dab580ca0ad111129a9d04cb41c80f0",
+      "signing": {
+        "verifiedSchemes": [
+          "v2"
+        ],
+        "signerCount": 1,
+        "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+      }
+    }
+  ],
+  "rounds": [
+    {
+      "round": 1,
+      "processRestartBeforeRound": true,
+      "commandStatus": 0,
+      "passed": true,
+      "output": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29812 reaped=true exitCode=137 durationMillis=318 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29826 reaped=true exitCode=137 durationMillis=312 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29839 reaped=true exitCode=137 durationMillis=314 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=29899 reaped=true exitCode=137 durationMillis=3306 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=29932 reaped=true exitCode=137 durationMillis=830 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 11.806\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+      "stderr": "",
+      "tests": 8,
+      "failures": 0,
+      "skipped": 0,
+      "durationSeconds": 11.806,
+      "testStatuses": [
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "installedNativeRuntimeMatchesTheLockedPayload",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "installedNativeRuntimeMatchesTheLockedPayload",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringTimeoutReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringTimeoutReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringOutputLimitReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringOutputLimitReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "checkedInSamplesExecuteWithinPublishedBoundaries",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "checkedInSamplesExecuteWithinPublishedBoundaries",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "manifestPublishesWakeInfoAndRuntimeContracts",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "manifestPublishesWakeInfoAndRuntimeContracts",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "timeoutCancellationAndInvalidRequestAreBounded",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "timeoutCancellationAndInvalidRequestAreBounded",
+          "code": 0
+        }
+      ],
+      "lifecycle": [
+        {
+          "error": "CANCELLED",
+          "childPid": 29812,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 318,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "CANCELLED",
+          "childPid": 29826,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 312,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "CANCELLED",
+          "childPid": 29839,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 314,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "TIMEOUT",
+          "childPid": 29899,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 3306,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "OUTPUT_LIMIT",
+          "childPid": 29932,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 830,
+          "workspaceRemoved": true
+        }
+      ],
+      "rawLog": {
+        "bytes": 7016,
+        "sha256": "63c63b10b57968edd152c981f67f6ae29dc682ef787de3123eaf12307507759b"
+      }
+    },
+    {
+      "round": 2,
+      "processRestartBeforeRound": true,
+      "commandStatus": 0,
+      "passed": true,
+      "output": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=30091 reaped=true exitCode=137 durationMillis=316 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=30105 reaped=true exitCode=137 durationMillis=312 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=30120 reaped=true exitCode=137 durationMillis=314 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=30178 reaped=true exitCode=137 durationMillis=3305 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=30208 reaped=true exitCode=137 durationMillis=821 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 12.023\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+      "stderr": "",
+      "tests": 8,
+      "failures": 0,
+      "skipped": 0,
+      "durationSeconds": 12.023,
+      "testStatuses": [
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "installedNativeRuntimeMatchesTheLockedPayload",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "installedNativeRuntimeMatchesTheLockedPayload",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringTimeoutReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringTimeoutReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringOutputLimitReapsTheChild",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "sigtermIgnoringOutputLimitReapsTheChild",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "checkedInSamplesExecuteWithinPublishedBoundaries",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "checkedInSamplesExecuteWithinPublishedBoundaries",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "manifestPublishesWakeInfoAndRuntimeContracts",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "manifestPublishesWakeInfoAndRuntimeContracts",
+          "code": 0
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "timeoutCancellationAndInvalidRequestAreBounded",
+          "code": 1
+        },
+        {
+          "class": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest",
+          "test": "timeoutCancellationAndInvalidRequestAreBounded",
+          "code": 0
+        }
+      ],
+      "lifecycle": [
+        {
+          "error": "CANCELLED",
+          "childPid": 30091,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 316,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "CANCELLED",
+          "childPid": 30105,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 312,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "CANCELLED",
+          "childPid": 30120,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 314,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "TIMEOUT",
+          "childPid": 30178,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 3305,
+          "workspaceRemoved": true
+        },
+        {
+          "error": "OUTPUT_LIMIT",
+          "childPid": 30208,
+          "reaped": true,
+          "exitCode": 137,
+          "durationMillis": 821,
+          "workspaceRemoved": true
+        }
+      ],
+      "rawLog": {
+        "bytes": 7016,
+        "sha256": "c5c9c53690f9f7dff712ccb3cb7dbc268c8dece6e7a1a4399b63c02fc20de176"
+      }
+    }
+  ],
+  "lifecycle": {
+    "preexistingPackagesAbsent": true,
+    "installs": [
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.test",
+        "status": 0,
+        "stdout": "Performing Streamed Install\r\nSuccess\r\n",
+        "stderr": ""
+      },
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+        "status": 0,
+        "stdout": "Performing Streamed Install\r\nSuccess\r\n",
+        "stderr": ""
+      }
+    ],
+    "cleanup": [
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+        "uid": 10324,
+        "uidProcessesBeforeUninstall": 0,
+        "packageAbsent": true,
+        "finalUidProcessCount": 0
+      },
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.test",
+        "uid": 10323,
+        "uidProcessesBeforeUninstall": 0,
+        "packageAbsent": true,
+        "finalUidProcessCount": 0
+      }
+    ]
+  },
+  "installedPayloads": [
+    {
+      "name": "libbun_exec.so",
+      "path": "/data/app/~~CR1z9_CALf2juFiSmXIkLA==/io.github.supermonster003.autojs6.plugin.bun.runtime-6taXTj8L281w6NGqIJsl1g==/lib/arm64/libbun_exec.so",
+      "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+      "metadata": "87914400:755"
+    },
+    {
+      "name": "libbun_supervisor.so",
+      "path": "/data/app/~~CR1z9_CALf2juFiSmXIkLA==/io.github.supermonster003.autojs6.plugin.bun.runtime-6taXTj8L281w6NGqIJsl1g==/lib/arm64/libbun_supervisor.so",
+      "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+      "metadata": "7440:755"
+    }
+  ],
+  "finishedAt": "2026-09-10T01:42:03.845Z",
+  "preparationAttempts": [
+    {
+      "attempt": 1,
+      "scope": "Local evidence-collector preparation; no Binder test ran",
+      "rawReport": {
+        "bytes": 2303,
+        "sha256": "4b25b1414ec7b002b84f50d35a4b332a1e77defaee759ccda2c87be68c15e7b9"
+      },
+      "error": "AssertionError [ERR_ASSERTION]: unexpected installed package/UID record",
+      "cleanup": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.test",
+          "packageAbsent": true
+        }
+      ],
+      "resolution": "Use an exact package-name UID parser instead of the API28-probe-specific parser."
+    },
+    {
+      "attempt": 2,
+      "scope": "Local evidence-collector preparation; no Binder test ran",
+      "rawReport": {
+        "bytes": 2822,
+        "sha256": "3ff15fdfeb8e43898af18122d11a38b5712af61e3305c232542f59ccc1cbf8c9"
+      },
+      "error": "AssertionError [ERR_ASSERTION]: safe installed native directory required",
+      "cleanup": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+          "uid": 10322,
+          "uidProcessesBeforeUninstall": 0,
+          "packageAbsent": true,
+          "finalUidProcessCount": 0
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.test",
+          "uid": 10321,
+          "uidProcessesBeforeUninstall": 0,
+          "packageAbsent": true,
+          "finalUidProcessCount": 0
+        }
+      ],
+      "resolution": "Allow dots in the validated Android package directory; retain the traversal and metacharacter rejection."
+    }
+  ],
+  "interpretation": [
+    "The target is a user-provided Samsung Remote Test Lab physical ARM64 device; ro.kernel.qemu=0 and nativeBridge=0. PAGE_SIZE=16384 is checked on-device and through Os.sysconf in every instrumentation @Before, not inferred from ELF/ZIP alignment.",
+    "All 16 Binder test executions and 10 SIGTERM-ignoring lifecycle cases pass without relaxing production limits or the native 3000 ms fixture. The installed Bun and supervisor execute from Android nativeLibraryDir with exact locked hashes and mode 755.",
+    "This closes the recorded native ARM64 development-build execution gap. Native x86_64 large-page support, final Release-APK acceptance and the experimental line remain separate gates.",
+    "The test app and permission-owning instrumentation APK were absent before installation and removed afterwards with no UID processes remaining. No remote session shutdown, account login, reservation change, credit purchase or unrelated package operation was performed."
+  ],
+  "experimentalCompanionReport": "docs/compatibility/2026-09-10-m3-native-arm64-16k.json"
+}

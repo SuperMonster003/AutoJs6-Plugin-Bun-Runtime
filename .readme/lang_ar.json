@@ -76,7 +76,7 @@
     },
     {
       "q": "هل أجهزة page-size بحجم 16 KB مدعومة?",
-      "a": "يجتاز كلا ELF executable المعبأين وجميع إدخالات APK بوابات 16 KB alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز APK لـ `arm64-v8a` مجموعة Binder الكاملة عبر `libndk_translation`, لكن payload `x86_64` الأصلي يتوقف بالـ exit code 134 حتى مع script بسيطة; ولم يتم اختبار arm64 الأصلي بعد. هذه أدلة جزئية, لذلك لا يزال هذا الإصدار لا يدعي دعما عاما لـ 16 KB."
+      "a": "16 KB: تجتاز ملفات ELF وAPK اختبارات المحاذاة. على Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384), اجتاز APK التطوير v0.2.1 المخصص لـ arm64 مع Bun الرسمي اختبارات Binder الثمانية مرتين دون ترجمة المعمارية. تظل نتيجة ARM64 السابقة على AVD بمعمارية x86_64 نتيجة عبر الترجمة فقط; ويتوقف x86_64 الأصلي حتى مع سكربت بسيط برمز الخروج 134. هذا دليل تطوير خاص بالجهاز, وليس اعتمادا لـ APK إصدار منشور أو دعما عاما لـ 16 KB."
     },
     {
       "q": "أي APK يجب أن أثبت?",
@@ -86,7 +86,7 @@
   "h3_plugin_interface": "واجهة plugin",
   "p_plugin_interface": "هذا القسم موجه لمطوري مضيف AutoJs6 و plugin; يمكن للمستخدمين العاديين تخطيه. المعرفات والحدود الثابتة هي",
   "p_contract": "يتم اكتشاف `BunRuntimeService` عبر action `{{ plugin_service_action }}` و category `{{ plugin_service_category }}`. يستقبل المصدر عبر `ParcelFileDescriptor` و execution ID ضمن الطلب, ثم ينفذ `bun run --no-install <source>` مع بقاء استدعاء `runScript` المتزامن نشطا. يتم إرسال stdout و stderr فقط كـ bounded chunk عبر oneway callback. يحتوي terminal Bundle المعاد و event باسم `finished` على status و diagnostic summary field فقط ولا يحمل complete output stream, مما يبقي كل Binder transaction دون size limit. تدعم service cancellation صريحة و runtime prewarming وتعمل في `:bun_runtime`.",
-  "p_16kb_status": "حالة 16 KB: يجتاز كلا ELF payload وإدخالاتهما في APK بوابات alignment. على AVD بحجم صفحات 16 KB يعمل بنظام Android 16 (API 36), اجتاز `arm64-v8a` اختبارات Binder الخمسة عبر `libndk_translation`, بينما يتوقف `x86_64` الأصلي بالـ exit code 134 مع script بسيطة; ويبقى arm64 الأصلي غير مختبر. لا يتم ادعاء دعم عام لـ 16 KB.",
+  "p_16kb_status": "16 KB: تجتاز ملفات ELF وAPK اختبارات المحاذاة. على Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384), اجتاز APK التطوير v0.2.1 المخصص لـ arm64 مع Bun الرسمي اختبارات Binder الثمانية مرتين دون ترجمة المعمارية. تظل نتيجة ARM64 السابقة على AVD بمعمارية x86_64 نتيجة عبر الترجمة فقط; ويتوقف x86_64 الأصلي حتى مع سكربت بسيط برمز الخروج 134. هذا دليل تطوير خاص بالجهاز, وليس اعتمادا لـ APK إصدار منشور أو دعما عاما لـ 16 KB.",
   "h3_roadmap": "خريطة الطريق",
   "p_roadmap": "تجيب خريطة الطريق عن سؤالين: ما الذي يعمل الآن وما الذي يأتي لاحقا. تصف العناصر المحددة السلوك الفعلي للإصدار الحالي; أما العناصر غير المحددة (المشاريع متعددة الملفات و AutoJs6 capability bridge ودعم إصدارات Android أوسع وترقيات Bun وغيرها) فهي خطط, وليست وعدا بدعم حالي.",
   "text_link_roadmap": "عرض ROADMAP.md",

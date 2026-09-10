@@ -51,9 +51,18 @@ retains all results and binds sources/APKs without altering earlier reports.
 The next source fix must respect the spawn child's vfork constraints; do not
 reuse the allocating startup helper there. Full experimental Binder, other
 syscall semantics and the remaining API/ABI matrix are still open; this is not
-stable Android 9 support. Native ARM64 16 KiB environment options are documented
-in the [x64 Windows guide](../../../../docs/compatibility/16k-arm64-test-environments.md),
-not claimed as completed device acceptance.
+stable Android 9 support.
+
+The same unchanged experimental APK subsequently scored **19/20 twice** on a
+Samsung Remote Test Lab SM-A566B physical device (API 36, native arm64-v8a,
+16384-byte pages, no translation). The native lowered-limit control passes;
+only its forced-TRAP counterpart still leaks the sentinel through both child
+APIs. All six forcible lifecycle cases pass, and the package was uninstalled
+with zero UID processes. See the [native 16 KiB application report](../../../../docs/compatibility/2026-09-10-m3-native-arm64-16k.json).
+This establishes specific 16 KiB execution observations, not full experimental
+runtime or Binder acceptance. The official runtime's separate 8/8-twice Binder
+result does not close this failure. The working remote-device route is described
+in the [x64 Windows guide](../../../../docs/compatibility/16k-arm64-test-environments.md).
 
 ## Safety boundary
 

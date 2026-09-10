@@ -48,7 +48,9 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - API 28 through 32 remain unsupported until a patched Bun runtime handles Android seccomp traps and portable lower-version validation passes. A manifest-only minSdk change cannot make the unmodified runtime portable on those releases.
 - Both packaged ELF files meet at least 16 KB PT_LOAD alignment, and every debug/release APK passes the 16 KB ZIP alignment gate.
 - On an Android 16 / API 36 x86_64 AVD with `PAGE_SIZE=16384` hard-asserted, the official `arm64-v8a` payload passed the full 5-test Binder suite through `libndk_translation`, while the native `x86_64` payload aborted with exit code 134 on the minimal `--eval "void 0"` probe.
-- Do not claim general end-to-end 16 KB support: native x86_64 remains blocked, native arm64 has not been exercised in a 16 KB environment, and the future patched runtime has no 16 KB execution evidence.
+- On Samsung Remote Test Lab SM-A566B (Android 16 / API 36, native arm64-v8a, PAGE_SIZE=16384, native bridge disabled), the official Bun plus supervisor in the v0.2.1 development arm64-only Debug APK passed the full 8-test Binder suite twice with a process restart. Installed payload hashes and cleanup passed; see `docs/compatibility/2026-09-10-m5-native-arm64-16k.json`. This is not acceptance of a published Release APK.
+- The unchanged experimental `1.4.0+c240d6c68` runtime scored 19/20 twice on that same native ARM64 16 KiB device: the forced-TRAP lowered-RLIMIT_NOFILE spawn leak remains, while the other application probes passed. See `docs/compatibility/2026-09-10-m3-native-arm64-16k.json`; do not claim full experimental Binder or runtime acceptance.
+- Do not claim general end-to-end 16 KB support: native x86_64 remains blocked, final Release-APK acceptance is separate, and the experimental runtime still has an open spawn fallback defect. Keep native ARM64, translated ARM64 and native x86_64 evidence distinct.
 
 ## Execution contract
 

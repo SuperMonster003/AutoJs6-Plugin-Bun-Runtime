@@ -76,7 +76,7 @@
     },
     {
       "q": "16 KB page-size 端末に対応していますか?",
-      "a": "Packaged された 2 つの ELF executable とすべての APK entry は 16 KB alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では, `arm64-v8a` APK が `libndk_translation` 経由で Binder suite 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort し, native arm64 は未検証です. これは部分的な証拠であるため, この release は一般的な 16 KB 対応をまだ表明しません."
+      "a": "16 KB: ELF と APK の配置チェックは成功しています. Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384) では, 公式 Bun を使う v0.2.1 開発版 arm64 専用 APK が変換なしで Binder 全 8 テストに 2 回とも成功しました. 以前の x86_64 AVD 上の ARM64 結果は変換経由の証拠のままです; ネイティブ x86_64 は最小スクリプトでも終了コード 134 で中止します. これは当該端末と開発版に限る証拠であり, 公開済み Release APK の検証や一般的な 16 KB 対応を意味しません."
     },
     {
       "q": "どの APK をインストールすればよいですか?",
@@ -86,7 +86,7 @@
   "h3_plugin_interface": "プラグインインターフェース",
   "p_plugin_interface": "このセクションは AutoJs6 host と plugin developer 向けです. 一般ユーザーは読み飛ばして構いません. 安定した identifier と limit は次のとおりです",
   "p_contract": "`BunRuntimeService` は action `{{ plugin_service_action }}` と category `{{ plugin_service_category }}` で発見されます. `ParcelFileDescriptor` で source を, request で execution ID を受け取り, synchronous `runScript` call が active の間に `bun run --no-install <source>` を実行します. Stdout と stderr は oneway callback で bounded chunk としてのみ送信します. Returned terminal Bundle と `finished` event は status と diagnostic summary field だけを含み, complete output stream を含まないため, 各 Binder transaction は size limit 以下に保たれます. Service は explicit cancel と runtime prewarming に対応し, `:bun_runtime` で動作します.",
-  "p_16kb_status": "16 KB status: 2 つの ELF payload と APK entry は alignment gate を通過しています. Android 16 (API 36) の 16 KB AVD では `arm64-v8a` が `libndk_translation` 経由で Binder test 全 5 件に成功しましたが, native `x86_64` は最小 script でも exit code 134 で abort し, native arm64 は未検証です. 一般的な 16 KB 対応は表明しません.",
+  "p_16kb_status": "16 KB: ELF と APK の配置チェックは成功しています. Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384) では, 公式 Bun を使う v0.2.1 開発版 arm64 専用 APK が変換なしで Binder 全 8 テストに 2 回とも成功しました. 以前の x86_64 AVD 上の ARM64 結果は変換経由の証拠のままです; ネイティブ x86_64 は最小スクリプトでも終了コード 134 で中止します. これは当該端末と開発版に限る証拠であり, 公開済み Release APK の検証や一般的な 16 KB 対応を意味しません.",
   "h3_roadmap": "ロードマップ",
   "p_roadmap": "Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何をするか. チェック済み項目は現在のバージョンの実際の動作を表します. 未チェック項目 (複数ファイルプロジェクト, AutoJs6 capability bridge, より広い Android バージョン対応, Bun upgrade など) は計画であり, 現在の対応を意味しません.",
   "text_link_roadmap": "ROADMAP.md を表示",
