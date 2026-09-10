@@ -11,18 +11,23 @@ import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lo
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 function fdFixture(mode, abi = "arm64-v8a") {
+  const lowered = mode === "lowered-native" || mode === "lowered-trap";
   const enosys = { result: -1, errno: 38 };
   const trap = { marker: enosys, closeRange: enosys };
   const base = { schemaVersion: 1, mode, arch: abi === "arm64-v8a" ? "arm64" : "x64", passed: true };
   return structuredClone({ ...base, before: { fd: 256, open: true, cloexec: false },
     nativeCloseRange: enosys, nativeStillOpen: true, nativeCloexec: false,
     after: { parentOpen: true, parentCloexec: false, sentinelIdentity: true },
-    ...(mode !== "spawn-native" ? { policy: { installed: true, before: { result: -1, errno: 22 },
+    ...(mode !== "spawn-native" && mode !== "lowered-native" ? { policy: { installed: true, before: { result: -1, errno: 22 },
       after: enosys, filterSha256: fdFilterSha256(abi) }, trap } : {}),
     ...(mode === "startup-trap" ? { startup: { samePid: true, inheritedOpen: true, cloexec: true, sentinelIdentity: true } } :
       mode === "sigsys-listener" ? { listener: { during: trap, after: trap, delivered: 1 } } : {
-      control: { exitCode: 0, stdoutTarget: "/memfd:spawn_stdio_stdout (deleted)", stderrEmpty: true }, maskRestored: true,
-      sync: { sentinelAbsent: true, exitCode: 1 }, async: { sentinelAbsent: true, exitCode: 1 },
+      control: { exitCode: 0, stdoutTarget: "/memfd:spawn_stdio_stdout (deleted)", stderrEmpty: true },
+      ...(lowered ? { limit: { before: { soft: 32768, hard: 32768, openMax: 32768 },
+        during: { soft: 128, hard: 32768, openMax: 128 }, after: { soft: 32768, hard: 32768, openMax: 32768 }, restored: true } } :
+        { maskRestored: true }),
+      sync: { sentinelAbsent: true, ...(lowered ? { sentinelIdentity: false } : {}), exitCode: 1 },
+      async: { sentinelAbsent: true, ...(lowered ? { sentinelIdentity: false } : {}), exitCode: 1 },
       ...(mode === "blocked-sigsys" ? { mask: { childBlocked: true, callerStillBlocked: true } } : {}),
     }),
   });
@@ -143,6 +148,37 @@ test("FD evidence cannot hide no-op fallback, missing controls, wrong policy or 
     assert.throws(() => validateFdEvidence(proof, mode, "arm64-v8a"));
   }
   assert.throws(() => validateFdEvidence(undefined, "spawn-native", "arm64-v8a"));
+});
+test("lowered nofile probes require the exact lowered bound, unchanged hard limit, restoration and both child checks", () => {
+  for (const abi of ABIS) for (const mode of ["lowered-native", "lowered-trap"]) {
+    const proof = fdFixture(mode, abi);
+    validateFdEvidence(proof, mode, abi);
+    for (const change of [
+      p => { delete p.limit; }, p => { p.limit.restored = false; },
+      p => { p.limit.before.soft = 128; }, p => { p.limit.before.soft = Infinity; },
+      p => { p.limit.before.hard = 1024; }, p => { p.limit.before.openMax = 1024; },
+      p => { p.limit.during.soft = 32768; }, p => { p.limit.during.hard = 128; },
+      p => { p.limit.during.openMax = 32768; }, p => { p.limit.after.soft = 128; },
+      p => { p.sync.sentinelAbsent = false; }, p => { p.sync.sentinelIdentity = true; },
+      p => { p.async.exitCode = 0; }, p => { delete p.async; }, p => { delete p.control; },
+    ]) {
+      const changed = structuredClone(proof); change(changed);
+      assert.throws(() => validateFdEvidence(changed, mode, abi));
+    }
+  }
+});
+test("lowered-limit fixtures preserve the original probe suite and cannot disguise a skip as success", () => {
+  for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
+    const index = probes.findIndex(probe => probe.id === id);
+    const { report, options } = fixture();
+    assert.equal(report.probes.length, 20);
+    report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
+    report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
+    assert.throws(() => validateReport(report, options), /child inherited sentinel/);
+    const skipped = fixture();
+    skipped.report.probes[index].fdEvidence = { mode: FD_MODES[id], passed: true, skipped: true };
+    assert.throws(() => validateReport(skipped.report, skipped.options));
+  }
 });
 test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
   assert.deepEqual(parseOptions(["--serial", "a"], ["--serial"]), { "--serial": "a" });

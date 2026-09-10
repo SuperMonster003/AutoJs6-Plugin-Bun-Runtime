@@ -15,13 +15,43 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
-The startup-fix revision `1.4.0+c240d6c68` now passes **18/18 twice on each of
+The suite now has **20 probes**. Two new lowered-`RLIMIT_NOFILE` cases expose a
+spawn fallback defect in the unchanged startup-fix revision `1.4.0+c240d6c68`:
+native arm64 API 28/31/33/35 each score **18/20 twice**, and the native x86_64
+API 33 AVD scores **19/20 twice**, all with 4096-byte pages. The original
+180/180 observations still pass, including all 10 startup-CLOEXEC assertions.
+Of the 20 new observations, 18 fail and only the two native x86_64 controls pass.
+All five device runners correctly exit nonzero. This is not a passing runtime gate.
+
+After opening fd 256, each new case lowers only its Bun process's soft limit
+from 32768 to 128; the hard limit remains 32768. The fallback scans only below
+the current `sysconf(_SC_OPEN_MAX)`, so both non-Bun toybox children can still
+resolve the sentinel's path through fd 256. All 18 failures identify the same sentinel
+in both `spawnSync` and asynchronous `spawn`, totaling 36 leaked child-FD
+observations. Native x86_64 `close_range` succeeds; forcing a TRAP reproduces
+the leak there too. Each case restores the original limit and retains the
+parent descriptor unchanged before reporting its verdict.
+
+The [lowered-limit report](../../../../../docs/compatibility/2026-09-10-m3-spawn-nofile.json)
+binds the exact sources, test APKs, all 200 bounded outcomes and cleanup. The
+builder reverified the existing two-clean-build runtime pair; no new Bun build,
+runtime patch or official payload change occurred in this run. All 30 forcible
+termination cases still pass at 301-306 ms. Every test package was uninstalled
+with zero UID processes remaining, and the owned API 33 AVD was shut down.
+The next fix must cover live fds above a lowered soft limit **without violating
+the spawn child's vfork constraints**; the allocating startup helper is not a
+drop-in replacement. Full Binder and native 16 KiB acceptance remain open;
+see the [x64 Windows environment guide](../../../../../docs/compatibility/16k-arm64-test-environments.md).
+
+### Previous startup-fix baseline
+
+Before adding the lowered-limit cases, revision `1.4.0+c240d6c68` passed **18/18 twice on each of
 five environments**, totaling 180/180: native arm64 API 28/31/33/35 and native
 x86_64 API 33, all with 4096-byte pages. The unchanged same-PID startup assertion
 now confirms a retained sentinel with CLOEXEC in all 10 rounds. All 30 forcible
 termination cases also pass at 301-305 ms. Every test package was uninstalled
 with no UID processes remaining, and the owned API 33 AVD was shut down.
-The [new report](../../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json)
+The [startup-fix report](../../../../../docs/compatibility/2026-09-10-m3-startup-cloexec.json)
 binds the two-clean-build runtime pair, APKs, sources, helpers and all bounded
 results. This remains test-only application evidence, not full plugin Binder
 or general Android 9/16 KiB support.
@@ -88,7 +118,7 @@ arbitrary detached descendants; this is not a security sandbox.
 
 ## FD and SIGSYS fixture design
 
-`probes.json` names only the fixed `fd-probes.mjs` source and five exact modes.
+`probes.json` names only the fixed `fd-probes.mjs` source and seven exact modes.
 The builder inlines a constant mode plus canonical UTF-8/LF source into the
 APK, rejecting arbitrary paths, mixed source/arguments and oversized assets.
 The fixed fixture has a 16 KiB source cap; existing inline fixtures keep their
@@ -111,6 +141,14 @@ dependency, package another native helper or invoke a shell:
   both spawn APIs. A positive child stdout-FD control supports Bun's pipe,
   socketpair and memfd implementations; the sentinel must be absent while the
   parent's descriptor and identity remain intact.
+- In `lowered-native` and `lowered-trap`, require an original soft limit of at
+  least 512, then lower it to 128 while the sentinel remains open. Bind
+  `getrlimit(RLIMIT_NOFILE)` and Android `sysconf(_SC_OPEN_MAX)` before, during
+  and after; never lower the hard limit. Collect both child results even if
+  the first leaks, compare the actual sentinel identity, and restore the exact
+  original limits in `finally` before asserting isolation. Setup or restoration
+  failure is a failure, never a skipped pass. These modes do not claim blocked
+  signal-mask coverage.
 - Block SIGSYS on the spawning thread, verify spawnSync child/caller masks,
   then restore the original mask before the asynchronous case. Register and
   remove a JavaScript SIGSYS listener around forced traps, separately checking
@@ -120,7 +158,7 @@ dependency, package another native helper or invoke a shell:
   CLOEXEC. Returning ENOSYS without that marking fails the test.
 
 Java accepts exactly one bounded JSON evidence line, and the host validator
-checks mode, ABI, positive controls, syscall results, masks, flags and stream
+checks mode, ABI, positive controls, syscall results, limits/restoration, masks, flags and stream
 consistency. A `passed` boolean alone is insufficient. This is evidence for
 these sentinel paths, not for FD values at/above the existing 65536 spawn-loop
 ceiling, `CLOSE_RANGE_UNSHARE`, every thread, blocked asynchronous spawn, all
