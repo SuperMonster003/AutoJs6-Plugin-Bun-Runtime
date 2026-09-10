@@ -7,6 +7,7 @@ import { inspectElfBuffer, verifyRuntimeEvidenceManifest } from "../verify-built
 import { inspectApkRuntime } from "../../../verify-apk-runtime.mjs";
 import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../../../supervisor/supervisor-common.mjs";
 import { SYSCALL_MODES, validateSyscallEvidence } from "./syscall-evidence.mjs";
+import { OPENAT2_MODES, validateOpenat2Evidence } from "./openat2-evidence.mjs";
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../../../../..");
@@ -16,7 +17,7 @@ export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
 export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
 export const INPUTS = [
-  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "openat2-probes.mjs", "openat2-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
     .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
   SHARED_PROCESS,
   ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
@@ -32,7 +33,7 @@ export const FD_MODES = {
 };
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
-  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), "recovery-after-termination"];
+  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), ...Object.keys(OPENAT2_MODES), "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
@@ -104,9 +105,10 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 23-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 24-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
+    assert(!Object.hasOwn(probe, "sourceAsset"), "asset binding belongs to the builder, not probe definitions");
     assert(/^[a-z][a-z0-9-]{0,63}$/.test(probe.id) && !ids.has(probe.id), "unsafe or duplicate probe ID");
     ids.add(probe.id);
     assert(["exited", "timeout", "output-limit", "cancelled"].includes(probe.termination), "invalid termination");
@@ -127,10 +129,11 @@ export function validateProbes(probes) {
     assert(Number.isInteger(probe.outputBytes ?? 16384) && (probe.outputBytes ?? 16384) >= 1024 &&
       (probe.outputBytes ?? 16384) <= 16384, "invalid output bound");
     const fixedFd = Object.hasOwn(FD_MODES, probe.id), fixedSyscall = Object.hasOwn(SYSCALL_MODES, probe.id);
-    if (fixedFd || fixedSyscall) {
-      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : "syscall-probes.mjs", "only the fixed source fixture is allowed");
-      assert.equal(probe.mode, (fixedFd ? FD_MODES : SYSCALL_MODES)[probe.id], "fixed mode required");
-      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=");
+    const fixedOpenat2 = Object.hasOwn(OPENAT2_MODES, probe.id);
+    if (fixedFd || fixedSyscall || fixedOpenat2) {
+      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : fixedSyscall ? "syscall-probes.mjs" : "openat2-probes.mjs", "only the fixed source fixture is allowed");
+      assert.equal(probe.mode, (fixedFd ? FD_MODES : fixedSyscall ? SYSCALL_MODES : OPENAT2_MODES)[probe.id], "fixed mode required");
+      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : fixedSyscall ? "SYSCALL_PROBE_RESULT=" : "OPENAT2_PROBE_RESULT=");
       for (const key of ["source", "arguments", "extension"])
         assert(!Object.hasOwn(probe, key), "ambiguous FD fixture: " + key);
     } else if (probe.arguments) {
@@ -141,7 +144,7 @@ export function validateProbes(probes) {
       assert(typeof probe.source === "string" && Buffer.byteLength(probe.source) <= 8192, "invalid source");
       assert(["js", "ts"].includes(probe.extension ?? "js"), "invalid source extension");
     }
-    if (!fixedFd && !fixedSyscall) {
+    if (!fixedFd && !fixedSyscall && !fixedOpenat2) {
       assert(!Object.hasOwn(probe, "sourceFile") && !Object.hasOwn(probe, "mode"), "unexpected source fixture");
     }
   }
@@ -152,8 +155,12 @@ export function materializeProbes(probes) {
   validateProbes(probes);
   const result = probes.map(probe => {
     if (!probe.sourceFile) return { ...probe };
+    if (probe.sourceFile === "openat2-probes.mjs") {
+      materializeOpenat2Source();
+      return { ...probe, sourceAsset: "openat2-probes.mjs" };
+    }
     const source = readFileSync(requireFile(join(HERE, probe.sourceFile)), "utf8").replace(/\r\n/g, "\n");
-    const inline = "const " + (probe.sourceFile === "fd-probes.mjs" ? "FD_MODE" : "SYSCALL_MODE") +
+    const inline = "const " + (probe.sourceFile === "fd-probes.mjs" ? "FD_MODE" : probe.sourceFile === "syscall-probes.mjs" ? "SYSCALL_MODE" : "OPENAT2_MODE") +
       " = " + JSON.stringify(probe.mode) + ";\n" + source;
     // Only this checked-in, source-bound fixture gets 16 KiB. Existing inline
     // probes retain 8 KiB; execution time and output limits are unchanged.
@@ -162,6 +169,15 @@ export function materializeProbes(probes) {
   });
   assert(Buffer.byteLength(JSON.stringify(result)) <= 131072, "probe asset exceeds reader limit");
   return result;
+}
+
+// One immutable asset avoids duplicating source into the nearly-full JSON.
+// No arbitrary asset name or code is accepted, and the old 23 entries stay exact.
+export function materializeOpenat2Source() {
+  const source = "const OPENAT2_MODE = \"confinement\";\n" +
+    readFileSync(requireFile(join(HERE, "openat2-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
+  assert(Buffer.byteLength(source) <= 8192, "fixed openat2 asset exceeds 8 KiB");
+  return source;
 }
 
 // Independent expected bytecode digest: runtime evidence must identify the
@@ -395,6 +411,13 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
       assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("SYSCALL_PROBE_RESULT="), "bounded syscall record required");
       assert.deepEqual(JSON.parse(line.slice("SYSCALL_PROBE_RESULT=".length)), result.syscallEvidence, "syscall evidence/output drift");
     } else assert(!result.syscallEvidence, "unexpected syscall evidence");
+    if (expected.sourceFile === "openat2-probes.mjs") {
+      validateOpenat2Evidence(result.openat2Evidence, expected.mode, abi);
+      assert.equal(result.openat2Evidence.kernel, env.kernel, "independent kernel observation required");
+      const line = result.stdout.trim();
+      assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("OPENAT2_PROBE_RESULT="), "bounded openat2 evidence required");
+      assert.deepEqual(JSON.parse(line.slice("OPENAT2_PROBE_RESULT=".length)), result.openat2Evidence, "openat2 evidence/output drift");
+    } else assert(!result.openat2Evidence, "unexpected openat2 evidence");
   }
   assert.equal(report.passed, true);
   return report;

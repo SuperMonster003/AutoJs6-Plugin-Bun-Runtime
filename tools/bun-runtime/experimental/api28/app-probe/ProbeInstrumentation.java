@@ -143,8 +143,18 @@ public final class ProbeInstrumentation extends Instrumentation {
             for (int index = 0; index < args.length(); index++) command.add(args.getString(index));
         } else {
             File source = new File(work, "entry." + probe.optString("extension", "js"));
+            String sourceText;
+            if (probe.has("sourceAsset")) {
+                check(id.equals("openat2-confinement") && probe.getString("mode").equals("confinement") &&
+                        probe.getString("sourceFile").equals("openat2-probes.mjs") &&
+                        probe.getString("sourceAsset").equals("openat2-probes.mjs") && !probe.has("source"),
+                        "fixed openat2 source asset binding");
+                sourceText = asset("openat2-probes.mjs");
+                check(sourceText.getBytes(StandardCharsets.UTF_8).length <= 8192 &&
+                        sourceText.startsWith("const OPENAT2_MODE = \"confinement\";\n"), "bounded fixed source asset");
+            } else sourceText = probe.getString("source");
             try (OutputStream stream = new FileOutputStream(source)) {
-                stream.write(probe.getString("source").getBytes(StandardCharsets.UTF_8));
+                stream.write(sourceText.getBytes(StandardCharsets.UTF_8));
             }
             command.add("run"); command.add("--no-install"); command.add(source.getAbsolutePath());
         }
@@ -222,10 +232,12 @@ public final class ProbeInstrumentation extends Instrumentation {
         if (probe.has("sourceFile")) {
             try {
                 String sourceFile = probe.getString("sourceFile");
-                check(sourceFile.equals("fd-probes.mjs") || sourceFile.equals("syscall-probes.mjs"), "fixed fixture source");
+                check(sourceFile.equals("fd-probes.mjs") || sourceFile.equals("syscall-probes.mjs") ||
+                        sourceFile.equals("openat2-probes.mjs"), "fixed fixture source");
                 boolean fd = sourceFile.equals("fd-probes.mjs");
-                String prefix = fd ? "FD_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=";
-                evidenceKey = fd ? "fdEvidence" : "syscallEvidence";
+                boolean openat2 = sourceFile.equals("openat2-probes.mjs");
+                String prefix = fd ? "FD_PROBE_RESULT=" : openat2 ? "OPENAT2_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=";
+                evidenceKey = fd ? "fdEvidence" : openat2 ? "openat2Evidence" : "syscallEvidence";
                 String line = out.trim();
                 check(line.startsWith(prefix) && !line.contains("\n") && line.length() <= 2048,
                         "exactly one bounded fixture evidence record");

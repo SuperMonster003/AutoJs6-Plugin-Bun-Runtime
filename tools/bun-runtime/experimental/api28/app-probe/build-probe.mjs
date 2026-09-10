@@ -7,7 +7,7 @@ import { pathToFileURL } from "node:url";
 import { verifyApkSignature } from "../../../release/assemble-corresponding-source.mjs";
 import { supervisorArtifacts, supervisorLock, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, fileFacts, inputFacts, json, lockedEvidence,
-  newOutputDirectory, parseOptions, requireFile, materializeProbes, validateReceipt,
+  newOutputDirectory, parseOptions, requireFile, materializeProbes, materializeOpenat2Source, validateReceipt,
   validateManifestDump, verifyProbeApk, verifyRuntimePair } from "./probe-common.mjs";
 
 function run(command, args) {
@@ -74,6 +74,7 @@ export function buildProbe(options) {
     run(java, ["-cp", d8, "com.android.tools.r8.D8", "--min-api", "28", "--lib", androidJar,
       "--output", join(staging, "dex"), ...classes]);
     writeFileSync(join(staging, "assets", "probes.json"), JSON.stringify(probes));
+    writeFileSync(join(staging, "assets", "openat2-probes.mjs"), materializeOpenat2Source());
     writeFileSync(join(staging, "assets", "build-facts.json"), JSON.stringify(receipt));
     for (const filename of ["BUN-LICENSE.md", "WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
       "WEBKIT-WEBCORE-LICENSE-LGPL-2", "WEBKIT-WEBCORE-LICENSE-LGPL-2.1", "WEBKIT-WEBCORE-LICENSE-APPLE"]) {

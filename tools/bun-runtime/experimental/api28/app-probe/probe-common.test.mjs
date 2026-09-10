@@ -6,9 +6,11 @@ import test from "node:test";
 import { supervisorLock } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lockedEvidence, newOutputDirectory,
   outsideRepository, parseInstrumentation, parseOptions, validateManifestDump, validateProbes, validateReceipt, validateReport,
-  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
+  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, materializeOpenat2Source, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
 import { SYSCALL_MODES } from "./syscall-evidence.mjs";
 import { syscallFixture } from "./syscall-fixture.test-support.mjs";
+import { OPENAT2_MODES } from "./openat2-evidence.mjs";
+import { openat2Fixture } from "./openat2-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
@@ -68,6 +70,8 @@ function fixture() {
         stdout: "FD_PROBE_RESULT=" + JSON.stringify(fdFixture(probe.mode)) + "\n" } : {}),
       ...(probe.sourceFile === "syscall-probes.mjs" ? { syscallEvidence: syscallFixture(probe.mode),
         stdout: "SYSCALL_PROBE_RESULT=" + JSON.stringify(syscallFixture(probe.mode)) + "\n" } : {}),
+      ...(probe.sourceFile === "openat2-probes.mjs" ? { openat2Evidence: openat2Fixture(),
+        stdout: "OPENAT2_PROBE_RESULT=" + JSON.stringify(openat2Fixture()) + "\n" } : {}),
     })),
   } };
 }
@@ -105,6 +109,11 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       const syscallSource = readFileSync(join(HERE, "syscall-probes.mjs"), "utf8").replace(/\r\n/g, "\n");
       assert.equal(actual.source, "const SYSCALL_MODE = " + JSON.stringify(probe.mode) + ";\n" + syscallSource);
       assert(Buffer.byteLength(actual.source) <= 16384);
+    } else if (probe.sourceFile === "openat2-probes.mjs") {
+      assert.deepEqual(actual,{...probe,sourceAsset:"openat2-probes.mjs"});
+      assert.equal(materializeOpenat2Source(),"const OPENAT2_MODE = \"confinement\";\n" +
+        readFileSync(join(HERE,"openat2-probes.mjs"),"utf8").replace(/\r\n/g,"\n"));
+      assert(Buffer.byteLength(materializeOpenat2Source())<=8192);
     } else assert.deepEqual(actual, probe);
   }
   assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
@@ -179,7 +188,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 23);
+    assert.equal(report.probes.length, 24);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);
@@ -195,7 +204,7 @@ test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
 });
 
 test("syscall additions preserve every original 20-probe definition and assertion byte-for-byte", () => {
-  const original = probes.filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id));
+  const original = probes.filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id) && !Object.hasOwn(OPENAT2_MODES,probe.id));
   assert.equal(original.length, 20);
   assert.equal(hash(JSON.stringify(original)), "8e1450d608cc8694ffac9988ecf6677c70fb576cb4eb64dd9ea130ca3fb254fb");
   for (const path of ["/syscall-probes.mjs", "/syscall-evidence.mjs"])
@@ -232,6 +241,27 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
     assert.throws(() => newOutputDirectory("relative-path"));
     assert.equal(newOutputDirectory(join(temp, "new")), join(temp, "new"));
   } finally { rmSync(temp, { recursive: true }); }
+});
+
+test("openat2 additions preserve all original 23 definitions and the existing materialized asset entries", () => {
+  const original=probes.filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
+  assert.equal(hash(JSON.stringify(original)),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
+  const oldAssets=materializeProbes(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
+  assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);
+  for (const path of ["/openat2-probes.mjs","/openat2-evidence.mjs"])
+    assert(inputFacts().some(input => input.path.endsWith(path)));
+  for (const change of [p => {p[22].sourceAsset="../escape";},p => {p[22].sourceFile="../openat2-probes.mjs";},
+    p => {p[22].mode="skip";},p => {p[22].source="fake";}]) {
+    const changed=structuredClone(probes); change(changed); assert.throws(() => validateProbes(changed));
+  }
+});
+
+test("a failed confinement proof or mismatched kernel can never pass the full runner", () => {
+  for (const change of [r => {delete r.probes[22].openat2Evidence;},r => {r.probes[22].openat2Evidence.kernel="4.4.1";},
+    r => {r.probes[22].stdout="OPENAT2_PROBE_RESULT={}";},r => {r.probes[0].openat2Evidence=openat2Fixture();},
+    r => {r.probes[22].openat2Evidence.trapRows[8]=[200,"secret"];r.probes[22].openat2Evidence.passed=false;}]) {
+    const {report,options}=fixture(); change(report); assert.throws(() => validateReport(report,options));
+  }
 });
 test("build receipts bind current probe inputs, exact runtime hashes and APK inventory", () => validateReceipt(receipt()));
 test("receipts reject production identity, source drift, paths and ABI/hash drift", () => {

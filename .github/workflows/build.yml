@@ -59,6 +59,7 @@ jobs:
             tools/bun-runtime/experimental/api28/verify-distribution-source.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/probe-common.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.test.mjs \
             tools/bun-runtime/release/release-asset-common.test.mjs
 
       - name: Re-materialize immutable Bun experiment inputs
