@@ -15,8 +15,18 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
-The suite now contains **23 probes**, preserving all original 20 definitions
-and assertions. The unchanged `1.4.0+a260ef308` bytes pass twice in five native
+The latest suite contains **24 probes** and fails at **23/24 twice in each of
+five native 4 KiB environments**. The unchanged original 23 probes pass, but
+directory routes return a synthetic outside-root sentinel through relative,
+absolute and magic symlinks, before and after adding TRAP. All 10 confinement
+probes fail, with 60 failed path assertions. See the [openat2 blocker report](../../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md).
+Runtime bytes are unchanged; no native fix or Release is included. Historical
+success below is narrower coverage and must not override this failed gate.
+
+### Previous 23-probe syscall baseline
+
+The preceding suite contained **23 probes**, preserving all original 20 definitions
+and assertions. The unchanged `1.4.0+a260ef308` bytes passed twice in five native
 4 KiB environments (arm64 API 28/31/33/35 and x86_64 API 33), totaling **230/230**.
 The three new syscall fixtures verify 60 raw TRAP-to-ENOSYS calls and 16
 EIO-controlled copy/wait fallbacks; four API 28 kernel/policy-gated observations
@@ -219,6 +229,14 @@ descriptor and immediately closing it follows the
 [Linux close_range contract](https://man7.org/linux/man-pages/man2/close_range.2.html).
 
 ## Build outside the repository
+
+The fixed `openat2-confinement` case compares 12 raw loopback HTTP paths in
+native and post-TRAP phases. Its new source is an independent 8 KiB-capped
+APK asset, with an exact ID/mode/name binding; it does not duplicate source
+into the nearly-full, still 128 KiB-capped JSON asset. Every original 23 entry
+remains unchanged. The verifier preserves complete failed evidence for
+inspection but never accepts a confinement failure as success. The source,
+verifier and Java asset dispatch are included in the current build receipt.
 
 The three additional `syscall-probes.mjs` modes are `raw-controls`, `copy-range`
 and `pidfd`. They use a separate bounded `SYSCALL_PROBE_RESULT` record and

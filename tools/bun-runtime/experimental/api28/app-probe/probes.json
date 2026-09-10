@@ -150,6 +150,13 @@
     "termination": "exited"
   },
   {
+    "id": "openat2-confinement",
+    "sourceFile": "openat2-probes.mjs",
+    "mode": "confinement",
+    "stdout": "OPENAT2_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

@@ -15,6 +15,14 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > the production plugin's only Bun payloads; its separately locked first-party
 > supervisor is also reused by the test-only probe.
 
+The latest [directory-confinement probe](../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md)
+exposes a new blocker in the unchanged eight-patch runtime: five native 4 KiB
+environments each score 23/24 twice. All original 23 probes pass, but
+relative/absolute/magic links escape the configured static-directory root
+when openat2 is unavailable, producing 60 failed path assertions. The gate
+is failed, no native fix is applied, and experimental distribution remains
+blocked. The earlier successful narrower suites below remain historical evidence.
+
 The current eight-patch revision `1.4.0+a260ef308` fixes the Linux spawn FD
 fallback independently of the startup helper. Two clean builds per ABI reproduce
 identical bytes. The unchanged **20-probe suite passes twice in all six native

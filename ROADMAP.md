@@ -4,7 +4,7 @@
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC 与 spawn FD 回退均已修复; 六个原生环境各两轮 20/20, 含三星 ARM64 16 KiB 真机, 共 240/240), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC 与 spawn FD 回退已修复并通过既有矩阵; 新增 openat2 目录约束测试在五个原生 4 KiB 环境均失败, 修复待确认), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
@@ -13,7 +13,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与完整实验 Binder 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 已修复的 spawn FD 回退通过不放宽断言的设备复测, 旧失败报告保持不变. 其他 syscall、Android 高位 FD/硬限制降低/UNSHARE、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成; 不把 test-only 20/20 当作稳定 Android 9 支持 |
+| 当前缺口 | 新增 openat2 目录约束门禁失败: plain openat 回退允许符号链接读取配置根外的私有测试哨兵. 既有 spawn/23 项 syscall 历史保留. 修复、其余 syscall、Android 高位 FD/硬限制降低/UNSHARE、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成; 不把较窄套件通过当作稳定 Android 9 支持 |
 
 ## 如何阅读这份路线图
 
@@ -76,7 +76,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 进行中, spawn FD 修复后推进 syscall | 原六环境 240/240 含 ARM64 16 KiB; 同字节新增 syscall 夹具在五个 4 KiB 环境各两轮 23/23, 60 次 raw TRAP 与 16 次受控复制/等待回退通过; 其余语义和完整 Binder 待完成 | 插件/测试/设备/发布 |
+| M3 Android 9-12L 实验支持 | 进行中, 新 openat2 目录约束阻断 | 五个原生 4 KiB 环境各两轮 23/24; 原 23 项仍通过, 新增目录路由用例记录 60 次越界哨兵读取; 修复方案待确认, 完整 Binder 待完成 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -205,8 +205,12 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (上游/构建/测试/设备) 第 8 个 MIT 补丁以 4096-byte 栈缓冲和 raw `openat/getdents64/fcntl/close` 枚举 Linux spawn child 的实际 FD, 移除当前 RLIMIT 与 65536 编号上限依赖, 不分配内存、不取锁, 失败时在 exec 前经原错误路径退出. GCC 13 与 Clang 21 各通过 4 组 57 场景, 包括 fd 70000、降低 soft/hard、真实 vfork/exec、EINTR/目录项/条目预算、符号审计及原实现四项失败对照; 双 Android ABI 目标对象只引用 syscall/errno/栈保护符号. 双 ABI 各两轮清洁构建一致后, 四台 4 KiB arm64 真机、API 33 原生 x86_64 AVD、Samsung API 36 原生 ARM64 16 KiB 真机各两轮 20/20, 合计 240/240. 未放宽原断言, 24 次降低软限制用例均确认两个子 API 不继承 sentinel, 36 次强制回收为 301-329 ms. 所有测试包卸载、UID 进程归零, 本轮 AVD 已关闭, 原有 API 24 AVD 保持运行; 旧失败报告原样保留. 见 [M3 spawn 修复报告](docs/compatibility/2026-09-10-m3-spawn-fd-fix.json). (2026-09-10, G1/G2, 非完整 Binder, 未发布)
 - [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Linux 主机已有启动/spawn 的 FD 70000 和 spawn 降低 hard limit 证据, 但 Android 所测 hard limit 为 32768、sentinel 为 fd 256, 不能据此声称 Android 高于原 65536 上界或降低 hard limit 已覆盖; UNSHARE、watch/reload 等边界和完整实验 Binder 仍未完成.
 - [x] (测试/设备) 在不改运行时字节、不放宽原 20 项定义/断言的前提下新增三个固定 syscall 夹具和独立证据校验器. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/23, 共 230/230; 六个 syscall 的 raw TRAP→ENOSYS 对照共 60 次通过, 复制与异步等待另有 16 次先 EIO 证明调用路径、再 TRAP 证明回退的验证通过. API 28 的两次复制因 kernel 4.4 门控、两次 pidfd 因既有更高优先级策略无法观察 EIO, 单独记录且不计为高层分支触达. 原有 30 次强制回收为 301-307 ms, 测试包卸载且 UID 进程归零, 本轮 AVD 已关闭, 未主动操作原有 AVD; API 24 仍在线, 原有 API 36 大页 AVD 在最终只读检查时已离线, 原因未确定. 见 [syscall 报告与语义边界](docs/compatibility/2026-09-10-m3-syscall-fallbacks.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-syscall-fallbacks.json). (2026-09-10, G1/G2, 原始历史不变, 本轮无 16 KiB/完整 Binder/发布)
-- [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3、timer/fetch 视为 Android 主动禁用的 epoll_pwait2、或无效 raw openat2 视为路径约束通过. fchmodat2 依赖调用路径、其余错误/FD/线程边界及新夹具原生 ARM64 16 KiB 仍待验证.
+- [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3、timer/fetch 视为 Android 主动禁用的 epoll_pwait2、或 raw openat2 视为路径约束通过. 新增 openat2 目录路由已暴露阻断; fchmodat2 的内部 sys::lchmod/包可执行文件链接路径现已定位, 但未实际运行, 不能由 Android 公开导出不存在推断通过. 其余错误/FD/线程边界及新夹具原生 ARM64 16 KiB 仍待验证.
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 独立探针已通过 spawnSync 的 caller/child mask 保留、注册/移除监听器期间的强制 trap、普通用户 SIGSYS 恰好一次送达, 以及生命周期复测; async spawn 在恢复 mask 后执行, 不推断 blocked async、watch/reload、其他线程或完整插件/Binder 通过.
+
+- [x] (测试/设备) 在同一 `a260ef308` 字节上增加固定 openat2 目录约束夹具, 套件扩为 24 项; 新源码独立打包为 8 KiB 上限的 APK 资源, 保留原 23 项内容与原 128 KiB JSON/输出/超时门禁. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/24: 原 230 项观测全部通过, 新增 10 项均失败. 12 种 HTTP 路径分别在 native 与后置 TRAP 阶段检查; 普通文件、内部链接、编码穿越拒绝及 FIFO 非阻塞通过, 相对/绝对/魔术链接共 60 次返回配置根外的私有测试哨兵. 不接触用户数据, 不把失败改作通过; 原 30 次强制回收为 301-316 ms, 全部测试包卸载后 UID 进程归零, 本轮 AVD 已关闭. 所有设备在测试过滤器前已观察到 raw openat2=ENOSYS, 不声称 EIO/首次高层 TRAP 触达. 见 [目录约束阻断报告](docs/compatibility/2026-09-10-m3-openat2-confinement.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-openat2-confinement.json). (2026-09-10, G1/G2, 验收失败, 未改 native/未发布)
+- [x] (源码审计) 修正上一轮大小写敏感搜索的局限: `fchmodat2` 以 `SYS_FCHMODAT2` 直接出现在 `sys::lchmod`, 由 install/bin 的 chmod_on_ok 调用, ENOSYS 后走 libc fchmodat 且调用者忽略错误. Android 内部 Node lchmod 另返回 EOPNOTSUPP, 十轮实测两个公开 node:fs 导出均为 undefined. 本轮未运行依赖安装, 不据此通过内部 CLI fallback; 旧报告保持原样, 新报告明确记录修正.
+- [ ] (上游/测试, 当前阻断) 修复 openat2 不可用后 plain openat 丢失 IN_ROOT/NO_MAGICLINKS 约束的问题. 建议先 fail-closed 返回受控目录请求错误, 代价是这些环境的目录路由不可用; 另一条路线是实现并单独验证抗竞态的 FD 相对路径解析. 这是功能取舍, 待用户确认后锁定补丁、双 ABI 各两轮重建并复测; 当前不放宽新断言, 暂无需预约三星设备.
 
 ### M3-B: 插件诊断与实验分发
 
