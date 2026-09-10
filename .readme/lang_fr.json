@@ -76,7 +76,7 @@
     },
     {
       "q": "Les appareils à pages de 16 KB sont-ils pris en charge?",
-      "a": "Les deux exécutables ELF empaquetés et toutes les entrées APK satisfont aux contrôles d'alignement 16 KB. Sur un AVD 16 KB sous Android 16 (API 36), l'APK `arm64-v8a` a réussi toute la suite Binder via `libndk_translation`, mais le payload `x86_64` natif s'interrompt avec le code 134 même pour un script minimal; l'arm64 natif n'a pas encore été testé. Ces preuves restent partielles, donc cette version ne revendique toujours pas une prise en charge générale des pages 16 KB."
+      "a": "16 KB: les contrôles d'alignement ELF et APK passent. Sur Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384), l'APK de développement v0.2.1 arm64 uniquement avec Bun officiel a réussi les 8 tests Binder deux fois sans traduction. Le résultat ARM64 précédent sur AVD x86_64 reste limité à la traduction; x86_64 natif s'interrompt avec le code 134 même sur un script minimal. Cette preuve concerne ce développement et cet appareil, pas un APK de Release publié ni une prise en charge générale de 16 KB."
     },
     {
       "q": "Quel APK dois-je installer?",
@@ -86,7 +86,7 @@
   "h3_plugin_interface": "Interface du plugin",
   "p_plugin_interface": "Cette section s'adresse aux développeurs de l'hôte AutoJs6 et de plugins; les utilisateurs ordinaires peuvent la passer. Les identifiants et limites stables sont",
   "p_contract": "`BunRuntimeService` est découvert par l'action `{{ plugin_service_action }}` et la catégorie `{{ plugin_service_category }}`. Il reçoit la source via `ParcelFileDescriptor` et un ID d'exécution dans la requête, puis lance `bun run --no-install <source>` tant que l'appel synchrone `runScript` reste actif. Stdout et stderr sont envoyés uniquement sous forme de fragments bornés par le callback oneway. Le Bundle terminal renvoyé et l'événement `finished` contiennent des champs de statut et un résumé diagnostic, jamais les streams complets, afin de garder chaque transaction Binder sous sa limite. Le service prend en charge l'annulation explicite et le préchauffage et tourne dans `:bun_runtime`.",
-  "p_16kb_status": "État 16 KB: les deux payloads ELF et leurs entrées APK satisfont aux contrôles d'alignement. Sur un AVD 16 KB sous Android 16 (API 36), `arm64-v8a` a réussi les 5 tests Binder via `libndk_translation`, tandis que `x86_64` natif s'interrompt avec le code 134 sur un script minimal; l'arm64 natif reste non testé. La prise en charge générale des pages 16 KB n'est pas revendiquée.",
+  "p_16kb_status": "16 KB: les contrôles d'alignement ELF et APK passent. Sur Samsung SM-A566B (Android 16 / API 36, PAGE_SIZE=16384), l'APK de développement v0.2.1 arm64 uniquement avec Bun officiel a réussi les 8 tests Binder deux fois sans traduction. Le résultat ARM64 précédent sur AVD x86_64 reste limité à la traduction; x86_64 natif s'interrompt avec le code 134 même sur un script minimal. Cette preuve concerne ce développement et cet appareil, pas un APK de Release publié ni une prise en charge générale de 16 KB.",
   "h3_roadmap": "Feuille de route",
   "p_roadmap": "La feuille de route répond à deux questions: ce qui fonctionne maintenant et ce qui vient ensuite. Les éléments cochés décrivent le comportement réel de la version actuelle; les éléments non cochés (projets multifichiers, pont de capacités AutoJs6, prise en charge élargie des versions Android, mises à niveau de Bun, etc.) sont des plans, pas des promesses de prise en charge actuelle.",
   "text_link_roadmap": "Voir ROADMAP.md",

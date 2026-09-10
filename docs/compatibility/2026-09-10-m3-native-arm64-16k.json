@@ -1,0 +1,1804 @@
+{
+  "schemaVersion": 2,
+  "evidenceDate": "2026-09-10",
+  "localVerification": {
+    "nodeTests": {
+      "files": 16,
+      "passed": 104,
+      "failed": 0
+    },
+    "markdown": {
+      "languages": 10,
+      "generatedArtifacts": 36,
+      "checkPassed": true,
+      "pythonTestsPassed": 11
+    },
+    "gradle": {
+      "jdk": "21.0.12.1",
+      "tasks": [
+        ":app:testDebugUnitTest --rerun",
+        ":app:verifyDebugApkRuntimeIntegrity",
+        ":app:assembleDebugAndroidTest",
+        ":app:lintDebug"
+      ],
+      "passed": true,
+      "jvmTestsPassed": 7,
+      "debugApkVariants": [
+        "arm64-v8a",
+        "x86_64",
+        "universal"
+      ],
+      "zipAlignmentBytes": 16384
+    },
+    "runtimeSupervisorSharedApiAndExperimentalLocksPassed": true,
+    "sourceCodeOrRuntimePayloadChanged": false,
+    "note": "Post-documentation local checks are separate from the exact retained APKs used for device acceptance; device reports bind their original hashes and clean source commit."
+  },
+  "milestone": "M3 native ARM64 16 KiB application probes",
+  "status": "native-16k-execution-observed-with-known-spawn-fallback-blocker",
+  "scope": "Two unchanged 20-probe rounds on the same Samsung native ARM64 16 KiB physical device; test-only application process, not the full experimental plugin Binder contract.",
+  "projectBaseCommit": "415ba1d019e8adf8d3253104588684cf215db291",
+  "sourceBinding": "Existing test APKs built from this commit's exact receipt inputs; current fingerprints revalidated before and after device runs.",
+  "downstreamBunCommit": "c240d6c6895db4241dc324f260ee3ee4d0da9889",
+  "bunRevision": "1.4.0+c240d6c68",
+  "newRuntimeBuildsThisSession": 0,
+  "runtimeOrProbeSourceChanged": false,
+  "rawReport": {
+    "bytes": 65218,
+    "sha256": "4a541c769c90828bf56bd2b000c87c1ebb411dcd01316e832a0017cffff0693b"
+  },
+  "instrumentation": [
+    {
+      "round": 1,
+      "bytes": 20410,
+      "sha256": "acff9676fe9ae28d9df0d09213dd12144f43dea4ff0bdb9d05636e867430527d"
+    },
+    {
+      "round": 2,
+      "bytes": 20408,
+      "sha256": "4fe8f37fb08ba0112cb2853cb44f8ccc364a215c5b5cc84dc43d0d28a32f2b0b"
+    }
+  ],
+  "summary": {
+    "rounds": 2,
+    "probesPerRound": 20,
+    "passedProbes": 38,
+    "failedProbes": 2,
+    "failureIds": [
+      "fd-spawn-lowered-trap"
+    ],
+    "leakedChildDescriptorObservations": 4,
+    "nativeLoweredLimitControlPasses": 2,
+    "startupCloexecPasses": 2,
+    "forciblyReapedChildren": 6,
+    "terminationToExitMillis": {
+      "min": 302,
+      "max": 306
+    }
+  },
+  "kind": "test-only-application-process-probe-runs",
+  "capturedAt": "2026-09-10T01:42:58.393Z",
+  "pluginBinderExercised": false,
+  "distributionReady": false,
+  "build": {
+    "schemaVersion": 2,
+    "kind": "test-only-application-process-probe",
+    "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+    "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe/io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe.ProbeInstrumentation",
+    "testOnly": true,
+    "minSdk": 28,
+    "targetSdk": 36,
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "inputEncoding": "utf8-lf",
+    "inputs": [
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+        "bytes": 914,
+        "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+        "bytes": 21170,
+        "sha256": "be0db4e993ea38460934eabbc1b008d87ed0987bffa6ac29190f75604d0aff37"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+        "bytes": 5586,
+        "sha256": "dfa120ec18c353a769b5b8d4feb7bf270d540486edfc414fcab3c43f4e10b177"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+        "bytes": 12747,
+        "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+        "bytes": 24968,
+        "sha256": "dccd92a70e50add5518fd938bf0585c10ed668b74cb6b043e3c71620f94dfe5b"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+        "bytes": 8428,
+        "sha256": "64aaf83cb7e0d3df1838fccada4cd5f8a35e4161d6d148bedb9281f0a086efe3"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+        "bytes": 9537,
+        "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+      },
+      {
+        "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+        "bytes": 3727,
+        "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.c",
+        "bytes": 4394,
+        "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+        "bytes": 1018,
+        "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+        "bytes": 2128,
+        "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+        "bytes": 2200,
+        "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+        "bytes": 480,
+        "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/README.md",
+        "bytes": 5511,
+        "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+      },
+      {
+        "path": "tools/bun-runtime/verify-runtime.mjs",
+        "bytes": 19651,
+        "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+      },
+      {
+        "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+        "bytes": 14754,
+        "sha256": "439f1ab4ac2a5f73ebff75cb9e33665e594273051f2eea0992b364f6971f4fc4"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+        "bytes": 9589,
+        "sha256": "e82a4b053b5f803702afc8a93f8e5ac3220b0142835a4b9cc7461c8fb4803d53"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+        "bytes": 39212,
+        "sha256": "3af0b4516b8697293cb80e00ba9ea36dc71449730e6dfd746e2a681acef9172b"
+      }
+    ],
+    "supervisor": {
+      "schemaVersion": 1,
+      "name": "bun-lifecycle-supervisor",
+      "source": "tools/bun-runtime/supervisor/supervisor.c",
+      "sourceSha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8",
+      "ndkVersion": "29.0.14206865",
+      "androidApi": 28,
+      "flags": [
+        "-std=c11",
+        "-Oz",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIE",
+        "-pie",
+        "-fstack-protector-strong",
+        "-D_FORTIFY_SOURCE=2",
+        "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+        "-Wl,--build-id=sha1",
+        "-Wl,--strip-all"
+      ],
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "target": "aarch64-linux-android",
+          "elfMachine": 183,
+          "binaryPath": "app/src/main/jniLibs/arm64-v8a/libbun_supervisor.so",
+          "binaryBytes": 7440,
+          "binarySha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+        },
+        {
+          "abi": "x86_64",
+          "target": "x86_64-linux-android",
+          "elfMachine": 62,
+          "binaryPath": "app/src/main/jniLibs/x86_64/libbun_supervisor.so",
+          "binaryBytes": 7304,
+          "binarySha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+        }
+      ]
+    },
+    "runtimes": {
+      "arm64-v8a": {
+        "bytes": 87923312,
+        "sha256": "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d"
+      },
+      "x86_64": {
+        "bytes": 90449712,
+        "sha256": "da4a1a681016e2b1c90d20032e3a5d9c4049266d3ad9aafd2b3761c04609ae1d"
+      }
+    },
+    "tools": {
+      "buildToolsVersion": "37.0.0",
+      "androidJar": {
+        "bytes": 27768026,
+        "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+      },
+      "javacVersion": "javac 21.0.12.1",
+      "aapt2Version": "",
+      "d8": {
+        "bytes": 20528803,
+        "sha256": "a26ee56252adcff6752c379ae255a0ad538ebec60189e078ec6855487107637d"
+      },
+      "apksigner": {
+        "bytes": 1181416,
+        "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+      }
+    },
+    "apks": [
+      {
+        "abi": "arm64-v8a",
+        "filename": "bun-api28-probe-arm64-v8a.apk",
+        "bytes": 35251144,
+        "sha256": "308b17ac9af5142954658f86ad37122def3b015d06cd710865f2b982de277af0",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "e603216cb9629b76040097b8a2b8c888089c3ad32af9ce8afc6d4cb18d5d0b50"
+        }
+      },
+      {
+        "abi": "x86_64",
+        "filename": "bun-api28-probe-x86_64.apk",
+        "bytes": 36647874,
+        "sha256": "2e01f70db6ebaf4c640b9149d350fbfad4137bf191437be2932cf674886f5908",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "e603216cb9629b76040097b8a2b8c888089c3ad32af9ce8afc6d4cb18d5d0b50"
+        }
+      }
+    ]
+  },
+  "runs": [
+    {
+      "schemaVersion": 2,
+      "kind": "test-only-application-process-probe",
+      "pluginBinderExercised": false,
+      "variant": "bun-1.4.0-android-api28-patched-experimental",
+      "runtimeSha256": "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d",
+      "runtimeBytes": 87923312,
+      "installedPayloadVerified": true,
+      "supervisorSha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+      "supervisorBytes": 7440,
+      "installedSupervisorVerified": true,
+      "installedApkSha256": "308b17ac9af5142954658f86ad37122def3b015d06cd710865f2b982de277af0",
+      "environment": {
+        "manufacturer": "samsung",
+        "model": "SM-A566B",
+        "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+        "apiLevel": 36,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+        "pageSizeBytes": 16384,
+        "uid": 10325,
+        "selinuxContext": "u:r:untrusted_app:s0:c69,c257,c512,c768",
+        "seccomp": 2
+      },
+      "privateJobRemoved": true,
+      "probes": [
+        {
+          "id": "version",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 46,
+          "capturedBytes": 6,
+          "outputLimitBytes": 16384,
+          "stdout": "1.4.0\n",
+          "stderr": ""
+        },
+        {
+          "id": "revision",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 49,
+          "capturedBytes": 16,
+          "outputLimitBytes": 16384,
+          "stdout": "1.4.0+c240d6c68\n",
+          "stderr": ""
+        },
+        {
+          "id": "application-domain",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 137,
+          "capturedBytes": 111,
+          "outputLimitBytes": 16384,
+          "stdout": "{\"uid\":10325,\"context\":\"u:r:untrusted_app:s0:c69,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+          "stderr": ""
+        },
+        {
+          "id": "javascript-unicode-streams",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 97,
+          "capturedBytes": 39,
+          "outputLimitBytes": 16384,
+          "stdout": "JavaScript 中文 😀 1.4.0\n",
+          "stderr": "stderr-ok\n"
+        },
+        {
+          "id": "typescript",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 99,
+          "capturedBytes": 14,
+          "outputLimitBytes": 16384,
+          "stdout": "typescript=42\n",
+          "stderr": ""
+        },
+        {
+          "id": "spawn-and-spawn-sync",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 135,
+          "capturedBytes": 19,
+          "outputLimitBytes": 16384,
+          "stdout": "spawn+spawnSync-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "file-io",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 90,
+          "capturedBytes": 11,
+          "outputLimitBytes": 16384,
+          "stdout": "file-io-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "fetch-loopback",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 91,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "fetch-loopback-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "user-sigsys-handler",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 347,
+          "capturedBytes": 15,
+          "outputLimitBytes": 16384,
+          "stdout": "user-sigsys-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "timeout-forcible-cleanup",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "timeout",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 1835,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "PROBE_READY=30735\n",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30735,
+          "supervisorPid": 30732,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 54,
+          "terminationRequestedAfterReadyMillis": 1475,
+          "terminationToExitMillis": 306,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "bounded-output",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "output-limit",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 399,
+          "capturedBytes": 1024,
+          "outputLimitBytes": 1024,
+          "stdout": "PROBE_READY=30746\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30746,
+          "supervisorPid": 30743,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 97,
+          "terminationRequestedAfterReadyMillis": 0,
+          "terminationToExitMillis": 302,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "cancel-after-ready",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "cancelled",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 484,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "PROBE_READY=30758\n",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30758,
+          "supervisorPid": 30755,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 56,
+          "terminationRequestedAfterReadyMillis": 125,
+          "terminationToExitMillis": 303,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "fd-spawn-native",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 180,
+          "capturedBytes": 481,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[160888]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "spawn-native",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[160888]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 223,
+          "capturedBytes": 737,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163087]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "spawn-trap",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[163087]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-blocked-sigsys",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 300,
+          "capturedBytes": 796,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"blocked-sigsys\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[160942]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"mask\":{\"childBlocked\":true,\"callerStillBlocked\":true},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "blocked-sigsys",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[160942]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "mask": {
+              "childBlocked": true,
+              "callerStillBlocked": true
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-startup-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 140,
+          "capturedBytes": 566,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"startup-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"startup\":{\"samePid\":true,\"inheritedOpen\":true,\"cloexec\":true,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "startup-trap",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "startup": {
+              "samePid": true,
+              "inheritedOpen": true,
+              "cloexec": true,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "sigsys-listener-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 181,
+          "capturedBytes": 748,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"sigsys-listener\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"listener\":{\"during\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"after\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"delivered\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "sigsys-listener",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "listener": {
+              "during": {
+                "marker": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "closeRange": {
+                  "result": -1,
+                  "errno": 38
+                }
+              },
+              "after": {
+                "marker": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "closeRange": {
+                  "result": -1,
+                  "errno": 38
+                }
+              },
+              "delivered": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-lowered-native",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 179,
+          "capturedBytes": 693,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[160994]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "lowered-native",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[160994]",
+              "stderrEmpty": true
+            },
+            "limit": {
+              "before": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              },
+              "restored": true,
+              "during": {
+                "soft": 128,
+                "hard": 32768,
+                "openMax": 128
+              },
+              "after": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              }
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "sentinelIdentity": false,
+              "exitCode": 1
+            },
+            "async": {
+              "sentinelAbsent": true,
+              "sentinelIdentity": false,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-lowered-trap",
+          "passed": false,
+          "exitCode": 1,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 176,
+          "capturedBytes": 1027,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-trap\",\"passed\":false,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[161039]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":false,\"sentinelIdentity\":true,\"exitCode\":0},\"async\":{\"sentinelAbsent\":false,\"sentinelIdentity\":true,\"exitCode\":0},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true},\"error\":\"Error: spawnSync/spawn leaked sentinel above lowered RLIMIT_NOFILE\"}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "lowered-trap",
+            "passed": false,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[161039]",
+              "stderrEmpty": true
+            },
+            "limit": {
+              "before": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              },
+              "restored": true,
+              "during": {
+                "soft": 128,
+                "hard": 32768,
+                "openMax": 128
+              },
+              "after": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              }
+            },
+            "sync": {
+              "sentinelAbsent": false,
+              "sentinelIdentity": true,
+              "exitCode": 0
+            },
+            "async": {
+              "sentinelAbsent": false,
+              "sentinelIdentity": true,
+              "exitCode": 0
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            },
+            "error": "Error: spawnSync/spawn leaked sentinel above lowered RLIMIT_NOFILE"
+          }
+        },
+        {
+          "id": "recovery-after-termination",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 93,
+          "capturedBytes": 12,
+          "outputLimitBytes": 16384,
+          "stdout": "recovery-ok\n",
+          "stderr": ""
+        }
+      ],
+      "passed": false
+    },
+    {
+      "schemaVersion": 2,
+      "kind": "test-only-application-process-probe",
+      "pluginBinderExercised": false,
+      "variant": "bun-1.4.0-android-api28-patched-experimental",
+      "runtimeSha256": "b35db60bff4c1a9e9e056aed8853e5c3f5486133b106a9ebb4128ffd359ff99d",
+      "runtimeBytes": 87923312,
+      "installedPayloadVerified": true,
+      "supervisorSha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+      "supervisorBytes": 7440,
+      "installedSupervisorVerified": true,
+      "installedApkSha256": "308b17ac9af5142954658f86ad37122def3b015d06cd710865f2b982de277af0",
+      "environment": {
+        "manufacturer": "samsung",
+        "model": "SM-A566B",
+        "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+        "apiLevel": 36,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+        "pageSizeBytes": 16384,
+        "uid": 10325,
+        "selinuxContext": "u:r:untrusted_app:s0:c69,c257,c512,c768",
+        "seccomp": 2
+      },
+      "privateJobRemoved": true,
+      "probes": [
+        {
+          "id": "version",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 47,
+          "capturedBytes": 6,
+          "outputLimitBytes": 16384,
+          "stdout": "1.4.0\n",
+          "stderr": ""
+        },
+        {
+          "id": "revision",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 96,
+          "capturedBytes": 16,
+          "outputLimitBytes": 16384,
+          "stdout": "1.4.0+c240d6c68\n",
+          "stderr": ""
+        },
+        {
+          "id": "application-domain",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 98,
+          "capturedBytes": 111,
+          "outputLimitBytes": 16384,
+          "stdout": "{\"uid\":10325,\"context\":\"u:r:untrusted_app:s0:c69,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+          "stderr": ""
+        },
+        {
+          "id": "javascript-unicode-streams",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 90,
+          "capturedBytes": 39,
+          "outputLimitBytes": 16384,
+          "stdout": "JavaScript 中文 😀 1.4.0\n",
+          "stderr": "stderr-ok\n"
+        },
+        {
+          "id": "typescript",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 96,
+          "capturedBytes": 14,
+          "outputLimitBytes": 16384,
+          "stdout": "typescript=42\n",
+          "stderr": ""
+        },
+        {
+          "id": "spawn-and-spawn-sync",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 136,
+          "capturedBytes": 19,
+          "outputLimitBytes": 16384,
+          "stdout": "spawn+spawnSync-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "file-io",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 97,
+          "capturedBytes": 11,
+          "outputLimitBytes": 16384,
+          "stdout": "file-io-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "fetch-loopback",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 91,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "fetch-loopback-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "user-sigsys-handler",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 347,
+          "capturedBytes": 15,
+          "outputLimitBytes": 16384,
+          "stdout": "user-sigsys-ok\n",
+          "stderr": ""
+        },
+        {
+          "id": "timeout-forcible-cleanup",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "timeout",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 1832,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "PROBE_READY=30952\n",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30952,
+          "supervisorPid": 30949,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 98,
+          "terminationRequestedAfterReadyMillis": 1431,
+          "terminationToExitMillis": 302,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "bounded-output",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "output-limit",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 399,
+          "capturedBytes": 1024,
+          "outputLimitBytes": 1024,
+          "stdout": "PROBE_READY=30966\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30966,
+          "supervisorPid": 30962,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 96,
+          "terminationRequestedAfterReadyMillis": 0,
+          "terminationToExitMillis": 302,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "cancel-after-ready",
+          "passed": true,
+          "exitCode": 137,
+          "termination": "cancelled",
+          "forciblyTerminated": true,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 486,
+          "capturedBytes": 18,
+          "outputLimitBytes": 16384,
+          "stdout": "PROBE_READY=30979\n",
+          "stderr": "",
+          "readyObserved": true,
+          "parentageVerified": true,
+          "childPid": 30979,
+          "supervisorPid": 30976,
+          "childGone": true,
+          "supervisorGone": true,
+          "readinessMillis": 56,
+          "terminationRequestedAfterReadyMillis": 125,
+          "terminationToExitMillis": 305,
+          "possibleSignalFromExitConvention": 9
+        },
+        {
+          "id": "fd-spawn-native",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 184,
+          "capturedBytes": 481,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163345]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "spawn-native",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[163345]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 216,
+          "capturedBytes": 737,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163391]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "spawn-trap",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[163391]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-blocked-sigsys",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 255,
+          "capturedBytes": 796,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"blocked-sigsys\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163416]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"mask\":{\"childBlocked\":true,\"callerStillBlocked\":true},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "blocked-sigsys",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[163416]",
+              "stderrEmpty": true
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "mask": {
+              "childBlocked": true,
+              "callerStillBlocked": true
+            },
+            "maskRestored": true,
+            "async": {
+              "sentinelAbsent": true,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-startup-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 96,
+          "capturedBytes": 566,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"startup-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"startup\":{\"samePid\":true,\"inheritedOpen\":true,\"cloexec\":true,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "startup-trap",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "startup": {
+              "samePid": true,
+              "inheritedOpen": true,
+              "cloexec": true,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "sigsys-listener-trap",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 179,
+          "capturedBytes": 748,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"sigsys-listener\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"listener\":{\"during\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"after\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"delivered\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "sigsys-listener",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "listener": {
+              "during": {
+                "marker": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "closeRange": {
+                  "result": -1,
+                  "errno": 38
+                }
+              },
+              "after": {
+                "marker": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "closeRange": {
+                  "result": -1,
+                  "errno": 38
+                }
+              },
+              "delivered": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-lowered-native",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 137,
+          "capturedBytes": 693,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[138088]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "lowered-native",
+            "passed": true,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[138088]",
+              "stderrEmpty": true
+            },
+            "limit": {
+              "before": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              },
+              "restored": true,
+              "during": {
+                "soft": 128,
+                "hard": 32768,
+                "openMax": 128
+              },
+              "after": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              }
+            },
+            "sync": {
+              "sentinelAbsent": true,
+              "sentinelIdentity": false,
+              "exitCode": 1
+            },
+            "async": {
+              "sentinelAbsent": true,
+              "sentinelIdentity": false,
+              "exitCode": 1
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            }
+          }
+        },
+        {
+          "id": "fd-spawn-lowered-trap",
+          "passed": false,
+          "exitCode": 1,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 175,
+          "capturedBytes": 1027,
+          "outputLimitBytes": 16384,
+          "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-trap\",\"passed\":false,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[161639]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":false,\"sentinelIdentity\":true,\"exitCode\":0},\"async\":{\"sentinelAbsent\":false,\"sentinelIdentity\":true,\"exitCode\":0},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true},\"error\":\"Error: spawnSync/spawn leaked sentinel above lowered RLIMIT_NOFILE\"}\n",
+          "stderr": "",
+          "fdEvidence": {
+            "schemaVersion": 1,
+            "mode": "lowered-trap",
+            "passed": false,
+            "arch": "arm64",
+            "before": {
+              "fd": 256,
+              "open": true,
+              "cloexec": false
+            },
+            "nativeCloseRange": {
+              "result": 0,
+              "errno": 0
+            },
+            "nativeStillOpen": true,
+            "nativeCloexec": true,
+            "policy": {
+              "installed": true,
+              "before": {
+                "result": -1,
+                "errno": 22
+              },
+              "after": {
+                "result": -1,
+                "errno": 38
+              },
+              "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+            },
+            "trap": {
+              "marker": {
+                "result": -1,
+                "errno": 38
+              },
+              "closeRange": {
+                "result": -1,
+                "errno": 38
+              }
+            },
+            "control": {
+              "exitCode": 0,
+              "stdoutTarget": "socket:[161639]",
+              "stderrEmpty": true
+            },
+            "limit": {
+              "before": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              },
+              "restored": true,
+              "during": {
+                "soft": 128,
+                "hard": 32768,
+                "openMax": 128
+              },
+              "after": {
+                "soft": 32768,
+                "hard": 32768,
+                "openMax": 32768
+              }
+            },
+            "sync": {
+              "sentinelAbsent": false,
+              "sentinelIdentity": true,
+              "exitCode": 0
+            },
+            "async": {
+              "sentinelAbsent": false,
+              "sentinelIdentity": true,
+              "exitCode": 0
+            },
+            "after": {
+              "parentOpen": true,
+              "parentCloexec": false,
+              "sentinelIdentity": true
+            },
+            "error": "Error: spawnSync/spawn leaked sentinel above lowered RLIMIT_NOFILE"
+          }
+        },
+        {
+          "id": "recovery-after-termination",
+          "passed": true,
+          "exitCode": 0,
+          "termination": "exited",
+          "forciblyTerminated": false,
+          "processReaped": true,
+          "workspaceRemoved": true,
+          "elapsedMillis": 98,
+          "capturedBytes": 12,
+          "outputLimitBytes": 16384,
+          "stdout": "recovery-ok\n",
+          "stderr": ""
+        }
+      ],
+      "passed": false
+    }
+  ],
+  "lifecycle": {
+    "installedByThisRun": true,
+    "forceStopVerified": true,
+    "rounds": [
+      {
+        "round": 1,
+        "packageProcessAbsent": true,
+        "uidProcessCount": 0
+      },
+      {
+        "round": 2,
+        "packageProcessAbsent": true,
+        "uidProcessCount": 0
+      }
+    ],
+    "uninstalled": true,
+    "installedUid": 10325,
+    "finalUidProcessCount": 0
+  },
+  "passed": false,
+  "validationErrors": [
+    "Round 1: fd-spawn-lowered-trap failed\n\nfalse !== true\n",
+    "Round 2: fd-spawn-lowered-trap failed\n\nfalse !== true\n"
+  ],
+  "error": "Round 1: fd-spawn-lowered-trap failed\n\nfalse !== true\n; Round 2: fd-spawn-lowered-trap failed\n\nfalse !== true\n",
+  "acceptancePolicy": {
+    "fullSuitePassed": false,
+    "runnerExitCode": 1,
+    "unchangedDefaultValidatorRejectsFailures": true,
+    "passingSubsetChecks": "Existing validator applied separately to the explicitly selected 19 passing probes per round with matching definitions; raw full rounds retain passed=false. Failures independently checked for exact leaked identity, limit restoration, controls, bounds and cleanup.",
+    "noSkippedOrWeakenedAssertions": true
+  },
+  "interpretation": [
+    "Native ARM64 16 KiB execution is now observed for these specific experimental application probes. It does not establish full experimental Binder or general runtime compatibility.",
+    "The native lowered-limit control passes because the kernel close_range CLOEXEC operation succeeds. Forced TRAP returns ENOSYS and exposes the already recorded fallback scan-bound defect in both spawn APIs; both rounds restore the original soft/hard limits and preserve the parent FD.",
+    "This is the same boundary found on 4 KiB environments, not evidence that 16 KiB pages caused the leak. No runtime fix, clean Bun build, Release or distributionReady transition occurred.",
+    "All six forced termination cases reap the immediate child and remove its workspace. The test-only package was uninstalled with zero remaining processes under its UID."
+  ],
+  "officialCompanionReport": "docs/compatibility/2026-09-10-m5-native-arm64-16k.json"
+}

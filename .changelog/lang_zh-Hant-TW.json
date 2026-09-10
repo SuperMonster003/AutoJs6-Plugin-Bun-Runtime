@@ -19,6 +19,8 @@
         "尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本"
       ],
       "improvement": [
+        "在 Samsung Remote Test Lab SM-A566B (API 36) 完成原生 ARM64 16 KiB 執行驗證: 官方 Bun 與鎖定監督器組成的 v0.2.1 開發版 arm64-only APK 兩輪通過全部 8 項 Binder 測試, 包含程序重啟, 安裝後摘要及 10 次強制生命週期回收; 封存原始碼/APK/記錄綁定並解除安裝測試套件, 最終 Release 與 x86_64 門檻仍獨立保留",
+        "在同一原生 ARM64 16 KiB 實體裝置記錄未更動實驗 runtime 的兩輪 19/20: 原生 close_range, 啟動標記和生命週期通過, 已知 forced-TRAP 降低 RLIMIT_NOFILE 後的 spawn fd 繼承缺陷仍存在; 保留兩次失敗, 不宣稱完整實驗 Binder 或 runtime 驗收通過",
         "新增降低 RLIMIT_NOFILE 的原生/TRAP 對照, 實驗探針擴至 20 項: API 28/31/33/35 四台原生 arm64 實體裝置各兩輪 18/20, API 33 原生 x86_64 AVD 各兩輪 19/20, 均為 4 KiB 頁. 原有 180 次觀測仍通過; 新增 18 次失敗證明 soft limit 降至 128 後兩種 spawn API 均繼承 fd 256. 封存失敗, 限制還原及清理證據, 不更動 runtime 位元組或宣稱缺陷已修正",
         "補充 x64 Windows 的 ARM64 16 KiB 環境指南: VMware/WSL 本身不能提供原生 ARM64 Android, 區分全系統軟體模擬與原生執行, 建議優先確認 Samsung 遠端 16 KiB 實體裝置及 RDB/ADB 的可用性和權限, 不據此宣稱新增裝置驗收通過",
         "先前 18 項基準: 新增 5 項 FD/SIGSYS 專項探針並完成啟動修正複測: API 28/31/33/35 四台原生 arm64 實體裝置及 API 33 原生 x86_64 AVD 各兩輪均為 18/18, 合計 180/180; 雙 ABI 各兩次乾淨建置逐位元組一致. 保留原 17/18 失敗報告, 不更動正式 runtime 和 Android 13 最低需求; 完整實驗 Binder 與原生 16 KB 驗證仍待完成",

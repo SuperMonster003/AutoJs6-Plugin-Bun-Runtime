@@ -12,6 +12,8 @@
 * `修复` 以锁定的 MIT 补丁修复实验 Bun 的启动 CLOEXEC 回退: 枚举实际打开的描述符而不限制 fd 编号, 保留 fd 0-3, 标记未完成则明确退出; 新增原生错误/边界测试, 分离构建输入验证与运行时验收, 不改动正式 runtime 或 Android 13 最低要求
 * `修复` 修复正式插件在超时, 取消和输出超限时的进程回收: 使用摘要锁定的只读监督器, 将被忽略的 SIGTERM 升级为 SIGKILL, 等待直接 Bun 子进程退出并保留待排空的输出; Bun 1.4.0 和 Android 13 最低要求不变
 * `修复` 通过原文件编译共享 SupervisedProcess 并打包锁定监督器, 修复 patched Bun 独立探针的终止路径; schema 2 构建收据绑定源码, 工具链和 helper 字节, 输出读取器保持到终止后再关闭
+* `优化` 在 Samsung Remote Test Lab SM-A566B (API 36) 完成原生 ARM64 16 KiB 执行验证: 官方 Bun 与锁定监督器组成的 v0.2.1 开发版 arm64-only APK 两轮通过全部 8 项 Binder 测试, 包含进程重启, 安装后摘要及 10 次强制生命周期回收; 归档源码/APK/日志绑定并卸载测试包, 最终 Release 与 x86_64 门禁仍单独保留
+* `优化` 在同一原生 ARM64 16 KiB 真机记录未改动实验 runtime 的两轮 19/20: 原生 close_range, 启动标记和生命周期通过, 已知 forced-TRAP 降低 RLIMIT_NOFILE 后的 spawn fd 继承缺陷仍存在; 保留两次失败, 不声称完整实验 Binder 或运行时验收通过
 * `优化` 新增降低 RLIMIT_NOFILE 的原生/TRAP 对照, 实验探针扩至 20 项: API 28/31/33/35 四台原生 arm64 真机各两轮 18/20, API 33 原生 x86_64 AVD 各两轮 19/20, 均为 4 KiB 页. 原有 180 次观测仍通过; 新增 18 次失败证明 soft limit 降至 128 后两种 spawn API 均继承 fd 256. 归档失败, 限制恢复及清理证据, 不修改 runtime 字节或声称缺陷已修复
 * `优化` 补充 x64 Windows 的 ARM64 16 KiB 环境指南: VMware/WSL 本身不能提供原生 ARM64 Android, 区分全系统软件模拟与原生执行, 建议优先核实 Samsung 远程 16 KiB 真机及 RDB/ADB 的可用性和权限, 不据此声称新增设备验收通过
 * `优化` 此前 18 项基线: 新增 5 项 FD/SIGSYS 专项探针并完成启动修复复测: API 28/31/33/35 四台原生 arm64 真机及 API 33 原生 x86_64 AVD 各两轮均为 18/18, 合计 180/180; 双 ABI 各两次清洁构建逐字节一致. 保留原 17/18 失败报告, 不改动正式 runtime 和 Android 13 最低要求; 完整实验 Binder 与原生 16 KB 验证仍待完成
