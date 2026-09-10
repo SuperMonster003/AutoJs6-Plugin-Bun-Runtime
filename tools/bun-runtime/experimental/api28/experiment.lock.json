@@ -176,7 +176,7 @@
       "id": "v1.4.0-backport",
       "resolved": true,
       "blocksBuild": true,
-      "description": "Eight deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, and patch eight provides a bounded allocation-free Linux spawn FD fallback with separately audited source differences."
+      "description": "Nine deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, patch eight provides a bounded allocation-free Linux spawn FD fallback, and patch nine preserves read-only directory confinement without openat2. All project-owned source differences are separately audited."
     },
     {
       "id": "toolchain-byte-lock",
@@ -194,7 +194,7 @@
       "id": "build-and-runtime-evidence",
       "resolved": false,
       "blocksBuild": false,
-      "description": "Two clean builds per ABI of the a260ef308 spawn-FD-fix source are byte-for-byte identical and pass the complete static ELF audit. Historical six-patch and seven-patch artifacts remain separate. Full experimental Binder/device acceptance and matching APK/source publication remain open; project policy does not require a separate legal-review gate."
+      "description": "The nine-patch 7b9ac266 directory-confinement source passes deterministic replay and two clean builds per ABI with byte-identical outputs and the complete static ELF audit. Historical artifacts and reports are not reassigned to this source. Full experimental Binder/device acceptance and matching APK/source publication remain open; project policy does not require a separate legal-review gate."
     }
   ]
 }

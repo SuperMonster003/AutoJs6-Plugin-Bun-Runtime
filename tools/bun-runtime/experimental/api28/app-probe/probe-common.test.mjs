@@ -14,6 +14,9 @@ import { openat2Fixture } from "./openat2-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
+// Only the expected revision changes when testing the repaired runtime.
+// Historical definition hashes still protect every other field/assertion.
+const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
   const enosys = { result: -1, errno: 38 };
@@ -77,6 +80,10 @@ function fixture() {
 }
 
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
+test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
+  assert.equal(hash(JSON.stringify(previousRevision(probes))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
+});
 test("probe definitions reject traversal, duplication, arbitrary arguments, and unbounded work", () => {
   for (const change of [
     p => { p[0].id = "../escape"; }, p => { p[1].id = p[0].id; },
@@ -203,10 +210,10 @@ test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
     ["--serial", "a", "--serial", "b"]]) assert.throws(() => parseOptions(args, ["--serial"]));
 });
 
-test("syscall additions preserve every original 20-probe definition and assertion byte-for-byte", () => {
+test("syscall additions preserve the original 20 definitions apart from the expected revision", () => {
   const original = probes.filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id) && !Object.hasOwn(OPENAT2_MODES,probe.id));
   assert.equal(original.length, 20);
-  assert.equal(hash(JSON.stringify(original)), "8e1450d608cc8694ffac9988ecf6677c70fb576cb4eb64dd9ea130ca3fb254fb");
+  assert.equal(hash(JSON.stringify(previousRevision(original))), "8e1450d608cc8694ffac9988ecf6677c70fb576cb4eb64dd9ea130ca3fb254fb");
   for (const path of ["/syscall-probes.mjs", "/syscall-evidence.mjs"])
     assert(inputFacts().some(input => input.path.endsWith(path)));
 });
@@ -243,9 +250,10 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
   } finally { rmSync(temp, { recursive: true }); }
 });
 
-test("openat2 additions preserve all original 23 definitions and the existing materialized asset entries", () => {
+test("openat2 additions preserve the original 23 definitions and assets apart from the expected revision", () => {
   const original=probes.filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
-  assert.equal(hash(JSON.stringify(original)),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
+  assert.equal(hash(JSON.stringify(previousRevision(original))),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
   const oldAssets=materializeProbes(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);
   for (const path of ["/openat2-probes.mjs","/openat2-evidence.mjs"])
