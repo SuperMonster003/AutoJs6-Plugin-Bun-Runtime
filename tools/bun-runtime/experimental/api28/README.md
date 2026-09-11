@@ -7,7 +7,8 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > host-image, license, and corresponding-source input closure is locked and
 > `buildReady` is true. The nine-patch source is replay-verified and produces
 > identical bytes in two clean builds per ABI, with complete ELF audits. Its
-> unchanged 24-probe suite passes twice in five native 4 KiB environments.
+> unchanged 24-probe suite passes twice in five native 4 KiB environments, with
+> the same ARM64 APK subsequently passing twice on Samsung native 16 KiB.
 > Historical eight-patch binary pairs cannot satisfy the new source gate. The experiment remains
 > `distributionReady: false` until a matching experimental APK passes its
 > application-process gates and is actually published. Patched executables stay
@@ -29,8 +30,16 @@ totaling 240/240. All 240 directory-path assertions pass, including rejection
 of the 60 formerly failing outside-root sentinel reads. Packages and UID
 processes are cleaned up and the owned AVD is closed. See the
 [new scoped-open report](../../../../docs/compatibility/2026-09-10-m3-scoped-open-fix.md).
-These new bytes and fixtures still need native ARM64 16 KiB, full experimental
-Binder and the remaining syscall/API matrix; distribution remains false.
+On 2026-09-11, the exact same ARM64 APK and all 24 definitions also pass twice
+on Samsung SM-A566B (API 36, native arm64-v8a, 16384-byte pages, native bridge=0),
+adding 48/48 observations and 48 passing path assertions. All 12 escape requests
+reject the sentinel; six forcible lifecycle cases complete in 302-304 ms. The
+package is uninstalled with zero UID processes; no AVD is launched or stopped.
+See the [separate native ARM64 16 KiB report](../../../../docs/compatibility/2026-09-11-m3-scoped-open-native-arm64-16k.md).
+This reuses the previous binaries, not new builds or the production v0.2.2 APK.
+Full experimental Binder and the remaining syscall/API matrix stay open;
+distribution remains false. Raw openat2 is already unavailable before filters
+in both sessions, so neither proves first-entry high-level EIO/TRAP reachability.
 
 The historical [directory-confinement probe](../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.md)
 exposes a blocker in the eight-patch runtime: five native 4 KiB
@@ -55,7 +64,7 @@ stable Android 9 support, native x86_64 16 KiB support or a published patched AP
 
 ### Historical application evidence
 
-The latest [scoped syscall follow-up](../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md)
+The historical [scoped syscall follow-up](../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md)
 keeps those runtime bytes unchanged and expands the fixture suite to 23.
 Five native 4 KiB environments pass two rounds, totaling 230/230, including
 60 raw TRAP-to-ENOSYS observations and 16 EIO-controlled copy/wait fallbacks.

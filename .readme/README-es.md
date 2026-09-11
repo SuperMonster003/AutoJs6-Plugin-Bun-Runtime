@@ -216,6 +216,7 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 _2026/09/11_
 
+- `Mejora` Validar Bun experimental de nueve parches en Samsung ARM64 nativo / API 36 / 16 KiB con el mismo APK y las 24 pruebas sin cambios: 48/48 en dos rondas, 48 comprobaciones de rutas correctas y 12 solicitudes de escape rechazan el centinela; desinstalar el paquete de prueba sin procesos UID restantes ni iniciar o apagar AVD. Siguen pendientes Binder experimental completo, Release y x86_64 16 KiB
 - `Mejora` Verificación de compilación de la alineación de páginas de 16 KB en bibliotecas nativas de 64 bits, con controles del contrato manifest e informes JSON
 
 #### v0.2.1

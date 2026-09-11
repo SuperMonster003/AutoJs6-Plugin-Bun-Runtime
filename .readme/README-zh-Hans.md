@@ -216,6 +216,7 @@ default timeout: 60 seconds
 
 _2026/09/11_
 
+- `优化` 在 Samsung 原生 ARM64 / API 36 / 16 KiB 使用相同 APK 和未改动的 24 项套件验证九补丁实验 Bun: 两轮 48/48, 全部 48 项路径断言通过, 12 次越界请求均拒绝测试哨兵; 测试包卸载后 UID 进程为零, 未启动或关闭 AVD. 完整实验 Binder, Release 和 x86_64 16 KiB 门禁仍未完成
 - `优化` 构建阶段校验 64 位原生库的 16 KB 页大小对齐, 检查 manifest 契约并输出 JSON 报告
 
 #### v0.2.1

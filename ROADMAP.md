@@ -1,10 +1,10 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-更新日期: 2026-09-10
+更新日期: 2026-09-11
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC, spawn FD 与保留目录服务的 openat2 回退已修复; 新九补丁在五个原生 4 KiB 环境按原 24 项断言各两轮通过, 新版原生 16 KiB 和完整 Binder 待验收), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC, spawn FD 与保留目录服务的 openat2 回退已修复; 新九补丁在五个原生 4 KiB 环境按原 24 项断言各两轮通过, 同一 APK 又在三星原生 ARM64 16 KiB 两轮通过, 完整 Binder 待验收), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
 
 ## 当前状态速览
 
@@ -13,7 +13,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与完整实验 Binder 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 目录约束修复已通过本地五环境 240/240, 新字节及 24 项夹具的原生 ARM64 16 KiB 需另约三星复测. 其余 syscall、Android 高位 FD/硬限制降低/UNSHARE、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成; 旧失败/较窄成功记录均保留, 不将局部验收当作稳定 Android 9 支持 |
+| 当前缺口 | 目录约束修复已通过本地五环境 240/240, 同一 ARM64 APK 又在三星原生 16 KiB 通过 48/48; 本轮设备缺口已补齐. 其余 syscall、Android 高位 FD/硬限制降低/UNSHARE、完整实验 Binder、API 29/30/32 和 patched paired APK/source Release 仍待完成; 旧失败/较窄成功记录均保留, 不将局部验收当作稳定 Android 9 支持 |
 
 ## 如何阅读这份路线图
 
@@ -76,7 +76,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 构建与源码发布流程完成, patched 分发待验收 | 两轮双 ABI 清洁构建逐字节一致; 官方 v0.2.0 已通过 paired APK/source 发布验证, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 目录回退 4 KiB 已通过, 完整矩阵进行中 | 采用方案二保留普通目录服务, 九补丁五个原生 4 KiB 环境各两轮 24/24; 原 60 项越界失败全部拒绝, 新版原生 16 KiB 与完整 Binder 待完成 | 插件/测试/设备/发布 |
+| M3 Android 9-12L 实验支持 | 目录回退 4 KiB / 原生 ARM64 16 KiB 已通过, 完整矩阵进行中 | 采用方案二保留普通目录服务, 九补丁五个原生 4 KiB 环境各两轮 24/24; 原 60 项越界失败全部拒绝, 同一 APK 在三星原生 16 KiB 两轮 24/24; 完整 Binder 待完成 | 插件/测试/设备/发布 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -207,14 +207,14 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (上游/构建/测试/设备) 第 8 个 MIT 补丁以 4096-byte 栈缓冲和 raw `openat/getdents64/fcntl/close` 枚举 Linux spawn child 的实际 FD, 移除当前 RLIMIT 与 65536 编号上限依赖, 不分配内存、不取锁, 失败时在 exec 前经原错误路径退出. GCC 13 与 Clang 21 各通过 4 组 57 场景, 包括 fd 70000、降低 soft/hard、真实 vfork/exec、EINTR/目录项/条目预算、符号审计及原实现四项失败对照; 双 Android ABI 目标对象只引用 syscall/errno/栈保护符号. 双 ABI 各两轮清洁构建一致后, 四台 4 KiB arm64 真机、API 33 原生 x86_64 AVD、Samsung API 36 原生 ARM64 16 KiB 真机各两轮 20/20, 合计 240/240. 未放宽原断言, 24 次降低软限制用例均确认两个子 API 不继承 sentinel, 36 次强制回收为 301-329 ms. 所有测试包卸载、UID 进程归零, 本轮 AVD 已关闭, 原有 API 24 AVD 保持运行; 旧失败报告原样保留. 见 [M3 spawn 修复报告](docs/compatibility/2026-09-10-m3-spawn-fd-fix.json). (2026-09-10, G1/G2, 非完整 Binder, 未发布)
 - [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Linux 主机已有启动/spawn 的 FD 70000 和 spawn 降低 hard limit 证据, 但 Android 所测 hard limit 为 32768、sentinel 为 fd 256, 不能据此声称 Android 高于原 65536 上界或降低 hard limit 已覆盖; UNSHARE、watch/reload 等边界和完整实验 Binder 仍未完成.
 - [x] (测试/设备) 在不改运行时字节、不放宽原 20 项定义/断言的前提下新增三个固定 syscall 夹具和独立证据校验器. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/23, 共 230/230; 六个 syscall 的 raw TRAP→ENOSYS 对照共 60 次通过, 复制与异步等待另有 16 次先 EIO 证明调用路径、再 TRAP 证明回退的验证通过. API 28 的两次复制因 kernel 4.4 门控、两次 pidfd 因既有更高优先级策略无法观察 EIO, 单独记录且不计为高层分支触达. 原有 30 次强制回收为 301-307 ms, 测试包卸载且 UID 进程归零, 本轮 AVD 已关闭, 未主动操作原有 AVD; API 24 仍在线, 原有 API 36 大页 AVD 在最终只读检查时已离线, 原因未确定. 见 [syscall 报告与语义边界](docs/compatibility/2026-09-10-m3-syscall-fallbacks.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-syscall-fallbacks.json). (2026-09-10, G1/G2, 原始历史不变, 本轮无 16 KiB/完整 Binder/发布)
-- [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3、timer/fetch 视为 Android 主动禁用的 epoll_pwait2、或 raw openat2 视为路径约束通过. openat2 目录约束已通过九补丁的本地 4 KiB 修复复测, 但首次高层 EIO/TRAP 与原生 16 KiB 边界未完成; fchmodat2 的内部 sys::lchmod/包可执行文件链接路径现已定位, 但未实际运行, 不能由 Android 公开导出不存在推断通过. 其余错误/FD/线程边界及新夹具原生 ARM64 16 KiB 仍待验证.
+- [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得 exit 159, hang 或泄漏 FD. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3、timer/fetch 视为 Android 主动禁用的 epoll_pwait2、或 raw openat2 视为路径约束通过. openat2 目录约束已通过九补丁的本地 4 KiB 与三星原生 ARM64 16 KiB 修复复测, 但首次高层 EIO/TRAP 触达未完成; fchmodat2 的内部 sys::lchmod/包可执行文件链接路径现已定位, 但未实际运行, 不能由 Android 公开导出不存在推断通过. 其余错误/FD/线程边界仍待验证; 新夹具的原生 ARM64 16 KiB 两轮证据见下方独立记录.
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 独立探针已通过 spawnSync 的 caller/child mask 保留、注册/移除监听器期间的强制 trap、普通用户 SIGSYS 恰好一次送达, 以及生命周期复测; async spawn 在恢复 mask 后执行, 不推断 blocked async、watch/reload、其他线程或完整插件/Binder 通过.
 
 - [x] (测试/设备) 在同一 `a260ef308` 字节上增加固定 openat2 目录约束夹具, 套件扩为 24 项; 新源码独立打包为 8 KiB 上限的 APK 资源, 保留原 23 项内容与原 128 KiB JSON/输出/超时门禁. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/24: 原 230 项观测全部通过, 新增 10 项均失败. 12 种 HTTP 路径分别在 native 与后置 TRAP 阶段检查; 普通文件、内部链接、编码穿越拒绝及 FIFO 非阻塞通过, 相对/绝对/魔术链接共 60 次返回配置根外的私有测试哨兵. 不接触用户数据, 不把失败改作通过; 原 30 次强制回收为 301-316 ms, 全部测试包卸载后 UID 进程归零, 本轮 AVD 已关闭. 所有设备在测试过滤器前已观察到 raw openat2=ENOSYS, 不声称 EIO/首次高层 TRAP 触达. 见 [目录约束阻断报告](docs/compatibility/2026-09-10-m3-openat2-confinement.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-openat2-confinement.json). (2026-09-10, G1/G2, 验收失败, 未改 native/未发布)
 - [x] (源码审计) 修正上一轮大小写敏感搜索的局限: `fchmodat2` 以 `SYS_FCHMODAT2` 直接出现在 `sys::lchmod`, 由 install/bin 的 chmod_on_ok 调用, ENOSYS 后走 libc fchmodat 且调用者忽略错误. Android 内部 Node lchmod 另返回 EOPNOTSUPP, 十轮实测两个公开 node:fs 导出均为 undefined. 本轮未运行依赖安装, 不据此通过内部 CLI fallback; 旧报告保持原样, 新报告明确记录修正.
 - [x] (产品决策) 用户选择原方案二: 保留普通目录路由, 为 openat2 不可用的环境实现有界只读 FD 相对路径回退, 不采用整体关闭目录服务或新增宽松开关. 一般 Bun.file/node:fs 能力不受本次修改限制, 不将可信脚本包装成安全沙箱. (2026-09-10)
 - [x] (上游/构建/测试/设备) 第 9 个 MIT 目录约束补丁锁定至 `7b9ac266888abda7ee6ec0b8ac11a74236420030`, 通过完整源码重放与双 ABI 各两轮逐字节一致的清洁构建. GCC 13 / Clang 21 各四组 20 场景, GCC ASan/UBSan/泄漏检查及 API 28 双 ABI 对象审计通过. 原 24 项设备定义仅更新 revision: 四台 API 28/31/33/35 ARM64 真机与 API 33 x86_64 AVD (均原生 4 KiB) 各两轮 24/24, 共 240/240; 全部 240 路径断言通过, 原 60 次越界哨兵读取全部拒绝且普通目录服务保留. 30 次强制回收 300-306 ms, 测试包卸载后 UID 进程为零, 本轮 AVD 已关闭. 旧失败不改写, 不声称首次高层 EIO/TRAP 触达或内核级全竞态等价. 见 [目录回退修复报告](docs/compatibility/2026-09-10-m3-scoped-open-fix.md) 与 [完整证据](docs/compatibility/2026-09-10-m3-scoped-open-fix.json). (2026-09-10, G1/G2, 未发布)
-- [ ] (设备, 下一验证项) 另约三星原生 ARM64 / API 36 / 16 KiB 设备, 对新 `1.4.0+7b9ac2668` 字节复测同一 24 项套件; 不沿用旧 revision 的 20 项或官方 Binder 证据. 完整实验 Binder 和其余 syscall/API 边界仍单独跟踪.
+- [x] (设备) Samsung SM-A566B (API 36, 原生 arm64-v8a, PAGE_SIZE=16384, native bridge=0) 对九补丁 `1.4.0+7b9ac2668` 运行完全相同的 ARM64 APK 和 24 项套件, 两轮 24/24, 共 48/48. 48 项路径断言全部通过, 12 次越界请求均拒绝哨兵, 普通文件/根内链接正常; 12 次 raw syscall 对照与 4 次 EIO 控制下的复制/等待行为通过. 4 次降低软 FD 限制、6 次强制回收 (302-304 ms) 通过, 包卸载后 UID 进程为零; 本轮未启动/关闭 AVD, 两台原有 AVD 保持在线. 原字节/夹具/验证器/限制不变, 复核旧四个构建产物而非重新构建. raw openat2 仍在过滤器前不可用, 不声称首次高层 EIO/TRAP、完整实验 Binder 或生产 v0.2.2/Release 验收. 见 [原生 ARM64 16 KiB 复测](docs/compatibility/2026-09-11-m3-scoped-open-native-arm64-16k.md) 与 [完整 JSON](docs/compatibility/2026-09-11-m3-scoped-open-native-arm64-16k.json). (2026-09-11, G2, 未发布)
 
 ### M3-B: 插件诊断与实验分发
 
@@ -266,7 +266,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (设备/arm64) Samsung Remote Test Lab SM-A566B 真机 (Android 16 / API 36, 原生 arm64-v8a, kernel aarch64, PAGE_SIZE=16384, native bridge=0) 完成官方 Bun 1.4.0 + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK 完整 8 项 Binder 两轮验收. 每项测试前硬断言 API/页大小, 每轮前 force-stop 并重新启动, 安装后双 payload 摘要与可执行权限通过, PluginInfo 与单 ABI 包内容一致; 10 次忽略 SIGTERM 的取消/超时/输出超限均真实回收并删除工作目录. 两个测试包卸载后 UID 进程数为 0, 不从翻译桥推断原生执行. 见 [M5 原生 ARM64 报告](docs/compatibility/2026-09-10-m5-native-arm64-16k.json). (2026-09-10, G1/G2, 开发版, 非已发布 Release APK)
 - [ ] (发布/arm64) 对最终拟发布的签名 APK 在原生 arm64 16 KiB 环境重复匹配范围的验收, 绑定该产物的安装后摘要及同 Release 源码资产; 不将开发版 Debug APK 通过归因给未测试的 Release 文件.
 - [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB; 最初的资料核查只确认候选路线, 不计为设备通过, 随后用户接入的 Samsung 真机已按上方独立条目归档实测结果. (2026-09-10, 环境资料核查; 设备 G2 见独立报告)
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 当前八补丁双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KiB 双 ABI 与原生 ARM64 16 KiB 安装后摘要和应用进程生命周期已完成. 四台 4 KiB arm64 真机、API 33 原生 x86_64 AVD 与 Samsung API 36 原生 arm64 / 16 KiB 真机各两轮 20/20, 合计 240/240. 旧 18/20 和 19/20 记录保留; 完整实验 Binder/其余 FD 语义及 x86_64 16 KiB 仍未完成.
+- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 当前九补丁双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KiB 双 ABI 与原生 ARM64 16 KiB 安装后摘要和应用进程生命周期已完成. 2026-09-10 五个原生 4 KiB 环境各两轮 24/24 (240/240), 2026-09-11 同一 ARM64 APK 在 Samsung API 36 原生 16 KiB 各两轮 24/24 (48/48), 合并六环境 288/288, 不表示同轮重跑. 旧 18/20、19/20、23/24 失败及较窄成功记录均保留; 完整实验 Binder/其余 syscall/FD 语义、最终签名 APK/source 发布及 x86_64 16 KiB 仍未完成.
 - [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.

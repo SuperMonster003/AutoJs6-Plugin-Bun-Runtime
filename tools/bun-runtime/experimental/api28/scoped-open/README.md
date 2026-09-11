@@ -90,5 +90,10 @@ environments, 240/240. It also records the same helper tests passing with GCC
 ASan/UBSan and leak detection using the already-locked host runtime libraries.
 The previous failed
 [`a260ef308` device report](../../../../../docs/compatibility/2026-09-10-m3-openat2-confinement.json)
-remains immutable. Native ARM64 16 KiB, full experimental Binder, remaining syscall
-semantics and matching APK/source publication are separate gates.
+remains immutable. The [2026-09-11 Samsung follow-up](../../../../../docs/compatibility/2026-09-11-m3-scoped-open-native-arm64-16k.md)
+reuses the exact ARM64 APK and all 24 definitions on native ARM64 / API 36 /
+16384-byte pages, passing twice (48/48), including all 48 path assertions and
+12 rejected escape requests. Packages/UID processes are cleaned up; pre-existing
+AVDs are not operated. Raw openat2 is unavailable before filters here too, not
+first-entry high-level EIO/TRAP acceptance. Full experimental Binder, remaining
+syscall semantics and matching APK/source publication are still separate gates.
