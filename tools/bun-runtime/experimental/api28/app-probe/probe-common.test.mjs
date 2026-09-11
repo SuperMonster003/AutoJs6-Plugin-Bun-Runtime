@@ -6,17 +6,20 @@ import test from "node:test";
 import { supervisorLock } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lockedEvidence, newOutputDirectory,
   outsideRepository, parseInstrumentation, parseOptions, validateManifestDump, validateProbes, validateReceipt, validateReport,
-  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, materializeOpenat2Source, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
+  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, materializeOpenat2Source, materializeLchmodSource, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
 import { SYSCALL_MODES } from "./syscall-evidence.mjs";
 import { syscallFixture } from "./syscall-fixture.test-support.mjs";
 import { OPENAT2_MODES } from "./openat2-evidence.mjs";
 import { openat2Fixture } from "./openat2-fixture.test-support.mjs";
+import { LCHMOD_MODES } from "./lchmod-evidence.mjs";
+import { lchmodFixture } from "./lchmod-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
+const withoutLchmod = rows => rows.filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
   const enosys = { result: -1, errno: 38 };
@@ -75,6 +78,8 @@ function fixture() {
         stdout: "SYSCALL_PROBE_RESULT=" + JSON.stringify(syscallFixture(probe.mode)) + "\n" } : {}),
       ...(probe.sourceFile === "openat2-probes.mjs" ? { openat2Evidence: openat2Fixture(),
         stdout: "OPENAT2_PROBE_RESULT=" + JSON.stringify(openat2Fixture()) + "\n" } : {}),
+      ...(probe.sourceFile === "lchmod-probes.mjs" ? { lchmodEvidence: lchmodFixture(),
+        stdout: "LCHMOD_PROBE_RESULT=" + JSON.stringify(lchmodFixture()) + "\n" } : {}),
     })),
   } };
 }
@@ -82,7 +87,7 @@ function fixture() {
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
 test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
   assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
-  assert.equal(hash(JSON.stringify(previousRevision(probes))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
+  assert.equal(hash(JSON.stringify(previousRevision(withoutLchmod(probes)))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
 });
 test("probe definitions reject traversal, duplication, arbitrary arguments, and unbounded work", () => {
   for (const change of [
@@ -116,6 +121,10 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       const syscallSource = readFileSync(join(HERE, "syscall-probes.mjs"), "utf8").replace(/\r\n/g, "\n");
       assert.equal(actual.source, "const SYSCALL_MODE = " + JSON.stringify(probe.mode) + ";\n" + syscallSource);
       assert(Buffer.byteLength(actual.source) <= 16384);
+    } else if (probe.sourceFile === "lchmod-probes.mjs") {
+      assert.deepEqual(actual,{...probe,sourceAsset:"lchmod-probes.mjs"});
+      assert.equal(materializeLchmodSource(), "const LCHMOD_MODE = \"bin-link\";\n" +
+        readFileSync(join(HERE,"lchmod-probes.mjs"),"utf8").replace(/\r\n/g,"\n"));
     } else if (probe.sourceFile === "openat2-probes.mjs") {
       assert.deepEqual(actual,{...probe,sourceAsset:"openat2-probes.mjs"});
       assert.equal(materializeOpenat2Source(),"const OPENAT2_MODE = \"confinement\";\n" +
@@ -195,7 +204,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 24);
+    assert.equal(report.probes.length, 25);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);
@@ -211,7 +220,7 @@ test("CLI rejects absent, duplicate, unknown and valueless arguments", () => {
 });
 
 test("syscall additions preserve the original 20 definitions apart from the expected revision", () => {
-  const original = probes.filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id) && !Object.hasOwn(OPENAT2_MODES,probe.id));
+  const original = withoutLchmod(probes).filter(probe => !Object.hasOwn(SYSCALL_MODES, probe.id) && !Object.hasOwn(OPENAT2_MODES,probe.id));
   assert.equal(original.length, 20);
   assert.equal(hash(JSON.stringify(previousRevision(original))), "8e1450d608cc8694ffac9988ecf6677c70fb576cb4eb64dd9ea130ca3fb254fb");
   for (const path of ["/syscall-probes.mjs", "/syscall-evidence.mjs"])
@@ -251,10 +260,10 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
 });
 
 test("openat2 additions preserve the original 23 definitions and assets apart from the expected revision", () => {
-  const original=probes.filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
+  const original=withoutLchmod(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
   assert.equal(hash(JSON.stringify(previousRevision(original))),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
-  const oldAssets=materializeProbes(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
+  const oldAssets=withoutLchmod(materializeProbes(probes)).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);
   for (const path of ["/openat2-probes.mjs","/openat2-evidence.mjs"])
     assert(inputFacts().some(input => input.path.endsWith(path)));
@@ -271,6 +280,26 @@ test("a failed confinement proof or mismatched kernel can never pass the full ru
     const {report,options}=fixture(); change(report); assert.throws(() => validateReport(report,options));
   }
 });
+test("lchmod adds only a fixed asset and preserves every original 24-probe definition", () => {
+  assert.equal(withoutLchmod(probes).length,24);
+  for(const path of ["/lchmod-probes.mjs","/lchmod-evidence.mjs"])
+    assert(inputFacts().some(input=>input.path.endsWith(path)));
+  assert(Buffer.byteLength(materializeLchmodSource())<=12288);
+  assert(Buffer.byteLength(JSON.stringify(materializeProbes(probes)))<=131072);
+  for(const change of [p=>{p[23].sourceAsset="../escape";},p=>{p[23].sourceFile="../lchmod-probes.mjs";},
+    p=>{p[23].mode="install";},p=>{p[23].source="fake";},p=>{p[23].stdout="SYSCALL_PROBE_RESULT=";},
+    p=>{p[23].timeoutMillis=30000;}]) {
+    const changed=structuredClone(probes);change(changed);assert.throws(()=>validateProbes(changed));
+  }
+});
+test("lchmod CLI evidence must match output, kernel, path effects and negative controls", () => {
+  for(const change of [r=>{delete r.probes[23].lchmodEvidence;},r=>{r.probes[23].lchmodEvidence.kernel="4.4.1";},
+    r=>{r.probes[23].stdout="LCHMOD_PROBE_RESULT={}";},r=>{r.probes[23].stdout+=r.probes[23].stdout;},
+    r=>{r.probes[0].lchmodEvidence=lchmodFixture();},r=>{r.probes[23].lchmodEvidence.rows[1][1]=0;}]) {
+    const {report,options}=fixture();change(report);assert.throws(()=>validateReport(report,options));
+  }
+});
+
 test("build receipts bind current probe inputs, exact runtime hashes and APK inventory", () => validateReceipt(receipt()));
 test("receipts reject production identity, source drift, paths and ABI/hash drift", () => {
   for (const change of [

@@ -7,8 +7,9 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > host-image, license, and corresponding-source input closure is locked and
 > `buildReady` is true. The nine-patch source is replay-verified and produces
 > identical bytes in two clean builds per ABI, with complete ELF audits. Its
-> unchanged 24-probe suite passes twice in five native 4 KiB environments, with
-> the same ARM64 APK subsequently passing twice on Samsung native 16 KiB.
+> original 24-probe suite passes in five native 4 KiB environments and Samsung
+> native 16 KiB. A new offline lchmod CLI probe extends it to 25 without changing
+> those 24 definitions: all six environments pass twice (300/300).
 > Historical eight-patch binary pairs cannot satisfy the new source gate. The experiment remains
 > `distributionReady: false` until a matching experimental APK passes its
 > application-process gates and is actually published. Patched executables stay
@@ -24,6 +25,16 @@ mode, restricting general file APIs or introducing a third-party dependency.
 The exact helper and C bridge pass four groups / 20 named cases with both GCC 13
 and Clang 21, including native openat2 comparisons, replacement/error controls
 and FD cleanup. See the [implementation and limits](scoped-open/README.md).
+
+The [new internal lchmod/bin-link evidence](../../../../docs/compatibility/2026-09-11-m3-lchmod-bin-link.md)
+adds seven bounded offline CLI cases per round: 84 observations in all six
+native environments, including Samsung ARM64 / API 36 / 16 KiB. Mode repair,
+repeated linking, no-follow, ignored-EIO and observed-SIGSYS reachability controls
+pass. Only the test harness/APK changes; no Bun native patch, production CLI
+capability or automatic dependency installation is added. Historical failures,
+the original 24 fixtures, official bytes and the API 33 production floor remain
+unchanged. Test packages/UID processes and the owned API 33 AVD are cleaned up.
+
 The new revision `1.4.0+7b9ac2668` passes the unchanged 24-probe Android suite
 twice on native arm64 API 28/31/33/35 and x86_64 API 33 (all 4096-byte pages),
 totaling 240/240. All 240 directory-path assertions pass, including rejection
