@@ -8,6 +8,7 @@
 
 ###### 2026/09/11
 
+* `Improvement` Add a fixed offline CLI probe for internal lchmod/fchmodat2 without changing runtime bytes or the original 24 probes: all 25 pass twice in six native environments (300/300), including ARM64 16 KiB. Verify mode changes, repeated links, no-follow, ignored EIO and SIGSYS reachability with bounded thread cleanup; preserve early harness failures, remove test packages and close the owned AVD. Full experimental Binder and Release gates remain open
 * `Improvement` Validate the nine-patch experimental Bun on Samsung native ARM64 / API 36 / 16 KiB with the identical APK and unchanged 24-probe suite: 48/48 across two rounds, all 48 path assertions pass and 12 escape requests reject the sentinel; uninstall the test package with zero UID processes and no AVD launches or shutdowns. Full experimental Binder, Release and x86_64 16 KiB gates remain open
 * `Improvement` Build verification of 16 KB page alignment for 64-bit native libraries, including manifest contract checks and JSON reports
 

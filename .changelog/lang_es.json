@@ -8,6 +8,7 @@
     "v0.2.2": {
       "released_date": "2026/09/11",
       "improvement": [
+        "Agregar una prueba CLI fija sin red para lchmod/fchmodat2 interno sin cambiar los binarios ni las 24 pruebas originales: las 25 pasan dos veces en seis entornos nativos (300/300), incluido ARM64 de 16 KiB. Verificar permisos, enlaces repetidos, no-follow, EIO ignorado y alcance con SIGSYS y limpieza acotada de hilos; conservar los fallos iniciales del arnés, eliminar los paquetes de prueba y cerrar el AVD iniciado. Siguen pendientes Binder experimental completo y Release",
         "Validar Bun experimental de nueve parches en Samsung ARM64 nativo / API 36 / 16 KiB con el mismo APK y las 24 pruebas sin cambios: 48/48 en dos rondas, 48 comprobaciones de rutas correctas y 12 solicitudes de escape rechazan el centinela; desinstalar el paquete de prueba sin procesos UID restantes ni iniciar o apagar AVD. Siguen pendientes Binder experimental completo, Release y x86_64 16 KiB",
         "Verificación de compilación de la alineación de páginas de 16 KB en bibliotecas nativas de 64 bits, con controles del contrato manifest e informes JSON"
       ]

@@ -157,6 +157,13 @@
     "termination": "exited"
   },
   {
+    "id": "lchmod-bin-link",
+    "sourceFile": "lchmod-probes.mjs",
+    "mode": "bin-link",
+    "stdout": "LCHMOD_PROBE_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

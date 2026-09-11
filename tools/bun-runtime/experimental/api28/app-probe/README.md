@@ -15,6 +15,36 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The fixed 25th probe exercises internal `sys::lchmod` through bare, offline
+`bun link --ignore-scripts --config=<owned-file>`. The unchanged nine-patch
+runtime passes **25/25 twice in six native environments (300/300)**: arm64
+API 28/31/33/35 and x86_64 API 33 on 4 KiB pages, plus Samsung SM-A566B native
+arm64 API 36 on 16 KiB pages, native bridge=0. All original 24 definitions and
+fixture bytes remain unchanged. This is a new test APK, not the historical
+24-probe APK. See the [lchmod report and exact bindings](../../../../../docs/compatibility/2026-09-11-m3-lchmod-bin-link.md).
+
+Seven fixed children per round verify no-bin registration, syscall reachability,
+native/TRAP mode repair, a second link against an existing bin, ignored fallback
+EIO, and a symlink whose referent must not be chmodded. Every child uses owned
+private package/global/bin/cache/temp paths, denies IPv4/IPv6 socket creation,
+and never executes a package bin or installs a dependency. A successful CLI
+exit alone is insufficient: the upstream bin linker intentionally ignores
+`lchmod` errors. Repeating the CLI uses a new process, not a cached-call claim.
+
+The reachability control applies `KILL_THREAD` only to syscall 452. If sibling
+threads remain, the parent first requires the owned child's `/proc/PID/stat`
+leader state `Z` and raw exit status 31, then kills through its existing child
+handle and reaps the process. `SIGKILL` alone never passes. All children retain
+the 1500 ms / 4096-byte limits; the new fixed lchmod source asset alone has a
+12 KiB cap, while the original openat2 asset keeps its 8 KiB cap. Each semantic
+JSON remains at most 2048 bytes. Early BigInt/CLI-argument/report-format issues
+and the old-kernel `KILL_PROCESS` timeout remain separate diagnostics, not
+runtime regressions or accepted observations. Packages and UID processes are
+cleaned up, the owned AVD is closed, and the two pre-existing AVDs are untouched.
+Full experimental Binder, other syscall/API/FD boundaries and Release stay open.
+
+### Previous nine-patch 24-probe baseline
+
 The new nine-patch runtime passes the same **24 probes twice in five native
 4 KiB environments (240/240)**, changing only the expected revision to `1.4.0+7b9ac2668`. Fixture
 sources, validators, HTTP/path assertions and all resource bounds are unchanged.
