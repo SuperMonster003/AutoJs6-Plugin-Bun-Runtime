@@ -5,6 +5,12 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "依賴",
   "$data": {
+    "v0.2.2": {
+      "released_date": "2026/09/11",
+      "improvement": [
+        "建置階段校驗 64 位原生程式庫的 16 KB 頁面大小對齊, 檢查 manifest 契約並輸出 JSON 報告"
+      ]
+    },
     "v0.2.1": {
       "fix": [
         "以鎖定的 MIT FD 相對路徑回退保留 openat2 不可用時的實驗靜態目錄服務: 固定路徑組件, 解析根內連結, 拒絕根外與魔術連結, 限定遍歷並管理錯誤和 FD 擁有權; 不改變一般 Bun.file/node:fs 存取, 官方執行階段位元組或 Android 13 最低要求",

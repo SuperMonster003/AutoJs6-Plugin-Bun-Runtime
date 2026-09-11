@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Mejora",
   "changelog_label_dependency": "Dependencia",
   "$data": {
+    "v0.2.2": {
+      "released_date": "2026/09/11",
+      "improvement": [
+        "Verificación de compilación de la alineación de páginas de 16 KB en bibliotecas nativas de 64 bits, con controles del contrato manifest e informes JSON"
+      ]
+    },
     "v0.2.1": {
       "fix": [
         "Conservar el servicio experimental de directorios estáticos sin openat2 mediante una alternativa MIT fijada y relativa a descriptores: fijar componentes, resolver enlaces dentro de la raíz, rechazar enlaces externos y mágicos, y limitar el recorrido, los errores y la propiedad de FD; sin cambiar Bun.file/node:fs, el motor oficial ni el mínimo Android 13",

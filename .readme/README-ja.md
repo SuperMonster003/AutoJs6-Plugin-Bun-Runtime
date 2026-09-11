@@ -212,6 +212,12 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `改善` 64 ビットのネイティブライブラリの 16 KB ページアラインメントをビルド時に検証, manifest 契約の検査と JSON レポートに対応
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `改善` patched runtime を配布せずに再現可能 build gate を完了: host の `.deb` archive 155 件 (422,223,096 bytes) を再現可能な OCI image として固定し, Cargo closure を一意な archive 206 件へ拡張; 2 つの 64-bit ABI を network 無効の clean 環境で各 2 回 build して byte-for-byte 一致を確認し, pure Node ELF audit も固定しました. API 28/31 の直接 shell probe は成功しましたが, APK と application process の gate は未完了です
 - `改善` 検証可能な対応 source の Release assets を実装: source を APK から分離して同じ Release に置き, 正確な Bun/WebKit/JSC, native 19 件, Cargo 206 件, npm 125 件の source archive, patch, build/relink 手順, 公開 license notice を梱包; 大容量 asset は 1.9 GB で分割し, machine-readable manifest と SHA256SUMS で APK/runtime/source の bytes を結合し, GitHub SHA-256 がすべて一致した後だけ draft を公開します; これは自動技術検証の記録であり, 法的承認の主張ではありません
 - `依存関係` Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `ヒント` 初回リリース: 各実行は独立したスクリプトファイル 1 つを実行します. AutoJs6 の内蔵関数, Java bridge, 複数ファイルのプロジェクト, 相対パス import はまだ利用できません
-- `機能` 独立した `bun` エンジンを追加: スクリプトの 1 行目に `"bun";` と書くだけで公式 Bun 1.4.0 Android executable により JavaScript と TypeScript を実行. 実際のコマンドは `bun run --no-install <source>` で, 依存関係の自動インストールは行いません
-- `機能` 実行出力をリアルタイムで返送: stdout と stderr は有界の oneway Binder callback によりチャンク単位でストリーミングされ, 最終結果は状態と診断情報のみを報告し, 完全な出力ストリームは含みません
-- `機能` 実行を制御可能に: スクリプトは隔離された `:bun_runtime` プラグインプロセスで実行され, 明示的なキャンセル, 60 秒のデフォルト timeout, runtime 情報の照会, prewarming に対応
-- `機能` `arm64-v8a` と baseline `x86_64` の公式 64-bit Android payload, および単一 ABI と `universal` パッケージを提供
-- `機能` 完全なプラグイン体験を提供: プラグイン検出, 権限で保護されたアクティベーション (Wake), 完全な PluginInfo metadata, 10 言語のユーザードキュメント
-- `改善` バージョン管理された Binder contract を採用し, ParcelFileDescriptor でソースを転送. ソース上限 16 MiB, 合計出力上限 8 MiB
-- `改善` Android の読み取り専用 native library ディレクトリーから Bun を起動し, 固定 release archive とパッケージ済み binary のサイズ, SHA-256, ELF 属性を検証
-- `改善` パッケージされた 2 つの executable の PT_LOAD alignment がいずれも 16 KB 以上であることを検証しつつ, 実際の 16 KB Android 環境でのテストが未完了であることを正直に記載
-- `改善` 検証済み JSON ソースから README, プラグインセンター説明, 内蔵 changelog を生成し, ビルド, Markdown, runtime artifact の CI チェックを追加
-- `改善` 最低バージョンを暫定的に Android 14 (API 34) に設定: API 31 実機では Bun の `close_range` syscall が seccomp により `SIGSYS` で強制終了され, Sony 製 API 33 端末 1 台は予想外に通過したものの移植性の証明には不十分で, API 35 実機での JS と TS の Binder 往復テストは通過
 
 ##### その他のリリース履歴
 
@@ -333,3 +323,6 @@ Plugin code は [Mozilla Public License 2.0](https://github.com/SuperMonster003/
 - Bun 公式サイト: https://bun.sh/
 - 固定 Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - 第三者通知: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)

@@ -212,6 +212,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `Mejora` Verificación de compilación de la alineación de páginas de 16 KB en bibliotecas nativas de 64 bits, con controles del contrato manifest e informes JSON
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `Mejora` Completar la puerta de compilación reproducible del runtime parcheado sin distribuirlo: bloquear 155 archivos `.deb` del host (422,223,096 bytes) en una imagen OCI reproducible, ampliar el cierre de Cargo a 206 archivos únicos, ejecutar dos compilaciones limpias y sin red de ambos ABI de 64 bits con resultados idénticos byte a byte, y fijar auditorías ELF en Node puro; pasan las pruebas directas de shell en API 28 y 31, mientras siguen pendientes las puertas de APK y proceso de aplicación
 - `Mejora` Implementar assets de Release verificables del código fuente correspondiente: mantener el código separado de los APK en el mismo Release; empaquetar Bun/WebKit/JSC exactos, 19 archivos native, 206 de Cargo y 125 de npm, además de patches, instrucciones de build/relink y un aviso público de licencias; dividir archivos grandes a 1.9 GB, vincular bytes de APK/runtime/source mediante un manifest legible por máquina y SHA256SUMS, y publicar el draft solo tras coincidir todos los SHA-256 de GitHub; esto registra verificación técnica automatizada, no aprobación legal
 - `Dependencia` Añadir el runtime de Kotlin Parcelize para que R8 en Release conserve la clase compartida del contrato Parcelable
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `Aviso` Primera versión: cada ejecución procesa un único archivo de script independiente; las funciones integradas de AutoJs6, el puente Java, los proyectos multiarchivo y las importaciones relativas aún no están disponibles
-- `Función` Añadir el motor `bun` independiente: escribe `"bun";` en la primera línea de un script para ejecutar JavaScript y TypeScript con el ejecutable Android oficial de Bun 1.4.0; el comando real es `bun run --no-install <source>` y las dependencias nunca se instalan automáticamente
-- `Función` Devolver la salida en tiempo real: stdout y stderr se transmiten en fragmentos acotados mediante oneway Binder callback, y el resultado final solo informa estado y diagnóstico sin llevar el flujo de salida completo
-- `Función` Ejecución controlable: los scripts se ejecutan en el proceso aislado del plugin `:bun_runtime`, con cancelación explícita, timeout predeterminado de 60 segundos, consulta de información del runtime y prewarming
-- `Función` Proporcionar payloads Android oficiales de 64 bits para `arm64-v8a` y baseline `x86_64`, además de paquetes de un solo ABI y `universal`
-- `Función` Ofrecer la experiencia completa de plugin: descubrimiento del plugin, activación protegida por permiso (Wake), metadatos PluginInfo completos y documentación de usuario en 10 idiomas
-- `Mejora` Adoptar un contrato Binder versionado que transfiere el código fuente por ParcelFileDescriptor, con límite de 16 MiB para el código y de 8 MiB para la salida combinada
-- `Mejora` Iniciar Bun desde el directorio read-only de native library de Android y verificar tamaño, SHA-256 y propiedades ELF de los archivos release fijados y los binarios empaquetados
-- `Mejora` Verificar que ambos ejecutables empaquetados tienen PT_LOAD alignment de al menos 16 KB, documentando con honestidad que la prueba en un entorno Android real de 16 KB aún no se ha completado
-- `Mejora` Generar el README, las instrucciones del centro de plugins y el changelog integrado desde fuentes JSON validadas, con comprobaciones de CI para build, Markdown y artefactos de runtime
-- `Mejora` Fijar el mínimo provisional en Android 14 (API 34): en un dispositivo real con API 31 la syscall `close_range` de Bun es terminada por seccomp con `SIGSYS`, un dispositivo Sony con API 33 pasó inesperadamente pero no demuestra portabilidad, y las pruebas de ida y vuelta por Binder con JS y TS pasaron en un dispositivo real con API 35
 
 ##### Más historial de versiones
 
@@ -333,3 +323,6 @@ El código del plugin usa [Mozilla Public License 2.0](https://github.com/SuperM
 - Sitio oficial de Bun: https://bun.sh/
 - Versión fijada de Bun: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - Avisos de terceros: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)

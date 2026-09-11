@@ -5,6 +5,12 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.2.2": {
+      "released_date": "2026/09/11",
+      "improvement": [
+        "64 ビットのネイティブライブラリの 16 KB ページアラインメントをビルド時に検証, manifest 契約の検査と JSON レポートに対応"
+      ]
+    },
     "v0.2.1": {
       "fix": [
         "固定した MIT の FD 相対フォールバックで, openat2 が使えない環境でも実験版の静的ディレクトリ配信を維持: パス要素を固定し, ルート内リンクを解決, ルート外リンクとマジックリンクを拒否し, 探索/エラー/FD 所有を制限; 通常の Bun.file/node:fs アクセス, 公式ランタイムのバイト列, Android 13 の最低要件は変更なし",

@@ -212,6 +212,12 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `개선` 64비트 네이티브 라이브러리의 16 KB 페이지 정렬을 빌드 시 검증, manifest 계약 검사 및 JSON 보고서 지원
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `개선` patched runtime을 배포하지 않은 채 재현 가능한 build gate 완결: host `.deb` archive 155개 (422,223,096 bytes)를 반복 생성 가능한 OCI image로 잠그고, Cargo closure를 고유 archive 206개로 확장했으며, 두 64-bit ABI를 network 차단 clean 환경에서 각각 두 번 build해 byte-for-byte 동일한 결과를 확인하고 pure Node ELF audit도 잠금; API 28과 31의 직접 shell probe는 통과했지만 APK와 application process gate는 아직 열려 있음
 - `개선` 검증 가능한 대응 source Release assets 구현: source를 APK와 분리하되 같은 Release에 두고, 정확한 Bun/WebKit/JSC, native 19개, Cargo 206개, npm 125개 source archive와 patch, build/relink 지침, 공개 license notice를 패키징; 대용량 asset은 1.9 GB로 분할하고 machine-readable manifest와 SHA256SUMS로 APK/runtime/source bytes를 결합하며, GitHub SHA-256이 모두 일치한 뒤에만 draft를 공개; 이는 자동화 기술 검증 기록이며 법적 승인을 주장하지 않음
 - `의존성` Release R8이 공유 Parcelable contract class를 유지하도록 Kotlin Parcelize runtime 추가
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `힌트` 첫 릴리스: 각 실행은 독립 스크립트 파일 하나를 실행하며, AutoJs6 내장 함수, Java bridge, 다중 파일 프로젝트, 상대 경로 import는 아직 제공되지 않습니다
-- `기능` 독립 `bun` 엔진 추가: 스크립트 첫 줄에 `"bun";`만 단독으로 쓰면 공식 Bun 1.4.0 Android executable로 JavaScript와 TypeScript를 실행. 실제 명령은 `bun run --no-install <source>`이며 의존성을 자동으로 설치하지 않음
-- `기능` 실행 출력을 실시간으로 반환: stdout과 stderr는 유계 oneway Binder callback으로 청크 단위 스트리밍되고, 최종 결과는 상태와 진단 정보만 보고하며 전체 출력 스트림을 담지 않음
-- `기능` 실행 제어 가능: 스크립트는 격리된 `:bun_runtime` 플러그인 프로세스에서 실행되며 명시적 취소, 60초 기본 timeout, runtime 정보 조회, prewarming을 지원
-- `기능` `arm64-v8a`와 baseline `x86_64` 공식 64-bit Android payload 및 단일 ABI와 `universal` 패키지 제공
-- `기능` 완전한 플러그인 경험 제공: 플러그인 검색, 권한으로 보호되는 활성화 (Wake), 완전한 PluginInfo metadata, 10개 언어 사용자 문서
-- `개선` 버전 관리되는 Binder contract를 채택하여 ParcelFileDescriptor로 소스를 전송. 소스 상한 16 MiB, 합산 출력 상한 8 MiB
-- `개선` Android의 읽기 전용 native library 디렉터리에서 Bun을 시작하고, 고정 release archive와 패키징된 binary의 크기, SHA-256, ELF 속성을 검증
-- `개선` 패키징된 두 executable의 PT_LOAD alignment가 모두 16 KB 이상임을 검증하면서, 실제 16 KB Android 환경 테스트는 아직 완료되지 않았음을 명확히 기록
-- `개선` 검증된 JSON 소스에서 README, plugin center 안내, 내장 changelog를 생성하고 빌드, Markdown, runtime artifact CI 검사를 추가
-- `개선` 최소 버전을 잠정적으로 Android 14 (API 34)로 설정: API 31 실제 기기에서 Bun의 `close_range` syscall이 seccomp에 의해 `SIGSYS`로 종료되었고, Sony API 33 기기 한 대는 예상외로 통과했지만 이식성을 증명하기에 부족하며, API 35 실제 기기 JS 및 TS Binder 왕복 테스트는 통과
 
 ##### 더 많은 릴리스 기록
 
@@ -333,3 +323,6 @@ Plugin code는 [Mozilla Public License 2.0](https://github.com/SuperMonster003/A
 - Bun 공식 사이트: https://bun.sh/
 - 고정 Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - 서드 파티 고지: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)

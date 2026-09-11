@@ -212,6 +212,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `Improvement` Build verification of 16 KB page alignment for 64-bit native libraries, including manifest contract checks and JSON reports
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `Improvement` Complete the reproducible patched-runtime build gate without shipping it: lock 155 host `.deb` archives (422,223,096 bytes) into a repeatable OCI image, expand the Cargo closure to 206 unique archives, run two clean networkless builds of both 64-bit ABIs with byte-identical results, and lock pure-Node ELF audits; direct API 28 and 31 shell probes pass, while APK and application-process gates remain open
 - `Improvement` Implement verifiable corresponding-source Release assets: keep sources separate from APKs in the same Release; package exact Bun/WebKit/JSC, 19 native, 206 Cargo, and 125 npm source archives plus patches, build/relink instructions, and a public license notice; split large assets at 1.9 GB, bind APK/runtime/source bytes with a machine-readable manifest and SHA256SUMS, and publish the draft only after GitHub SHA-256 digests match; this records automated technical verification, not legal approval
 - `Dependency` Add the Kotlin Parcelize runtime so that R8 in Release builds keeps the shared Parcelable contract class
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `Hint` First release: each run executes one standalone script file; AutoJs6 built-in functions, the Java bridge, multi-file projects, and relative imports are not available yet
-- `Feature` Add the standalone `bun` engine: put `"bun";` on the first line of a script to run JavaScript and TypeScript with the official Bun 1.4.0 Android executable; the actual command is `bun run --no-install <source>`, so dependencies are never installed automatically
-- `Feature` Stream run output in real time: stdout and stderr come back in bounded oneway Binder callback chunks, while the final result reports only status and diagnostics without carrying the complete output stream
-- `Feature` Keep runs under control: scripts execute in the isolated `:bun_runtime` plugin process, with explicit cancellation, a 60-second default timeout, runtime information queries, and prewarming
-- `Feature` Ship official 64-bit Android payloads for `arm64-v8a` and baseline `x86_64`, plus single-ABI and `universal` packages
-- `Feature` Deliver the full plugin experience: plugin discovery, permission-protected activation (Wake), complete PluginInfo metadata, and user documentation in 10 languages
-- `Improvement` Adopt a versioned Binder contract that transfers source code over ParcelFileDescriptor, with a 16 MiB source limit and an 8 MiB combined output limit
-- `Improvement` Launch Bun from Android's read-only native library directory and verify the size, SHA-256, and ELF properties of the pinned release archives and packaged binaries
-- `Improvement` Verify that both packaged executables have PT_LOAD alignment of at least 16 KB, while honestly noting that testing in a real 16 KB Android environment is not complete yet
-- `Improvement` Generate the README, plugin center instructions, and built-in changelog from validated JSON copy sources, and add CI checks for the build, Markdown, and runtime artifacts
-- `Improvement` Set the provisional minimum to Android 14 (API 34): on a real API 31 device Bun's `close_range` syscall was killed by seccomp with `SIGSYS`, one Sony API 33 device passed unexpectedly but that does not prove portability, and real-device JS and TS Binder round-trip tests passed on API 35
 
 ##### For more release history
 
@@ -333,3 +323,6 @@ Plugin code is licensed under the [Mozilla Public License 2.0](https://github.co
 - Bun official site: https://bun.sh/
 - Pinned Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - Third-party notices: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)
