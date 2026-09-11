@@ -1,0 +1,2879 @@
+{
+  "schemaVersion": 2,
+  "evidenceDate": "2026-09-11",
+  "capturedAt": "2026-09-11T14:14:08.545Z",
+  "milestone": "M3",
+  "evidenceLevel": "G2-scoped-test-only-application-process",
+  "status": "scoped-open-fix-native-arm64-16k-passed",
+  "passed": true,
+  "scope": "Same nine-patch Bun and exact 24-probe APK as the five-environment 4 KiB baseline, now passing twice on native Samsung ARM64 / API 36 / 16384-byte pages. Not full experimental plugin Binder or Release APK acceptance.",
+  "projectBaseCommit": "800a48f0902e6586253e9f7a03d6d006889bec02",
+  "sourceBinding": "All receipt inputs match the unmodified committed base as canonical UTF-8/LF bytes; the same test APK and runtime bytes were reused from the previous report, not rebuilt for the production v0.2.2 build changes.",
+  "previousFourKiBEvidence": {
+    "path": "docs/compatibility/2026-09-10-m3-scoped-open-fix.json",
+    "bytes": 524483,
+    "sha256": "5725a5363f8c3539a2e7a6c4f57e00b0120550e7fa97b02db7a1ea03784e085c",
+    "observations": 240,
+    "passedObservations": 240,
+    "unchangedBuildReceipt": true,
+    "observationsRepeatedThisSession": false
+  },
+  "officialPluginMinimumApi": 33,
+  "officialBunAndSupervisorPayloadsUnchanged": true,
+  "patchedRuntimeBytesUnchanged": true,
+  "nativeRuntimeRebuiltThisSession": false,
+  "testApkRebuiltThisSession": false,
+  "distributionReady": false,
+  "pluginBinderExercised": false,
+  "nativeSixteenKiBTestedThisSession": true,
+  "upstreamBunCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+  "downstreamBunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+  "bunRevision": "1.4.0+7b9ac2668",
+  "runtimeBuildEvidence": {
+    "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+    "bytes": 9465,
+    "sha256": "f5eebdaffce5efe660ba7c8cf3d59359c381f8ace1f98e8978008a3e3376a412",
+    "originalBuildDate": "2026-09-10",
+    "twoCleanBuildsPerAbiPreviouslyCompleted": true,
+    "bothStoredBuildPairsReverifiedThisSession": true,
+    "byteForByteIdentical": true,
+    "staticElfAuditPassed": true,
+    "log": {
+      "bytes": 463,
+      "sha256": "9201a7d48ff02c48a905f125f4892021e29fb845aef64edca402a673a48a9bd5"
+    }
+  },
+  "localVerification": {
+    "node": {
+      "passed": 123,
+      "failed": 0,
+      "skipped": 0,
+      "log": {
+        "bytes": 27098,
+        "sha256": "814c7a314be54efea56f0b1e4dbc5c4c9395a37973130201f3e1f0d95ab1dffd"
+      }
+    },
+    "officialRuntimeAndSupervisorVerifiersPassed": true,
+    "remoteCiRunOrReleasePublishedThisSession": false
+  },
+  "summary": {
+    "deviceCount": 1,
+    "physicalDeviceCount": 1,
+    "avdCount": 0,
+    "roundCount": 2,
+    "probesPerRound": 24,
+    "totalProbes": 48,
+    "passedProbes": 48,
+    "failedProbes": 0,
+    "confinementProbesPassed": 2,
+    "pathAssertions": 48,
+    "passedPathAssertions": 48,
+    "outsideRootSentinelReads": 0,
+    "escapeAssertionsRejected": 12,
+    "rawOpenat2UnavailableBeforeTestFilter": 2,
+    "eioHighLevelOpenat2ReachabilityControls": 0,
+    "rawTrapToEnosysObservations": 12,
+    "eioControlledCopyWaitObservations": 4,
+    "kernelOrPolicyGatedCopyWaitObservations": 0,
+    "loweredLimitProbesPassed": 4,
+    "forciblyReapedChildren": 6,
+    "terminationToExitMillis": {
+      "min": 302,
+      "max": 304
+    }
+  },
+  "acceptancePolicy": {
+    "sameApkAndAll24DefinitionsAsFourKiBBaseline": true,
+    "fixtureSourcesAndValidatorsUnchanged": true,
+    "failedProbesDropped": false,
+    "timeoutOrOutputLimitsRelaxed": false,
+    "previousReportsRewritten": false,
+    "syntheticSentinelOnly": true,
+    "unrelatedFilesRead": false,
+    "serverBindAddress": "127.0.0.1",
+    "translationUsed": false,
+    "applicationPageSizeHardAssertedEachRound": true,
+    "compatibilityModeOrDevicePolicyChanged": false,
+    "filtersAffectExistingSiblingThreads": false
+  },
+  "postflight": {
+    "capturedAt": "2026-09-11T14:18:12.892Z",
+    "properties": {
+      "ro.product.model": "SM-A566B",
+      "ro.build.version.sdk": "36",
+      "ro.product.cpu.abi": "arm64-v8a",
+      "ro.product.cpu.abilist": "arm64-v8a",
+      "ro.dalvik.vm.native.bridge": "0"
+    },
+    "kernelMachine": "aarch64",
+    "pageSizeBytes": 16384,
+    "probePackageAbsent": true,
+    "probeUidProcessCount": 0,
+    "remoteDeviceRebootedOrStopped": false,
+    "connectionNote": "Initial shell property reads timed out despite an online ADB state. Only the selected endpoint was disconnected/reconnected before installation; subsequent preflight, both runs and cleanup passed. The ADB server and device were not restarted.",
+    "avdLifecycle": {
+      "launchedByThisSession": 0,
+      "stoppedByThisSession": 0,
+      "preExistingOnlineCount": 2,
+      "samePreExistingAvdsOnlineAfterTests": true
+    }
+  },
+  "historicalEvidence": [
+    {
+      "path": "docs/compatibility/2026-09-01-m1.json",
+      "bytes": 3944,
+      "sha256": "0faf6aeec768f373d4517769e2361193fdb3c09e6ed41b3e7349c2abe35c5988",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-02-m5-16kb-execution.json",
+      "bytes": 7924,
+      "sha256": "80a6a6d609703cf93b2224cd184c9e83a48a5c142fa5d54ae916009004f8b74b",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-02-m5-payload-integrity.json",
+      "bytes": 4416,
+      "sha256": "41fac81a9508321d33b249960b5c863986c0cf5d4ea57d1ef67d6ec3ccb03181",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-02-m5-x86-16kb-root-cause.json",
+      "bytes": 11642,
+      "sha256": "4adcd4c87b3367bf9afff4e4d817a798c04e76b6687eb31c92bf3b1a2da170b6",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-02-m9-samples.json",
+      "bytes": 6728,
+      "sha256": "c26127c15838888db374cb0ab928f790c5f0d560cee8e0d0eb576f746fac485d",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-03-m2-patched-runtime-shell-smoke.json",
+      "bytes": 5450,
+      "sha256": "cba017af0341adb335c01da43f57d1534c14407cd1a94c7a1e3a21af49a2bc3b",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-03-m2-runtime-evidence.json",
+      "bytes": 9189,
+      "sha256": "9f532e91bbc0c5ba86fe3ab1bf1435f2a09ac8f77de690192c102e38aa9d3929",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-08-m1-supervised-termination.json",
+      "bytes": 25467,
+      "sha256": "0260a209b281860867fd3c8857868a4a7ccb6449144baf93b31df54eb6867a92",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-08-m3-application-probe.json",
+      "bytes": 46694,
+      "sha256": "5761c2aa4a21c61f95dcfa1f156ba41b689bc7c2c9cd579700f5e606ee10e876",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-08-platform-versions-1.7.4.json",
+      "bytes": 3593,
+      "sha256": "1507404457f9de9d27cd95ae2deefb5eea77181bf876302e5f9cecc9f0548b4c",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-08-v0.2.0-release.json",
+      "bytes": 8531,
+      "sha256": "d242a1766f5293719371602ba7d003be6d34d27815c705d658050b5ca1d80349",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-09-m3-supervised-application-probe.json",
+      "bytes": 95574,
+      "sha256": "830c8f32d27d56eeb64d43c26f1ece9449720665329a4c8dbf50f893a62d92d9",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m2-spawn-runtime-evidence.json",
+      "bytes": 9452,
+      "sha256": "ba9f1604b02a98612c0b09302bedd10b39f2b06cdf54f4610d1526d9cec63908",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m2-startup-runtime-evidence.json",
+      "bytes": 9589,
+      "sha256": "e82a4b053b5f803702afc8a93f8e5ac3220b0142835a4b9cc7461c8fb4803d53",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-fd-semantics.json",
+      "bytes": 267707,
+      "sha256": "76aced47bcc9feb705006a67f39e9bad8a314cc9d2f6ae773e5eef734101605c",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-native-arm64-16k.json",
+      "bytes": 69170,
+      "sha256": "71b913deb0b397afc6a10e33af2ef534438e9718b68e00d61e4581796d2f50a7",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-openat2-confinement.json",
+      "bytes": 530548,
+      "sha256": "725fb62a97a38ec58cdbcacfe53ef5eba3315216e0951b3663085cea289a7967",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-scoped-open-fix.json",
+      "bytes": 524483,
+      "sha256": "5725a5363f8c3539a2e7a6c4f57e00b0120550e7fa97b02db7a1ea03784e085c",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-spawn-fd-fix.json",
+      "bytes": 403175,
+      "sha256": "c2ef105ad36598f2ec511327b6e0c33aeae084ded03947878cce586e17e76097",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-spawn-nofile.json",
+      "bytes": 344032,
+      "sha256": "3ce605122cfca302e9b39e41397b3bf590eb4e36d55584ae10a5a8acc7d5705e",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-startup-cloexec.json",
+      "bytes": 265011,
+      "sha256": "a20d8837b78aea7aad5cd483d867345a729a540a91d9e10c5cc9305df0babe97",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m3-syscall-fallbacks.json",
+      "bytes": 460205,
+      "sha256": "f3f98a3b19e14ee43cf264bc951bbfc0c882aef911afaec107273559995dc05f",
+      "contentsUnchanged": true
+    },
+    {
+      "path": "docs/compatibility/2026-09-10-m5-native-arm64-16k.json",
+      "bytes": 37887,
+      "sha256": "3a93363c1be808bae31a000b563e1f3f47e5cc6d8a820241bb205570f1f54a80",
+      "contentsUnchanged": true
+    }
+  ],
+  "buildReceipt": {
+    "filename": "probe-build.json",
+    "bytes": 7586,
+    "sha256": "b0de64b12032127767070922a96c4715b7794b217a5d0f07a0199b74b7024669"
+  },
+  "build": {
+    "schemaVersion": 2,
+    "kind": "test-only-application-process-probe",
+    "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+    "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe/io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe.ProbeInstrumentation",
+    "testOnly": true,
+    "minSdk": 28,
+    "targetSdk": 36,
+    "variant": "bun-1.4.0-android-api28-patched-experimental",
+    "inputEncoding": "utf8-lf",
+    "inputs": [
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+        "bytes": 914,
+        "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+        "bytes": 22585,
+        "sha256": "76a1d0eda40dc9be63da158a71167d9ddd7e91a36e48c544dc5d21aeb633955a"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+        "bytes": 6289,
+        "sha256": "0b6e1583426da2f533bc8bffc1073e31eea045f790102ce196cff38527057577"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+        "bytes": 12747,
+        "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+        "bytes": 8188,
+        "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+        "bytes": 4905,
+        "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+        "bytes": 7037,
+        "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+        "bytes": 3798,
+        "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+        "bytes": 27854,
+        "sha256": "2b58e8a011302c12d956d14bcbb4a120f218e2877bbec7446763286a5b92e223"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+        "bytes": 8548,
+        "sha256": "eb696e237b79f2c0c14b49697642ab35fbdba7956fe047d76f828c84e8265b31"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+        "bytes": 9537,
+        "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+      },
+      {
+        "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+        "bytes": 3727,
+        "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.c",
+        "bytes": 4394,
+        "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+        "bytes": 1018,
+        "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+        "bytes": 2128,
+        "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+        "bytes": 2200,
+        "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+        "bytes": 480,
+        "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+      },
+      {
+        "path": "tools/bun-runtime/supervisor/README.md",
+        "bytes": 5511,
+        "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+      },
+      {
+        "path": "tools/bun-runtime/verify-runtime.mjs",
+        "bytes": 19651,
+        "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+      },
+      {
+        "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+        "bytes": 14754,
+        "sha256": "439f1ab4ac2a5f73ebff75cb9e33665e594273051f2eea0992b364f6971f4fc4"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+        "bytes": 9465,
+        "sha256": "f5eebdaffce5efe660ba7c8cf3d59359c381f8ace1f98e8978008a3e3376a412"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+        "bytes": 39212,
+        "sha256": "80e4675eaedc8948563d16f1907662309ae7c6c2788b640dded361cc6f636401"
+      }
+    ],
+    "supervisor": {
+      "schemaVersion": 1,
+      "name": "bun-lifecycle-supervisor",
+      "source": "tools/bun-runtime/supervisor/supervisor.c",
+      "sourceSha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8",
+      "ndkVersion": "29.0.14206865",
+      "androidApi": 28,
+      "flags": [
+        "-std=c11",
+        "-Oz",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIE",
+        "-pie",
+        "-fstack-protector-strong",
+        "-D_FORTIFY_SOURCE=2",
+        "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+        "-Wl,--build-id=sha1",
+        "-Wl,--strip-all"
+      ],
+      "artifacts": [
+        {
+          "abi": "arm64-v8a",
+          "target": "aarch64-linux-android",
+          "elfMachine": 183,
+          "binaryPath": "app/src/main/jniLibs/arm64-v8a/libbun_supervisor.so",
+          "binaryBytes": 7440,
+          "binarySha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+        },
+        {
+          "abi": "x86_64",
+          "target": "x86_64-linux-android",
+          "elfMachine": 62,
+          "binaryPath": "app/src/main/jniLibs/x86_64/libbun_supervisor.so",
+          "binaryBytes": 7304,
+          "binarySha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+        }
+      ]
+    },
+    "runtimes": {
+      "arm64-v8a": {
+        "bytes": 87923320,
+        "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+      },
+      "x86_64": {
+        "bytes": 90449736,
+        "sha256": "83df7d535e4deab9484941a9e8cabc46be3ab6462ccc43c86b76f55325459130"
+      }
+    },
+    "tools": {
+      "buildToolsVersion": "37.0.0",
+      "androidJar": {
+        "bytes": 27768026,
+        "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+      },
+      "javacVersion": "javac 21.0.12.1",
+      "aapt2Version": "",
+      "d8": {
+        "bytes": 20528803,
+        "sha256": "a26ee56252adcff6752c379ae255a0ad538ebec60189e078ec6855487107637d"
+      },
+      "apksigner": {
+        "bytes": 1181416,
+        "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+      }
+    },
+    "apks": [
+      {
+        "abi": "arm64-v8a",
+        "filename": "bun-api28-probe-arm64-v8a.apk",
+        "bytes": 35259407,
+        "sha256": "70740d35f9bf6866d01a34e6388877b90a6ddb9c7cc6e331b7c9bd947ce0156f",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "67bc395b4b0d931d3040427f73a2f0e18e65e1f2fe17aaf91ad82eff69a58b78"
+        }
+      },
+      {
+        "abi": "x86_64",
+        "filename": "bun-api28-probe-x86_64.apk",
+        "bytes": 36656137,
+        "sha256": "ee92821db0ef8f185b2919afeeac9fa0d3306507fdb67b12877316f063b4b182",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "67bc395b4b0d931d3040427f73a2f0e18e65e1f2fe17aaf91ad82eff69a58b78"
+        }
+      }
+    ]
+  },
+  "devices": [
+    {
+      "id": "samsung-api36-native-arm64-16k",
+      "type": "remote-physical-device",
+      "capturedAt": "2026-09-11T14:14:08.545Z",
+      "rawReport": {
+        "bytes": 97374,
+        "sha256": "44f794ce8a3e2033e7fb0ff691cbd12b8f036136976bc82c0c88f24e48c91edb"
+      },
+      "instrumentation": [
+        {
+          "round": 1,
+          "bytes": 29999,
+          "sha256": "e1c9f7d33e0f54acd3b9476ef89b877c112db53b7ef1d95092f511c376ebb6a5"
+        },
+        {
+          "round": 2,
+          "bytes": 29999,
+          "sha256": "58ea41d8a729c1a274451da0486efd76cdf3f546a9255787b60d6c1808573d87"
+        }
+      ],
+      "passed": true,
+      "lifecycle": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "rounds": [
+          {
+            "round": 1,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          }
+        ],
+        "uninstalled": true,
+        "installedUid": 10320,
+        "finalUidProcessCount": 0
+      },
+      "runs": [
+        {
+          "schemaVersion": 2,
+          "kind": "test-only-application-process-probe",
+          "pluginBinderExercised": false,
+          "variant": "bun-1.4.0-android-api28-patched-experimental",
+          "runtimeSha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7",
+          "runtimeBytes": 87923320,
+          "installedPayloadVerified": true,
+          "supervisorSha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+          "supervisorBytes": 7440,
+          "installedSupervisorVerified": true,
+          "installedApkSha256": "70740d35f9bf6866d01a34e6388877b90a6ddb9c7cc6e331b7c9bd947ce0156f",
+          "environment": {
+            "manufacturer": "samsung",
+            "model": "SM-A566B",
+            "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+            "apiLevel": 36,
+            "abi": "arm64-v8a",
+            "kernelMachine": "aarch64",
+            "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+            "pageSizeBytes": 16384,
+            "uid": 10320,
+            "selinuxContext": "u:r:untrusted_app:s0:c64,c257,c512,c768",
+            "seccomp": 2
+          },
+          "privateJobRemoved": true,
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 46,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 46,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+7b9ac2668\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 85,
+              "capturedBytes": 111,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10320,\"context\":\"u:r:untrusted_app:s0:c64,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 43,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 88,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 86,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 90,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 91,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 336,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "timeout",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 1817,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "PROBE_READY=24905\n",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 24905,
+              "supervisorPid": 24902,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 47,
+              "terminationRequestedAfterReadyMillis": 1467,
+              "terminationToExitMillis": 303,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "bounded-output",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "output-limit",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 403,
+              "capturedBytes": 1024,
+              "outputLimitBytes": 1024,
+              "stdout": "PROBE_READY=24916\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 24916,
+              "supervisorPid": 24913,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 101,
+              "terminationRequestedAfterReadyMillis": 0,
+              "terminationToExitMillis": 302,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "cancel-after-ready",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "cancelled",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 480,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "PROBE_READY=24929\n",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 24929,
+              "supervisorPid": 24926,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 53,
+              "terminationRequestedAfterReadyMillis": 124,
+              "terminationToExitMillis": 303,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "fd-spawn-native",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 173,
+              "capturedBytes": 481,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[155219]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "spawn-native",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[155219]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 132,
+              "capturedBytes": 737,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163395]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "spawn-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[163395]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-blocked-sigsys",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 173,
+              "capturedBytes": 796,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"blocked-sigsys\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163402]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"mask\":{\"childBlocked\":true,\"callerStillBlocked\":true},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "blocked-sigsys",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[163402]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "mask": {
+                  "childBlocked": true,
+                  "callerStillBlocked": true
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-startup-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 128,
+              "capturedBytes": 566,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"startup-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"startup\":{\"samePid\":true,\"inheritedOpen\":true,\"cloexec\":true,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "startup-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "startup": {
+                  "samePid": true,
+                  "inheritedOpen": true,
+                  "cloexec": true,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "sigsys-listener-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 212,
+              "capturedBytes": 748,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"sigsys-listener\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"listener\":{\"during\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"after\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"delivered\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "sigsys-listener",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "listener": {
+                  "during": {
+                    "marker": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "closeRange": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  "after": {
+                    "marker": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "closeRange": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  "delivered": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-lowered-native",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 133,
+              "capturedBytes": 693,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[160585]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "lowered-native",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[160585]",
+                  "stderrEmpty": true
+                },
+                "limit": {
+                  "before": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  },
+                  "restored": true,
+                  "during": {
+                    "soft": 128,
+                    "hard": 32768,
+                    "openMax": 128
+                  },
+                  "after": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  }
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "async": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-lowered-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 134,
+              "capturedBytes": 949,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[163427]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "lowered-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[163427]",
+                  "stderrEmpty": true
+                },
+                "limit": {
+                  "before": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  },
+                  "restored": true,
+                  "during": {
+                    "soft": 128,
+                    "hard": 32768,
+                    "openMax": 128
+                  },
+                  "after": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  }
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "async": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "syscall-trap-controls",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 92,
+              "capturedBytes": 935,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"raw-controls\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"calls\":[{\"name\":\"pidfd_open\",\"nr\":434,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"clone3\",\"nr\":435,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"epoll_pwait2\",\"nr\":441,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"copy_file_range\",\"nr\":285,\"before\":{\"result\":-1,\"errno\":9},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"openat2\",\"nr\":437,\"before\":{\"result\":-1,\"errno\":38},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"fchmodat2\",\"nr\":452,\"before\":{\"result\":-1,\"errno\":38},\"after\":{\"result\":-1,\"errno\":38}}],\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"690735f15298eb73f10c71f9dd412575d41d6f0ff2be5f241fccdc2c07dd5f81\"},\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "raw-controls",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "calls": [
+                  {
+                    "name": "pidfd_open",
+                    "nr": 434,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "clone3",
+                    "nr": 435,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "epoll_pwait2",
+                    "nr": 441,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "copy_file_range",
+                    "nr": 285,
+                    "before": {
+                      "result": -1,
+                      "errno": 9
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "openat2",
+                    "nr": 437,
+                    "before": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "fchmodat2",
+                    "nr": 452,
+                    "before": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  }
+                ],
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "690735f15298eb73f10c71f9dd412575d41d6f0ff2be5f241fccdc2c07dd5f81"
+                },
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "syscall-copy-range-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 90,
+              "capturedBytes": 1090,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"copy-range\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"target\":\"copy_file_range\",\"nr\":285,\"native\":{\"result\":-1,\"errno\":9},\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"b35dbf4b47ec967c237d546a70659e6626c63b3bc3d3197c0ce63566c9c77d3d\"},\"injected\":{\"result\":-1,\"errno\":5},\"path\":\"exercised\",\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"contentBytes\":102400,\"errorControl\":\"EIO\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"36f62fae1b8531ad54ef6ae299ab7eedad4ced75d3f9c7b6a7fef5f9e6c8d080\"},\"trapped\":{\"result\":-1,\"errno\":38},\"operations\":[{\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"bytes\":102400,\"mode\":384},{\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"bytes\":102400,\"mode\":384}],\"sourceUnchanged\":true,\"fileDescriptorsClosed\":true,\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "copy-range",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "target": "copy_file_range",
+                "nr": 285,
+                "native": {
+                  "result": -1,
+                  "errno": 9
+                },
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "b35dbf4b47ec967c237d546a70659e6626c63b3bc3d3197c0ce63566c9c77d3d"
+                },
+                "injected": {
+                  "result": -1,
+                  "errno": 5
+                },
+                "path": "exercised",
+                "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                "contentBytes": 102400,
+                "errorControl": "EIO",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "36f62fae1b8531ad54ef6ae299ab7eedad4ced75d3f9c7b6a7fef5f9e6c8d080"
+                },
+                "trapped": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "operations": [
+                  {
+                    "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                    "bytes": 102400,
+                    "mode": 384
+                  },
+                  {
+                    "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                    "bytes": 102400,
+                    "mode": 384
+                  }
+                ],
+                "sourceUnchanged": true,
+                "fileDescriptorsClosed": true,
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "syscall-pidfd-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 213,
+              "capturedBytes": 848,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"pidfd\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"target\":\"pidfd_open\",\"nr\":434,\"native\":{\"result\":-1,\"errno\":22},\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"17ea2ec76f4277e79af74af0a8530ca7efbd45a07c413ee0f2de7eb967c92b11\"},\"injected\":{\"result\":-1,\"errno\":5},\"path\":\"exercised\",\"errorControl\":\"EIO\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"c419e7e1e03a9fe47a7d8ef48eb85a2255830f3d82b865cdbc00cc82b120c4bf\"},\"trapped\":{\"result\":-1,\"errno\":38},\"operations\":[{\"exitCode\":17,\"stdout\":\"pidfd-child-ok\\n\",\"stderr\":\"\",\"childGone\":true},{\"exitCode\":17,\"stdout\":\"pidfd-child-ok\\n\",\"stderr\":\"\",\"childGone\":true}],\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "pidfd",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "target": "pidfd_open",
+                "nr": 434,
+                "native": {
+                  "result": -1,
+                  "errno": 22
+                },
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "17ea2ec76f4277e79af74af0a8530ca7efbd45a07c413ee0f2de7eb967c92b11"
+                },
+                "injected": {
+                  "result": -1,
+                  "errno": 5
+                },
+                "path": "exercised",
+                "errorControl": "EIO",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "c419e7e1e03a9fe47a7d8ef48eb85a2255830f3d82b865cdbc00cc82b120c4bf"
+                },
+                "trapped": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "operations": [
+                  {
+                    "exitCode": 17,
+                    "stdout": "pidfd-child-ok\n",
+                    "stderr": "",
+                    "childGone": true
+                  },
+                  {
+                    "exitCode": 17,
+                    "stdout": "pidfd-child-ok\n",
+                    "stderr": "",
+                    "childGone": true
+                  }
+                ],
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "openat2-confinement",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 171,
+              "capturedBytes": 1078,
+              "outputLimitBytes": 16384,
+              "stdout": "OPENAT2_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"confinement\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"nativeOpen\":{\"opened\":false,\"errno\":38},\"nativeRows\":[[200,\"ok\"],[200,\"ok\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"]],\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"0b68cfc375ef73f1036afc51d3127ddaae3d3ef34bf554b6aa83ba837d8353b8\"},\"eioOpen\":{\"opened\":false,\"errno\":38},\"errorControl\":[200,\"ok\"],\"reachability\":\"unavailable-before-filter\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"3e38257b20c9d4a1b503fc8dc971cfc5b5359a1e83069787c8eecb61912811c3\"},\"trapOpen\":{\"opened\":false,\"errno\":38},\"trapRows\":[[200,\"ok\"],[200,\"ok\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"]],\"publicLchmod\":[\"undefined\",\"undefined\"],\"filesRemoved\":true}\n",
+              "stderr": "",
+              "openat2Evidence": {
+                "schemaVersion": 1,
+                "mode": "confinement",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "nativeOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "nativeRows": [
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ]
+                ],
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "0b68cfc375ef73f1036afc51d3127ddaae3d3ef34bf554b6aa83ba837d8353b8"
+                },
+                "eioOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "errorControl": [
+                  200,
+                  "ok"
+                ],
+                "reachability": "unavailable-before-filter",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "3e38257b20c9d4a1b503fc8dc971cfc5b5359a1e83069787c8eecb61912811c3"
+                },
+                "trapOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "trapRows": [
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ]
+                ],
+                "publicLchmod": [
+                  "undefined",
+                  "undefined"
+                ],
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 46,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ],
+          "passed": true
+        },
+        {
+          "schemaVersion": 2,
+          "kind": "test-only-application-process-probe",
+          "pluginBinderExercised": false,
+          "variant": "bun-1.4.0-android-api28-patched-experimental",
+          "runtimeSha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7",
+          "runtimeBytes": 87923320,
+          "installedPayloadVerified": true,
+          "supervisorSha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+          "supervisorBytes": 7440,
+          "installedSupervisorVerified": true,
+          "installedApkSha256": "70740d35f9bf6866d01a34e6388877b90a6ddb9c7cc6e331b7c9bd947ce0156f",
+          "environment": {
+            "manufacturer": "samsung",
+            "model": "SM-A566B",
+            "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+            "apiLevel": 36,
+            "abi": "arm64-v8a",
+            "kernelMachine": "aarch64",
+            "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+            "pageSizeBytes": 16384,
+            "uid": 10320,
+            "selinuxContext": "u:r:untrusted_app:s0:c64,c257,c512,c768",
+            "seccomp": 2
+          },
+          "privateJobRemoved": true,
+          "probes": [
+            {
+              "id": "version",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 46,
+              "capturedBytes": 6,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0\n",
+              "stderr": ""
+            },
+            {
+              "id": "revision",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 45,
+              "capturedBytes": 16,
+              "outputLimitBytes": 16384,
+              "stdout": "1.4.0+7b9ac2668\n",
+              "stderr": ""
+            },
+            {
+              "id": "application-domain",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 87,
+              "capturedBytes": 111,
+              "outputLimitBytes": 16384,
+              "stdout": "{\"uid\":10320,\"context\":\"u:r:untrusted_app:s0:c64,c257,c512,c768\",\"seccomp\":2,\"arch\":\"arm64\",\"version\":\"1.4.0\"}\n",
+              "stderr": ""
+            },
+            {
+              "id": "javascript-unicode-streams",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 88,
+              "capturedBytes": 39,
+              "outputLimitBytes": 16384,
+              "stdout": "JavaScript 中文 😀 1.4.0\n",
+              "stderr": "stderr-ok\n"
+            },
+            {
+              "id": "typescript",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 93,
+              "capturedBytes": 14,
+              "outputLimitBytes": 16384,
+              "stdout": "typescript=42\n",
+              "stderr": ""
+            },
+            {
+              "id": "spawn-and-spawn-sync",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 135,
+              "capturedBytes": 19,
+              "outputLimitBytes": 16384,
+              "stdout": "spawn+spawnSync-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "file-io",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 91,
+              "capturedBytes": 11,
+              "outputLimitBytes": 16384,
+              "stdout": "file-io-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "fetch-loopback",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 91,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "fetch-loopback-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "user-sigsys-handler",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 338,
+              "capturedBytes": 15,
+              "outputLimitBytes": 16384,
+              "stdout": "user-sigsys-ok\n",
+              "stderr": ""
+            },
+            {
+              "id": "timeout-forcible-cleanup",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "timeout",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 1819,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "PROBE_READY=25174\n",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 25174,
+              "supervisorPid": 25170,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 90,
+              "terminationRequestedAfterReadyMillis": 1425,
+              "terminationToExitMillis": 304,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "bounded-output",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "output-limit",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 369,
+              "capturedBytes": 1024,
+              "outputLimitBytes": 1024,
+              "stdout": "PROBE_READY=25188\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 25188,
+              "supervisorPid": 25185,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 66,
+              "terminationRequestedAfterReadyMillis": 0,
+              "terminationToExitMillis": 303,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "cancel-after-ready",
+              "passed": true,
+              "exitCode": 137,
+              "termination": "cancelled",
+              "forciblyTerminated": true,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 525,
+              "capturedBytes": 18,
+              "outputLimitBytes": 16384,
+              "stdout": "PROBE_READY=25200\n",
+              "stderr": "",
+              "readyObserved": true,
+              "parentageVerified": true,
+              "childPid": 25200,
+              "supervisorPid": 25197,
+              "childGone": true,
+              "supervisorGone": true,
+              "readinessMillis": 97,
+              "terminationRequestedAfterReadyMillis": 125,
+              "terminationToExitMillis": 303,
+              "possibleSignalFromExitConvention": 9
+            },
+            {
+              "id": "fd-spawn-native",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 133,
+              "capturedBytes": 481,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[167346]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "spawn-native",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[167346]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 131,
+              "capturedBytes": 737,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"spawn-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[167964]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "spawn-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[167964]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-blocked-sigsys",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 169,
+              "capturedBytes": 796,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"blocked-sigsys\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[167474]\",\"stderrEmpty\":true},\"sync\":{\"sentinelAbsent\":true,\"exitCode\":1},\"mask\":{\"childBlocked\":true,\"callerStillBlocked\":true},\"maskRestored\":true,\"async\":{\"sentinelAbsent\":true,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "blocked-sigsys",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[167474]",
+                  "stderrEmpty": true
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "mask": {
+                  "childBlocked": true,
+                  "callerStillBlocked": true
+                },
+                "maskRestored": true,
+                "async": {
+                  "sentinelAbsent": true,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-startup-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 130,
+              "capturedBytes": 566,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"startup-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"startup\":{\"samePid\":true,\"inheritedOpen\":true,\"cloexec\":true,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "startup-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "startup": {
+                  "samePid": true,
+                  "inheritedOpen": true,
+                  "cloexec": true,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "sigsys-listener-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 212,
+              "capturedBytes": 748,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"sigsys-listener\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"listener\":{\"during\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"after\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"delivered\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "sigsys-listener",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "listener": {
+                  "during": {
+                    "marker": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "closeRange": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  "after": {
+                    "marker": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "closeRange": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  "delivered": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-lowered-native",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 174,
+              "capturedBytes": 693,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-native\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[167993]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "lowered-native",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[167993]",
+                  "stderrEmpty": true
+                },
+                "limit": {
+                  "before": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  },
+                  "restored": true,
+                  "during": {
+                    "soft": 128,
+                    "hard": 32768,
+                    "openMax": 128
+                  },
+                  "after": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  }
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "async": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "fd-spawn-lowered-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 138,
+              "capturedBytes": 949,
+              "outputLimitBytes": 16384,
+              "stdout": "FD_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"lowered-trap\",\"passed\":true,\"arch\":\"arm64\",\"before\":{\"fd\":256,\"open\":true,\"cloexec\":false},\"nativeCloseRange\":{\"result\":0,\"errno\":0},\"nativeStillOpen\":true,\"nativeCloexec\":true,\"policy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"marker\":{\"result\":-1,\"errno\":38},\"closeRange\":{\"result\":-1,\"errno\":38}},\"control\":{\"exitCode\":0,\"stdoutTarget\":\"socket:[167624]\",\"stderrEmpty\":true},\"limit\":{\"before\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768},\"restored\":true,\"during\":{\"soft\":128,\"hard\":32768,\"openMax\":128},\"after\":{\"soft\":32768,\"hard\":32768,\"openMax\":32768}},\"sync\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"async\":{\"sentinelAbsent\":true,\"sentinelIdentity\":false,\"exitCode\":1},\"after\":{\"parentOpen\":true,\"parentCloexec\":false,\"sentinelIdentity\":true}}\n",
+              "stderr": "",
+              "fdEvidence": {
+                "schemaVersion": 1,
+                "mode": "lowered-trap",
+                "passed": true,
+                "arch": "arm64",
+                "before": {
+                  "fd": 256,
+                  "open": true,
+                  "cloexec": false
+                },
+                "nativeCloseRange": {
+                  "result": 0,
+                  "errno": 0
+                },
+                "nativeStillOpen": true,
+                "nativeCloexec": true,
+                "policy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1"
+                },
+                "trap": {
+                  "marker": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "closeRange": {
+                    "result": -1,
+                    "errno": 38
+                  }
+                },
+                "control": {
+                  "exitCode": 0,
+                  "stdoutTarget": "socket:[167624]",
+                  "stderrEmpty": true
+                },
+                "limit": {
+                  "before": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  },
+                  "restored": true,
+                  "during": {
+                    "soft": 128,
+                    "hard": 32768,
+                    "openMax": 128
+                  },
+                  "after": {
+                    "soft": 32768,
+                    "hard": 32768,
+                    "openMax": 32768
+                  }
+                },
+                "sync": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "async": {
+                  "sentinelAbsent": true,
+                  "sentinelIdentity": false,
+                  "exitCode": 1
+                },
+                "after": {
+                  "parentOpen": true,
+                  "parentCloexec": false,
+                  "sentinelIdentity": true
+                }
+              }
+            },
+            {
+              "id": "syscall-trap-controls",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 89,
+              "capturedBytes": 935,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"raw-controls\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"calls\":[{\"name\":\"pidfd_open\",\"nr\":434,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"clone3\",\"nr\":435,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"epoll_pwait2\",\"nr\":441,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"copy_file_range\",\"nr\":285,\"before\":{\"result\":-1,\"errno\":9},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"openat2\",\"nr\":437,\"before\":{\"result\":-1,\"errno\":38},\"after\":{\"result\":-1,\"errno\":38}},{\"name\":\"fchmodat2\",\"nr\":452,\"before\":{\"result\":-1,\"errno\":38},\"after\":{\"result\":-1,\"errno\":38}}],\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"690735f15298eb73f10c71f9dd412575d41d6f0ff2be5f241fccdc2c07dd5f81\"},\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "raw-controls",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "calls": [
+                  {
+                    "name": "pidfd_open",
+                    "nr": 434,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "clone3",
+                    "nr": 435,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "epoll_pwait2",
+                    "nr": 441,
+                    "before": {
+                      "result": -1,
+                      "errno": 22
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "copy_file_range",
+                    "nr": 285,
+                    "before": {
+                      "result": -1,
+                      "errno": 9
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "openat2",
+                    "nr": 437,
+                    "before": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  },
+                  {
+                    "name": "fchmodat2",
+                    "nr": 452,
+                    "before": {
+                      "result": -1,
+                      "errno": 38
+                    },
+                    "after": {
+                      "result": -1,
+                      "errno": 38
+                    }
+                  }
+                ],
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "690735f15298eb73f10c71f9dd412575d41d6f0ff2be5f241fccdc2c07dd5f81"
+                },
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "syscall-copy-range-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 88,
+              "capturedBytes": 1090,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"copy-range\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"target\":\"copy_file_range\",\"nr\":285,\"native\":{\"result\":-1,\"errno\":9},\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"b35dbf4b47ec967c237d546a70659e6626c63b3bc3d3197c0ce63566c9c77d3d\"},\"injected\":{\"result\":-1,\"errno\":5},\"path\":\"exercised\",\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"contentBytes\":102400,\"errorControl\":\"EIO\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"36f62fae1b8531ad54ef6ae299ab7eedad4ced75d3f9c7b6a7fef5f9e6c8d080\"},\"trapped\":{\"result\":-1,\"errno\":38},\"operations\":[{\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"bytes\":102400,\"mode\":384},{\"contentSha256\":\"7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe\",\"bytes\":102400,\"mode\":384}],\"sourceUnchanged\":true,\"fileDescriptorsClosed\":true,\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "copy-range",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "target": "copy_file_range",
+                "nr": 285,
+                "native": {
+                  "result": -1,
+                  "errno": 9
+                },
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "b35dbf4b47ec967c237d546a70659e6626c63b3bc3d3197c0ce63566c9c77d3d"
+                },
+                "injected": {
+                  "result": -1,
+                  "errno": 5
+                },
+                "path": "exercised",
+                "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                "contentBytes": 102400,
+                "errorControl": "EIO",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "36f62fae1b8531ad54ef6ae299ab7eedad4ced75d3f9c7b6a7fef5f9e6c8d080"
+                },
+                "trapped": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "operations": [
+                  {
+                    "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                    "bytes": 102400,
+                    "mode": 384
+                  },
+                  {
+                    "contentSha256": "7c0156315376383e31644c5bd83cd482fbb62f85e659271d2f543895b7998fbe",
+                    "bytes": 102400,
+                    "mode": 384
+                  }
+                ],
+                "sourceUnchanged": true,
+                "fileDescriptorsClosed": true,
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "syscall-pidfd-trap",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 215,
+              "capturedBytes": 848,
+              "outputLimitBytes": 16384,
+              "stdout": "SYSCALL_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"pidfd\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"target\":\"pidfd_open\",\"nr\":434,\"native\":{\"result\":-1,\"errno\":22},\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"17ea2ec76f4277e79af74af0a8530ca7efbd45a07c413ee0f2de7eb967c92b11\"},\"injected\":{\"result\":-1,\"errno\":5},\"path\":\"exercised\",\"errorControl\":\"EIO\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"c419e7e1e03a9fe47a7d8ef48eb85a2255830f3d82b865cdbc00cc82b120c4bf\"},\"trapped\":{\"result\":-1,\"errno\":38},\"operations\":[{\"exitCode\":17,\"stdout\":\"pidfd-child-ok\\n\",\"stderr\":\"\",\"childGone\":true},{\"exitCode\":17,\"stdout\":\"pidfd-child-ok\\n\",\"stderr\":\"\",\"childGone\":true}],\"filesRemoved\":true}\n",
+              "stderr": "",
+              "syscallEvidence": {
+                "schemaVersion": 1,
+                "mode": "pidfd",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "target": "pidfd_open",
+                "nr": 434,
+                "native": {
+                  "result": -1,
+                  "errno": 22
+                },
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "17ea2ec76f4277e79af74af0a8530ca7efbd45a07c413ee0f2de7eb967c92b11"
+                },
+                "injected": {
+                  "result": -1,
+                  "errno": 5
+                },
+                "path": "exercised",
+                "errorControl": "EIO",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "c419e7e1e03a9fe47a7d8ef48eb85a2255830f3d82b865cdbc00cc82b120c4bf"
+                },
+                "trapped": {
+                  "result": -1,
+                  "errno": 38
+                },
+                "operations": [
+                  {
+                    "exitCode": 17,
+                    "stdout": "pidfd-child-ok\n",
+                    "stderr": "",
+                    "childGone": true
+                  },
+                  {
+                    "exitCode": 17,
+                    "stdout": "pidfd-child-ok\n",
+                    "stderr": "",
+                    "childGone": true
+                  }
+                ],
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "openat2-confinement",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 130,
+              "capturedBytes": 1078,
+              "outputLimitBytes": 16384,
+              "stdout": "OPENAT2_PROBE_RESULT={\"schemaVersion\":1,\"mode\":\"confinement\",\"arch\":\"arm64\",\"kernel\":\"6.6.77-android15-8-abA566BXXU6BYIF\",\"passed\":true,\"nativeOpen\":{\"opened\":false,\"errno\":38},\"nativeRows\":[[200,\"ok\"],[200,\"ok\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"]],\"errorPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":5},\"filterSha256\":\"0b68cfc375ef73f1036afc51d3127ddaae3d3ef34bf554b6aa83ba837d8353b8\"},\"eioOpen\":{\"opened\":false,\"errno\":38},\"errorControl\":[200,\"ok\"],\"reachability\":\"unavailable-before-filter\",\"trapPolicy\":{\"installed\":true,\"before\":{\"result\":-1,\"errno\":5},\"after\":{\"result\":-1,\"errno\":38},\"filterSha256\":\"3e38257b20c9d4a1b503fc8dc971cfc5b5359a1e83069787c8eecb61912811c3\"},\"trapOpen\":{\"opened\":false,\"errno\":38},\"trapRows\":[[200,\"ok\"],[200,\"ok\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"],[404,\"miss\"]],\"publicLchmod\":[\"undefined\",\"undefined\"],\"filesRemoved\":true}\n",
+              "stderr": "",
+              "openat2Evidence": {
+                "schemaVersion": 1,
+                "mode": "confinement",
+                "arch": "arm64",
+                "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+                "passed": true,
+                "nativeOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "nativeRows": [
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ]
+                ],
+                "errorPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 22
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "filterSha256": "0b68cfc375ef73f1036afc51d3127ddaae3d3ef34bf554b6aa83ba837d8353b8"
+                },
+                "eioOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "errorControl": [
+                  200,
+                  "ok"
+                ],
+                "reachability": "unavailable-before-filter",
+                "trapPolicy": {
+                  "installed": true,
+                  "before": {
+                    "result": -1,
+                    "errno": 5
+                  },
+                  "after": {
+                    "result": -1,
+                    "errno": 38
+                  },
+                  "filterSha256": "3e38257b20c9d4a1b503fc8dc971cfc5b5359a1e83069787c8eecb61912811c3"
+                },
+                "trapOpen": {
+                  "opened": false,
+                  "errno": 38
+                },
+                "trapRows": [
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    200,
+                    "ok"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ],
+                  [
+                    404,
+                    "miss"
+                  ]
+                ],
+                "publicLchmod": [
+                  "undefined",
+                  "undefined"
+                ],
+                "filesRemoved": true
+              }
+            },
+            {
+              "id": "recovery-after-termination",
+              "passed": true,
+              "exitCode": 0,
+              "termination": "exited",
+              "forciblyTerminated": false,
+              "processReaped": true,
+              "workspaceRemoved": true,
+              "elapsedMillis": 92,
+              "capturedBytes": 12,
+              "outputLimitBytes": 16384,
+              "stdout": "recovery-ok\n",
+              "stderr": ""
+            }
+          ],
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "interpretation": {
+    "directoryScope": "All 12 fixed path cases pass before and after TRAP in each round. Regular files and root-contained links remain usable; relative/absolute/magic-link sentinel reads are rejected. No user files are touched.",
+    "syscallBoundary": "Raw openat2 was already ENOSYS before test filters; these phases prove unavailable-fallback behavior, not first-entry high-level EIO/TRAP reachability. The six raw controls are not six high-level fallback acceptances; copy_file_range and pidfd_open each have two EIO-controlled semantic observations.",
+    "remainingGates": [
+      "internal sys::lchmod/fchmodat2 and remaining syscall/FD/thread boundaries",
+      "Android API 29/30/32 matrix",
+      "full experimental plugin Binder",
+      "matching signed APK and corresponding-source Release acceptance",
+      "native x86_64 16 KiB remains separately blocked"
+    ],
+    "noProductionChange": "The official Bun bytes, Android 13 support minimum, signing and published v0.2.0 assets remain unchanged. This test-only APK is not a production v0.2.2 acceptance. Trusted scripts are not a security sandbox; finite helper race tests are not exhaustive kernel equivalence."
+  }
+}

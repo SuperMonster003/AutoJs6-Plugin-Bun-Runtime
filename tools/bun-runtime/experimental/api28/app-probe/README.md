@@ -24,8 +24,15 @@ Both ABIs reproduce in two clean builds. All 240 directory-path assertions pass,
 including the 60 formerly failing escape assertions; 30 forcible lifecycle cases
 complete in 300-306 ms. All test packages are uninstalled with zero UID processes,
 and the owned AVD is closed. See the [new source/APK/device evidence](../../../../../docs/compatibility/2026-09-10-m3-scoped-open-fix.md).
-Native ARM64 16 KiB for these new bytes/fixtures, full experimental Binder and
-remaining syscall/API gates stay open. Previous results are never reassigned.
+The identical ARM64 APK subsequently passes **24/24 twice (48/48)** on Samsung
+SM-A566B, API 36, native arm64-v8a / 16384-byte pages, native bridge=0, on
+2026-09-11. All 48 path assertions pass, including 12 rejected escape requests;
+four lowered-limit and six forcible lifecycle cases pass (302-304 ms). The
+package is uninstalled with zero UID processes. Both pre-existing AVDs remain
+online and are not operated. See the [native ARM64 16 KiB follow-up](../../../../../docs/compatibility/2026-09-11-m3-scoped-open-native-arm64-16k.md).
+This is new device evidence, not rebuilt runtime/APK bytes, full experimental
+Binder or production v0.2.2 acceptance. Remaining syscall/API and Release gates
+stay open. Previous results are never reassigned.
 
 ### Previous failed 24-probe baseline
 
@@ -47,8 +54,9 @@ EIO-controlled copy/wait fallbacks; four API 28 kernel/policy-gated observations
 are explicitly excluded from semantic reachability. All 30 forcible lifecycle
 cases pass at 301-307 ms, packages are removed with zero UID processes, and the
 owned AVD is shut down. See the [syscall report and scope](../../../../../docs/compatibility/2026-09-10-m3-syscall-fallbacks.md).
-The new fixtures have not run on native ARM64 16 KiB; full six-syscall semantics
-and experimental Binder acceptance remain open.
+That historical report has no native ARM64 16 KiB execution. The later nine-patch
+24-probe follow-up above adds such evidence without rewriting this baseline;
+full six-syscall semantics and experimental Binder acceptance remain open.
 
 ### Previous six-environment spawn-fix baseline
 
