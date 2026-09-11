@@ -215,3 +215,6 @@ app/src/main/res/raw*/plugin_instruction.md
 - {{ text_link_bun }}: {{ bun_official_url }}
 - {{ text_link_bun_release }}: {{ bun_release_url }}
 - {{ text_link_third_party_notices }}: {{ third_party_notices_url }}
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)

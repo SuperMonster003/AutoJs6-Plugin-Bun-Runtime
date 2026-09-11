@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.2.2": {
+      "released_date": "2026/09/11",
+      "improvement": [
+        "Build verification of 16 KB page alignment for 64-bit native libraries, including manifest contract checks and JSON reports"
+      ]
+    },
     "v0.2.1": {
       "fix": [
         "Preserve experimental static-directory serving without openat2 using a locked MIT descriptor-relative fallback: pin path components, resolve root-contained links, reject outside-root and magic links, and bound traversal, errors and FD ownership; ordinary Bun.file/node:fs access, official runtime bytes and the Android 13 minimum are unchanged",

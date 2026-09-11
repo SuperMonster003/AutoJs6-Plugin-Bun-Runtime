@@ -212,6 +212,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `優化` 建置階段校驗 64 位原生程式庫的 16 KB 頁面大小對齊, 檢查 manifest 契約並輸出 JSON 報告
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `優化` 完成 patched runtime 的可重現構建門禁但不隨套件分發: 將 155 個主機 `.deb` archive (422,223,096 bytes) 鎖定為可重複產生的 OCI image, 把 Cargo 閉包擴展至 206 個唯一 archive, 對兩個 64 位 ABI 各執行兩次停網清潔構建並取得逐字節相同結果, 再鎖定純 Node ELF 審計; API 28 與 31 的直接 shell 探針已通過, APK 與應用程式進程門仍未完成
 - `優化` 實現可驗證的對應源碼 Release assets: 源碼與 APK 分開但置於同一 Release, 打包精確 Bun/WebKit/JSC, 19 個 native, 206 個 Cargo, 125 個 npm source archive 以及 patch, build/relink 說明與公開許可聲明; 大檔案按 1.9 GB 分片, 用 machine-readable manifest 和 SHA256SUMS 綁定 APK/runtime/source 字節, 僅在 GitHub SHA-256 全部匹配後公開 draft; 此結果表示自動化技術驗證, 不聲稱法律獲批
 - `依賴` 新增 Kotlin Parcelize runtime, 確保 Release 版 R8 保留共用的 Parcelable contract class
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `提示` 首個版本: 每次執行一個獨立腳本檔案, 暫不提供 AutoJs6 內置函數, Java bridge, 多檔案專案和相對路徑導入
-- `新增` 新增獨立 `bun` 引擎: 在腳本第一行寫上 `"bun";` 即可用官方 Bun 1.4.0 Android executable 執行 JavaScript 和 TypeScript, 實際命令為 `bun run --no-install <source>`, 不會自動安裝依賴
-- `新增` 實時回傳執行輸出: stdout 和 stderr 通過有界 oneway Binder callback 分塊串流返回, 最終結果只報告狀態和診斷資訊, 不攜帶完整輸出流
-- `新增` 執行可控: 腳本在隔離的 `:bun_runtime` 插件程序中執行, 支援顯式取消, 60 秒預設超時, runtime 資訊查詢和 prewarming
-- `新增` 提供 `arm64-v8a` 和 baseline `x86_64` 官方 64 位 Android payload, 以及單 ABI 和 `universal` 安裝套件
-- `新增` 提供完整插件體驗: 插件發現, 受權限保護的激活 (Wake), 完整 PluginInfo metadata 和 10 種語言的用戶文件
-- `優化` 採用版本化 Binder contract, 通過 ParcelFileDescriptor 傳輸源碼, 源碼上限 16 MiB, 合併輸出上限 8 MiB
-- `優化` 從 Android 唯讀 native library 目錄啟動 Bun, 並校驗固定 release archive 和打包 binary 的大小, SHA-256 與 ELF 屬性
-- `優化` 驗證兩個打包 executable 的 PT_LOAD alignment 均不低於 16 KB, 同時如實說明尚未完成真實 16 KB Android 環境測試
-- `優化` 由經過校驗的 JSON 文案源生成 README, 插件中心說明和內置更新日誌, 並加入構建, Markdown 和 runtime artifact 的 CI 檢查
-- `優化` 將最低版本暫定為 Android 14 (API 34): API 31 真機上 Bun 的 `close_range` syscall 被 seccomp 以 `SIGSYS` 終止, 一台 Sony API 33 裝置雖意外通過但不足以證明可移植性, API 35 真機 JS 和 TS Binder 往返測試已通過
 
 ##### 更多發行記錄
 
@@ -333,3 +323,6 @@ app/src/main/res/raw*/plugin_instruction.md
 - Bun 官方網站: https://bun.sh/
 - 固定 Bun release: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - 第三方聲明: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "개선",
   "changelog_label_dependency": "의존성",
   "$data": {
+    "v0.2.2": {
+      "released_date": "2026/09/11",
+      "improvement": [
+        "64비트 네이티브 라이브러리의 16 KB 페이지 정렬을 빌드 시 검증, manifest 계약 검사 및 JSON 보고서 지원"
+      ]
+    },
     "v0.2.1": {
       "fix": [
         "고정된 MIT FD 상대 경로 폴백으로 openat2 없이 실험용 정적 디렉터리 제공 유지: 경로 구성 요소를 고정하고 루트 내부 링크를 해석하며 외부 및 매직 링크를 거부하고 탐색, 오류, FD 소유권을 제한; 일반 Bun.file/node:fs 접근, 공식 런타임 바이트와 Android 13 최소 요구 사항은 유지",

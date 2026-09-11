@@ -212,6 +212,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.2.2
+
+_2026/09/11_
+
+- `تحسين` التحقق أثناء البناء من محاذاة صفحات 16 KB للمكتبات الأصلية ذات 64 بت, مع فحص عقد manifest وتقارير JSON
+
 #### v0.2.1
 
 _2026/09/10_
@@ -258,22 +264,6 @@ _2026/09/08_
 - `تحسين` إكمال بوابة بناء runtime المعدّل القابل لإعادة الإنتاج من دون شحنه: قفل 155 أرشيف `.deb` للمضيف (422,223,096 بايت) في صورة OCI قابلة للتكرار, وتوسيع إغلاق Cargo إلى 206 أرشيفات فريدة, وتنفيذ بنائين نظيفين بلا شبكة لكل من ABI ذوي 64 بت بنتائج متطابقة بايتًا ببايت, وقفل تدقيق ELF باستخدام Node فقط; نجحت اختبارات shell المباشرة على API 28 و31, بينما تظل بوابتا APK وعملية التطبيق مفتوحتين
 - `تحسين` تنفيذ assets قابلة للتحقق للمصدر المطابق في Release: فصل المصدر عن ملفات APK مع وضعها في Release نفسه, وحزم المصادر الدقيقة لـ Bun/WebKit/JSC و19 أرشيف native و206 من Cargo و125 من npm مع patches وتعليمات build/relink وإشعار تراخيص علني; تقسيم الملفات الكبيرة عند 1.9 GB وربط bytes الخاصة بـ APK/runtime/source عبر manifest قابل للقراءة آليا وSHA256SUMS, وعدم نشر draft إلا بعد تطابق جميع قيم GitHub SHA-256; يسجل ذلك تحققا تقنيا آليا ولا يدعي اعتمادا قانونيا
 - `تبعية` إضافة Kotlin Parcelize runtime لكي يحتفظ R8 في Release بفئة Parcelable contract المشتركة
-
-#### v0.1.0
-
-_2026/09/01_
-
-- `تلميح` الإصدار الأول: ينفذ كل تشغيل ملف script مستقلا واحدا; دوال AutoJs6 المدمجة و Java bridge والمشاريع متعددة الملفات و relative import غير متاحة بعد
-- `ميزة` إضافة محرك `bun` مستقل: ضع `"bun";` في السطر الأول من script لتشغيل JavaScript و TypeScript بواسطة Bun 1.4.0 Android executable الرسمية; الأمر الفعلي هو `bun run --no-install <source>` ولا يتم تثبيت dependency تلقائيا أبدا
-- `ميزة` إعادة خرج التشغيل في الوقت الفعلي: يتم بث stdout و stderr على شكل chunk محدودة عبر oneway Binder callback, وتبلغ النتيجة النهائية عن الحالة والتشخيص فقط دون حمل تدفق الخرج الكامل
-- `ميزة` تشغيل قابل للتحكم: تعمل script في plugin process معزولة باسم `:bun_runtime` مع دعم الإلغاء الصريح و timeout افتراضي مدته 60 ثانية والاستعلام عن معلومات runtime و prewarming
-- `ميزة` توفير Android payload رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`, مع حزم single-ABI و `universal`
-- `ميزة` توفير تجربة plugin كاملة: اكتشاف plugin وتنشيط (Wake) محمي بالأذونات و PluginInfo metadata كاملة ووثائق مستخدم بعشر لغات
-- `تحسين` اعتماد Binder contract مرقم الإصدارات ينقل المصدر عبر ParcelFileDescriptor, مع حد أقصى للمصدر 16 MiB وللخرج المجمع 8 MiB
-- `تحسين` تشغيل Bun من native library directory للقراءة فقط في Android, والتحقق من حجم release archive المثبتة و binary المعبأة و SHA-256 وخصائص ELF
-- `تحسين` التحقق من أن PT_LOAD alignment لكلا executable المعبأين لا يقل عن 16 KB, مع التوثيق الصادق بأن اختبار بيئة Android حقيقية بحجم 16 KB لم يكتمل بعد
-- `تحسين` توليد README وتعليمات plugin center و changelog المدمج من مصادر JSON متحقق منها, مع إضافة فحوص CI للـ build و Markdown و runtime artifact
-- `تحسين` تحديد الحد الأدنى مؤقتا عند Android 14 (API 34): على جهاز حقيقي API 31 ينهي seccomp نداء `close_range` الخاص بـ Bun بإشارة `SIGSYS`, واجتاز جهاز Sony واحد بـ API 33 الاختبار بشكل غير متوقع دون إثبات قابلية النقل, بينما نجحت اختبارات الذهاب والإياب عبر Binder لـ JS و TS على جهاز حقيقي API 35
 
 ##### لمزيد من سجل الإصدارات
 
@@ -333,3 +323,6 @@ app/src/main/res/raw*/plugin_instruction.md
 - موقع Bun الرسمي: https://bun.sh/
 - إصدار Bun المثبت: https://github.com/oven-sh/bun/releases/tag/bun-v1.4.0
 - إشعارات الأطراف الخارجية: https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/THIRD_PARTY_NOTICES.md
+
+
+[16 KB page alignment and build verification](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/16kb.md)
