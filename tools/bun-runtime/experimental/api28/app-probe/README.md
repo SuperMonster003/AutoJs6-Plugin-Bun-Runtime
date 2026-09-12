@@ -15,6 +15,18 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The [ten-patch pidfd repair](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md)
+passes the same 31 probes twice in five native 4 KiB environments: ARM64
+API 28/31/33/35 and x86_64 API 33, **310/310**. Only the expected revision changes
+to `1.4.0+a9c76a599`; all fixtures, semantic validators, Java instrumentation
+and budgets are unchanged. All 20 blocked-async and 60 child observations pass.
+The independent full Binder suite also passes 80/80 with separately bound APKs.
+All packages/UID processes and only the owned AVD are cleaned up. New Samsung
+ARM64 API 32/4 KiB and API 36/native 16 KiB observations are pending; historical
+nine-patch results and the separate JSC candidate cannot accept the new bytes.
+
+### Historical nine-patch blocked-async failure
+
 The new [blocked asynchronous SIGSYS gate](../../../../../docs/compatibility/2026-09-13-m3-blocked-async.md)
 extends the suite to **31 probes**, keeping all original 29 definitions and
 fixture bytes. ARM64 API 31/33/35 and native x86_64 API 33 (all 4 KiB) pass two
@@ -381,7 +393,7 @@ restored; parent sentinel identity/flags and post-restore TRAP marker are checke
 The FD and child-mask checks concern separate children, not one combined program.
 
 The independent validator rejects early unblocking, changed TIDs/masks, missing
-children, drifted filter bytes and false cleanup. API 28 currently dies before
+children, drifted filter bytes and false cleanup. The historical nine-patch API 28 runtime died before
 emitting that proof; exit 159 suggests SIGSYS by the supervisor's convention,
 but does not identify `si_syscall`. Do not warm the waiter cache or unblock early
 to make this gate pass. General blocked-syscall semantics, all threads,

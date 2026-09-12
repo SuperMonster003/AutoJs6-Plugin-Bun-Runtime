@@ -41,6 +41,7 @@ const apk = join(buildRoot, `outputs/apk/debug/experimental-binder-${expected.ab
 const testApk = join(buildRoot, "outputs/apk/androidTest/debug/experimental-binder-debug-androidTest.apk");
 const evidence = JSON.parse(readFileSync(join(here, "../runtime-evidence.json"), "utf8"));
 if (jsc) {
+    assert.equal(jsc.bunCommit, evidence.source.downstreamHeadCommit, "The JSC candidate needs a separately verified rebase to the current Bun source");
     evidence.artifacts = evidence.artifacts.map(a => a.abi === "x86_64" ? jsc.artifact : a);
     evidence.identity.variant = jsc.variant;
 }

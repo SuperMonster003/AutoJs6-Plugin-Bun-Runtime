@@ -7,7 +7,8 @@ import { materializeAsyncSignalSource, materializeProbes, validateProbes, inputF
 
 const probes = JSON.parse(readFileSync(new URL("probes.json", import.meta.url), "utf8"));
 test("async fixtures preserve the original 29 definitions and fixed source-only bindings", () => {
-  const original = probes.filter(p => !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id));
+  const original = probes.filter(p => !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id))
+    .map(p => p.id === "revision" ? { ...p, stdout: "1.4.0+7b9ac2668" } : p);
   assert.equal(original.length, 29);
   assert.equal(hash(JSON.stringify(original)), "3c1d33410d09c6ca15ba01f01cc43734275511b5078713cf7723c37ea1faee3f");
   for (const path of ["/async-signal-probes.mjs", "/async-signal-evidence.mjs"])

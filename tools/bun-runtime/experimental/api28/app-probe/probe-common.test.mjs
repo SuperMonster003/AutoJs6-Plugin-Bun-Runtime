@@ -23,6 +23,7 @@ const evidence = lockedEvidence();
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
+const ninePatchRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+7b9ac2668"} : p);
 const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id));
 const withoutLchmod = rows => withoutHardLimits(rows).filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
@@ -92,9 +93,17 @@ function fixture() {
 }
 
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
+test("the pidfd repair preserves all 31 definitions and every existing fixture and semantic validator", () => {
+  const historical = json(join(ROOT, "docs/compatibility/2026-09-13-m3-blocked-async-passing.json"));
+  assert.equal(probes.length, 31);
+  assert.deepEqual(ninePatchRevision(probes), historical.probes);
+  const protectedInputs = inputFacts().filter(input => /\/(?:ProbeInstrumentation\.java|(?:fd|syscall|openat2|lchmod|hard-limit|async-signal)-(?:probes|evidence)\.mjs|probe-common\.mjs)$/.test(input.path));
+  assert.equal(protectedInputs.length, 13);
+  for (const input of protectedInputs) assert.deepEqual(input, historical.inputs.find(old => old.path === input.path));
+});
 test("hard-limit additions preserve all 25 definitions and allow only the four fixed assets", () => {
   assert.equal(withoutHardLimits(probes).length, 25);
-  assert.equal(hash(JSON.stringify(withoutHardLimits(probes))), "2c905e8eed2e455c1ab5324410811d6847b9f5011fdc0946776ab9445f94a270");
+  assert.equal(hash(JSON.stringify(ninePatchRevision(withoutHardLimits(probes)))), "2c905e8eed2e455c1ab5324410811d6847b9f5011fdc0946776ab9445f94a270");
   for (const path of ["/hard-limit-probes.mjs", "/hard-limit-evidence.mjs"])
     assert(inputFacts().some(input => input.path.endsWith(path)));
   for (const mode of ["", "../spawn-native", "skip", "startup-native\n"]) assert.throws(() => materializeHardLimitSource(mode));
@@ -125,7 +134,7 @@ test("async-signal semantic records must match stdout and the independent applic
   }
 });
 test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+a9c76a599");
   assert.equal(hash(JSON.stringify(previousRevision(withoutLchmod(probes)))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
 });
 test("probe definitions reject traversal, duplication, arbitrary arguments, and unbounded work", () => {
@@ -308,7 +317,7 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
 
 test("openat2 additions preserve the original 23 definitions and assets apart from the expected revision", () => {
   const original=withoutLchmod(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+a9c76a599");
   assert.equal(hash(JSON.stringify(previousRevision(original))),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
   const oldAssets=withoutLchmod(materializeProbes(probes)).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);

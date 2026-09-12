@@ -216,6 +216,7 @@ default timeout: 60 seconds
 
 _2026/09/12_
 
+- `修复` 修复实验版 Android 在屏蔽 SIGSYS 时首次异步 spawn 的 pidfd 探测崩溃, 通过既有 waiter 回退保留调用线程掩码及 pending 信号. 十补丁运行时在五个原生 4 KiB 环境通过原 31 项探针 (310/310) 和完整八项 Binder (80/80). 恢复构建完成证据时明确保留原退出码缺失, 单独归档首次 ART 启动失败. 新字节的三星 API 32/16 KiB, JSC rebase 及 Release 门禁仍开放, 官方字节不变
 - `修复` 修复实验版原生 x86_64 16 KiB 的 JavaScriptCore 启动中止: 以显式大页/JIT/分配器配置重编 pinned WebKit 并重新链接 Bun, 在 4 KiB 和 16 KiB AVD 各两轮完整 Binder 通过 (32/32). 官方字节及其 4 KiB 防护保持不变, Release 验收另行进行
 - `优化` 新增独立 test-only SIGSYS 观察器: 原生 ARM64 API 28 四次失败直接定位 pidfd_open, 未追踪对照同样失败, API 31 对照通过. 绑定原始证据, 保留初版工具失败, 验证信号转发, 防篡改和清理; 此诊断不等于新运行时, Binder 或 Release 验收
 - `优化` 新增两个固定 blocked-SIGSYS 异步 spawn 探针, 保持原 29 项定义和 native 字节不变: 四个原生 4 KiB 环境通过 248/248, 但 Sony API 28 的两个新模式各失败两次, exit 159 (整体 58/62). 四次失败独立严格归档, 兼容门禁保持未通过; 清理测试包, UID 进程和本轮 AVD, 不新增 Binder, 16 KiB 或 Release 验收结论

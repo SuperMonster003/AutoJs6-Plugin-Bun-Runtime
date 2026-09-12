@@ -8,6 +8,7 @@
     "v0.2.2": {
       "released_date": "2026/09/12",
       "fix": [
+        "Fix experimental Android pidfd probing when asynchronous spawn starts with SIGSYS blocked, preserving the caller mask and pending signals through the existing waiter fallback. The ten-patch runtime passes the unchanged 31-probe suite (310/310) and full eight-test Binder suite (80/80) in five native 4 KiB environments. Record recovered build completion without inventing missing original exit codes, and preserve the initial ART startup failure separately. New Samsung API 32/16 KiB, JSC rebase and Release gates remain open; official payloads are unchanged",
         "Fix the experimental native x86_64 16 KiB JavaScriptCore startup abort by rebuilding pinned WebKit with explicit large-page, JIT and allocator settings and relinking Bun; all eight Binder tests pass twice on both 4 KiB and 16 KiB AVDs (32/32). Official payloads and their 4 KiB guard remain unchanged; Release acceptance is separate"
       ],
       "dependency": [

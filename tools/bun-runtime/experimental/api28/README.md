@@ -3,28 +3,23 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-> Status: the complete source, direct-toolchain, Cargo/Bun registry, host-package,
-> host-image, license, and corresponding-source input closure is locked and
-> `buildReady` is true. The nine-patch source is replay-verified and produces
-> identical bytes in two clean builds per ABI, with complete ELF audits. Its
-> original 24-probe suite passes in five native 4 KiB environments and Samsung
-> native 16 KiB. A new offline lchmod CLI probe extends it to 25 without changing
-> those 24 definitions: all six environments pass twice (300/300).
-> The separate opt-in [real plugin Binder module](binder/README.md) now passes the
-> existing full eight-test suite twice in nine native environments (144/144),
-> including ARM64 16 KiB. A separately locked large-page JSC candidate passes
-> native x86_64 4 KiB/16 KiB Binder tests (32/32); it does not change this directory's
-> original nine-patch runtime lock. Remaining syscall/API/FD/OEM and Release gates
-> stay open.
-> Historical eight-patch binary pairs cannot satisfy the new source gate. The experiment remains
-> `distributionReady: false` until a matching experimental APK passes its
-> application-process gates and is actually published. Patched executables stay
-> outside Git; the opt-in [test-only app probe](app-probe/README.md) packages them
-> only into external test APKs. The unmodified official Bun artifacts remain
-> the production plugin's only Bun payloads; its separately locked first-party
-> supervisor is also reused by the test-only probe.
+> Status: ten-patch source `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,
+> revision `1.4.0+a9c76a599`, has two identical output pairs recovered from the
+> original clean checkouts. The original driver exits were not retained;
+> schema-2 evidence explicitly records null and binds four read-only Ninja
+> no-work checks, final build edges, clean source and full ELF audits. No native
+> rebuild was started. `buildReady` and `runtimeProduced` are true;
+> `distributionReady` remains false.
+>
+> The unchanged 31-probe suite passes twice in five native 4 KiB environments
+> (ARM64 API 28/31/33/35 and x86_64 API 33), 310/310; the original complete
+> eight-test plugin Binder suite passes twice in the same environments, 80/80.
+> An initial API 28 Binder ART/ADB-JDWP startup crash remains a separate failed
+> batch; the same APK retry passes. Samsung ARM64 API 32/4 KiB and API 36/native
+> 16 KiB need fresh acceptance. Official payloads and the nine-patch JSC candidate
+> are unchanged. See the [new report](../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md).
 
-Latest scoped result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
+Historical nine-patch result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
 passes twice in five native 4 KiB environments (290/290). The subsequent
 [Samsung Fold4 ARM64 API 32 follow-up](../../../../docs/compatibility/2026-09-12-m3-native-arm64-api32.md)
 adds 58/58 with the identical probe APK, totaling 348/348 in six environments.
@@ -191,7 +186,8 @@ commit `ed738e842d2fbdf2d6459e39267a633c4a9b2f5d`.
 Project-owned patch 7 adds the MIT-licensed [startup CLOEXEC fallback](startup-cloexec/README.md).
 Patch 8 adds a separate MIT-licensed, allocation-free [spawn FD fallback](spawn-fd/README.md).
 Patch 9 implements the selected bounded, read-only [directory-confinement fallback](scoped-open/README.md).
-The final head is `7b9ac266888abda7ee6ec0b8ac11a74236420030`; its startup,
+Patch 10 adds the [mask-preserving Android pidfd fallback](blocked-pidfd/README.md).
+The final head is `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`; its startup,
 spawn and scoped-open code intentionally differ from the upstream PR. The replay verifier checks every
 patch's actual affected paths and the exact final commit/tree while retaining
 the complete upstream equivalence check at prefix
@@ -270,10 +266,12 @@ filesystem read-only, drops capabilities, enables `no-new-privileges`, mounts
 every immutable input read-only, disables ccache, fixes the hostname and
 `/work/bun` path, and allows writes only to the clean patched checkout. Two
 independent checkouts completed both ABI builds. The outputs were identical
-across runs: ARM64 is 87,923,312 bytes with SHA-256
-`186968ad26f1753675b3782cfa87c954530d47cd593e26b701e6d2ce02b4e333`;
-x86_64 is 90,449,712 bytes with SHA-256
-`f27375423557dcb61c7d5e66b71de0beb8431f20f6393e78aba34ee23dfda8d3`.
+across runs: ARM64 is 87,923,328 bytes with SHA-256
+`96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f`;
+x86_64 is 90,449,744 bytes with SHA-256
+`c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde`.
+The original outer exits are unknown; schema 2 binds recovered completion
+without pretending the four read-only dry-run exits are the original build exits.
 The executables remain external evidence and are not copied into `jniLibs`.
 
 Build preparation uses `verifyBuildInputs`, which checks the source, patch,
@@ -303,7 +301,7 @@ and [seven-patch startup-fix record](../../../../docs/compatibility/2026-09-10-m
 are retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all nine downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all ten downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
@@ -340,6 +338,7 @@ api28/
   patches/downstream/               reviewed v1.4.0 source and supply-chain patches
   startup-cloexec/                  exact-patch Linux native fallback regressions
   spawn-fd/                        exact-patch vfork FD regressions and old failure controls
+  blocked-pidfd/                    exact-patch mask/pending-signal host regressions
   build-experiment.mjs              read-only plan, offline preflight, gated build
   build-host-image.mjs              locked host-image builder and evidence recorder
   run-locked-build.mjs              isolated digest-locked container build entry

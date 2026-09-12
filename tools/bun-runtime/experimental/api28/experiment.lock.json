@@ -176,7 +176,7 @@
       "id": "v1.4.0-backport",
       "resolved": true,
       "blocksBuild": true,
-      "description": "Nine deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, patch eight provides a bounded allocation-free Linux spawn FD fallback, and patch nine preserves read-only directory confinement without openat2. All project-owned source differences are separately audited."
+      "description": "Ten deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, patch eight provides the allocation-free Linux spawn FD fallback, patch nine preserves read-only directory confinement, and patch ten avoids optional Android pidfd probing when the calling thread blocks SIGSYS. All project-owned source differences are separately audited."
     },
     {
       "id": "toolchain-byte-lock",
@@ -194,7 +194,7 @@
       "id": "build-and-runtime-evidence",
       "resolved": false,
       "blocksBuild": false,
-      "description": "The nine-patch 7b9ac266 directory-confinement source passes deterministic replay and two clean builds per ABI with byte-identical outputs and the complete static ELF audit. Historical artifacts and reports are not reassigned to this source. Full experimental Binder/device acceptance and matching APK/source publication remain open; project policy does not require a separate legal-review gate."
+      "description": "The ten-patch a9c76a599 source has two independent byte-identical output pairs with complete static ELF audits. Original driver exit statuses were lost across session recovery; four read-only Ninja completion checks and retained final edges verify the completed builds without recompilation, as explicitly recorded in schema-2 runtime evidence. New-source device/Binder and matching APK/source publication gates remain separate; no historical acceptance is reassigned."
     }
   ]
 }

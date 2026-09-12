@@ -1,6 +1,6 @@
 # Downstream backport patches
 
-This directory contains a deterministic nine-patch series reviewed against exact
+This directory contains a deterministic ten-patch series reviewed against exact
 Bun commit `34cbb9a40b4bd1bd767d134a7065e66c2432a676`.
 
 The first five patches replay the immutable upstream compatibility commits
@@ -23,6 +23,11 @@ fallback with a bounded, read-only descriptor-relative resolver. Its
 [native harness](../../scoped-open/README.md) extracts and compiles the exact
 new header and bridge. It preserves ordinary directory serving without adding
 a dependency or a permissive switch, and does not restrict general script I/O.
+
+Project-owned MIT patch 0010 changes only the Android pidfd shim. It queries
+the caller's mask and uses the existing waiter fallback when SIGSYS is blocked,
+preserving pending signals without unblocking or warming the waiter cache.
+The [exact-source host harness](../../blocked-pidfd/README.md) covers ten cases.
 
 The stable patch IDs of compatibility patches 0001-0005 equal their
 corresponding upstream reference patches. At that five-patch prefix,

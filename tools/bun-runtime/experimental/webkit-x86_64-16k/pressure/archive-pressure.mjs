@@ -28,7 +28,10 @@ export function validatePressureRun(record, rawRounds) {
     const candidate = loadJscCandidate();
     assert.deepEqual(record.build.inputs, buildInputs(), "Archive before changing compiled inputs; never substitute a later APK");
     assert.deepEqual(record.build.jscCandidate, candidate);
-    const baseline = JSON.parse(readFileSync(new URL("../../api28/runtime-evidence.json", import.meta.url), "utf8"));
+    // This immutable candidate still contains nine-patch Bun. A newer baseline
+    // runtime lock must not silently relabel its source or historical results.
+    const baseline = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url), "utf8"));
+    assert.equal(baseline.source.downstreamHeadCommit, candidate.bunCommit);
     assert.deepEqual(record.runtime, { ...baseline.identity, variant: candidate.variant });
     assert.deepEqual(record.build.runtime, record.runtime);
     assert.deepEqual(record.build.source, baseline.source);
