@@ -14,6 +14,7 @@
         "将在线 platform-versions 插件与仓库要求的 1.7.4 对齐, 保持 native-alignment 插件不变"
       ],
       "improvement": [
+        "新增独立 test-only SIGSYS 观察器: 原生 ARM64 API 28 四次失败直接定位 pidfd_open, 未追踪对照同样失败, API 31 对照通过. 绑定原始证据, 保留初版工具失败, 验证信号转发, 防篡改和清理; 此诊断不等于新运行时, Binder 或 Release 验收",
         "新增两个固定 blocked-SIGSYS 异步 spawn 探针, 保持原 29 项定义和 native 字节不变: 四个原生 4 KiB 环境通过 248/248, 但 Sony API 28 的两个新模式各失败两次, exit 159 (整体 58/62). 四次失败独立严格归档, 兼容门禁保持未通过; 清理测试包, UID 进程和本轮 AVD, 不新增 Binder, 16 KiB 或 Release 验收结论",
         "补齐 Samsung SM-A566B / API 36 上四种硬 FD 上限模式的原生 ARM64 16 KiB 验证: 同一 APK 和未改动的 29 项探针两轮通过 58/58, 含 8 次硬上限观测, 原生 close_range 与 forced-TRAP 回退均成功. 卸载后 UID 进程为零, 未操作 AVD; 七环境累计 406/406. 未重编 native, 未重跑 Binder, 不作为 Release 验收",
         "确认 Samsung Galaxy Z Fold4 SM-F936U 实际为 API 32 / Android 12L, 原生 ARM64 / 4 KiB: 现有 Binder 两轮 16/16, 未改动的 29 项应用探针 58/58, 含全部 8 次硬上限验证. 精确绑定 APK/源码/原始证据, 卸载三个测试包并确认 UID 进程为零, 未操作 AVD. 原生字节不变; 新四模式的 ARM64 原生 16 KiB, 扩展矩阵与 Release 门禁仍开放",
