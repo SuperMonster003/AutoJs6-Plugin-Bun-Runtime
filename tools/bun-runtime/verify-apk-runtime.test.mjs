@@ -6,10 +6,38 @@ import { join } from "node:path";
 import test from "node:test";
 import { deflateRawSync } from "node:zlib";
 
-import { inspectApkRuntime } from "./verify-apk-runtime.mjs";
+import { inspectApkRuntime, readBoundedApkEntry } from "./verify-apk-runtime.mjs";
 import { root, supervisorArtifacts, verifySupervisorSource } from "./supervisor/supervisor-common.mjs";
 
 const RUNTIME_NAME = "libbun_exec.so";
+
+test("embedded build receipts enforce size, CRC and entry identity", () => {
+  const name = "assets/binder-build.json", payload = Buffer.from('{"schemaVersion":1}');
+  for (const method of [0, 8]) withApk([{ name, payload, method }], apk => {
+    assert.deepEqual(readBoundedApkEntry(apk, name, payload.length), payload);
+    assert.throws(() => readBoundedApkEntry(apk, name, payload.length - 1), /exceeds bound/);
+    assert.throws(() => readBoundedApkEntry(apk, "assets/missing.json"), /Missing APK entry/);
+    for (const bound of [0, -1, 0.5, Infinity]) assert.throws(() => readBoundedApkEntry(apk, name, bound), /bound/);
+    const bytes = readFileSync(apk);
+    const central = bytes.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02]));
+    bytes.writeUInt32LE(0, 14);
+    bytes.writeUInt32LE(0, central + 16);
+    writeFileSync(apk, bytes);
+    assert.throws(() => readBoundedApkEntry(apk, name), /CRC32/);
+  });
+});
+
+test("a forged deflated entry length cannot bypass the actual output bound", () => {
+  const name = "assets/binder-build.json", payload = Buffer.alloc(4096, 65);
+  withApk([{ name, payload, method: 8 }], apk => {
+    const bytes = readFileSync(apk);
+    const central = bytes.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02]));
+    bytes.writeUInt32LE(16, 22);
+    bytes.writeUInt32LE(16, central + 24);
+    writeFileSync(apk, bytes);
+    assert.throws(() => readBoundedApkEntry(apk, name, 32), /larger than|buffer|length|bound/i);
+  });
+});
 
 test("supervised APKs bind exact helper bytes, ABI coverage and ELF alignment", () => {
   verifySupervisorSource();

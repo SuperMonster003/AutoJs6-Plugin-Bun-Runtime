@@ -1,19 +1,19 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-更新日期: 2026-09-11
+更新日期: 2026-09-12
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, v0.2.1 开发版已修复强制终止), "Android 9 至 12L 实验支持" (启动 CLOEXEC, spawn FD 与目录回退已修复; 新增内部 lchmod 离线 CLI 探针后, 六个原生环境各两轮 25/25, 含三星 ARM64 16 KiB, 完整 Binder 待验收), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始).
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁与 25 项独立探针已有证据; 现有完整 8 项插件 Binder 在九个原生环境各两轮通过 144/144, 含三星 ARM64 16 KiB), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 原生 x86_64 16 KiB 的大页 JSC 候选已通过双页大小 Binder 32/32, 与官方发行线和最终 Release 验收分开.
 
 ## 当前状态速览
 
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与完整实验 Binder 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
+| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 新增内部 lchmod/fchmodat2 离线 CLI 验证后, 六个原生环境各两轮 25/25 (300/300), 含三星原生 ARM64 16 KiB 50/50; 原 24 项不变. 其余 syscall, Android 高位 FD/硬限制降低/UNSHARE, 完整实验 Binder, API 29/30/32 和 patched paired APK/source Release 仍待完成; 不将局部验收当作稳定 Android 9 支持 |
+| 当前缺口 | 现有完整 8 项实验 Binder 已通过九环境 144/144, 包含 x86 API 28/30/31/36; 新大页 JSC 的 native x86 4 KiB/16 KiB 各两轮 8/8. API 29/32 x86 镜像下载失败未计通过, API 32 ARM64 真机、其余 syscall/SIGSYS、Android 高位 FD/硬限制降低/UNSHARE、JIT 压力与最终 paired APK/source Release 仍待完成; 不将现有套件等同于全部 API/CLI 或稳定 Android 9 支持 |
 
 ## 如何阅读这份路线图
 
@@ -220,10 +220,11 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ### M3-B: 插件诊断与实验分发
 
+- [x] (插件/测试/设备) 新增 opt-in `minSdk=28`、独立包名、`testOnly=true` 且禁用 Release variant 的实验插件模块, 复用真实生产服务和同一 8 项 Binder instrumentation. 原九补丁双 ABI 与 supervisor 不变, API 28/31/33/35 ARM64 真机、API 36 ARM64 16 KiB 三星真机及 API 28/30/31/36 native x86 4 KiB AVD 各两轮 8/8, 合计 144/144. 绑定 APK 内嵌源码 receipt、安装后摘要、90 条生命周期诊断和卸载后零 UID 进程; 权限签名或早期工具解析失败独立保留, 不绕过真实服务权限. 见 [实验 Binder 报告](docs/compatibility/2026-09-12-m3-experimental-binder.md). (2026-09-12, G1/G2, 现有完整套件, 非全部语义/OEM/Release)
 - [ ] (插件/API) 改善 runtime probe 诊断, 报告 API, ABI, probe 阶段, 退出码, 可能的 signal, runtime identity 和有界 stderr; 不把设备 fingerprint 或用户内容写入普通 Binder 错误.
 - [ ] (插件) 明确失败缓存和重试生命周期, 使一次启动失败不会产生不可解释的永久不可用状态, 同时避免并发重复启动 probe.
 - [ ] (测试) 构建 `minSdk=28` 实验 APK, 验证 Java/Kotlin API 28 路径, native payload 提取, 只读 `nativeLibraryDir` exec, SELinux 和应用 zygote seccomp 继承.
-- [ ] (设备) API 28, 29, 30, 31, 32 各完成 `x86_64` AVD instrumentation; Android 12 与 12L 分开记录.
+- [ ] (设备) API 28, 29, 30, 31, 32 各完成 `x86_64` AVD instrumentation; 2026-09-12 已完成 API 28/30/31 各两轮完整 8 项 Binder. API 29/32 镜像下载器失败未计为执行通过, Android 12 与 12L 仍分开记录.
 - [ ] (设备) 至少在 API 28, 31, 32 各一台 `arm64-v8a` 真机运行完整矩阵, 并覆盖 AOSP/Pixel 类与至少两种 OEM.
 - [ ] (发布) 实验包, PluginInfo, README 和错误信息显式标明仅支持 64 位设备, 单源码 `--no-install`, 未承诺完整 Bun CLI; 提供恢复到 API 33 稳定包的清晰路径.
 
@@ -264,11 +265,12 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建/发布) debug/release 三类 APK 均通过 `zipalign -c -P 16 4` 与包内摘要验证; 最终 v0.2.0 arm64-only/universal 的原生 arm64 安装后 `nativeLibraryDir` 摘要已通过真机验证, 见 [发布报告](docs/compatibility/2026-09-08-v0.2.0-release.json). (2026-09-08, G1/G2)
 - [ ] (设备/发布) 补齐最终签名 x86_64 APK 的安装后摘要与完整原生执行验收, 不用 debug CI 代替最终签名产物测试.
 - [x] (设备) 在 Android 16 / API 36 `google_apis_ps16k` AVD 硬断言 `PAGE_SIZE=16384`, 并以 `arm64-v8a` 单 ABI APK 经原生翻译桥完成 5/5 Bun Binder instrumentation. (2026-09-02, G2; 明确不等同于原生 arm64 证据)
-- [ ] (设备/x86_64) pinned WebKit 的 x86_64 `CeilingOnPageSize=4 KB` 根因已收敛, 插件也会在 `PAGE_SIZE>4096` 时无崩溃拒绝; 仍须以显式且已审阅的 large-page/JIT/allocator 配置重建 WebKit 与 Bun, 并在 4 KB/16 KB 双环境重复完整 Binder instrumentation 后才能勾选.
+- [x] (实验/设备/x86_64) 在 pinned WebKit 显式启用 `USE_64KB_PAGE_BLOCK`, 保留 JIT/DFG/FTL/Wasm JIT 与 Bun 外部 mimalloc 配置, 重编 JSC/WTF/bmalloc 并重新链接九补丁 Bun. 新候选在 API 36 native x86 的 4 KiB/16 KiB AVD 各两轮完整 8 项 Binder 通过 (32/32), 启动中止消失, installed APK/payload 与清理通过. 原始候选锁保留 incremental 来源, 后续独立清洁重建另计; 不把编译启用各 JIT 层当作逐层性能验收. 官方 payload 和 >4096-byte 防护不变. 见 [JSC 修复候选报告](docs/compatibility/2026-09-12-m5-x86-16k-jsc.md). (2026-09-12, G1/G2, 非 Release)
+- [x] (构建/x86_64) 在两个全新目录各构建一轮 WebKit/JSC, 并在两个全新九补丁 Bun checkout 各完成一轮完整离线 native/Rust 构建. 三个 JSC 库、config 与两个完整 Bun 的 SHA-256 均一致, Bun 均匹配已通过双页大小 Binder 的 `704cc156...3963e38` 候选. 原 incremental 来源锁不改写, [独立清洁构建 receipt](docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json) 单独绑定后续证据; 上游 ICU 复用而非重编. (2026-09-12, G1, 非 Release)
 - [x] (设备/arm64) Samsung Remote Test Lab SM-A566B 真机 (Android 16 / API 36, 原生 arm64-v8a, kernel aarch64, PAGE_SIZE=16384, native bridge=0) 完成官方 Bun 1.4.0 + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK 完整 8 项 Binder 两轮验收. 每项测试前硬断言 API/页大小, 每轮前 force-stop 并重新启动, 安装后双 payload 摘要与可执行权限通过, PluginInfo 与单 ABI 包内容一致; 10 次忽略 SIGTERM 的取消/超时/输出超限均真实回收并删除工作目录. 两个测试包卸载后 UID 进程数为 0, 不从翻译桥推断原生执行. 见 [M5 原生 ARM64 报告](docs/compatibility/2026-09-10-m5-native-arm64-16k.json). (2026-09-10, G1/G2, 开发版, 非已发布 Release APK)
 - [ ] (发布/arm64) 对最终拟发布的签名 APK 在原生 arm64 16 KiB 环境重复匹配范围的验收, 绑定该产物的安装后摘要及同 Release 源码资产; 不将开发版 Debug APK 通过归因给未测试的 Release 文件.
 - [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB; 最初的资料核查只确认候选路线, 不计为设备通过, 随后用户接入的 Samsung 真机已按上方独立条目归档实测结果. (2026-09-10, 环境资料核查; 设备 G2 见独立报告)
-- [ ] (测试) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 当前九补丁双 ABI 各两轮 ELF 已逐字节复现; 独立 test-only 双 ABI APK 的 ZIP/payload 验证、4 KiB 双 ABI 与原生 ARM64 16 KiB 安装后摘要和应用进程生命周期已完成. 2026-09-10 五个原生 4 KiB 环境各两轮 24/24 (240/240), 2026-09-11 同一 ARM64 APK 在 Samsung API 36 原生 16 KiB 各两轮 24/24 (48/48), 合并六环境 288/288, 不表示同轮重跑. 旧 18/20、19/20、23/24 失败及较窄成功记录均保留; 完整实验 Binder/其余 syscall/FD 语义、最终签名 APK/source 发布及 x86_64 16 KiB 仍未完成.
+- [ ] (测试/发布) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 九补丁双 ABI 各两轮 ELF 已复现, 原独立 24/25 项应用探针及其失败历史保持原样. 2026-09-12 现有完整 8 项实验插件 Binder 在九环境 144/144, 含 native ARM64 16 KiB; 单独大页 JSC 候选在 native x86 4 KiB/16 KiB 32/32, 并有两个独立全量清洁构建一致性及最终工具复测. 原九补丁 x86 lock 不因此换字节, 官方 x86 页保护仍保留; 其余 syscall/FD/API、JIT 压力和最终签名 APK/source 发布仍未完成.
 - [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
 
 **M5 验收条件:** 官方和 patched 发行线的每个拟支持 ABI, 各自在宣称支持前完成 ELF, APK ZIP, 安装后 payload 和原生 16 KB execution 四层验证; 翻译桥结果只作为单独标注的补充证据.

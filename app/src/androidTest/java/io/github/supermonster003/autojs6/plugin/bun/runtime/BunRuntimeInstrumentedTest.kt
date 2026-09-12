@@ -46,8 +46,8 @@ class BunRuntimeInstrumentedTest {
     @Before
     fun assertInstrumentationEnvironment() {
         assertTrue(
-            "Bun runtime instrumentation requires Android 13 (API 33) or newer, but ran on API ${Build.VERSION.SDK_INT}",
-            Build.VERSION.SDK_INT >= MIN_SUPPORTED_API_LEVEL,
+            "Bun runtime instrumentation requires API ${BuildConfig.BUN_MIN_API}, but ran on API ${Build.VERSION.SDK_INT}",
+            Build.VERSION.SDK_INT >= BuildConfig.BUN_MIN_API,
         )
         val requiredApiLevel = requireNotNull(
             InstrumentationRegistry.getArguments()
@@ -108,7 +108,7 @@ class BunRuntimeInstrumentedTest {
             assertEquals(context.getString(R.string.plugin_author), info.author)
             assertEquals(BunPluginIds.ID, info.id)
             assertEquals(BunPluginIds.ENGINE, info.engine)
-            assertEquals(BunPluginIds.VARIANT_BUN_1_4_0_ANDROID, info.variant)
+            assertEquals(BuildConfig.BUN_RUNTIME_VARIANT, info.variant)
             assertEquals(packageInfo.versionName, info.versionName)
             assertEquals(packageInfo.longVersionCode, info.versionCode)
             assertTrue(info.versionDate?.isNotBlank() == true)
@@ -658,8 +658,8 @@ class BunRuntimeInstrumentedTest {
             probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty(),
             probe.getBoolean(BunRuntimeContract.KEY_RUNTIME_READY),
         )
-        assertEquals(BunRuntimeContract.RUNTIME_VERSION, probe.getString(BunRuntimeContract.KEY_RUNTIME_VERSION))
-        assertEquals(BunRuntimeContract.RUNTIME_REVISION, probe.getString(BunRuntimeContract.KEY_RUNTIME_REVISION))
+        assertEquals(BuildConfig.BUN_RUNTIME_VERSION, probe.getString(BunRuntimeContract.KEY_RUNTIME_VERSION))
+        assertEquals(BuildConfig.BUN_RUNTIME_REVISION, probe.getString(BunRuntimeContract.KEY_RUNTIME_REVISION))
         assertTrue(probe.getString(BunRuntimeContract.KEY_PROCESS_NAME).orEmpty().endsWith(":bun_runtime"))
         assertEquals(
             packagedAbis,
@@ -731,7 +731,6 @@ class BunRuntimeInstrumentedTest {
     }
 
     private companion object {
-        const val MIN_SUPPORTED_API_LEVEL = Build.VERSION_CODES.TIRAMISU
         const val PREWARM_REPETITIONS = 2
         const val REQUIRED_API_LEVEL_ARGUMENT = "requiredApiLevel"
         const val REQUIRED_PAGE_SIZE_BYTES_ARGUMENT = "requiredPageSizeBytes"

@@ -61,14 +61,14 @@ internal class BunRuntimeBinary(private val context: Context) {
             require(supervisor.isFile && sha256(supervisor) == expectedSupervisor) {
                 "Bun supervisor SHA-256 does not match the locked ABI payload"
             }
-            officialRuntimePageSizeError(
-                abi,
-                Os.sysconf(OsConstants._SC_PAGESIZE),
-            )?.let(::error)
+            val pageSize = Os.sysconf(OsConstants._SC_PAGESIZE)
+            if (abi == "x86_64" && pageSize > BuildConfig.BUN_X86_MAX_PAGE_SIZE_BYTES) {
+                error(officialRuntimePageSizeError(abi, pageSize) ?: "Unsupported process page size: $pageSize")
+            }
             val version = executeProbe(runtime, "--version")
-            require(version == BunRuntimeContract.RUNTIME_VERSION) { "Unexpected Bun version: $version" }
+            require(version == BuildConfig.BUN_RUNTIME_VERSION) { "Unexpected Bun version: $version" }
             val revision = executeProbe(runtime, "--revision")
-            require(revision == BunRuntimeContract.RUNTIME_REVISION) { "Unexpected Bun revision: $revision" }
+            require(revision == BuildConfig.BUN_RUNTIME_REVISION) { "Unexpected Bun revision: $revision" }
             executeProbe(runtime, "--eval", "void 0")
             BunRuntimeProbe(true, runtime.path, runtimeAbi, version, revision, null)
         }.getOrElse { error ->

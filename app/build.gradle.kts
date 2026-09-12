@@ -66,6 +66,12 @@ android {
         }
         versionCode = versions.appVersionCode
         versionName = versions.appVersionName
+        buildConfigField("String", "BUN_RUNTIME_VERSION", "\"1.4.0\"")
+        buildConfigField("String", "BUN_RUNTIME_REVISION", "\"1.4.0+34cbb9a40\"")
+        buildConfigField("String", "BUN_RUNTIME_VARIANT", "\"bun-1.4.0-android\"")
+        buildConfigField("int", "BUN_MIN_API", versions.sdkVersionMin.toString())
+        buildConfigField("boolean", "BUN_EXPERIMENTAL", "false")
+        buildConfigField("long", "BUN_X86_MAX_PAGE_SIZE_BYTES", "4096L")
         bunSupervisorArtifacts.forEach { (abi, artifact) ->
             buildConfigField("String", "BUN_SUPERVISOR_${abi.uppercase().replace('-', '_')}_SHA256",
                 "\"${artifact.getValue("binarySha256")}\"")

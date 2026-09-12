@@ -46,13 +46,13 @@ internal fun Context.bunPluginInfo(): PluginInfo {
         versionDate = getString(R.string.plugin_version_date)
         id = BunPluginIds.ID
         engine = BunPluginIds.ENGINE
-        variant = BunPluginIds.VARIANT_BUN_1_4_0_ANDROID
+        variant = BuildConfig.BUN_RUNTIME_VARIANT
         supportedAbis = appContext.packagedRuntimeAbis()
         capabilities = Bundle().apply {
             putLong(PluginCapabilityKeys.REQUIRES_HOST_VERSION, BunRuntimeContract.REQUIRES_HOST_VERSION)
             putInt(BunPluginCapabilityKeys.CONTRACT_VERSION, BunRuntimeContract.PROTOCOL_VERSION)
-            putString(BunPluginCapabilityKeys.RUNTIME_VERSION, BunRuntimeContract.RUNTIME_VERSION)
-            putString(BunPluginCapabilityKeys.RUNTIME_REVISION, BunRuntimeContract.RUNTIME_REVISION)
+            putString(BunPluginCapabilityKeys.RUNTIME_VERSION, BuildConfig.BUN_RUNTIME_VERSION)
+            putString(BunPluginCapabilityKeys.RUNTIME_REVISION, BuildConfig.BUN_RUNTIME_REVISION)
             putString(BunPluginCapabilityKeys.SOURCE_TRANSPORT, "parcel-file-descriptor")
             putString(BunPluginCapabilityKeys.EXECUTION_MODEL, "isolated-process-single-source")
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_TYPESCRIPT, true)
