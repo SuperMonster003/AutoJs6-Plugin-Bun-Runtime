@@ -18,6 +18,8 @@
 
 本轮初始 master HEAD 为 `fb9fbc6652ec434e4ec5e8674561461c9f33ccf5`, 工作区原本干净. 本轮诊断工具、归档及文档作为独立逻辑提交保存; 实验 native 构建改动另留工作区, 见下节.
 
+诊断提交为 `0bc66d6` (`test(runtime): capture blocked async pidfd SIGSYS`), 作者/提交者均为 noreply. 该提交的独立 clean worktree 已通过全部 176 个 Node 测试、完整九补丁 `verifyExperiment` 和 Markdown --check; 并非将含十补丁草稿的当前工作区说成已全面通过. 临时验证 worktree 用后清理, 日志保存在本机交接目录. 未运行远程 CI, 未 push 或发布.
+
 1. [动态诊断](compatibility/2026-09-13-m3-blocked-pidfd-diagnosis.json): 原九补丁 Bun 在 Sony G8441 / API 28 / native ARM64 / 4096 上, native/trap 两种冷 async fixture 各两轮, 四次 traced 失败直接记录 leader SIGSYS / SYS_SECCOMP / syscall 434 (pidfd_open), 然后 exit 159. 四个 plain 对照同样失败. Sony XQ-AT72 / API 31 的同样八次执行均通过原语义断言, 没有 pidfd SIGSYS. 两包卸载且 UID 进程为零.
 2. 独立 test-only observer 不修改寄存器、掩码或信号交付; execve-only launcher 不预热 spawn/waiter. syscall 身份是动态证据, Rust 调用点来自源码审查, 不是捕获的栈. [初版 harness 失败](compatibility/2026-09-13-m3-signal-trace-harness-failure.json) 单独保留, 不计为 native 修复结果.
 3. 诊断防篡改 Node 测试 14 项通过; 真实 Linux observer 的 handled/fatal SIGSYS 对照通过. 原 APK/release-helper 与新诊断组合 31 个 Node 测试通过.
