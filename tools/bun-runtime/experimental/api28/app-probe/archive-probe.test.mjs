@@ -3,6 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { inputFacts } from "./probe-common.mjs";
 import { summarizeRecords, validateRunRecord } from "./archive-probe.mjs";
+import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
+import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
 
 function fixture() {
   const historical = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-11-m3-lchmod-bin-link.json", import.meta.url), "utf8"));
@@ -13,6 +15,8 @@ function fixture() {
   // Synthetic validator fixture ONLY. Historical receipts on disk are untouched;
   // a real old APK cannot pass this substitution because the device runner binds it.
   record.build.inputs = inputFacts();
+  for (const run of record.runs) run.probes.splice(run.probes.length - 1, 0,
+    ...Object.values(HARD_LIMIT_MODES).map(mode => hardLimitResult(mode, run.environment.abi, run.environment.uid)));
   return record;
 }
 const raw = record => record.runs.map(run => "INSTRUMENTATION_RESULT: report=" + JSON.stringify(run) + "\nINSTRUMENTATION_CODE: -1\n");
@@ -23,10 +27,14 @@ test("archive revalidates both complete application rounds and counts only their
   const summary = summarizeRecords([record]);
   assert.equal(summary.environments, 1);
   assert.equal(summary.rounds, 2);
-  assert.equal(summary.passedProbes, 50);
-  assert.equal(summary.totalProbes, 50);
+  assert.equal(summary.passedProbes, 58);
+  assert.equal(summary.totalProbes, 58);
   assert.equal(summary.loweredSoftLimitObservations, 4);
   assert.equal(summary.forcibleLifecycleObservations, 6);
+  assert.equal(summary.loweredHardLimitObservations, 8);
+  assert.equal(summary.hardLimitStartupObservations, 4);
+  assert.equal(summary.hardLimitSpawnObservations, 4);
+  assert.equal(summary.hardLimitSpawnApiObservations, 8);
 });
 
 test("archive rejects failed, incomplete, wrong-source, wrong-payload and unclean runs", () => {
@@ -57,7 +65,13 @@ test("raw instrumentation cannot be missing, diverge from JSON or hide a crash",
 test("a changed UID, time or directory is not a new environment; APK builds stay separate", () => {
   const first = fixture(), repeat = fixture();
   repeat.lifecycle.installedUid++;
-  repeat.runs.forEach(run => run.environment.uid++);
+  repeat.runs.forEach(run => {
+    run.environment.uid++;
+    for (const probe of run.probes.filter(p => p.hardLimitEvidence)) {
+      probe.hardLimitEvidence.uid++;
+      probe.stdout = "HARD_LIMIT_RESULT=" + JSON.stringify(probe.hardLimitEvidence) + "\n";
+    }
+  });
   validateRunRecord(repeat, raw(repeat));
   assert.throws(() => summarizeRecords([first, repeat]), /Repeated environments/);
   repeat.runs.forEach(run => run.environment.fingerprint += "-different-image");

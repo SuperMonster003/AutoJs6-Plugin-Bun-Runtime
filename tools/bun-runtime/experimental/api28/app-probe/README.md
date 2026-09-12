@@ -15,6 +15,18 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The [Android hard-limit follow-up](../../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
+extends the suite to **29 probes**, preserving all original 25 definitions and
+fixture bytes. Two rounds in five native 4 KiB environments (arm64 API
+28/31/33/35 and x86_64 API 33) pass **290/290**, including 40 new hard-limit
+observations. Startup retains/marks FD 256 after soft AND hard limits become
+128; both spawn APIs exclude it from non-Bun children. Instrumentation and
+supervisor limits remain unchanged. These new modes do not yet have native
+ARM64 16 KiB or API 32 evidence and do not cover Android FD 70000, UNSHARE,
+watch/reload or the complete Binder/API/Release matrix. Runtime bytes stay exact.
+
+### API 29/32 25-probe follow-up
+
 The subsequent [API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md)
 adds **100/100** unchanged application probes in two native x86_64 / 4 KiB AVD
 environments. Its test APK is rebuilt only to bind the current APK verifier;
@@ -294,6 +306,34 @@ signal defaults or detached descendants. The distinction between marking a
 descriptor and immediately closing it follows the
 [Linux close_range contract](https://man7.org/linux/man-pages/man2/close_range.2.html).
 
+## Fixed hard-limit fixture
+
+`hard-limit-probes.mjs` is a separate immutable source, not a change to the
+seven original FD modes above. The builder accepts only `startup-native`,
+`startup-trap`, `spawn-native`, and `spawn-trap`, binding each ID, mode, asset
+name and constant source header. Only the new assets have a 12 KiB source cap;
+the original 25 definitions, 128 KiB JSON cap, 15-second default timeout,
+16 KiB output budget and bounded semantic record are unchanged.
+
+Each disposable supervised Bun process opens a non-CLOEXEC sentinel FD in
+`[256,512)`, requires original limits at least 512, then lowers both soft and
+hard limits to 128. Restoration must fail with EPERM. Startup re-execs the
+installed read-only Bun at the same PID/UID, retaining the sentinel and setting
+CLOEXEC; sync and async non-Bun toybox children each prove stdout-FD visibility,
+sentinel absence and inherited limits of 128/128. Parent FD identity/flags and
+limits remain correct. The Java instrumentation and supervisor independently
+retain their original limits. No system setting, hidden Android API, extra
+native helper, dependency or shell is used. See the
+[Linux resource-limit contract](https://man7.org/linux/man-pages/man2/getrlimit.2.html).
+
+TRAP modes add only a fixed ABI-checked calling-thread filter for syscall 436
+and its prctl marker. Its bytes and all semantic fields are independently
+validated; native control results remain success, ENOSYS or EINVAL as actually
+observed, not a claim that native close_range is universally available.
+The suite still does not cover FD 70000, UNSHARE, blocked asynchronous SIGSYS,
+all threads or detached descendants. The original soft-only modes still restore
+their limits; irreversible hard lowering occurs only in these new child processes.
+
 ## Build outside the repository
 
 The fixed `openat2-confinement` case compares 12 raw loopback HTTP paths in
@@ -410,7 +450,7 @@ node tools/bun-runtime/experimental/api28/app-probe/archive-probe.mjs `
 ```
 
 The archiver requires both raw instrumentation files and `probe-result.json`.
-It revalidates the complete 25 observations per round, exact installed hashes,
+It revalidates the complete current 29 observations per round, exact installed hashes,
 the current build receipt, every force-stop/uninstall/UID cleanup record and
 the unchanged environment identity across rounds. Repeated images, different
 APK builds, stale source bindings, failures or a raw/JSON mismatch are rejected.
@@ -421,6 +461,7 @@ of historical APKs. Native builds and test fixtures are not changed by archiving
 ```powershell
 node --test tools/bun-runtime/experimental/api28/app-probe/probe-common.test.mjs
 node --test tools/bun-runtime/experimental/api28/app-probe/archive-probe.test.mjs
+node --test tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.test.mjs
 ```
 
 Build CI runs these fail-closed validator tests and compiles the Java runner

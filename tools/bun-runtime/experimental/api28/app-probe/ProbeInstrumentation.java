@@ -134,6 +134,8 @@ public final class ProbeInstrumentation extends Instrumentation {
 
     private JSONObject runProbe(JSONObject probe, int uid) throws Exception {
         String id = probe.getString("id");
+        boolean hardLimit = id.startsWith("fd-hard-");
+        long[] parentBefore = hardLimit ? readNofileLimits() : null;
         File work = new File(job, id);
         check(work.mkdir(), "new per-probe directory");
         List<String> command = new ArrayList<>();
@@ -145,16 +147,27 @@ public final class ProbeInstrumentation extends Instrumentation {
             File source = new File(work, "entry." + probe.optString("extension", "js"));
             String sourceText;
             if (probe.has("sourceAsset")) {
-                boolean lchmod = id.equals("lchmod-bin-link");
-                String name = lchmod ? "lchmod-probes.mjs" : "openat2-probes.mjs";
-                String mode = lchmod ? "bin-link" : "confinement";
-                check((lchmod || id.equals("openat2-confinement")) && probe.getString("mode").equals(mode) &&
-                        probe.getString("sourceFile").equals(name) &&
-                        probe.getString("sourceAsset").equals(name) && !probe.has("source"), "fixed source asset binding");
-                sourceText = asset(name);
-                check(sourceText.getBytes(StandardCharsets.UTF_8).length <= (lchmod ? 12288 : 8192) &&
-                        sourceText.startsWith(lchmod ? "const LCHMOD_MODE = \"bin-link\";\n" :
-                                "const OPENAT2_MODE = \"confinement\";\n"), "bounded fixed source asset");
+                if (hardLimit) {
+                    String mode = probe.getString("mode");
+                    check(java.util.Arrays.asList("startup-native", "startup-trap", "spawn-native", "spawn-trap").contains(mode) &&
+                            id.equals("fd-hard-" + mode) && probe.getString("sourceFile").equals("hard-limit-probes.mjs") &&
+                            probe.getString("sourceAsset").equals("hard-limit-" + mode + ".mjs") && !probe.has("source"),
+                            "fixed hard-limit source asset binding");
+                    sourceText = asset("hard-limit-" + mode + ".mjs");
+                    check(sourceText.getBytes(StandardCharsets.UTF_8).length <= 12288 &&
+                            sourceText.startsWith("const HARD_LIMIT_MODE = \"" + mode + "\";\n"), "bounded fixed hard-limit source asset");
+                } else {
+                    boolean lchmod = id.equals("lchmod-bin-link");
+                    String name = lchmod ? "lchmod-probes.mjs" : "openat2-probes.mjs";
+                    String mode = lchmod ? "bin-link" : "confinement";
+                    check((lchmod || id.equals("openat2-confinement")) && probe.getString("mode").equals(mode) &&
+                            probe.getString("sourceFile").equals(name) &&
+                            probe.getString("sourceAsset").equals(name) && !probe.has("source"), "fixed source asset binding");
+                    sourceText = asset(name);
+                    check(sourceText.getBytes(StandardCharsets.UTF_8).length <= (lchmod ? 12288 : 8192) &&
+                            sourceText.startsWith(lchmod ? "const LCHMOD_MODE = \"bin-link\";\n" :
+                                    "const OPENAT2_MODE = \"confinement\";\n"), "bounded fixed source asset");
+                }
             } else sourceText = probe.getString("source");
             try (OutputStream stream = new FileOutputStream(source)) {
                 stream.write(sourceText.getBytes(StandardCharsets.UTF_8));
@@ -236,12 +249,13 @@ public final class ProbeInstrumentation extends Instrumentation {
             try {
                 String sourceFile = probe.getString("sourceFile");
                 check(sourceFile.equals("fd-probes.mjs") || sourceFile.equals("syscall-probes.mjs") ||
-                        sourceFile.equals("openat2-probes.mjs") || sourceFile.equals("lchmod-probes.mjs"), "fixed fixture source");
+                        sourceFile.equals("openat2-probes.mjs") || sourceFile.equals("lchmod-probes.mjs") ||
+                        sourceFile.equals("hard-limit-probes.mjs"), "fixed fixture source");
                 boolean fd = sourceFile.equals("fd-probes.mjs");
                 boolean openat2 = sourceFile.equals("openat2-probes.mjs");
                 boolean lchmod = sourceFile.equals("lchmod-probes.mjs");
-                String prefix = fd ? "FD_PROBE_RESULT=" : openat2 ? "OPENAT2_PROBE_RESULT=" : lchmod ? "LCHMOD_PROBE_RESULT=" : "SYSCALL_PROBE_RESULT=";
-                evidenceKey = fd ? "fdEvidence" : openat2 ? "openat2Evidence" : lchmod ? "lchmodEvidence" : "syscallEvidence";
+                String prefix = fd ? "FD_PROBE_RESULT=" : openat2 ? "OPENAT2_PROBE_RESULT=" : lchmod ? "LCHMOD_PROBE_RESULT=" : hardLimit ? "HARD_LIMIT_RESULT=" : "SYSCALL_PROBE_RESULT=";
+                evidenceKey = fd ? "fdEvidence" : openat2 ? "openat2Evidence" : lchmod ? "lchmodEvidence" : hardLimit ? "hardLimitEvidence" : "syscallEvidence";
                 String line = out.trim();
                 check(line.startsWith(prefix) && !line.contains("\n") && line.length() <= 2048,
                         "exactly one bounded fixture evidence record");
@@ -249,6 +263,15 @@ public final class ProbeInstrumentation extends Instrumentation {
                 passed &= fixtureEvidence.getInt("schemaVersion") == 1 && fixtureEvidence.getBoolean("passed") &&
                         fixtureEvidence.getString("mode").equals(probe.getString("mode"));
             } catch (Exception error) { passed = false; evidenceError = bounded(error.toString()); }
+        }
+        JSONObject parentLimits = null;
+        if (hardLimit) {
+            // Observation only: never lower this instrumentation process's limit.
+            long[] parentAfter = readNofileLimits();
+            passed &= parentBefore[0] >= 512 && parentBefore[1] >= parentBefore[0] &&
+                    parentAfter[0] == parentBefore[0] && parentAfter[1] == parentBefore[1];
+            parentLimits = new JSONObject().put("before", new JSONArray().put(parentBefore[0]).put(parentBefore[1]))
+                    .put("after", new JSONArray().put(parentAfter[0]).put(parentAfter[1]));
         }
         deleteOwned(work, work.getCanonicalPath(), 0, new int[] {0});
         check(!work.exists(), "per-probe workspace remains");
@@ -258,6 +281,7 @@ public final class ProbeInstrumentation extends Instrumentation {
                 .put("elapsedMillis", elapsed).put("capturedBytes", capture.used)
                 .put("outputLimitBytes", outputLimit).put("stdout", bounded(out)).put("stderr", bounded(err));
         if (fixtureEvidence != null) result.put(evidenceKey, fixtureEvidence);
+        if (parentLimits != null) result.put("hardLimitParentLimits", parentLimits);
         if (evidenceError != null) result.put("evidenceError", evidenceError);
         if (requiresReady) result.put("readyObserved", readyAt >= 0).put("parentageVerified", supervisorPid > 1)
                 .put("childPid", childPid).put("supervisorPid", supervisorPid)
@@ -268,6 +292,13 @@ public final class ProbeInstrumentation extends Instrumentation {
         if (streamError.get() != null) result.put("streamError", bounded(streamError.get()));
         if (exitCode >= 128 && exitCode <= 192) result.put("possibleSignalFromExitConvention", exitCode - 128);
         return result;
+    }
+
+    private static long[] readNofileLimits() throws IOException {
+        Matcher match = Pattern.compile("(?m)^Max open files[ \\t]+(\\d+)[ \\t]+(\\d+)[ \\t]+files[ \\t]*$")
+                .matcher(read(new File("/proc/self/limits"), 16384));
+        check(match.find(), "independent instrumentation nofile limits");
+        return new long[] { Long.parseLong(match.group(1)), Long.parseLong(match.group(2)) };
     }
 
     private int verifyParentage(int childPid, int uid) throws Exception {

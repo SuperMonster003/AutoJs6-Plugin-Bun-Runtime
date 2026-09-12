@@ -9,6 +9,7 @@ import { supervisorArtifacts, supervisorLock, verifySupervisorSource } from "../
 import { SYSCALL_MODES, validateSyscallEvidence } from "./syscall-evidence.mjs";
 import { OPENAT2_MODES, validateOpenat2Evidence } from "./openat2-evidence.mjs";
 import { LCHMOD_MODES, validateLchmodEvidence } from "./lchmod-evidence.mjs";
+import { HARD_LIMIT_MODES, validateHardLimitEvidence } from "./hard-limit-evidence.mjs";
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../../../../..");
@@ -18,7 +19,7 @@ export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
 export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
 export const INPUTS = [
-  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs", "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
     .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
   SHARED_PROCESS,
   ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
@@ -34,7 +35,7 @@ export const FD_MODES = {
 };
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
-  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), ...Object.keys(OPENAT2_MODES), ...Object.keys(LCHMOD_MODES), "recovery-after-termination"];
+  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), ...Object.keys(OPENAT2_MODES), ...Object.keys(LCHMOD_MODES), ...Object.keys(HARD_LIMIT_MODES), "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
@@ -106,7 +107,7 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 25-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 29-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(!Object.hasOwn(probe, "sourceAsset"), "asset binding belongs to the builder, not probe definitions");
@@ -132,10 +133,11 @@ export function validateProbes(probes) {
     const fixedFd = Object.hasOwn(FD_MODES, probe.id), fixedSyscall = Object.hasOwn(SYSCALL_MODES, probe.id);
     const fixedOpenat2 = Object.hasOwn(OPENAT2_MODES, probe.id);
     const fixedLchmod = Object.hasOwn(LCHMOD_MODES, probe.id);
-    if (fixedFd || fixedSyscall || fixedOpenat2 || fixedLchmod) {
-      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : fixedSyscall ? "syscall-probes.mjs" : fixedOpenat2 ? "openat2-probes.mjs" : "lchmod-probes.mjs", "only the fixed source fixture is allowed");
-      assert.equal(probe.mode, (fixedFd ? FD_MODES : fixedSyscall ? SYSCALL_MODES : fixedOpenat2 ? OPENAT2_MODES : LCHMOD_MODES)[probe.id], "fixed mode required");
-      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : fixedSyscall ? "SYSCALL_PROBE_RESULT=" : fixedOpenat2 ? "OPENAT2_PROBE_RESULT=" : "LCHMOD_PROBE_RESULT=");
+    const fixedHardLimit = Object.hasOwn(HARD_LIMIT_MODES, probe.id);
+    if (fixedFd || fixedSyscall || fixedOpenat2 || fixedLchmod || fixedHardLimit) {
+      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : fixedSyscall ? "syscall-probes.mjs" : fixedOpenat2 ? "openat2-probes.mjs" : fixedLchmod ? "lchmod-probes.mjs" : "hard-limit-probes.mjs", "only the fixed source fixture is allowed");
+      assert.equal(probe.mode, (fixedFd ? FD_MODES : fixedSyscall ? SYSCALL_MODES : fixedOpenat2 ? OPENAT2_MODES : fixedLchmod ? LCHMOD_MODES : HARD_LIMIT_MODES)[probe.id], "fixed mode required");
+      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : fixedSyscall ? "SYSCALL_PROBE_RESULT=" : fixedOpenat2 ? "OPENAT2_PROBE_RESULT=" : fixedLchmod ? "LCHMOD_PROBE_RESULT=" : "HARD_LIMIT_RESULT=");
       for (const key of ["source", "arguments", "extension"])
         assert(!Object.hasOwn(probe, key), "ambiguous FD fixture: " + key);
     } else if (probe.arguments) {
@@ -146,7 +148,7 @@ export function validateProbes(probes) {
       assert(typeof probe.source === "string" && Buffer.byteLength(probe.source) <= 8192, "invalid source");
       assert(["js", "ts"].includes(probe.extension ?? "js"), "invalid source extension");
     }
-    if (!fixedFd && !fixedSyscall && !fixedOpenat2 && !fixedLchmod) {
+    if (!fixedFd && !fixedSyscall && !fixedOpenat2 && !fixedLchmod && !fixedHardLimit) {
       assert(!Object.hasOwn(probe, "sourceFile") && !Object.hasOwn(probe, "mode"), "unexpected source fixture");
     }
   }
@@ -164,6 +166,10 @@ export function materializeProbes(probes) {
     if (probe.sourceFile === "lchmod-probes.mjs") {
       materializeLchmodSource();
       return { ...probe, sourceAsset: "lchmod-probes.mjs" };
+    }
+    if (probe.sourceFile === "hard-limit-probes.mjs") {
+      materializeHardLimitSource(probe.mode);
+      return { ...probe, sourceAsset: "hard-limit-" + probe.mode + ".mjs" };
     }
     const source = readFileSync(requireFile(join(HERE, probe.sourceFile)), "utf8").replace(/\r\n/g, "\n");
     const inline = "const " + (probe.sourceFile === "fd-probes.mjs" ? "FD_MODE" : probe.sourceFile === "syscall-probes.mjs" ? "SYSCALL_MODE" : "OPENAT2_MODE") +
@@ -191,6 +197,16 @@ export function materializeLchmodSource() {
   const source = "const LCHMOD_MODE = \"bin-link\";\n" +
     readFileSync(requireFile(join(HERE, "lchmod-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
   assert(Buffer.byteLength(source) <= 12288, "fixed lchmod asset exceeds 12 KiB");
+  return source;
+}
+
+// Four immutable mode bindings share one canonical source. Only these new
+// assets receive a 12 KiB cap; the original 25 definitions/budgets stay exact.
+export function materializeHardLimitSource(mode) {
+  assert(Object.values(HARD_LIMIT_MODES).includes(mode), "fixed hard-limit mode required");
+  const source = "const HARD_LIMIT_MODE = " + JSON.stringify(mode) + ";\n" +
+    readFileSync(requireFile(join(HERE, "hard-limit-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
+  assert(Buffer.byteLength(source) <= 12288, "fixed hard-limit asset exceeds 12 KiB");
   return source;
 }
 
@@ -439,6 +455,17 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
       assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("LCHMOD_PROBE_RESULT="), "bounded lchmod evidence required");
       assert.deepEqual(JSON.parse(line.slice("LCHMOD_PROBE_RESULT=".length)), result.lchmodEvidence, "lchmod evidence/output drift");
     } else assert(!result.lchmodEvidence, "unexpected lchmod evidence");
+    if (expected.sourceFile === "hard-limit-probes.mjs") {
+      const proof = validateHardLimitEvidence(result.hardLimitEvidence, expected.mode, abi);
+      assert.equal(proof.uid, env.uid, "hard-limit child must retain the application UID");
+      const parent = result.hardLimitParentLimits;
+      assert.deepEqual(parent.before, [proof.before.soft, proof.before.hard], "independent inherited limits required");
+      assert.deepEqual(parent.after, parent.before, "instrumentation limits must remain unchanged");
+      assert.deepEqual(proof.supervisorBefore, parent.before, "supervisor must retain parent limits");
+      const line = result.stdout.trim();
+      assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("HARD_LIMIT_RESULT="), "bounded hard-limit evidence required");
+      assert.deepEqual(JSON.parse(line.slice("HARD_LIMIT_RESULT=".length)), proof, "hard-limit evidence/output drift");
+    } else assert(!result.hardLimitEvidence && !result.hardLimitParentLimits, "unexpected hard-limit evidence");
   }
   assert.equal(report.passed, true);
   return report;
