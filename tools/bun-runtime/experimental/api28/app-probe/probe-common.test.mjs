@@ -15,13 +15,15 @@ import { LCHMOD_MODES } from "./lchmod-evidence.mjs";
 import { lchmodFixture } from "./lchmod-fixture.test-support.mjs";
 import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
 import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
+import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
+import { asyncSignalResult } from "./async-signal-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
-const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id));
+const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id));
 const withoutLchmod = rows => withoutHardLimits(rows).filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
@@ -84,6 +86,7 @@ function fixture() {
       ...(probe.sourceFile === "lchmod-probes.mjs" ? { lchmodEvidence: lchmodFixture(),
         stdout: "LCHMOD_PROBE_RESULT=" + JSON.stringify(lchmodFixture()) + "\n" } : {}),
       ...(probe.sourceFile === "hard-limit-probes.mjs" ? hardLimitResult(probe.mode) : {}),
+      ...(probe.sourceFile === "async-signal-probes.mjs" ? asyncSignalResult(probe.mode) : {}),
     })),
   } };
 }
@@ -109,6 +112,15 @@ test("hard-limit output and independent Java UID/parent-limit observations must 
     r => { r.probes[24].stdout = "HARD_LIMIT_RESULT={}"; }, r => { r.probes[24].stdout += r.probes[24].stdout; },
     r => { r.probes[0].hardLimitEvidence = r.probes[24].hardLimitEvidence; },
     r => { r.probes[0].hardLimitParentLimits = r.probes[24].hardLimitParentLimits; }]) {
+    const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
+  }
+});
+test("async-signal semantic records must match stdout and the independent application UID", () => {
+  for (const change of [r => { delete r.probes[28].asyncSignalEvidence; },
+    r => { r.probes[28].asyncSignalEvidence.uid++; r.probes[28].asyncSignalEvidence.rows[2].uid++; },
+    r => { r.probes[28].stdout = "ASYNC_SIGNAL_RESULT={}"; }, r => { r.probes[28].stdout += r.probes[28].stdout; },
+    r => { r.probes[0].asyncSignalEvidence = r.probes[28].asyncSignalEvidence; },
+    r => { r.probes[28].asyncSignalEvidence.rows[0].after[1] = "0000000000000000"; }]) {
     const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
   }
 });
@@ -163,6 +175,8 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       assert.equal(source, "const HARD_LIMIT_MODE = " + JSON.stringify(probe.mode) + ";\n" +
         readFileSync(join(HERE,"hard-limit-probes.mjs"),"utf8").replace(/\r\n/g,"\n"));
       assert(Buffer.byteLength(source) <= 12288);
+    } else if (probe.sourceFile === "async-signal-probes.mjs") {
+      assert.deepEqual(actual, {...probe, sourceAsset: "async-signal-" + probe.mode + ".mjs"});
     } else assert.deepEqual(actual, probe);
   }
   assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
@@ -237,7 +251,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 29);
+    assert.equal(report.probes.length, 31);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);

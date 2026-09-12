@@ -217,6 +217,7 @@ default timeout: 60 seconds
 _2026/09/12_
 
 - `修復` 修復實驗版原生 x86_64 16 KiB 的 JavaScriptCore 啟動中止: 以明確大頁/JIT/分配器設定重新編譯 pinned WebKit 並重新連結 Bun, 在 4 KiB 和 16 KiB AVD 各兩輪完整 Binder 通過 (32/32). 官方位元組及其 4 KiB 防護保持不變, Release 驗收另行進行
+- `優化` 新增兩個固定 blocked-SIGSYS 非同步 spawn 探針, 保持原 29 項定義和 native 位元組不變: 四個原生 4 KiB 環境通過 248/248, 但 Sony API 28 的兩個新模式各失敗兩次, exit 159 (整體 58/62). 四次失敗獨立嚴格歸檔, 相容性門檻維持未通過; 清理測試套件, UID 程序和本輪 AVD, 不新增 Binder, 16 KiB 或 Release 驗收結論
 - `優化` 補齊 Samsung SM-A566B / API 36 上四種硬 FD 上限模式的原生 ARM64 16 KiB 驗證: 同一 APK 和未改動的 29 項探針兩輪通過 58/58, 含 8 次硬上限觀測, 原生 close_range 與 forced-TRAP 回退均成功. 解除安裝後 UID 處理程序為零, 未操作 AVD; 七環境累計 406/406. 未重編 native, 未重跑 Binder, 不作為 Release 驗收
 - `優化` 確認 Samsung Galaxy Z Fold4 SM-F936U 實際為 API 32 / Android 12L, 原生 ARM64 / 4 KiB: 現有 Binder 兩輪 16/16, 未改動的 29 項應用程式探針 58/58, 含全部 8 次硬上限驗證. 精確綁定 APK/原始碼/原始證據, 解除安裝三個測試套件並確認 UID 處理程序為零, 未操作 AVD. 原生位元組不變; 新四模式的 ARM64 原生 16 KiB, 擴展矩陣與 Release 門檻仍未完成
 - `優化` 保留原 25 項定義和執行階段位元組, 新增四項 Android FD 硬上限探針: 五個原生 4 KiB 環境各兩輪 29/29 (合計 290/290), 含 40 次硬上限驗證. 軟/硬上限降至 128 後啟動 CLOEXEC 和兩種 spawn API 均正確, 應用程式和 supervisor 上限不變. 綁定原始證據, 清理測試套件和本輪 AVD; FD 70000, 新用例原生 16 KiB 與 Release 門檻仍未完成

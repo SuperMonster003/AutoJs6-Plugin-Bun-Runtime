@@ -192,6 +192,20 @@
     "termination": "exited"
   },
   {
+    "id": "sigsys-blocked-async-native",
+    "sourceFile": "async-signal-probes.mjs",
+    "mode": "native",
+    "stdout": "ASYNC_SIGNAL_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "sigsys-blocked-async-trap",
+    "sourceFile": "async-signal-probes.mjs",
+    "mode": "trap",
+    "stdout": "ASYNC_SIGNAL_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

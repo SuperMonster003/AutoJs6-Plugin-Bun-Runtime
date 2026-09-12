@@ -68,6 +68,8 @@ export function summarizeRecords(records) {
     hardLimitStartupObservations: results.filter(probe => probe.id.startsWith("fd-hard-startup-")).length,
     hardLimitSpawnObservations: results.filter(probe => probe.id.startsWith("fd-hard-spawn-")).length,
     hardLimitSpawnApiObservations: results.filter(probe => probe.id.startsWith("fd-hard-spawn-")).length * 2,
+    blockedAsyncSignalObservations: results.filter(probe => probe.id.startsWith("sigsys-blocked-async-")).length,
+    blockedAsyncChildObservations: results.filter(probe => probe.id.startsWith("sigsys-blocked-async-")).length * 3,
     forcibleLifecycleObservations: lifecycle.length,
     terminationToExitMillis: { minimum: Math.min(...lifecycle.map(probe => probe.terminationToExitMillis)),
       maximum: Math.max(...lifecycle.map(probe => probe.terminationToExitMillis)) } };
