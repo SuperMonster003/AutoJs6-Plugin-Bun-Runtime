@@ -64,6 +64,8 @@ jobs:
             tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/archive-async-signal-failure.test.mjs \
             tools/bun-runtime/experimental/api28/binder/binder-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/pressure-common.test.mjs \

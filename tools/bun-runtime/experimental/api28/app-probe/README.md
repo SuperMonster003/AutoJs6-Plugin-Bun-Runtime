@@ -15,6 +15,19 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The new [blocked asynchronous SIGSYS gate](../../../../../docs/compatibility/2026-09-13-m3-blocked-async.md)
+extends the suite to **31 probes**, keeping all original 29 definitions and
+fixture bytes. ARM64 API 31/33/35 and native x86_64 API 33 (all 4 KiB) pass two
+rounds, **248/248**. Sony G8441 API 28 / ARM64 / 4 KiB instead scores **29/31
+twice**: both new modes exit 159 without a semantic record, four failures.
+Original 29 still pass 58/58. This is an **open failed gate**, not an expected
+failure counted as acceptance. `pidfd_open` is the source-review hypothesis,
+not a dynamically confirmed syscall number. All packages/UIDs and the owned
+AVD are cleaned up. New API 32, native 16 KiB, Binder and Release coverage is
+not inferred from the historical narrower suites below.
+
+### Historical 29-probe acceptance
+
 The [Android hard-limit follow-up](../../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
 extends the suite to **29 probes**, preserving all original 25 definitions and
 fixture bytes. Two rounds in five native 4 KiB environments (arm64 API
@@ -339,9 +352,40 @@ TRAP modes add only a fixed ABI-checked calling-thread filter for syscall 436
 and its prctl marker. Its bytes and all semantic fields are independently
 validated; native control results remain success, ENOSYS or EINVAL as actually
 observed, not a claim that native close_range is universally available.
-The suite still does not cover FD 70000, UNSHARE, blocked asynchronous SIGSYS,
+These hard-limit modes do not cover FD 70000, UNSHARE, blocked asynchronous SIGSYS,
 all threads or detached descendants. The original soft-only modes still restore
 their limits; irreversible hard lowering occurs only in these new child processes.
+
+## Fixed blocked-async fixture
+
+`async-signal-probes.mjs` is separate from all historical fixtures. Only fixed
+`native` and `trap` assets are accepted, each capped at 12 KiB, with unchanged
+128 KiB probe JSON, 15-second/16 KiB process budgets and a 2048-byte semantic
+record. No dependencies, extra native helper, shell or user project is used.
+
+Each fresh Bun process opens a non-CLOEXEC FD in `[256,512)`, performs its raw
+close_range control while unblocked, then clears any CLOEXEC mark. TRAP mode
+installs the same ABI-checked close_range/prctl-marker policy as the hard-limit
+fixture, and verifies its hash and ENOSYS before blocking. It does not synchronize
+existing threads or deliberately trap pidfd_open. Platform filters still apply.
+
+The main thread adds only SIGSYS to its mask, then asynchronously launches three
+short-lived toybox children: stdout FD positive control, sentinel FD negative
+control, and `/proc/self/status` observation. There is no earlier spawn/cache
+warmup. Calling-thread TID and the exact mask are checked before spawn, immediately
+after it returns and after streams/exit complete. The status child must retain
+the exact blocked mask, expected parent and application UID; each observed child
+must be gone after awaiting exit. Each child has 1500 ms and 8192 combined output
+bytes, drained concurrently. Only after all children exit is the original mask
+restored; parent sentinel identity/flags and post-restore TRAP marker are checked.
+The FD and child-mask checks concern separate children, not one combined program.
+
+The independent validator rejects early unblocking, changed TIDs/masks, missing
+children, drifted filter bytes and false cleanup. API 28 currently dies before
+emitting that proof; exit 159 suggests SIGSYS by the supervisor's convention,
+but does not identify `si_syscall`. Do not warm the waiter cache or unblock early
+to make this gate pass. General blocked-syscall semantics, all threads,
+watch/reload and detached descendants remain outside this bounded fixture.
 
 ## Build outside the repository
 
@@ -459,7 +503,7 @@ node tools/bun-runtime/experimental/api28/app-probe/archive-probe.mjs `
 ```
 
 The archiver requires both raw instrumentation files and `probe-result.json`.
-It revalidates the complete current 29 observations per round, exact installed hashes,
+It revalidates the complete current 31 observations per round, exact installed hashes,
 the current build receipt, every force-stop/uninstall/UID cleanup record and
 the unchanged environment identity across rounds. Repeated images, different
 APK builds, stale source bindings, failures or a raw/JSON mismatch are rejected.
@@ -471,7 +515,22 @@ of historical APKs. Native builds and test fixtures are not changed by archiving
 node --test tools/bun-runtime/experimental/api28/app-probe/probe-common.test.mjs
 node --test tools/bun-runtime/experimental/api28/app-probe/archive-probe.test.mjs
 node --test tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.test.mjs
+node --test tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.test.mjs
+node --test tools/bun-runtime/experimental/api28/app-probe/archive-async-signal-failure.test.mjs
 ```
+
+For the reproduced API 28 failure only, use the separate failure archiver:
+
+```powershell
+node tools/bun-runtime/experimental/api28/app-probe/archive-async-signal-failure.mjs `
+  docs/compatibility/<new-failure-report>.json <failed-run-directory>
+```
+
+It requires both failed instrumentation codes, all four unmodified exit-159
+results, the original 29 passing observations per round, exact source/payload
+bindings and full cleanup. Other regressions are rejected. Its output remains
+`passed=false` and cannot enter the passing archiver. It preserves failures,
+not an acceptance exception or a confirmed syscall diagnosis.
 
 Build CI runs these fail-closed validator tests and compiles the Java runner
 and shared process wrapper
