@@ -1,0 +1,888 @@
+{
+  "schemaVersion": 1,
+  "kind": "archived-blocked-async-signal-diagnosis",
+  "archivedAt": "2026-09-12T17:14:56.448Z",
+  "projectBaseCommit": "fb9fbc6652ec434e4ec5e8674561461c9f33ccf5",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "pluginBinderExercised": false,
+  "scope": "Original nine-patch Bun and unchanged async fixtures, plain/ptrace pairs twice on native ARM64 API 28 and 31 at 4096-byte pages. Four API 28 leader SIGSYS deliveries identify syscall 434 (pidfd_open), followed by exit 159. Both plain modes also exit 159. API 31 pairs pass the original semantic validator with no pidfd SIGSYS.",
+  "limits": "Observer requests dumpability only in its disposable owned tracee and forwards SIGSYS unchanged. It does not record instruction pointers or call stacks; syscall identity is dynamic, Rust caller attribution is source analysis. Diagnostic execution is not Binder, full-suite, native 16 KiB or Release acceptance.",
+  "summary": [
+    {
+      "api": 28,
+      "rounds": 2,
+      "executions": 8,
+      "fatalPidfdSignals": 4
+    },
+    {
+      "api": 31,
+      "rounds": 2,
+      "executions": 8,
+      "fatalPidfdSignals": 0
+    }
+  ],
+  "records": [
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-12T17:06:32.500Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 26312,
+            "sha256": "860972b576e6df7745a39fd692817b97f7c849e0e02e5cf9b658ab11591a3c73"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 7530,
+            "sha256": "34eddefb5636614b35b0c611b0f8e9d59532d32a32a1c187443da389daf6b01e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 33330,
+            "sha256": "a0bca40084cfa6ad8c814f9fc28a3b9bdad8187397536cd184c25daa7ebb01e8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9191,
+            "sha256": "5be106a901535479d0e7a891bce723283ac050c7d97a5140ab2e738dbb66b6de"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 9465,
+            "sha256": "f5eebdaffce5efe660ba7c8cf3d59359c381f8ace1f98e8978008a3e3376a412"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 39212,
+            "sha256": "80e4675eaedc8948563d16f1907662309ae7c6c2788b640dded361cc6f636401"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 3311,
+            "sha256": "5c2b7c4d415bf6bea79d90e67f96f03845aabe3db0c32235cf30603594029552"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9310,
+            "sha256": "cc288094668b826db430e3f72f8acf5029c80841f3da053c8b23da6cfa93202b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 9870,
+            "sha256": "9bc6db8aa9bda1cb30e9edf289adeaef37c64d1e46f4f1165d13349c326a55a5"
+          }
+        ],
+        "runtimeSourceCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923320,
+              "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 7144,
+              "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35251382,
+          "sha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "43eb23eb01c7f4a3ba00764e8a3a38224f98812f9ddf18cd26171c099e4ba4ee"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5286,
+        "sha256": "bebc038244010604520c3b8e6e018915df0298ee21e2b167342acda5262518bb"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10745,
+            "selinux": "u:r:untrusted_app:s0:c233,c258,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923320,
+                "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7144,
+                "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 159,
+                "elapsedMillis": 103,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 159,
+                "elapsedMillis": 101,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "",
+                "stderr": "TRACE_SIGSYS={\"leader\":24707,\"tid\":24707,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24707,\"tid\":24707,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24707,\"tid\":24710,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24707,\"tid\":24707,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_DONE={\"leader\":24707,\"exitCode\":159,\"events\":21,\"signals\":4,\"exits\":4}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 159,
+                "elapsedMillis": 102,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 159,
+                "elapsedMillis": 101,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "",
+                "stderr": "TRACE_SIGSYS={\"leader\":24725,\"tid\":24725,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24725,\"tid\":24725,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24725,\"tid\":24725,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24725,\"tid\":24725,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24725,\"tid\":24728,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24725,\"tid\":24725,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_DONE={\"leader\":24725,\"exitCode\":159,\"events\":23,\"signals\":6,\"exits\":4}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10745,\"selinux\":\"u:r:untrusted_app:s0:c233,c258,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923320,\"sha256\":\"22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7144,\"sha256\":\"8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":159,\"elapsedMillis\":103,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":159,\"elapsedMillis\":101,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":24707,\\\"tid\\\":24707,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24707,\\\"tid\\\":24707,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24707,\\\"tid\\\":24710,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24707,\\\"tid\\\":24707,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":24707,\\\"exitCode\\\":159,\\\"events\\\":21,\\\"signals\\\":4,\\\"exits\\\":4}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":159,\"elapsedMillis\":102,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":159,\"elapsedMillis\":101,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24725,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24725,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24725,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24725,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24728,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24725,\\\"tid\\\":24725,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":24725,\\\"exitCode\\\":159,\\\"events\\\":23,\\\"signals\\\":6,\\\"exits\\\":4}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 2882,
+          "sha256": "a01c36b261cf8fd18cca95ab7fbc1b6416792330a9baca211bba3fe61a24be0a"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10745,
+            "selinux": "u:r:untrusted_app:s0:c233,c258,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923320,
+                "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7144,
+                "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 159,
+                "elapsedMillis": 103,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 159,
+                "elapsedMillis": 205,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "",
+                "stderr": "TRACE_SIGSYS={\"leader\":24781,\"tid\":24781,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24781,\"tid\":24781,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24781,\"tid\":24784,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24781,\"tid\":24781,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_DONE={\"leader\":24781,\"exitCode\":159,\"events\":21,\"signals\":4,\"exits\":4}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 159,
+                "elapsedMillis": 106,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 159,
+                "elapsedMillis": 203,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "",
+                "stderr": "TRACE_SIGSYS={\"leader\":24798,\"tid\":24798,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24798,\"tid\":24798,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24798,\"tid\":24798,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24798,\"tid\":24798,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24798,\"tid\":24801,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":24798,\"tid\":24798,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_DONE={\"leader\":24798,\"exitCode\":159,\"events\":23,\"signals\":6,\"exits\":4}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10745,\"selinux\":\"u:r:untrusted_app:s0:c233,c258,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923320,\"sha256\":\"22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7144,\"sha256\":\"8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":159,\"elapsedMillis\":103,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":159,\"elapsedMillis\":205,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":24781,\\\"tid\\\":24781,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24781,\\\"tid\\\":24781,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24781,\\\"tid\\\":24784,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24781,\\\"tid\\\":24781,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":24781,\\\"exitCode\\\":159,\\\"events\\\":21,\\\"signals\\\":4,\\\"exits\\\":4}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":159,\"elapsedMillis\":106,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":159,\"elapsedMillis\":203,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24798,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24798,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24798,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24798,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24801,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":24798,\\\"tid\\\":24798,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":24798,\\\"exitCode\\\":159,\\\"events\\\":23,\\\"signals\\\":6,\\\"exits\\\":4}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 2882,
+          "sha256": "2f3cfe2e18fa0c2c327870b669679c2d5b4f7ab3ee1fe8e536898deef2f13407"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 10745,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true
+    },
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-12T17:07:15.169Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 26312,
+            "sha256": "860972b576e6df7745a39fd692817b97f7c849e0e02e5cf9b658ab11591a3c73"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 7530,
+            "sha256": "34eddefb5636614b35b0c611b0f8e9d59532d32a32a1c187443da389daf6b01e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 33330,
+            "sha256": "a0bca40084cfa6ad8c814f9fc28a3b9bdad8187397536cd184c25daa7ebb01e8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9191,
+            "sha256": "5be106a901535479d0e7a891bce723283ac050c7d97a5140ab2e738dbb66b6de"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 9465,
+            "sha256": "f5eebdaffce5efe660ba7c8cf3d59359c381f8ace1f98e8978008a3e3376a412"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 39212,
+            "sha256": "80e4675eaedc8948563d16f1907662309ae7c6c2788b640dded361cc6f636401"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 3311,
+            "sha256": "5c2b7c4d415bf6bea79d90e67f96f03845aabe3db0c32235cf30603594029552"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9310,
+            "sha256": "cc288094668b826db430e3f72f8acf5029c80841f3da053c8b23da6cfa93202b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 9870,
+            "sha256": "9bc6db8aa9bda1cb30e9edf289adeaef37c64d1e46f4f1165d13349c326a55a5"
+          }
+        ],
+        "runtimeSourceCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923320,
+              "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 7144,
+              "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35251382,
+          "sha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "43eb23eb01c7f4a3ba00764e8a3a38224f98812f9ddf18cd26171c099e4ba4ee"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5286,
+        "sha256": "bebc038244010604520c3b8e6e018915df0298ee21e2b167342acda5262518bb"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15112,
+            "selinux": "u:r:untrusted_app:s0:c248,c275,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923320,
+                "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7144,
+                "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 207,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19510,\"before\":[19510,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19513,\"exitCode\":0,\"immediate\":[19510,\"00000000c0000000\"],\"after\":[19510,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55408945]\"},{\"kind\":\"sentinel\",\"pid\":19516,\"exitCode\":1,\"immediate\":[19510,\"00000000c0000000\"],\"after\":[19510,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19517,\"exitCode\":0,\"immediate\":[19510,\"00000000c0000000\"],\"after\":[19510,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19510,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"restored\":[19510,\"0000000080000000\"],\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 205,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19525,\"before\":[19525,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19529,\"exitCode\":0,\"immediate\":[19525,\"00000000c0000000\"],\"after\":[19525,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55408959]\"},{\"kind\":\"sentinel\",\"pid\":19532,\"exitCode\":1,\"immediate\":[19525,\"00000000c0000000\"],\"after\":[19525,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19533,\"exitCode\":0,\"immediate\":[19525,\"00000000c0000000\"],\"after\":[19525,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19525,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"restored\":[19525,\"0000000080000000\"],\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":19525,\"tid\":19525,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19525,\"tid\":19525,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19525,\"tid\":19529,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19525,\"tid\":19532,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19525,\"tid\":19533,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_DONE={\"leader\":19525,\"exitCode\":0,\"events\":42,\"signals\":5,\"exits\":8}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 206,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19537,\"before\":[19537,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19540,\"exitCode\":0,\"immediate\":[19537,\"00000000c0000000\"],\"after\":[19537,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55408963]\"},{\"kind\":\"sentinel\",\"pid\":19542,\"exitCode\":1,\"immediate\":[19537,\"00000000c0000000\"],\"after\":[19537,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19544,\"exitCode\":0,\"immediate\":[19537,\"00000000c0000000\"],\"after\":[19537,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19537,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"restored\":[19537,\"0000000080000000\"],\"postMarker\":{\"result\":-1,\"errno\":38},\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 309,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19551,\"before\":[19551,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19554,\"exitCode\":0,\"immediate\":[19551,\"00000000c0000000\"],\"after\":[19551,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55361118]\"},{\"kind\":\"sentinel\",\"pid\":19557,\"exitCode\":1,\"immediate\":[19551,\"00000000c0000000\"],\"after\":[19551,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19558,\"exitCode\":0,\"immediate\":[19551,\"00000000c0000000\"],\"after\":[19551,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19551,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"restored\":[19551,\"0000000080000000\"],\"postMarker\":{\"result\":-1,\"errno\":38},\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":19551,\"tid\":19551,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19551,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19551,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19551,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19554,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19557,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19558,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19551,\"tid\":19551,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":19551,\"exitCode\":0,\"events\":45,\"signals\":8,\"exits\":8}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15112,\"selinux\":\"u:r:untrusted_app:s0:c248,c275,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923320,\"sha256\":\"22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7144,\"sha256\":\"8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":207,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19510,\\\"before\\\":[19510,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19513,\\\"exitCode\\\":0,\\\"immediate\\\":[19510,\\\"00000000c0000000\\\"],\\\"after\\\":[19510,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55408945]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19516,\\\"exitCode\\\":1,\\\"immediate\\\":[19510,\\\"00000000c0000000\\\"],\\\"after\\\":[19510,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19517,\\\"exitCode\\\":0,\\\"immediate\\\":[19510,\\\"00000000c0000000\\\"],\\\"after\\\":[19510,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19510,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19510,\\\"0000000080000000\\\"],\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":205,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19525,\\\"before\\\":[19525,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19529,\\\"exitCode\\\":0,\\\"immediate\\\":[19525,\\\"00000000c0000000\\\"],\\\"after\\\":[19525,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55408959]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19532,\\\"exitCode\\\":1,\\\"immediate\\\":[19525,\\\"00000000c0000000\\\"],\\\"after\\\":[19525,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19533,\\\"exitCode\\\":0,\\\"immediate\\\":[19525,\\\"00000000c0000000\\\"],\\\"after\\\":[19525,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19525,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19525,\\\"0000000080000000\\\"],\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":19525,\\\"tid\\\":19525,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19525,\\\"tid\\\":19525,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19525,\\\"tid\\\":19529,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19525,\\\"tid\\\":19532,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19525,\\\"tid\\\":19533,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":19525,\\\"exitCode\\\":0,\\\"events\\\":42,\\\"signals\\\":5,\\\"exits\\\":8}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":206,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19537,\\\"before\\\":[19537,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19540,\\\"exitCode\\\":0,\\\"immediate\\\":[19537,\\\"00000000c0000000\\\"],\\\"after\\\":[19537,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55408963]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19542,\\\"exitCode\\\":1,\\\"immediate\\\":[19537,\\\"00000000c0000000\\\"],\\\"after\\\":[19537,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19544,\\\"exitCode\\\":0,\\\"immediate\\\":[19537,\\\"00000000c0000000\\\"],\\\"after\\\":[19537,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19537,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19537,\\\"0000000080000000\\\"],\\\"postMarker\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":309,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19551,\\\"before\\\":[19551,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19554,\\\"exitCode\\\":0,\\\"immediate\\\":[19551,\\\"00000000c0000000\\\"],\\\"after\\\":[19551,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55361118]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19557,\\\"exitCode\\\":1,\\\"immediate\\\":[19551,\\\"00000000c0000000\\\"],\\\"after\\\":[19551,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19558,\\\"exitCode\\\":0,\\\"immediate\\\":[19551,\\\"00000000c0000000\\\"],\\\"after\\\":[19551,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19551,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19551,\\\"0000000080000000\\\"],\\\"postMarker\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19551,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19551,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19551,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19551,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19554,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19557,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19558,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19551,\\\"tid\\\":19551,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":19551,\\\"exitCode\\\":0,\\\"events\\\":45,\\\"signals\\\":8,\\\"exits\\\":8}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 7439,
+          "sha256": "93b93c818b26fbf0f1997870eb0b8d5b89c7a98bd9ee707e10c91e8476ade498"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15112,
+            "selinux": "u:r:untrusted_app:s0:c248,c275,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923320,
+                "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7144,
+                "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 210,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19627,\"before\":[19627,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19630,\"exitCode\":0,\"immediate\":[19627,\"00000000c0000000\"],\"after\":[19627,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55409169]\"},{\"kind\":\"sentinel\",\"pid\":19633,\"exitCode\":1,\"immediate\":[19627,\"00000000c0000000\"],\"after\":[19627,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19634,\"exitCode\":0,\"immediate\":[19627,\"00000000c0000000\"],\"after\":[19627,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19627,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"restored\":[19627,\"0000000080000000\"],\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 304,
+                "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19641,\"before\":[19641,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19644,\"exitCode\":0,\"immediate\":[19641,\"00000000c0000000\"],\"after\":[19641,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55409182]\"},{\"kind\":\"sentinel\",\"pid\":19647,\"exitCode\":1,\"immediate\":[19641,\"00000000c0000000\"],\"after\":[19641,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19648,\"exitCode\":0,\"immediate\":[19641,\"00000000c0000000\"],\"after\":[19641,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19641,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"restored\":[19641,\"0000000080000000\"],\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":19641,\"tid\":19641,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19641,\"tid\":19641,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19641,\"tid\":19644,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19641,\"tid\":19647,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19641,\"tid\":19648,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_DONE={\"leader\":19641,\"exitCode\":0,\"events\":42,\"signals\":5,\"exits\":8}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 205,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19654,\"before\":[19654,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19657,\"exitCode\":0,\"immediate\":[19654,\"00000000c0000000\"],\"after\":[19654,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55361140]\"},{\"kind\":\"sentinel\",\"pid\":19659,\"exitCode\":1,\"immediate\":[19654,\"00000000c0000000\"],\"after\":[19654,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19661,\"exitCode\":0,\"immediate\":[19654,\"00000000c0000000\"],\"after\":[19654,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19654,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"restored\":[19654,\"0000000080000000\"],\"postMarker\":{\"result\":-1,\"errno\":38},\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 306,
+                "sourceSha256": "78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75",
+                "stdout": "ASYNC_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15112,\"pid\":19669,\"before\":[19669,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[{\"kind\":\"positive\",\"pid\":19672,\"exitCode\":0,\"immediate\":[19669,\"00000000c0000000\"],\"after\":[19669,\"00000000c0000000\"],\"gone\":true,\"stdoutTarget\":\"socket:[55409187]\"},{\"kind\":\"sentinel\",\"pid\":19675,\"exitCode\":1,\"immediate\":[19669,\"00000000c0000000\"],\"after\":[19669,\"00000000c0000000\"],\"gone\":true,\"sentinelAbsent\":true},{\"kind\":\"status\",\"pid\":19676,\"exitCode\":0,\"immediate\":[19669,\"00000000c0000000\"],\"after\":[19669,\"00000000c0000000\"],\"gone\":true,\"childMask\":\"00000000c0000000\",\"ppid\":19669,\"uid\":15112}],\"passed\":true,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"restored\":[19669,\"0000000080000000\"],\"postMarker\":{\"result\":-1,\"errno\":38},\"sentinelIdentity\":true,\"parentFlags\":0}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":19669,\"tid\":19669,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19669,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19669,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19669,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19672,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19675,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19676,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":19669,\"tid\":19669,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":19669,\"exitCode\":0,\"events\":45,\"signals\":8,\"exits\":8}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15112,\"selinux\":\"u:r:untrusted_app:s0:c248,c275,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"a4eb6cfce8b4452fdd8b5ffb1256626efc3771bbc1e046e1d9956fdc7f487eab\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923320,\"sha256\":\"22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7144,\"sha256\":\"8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":210,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19627,\\\"before\\\":[19627,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19630,\\\"exitCode\\\":0,\\\"immediate\\\":[19627,\\\"00000000c0000000\\\"],\\\"after\\\":[19627,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55409169]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19633,\\\"exitCode\\\":1,\\\"immediate\\\":[19627,\\\"00000000c0000000\\\"],\\\"after\\\":[19627,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19634,\\\"exitCode\\\":0,\\\"immediate\\\":[19627,\\\"00000000c0000000\\\"],\\\"after\\\":[19627,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19627,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19627,\\\"0000000080000000\\\"],\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":304,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19641,\\\"before\\\":[19641,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19644,\\\"exitCode\\\":0,\\\"immediate\\\":[19641,\\\"00000000c0000000\\\"],\\\"after\\\":[19641,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55409182]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19647,\\\"exitCode\\\":1,\\\"immediate\\\":[19641,\\\"00000000c0000000\\\"],\\\"after\\\":[19641,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19648,\\\"exitCode\\\":0,\\\"immediate\\\":[19641,\\\"00000000c0000000\\\"],\\\"after\\\":[19641,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19641,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19641,\\\"0000000080000000\\\"],\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":19641,\\\"tid\\\":19641,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19641,\\\"tid\\\":19641,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19641,\\\"tid\\\":19644,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19641,\\\"tid\\\":19647,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19641,\\\"tid\\\":19648,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":19641,\\\"exitCode\\\":0,\\\"events\\\":42,\\\"signals\\\":5,\\\"exits\\\":8}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":205,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19654,\\\"before\\\":[19654,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19657,\\\"exitCode\\\":0,\\\"immediate\\\":[19654,\\\"00000000c0000000\\\"],\\\"after\\\":[19654,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55361140]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19659,\\\"exitCode\\\":1,\\\"immediate\\\":[19654,\\\"00000000c0000000\\\"],\\\"after\\\":[19654,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19661,\\\"exitCode\\\":0,\\\"immediate\\\":[19654,\\\"00000000c0000000\\\"],\\\"after\\\":[19654,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19654,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19654,\\\"0000000080000000\\\"],\\\"postMarker\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":306,\"sourceSha256\":\"78ad02b72c1485319db36b0362de00494299c17944f1ddac9092253c4b9b8d75\",\"stdout\":\"ASYNC_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15112,\\\"pid\\\":19669,\\\"before\\\":[19669,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[{\\\"kind\\\":\\\"positive\\\",\\\"pid\\\":19672,\\\"exitCode\\\":0,\\\"immediate\\\":[19669,\\\"00000000c0000000\\\"],\\\"after\\\":[19669,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"stdoutTarget\\\":\\\"socket:[55409187]\\\"},{\\\"kind\\\":\\\"sentinel\\\",\\\"pid\\\":19675,\\\"exitCode\\\":1,\\\"immediate\\\":[19669,\\\"00000000c0000000\\\"],\\\"after\\\":[19669,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"sentinelAbsent\\\":true},{\\\"kind\\\":\\\"status\\\",\\\"pid\\\":19676,\\\"exitCode\\\":0,\\\"immediate\\\":[19669,\\\"00000000c0000000\\\"],\\\"after\\\":[19669,\\\"00000000c0000000\\\"],\\\"gone\\\":true,\\\"childMask\\\":\\\"00000000c0000000\\\",\\\"ppid\\\":19669,\\\"uid\\\":15112}],\\\"passed\\\":true,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"restored\\\":[19669,\\\"0000000080000000\\\"],\\\"postMarker\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sentinelIdentity\\\":true,\\\"parentFlags\\\":0}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19669,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19669,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19669,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19669,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19672,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19675,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19676,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":19669,\\\"tid\\\":19669,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":19669,\\\"exitCode\\\":0,\\\"events\\\":45,\\\"signals\\\":8,\\\"exits\\\":8}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 7439,
+          "sha256": "ada6a3aac246cc58718d10e215087318e230cb4e302334e612d84da7994c857e"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 15112,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true
+    }
+  ],
+  "validator": {
+    "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-evidence.mjs",
+    "bytes": 5791,
+    "sha256": "13b395377aebf83187692e9f650fa57b6b97c9562addb9052e96f3f07c252d99"
+  },
+  "archiver": {
+    "path": "tools/bun-runtime/experimental/api28/signal-trace/archive-trace.mjs",
+    "bytes": 3700,
+    "sha256": "20422ee73eb7301bf04015ddd38cb45b8139418aba9f4b6e8a084753480f17ef"
+  }
+}

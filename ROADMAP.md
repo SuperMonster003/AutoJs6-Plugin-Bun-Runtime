@@ -1,5 +1,7 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
+本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 2026-09-13 已用独立 ptrace 观察器在 Sony API 28 / 原生 ARM64 / 4 KiB 四次直接捕获主线程 `pidfd_open` (434) 的 SIGSYS, 未追踪对照同样 exit 159; API 31 对照均通过. [完整诊断证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-diagnosis.json) 与初版工具失败分别保留. 第 10 个 mask-preserving 回退补丁和精确源码 host 测试已就绪, 两轮双 ABI 构建尚在进行; 新 revision 的设备/Binder/Release 验收不能算作完成.
+
 更新日期: 2026-09-13
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.

@@ -1,0 +1,312 @@
+{
+  "schemaVersion": 1,
+  "kind": "archived-signal-trace-harness-failure",
+  "compatibilityAcceptance": false,
+  "scope": "Initial observer-launch harness failed before any ptrace execution: the unchanged production SupervisedProcess rejected a non-Bun executable basename. One untraced fixture exited 159. This is neither a runtime-fix result nor acceptance. The diagnostic package was uninstalled with zero UID processes.",
+  "record": {
+    "schemaVersion": 1,
+    "kind": "test-only-signal-trace-runs",
+    "compatibilityAcceptance": false,
+    "capturedAt": "2026-09-12T17:02:27.839Z",
+    "build": {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-build",
+      "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+      "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+      "abi": "arm64-v8a",
+      "compatibilityAcceptance": false,
+      "inputs": [
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+          "bytes": 914,
+          "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+          "bytes": 26312,
+          "sha256": "860972b576e6df7745a39fd692817b97f7c849e0e02e5cf9b658ab11591a3c73"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+          "bytes": 7530,
+          "sha256": "34eddefb5636614b35b0c611b0f8e9d59532d32a32a1c187443da389daf6b01e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+          "bytes": 12747,
+          "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+          "bytes": 8188,
+          "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+          "bytes": 4905,
+          "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+          "bytes": 7037,
+          "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+          "bytes": 3798,
+          "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+          "bytes": 10187,
+          "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+          "bytes": 3454,
+          "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+          "bytes": 9927,
+          "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+          "bytes": 3344,
+          "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+          "bytes": 8005,
+          "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+          "bytes": 2821,
+          "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+          "bytes": 33330,
+          "sha256": "a0bca40084cfa6ad8c814f9fc28a3b9bdad8187397536cd184c25daa7ebb01e8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+          "bytes": 9191,
+          "sha256": "5be106a901535479d0e7a891bce723283ac050c7d97a5140ab2e738dbb66b6de"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+          "bytes": 9537,
+          "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+          "bytes": 3727,
+          "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.c",
+          "bytes": 4394,
+          "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+          "bytes": 1018,
+          "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+          "bytes": 2128,
+          "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+          "bytes": 2200,
+          "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+          "bytes": 480,
+          "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/README.md",
+          "bytes": 5511,
+          "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+        },
+        {
+          "path": "tools/bun-runtime/verify-runtime.mjs",
+          "bytes": 19651,
+          "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+        },
+        {
+          "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+          "bytes": 15471,
+          "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+          "bytes": 9465,
+          "sha256": "f5eebdaffce5efe660ba7c8cf3d59359c381f8ace1f98e8978008a3e3376a412"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+          "bytes": 39212,
+          "sha256": "80e4675eaedc8948563d16f1907662309ae7c6c2788b640dded361cc6f636401"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+          "bytes": 3311,
+          "sha256": "5c2b7c4d415bf6bea79d90e67f96f03845aabe3db0c32235cf30603594029552"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+          "bytes": 9095,
+          "sha256": "6393dc76d48c0af60da323f78f706e7c3a00b3d5e3f54bea4ba790622b193fa8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+          "bytes": 680,
+          "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+          "bytes": 9550,
+          "sha256": "0628090686c0a3bca34370b6509ea31eb5f43455006e48c3008d72655072a490"
+        }
+      ],
+      "runtimeSourceCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+      "ndkVersion": "29.0.14206865",
+      "flags": [
+        "-std=c11",
+        "-Oz",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-fPIE",
+        "-pie",
+        "-fstack-protector-strong",
+        "-D_FORTIFY_SOURCE=2",
+        "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+        "-Wl,--build-id=sha1",
+        "-Wl,--strip-all"
+      ],
+      "traceElf": {
+        "androidIdentApi": 28,
+        "interpreter": "/system/bin/linker64",
+        "neededLibraries": [
+          "libdl.so",
+          "libc.so"
+        ]
+      },
+      "toolchain": {
+        "clang": {
+          "bytes": 126826136,
+          "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+        },
+        "androidJar": {
+          "bytes": 27768026,
+          "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+        },
+        "apksigner": {
+          "bytes": 1181416,
+          "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+        }
+      },
+      "payloads": {
+        "arm64-v8a": {
+          "libbun_exec.so": {
+            "bytes": 87923320,
+            "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+          },
+          "libbun_supervisor.so": {
+            "bytes": 7440,
+            "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+          },
+          "libbun_signal_trace.so": {
+            "bytes": 7144,
+            "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+          }
+        }
+      },
+      "apk": {
+        "filename": "bun-signal-trace-arm64-v8a.apk",
+        "bytes": 35251311,
+        "sha256": "5c9a8b2dcb64ab66f3ec758b824f3c9811f9e9442208ca75b14d1ff7cc78cc80",
+        "signing": {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "55db0d5faf64666dca23cdcfa9b8afd69949eafb7fde49bea0f3a2708808dddb"
+        }
+      }
+    },
+    "runner": {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+      "bytes": 5286,
+      "sha256": "bebc038244010604520c3b8e6e018915df0298ee21e2b167342acda5262518bb"
+    },
+    "runs": [
+      {
+        "report": {
+          "kind": "test-only-signal-trace-observation",
+          "compatibilityAcceptance": false,
+          "api": 28,
+          "abi": "arm64-v8a",
+          "pageSize": 4096,
+          "uid": 10744,
+          "selinux": "u:r:untrusted_app:s0:c232,c258,c512,c768",
+          "seccomp": 2,
+          "kernel": "4.4.148-perf+",
+          "model": "G8441",
+          "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+          "apkSha256": "5c9a8b2dcb64ab66f3ec758b824f3c9811f9e9442208ca75b14d1ff7cc78cc80",
+          "payloads": {
+            "libbun_exec.so": {
+              "bytes": 87923320,
+              "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 7144,
+              "sha256": "8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e"
+            }
+          },
+          "rows": [
+            {
+              "mode": "native",
+              "traced": false,
+              "exitCode": 159,
+              "elapsedMillis": 103,
+              "sourceSha256": "638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70",
+              "stdout": "",
+              "stderr": "",
+              "processReaped": true
+            }
+          ],
+          "error": "java.io.IOException: Bun and its supervisor must be installed read-only sibling executables",
+          "workspaceRemoved": true,
+          "completed": false
+        },
+        "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10744,\"selinux\":\"u:r:untrusted_app:s0:c232,c258,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"5c9a8b2dcb64ab66f3ec758b824f3c9811f9e9442208ca75b14d1ff7cc78cc80\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923320,\"sha256\":\"22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7144,\"sha256\":\"8ac900cd087e4e42d89fcb034d1442f9970c716c6c3904012ccd1ce9d42f221e\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":159,\"elapsedMillis\":103,\"sourceSha256\":\"638c3f711cba674aae87d59bfbc61fa0fc8121c38cb2b4ac1ef85aeca4f3be70\",\"stdout\":\"\",\"stderr\":\"\",\"processReaped\":true}],\"error\":\"java.io.IOException: Bun and its supervisor must be installed read-only sibling executables\",\"workspaceRemoved\":true,\"completed\":false}\r\nINSTRUMENTATION_CODE: 0\r\n",
+        "bytes": 1159,
+        "sha256": "92d0b55597b8cd143e3ee869d16c6c252883a759319419fbec939eb79fea3950"
+      }
+    ],
+    "lifecycle": {
+      "rounds": [],
+      "installedUid": 10744,
+      "installedByThisRun": true,
+      "uninstalled": true,
+      "finalUidProcessCount": 0
+    },
+    "completed": false,
+    "error": "Expected values to be strictly equal:\n\nfalse !== true\n"
+  }
+}

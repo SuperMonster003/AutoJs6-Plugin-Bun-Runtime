@@ -20,6 +20,8 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Session and Git safety
 
+- For the latest interrupted native-build checkpoint, read `docs/SESSION_HANDOFF.md` before resuming. The confirmed nine-patch `pidfd_open` SIGSYS diagnosis is archived separately from the in-progress ten-patch source/build work; never transfer historical device acceptance to the new source or start duplicate builds without checking existing processes.
+
 - At the start of work, run `git status --short`, check the current branch and latest commit, and look for more specific `AGENTS.md` files.
 - Treat all pre-existing changes as user work. Do not overwrite, reset, revert, or reorganize unrelated changes.
 - Do not use destructive Git commands such as `git reset --hard` or `git checkout -- <path>` without explicit authorization.
