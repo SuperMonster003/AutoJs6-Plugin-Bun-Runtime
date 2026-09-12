@@ -9,6 +9,7 @@
 ###### 2026/09/12
 
 * `修复` 修复实验版原生 x86_64 16 KiB 的 JavaScriptCore 启动中止: 以显式大页/JIT/分配器配置重编 pinned WebKit 并重新链接 Bun, 在 4 KiB 和 16 KiB AVD 各两轮完整 Binder 通过 (32/32). 官方字节及其 4 KiB 防护保持不变, Release 验收另行进行
+* `优化` 确认 Samsung Galaxy Z Fold4 SM-F936U 实际为 API 32 / Android 12L, 原生 ARM64 / 4 KiB: 现有 Binder 两轮 16/16, 未改动的 29 项应用探针 58/58, 含全部 8 次硬上限验证. 精确绑定 APK/源码/原始证据, 卸载三个测试包并确认 UID 进程为零, 未操作 AVD. 原生字节不变; 新四模式的 ARM64 原生 16 KiB, 扩展矩阵与 Release 门禁仍开放
 * `优化` 保留原 25 项定义和运行时字节, 新增四项 Android FD 硬上限探针: 五个原生 4 KiB 环境各两轮 29/29 (合计 290/290), 含 40 次硬上限验证. 软/硬上限降至 128 后启动 CLOEXEC 和两种 spawn API 均正确, 应用和 supervisor 上限不变. 绑定原始证据, 清理测试包和本轮 AVD; FD 70000, 新用例原生 16 KiB 与 Release 门禁仍开放
 * `优化` 新增独立有界 JSC 压力验收: API 36 x86_64 的 4 KiB 与模拟 16 KiB 用户空间页各两轮通过七种离线模式 (28/28), 包含 LLInt/Baseline/DFG/FTL 实际采样, GC, Wasm 及 64 个 worker 正常退出. 同一 APK 的原有 Binder 套件另行通过 32/32. 单独记录 4 KiB 内核映射, 保留早期工具运行结果并清理本轮设备; 原生字节, 正式支持范围及 Release 门禁不变
 * `优化` 补齐 API 29/32 原生 x86_64 / 4 KiB 验证: 各两轮新增 Binder 32/32 与未改动的应用探针 100/100, 完成现有 Binder 套件的 API 28-32 x86 版本覆盖. 新增拒绝原始报告/源码/清理记录不一致的归档工具; 保留历史证据, ARM64 API 32 和 Release 门禁仍开放, 仅关闭本轮启动的两台 AVD

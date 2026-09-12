@@ -24,12 +24,16 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > the production plugin's only Bun payloads; its separately locked first-party
 > supervisor is also reused by the test-only probe.
 
-Latest scoped FD result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
-passes twice in five native 4 KiB environments (290/290), including 40 new
-Android hard-limit-lowering observations. The original 25 definitions and
-runtime bytes are unchanged; FD 70000, UNSHARE and the new modes' native ARM64
-16 KiB/API 32 coverage remain open. Earlier per-session results below are
-historical and are not reassigned to the expanded suite.
+Latest scoped result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
+passes twice in five native 4 KiB environments (290/290). The subsequent
+[Samsung Fold4 ARM64 API 32 follow-up](../../../../docs/compatibility/2026-09-12-m3-native-arm64-api32.md)
+adds 58/58 with the identical probe APK, totaling 348/348 in six environments
+and 48 hard-limit-lowering observations. Its separate unchanged eight-test
+Binder suite passes 16/16, bringing baseline Binder evidence to 192/192 across
+twelve native environments in separately bound APK batches. The original
+definitions and runtime bytes are unchanged; FD 70000, UNSHARE, the new modes'
+native ARM64 16 KiB coverage and the wider matrix remain open. Earlier
+per-session results are historical and are not reassigned to the expanded suite.
 
 The selected option 2 is implemented by project-owned MIT patch 9: a bounded
 read-only descriptor-relative fallback for static directory routes. It keeps

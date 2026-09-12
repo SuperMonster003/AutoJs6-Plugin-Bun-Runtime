@@ -18,12 +18,15 @@ Its label is deliberately different from the production application name.
 The [Android hard-limit follow-up](../../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
 extends the suite to **29 probes**, preserving all original 25 definitions and
 fixture bytes. Two rounds in five native 4 KiB environments (arm64 API
-28/31/33/35 and x86_64 API 33) pass **290/290**, including 40 new hard-limit
-observations. Startup retains/marks FD 256 after soft AND hard limits become
-128; both spawn APIs exclude it from non-Bun children. Instrumentation and
-supervisor limits remain unchanged. These new modes do not yet have native
-ARM64 16 KiB or API 32 evidence and do not cover Android FD 70000, UNSHARE,
-watch/reload or the complete Binder/API/Release matrix. Runtime bytes stay exact.
+28/31/33/35 and x86_64 API 33) pass **290/290**. The subsequent
+[Samsung Fold4 API 32 ARM64 follow-up](../../../../../docs/compatibility/2026-09-12-m3-native-arm64-api32.md)
+reuses the identical ARM64 probe APK for **58/58**, totaling **348/348** in six
+native 4 KiB environments, including 48 hard-limit observations. Startup
+retains/marks FD 256 after soft AND hard limits become 128; both spawn APIs
+exclude it from non-Bun children. Instrumentation and supervisor limits remain
+unchanged. These new modes still lack native ARM64 16 KiB evidence and do not
+cover Android FD 70000, UNSHARE, watch/reload or the complete Binder/API/Release
+matrix. Runtime bytes stay exact.
 
 ### API 29/32 25-probe follow-up
 
@@ -33,8 +36,9 @@ environments. Its test APK is rebuilt only to bind the current APK verifier;
 the 25 definitions, fixtures, Java runner, native bytes and resource bounds do
 not change. API 29 pidfd remains policy-gated, not EIO-controlled reachability.
 The independent real plugin Binder suite now has API 28-32 x86 version coverage;
-neither suite implies all syscall/FD/CLI/OEM or final Release acceptance. ARM64
-API 32 remains untested. The earlier per-session observations below are historical.
+neither suite implies all syscall/FD/CLI/OEM or final Release acceptance. That
+session had no ARM64 API 32 evidence; the later Fold4 result above closes that
+device gap for the existing suites. These per-session observations are historical.
 
 ### Six-environment 25-probe baseline
 
