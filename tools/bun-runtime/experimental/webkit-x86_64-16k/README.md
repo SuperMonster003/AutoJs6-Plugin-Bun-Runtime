@@ -95,11 +95,20 @@ historical origin field, not a replacement for this subsequent two-build receipt
 ## Device acceptance
 
 Use the [isolated Binder module](../api28/binder/README.md) and its `jsc16k` profile.
-Require real native x86_64 API 36 devices with 4096 and 16384-byte pages, two
+Require native x86_64 API 36 execution with 4096 and 16384-byte userspace page ABIs, two
 process-restarted rounds of all eight tests, installed payload hashes, bounded
 output/lifecycle behavior and cleanup. The first matrix is
 [32/32](../../../../docs/compatibility/2026-09-12-m5-x86-16k-jsc.md).
-This does not verify every JIT tier, all Wasm, stress/performance, 64 KiB Android,
+That original Binder suite does not verify every JIT tier, all Wasm, stress/performance, 64 KiB Android,
 remaining syscall/FD boundaries or a published signed Release/source asset set.
 The official x86 runtime still has its 4 KiB guard, and the official minimum
 Android version remains 13 (API 33).
+
+The separate [bounded pressure suite](pressure/README.md) now passes seven modes
+twice in both environments (28/28), with actual LLInt/Baseline/DFG/FTL sampled
+frames, GC, Wasm execution/memory growth and 64 normal worker exits. The same APKs
+also repeat the original Binder suite (32/32). See the
+[pressure report](../../../../docs/compatibility/2026-09-12-m5-x86-jsc-pressure.md).
+The x86 16 KiB userspace ABI is emulated over 4 KiB kernel mappings; the new fixture
+records both, requiring ELF AT_PAGESZ, Android sysconf and getconf to agree. Native
+x86 execution is distinct from native ARM64 hardware 16 KiB acceptance.
