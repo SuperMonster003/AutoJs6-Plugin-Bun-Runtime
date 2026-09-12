@@ -85,6 +85,11 @@ android {
             java.directories.apply { clear(); add(implementationRoot.resolve("androidTest/java").absolutePath) }
             kotlin.directories.add(implementationRoot.resolve("androidTest/java").absolutePath)
             assets.directories.apply { clear(); add(rootProject.file("samples").absolutePath) }
+            if (jscCandidate != null) {
+                java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
+                kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
+                assets.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets").absolutePath)
+            }
         }
     }
     buildFeatures { aidl = true; resValues = true; buildConfig = true }

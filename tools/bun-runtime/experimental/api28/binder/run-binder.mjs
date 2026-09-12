@@ -9,6 +9,7 @@ import { countUidProcesses } from "../app-probe/probe-common.mjs";
 import { PACKAGE, TEST_PACKAGE, TEST_CLASS, facts, buildInputs, parseBinderUid, validateDevice, validateInstrumentation } from "./binder-common.mjs";
 import { loadJscCandidate } from "../../webkit-x86_64-16k/jsc-common.mjs";
 import { parseApkSignerOutput } from "../../../release/assemble-corresponding-source.mjs";
+import { KIND, MODES, PRESSURE_CLASS, PRESSURE_TEST, validatePressureInstrumentation } from "../../webkit-x86_64-16k/pressure/pressure-common.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2), options = {};
@@ -18,14 +19,17 @@ for (let i = 0; i < args.length; i += 2) {
 }
 assert(!options["--profile"] || options["--profile"] === "jsc16k");
 const jsc = options["--profile"] ? loadJscCandidate() : null;
+const pressure = options["--suite"] === "jsc-pressure";
+assert(!options["--suite"] || (pressure && jsc), "Pressure suite requires the explicit jsc16k profile");
 const pkg = PACKAGE + (jsc ? ".jsc16k" : ""), testPkg = pkg + ".test";
-assert.deepEqual(Object.keys(options).sort(), ["--abi", "--api", "--output", "--pages", "--sdk", "--serial", ...(jsc ? ["--profile"] : [])].sort());
+assert.deepEqual(Object.keys(options).sort(), ["--abi", "--api", "--output", "--pages", "--sdk", "--serial", ...(jsc ? ["--profile"] : []), ...(pressure ? ["--suite"] : [])].sort());
 const expected = { abi: options["--abi"], api: Number(options["--api"]), pages: Number(options["--pages"]) };
 assert(["arm64-v8a", "x86_64"].includes(expected.abi));
 assert(Number.isInteger(expected.api) && expected.api >= 28 && expected.api <= 100);
 assert([4096, 16384].includes(expected.pages));
 assert(expected.abi !== "x86_64" || expected.pages === 4096 || jsc, "Original experimental x86_64 JSC remains limited to 4 KiB");
 assert(!jsc || expected.abi === "x86_64");
+assert(!pressure || expected.api === 36, "Pressure acceptance is scoped to API 36 native x86_64");
 const serial = options["--serial"];
 assert(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(serial));
 const exe = process.platform === "win32" ? ".exe" : "";
@@ -48,7 +52,7 @@ assert.deepEqual(build.source, evidence.source);
 assert.deepEqual(build.jscCandidate, jsc);
 const output = resolve(options["--output"]);
 mkdirSync(output); // Refuse to overwrite a previous report, including a failure.
-const report = { schemaVersion: 1, kind: "experimental-plugin-binder", capturedAt: new Date().toISOString(),
+const report = { schemaVersion: 1, kind: pressure ? KIND : "experimental-plugin-binder", capturedAt: new Date().toISOString(),
     serial, expected, package: pkg, runtime: evidence.identity, apk: facts(apk), testApk: facts(testApk),
     build, payloads, rounds: [], cleanup: [], passed: false, distributionReady: false };
 
@@ -56,7 +60,7 @@ async function command(command, args, timeout = 60000) {
     return await new Promise((done, fail) => {
         const child = spawn(command, args, { windowsHide: true, stdio: ["ignore", "pipe", "pipe"] });
         let stdout = "", stderr = "", bytes = 0, error;
-        const timer = setTimeout(() => { error = new Error("Command timed out"); child.kill(); }, timeout);
+        const timer = setTimeout(() => { error = new Error(`Command timed out after ${timeout} ms: ${command} ${JSON.stringify(args)}`); child.kill(); }, timeout);
         for (const [name, stream] of [["stdout", child.stdout], ["stderr", child.stderr]]) {
             stream.setEncoding("utf8");
             stream.on("data", chunk => {
@@ -66,7 +70,13 @@ async function command(command, args, timeout = 60000) {
             });
         }
         child.on("error", error => { clearTimeout(timer); fail(error); });
-        child.on("close", status => { clearTimeout(timer); error ? fail(error) : done({ status, stdout, stderr }); });
+        child.on("close", status => {
+            clearTimeout(timer);
+            if (error) {
+                error.commandDiagnostic = { command, args, status, stdout, stderr };
+                fail(error);
+            } else done({ status, stdout, stderr });
+        });
     });
 }
 const call = (...args) => command(adb, ["-s", serial, ...args]);
@@ -121,8 +131,11 @@ try {
         assert([0, 1].includes(found.status) && !found.stdout.trim() && !found.stderr.trim(), "Refusing to replace an existing package: " + target);
     }
     for (const [pkg, path] of [[report.package, apk], [testPkg, testApk]]) {
-        assert.match(await checked("install", "-t", path), /Success/);
+        // The package manager may finish after the adb client times out. Own
+        // the attempt before starting it so the finally block still cleans it.
+        // Both exact packages were proven absent above; never replace user apps.
         installed.push(pkg);
+        assert.match(await checked("install", "-t", path), /Success/);
         if (pkg === report.package) report.uid = parseBinderUid(await checked("shell", "pm", "list", "packages", "-U", pkg), pkg);
     }
     const uid = report.uid;
@@ -139,25 +152,35 @@ try {
         await checked("shell", "am", "force-stop", pkg);
         assert.equal(countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), uid), 0);
         const result = await command(adb, ["-s", serial, "shell", "am", "instrument", "-w", "-r",
-            "-e", "class", TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
+            "-e", "class", pressure ? PRESSURE_CLASS : TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
             "-e", "requiredPageSizeBytes", String(expected.pages), `${testPkg}/androidx.test.runner.AndroidJUnitRunner`], 300000);
         const record = { round, ...result };
         report.rounds.push(record);
         writeFileSync(join(output, `round-${round}.txt`), result.stdout + result.stderr, { flag: "wx" });
         try {
             assert.equal(result.status, 0);
-            record.passedTests = validateInstrumentation(result.stdout);
+            if (pressure) {
+                record.pressure = validatePressureInstrumentation(result.stdout, expected.pages);
+                record.passedTests = [PRESSURE_TEST];
+            } else record.passedTests = validateInstrumentation(result.stdout);
         } catch (error) { record.error = error.message; }
         await checked("shell", "am", "force-stop", pkg);
         record.remainingUidProcesses = countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), uid);
         assert.equal(record.remainingUidProcesses, 0);
-        console.log(`${serial} round ${round}: ${record.passedTests?.length ?? 0}/8 Binder tests passed`);
+        console.log(pressure ? `${serial} round ${round}: ${record.pressure?.length ?? 0}/${MODES.length} JSC pressure modes passed`
+            : `${serial} round ${round}: ${record.passedTests?.length ?? 0}/8 Binder tests passed`);
     }
     report.passed = report.rounds.every(round => !round.error);
-} catch (error) { report.error = error.stack; }
+} catch (error) { report.error = error.stack; if (error.commandDiagnostic) report.commandFailure = error.commandDiagnostic; }
 finally {
     for (const pkg of installed.reverse()) {
         try {
+            if (pkg === report.package && report.uid === undefined) {
+                const path = await call("shell", "pm", "path", pkg);
+                assert([0, 1].includes(path.status) && !path.stderr.trim());
+                if (!path.stdout.trim()) { report.cleanup.push({ package: pkg, absentAfterInstallAttempt: true }); continue; }
+                report.uid = parseBinderUid(await checked("shell", "pm", "list", "packages", "-U", pkg), pkg);
+            }
             await checked("shell", "am", "force-stop", pkg);
             const result = await checked("uninstall", pkg);
             assert.match(result, /Success/);

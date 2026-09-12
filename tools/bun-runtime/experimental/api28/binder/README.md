@@ -73,11 +73,21 @@ the baseline with arbitrary bytes or silently disable the official x86 page guar
 Outputs are under `build/experimental-binder-jsc16k`; baseline outputs use
 `build/experimental-binder`, outside the immutable native experiment directory.
 
+The profile also compiles a separate test-only
+[JSC pressure class](../../webkit-x86_64-16k/pressure/README.md). Select it explicitly
+with `--suite jsc-pressure`; without this option the original eight methods remain
+the entire selected suite. Its seven offline modes produce their own report kind
+and are not eight-test Binder observations. Pressure requires API 36 and independently
+checks the Bun process's ELF AT_PAGESZ, Android sysconf and the host page-size gate.
+The x86 16 KiB userspace mode is emulated over 4 KiB kernel mappings, not ARM64
+hardware 16 KiB. Compiled input receipts bind the additional test sources/assets.
+
 ## Evidence
 
 - [2026-09-12 baseline Binder matrix](../../../../../docs/compatibility/2026-09-12-m3-experimental-binder.md): nine native environments, 144/144.
 - [2026-09-12 API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md): 32/32 additional native x86_64 / 4 KiB Binder observations, completing API 28-32 version coverage of this existing eight-test suite. The earlier matrix's APK/source bindings remain unchanged; ARM64 API 32 and the broader runtime/Release matrix remain open.
 - [2026-09-12 native x86 large-page candidate](../../../../../docs/compatibility/2026-09-12-m5-x86-16k-jsc.md): 32/32 in the two page-size environments.
+- [2026-09-12 bounded JSC pressure](../../../../../docs/compatibility/2026-09-12-m5-x86-jsc-pressure.md): 28/28 pressure modes and a separate 32/32 repeat of the unchanged Binder suite, with identical main/test APKs in both suites and both page-size environments.
 
 `archive-binder.mjs <new-report.json> <baseline|jsc16k> <run-directory>...`
 revalidates the retained raw instrumentation and cleanup records before archiving.

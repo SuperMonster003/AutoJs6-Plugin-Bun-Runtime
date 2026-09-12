@@ -20,7 +20,9 @@ export function buildInputs() {
         "tools/bun-runtime/experimental/webkit-x86_64-16k/record-candidate.mjs",
         "tools/bun-runtime/experimental/api28/runtime-evidence.json",
         ...walk("app/src/main/java"), ...walk("app/src/main/res"), ...walk("app/src/main/assets"),
-        ...walk("app/src/androidTest/java"), ...walk("samples")];
+        ...walk("app/src/androidTest/java"), ...walk("samples"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets")];
     return paths.sort().map(path => {
         let data = readFileSync(resolve(root, path));
         if (!path.endsWith(".aar")) data = Buffer.from(data.toString("utf8").replace(/\r\n/g, "\n"));
