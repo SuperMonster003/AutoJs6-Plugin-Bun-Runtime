@@ -8,6 +8,7 @@
     "v0.2.2": {
       "released_date": "2026/09/12",
       "fix": [
+        "Corrige el sondeo pidfd experimental de Android cuando el primer spawn asíncrono comienza con SIGSYS bloqueado, conservando la máscara del llamador y las señales pendientes mediante la alternativa waiter existente. El runtime de diez parches supera las 31 sondas sin cambios (310/310) y los ocho tests Binder completos (80/80) en cinco entornos nativos de 4 KiB. La evidencia de compilación recuperada declara los códigos de salida originales perdidos y archiva por separado el primer fallo de inicio ART. Samsung API 32/16 KiB, rebase JSC y Release siguen pendientes para los nuevos binarios; los oficiales no cambian",
         "Corregir el aborto de inicio experimental de JavaScriptCore en x86_64 nativo de 16 KiB reconstruyendo WebKit fijado con configuración explícita de páginas grandes, JIT y asignadores y reenlazando Bun: dos rondas Binder pasan en AVD de 4 KiB y 16 KiB (32/32). Los binarios oficiales y su límite de 4 KiB no cambian; la aceptación Release es independiente"
       ],
       "dependency": [

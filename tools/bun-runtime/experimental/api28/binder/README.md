@@ -1,7 +1,7 @@
 # Test-only experimental plugin Binder suite
 
 This opt-in Gradle module packages the existing production service, exact shared
-API AARs and the **same eight instrumentation methods** with the locked nine-patch
+API AARs and the **same eight instrumentation methods** with the locked ten-patch
 API 28 runtime. It does not implement a second service or a mock Binder contract.
 The default build remains the official API 33 plugin. No experimental executable
 is added to `app/src/main/jniLibs`, and this module cannot build a Release variant.
@@ -65,6 +65,10 @@ declaration does not grant the real service permission.
 
 ## Large-page x86 candidate
 
+The existing nine-patch JSC candidate needs a separately verified rebase before
+it can be used with the current ten-patch baseline. Build and runner reject
+source mismatch; the historical candidate lock and reports remain unchanged.
+
 Add `-PexperimentalJscCandidateFile=<absolute-locked-candidate-bun>` to the same
 build command, then pass `--profile jsc16k --abi x86_64` to the runner. Both API 36
 4 KiB and 16 KiB environments are required. This selection checks the separate
@@ -83,6 +87,8 @@ The x86 16 KiB userspace mode is emulated over 4 KiB kernel mappings, not ARM64
 hardware 16 KiB. Compiled input receipts bind the additional test sources/assets.
 
 ## Evidence
+
+- [2026-09-13 ten-patch local matrix](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md): 80/80 in five native 4 KiB environments, using the unchanged eight methods. The initial API 28 ART/ADB-JDWP startup crash is archived separately and excluded; the identical APK retry passes two rounds. Samsung new-source gates are pending. The results below are historical nine-patch evidence.
 
 - [2026-09-12 baseline Binder matrix](../../../../../docs/compatibility/2026-09-12-m3-experimental-binder.md): nine native environments, 144/144.
 - [2026-09-12 API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md): 32/32 additional native x86_64 / 4 KiB Binder observations, completing API 28-32 version coverage of this existing eight-test suite. The earlier matrix's APK/source bindings remain unchanged; ARM64 API 32 was still untested in that session.

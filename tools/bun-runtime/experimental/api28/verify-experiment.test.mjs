@@ -16,7 +16,7 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
-  assert.equal(result.downstreamPatchCount, 9);
+  assert.equal(result.downstreamPatchCount, 10);
   assert.equal(result.runtimeEvidenceVerified, true);
   assert.equal(result.lockedGithubArchiveCount, 19);
   assert.equal(result.lockedToolchainDownloadCount, 17);
@@ -34,8 +34,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.deepEqual(
     result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
     [
-      ["arm64-v8a", "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"],
-      ["x86_64", "83df7d535e4deab9484941a9e8cabc46be3ab6462ccc43c86b76f55325459130"],
+      ["arm64-v8a", "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f"],
+      ["x86_64", "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde"],
     ],
   );
   assert.equal(result.packagedLicenseCount, 5);

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { inputFacts } from "./probe-common.mjs";
+import { inputFacts, lockedEvidence } from "./probe-common.mjs";
 import { validateRunRecord } from "./archive-probe.mjs";
 import { validateAsyncSignalFailure } from "./archive-async-signal-failure.mjs";
 const archived = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-blocked-async-api28-failure.json", import.meta.url), "utf8"));
@@ -9,6 +9,13 @@ function fixture() {
   const record = structuredClone(archived.record);
   // Synthetic validator input only. The retained failed receipt is not changed.
   record.build.inputs = inputFacts();
+  record.build.runtimes = Object.fromEntries(lockedEvidence().artifacts.map(a => [a.abi, { bytes: a.bytes, sha256: a.sha256 }]));
+  for (const run of record.runs) {
+    const runtime = record.build.runtimes[run.environment.abi];
+    run.runtimeBytes = runtime.bytes;
+    run.runtimeSha256 = runtime.sha256;
+    run.probes.find(p => p.id === "revision").stdout = "1.4.0+a9c76a599";
+  }
   return record;
 }
 const raw = record => record.runs.map(run => "INSTRUMENTATION_RESULT: report=" + JSON.stringify(run) + "\nINSTRUMENTATION_CODE: 0\n");
@@ -18,7 +25,7 @@ test("failure archive preserves two failed rounds and cannot enter the passing a
   assert.deepEqual(record, original, "validation never rewrites failures as success");
   assert.throws(() => validateRunRecord(record, raw(record)));
   const sourceMatched = structuredClone(archived.record); sourceMatched.build.inputs = inputFacts();
-  validateAsyncSignalFailure(sourceMatched, archived.instrumentation.map(item => item.text));
+  assert.throws(() => validateAsyncSignalFailure(sourceMatched, archived.instrumentation.map(item => item.text)), /runtime receipt drift/);
 });
 test("failure archival rejects hidden regressions, missing signals, source drift and residual processes", () => {
   for (const change of [r => { r.passed = true; }, r => { r.distributionReady = true; }, r => { r.pluginBinderExercised = true; },

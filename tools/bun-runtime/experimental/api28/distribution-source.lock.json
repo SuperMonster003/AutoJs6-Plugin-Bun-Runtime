@@ -11,13 +11,13 @@
   "artifacts": [
     {
       "abi": "arm64-v8a",
-      "bytes": 87923320,
-      "sha256": "22b7e0778c5355d664045b9b04e849a90eae2572f203a23a8f57081a86879be7"
+      "bytes": 87923328,
+      "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f"
     },
     {
       "abi": "x86_64",
-      "bytes": 90449736,
-      "sha256": "83df7d535e4deab9484941a9e8cabc46be3ab6462ccc43c86b76f55325459130"
+      "bytes": 90449744,
+      "sha256": "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde"
     }
   ],
   "bunSource": {
@@ -33,9 +33,9 @@
       "archiveRoot": "bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676"
     },
     "patchSeries": "patches/series.lock.json",
-    "downstreamCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
-    "downstreamTreeSha1": "05f05ce5787a20f2af4d642fb0ada38f68674187",
-    "downstreamPatchCount": 9,
+    "downstreamCommit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+    "downstreamTreeSha1": "cb762d12f6959834517c79f01f4c538346990962",
+    "downstreamPatchCount": 10,
     "licenseSourcePath": "LICENSE.md",
     "licenseSourceBytes": 5613,
     "licenseSourceSha256": "b9caf52728691b4057e371232c221a132883198be2f3d2ddf92c90404c984b1a"

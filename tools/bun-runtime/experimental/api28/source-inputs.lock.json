@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "bunBaseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-  "downstreamHeadCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+  "downstreamHeadCommit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
   "status": "android-release-source-bytes-locked",
   "snapshotDate": "2026-09-02",
   "resolution": {

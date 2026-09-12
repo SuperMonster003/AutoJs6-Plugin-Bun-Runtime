@@ -89,6 +89,8 @@ jobs:
             --prepare-cache
           node tools/bun-runtime/experimental/api28/materialize-distribution-source.mjs \
             --output-directory "$RUNNER_TEMP/bun-api28-distribution-source"
+          PIDFD_LIBC_SOURCE="$RUNNER_TEMP/bun-api28-cargo/vendor/libc-0.2.186" \
+            python3 -B tools/bun-runtime/experimental/api28/blocked-pidfd/test_blocked_pidfd.py
 
       - name: Replay the Bun v1.4.0 downstream source series
         run: |

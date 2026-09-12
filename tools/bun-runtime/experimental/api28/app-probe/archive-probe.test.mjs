@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { inputFacts } from "./probe-common.mjs";
+import { inputFacts, lockedEvidence } from "./probe-common.mjs";
 import { summarizeRecords, validateRunRecord } from "./archive-probe.mjs";
 import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
 import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
@@ -17,6 +17,13 @@ function fixture() {
   // Synthetic validator fixture ONLY. Historical receipts on disk are untouched;
   // a real old APK cannot pass this substitution because the device runner binds it.
   record.build.inputs = inputFacts();
+  record.build.runtimes = Object.fromEntries(lockedEvidence().artifacts.map(a => [a.abi, { bytes: a.bytes, sha256: a.sha256 }]));
+  for (const run of record.runs) {
+    const runtime = record.build.runtimes[run.environment.abi];
+    run.runtimeBytes = runtime.bytes;
+    run.runtimeSha256 = runtime.sha256;
+    run.probes.find(p => p.id === "revision").stdout = "1.4.0+a9c76a599";
+  }
   for (const run of record.runs) run.probes.splice(run.probes.length - 1, 0,
     ...Object.values(HARD_LIMIT_MODES).map(mode => hardLimitResult(mode, run.environment.abi, run.environment.uid)),
     ...Object.values(ASYNC_SIGNAL_MODES).map(mode => asyncSignalResult(mode, run.environment.abi, run.environment.uid)));

@@ -42,10 +42,27 @@ test("the checked-in runtime evidence satisfies the non-distribution schema", ()
   assert.equal(verifyRuntimeEvidenceManifest(evidence), evidence);
 });
 
-test("neither previous reproducible runtime can be accepted for the spawn-fix source", () => {
-  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json"]) {
+test("previous reproducible runtimes cannot be accepted for the blocked-pidfd source", () => {
+  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json", "2026-09-10-m2-spawn-runtime-evidence.json", "2026-09-10-m2-scoped-open-runtime-evidence.json"]) {
     const previous = JSON.parse(readFileSync(resolve(repositoryRoot, "docs/compatibility", filename), "utf8"));
     assert.equal(previous.build.byteForByteIdentical, true);
-    assert.throws(() => verifyRuntimeEvidenceManifest(previous), /runtime evidence downstream commit drifted/);
+    assert.throws(() => verifyRuntimeEvidenceManifest(previous), /unsupported runtime evidence schema|runtime evidence downstream commit drifted/);
   }
+});
+
+for (const [name, mutate] of [
+  ["invented original exit", e => e.build.bothRunsExitCode = 0],
+  ["missing completion", e => e.build.completionRecovery.checks.pop()],
+  ["duplicate run", e => e.build.completionRecovery.checks[2].run = 1],
+  ["pending build work", e => e.build.completionRecovery.checks[0].stdout += "[1/1] LINK bun\n"],
+  ["failed check", e => e.build.completionRecovery.checks[0].exitCode = 1],
+  ["unbound output", e => e.build.completionRecovery.checks[0].runtimeSha256 = "0".repeat(64)],
+  ["missing final edge", e => e.build.completionRecovery.checks[0].finalEdges = []],
+  ["dirty source", e => e.build.completionRecovery.checks[0].cleanSource = false],
+  ["writable checkout", e => e.build.completionRecovery.checks[0].bunCheckoutReadOnly = false],
+  ["old source relabel", e => e.source.downstreamHeadCommit = "7b9ac266888abda7ee6ec0b8ac11a74236420030"],
+]) test(`recovered native build evidence rejects ${name}`, () => {
+  const evidence = JSON.parse(readFileSync(resolve(toolDirectory, "runtime-evidence.json"), "utf8"));
+  mutate(evidence);
+  assert.throws(() => verifyRuntimeEvidenceManifest(evidence));
 });

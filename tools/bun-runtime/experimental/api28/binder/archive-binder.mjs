@@ -41,7 +41,7 @@ const validation = ["binder-common.mjs", "run-binder.mjs", "archive-binder.mjs"]
     path: `tools/bun-runtime/experimental/api28/binder/${name}`,
     ...facts(new URL(name, import.meta.url)),
 }));
-writeFileSync(target, JSON.stringify({ schemaVersion: 1, evidenceDate: "2026-09-12",
+writeFileSync(target, JSON.stringify({ schemaVersion: 1, archivedAt: new Date().toISOString(),
     kind: `${scope}-experimental-plugin-binder`, projectBaseCommit: git.stdout.trim(),
     passed: true, distributionReady: false, productionReleaseAcceptance: false,
     scope: "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",

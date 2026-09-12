@@ -1,0 +1,73 @@
+From a9c76a599bacb75c72d3c00fc6f99c5cc9483b47 Mon Sep 17 00:00:00 2001
+From: SuperMonster003 <30370009+SuperMonster003@users.noreply.github.com>
+Date: Sat, 12 Sep 2026 17:20:00 +0000
+Subject: [PATCH] fix: preserve blocked SIGSYS during optional pidfd probing
+
+---
+ src/sys/linux_syscall.rs | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/src/sys/linux_syscall.rs b/src/sys/linux_syscall.rs
+index ae5cc0041722e39939949fa083eeab55bc91dac3..01eb4d017a0fcfccbe69a39c7ea725a5d3b37813 100644
+--- a/src/sys/linux_syscall.rs
++++ b/src/sys/linux_syscall.rs
+@@ -474,40 +474,59 @@ pub(crate) unsafe fn copy_file_range(
+ }
+ 
+ /// `pidfd_open(2)` — `Result` shape (caller maps to `bun_sys::Error`).
+ #[inline]
+ #[cfg(target_os = "linux")]
+ pub(crate) fn pidfd_open(pid: i32, flags: u32) -> Result<Fd, i32> {
+     let pid = rustix::process::Pid::from_raw(pid).ok_or(libc::EINVAL)?;
+     let flags = rustix::process::PidfdFlags::from_bits_retain(flags);
+     once(rustix::process::pidfd_open(pid, flags)).map(own_fd)
+ }
+ /// Android: rustix 0.38 gates `process::pidfd_open` behind
+ /// `cfg(target_os = "linux")`, but the kernel ABI is identical (same generic
+ /// syscall number 434 since Linux 5.3, before any Android NDK target shipped).
+ /// Raw-syscall it like the other shims here.
+ #[inline]
+ #[cfg(target_os = "android")]
+ pub(crate) fn pidfd_open(pid: i32, flags: u32) -> Result<Fd, i32> {
+     if pid <= 0 {
+         return Err(libc::EINVAL);
+     }
++    // Android app seccomp can turn this optional probe into SIGSYS, even on a
++    // kernel without pidfd_open. A blocked synchronous SIGSYS cannot reach
++    // our ENOSYS handler. Keep the caller's mask and pending signals intact:
++    // select the existing waiter-thread fallback instead of unblocking it.
++    let mut mask = core::mem::MaybeUninit::<libc::sigset_t>::uninit();
++    // SAFETY: a null set only queries this thread's mask; mask is writable.
++    let error = unsafe { libc::pthread_sigmask(libc::SIG_BLOCK, core::ptr::null(), mask.as_mut_ptr()) };
++    if error != 0 {
++        return Err(error);
++    }
++    // SAFETY: pthread_sigmask initialized mask on success; SIGSYS is valid.
++    let blocked = unsafe { libc::sigismember(mask.as_ptr(), libc::SIGSYS) };
++    match blocked {
++        0 => {}
++        1 => return Err(libc::ENOSYS),
++        // Do not issue a potentially fatal probe if the query was invalid.
++        _ => return Err(libc::EINVAL),
++    }
++
+     // libc 0.2.x doesn't expose `SYS_pidfd_open` for Android either, so use
+     // the kernel constant. `pidfd_open` has the same number on every arch.
+     const SYS_PIDFD_OPEN: libc::c_long = 434;
+     // SAFETY: raw `pidfd_open(2)`; kernel validates pid/flags.
+     let rc = unsafe { libc::syscall(SYS_PIDFD_OPEN, pid, flags) };
+     if rc < 0 {
+         return Err(errno());
+     }
+     Ok(Fd::from_native(rc as i32))
+ }
+ 
+ /// `getdents64(2)` into a caller-provided byte buffer — libc-convention return
+ /// (matches the existing `WrappedIterator` parser which decodes the raw
+ /// `linux_dirent64` records itself).
+ #[inline]
+ pub(crate) unsafe fn getdents64(fd: i32, buf: *mut u8, len: usize) -> isize {
+     // rustix only exposes `RawDir` (which owns the parse loop). We need the
+     // raw byte fill to keep the existing record parser, so issue the syscall
+     // via `libc::syscall(SYS_getdents64, ..)`. This is a thin trampoline (no
+     // errno-on-return mangling beyond the standard `-1`/errno convention).

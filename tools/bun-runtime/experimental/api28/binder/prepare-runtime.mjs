@@ -21,6 +21,7 @@ const evidence = JSON.parse(readFileSync(resolve(here, "../runtime-evidence.json
 assert.equal(evidence.identity.distributionReady, false);
 verifySupervisorSource();
 if (jsc) {
+    assert.equal(jsc.bunCommit, evidence.source.downstreamHeadCommit, "The JSC candidate needs a separately verified rebase to the current Bun source");
     verifyJscCandidate(options["--jsc-candidate-file"], jsc);
     evidence.identity.variant = jsc.variant;
 }

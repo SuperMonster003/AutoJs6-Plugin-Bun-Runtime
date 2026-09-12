@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
-    "headTreeSha1": "05f05ce5787a20f2af4d642fb0ada38f68674187",
+    "headCommit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+    "headTreeSha1": "cb762d12f6959834517c79f01f4c538346990962",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -313,6 +313,25 @@
           "--unified=20"
         ],
         "licenseImpact": "No license change; project-owned read-only directory fallback and its SPDX-MIT header are provided under Bun's MIT license."
+      },
+      {
+        "order": 10,
+        "commit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+        "parent": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+        "origin": "autojs6-blocked-pidfd",
+        "sourceCommit": null,
+        "bytes": 3486,
+        "sha256": "bd6563e58f24383718fb4f77f8bde52c99a198289a3246afac654939d7058b0d",
+        "stablePatchId": "67ca6fb6b5714764a36b3bdb9b3e63fbc3a0b7bf",
+        "path": "downstream/0010-fix-preserve-blocked-SIGSYS-during-optional-pidfd-probing.patch",
+        "purpose": "Avoid an optional Android pidfd_open probe when the calling thread blocks SIGSYS, selecting the existing waiter fallback without changing the mask or releasing pending signals; preserve invalid-pid and query errors.",
+        "affectedPaths": [
+          "src/sys/linux_syscall.rs"
+        ],
+        "formatPatchAdditionalOptions": [
+          "--unified=20"
+        ],
+        "licenseImpact": "No license change; project-owned changes to Bun's Android pidfd shim are provided under Bun's MIT license."
       }
     ],
     "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged."

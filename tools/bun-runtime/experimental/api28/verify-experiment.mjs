@@ -989,7 +989,7 @@ function verifyPatchSeries(patchRoot, lock, series) {
   );
 
   requireArray(downstream.patches, "downstreamBackport.patches");
-  requireEqual(downstream.patches.length, pr.commitCount + 4, "downstreamBackport.patches length");
+  requireEqual(downstream.patches.length, pr.commitCount + 5, "downstreamBackport.patches length");
   requireEqual(downstream.upstreamEquivalence.downstreamPrefixHeadCommit,
     downstream.patches[pr.commitCount - 1].commit, "upstream equivalence prefix head");
   requireEqual(downstream.upstreamEquivalence.scope, "upstream-compatibility-prefix", "upstream equivalence scope");
@@ -1003,7 +1003,12 @@ function verifyPatchSeries(patchRoot, lock, series) {
     requireEqual(patch.order, index + 1, `${label}: order`);
     require(SHA1.test(patch.commit), `${label}: commit must be a full lowercase SHA-1`);
     requireEqual(patch.parent, expectedParent, `${label}: parent`);
-    if (index === pr.commitCount + 3) {
+    if (index === pr.commitCount + 4) {
+      requireEqual(patch.origin, "autojs6-blocked-pidfd", `${label}: origin`);
+      requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
+      require(SHA1.test(patch.stablePatchId), `${label}: invalid stablePatchId`);
+      requireSameArray(patch.affectedPaths, ["src/sys/linux_syscall.rs"], `${label}: affectedPaths`);
+    } else if (index === pr.commitCount + 3) {
       requireEqual(patch.origin, "autojs6-scoped-open", `${label}: origin`);
       requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
       require(SHA1.test(patch.stablePatchId), `${label}: invalid stablePatchId`);
