@@ -6,11 +6,14 @@
 
 # v0.2.2
 
-###### 2026/09/11
+###### 2026/09/12
 
+* `Correctif` Corriger l'arrêt de JavaScriptCore expérimental au démarrage sur x86_64 natif 16 KiB en recompilant le WebKit épinglé avec des réglages explicites de grandes pages, JIT et allocateurs puis en rééditant les liens de Bun: deux passages Binder réussissent sur les AVD 4 KiB et 16 KiB (32/32). Les binaires officiels et leur garde 4 KiB restent inchangés; la validation Release est distincte
+* `Amélioration` Ajouter un plugin de test facultatif dans un paquet distinct réutilisant le service de production et les huit tests Binder complets avec Bun à neuf correctifs: deux passages réussissent dans neuf environnements natifs (144/144), dont ARM64 16 KiB; conserver les liens APK/sources et les preuves de nettoyage sans élargir le support stable
 * `Amélioration` Ajouter une sonde CLI fixe hors ligne pour lchmod/fchmodat2 interne sans modifier les binaires ni les 24 sondes initiales: les 25 passent deux fois dans six environnements natifs (300/300), dont ARM64 16 KiB. Vérifier les permissions, les liens répétés, no-follow, EIO ignoré et le passage par SIGSYS avec nettoyage borné des threads; conserver les premiers échecs du harnais, supprimer les paquets de test et fermer l'AVD lancé. Binder expérimental complet et Release restent à valider
 * `Amélioration` Valider Bun expérimental à neuf correctifs sur Samsung ARM64 natif / API 36 / 16 KiB avec le même APK et les 24 sondes inchangées: 48/48 sur deux passages, 48 assertions de chemins réussies et 12 requêtes de sortie refusant la sentinelle; désinstaller le paquet de test sans processus UID restant ni démarrage ou arrêt d'AVD. Binder expérimental complet, Release et x86_64 16 KiB restent à valider
 * `Amélioration` Vérification à la compilation de l'alignement des pages de 16 KB des bibliothèques natives 64 bits, avec contrôle du contrat manifest et rapports JSON
+* `Dépendance` Aligner le plugin en ligne platform-versions sur la version 1.7.4 fixée par le dépôt, sans modifier native-alignment
 
 # v0.2.1
 

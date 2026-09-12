@@ -10,6 +10,12 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > original 24-probe suite passes in five native 4 KiB environments and Samsung
 > native 16 KiB. A new offline lchmod CLI probe extends it to 25 without changing
 > those 24 definitions: all six environments pass twice (300/300).
+> The separate opt-in [real plugin Binder module](binder/README.md) now passes the
+> existing full eight-test suite twice in nine native environments (144/144),
+> including ARM64 16 KiB. A separately locked large-page JSC candidate passes
+> native x86_64 4 KiB/16 KiB Binder tests (32/32); it does not change this directory's
+> original nine-patch runtime lock. Remaining syscall/API/FD/OEM and Release gates
+> stay open.
 > Historical eight-patch binary pairs cannot satisfy the new source gate. The experiment remains
 > `distributionReady: false` until a matching experimental APK passes its
 > application-process gates and is actually published. Patched executables stay

@@ -1,0 +1,85 @@
+# Test-only experimental plugin Binder suite
+
+This opt-in Gradle module packages the existing production service, exact shared
+API AARs and the **same eight instrumentation methods** with the locked nine-patch
+API 28 runtime. It does not implement a second service or a mock Binder contract.
+The default build remains the official API 33 plugin. No experimental executable
+is added to `app/src/main/jniLibs`, and this module cannot build a Release variant.
+
+The application ID ends in `.api28binder`, the manifest has `testOnly=true`, and
+the version name and runtime variant explicitly identify experimental test bytes.
+The optional large-page x86 profile adds `.jsc16k` and packages only x86_64.
+The service permission, process name, request limits, argument vector, read-only
+`nativeLibraryDir` execution and supervisor are unchanged. Single-source,
+`--no-install`, no relative project imports, no AutoJs6 globals and no Java bridge
+remain the contract. A child process is not a security sandbox.
+
+## Build and run on Windows
+
+Supply the two previously verified native build directories (each containing
+`bun-arm64-v8a` and `bun-x86_64`). Use absolute paths, including WSL UNC paths if
+needed. Set `JAVA_HOME` to the repository's selected JDK. Example:
+
+```powershell
+.\gradlew.bat :experimental-binder:assembleDebug :experimental-binder:assembleDebugAndroidTest `
+  '-PexperimentalRuntimeDirectory=<absolute-first-build-directory>' `
+  '-PexperimentalRuntimeRepeatDirectory=<absolute-second-build-directory>'
+
+node tools/bun-runtime/experimental/api28/binder/run-binder.mjs `
+  --sdk <absolute-android-sdk> --serial <explicit-adb-serial> `
+  --abi arm64-v8a --api 36 --pages 16384 --output <new-run-directory>
+```
+
+The output parent must already exist; the runner refuses to overwrite a previous
+report. It checks the actual primary ABI, kernel architecture, API and page size,
+then performs two complete rounds with force-stop/process restart. ARM64 native
+acceptance requires a disabled translation bridge. An x86 ELF on an x86 primary
+ABI/kernel is native even if that AVD offers an ARM translation bridge.
+API 28 devices without `getconf` use the process `smaps` page size; every test also
+hard-asserts `Os.sysconf(_SC_PAGESIZE)` and the required API.
+
+The module verifies both native builds, supervisor sources/bytes and the API AAR
+lock. Its embedded `assets/binder-build.json` binds the actual compile inputs,
+including shared source and test definitions. The runner rejects stale APKs after
+input changes, verifies ZIP/payload integrity, checks APK signatures and the
+installed application/test APK hashes, and requires every test plus all five
+bounded lifecycle diagnostics in each round. Signature checks and installed-test
+APK hashing were added after the first archived matrix; do not retroactively
+attribute those extra checks to its earlier receipts.
+
+Only the two newly installed test packages are removed. Pre-existing packages are
+never replaced; on partial install or test failure cleanup still runs. Successful
+reports require zero processes for the exact application UID. AVD lifetime is
+owned by the caller: close any AVD you started after testing.
+
+## Permission and signing
+
+The real `org.autojs.permission.PLUGIN` signature permission remains enforced.
+The module uses the repository's existing Release signing configuration for
+host-compatible **test-only Debug** APKs when available; it never publishes or
+prints signing secrets. Without it, normal debug signing can work on a clean AVD
+whose permission is defined by the same-signed test APK. An existing AutoJs6 with
+a different signer must not be removed or bypassed for this test: use a clean AVD
+or the genuinely matching signing configuration. A unique test permission
+declaration does not grant the real service permission.
+
+## Large-page x86 candidate
+
+Add `-PexperimentalJscCandidateFile=<absolute-locked-candidate-bun>` to the same
+build command, then pass `--profile jsc16k --abi x86_64` to the runner. Both API 36
+4 KiB and 16 KiB environments are required. This selection checks the separate
+[JSC candidate lock](../../webkit-x86_64-16k/candidate.lock.json); it cannot replace
+the baseline with arbitrary bytes or silently disable the official x86 page guard.
+Outputs are under `build/experimental-binder-jsc16k`; baseline outputs use
+`build/experimental-binder`, outside the immutable native experiment directory.
+
+## Evidence
+
+- [2026-09-12 baseline Binder matrix](../../../../../docs/compatibility/2026-09-12-m3-experimental-binder.md): nine native environments, 144/144.
+- [2026-09-12 native x86 large-page candidate](../../../../../docs/compatibility/2026-09-12-m5-x86-16k-jsc.md): 32/32 in the two page-size environments.
+
+`archive-binder.mjs <new-report.json> <baseline|jsc16k> <run-directory>...`
+revalidates the retained raw instrumentation and cleanup records before archiving.
+It rejects duplicate environments and cannot turn a failed run into acceptance.
+The complete existing eight-test suite is not the full Bun CLI, signal, syscall,
+FD, OEM, API or final signed Release matrix. `distributionReady` stays false.

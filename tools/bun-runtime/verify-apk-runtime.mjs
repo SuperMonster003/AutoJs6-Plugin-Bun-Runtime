@@ -90,6 +90,17 @@ export function inspectApkRuntime(apkPath, expectedAbis, artifacts, supervisors)
   });
 }
 
+export function readBoundedApkEntry(apkPath, name, maximumBytes = 1024 * 1024) {
+  require(Number.isSafeInteger(maximumBytes) && maximumBytes > 0, "Positive APK entry bound required");
+  const apk = readFileSync(apkPath);
+  const entry = readCentralDirectory(apk, basename(apkPath)).get(name);
+  require(entry !== undefined, `Missing APK entry: ${name}`);
+  require(entry.uncompressedBytes <= maximumBytes, `APK entry exceeds bound: ${name}`);
+  const payload = extractEntry(apk, entry, basename(apkPath), maximumBytes);
+  requireEqual(crc32(payload), entry.crc32, `${name}: entry CRC32`);
+  return payload;
+}
+
 function inspectSupervisor(apk, entries, abi, supervisors, label) {
   const name = `lib/${abi}/libbun_supervisor.so`;
   const entry = entries.get(name);
@@ -167,7 +178,7 @@ function readCentralDirectory(apk, label) {
   return entries;
 }
 
-function extractEntry(apk, entry, label) {
+function extractEntry(apk, entry, label, maximumBytes = undefined) {
   requireRange(apk, entry.localOffset, 30, `${label}: ${entry.name} local header`);
   requireEqual(apk.readUInt32LE(entry.localOffset), LOCAL_SIGNATURE, `${label}: ${entry.name} local signature`);
   const localFlags = apk.readUInt16LE(entry.localOffset + 6);
@@ -188,7 +199,8 @@ function extractEntry(apk, entry, label) {
   requireRange(apk, dataOffset, entry.compressedBytes, `${label}: ${entry.name} compressed payload`);
   require(dataOffset + entry.compressedBytes <= entry.centralOffset, `${label}: ${entry.name} overlaps the central directory`);
   const compressed = apk.subarray(dataOffset, dataOffset + entry.compressedBytes);
-  const payload = entry.method === ZIP_STORED ? compressed : inflateRawSync(compressed);
+  const payload = entry.method === ZIP_STORED ? compressed : inflateRawSync(compressed,
+    maximumBytes === undefined ? undefined : { maxOutputLength: maximumBytes });
   requireEqual(payload.length, entry.uncompressedBytes, `${label}: ${entry.name} uncompressed byte count`);
   return payload;
 }

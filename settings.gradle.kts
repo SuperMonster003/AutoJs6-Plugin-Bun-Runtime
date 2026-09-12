@@ -10,7 +10,7 @@ pluginManagement {
         google()
     }
     plugins {
-        id("io.github.supermonster003.autojs6-platform-versions") version "1.8.0"
+        id("io.github.supermonster003.autojs6-platform-versions") version "1.7.4"
         id("io.github.supermonster003.autojs6-native-alignment") version "1.8.0"
         id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     }
@@ -23,3 +23,8 @@ plugins {
 
 includeBuild("build-logic")
 include(":app")
+// Opt-in, test-only packaging of the real plugin implementation. Never a Release.
+if (providers.gradleProperty("experimentalRuntimeDirectory").isPresent) {
+    include(":experimental-binder")
+    project(":experimental-binder").projectDir = file("tools/bun-runtime/experimental/api28/binder")
+}

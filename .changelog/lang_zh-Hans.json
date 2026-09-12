@@ -6,8 +6,15 @@
   "changelog_label_dependency": "依赖",
   "$data": {
     "v0.2.2": {
-      "released_date": "2026/09/11",
+      "released_date": "2026/09/12",
+      "fix": [
+        "修复实验版原生 x86_64 16 KiB 的 JavaScriptCore 启动中止: 以显式大页/JIT/分配器配置重编 pinned WebKit 并重新链接 Bun, 在 4 KiB 和 16 KiB AVD 各两轮完整 Binder 通过 (32/32). 官方字节及其 4 KiB 防护保持不变, Release 验收另行进行"
+      ],
+      "dependency": [
+        "将在线 platform-versions 插件与仓库要求的 1.7.4 对齐, 保持 native-alignment 插件不变"
+      ],
       "improvement": [
+        "新增独立包名的可选 test-only 实验插件, 复用生产服务及完整 8 项 Binder 套件验证锁定的九补丁 Bun: 九个原生环境各两轮全部通过 (144/144), 包含 ARM64 16 KiB; 保存 APK/源码绑定与清理证据, 不扩大稳定版支持范围",
         "在不改变运行时字节和原 24 项探针的前提下, 新增内部 lchmod/fchmodat2 固定离线 CLI 探针: 含 ARM64 16 KiB 的六个原生环境各两轮 25/25, 合计 300/300. 验证权限修改, 重复链接, 不跟随符号链接, 被忽略的 EIO 及 SIGSYS 路径触达与有界线程回收; 保留早期夹具失败, 卸载测试包并关闭本轮 AVD. 完整实验 Binder 与 Release 门禁仍未完成",
         "在 Samsung 原生 ARM64 / API 36 / 16 KiB 使用相同 APK 和未改动的 24 项套件验证九补丁实验 Bun: 两轮 48/48, 全部 48 项路径断言通过, 12 次越界请求均拒绝测试哨兵; 测试包卸载后 UID 进程为零, 未启动或关闭 AVD. 完整实验 Binder, Release 和 x86_64 16 KiB 门禁仍未完成",
         "构建阶段校验 64 位原生库的 16 KB 页大小对齐, 检查 manifest 契约并输出 JSON 报告"
