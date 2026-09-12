@@ -21,12 +21,17 @@ fixture bytes. Two rounds in five native 4 KiB environments (arm64 API
 28/31/33/35 and x86_64 API 33) pass **290/290**. The subsequent
 [Samsung Fold4 API 32 ARM64 follow-up](../../../../../docs/compatibility/2026-09-12-m3-native-arm64-api32.md)
 reuses the identical ARM64 probe APK for **58/58**, totaling **348/348** in six
-native 4 KiB environments, including 48 hard-limit observations. Startup
-retains/marks FD 256 after soft AND hard limits become 128; both spawn APIs
-exclude it from non-Bun children. Instrumentation and supervisor limits remain
-unchanged. These new modes still lack native ARM64 16 KiB evidence and do not
-cover Android FD 70000, UNSHARE, watch/reload or the complete Binder/API/Release
-matrix. Runtime bytes stay exact.
+native 4 KiB environments. The same APK then passes **58/58** on
+[Samsung SM-A566B native ARM64 / API 36 / 16 KiB](../../../../../docs/compatibility/2026-09-12-m3-hard-nofile-native-arm64-16k.md),
+including all eight hard-limit observations. The complete 29-probe suite now
+totals **406/406** in seven native environments, with 56 hard-limit observations.
+Startup retains/marks FD 256 after soft AND hard limits become 128; both spawn
+APIs exclude it from non-Bun children. Instrumentation and supervisor limits
+remain unchanged. Native close_range succeeds on this Samsung device; forced
+TRAP fallback also passes. These bounded modes do not cover Android FD 70000,
+UNSHARE, watch/reload or the complete Binder/API/Release matrix. Runtime bytes,
+fixtures and resource bounds stay exact; the native 16 KiB device gap for these
+four modes is closed, not the broader matrix.
 
 ### API 29/32 25-probe follow-up
 
