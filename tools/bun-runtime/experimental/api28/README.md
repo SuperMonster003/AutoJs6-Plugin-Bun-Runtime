@@ -27,13 +27,17 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 Latest scoped result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
 passes twice in five native 4 KiB environments (290/290). The subsequent
 [Samsung Fold4 ARM64 API 32 follow-up](../../../../docs/compatibility/2026-09-12-m3-native-arm64-api32.md)
-adds 58/58 with the identical probe APK, totaling 348/348 in six environments
-and 48 hard-limit-lowering observations. Its separate unchanged eight-test
-Binder suite passes 16/16, bringing baseline Binder evidence to 192/192 across
-twelve native environments in separately bound APK batches. The original
-definitions and runtime bytes are unchanged; FD 70000, UNSHARE, the new modes'
-native ARM64 16 KiB coverage and the wider matrix remain open. Earlier
-per-session results are historical and are not reassigned to the expanded suite.
+adds 58/58 with the identical probe APK, totaling 348/348 in six environments.
+The same APK subsequently passes [58/58 on Samsung native ARM64 / API 36 / 16 KiB](../../../../docs/compatibility/2026-09-12-m3-hard-nofile-native-arm64-16k.md),
+including all eight hard-limit observations and zero-UID-process cleanup, without
+starting or stopping an AVD. The 29-probe suite now totals 406/406 in seven native
+environments, including 56 hard-limit-lowering observations. The Fold4's separate
+eight-test Binder result remains 16/16; baseline Binder evidence stays 192/192
+across twelve native environments in separately bound APK batches, not rerun for
+this new application-probe follow-up. Probe definitions, accepted APKs and runtime
+bytes are unchanged; FD 70000, UNSHARE and the wider syscall/API/FD/OEM/Release matrix remain
+open. Earlier per-session results are historical and are not reassigned to the
+expanded suite.
 
 The selected option 2 is implemented by project-owned MIT patch 9: a bounded
 read-only descriptor-relative fallback for static directory routes. It keeps
