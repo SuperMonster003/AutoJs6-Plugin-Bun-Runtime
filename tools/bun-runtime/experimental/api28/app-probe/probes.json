@@ -164,6 +164,34 @@
     "termination": "exited"
   },
   {
+    "id": "fd-hard-startup-native",
+    "sourceFile": "hard-limit-probes.mjs",
+    "mode": "startup-native",
+    "stdout": "HARD_LIMIT_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-hard-startup-trap",
+    "sourceFile": "hard-limit-probes.mjs",
+    "mode": "startup-trap",
+    "stdout": "HARD_LIMIT_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-hard-spawn-native",
+    "sourceFile": "hard-limit-probes.mjs",
+    "mode": "spawn-native",
+    "stdout": "HARD_LIMIT_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "fd-hard-spawn-trap",
+    "sourceFile": "hard-limit-probes.mjs",
+    "mode": "spawn-trap",
+    "stdout": "HARD_LIMIT_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

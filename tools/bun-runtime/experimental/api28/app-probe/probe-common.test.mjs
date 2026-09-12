@@ -6,20 +6,23 @@ import test from "node:test";
 import { supervisorLock } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, inputFacts, json, lockedEvidence, newOutputDirectory,
   outsideRepository, parseInstrumentation, parseOptions, validateManifestDump, validateProbes, validateReceipt, validateReport,
-  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, materializeOpenat2Source, materializeLchmodSource, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
+  parsePackageUid, countUidProcesses, FD_MODES, materializeProbes, materializeOpenat2Source, materializeLchmodSource, materializeHardLimitSource, validateFdEvidence, fdFilterSha256, hash } from "./probe-common.mjs";
 import { SYSCALL_MODES } from "./syscall-evidence.mjs";
 import { syscallFixture } from "./syscall-fixture.test-support.mjs";
 import { OPENAT2_MODES } from "./openat2-evidence.mjs";
 import { openat2Fixture } from "./openat2-fixture.test-support.mjs";
 import { LCHMOD_MODES } from "./lchmod-evidence.mjs";
 import { lchmodFixture } from "./lchmod-fixture.test-support.mjs";
+import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
+import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
-const withoutLchmod = rows => rows.filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
+const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id));
+const withoutLchmod = rows => withoutHardLimits(rows).filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
   const enosys = { result: -1, errno: 38 };
@@ -80,11 +83,35 @@ function fixture() {
         stdout: "OPENAT2_PROBE_RESULT=" + JSON.stringify(openat2Fixture()) + "\n" } : {}),
       ...(probe.sourceFile === "lchmod-probes.mjs" ? { lchmodEvidence: lchmodFixture(),
         stdout: "LCHMOD_PROBE_RESULT=" + JSON.stringify(lchmodFixture()) + "\n" } : {}),
+      ...(probe.sourceFile === "hard-limit-probes.mjs" ? hardLimitResult(probe.mode) : {}),
     })),
   } };
 }
 
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
+test("hard-limit additions preserve all 25 definitions and allow only the four fixed assets", () => {
+  assert.equal(withoutHardLimits(probes).length, 25);
+  assert.equal(hash(JSON.stringify(withoutHardLimits(probes))), "2c905e8eed2e455c1ab5324410811d6847b9f5011fdc0946776ab9445f94a270");
+  for (const path of ["/hard-limit-probes.mjs", "/hard-limit-evidence.mjs"])
+    assert(inputFacts().some(input => input.path.endsWith(path)));
+  for (const mode of ["", "../spawn-native", "skip", "startup-native\n"]) assert.throws(() => materializeHardLimitSource(mode));
+  for (const change of [p => { p[24].sourceFile = "../hard-limit-probes.mjs"; }, p => { p[24].mode = "spawn-native"; },
+    p => { p[24].source = "fake"; }, p => { p[24].sourceAsset = "fake.mjs"; }, p => { p[24].timeoutMillis = 15000; },
+    p => { p[24].stdout = ""; }, p => { p[24].arguments = ["--version"]; }, p => { p[24].outputBytes = 16384; }]) {
+    const changed = structuredClone(probes); change(changed); assert.throws(() => validateProbes(changed));
+  }
+});
+test("hard-limit output and independent Java UID/parent-limit observations must agree", () => {
+  for (const change of [r => { delete r.probes[24].hardLimitEvidence; }, r => { delete r.probes[24].hardLimitParentLimits; },
+    r => { r.probes[24].hardLimitEvidence.uid++; }, r => { r.probes[24].hardLimitParentLimits.after = [128,128]; },
+    r => { r.probes[24].hardLimitParentLimits.before = [1024,1024]; },
+    r => { r.probes[24].hardLimitEvidence.supervisorBefore = [512,512]; r.probes[24].hardLimitEvidence.supervisorAfter = [512,512]; },
+    r => { r.probes[24].stdout = "HARD_LIMIT_RESULT={}"; }, r => { r.probes[24].stdout += r.probes[24].stdout; },
+    r => { r.probes[0].hardLimitEvidence = r.probes[24].hardLimitEvidence; },
+    r => { r.probes[0].hardLimitParentLimits = r.probes[24].hardLimitParentLimits; }]) {
+    const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
+  }
+});
 test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
   assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+7b9ac2668");
   assert.equal(hash(JSON.stringify(previousRevision(withoutLchmod(probes)))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
@@ -130,6 +157,12 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       assert.equal(materializeOpenat2Source(),"const OPENAT2_MODE = \"confinement\";\n" +
         readFileSync(join(HERE,"openat2-probes.mjs"),"utf8").replace(/\r\n/g,"\n"));
       assert(Buffer.byteLength(materializeOpenat2Source())<=8192);
+    } else if (probe.sourceFile === "hard-limit-probes.mjs") {
+      assert.deepEqual(actual, {...probe,sourceAsset:"hard-limit-" + probe.mode + ".mjs"});
+      const source = materializeHardLimitSource(probe.mode);
+      assert.equal(source, "const HARD_LIMIT_MODE = " + JSON.stringify(probe.mode) + ";\n" +
+        readFileSync(join(HERE,"hard-limit-probes.mjs"),"utf8").replace(/\r\n/g,"\n"));
+      assert(Buffer.byteLength(source) <= 12288);
     } else assert.deepEqual(actual, probe);
   }
   assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
@@ -204,7 +237,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 25);
+    assert.equal(report.probes.length, 29);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);
