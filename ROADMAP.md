@@ -4,7 +4,7 @@
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁与 25 项独立探针已有证据; 现有完整 8 项插件 Binder 在九个原生环境各两轮通过 144/144, 含三星 ARM64 16 KiB), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 原生 x86_64 16 KiB 的大页 JSC 候选已通过双页大小 Binder 32/32, 与官方发行线和最终 Release 验收分开.
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁与 25 项独立探针已有证据; 现有完整 8 项插件 Binder 累计十一原生环境 176/176, 含三星 ARM64 16 KiB, 已补齐 API 28-32 x86 版本覆盖), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 原生 x86_64 16 KiB 的大页 JSC 候选已通过双页大小 Binder 32/32, 与官方发行线和最终 Release 验收分开.
 
 ## 当前状态速览
 
@@ -13,7 +13,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 现有完整 8 项实验 Binder 已通过九环境 144/144, 包含 x86 API 28/30/31/36; 新大页 JSC 的 native x86 4 KiB/16 KiB 各两轮 8/8. API 29/32 x86 镜像下载失败未计通过, API 32 ARM64 真机、其余 syscall/SIGSYS、Android 高位 FD/硬限制降低/UNSHARE、JIT 压力与最终 paired APK/source Release 仍待完成; 不将现有套件等同于全部 API/CLI 或稳定 Android 9 支持 |
+| 当前缺口 | 现有完整 8 项实验 Binder 已有十一原生环境累计 176/176, 包含 x86 API 28/29/30/31/32/36; API 29/32 新增同一固定 25 项探针 100/100. 新大页 JSC 的 native x86 4 KiB/16 KiB 各两轮 8/8. API 32 ARM64 真机目前不可用, 其余 syscall/SIGSYS、Android 高位 FD/硬限制降低/UNSHARE、JIT 压力与最终 paired APK/source Release 仍待完成; 不将现有套件等同于全部 API/CLI 或稳定 Android 9 支持 |
 
 ## 如何阅读这份路线图
 
@@ -224,8 +224,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [ ] (插件/API) 改善 runtime probe 诊断, 报告 API, ABI, probe 阶段, 退出码, 可能的 signal, runtime identity 和有界 stderr; 不把设备 fingerprint 或用户内容写入普通 Binder 错误.
 - [ ] (插件) 明确失败缓存和重试生命周期, 使一次启动失败不会产生不可解释的永久不可用状态, 同时避免并发重复启动 probe.
 - [ ] (测试) 构建 `minSdk=28` 实验 APK, 验证 Java/Kotlin API 28 路径, native payload 提取, 只读 `nativeLibraryDir` exec, SELinux 和应用 zygote seccomp 继承.
-- [ ] (设备) API 28, 29, 30, 31, 32 各完成 `x86_64` AVD instrumentation; 2026-09-12 已完成 API 28/30/31 各两轮完整 8 项 Binder. API 29/32 镜像下载器失败未计为执行通过, Android 12 与 12L 仍分开记录.
-- [ ] (设备) 至少在 API 28, 31, 32 各一台 `arm64-v8a` 真机运行完整矩阵, 并覆盖 AOSP/Pixel 类与至少两种 OEM.
+- [x] (设备) API 28, 29, 30, 31, 32 各完成 `x86_64` AVD 的现有完整 8 项 Binder instrumentation, 每版本各两轮共 80/80. 原 API 28/30/31 证据不改写; 本轮补齐 API 29/32 native 4 KiB 的 32/32, 并以同一九补丁字节运行未改动的 25 项独立探针 100/100. 新增 20 条 Binder 生命周期诊断、8 次 FD 软限制降低和 12 次强制回收 (302-304 ms); API 29 pidfd 的两次 policy-gated 观测仍排除于 EIO 高层触达, 两版本 openat2 均在过滤器前不可用. 测试包与 UID 进程清理, 仅关闭本轮启动的两台新 AVD. Android 12 与 12L 分开, 不推断 ARM64 API 32 或其余 syscall/FD/CLI 通过. 见 [API 29/32 复测报告](docs/compatibility/2026-09-12-m3-api29-api32.md). (2026-09-12, G2, 非 Release)
+- [ ] (设备) 至少在 API 28, 31, 32 各一台 `arm64-v8a` 真机运行完整矩阵, 并覆盖 AOSP/Pixel 类与至少两种 OEM. API 28/31 已有现有 Binder/固定探针证据; 用户确认目前没有 Android 12L ARM64 设备, 此门禁保留, 不以 API 32 x86 AVD 代替.
 - [ ] (发布) 实验包, PluginInfo, README 和错误信息显式标明仅支持 64 位设备, 单源码 `--no-install`, 未承诺完整 Bun CLI; 提供恢复到 API 33 稳定包的清晰路径.
 
 **M3 升阶门:** API 28-32 每个版本至少有 G2 证据; 所有已知 syscall trap 路径无进程级 `SIGSYS`; API 33-35 无回归. 满足前只可发布 experimental/beta, 不得将 Android 9 写为稳定支持.
@@ -319,6 +319,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (发布/测试) 扩充 `samples/` 示例库: 5 个带注释的示例覆盖引擎确认, `fetch` 网络请求, 私有工作目录文件读写, stdout/stderr 行为和 TypeScript 类型用法; 生成器门禁检查精确清单, 首行 `"bun";`, 注释, 相对导入和依赖安装命令, instrumentation 直接执行仓库中的原始示例资产并以设备本地 HTTP 端点验证 `fetch`, 10 语言 README 与 changelog 均已同步. Sony XQ-DQ72 API 33, Redmi 22120RN86C API 33 与 Xiaomi 23046RP50C API 35 arm64 真机均 5/5 通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G1/G2)
 - [ ] (发布) 新增 `docs/troubleshooting.md` 排错指南: 按 "症状 -> 原因 -> 处理" 组织常见问题 (`"bun";` 指令未被识别, 插件未激活, 运行超时, 输出被截断, Android 版本过低导致的 `SIGSYS`, npm 依赖导入失败), 与 10 语言 README 的常见问题口径一致.
 - [ ] (发布) 把 `docs/compatibility/*.json` 设备报告汇总为人类可读的兼容矩阵 (设备, API, ABI, 页大小, 测试范围, 结论), 并在新增设备报告时同步更新; 优先用脚本从 JSON 生成, 避免手工维护漂移.
+- [x] (测试/文档) 为固定 25 项独立探针新增可重复归档工具, 对两轮原始 instrumentation 与 JSON、当前构建 receipt/源码、安装后 APK/runtime/helper 摘要及每轮/最终 UID 清理重新校验, 拒绝失败、混用 APK 与重复环境, 使用独占创建保留历史文件. 新增四组含负向变体的单元测试并接入 CI; 首次用于 API 29/32 的 100/100 报告. 这不是完整历史兼容矩阵生成器. (2026-09-12, G1/G2)
 - [ ] (插件/发布) 审计脚本运行失败时用户可见的错误与诊断文案, 确保关键失败场景 (未激活, 超时, 输出超限, 系统版本不支持) 在 10 种语言资源中都有可理解的提示, 并与 `strings.xml` 保持一致.
 
 **M9 验收条件:** 新用户只读 README 与示例即可完成首次运行; 常见失败在排错指南中有对应条目; 兼容矩阵与设备报告不脱节.

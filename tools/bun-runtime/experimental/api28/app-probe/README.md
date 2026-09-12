@@ -15,6 +15,17 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The subsequent [API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md)
+adds **100/100** unchanged application probes in two native x86_64 / 4 KiB AVD
+environments. Its test APK is rebuilt only to bind the current APK verifier;
+the 25 definitions, fixtures, Java runner, native bytes and resource bounds do
+not change. API 29 pidfd remains policy-gated, not EIO-controlled reachability.
+The independent real plugin Binder suite now has API 28-32 x86 version coverage;
+neither suite implies all syscall/FD/CLI/OEM or final Release acceptance. ARM64
+API 32 remains untested. The earlier per-session observations below are historical.
+
+### Six-environment 25-probe baseline
+
 The fixed 25th probe exercises internal `sys::lchmod` through bare, offline
 `bun link --ignore-scripts --config=<owned-file>`. The unchanged nine-patch
 runtime passes **25/25 twice in six native environments (300/300)**: arm64
@@ -226,6 +237,9 @@ it is not a substitute for this patched-runtime result, or vice versa.
 Full experimental plugin/Binder execution, other
 forced-syscall paths, watch/reload, API 29/30/32 and complete native 16 KiB
 acceptance remain open despite the scoped application results above.
+That preceding paragraph records the earlier baseline's limits, not the later
+Binder/API 29/32 follow-up. The 25-probe suite still lacks API 30 observations;
+its application evidence must not be inferred from the separate Binder suite.
 Only the immediate Bun child is supervised, not
 arbitrary detached descendants; this is not a security sandbox.
 `distributionReady` remains false. Nothing here is published as a Release asset.
@@ -388,8 +402,25 @@ and remove only this exact test package after reconnecting.
 
 ## Development checks
 
+Archive newly completed, source-matched runs with:
+
+```powershell
+node tools/bun-runtime/experimental/api28/app-probe/archive-probe.mjs `
+  docs/compatibility/<new-report>.json <first-run-directory> <second-run-directory>
+```
+
+The archiver requires both raw instrumentation files and `probe-result.json`.
+It revalidates the complete 25 observations per round, exact installed hashes,
+the current build receipt, every force-stop/uninstall/UID cleanup record and
+the unchanged environment identity across rounds. Repeated images, different
+APK builds, stale source bindings, failures or a raw/JSON mismatch are rejected.
+The JSON archive retains raw text and its digests; exclusive creation refuses
+existing targets. It archives new evidence, not retrospective source rebinding
+of historical APKs. Native builds and test fixtures are not changed by archiving.
+
 ```powershell
 node --test tools/bun-runtime/experimental/api28/app-probe/probe-common.test.mjs
+node --test tools/bun-runtime/experimental/api28/app-probe/archive-probe.test.mjs
 ```
 
 Build CI runs these fail-closed validator tests and compiles the Java runner

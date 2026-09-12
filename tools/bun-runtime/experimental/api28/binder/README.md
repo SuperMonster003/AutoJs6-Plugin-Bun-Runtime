@@ -76,6 +76,7 @@ Outputs are under `build/experimental-binder-jsc16k`; baseline outputs use
 ## Evidence
 
 - [2026-09-12 baseline Binder matrix](../../../../../docs/compatibility/2026-09-12-m3-experimental-binder.md): nine native environments, 144/144.
+- [2026-09-12 API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md): 32/32 additional native x86_64 / 4 KiB Binder observations, completing API 28-32 version coverage of this existing eight-test suite. The earlier matrix's APK/source bindings remain unchanged; ARM64 API 32 and the broader runtime/Release matrix remain open.
 - [2026-09-12 native x86 large-page candidate](../../../../../docs/compatibility/2026-09-12-m5-x86-16k-jsc.md): 32/32 in the two page-size environments.
 
 `archive-binder.mjs <new-report.json> <baseline|jsc16k> <run-directory>...`
