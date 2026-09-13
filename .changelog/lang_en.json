@@ -15,6 +15,7 @@
         "Align the online platform-versions plugin with the repository-pinned 1.7.4; leave the native-alignment plugin unchanged"
       ],
       "improvement": [
+        "Verify the new ten-patch large-page x86 candidate on API 36 at 4 KiB and 16 KiB userspace pages: unchanged Binder tests pass 32/32 and fixed pressure modes pass 28/28 using one APK pair bound to 77 inputs. Archive exact bytes, raw results and cleanup separately from historical evidence; the x86 16 KiB ABI remains emulated over 4 KiB kernel pages, with no Release or performance claim",
         "Bind a separate ten-patch large-page JSC candidate, requiring two matching clean Bun builds with retained real driver exits and exact reused JSC inputs. Route isolated Binder tooling through the new source-bound lock while preserving historical and official payloads; device and Release acceptance remain separate",
         "Add a Chinese troubleshooting guide with a minimal script, symptom/cause/action checks and bounded issue-report guidance; link it from all ten README languages without changing runtime capabilities",
         "Complete Samsung regression of the unchanged ten-patch runtime: native ARM64 API 32 / 4 KiB and API 36 / 16 KiB each pass two 31-probe rounds (62/62) and two complete eight-test Binder rounds (16/16), using identical APKs across both devices. Seven native environments now total 434/434 probes and 112/112 Binder. Bind exact source, APK and cleanup evidence without rebuilding native code or operating AVDs; JSC rebase, broader runtime and Release gates remain open",

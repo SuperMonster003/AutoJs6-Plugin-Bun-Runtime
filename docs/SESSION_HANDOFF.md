@@ -1,21 +1,58 @@
-# 会话交接: 十补丁大页 JSC 构建完成, 正在准备设备回归
+# 会话交接: 十补丁大页 JSC 回归与 M9 排错指南完成
 
-本轮从 `6212011` 的干净状态继续. 两个新 Bun checkout 已完成十补丁大页 JSC 构建,
-实际 driver exit 均为 0, 完整成品均为 90609488 bytes / SHA-256
-`a237dc8c13fbef6366a36769ea9a6d729fd24307b0df93bb051be8d997f8dcd5`.
-复用已核验的两套历史 JSC 库, 没有重编 WebKit/ICU; 新独立
-[候选锁](../tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json) 已通过 ELF/源码/库/日志核验.
-189 项 Node tests、生产四项标准 Gradle 检查、IDE build 与文档生成/11 项 Python tests 已通过.
-opt-in JSC 主/测试 APK 已构建成功 (49 秒, 80 tasks), 尚未运行本批次设备测试.
-不重启已完成的 native 构建.
-先读本轮本机记录 `E:/.codex-tmp/jsc-ten-patch-20260913/SESSION_HANDOFF.local.md`,
-其中有两份 driver/log、进程、输入与 AVD 所有权. 本轮只启动 emulator-5580/5582;
-原有 5554/5560/5562 未干预. M9 排错指南及十语言入口已实现.
+更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `6212011` 继续,
+实现/构建证据已提交为 `573812979506283492637aaea3375819c336e515`.
+本轮完成 M5 的十补丁 JSC rebase、双 clean Bun 构建、双页大小原 Binder 与压力回归,
+以及 M9 排错指南/十语言 README 入口. 最终证据见
+[完整说明](compatibility/2026-09-13-m5-ten-patch-jsc.md)、
+[Binder](compatibility/2026-09-13-m5-ten-patch-jsc-binder.json)、
+[压力](compatibility/2026-09-13-m5-ten-patch-jsc-pressure.json) 和
+[补充检查点](compatibility/2026-09-13-m5-ten-patch-jsc-checkpoints.json).
 
-用户新增要求: 如需三星, 明显说明型号/API/页大小并设置 10 分钟等待窗口,
-期间定期轮询 `localhost:50781`. 本轮所选 x86 JSC 小节暂未请求三星.
+继续前完整阅读 `AGENTS.md`、本文件及本轮本机记录
+`E:/.codex-tmp/jsc-ten-patch-20260913/SESSION_HANDOFF.local.md`.
+更早的 baseline/Samsung/诊断记录仍在
+`E:/.codex-tmp/bun-signal-trace-20260913/SESSION_HANDOFF.local.md`.
+先检查进程与日志, 不重复已完成的 native 构建、Gradle ZIP 修复或 SIGSYS 诊断.
 
-下方为此前已完成的 baseline/Samsung 阶段, 不把它的构建或设备结果转移给新 JSC 候选.
+## 本轮结果与精确范围
+
+- 两个新 Bun checkout 固定十补丁 head `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,
+  tree `cb762d12f6959834517c79f01f4c538346990962`. 两个实际 driver exit 均为 0,
+  complete x86_64 Bun 都是 90609488 bytes / SHA-256
+  `a237dc8c13fbef6366a36769ea9a6d729fd24307b0df93bb051be8d997f8dcd5`.
+- 精确复用原两个独立 WebKit 构建的三个 JSC 库/config 与上游 ICU, 新 WebKit/ICU 构建数为 0.
+  [新独立候选锁](../tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json)
+  绑定源、库、日志和最终 link/map/strip. 原九补丁 candidate.lock.json 与 baseline 锁未修改;
+  原 baseline 构建缺失的退出码仍为 null, 不被本次两个 actual exit 0 取代.
+- 新同一主/测试 APK 在 native x86_64 API 36 的 4 KiB/16 KiB 用户页各过两轮:
+  原八项 Binder 32/32, 原七模式压力 28/28. 原 fixture、压力语义校验器与预算未改, 设备套件无失败/重试.
+  APK 77 输入逐项匹配 `5738129`; 已测试 APK 与内嵌 receipt 保存在本机 `tested-apks` 子目录.
+  归档发生在最终 changelog 生成之前, 后续文档 APK 不替代已测试的精确字节.
+- x86 16 KiB 为用户空间页 ABI 模拟, 两台 shell smaps 内核/MMU 页仍为 4 KiB.
+  verified x86 ELF 没有通过可用的 ARM bridge 执行. 本轮没有三星、ARM64 或 API 28-32 新观测.
+- 四次 runner 的主/测试包卸载、所有 execution UID 清零; 16 KiB 两个测试 UID 另行捕获并清零,
+  4 KiB 未单独捕获测试 UID. 仅关闭本轮 owned AVD 5580/5582, 事先核对精确名称.
+  原有 5554 在最后仍在线; 5560/5562 已不在 ADB 列表中, 未对它们发出控制命令.
+  一个额外收尾库存断言因此退出 1, 原失败/脚本摘要和已落盘清理快照独立保留;
+  只恢复聚合 receipt, 没有重跑设备套件或重启 AVD. 不推断原有清单变化的原因.
+- Node 189/189, 文档 generator/check 与 Python 11/11, 生产标准四 Gradle 检查及 IDE build 通过.
+  生产 JVM 任务使用已有 8 项 UP-TO-DATE 结果, IDE 仅既有 SDK XML/Bundle.get 警告.
+- [排错指南](troubleshooting.md) 及十语言 FAQ/当前 changelog 已同步. 无 push/Release.
+
+## 下一轮与三星接入约定
+
+这些有限套件不关闭完整 syscall/API/FD/OEM、FD70000/UNSHARE/watch/reload、长时压力/性能
+或签名 APK/同 Release 对应源码门槛. baseline 十补丁仍是七环境 434/434 探针与 112/112 Binder;
+新 JSC 32/32、28/28 分开计数. M9 的完整兼容矩阵生成器与用户错误文案审计仍未完成.
+官方 API 33+、payload/supervisor/真实 service/AAR 和 `distributionReady=false` 均不变.
+
+用户要求一次会话尽量推进多个有边界的小节. 如需三星, 在过程中明显说明具体型号/API/页大小,
+给出 **10 分钟** 等待窗口, 期间定期轮询 `localhost:50781`.
+本轮未发出三星请求, 当前无待答设备窗口; 不假定旧会话设备仍满足新的需求.
+保持 noreply 提交身份, 不自行委派 agent.
+
+下方为此前已完成的 baseline/Samsung 阶段, 保持各自来源和历史边界.
 
 ## 此前: 十补丁构建恢复与七环境原套件回归完成
 

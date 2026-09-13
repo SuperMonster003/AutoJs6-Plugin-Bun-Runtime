@@ -81,7 +81,14 @@ extra, duplicate, wrong-tier or partial observations fail closed. Preliminary
 runs can be retained separately with `diagnostics` in place of `acceptance`; their
 original outcomes are preserved and never counted in final acceptance.
 
-The [2026-09-12 evidence](../../../../../docs/compatibility/2026-09-12-m5-x86-jsc-pressure.md)
+The [2026-09-13 ten-patch rebase](../../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md)
+passes this unchanged fixture with the new separately built `a237dc8c...7f8dcd5`
+candidate: 28/28 modes and a separate 32/32 original Binder regression. The same
+APK pair binds 77 inputs to project commit `5738129`; original assets, semantic
+validators and budgets are unchanged. The archive selects the exact source
+lineage and rejects borrowing historical candidate bytes for the new source.
+
+The historical [2026-09-12 evidence](../../../../../docs/compatibility/2026-09-12-m5-x86-jsc-pressure.md)
 records 28/28 pressure modes and a separate 32/32 original Binder regression.
 Official Android 13 support, the original x86 page guard and all native locks are
 unchanged. `distributionReady=false`; no Release/source assets are published.

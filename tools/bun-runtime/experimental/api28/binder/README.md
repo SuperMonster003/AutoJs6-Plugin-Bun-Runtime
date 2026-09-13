@@ -95,6 +95,8 @@ hardware 16 KiB. Compiled input receipts bind the additional test sources/assets
 
 ## Evidence
 
+- [2026-09-13 ten-patch large-page JSC](../../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md): the new `a237dc8c...7f8dcd5` candidate passes the unchanged eight-test suite twice on native x86_64 API 36 at both 4 KiB and 16 KiB userspace pages (32/32). The identical APK pair also passes the separate original pressure fixture (28/28 modes). Its 77 inputs match project commit `5738129`; signatures, installed bytes and execution UID cleanup pass. These candidate results are separate from baseline Binder totals and all nine-patch history.
+
 - [2026-09-13 ten-patch local matrix](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md): 80/80 in five native 4 KiB environments, using the unchanged eight methods. The initial API 28 ART/ADB-JDWP startup crash is archived separately and excluded; the identical APK retry passes two rounds. The later Samsung follow-up below completes both planned new-source device gates.
 
 - [2026-09-13 Samsung follow-up](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md): the same main/test APKs pass 16/16 each on SM-F936U API 32 / native ARM64 / 4 KiB and SM-A566B API 36 / native ARM64 / 16 KiB. This adds 32/32, bringing ten-patch totals to 112/112 across seven native environments in separately bound batches. The 75 inputs bound to project commit df186ec, installed hashes, lifecycle and cleanup pass; no native rebuild or AVD operation. The results below remain historical nine-patch evidence.
