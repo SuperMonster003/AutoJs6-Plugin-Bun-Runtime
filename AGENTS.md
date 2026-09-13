@@ -118,11 +118,13 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 - Locale `strings.xml` files contain no `app_name`. Keep default `values/strings.xml` and `values-en/strings.xml` identical, sort string names, use ASCII punctuation, and keep `plugin_description` free of terminal punctuation.
 - Treat `.readme/lang_*.json`, `.readme/common.json`, `.changelog/lang_*.json`, and the Markdown templates as the source of truth.
 - Do not hand-edit generated `README.md`, `.readme/README-*.md`, `app/src/main/res/raw*/plugin_instruction.md`, or `app/src/main/assets/doc/CHANGELOG*.md` files.
+- The compatibility matrix in `docs/compatibility/MATRIX.md` and `matrix.generated.json` is separately generated from registered, hash-bound historical JSON reports. Follow `tools/compatibility/README.md` when adding a report, then run `py .python/generate_compatibility_matrix.py` and `--check`. Preserve failed/preliminary/build-only scopes and never transfer acceptance between payloads or sum unrelated suites.
 - After changing documentation or localized resources, run:
 
 ```powershell
 py .python/generate_markdown.py
 py .python/generate_markdown.py --check
+py .python/generate_compatibility_matrix.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 ```
 
@@ -147,6 +149,7 @@ node tools/bun-runtime/supervisor/verify-supervisor.mjs
 node --test tools/bun-runtime/verify-apk-runtime.test.mjs
 node --test tools/bun-runtime/release/release-asset-common.test.mjs
 py .python/generate_markdown.py --check
+py .python/generate_compatibility_matrix.py --check
 py -B -m unittest discover -s .python -p "test_*.py"
 .\gradlew.bat :app:testDebugUnitTest
 .\gradlew.bat :app:verifyDebugApkRuntimeIntegrity :app:assembleDebugAndroidTest

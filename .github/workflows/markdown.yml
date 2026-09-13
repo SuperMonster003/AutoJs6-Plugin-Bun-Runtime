@@ -27,6 +27,10 @@ jobs:
         shell: cmd
         run: .python\check_markdown.bat
 
+      - name: Validate generated compatibility evidence matrix
+        shell: cmd
+        run: python .python/generate_compatibility_matrix.py --check
+
       - name: Test documentation generator
         shell: cmd
         run: python -B -m unittest discover -s .python -p "test_*.py"

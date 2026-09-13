@@ -159,6 +159,7 @@ See the [troubleshooting guide (Chinese)](https://github.com/SuperMonster003/Aut
 - Host: AutoJs6 build 5278 or later, with Bun runtime contract version 1.
 - Per-run bounds: source up to 16 MiB, combined stdout and stderr output up to 8 MiB, and a default timeout of 60 seconds.
 - Packages: single-ABI APKs keep installs smaller, while the larger `universal` APK contains both supported ABIs.
+- Test evidence: the [generated compatibility matrix (Chinese)](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/compatibility/MATRIX.md) lists devices, API levels, ABIs, page sizes and results for each recorded suite. Official, experimental, translated and failed runs retain their own scope; these records do not broaden published support.
 
 ******
 
@@ -222,6 +223,7 @@ _2026/09/12_
 
 - `Fix` Fix experimental Android pidfd probing when asynchronous spawn starts with SIGSYS blocked, preserving the caller mask and pending signals through the existing waiter fallback. The ten-patch runtime passes the unchanged 31-probe suite (310/310) and full eight-test Binder suite (80/80) in five native 4 KiB environments. Record recovered build completion without inventing missing original exit codes, and preserve the initial ART startup failure separately. JSC rebase and Release gates remain open; official payloads are unchanged
 - `Fix` Fix the experimental native x86_64 16 KiB JavaScriptCore startup abort by rebuilding pinned WebKit with explicit large-page, JIT and allocator settings and relinking Bun; all eight Binder tests pass twice on both 4 KiB and 16 KiB AVDs (32/32). Official payloads and their 4 KiB guard remain unchanged; Release acceptance is separate
+- `Improvement` Add a generated compatibility evidence matrix with a complete source index, archive hashes and CI drift checks; preserve per-runtime, per-device and per-suite results, including failures and preliminary diagnostics, without adding new device acceptance or broadening official support
 - `Improvement` Verify the new ten-patch large-page x86 candidate on API 36 at 4 KiB and 16 KiB userspace pages: unchanged Binder tests pass 32/32 and fixed pressure modes pass 28/28 using one APK pair bound to 77 inputs. Archive exact bytes, raw results and cleanup separately from historical evidence; the x86 16 KiB ABI remains emulated over 4 KiB kernel pages, with no Release or performance claim
 - `Improvement` Bind a separate ten-patch large-page JSC candidate, requiring two matching clean Bun builds with retained real driver exits and exact reused JSC inputs. Route isolated Binder tooling through the new source-bound lock while preserving historical and official payloads; device and Release acceptance remain separate
 - `Improvement` Add a Chinese troubleshooting guide with a minimal script, symptom/cause/action checks and bounded issue-report guidance; link it from all ten README languages without changing runtime capabilities

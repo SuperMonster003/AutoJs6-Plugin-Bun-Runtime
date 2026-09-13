@@ -34,7 +34,8 @@
     "系统: Android {{ min_android_version }} (API {{ android_min_sdk }}) 或更高版本, 提供 `arm64-v8a` 和 baseline `x86_64` 官方 64 位可执行文件. Android 9 到 12L (API 28 到 32) 暂不支持, 原因见上方常见问题. API 33 和 API 35 真机测试均已通过.",
     "宿主: AutoJs6 build {{ required_host_version_code }} 或更高版本, Bun runtime contract version {{ plugin_contract_version }}.",
     "单次运行上限: 源码最大 {{ max_source_size }}, stdout 和 stderr 合并输出最大 {{ max_output_size }}, 默认超时 {{ default_timeout }}.",
-    "安装包: 单 ABI APK 体积更小, 较大的 `universal` APK 同时包含两个受支持的 ABI."
+    "安装包: 单 ABI APK 体积更小, 较大的 `universal` APK 同时包含两个受支持的 ABI.",
+    "测试证据: [自动生成的兼容矩阵]({{ compatibility_matrix_url }}) 列出各份报告的设备, API, ABI, 页大小和测试结果. 官方, 实验, 翻译执行及失败记录各自保留验证范围, 不扩大已发布的支持范围."
   ],
   "h3_limitations": "当前限制",
   "limitations": [

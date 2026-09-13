@@ -34,7 +34,8 @@
     "النظام: Android {{ min_android_version }} (API {{ android_min_sdk }}) أو أحدث, مع executable رسمية 64-bit لـ `arm64-v8a` و baseline `x86_64`. لا يدعم بعد Android 9 حتى 12L (API 28 حتى 32); تشرح الأسئلة الشائعة أعلاه السبب. نجحت اختبارات الأجهزة الحقيقية على API 33 و API 35.",
     "المضيف: AutoJs6 build {{ required_host_version_code }} أو أحدث, مع Bun runtime contract version {{ plugin_contract_version }}.",
     "حدود كل تشغيل: مصدر حتى {{ max_source_size }}, وخرج stdout و stderr مجتمعين حتى {{ max_output_size }}, و timeout افتراضي مقداره {{ default_timeout }}.",
-    "الحزم: تبقي single-ABI APK التثبيت أصغر, بينما تتضمن `universal` APK الأكبر كلا ABI المدعومين."
+    "الحزم: تبقي single-ABI APK التثبيت أصغر, بينما تتضمن `universal` APK الأكبر كلا ABI المدعومين.",
+    "أدلة الاختبار: تعرض [مصفوفة التوافق المولدة (بالصينية)]({{ compatibility_matrix_url }}) الأجهزة ومستويات API ومعماريات ABI وأحجام الصفحات ونتائج كل مجموعة اختبارات مسجلة. تحتفظ الاختبارات الرسمية والتجريبية والمترجمة والفاشلة بنطاقها الخاص; ولا توسع هذه السجلات الدعم المعلن."
   ],
   "h3_limitations": "القيود الحالية",
   "limitations": [

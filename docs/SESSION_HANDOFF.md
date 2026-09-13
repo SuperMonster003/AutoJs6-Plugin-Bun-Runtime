@@ -1,4 +1,35 @@
-# 会话交接: 十补丁大页 JSC 回归与 M9 排错指南完成
+# 会话交接: M9 兼容矩阵生成器完成
+
+更新: 2026-09-13 (Asia/Shanghai). 从干净 `7d5ac1e` 继续,
+本轮完成独立兼容证据索引, 未改 native/runtime/service 或历史报告.
+继续前完整阅读 `AGENTS.md`、本文件及
+`E:/.codex-tmp/compatibility-matrix-20260913/SESSION_HANDOFF.local.md`.
+新生成器已登记 57 份源 JSON, 生成 144 条设备/尝试记录:
+[人类矩阵](compatibility/MATRIX.md)、[机器索引](compatibility/matrix.generated.json)、
+[维护说明](../tools/compatibility/README.md).
+
+- 按运行时完整 hash/源码、设备 API/ABI/页大小和各轮计数保留结果. 官方、实验、shell、
+  失败及初步诊断分别呈现; 构建和补充记录仅索引, 不增加设备通过数.
+- 同一报告内核对 summary、各轮计数/套件/环境和 payload/APK 一致性, 不跨报告或套件求总和.
+  缺失测量保留 null, 不把 x86 用户页 ABI 等同于内核页或 ARM64 硬件, 不以 ARM bridge 的存在推断翻译执行.
+- `matrix-sources.json` 固定历史报告 UTF-8/LF SHA-256. 新报告需登记其结构/范围后重新生成;
+  新增、缺失、历史修改或过期输出在 `--check` 中失败. Markdown CI 与 AGENTS 已加入检查.
+- 十语言 README 兼容章节与 v0.2.2 changelog 已同步. 原 36 文件生成器契约不变,
+  新矩阵另有两个生成产物. Python 35/35 (矩阵 24 + 原文档 11)、Node 189/189、
+  官方 Bun/supervisor 完整性、标准四 Gradle 检查和 IDE build 通过.
+  Gradle 25 秒/96 tasks, 48 executed/48 up-to-date; JVM 复用既有 8 项成功结果,
+  lint 0 errors/40 既有 warnings, IDE 仅既有 SDK XML 与 Bundle.get 警告.
+- 开始时确认此前两次 JSC/Bun native driver exit 0 和 WSL/Docker 无活动构建;
+  本轮没有 native 构建、Gradle 缓存修复、设备运行或 AVD 操作, 不把索引更新称为新设备验收.
+  旁侧 AutoJs6 仓库有用户构建, 未干预. 本轮命令均已结束, 无三星等待窗口, 无 push/Release.
+
+下一节可选择 M9 用户错误/诊断文案审计; 该小节尚未开始. 本轮矩阵覆盖多种历史结构,
+以完成其实现、负向回归和 CI 为边界. 现有实验 syscall/API/FD/OEM、长时压力/性能与 Release
+门槛保持开放. 三星接入仍按下方 10 分钟/50781 约定, 不假定旧设备连接可复用.
+
+下方为此前已完成的 JSC 与 baseline 工作, 保留各自证据边界和本机记录.
+
+## 此前: 十补丁大页 JSC 回归与 M9 排错指南完成
 
 更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `6212011` 继续,
 实现/构建证据已提交为 `573812979506283492637aaea3375819c336e515`.
