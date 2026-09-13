@@ -65,27 +65,22 @@ declaration does not grant the real service permission.
 
 ## Large-page x86 candidate
 
-The baseline source has advanced to eleven patches. The unchanged ten-patch JSC
-lock now resolves its original baseline evidence through the immutable archive;
-its provenance remains verifiable. The existing current-source check in Binder
-preparation rejects using it as the eleven-patch baseline. A further rebase and
-its own build/device evidence are still required.
-
-The ten-patch JSC rebase now has two independently built identical Bun binaries,
-with actual successful driver exits. Build and runner reject source mismatch;
-the historical nine-patch candidate lock and reports remain unchanged.
-
-The current `jsc16k` profile now requires the separate ten-patch
-[`rebased-candidate.lock.json`](../../webkit-x86_64-16k/rebased-candidate.lock.json)
-and its two matching clean Bun receipts. It never accepts the historical
-nine-patch candidate as current source. Both builds reuse the exact independently
-built JSC inputs; they do not constitute new WebKit builds. The original pressure
-asset, its budgets and the eight shared Binder test methods are unchanged.
+The baseline source has advanced to twelve patches. Historical nine/ten-patch
+JSC locks keep their original provenance and device records. The current
+`jsc16k` profile requires the separate
+[`twelve-patch-candidate.lock.json`](../../webkit-x86_64-16k/twelve-patch-candidate.lock.json)
+for `06e518f73b4fccc6c3ffb17412ea166bf886bed0` and two matching fresh Bun builds.
+The build and runner require that exact current source and reject both older
+candidates. Actual successful driver exits, clean heads/trees, all twenty-one
+build inputs, complete logs and output receipts must be bound before packaging.
+Both builds reuse the exact independently built JSC inputs and original ICU;
+they do not constitute new WebKit/ICU builds. The original pressure asset,
+semantic validator, budgets and eight shared Binder test methods are unchanged.
 
 Add `-PexperimentalJscCandidateFile=<absolute-locked-candidate-bun>` to the same
 build command, then pass `--profile jsc16k --abi x86_64` to the runner. Both API 36
 4 KiB and 16 KiB environments are required. This selection checks the separate
-[rebased JSC candidate lock](../../webkit-x86_64-16k/rebased-candidate.lock.json); it cannot replace
+[twelve-patch JSC candidate lock](../../webkit-x86_64-16k/twelve-patch-candidate.lock.json); it cannot replace
 the baseline with arbitrary bytes or silently disable the official x86 page guard.
 Outputs are under `build/experimental-binder-jsc16k`; baseline outputs use
 `build/experimental-binder`, outside the immutable native experiment directory.

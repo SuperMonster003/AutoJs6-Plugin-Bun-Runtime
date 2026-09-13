@@ -6,6 +6,7 @@ import { PACKAGE, buildInputs, validateInstrumentation } from "../../api28/binde
 import { KIND } from "./pressure-common.mjs";
 import { summarizePressureRuns, validatePressureRun } from "./archive-pressure.mjs";
 import { loadRebasedJscCandidate } from "../rebased-common.mjs";
+import { loadTwelvePatchJscCandidate, TWELVE_PATCH_BASELINE } from "../twelve-patch-common.mjs";
 
 export function observation(mode, pages = 16384) {
     const targets = { "jit-off": "LLInt", baseline: "Baseline", dfg: "DFG", ftl: "FTL" };
@@ -177,6 +178,31 @@ test("rebased pressure evidence binds the ten-patch source and cannot borrow his
         x => { x.build.jscCandidate = runFixture().build.jscCandidate; },
         x => { x.payloads[0].sha256 = runFixture().payloads[0].sha256; },
         x => { x.build.jscCandidate.builds[1].driver.exitCode = null; },
+    ]) {
+        const changed = structuredClone(r); mutate(changed);
+        assert.throws(() => validatePressureRun(changed, rawRounds(changed)));
+    }
+});
+
+test("twelve-patch pressure records require the new candidate and exact baseline source", () => {
+    const r = runFixture(); // Synthetic record, separate from actual device evidence.
+    const candidate = loadTwelvePatchJscCandidate();
+    const baseline = JSON.parse(readFileSync(TWELVE_PATCH_BASELINE, "utf8"));
+    r.runtime = { ...baseline.identity, variant: candidate.variant };
+    r.build.runtime = r.runtime;
+    r.build.source = baseline.source;
+    r.build.jscCandidate = candidate;
+    r.build.runtimes = baseline.artifacts.map(a => a.abi === "x86_64" ? candidate.artifact : a)
+        .map(({ abi, bytes, sha256 }) => ({ abi, bytes, sha256 }));
+    r.payloads[0].bytes = candidate.artifact.bytes;
+    r.payloads[0].sha256 = candidate.artifact.sha256;
+    validatePressureRun(r, rawRounds(r));
+    for (const mutate of [
+        x => { x.build.jscCandidate = loadRebasedJscCandidate(); },
+        x => { x.build.source = runFixture().build.source; },
+        x => { x.payloads[0].sha256 = loadRebasedJscCandidate().artifact.sha256; },
+        x => { x.build.jscCandidate.bunCommit = "f".repeat(40); },
+        x => { x.build.jscCandidate.builds[1].driver.api28RecipesUnchanged = false; },
     ]) {
         const changed = structuredClone(r); mutate(changed);
         assert.throws(() => validatePressureRun(changed, rawRounds(changed)));

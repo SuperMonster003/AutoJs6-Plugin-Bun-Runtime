@@ -835,6 +835,17 @@
       "note": "计数单位为压力模式, 与原八项 Binder 分开. 原生 x86 用户页 ABI 与内核映射页分别呈现; 不代表所有 JIT/Wasm 路径、长时压力或性能验收."
     },
     {
+      "file": "2026-09-13-m5-twelve-patch-jsc-builds.json",
+      "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad",
+      "schema": 2,
+      "kind": "clean-rebased-large-page-jsc-candidate",
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M5 十二补丁 JSC 双 clean Bun 构建",
+      "note": "两个实际 driver exit 0, 21 项构建输入未漂移, 两个完整成品一致. 精确复用原独立 JSC 库/config 与 ICU, 不计为设备或新 WebKit 构建验收."
+    },
+    {
       "file": "2026-09-13-m9-localized-errors-binder.json",
       "sha256": "59cd12123b0a0b0a71138d9e5bffa37a583809747e5d8263a1d1c436046fabc4",
       "schema": 1,

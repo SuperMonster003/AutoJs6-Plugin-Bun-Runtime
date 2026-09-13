@@ -1,3 +1,30 @@
+# 会话交接: 十二补丁 JSC 双构建完成, 新 APK 回归待执行
+
+2026-09-13 (Asia/Shanghai), 从干净 master `dbd0fde` 继续. 先完整阅读本文件、
+`AGENTS.md` 和 `E:/.codex-tmp/jsc-twelve-patch-20260913/SESSION_HANDOFF.local.md`.
+两个 `jsc-twelve-patch-run-{1,2}` 驱动均已实际 exit 0, 第二轮结束于 10:00:56Z;
+无需重跑 native driver 或任何已执行的 collector/promotion/文案脚本.
+两份完整 x86 Bun 为 90609496 bytes / SHA-256
+`34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad`, 完整两份 ELF 通过.
+clean head/tree 和 21 个构建输入未漂移, 复用原两个独立 WebKit 库/config 和原 ICU;
+没有新 WebKit/ICU 或 baseline Bun 构建. 新 `twelve-patch-candidate.lock.json` 和
+[构建归档](compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json) 与九/十补丁历史分开.
+最初两次 recorder 因原始/规范换行比较而失败; 一个既有脚本为 1479 CRLF 加两行 LF.
+现在显式绑定并逐字节重建完整换行分布, 不改写原 driver 摘要或 source, 原失败保留.
+新工具/构建报告/十语言文案已生成, Node 234/234、Python 38/38、Markdown 10 语言/36 产物
+和兼容矩阵 80 报告/180 行均通过.
+下一步复查并提交源码/构建结果, 用新候选打包 JSC APK, 再运行两种页大小的原八项 Binder
+与七模式压力各两轮. 原 pressure asset/Java/语义 validator/预算和生产 service/AAR 均不变.
+
+三星 APK 已另在干净 `dbd0fde` 的本机 `baseline-checkout` 构建, 81 项源码输入和宿主兼容
+签名/payload 验证通过; 33 项 probe APK 复用原字节并核对 30 输入. 两次签名准备问题保留,
+修正本机路径后新批次通过, 无设备安装. 忽略的配置副本已移除, 原私钥未复制或显示.
+17:48:42-17:58:42 本地时间的 10 分钟 50781 窗口 40 次轮询均 offline, 无三星新成绩.
+现无等待窗口或 owned AVD. 后续三星测试应使用该独立工作目录的匹配 runner/APK,
+不得借主工作目录后续新 JSC 输入放宽旧 APK 的 compiled-input 校验.
+
+## 此前完成的十二补丁本地回归
+
 # 会话交接: 十二补丁本地回归完成, 三星新源码与 JSC rebase 待继续
 
 2026-09-13 (Asia/Shanghai). 源码/构建已提交于 `bb61b9c`, 本轮最初为干净 master `86200f1`.

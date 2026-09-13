@@ -1,13 +1,50 @@
 # Experimental x86_64 large-page JavaScriptCore
 
 This directory does not replace the official Bun lock, production APKs or the
-nine-patch API 28 runtime evidence. The initial candidate is explicitly
+baseline API 28 runtime evidence. The initial candidate is explicitly
 diagnostic/incremental; any subsequent clean-build receipt is separate.
 `distributionReady=false`. No binaries or source archives belong in this directory.
 
-## Current ten-patch workflow
+## Current twelve-patch workflow
 
-The current isolated `jsc16k` Binder profile requires a separate
+The live `jsc16k` profile requires a separate `twelve-patch-candidate.lock.json`
+for Bun `06e518f73b4fccc6c3ffb17412ea166bf886bed0` (`1.4.0+06e518f73`). This includes
+the caller/pending-signal repairs in patches 11 and 12. The nine-patch
+`candidate.lock.json` and ten-patch `rebased-candidate.lock.json` retain their
+original build and device evidence. Neither historical binary can accept this source.
+
+Use two fresh twelve-patch Bun checkouts and the exact two original independent
+WebKit build directories with `run-clean-bun.mjs`, using the five explicit paths
+in the rebuild instructions below. Retain the actual driver exits, clean source
+heads/trees, complete logs, final Ninja edges and output receipts. Schema 2 also
+binds all sixteen API 28 build inputs alongside the five JSC recipes, requires
+their unchanged before/after hashes and records the actual build intervals.
+Keep those twenty-one inputs unchanged until both builds finish and are audited.
+Driver receipts preserve physical input bytes. A separate exact newline map
+reconstructs LF, CRLF or an explicitly recorded mixture from canonical Git text;
+the complete reconstructed hash must match the original driver. The recorder
+also rechecks the physical files before collecting, preserving both forms.
+
+```bash
+node tools/bun-runtime/experimental/webkit-x86_64-16k/record-twelve-patch.mjs \
+  /absolute/new-bun-1 /absolute/new-bun-2 \
+  /absolute/original-jsc-1/build /absolute/original-jsc-2/build \
+  /absolute/evidence/driver-run-1.json /absolute/evidence/driver-run-2.json
+```
+
+The recorder refuses an existing lock, missing actual exits, repeated build
+directories, source drift, historical bytes, incomplete final edges or changed
+JSC libraries/config. Both fresh builds reuse the original ICU; they do not
+constitute new WebKit or ICU compilation. Verify both complete ELF files before
+building new APKs. The unchanged eight-test Binder and seven-mode pressure
+fixtures require fresh, separately bound device results for this candidate.
+
+## Historical ten-patch workflow
+
+The commands in this section require their matching historical project revision.
+The current build plan and live Binder profile use the twelve-patch source above.
+
+The historical isolated `jsc16k` Binder profile used a separate
 `rebased-candidate.lock.json` for Bun `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`
 (`1.4.0+a9c76a599`). The original `candidate.lock.json`, its diagnostic origin and
 all nine-patch reports remain unchanged. The new loader rejects historical Bun
@@ -106,7 +143,7 @@ eventual exit status. The two WebKit output sets from this session match exactly
 
 The commands and results in this section describe the original nine-patch batch.
 Use the matching historical project revision to reproduce that batch; the current
-build plan pins ten patches and its results belong in the separate lock above.
+build plan pins twelve patches and its results belong in the separate current lock above.
 
 Use a fresh replay-verified nine-patch Bun checkout at
 `7b9ac266888abda7ee6ec0b8ac11a74236420030`, with no `build/autojs6-api28` output.

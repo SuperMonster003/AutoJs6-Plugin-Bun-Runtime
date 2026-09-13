@@ -7,11 +7,20 @@ import { spawnSync } from "node:child_process";
 import { KIND, MODES, PRESSURE_TEST, fixtureFacts, validatePressureInstrumentation } from "./pressure-common.mjs";
 import { PACKAGE, buildInputs, facts, validateDevice } from "../../api28/binder/binder-common.mjs";
 import { loadJscCandidate } from "../jsc-common.mjs";
-import { REBASED_KIND, loadRebasedJscCandidate } from "../rebased-common.mjs";
+import { REBASED_HEAD, loadRebasedJscCandidate } from "../rebased-common.mjs";
+import { TWELVE_PATCH_HEAD, TWELVE_PATCH_BASELINE, loadTwelvePatchJscCandidate } from "../twelve-patch-common.mjs";
 import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const pkg = PACKAGE + ".jsc16k";
+function sourceLineage(commit) {
+    if (commit === TWELVE_PATCH_HEAD) return { candidate: loadTwelvePatchJscCandidate(), baseline: TWELVE_PATCH_BASELINE };
+    if (commit === REBASED_HEAD) return { candidate: loadRebasedJscCandidate(),
+        baseline: new URL("../../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json", import.meta.url) };
+    assert.equal(commit, "7b9ac266888abda7ee6ec0b8ac11a74236420030", "Unknown JSC source lineage");
+    return { candidate: loadJscCandidate(),
+        baseline: new URL("../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url) };
+}
 export function validatePressureRun(record, rawRounds) {
     assert.equal(record.schemaVersion, 1);
     assert.equal(record.kind, KIND);
@@ -26,13 +35,12 @@ export function validatePressureRun(record, rawRounds) {
     assert(Number.isSafeInteger(record.uid) && record.uid >= 10000 && record.uid % 100000 >= 10000);
     assert.equal(record.finalUidProcesses, 0);
     assert.deepEqual(record.cleanup, [{ package: pkg + ".test", uninstalled: true }, { package: pkg, uninstalled: true }]);
-    const rebased = record.build.jscCandidate?.kind === REBASED_KIND;
-    const candidate = rebased ? loadRebasedJscCandidate() : loadJscCandidate();
+    const lineage = sourceLineage(record.build.jscCandidate?.bunCommit);
+    const { candidate } = lineage;
     assert.deepEqual(record.build.inputs, buildInputs(), "Archive before changing compiled inputs; never substitute a later APK");
     assert.deepEqual(record.build.jscCandidate, candidate);
     // Select the actual source lineage; a new candidate cannot relabel historical bytes.
-    const baseline = JSON.parse(readFileSync(new URL(rebased ? "../../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json"
-        : "../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url), "utf8"));
+    const baseline = JSON.parse(readFileSync(lineage.baseline, "utf8"));
     assert.equal(baseline.source.downstreamHeadCommit, candidate.bunCommit);
     assert.deepEqual(record.runtime, { ...baseline.identity, variant: candidate.variant });
     assert.deepEqual(record.build.runtime, record.runtime);

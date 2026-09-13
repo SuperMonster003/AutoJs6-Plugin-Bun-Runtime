@@ -25,24 +25,29 @@ export function rebasedSourceBindings() {
     };
 }
 export function validateRebasedCandidate(lock) {
+    return validateCleanRebase(lock, { schemaVersion: 1, head: REBASED_HEAD, tree: REBASED_TREE,
+        revision: "1.4.0+a9c76a599", baselineEvidence: BASELINE_EVIDENCE, bindings: rebasedSourceBindings() });
+}
+// Shared structural checks; public lineage loaders supply fixed source profiles.
+export function validateCleanRebase(lock, profile) {
     const historical = loadJscCandidate();
     const cleanHistory = JSON.parse(readFileSync(new URL("../../../../docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json", import.meta.url), "utf8"));
-    const baseline = JSON.parse(readFileSync(BASELINE_EVIDENCE, "utf8"));
-    assert.equal(lock.schemaVersion, 1);
+    const baseline = JSON.parse(readFileSync(profile.baselineEvidence, "utf8"));
+    assert.equal(lock.schemaVersion, profile.schemaVersion);
     assert.equal(lock.kind, REBASED_KIND);
     assert.equal(lock.distributionReady, false);
     assert.equal(lock.officialArtifact, false);
     assert.equal(lock.cleanBunBuilds, 2);
     assert.equal(lock.newWebKitBuilds, 0);
     assert.equal(lock.reusedIndependentWebKitBuilds, 2);
-    assert.equal(lock.bunCommit, REBASED_HEAD);
-    assert.equal(lock.bunTree, REBASED_TREE);
-    assert.equal(baseline.source.downstreamHeadCommit, REBASED_HEAD);
-    assert.equal(lock.revision, "1.4.0+a9c76a599");
+    assert.equal(lock.bunCommit, profile.head);
+    assert.equal(lock.bunTree, profile.tree);
+    assert.equal(baseline.source.downstreamHeadCommit, profile.head);
+    assert.equal(lock.revision, profile.revision);
     for (const key of ["variant", "webkitCommit", "hostImage", "sourceDateEpoch", "x86PageSizeCeiling", "config", "generatedConfig", "libraries"]) {
         assert.deepEqual(lock[key], historical[key], `${key}: only Bun is rebased; JSC inputs must remain exact`);
     }
-    assert.deepEqual(lock.bindings, rebasedSourceBindings());
+    assert.deepEqual(lock.bindings, profile.bindings);
     assert.equal(lock.artifact.abi, "x86_64");
     assert.notEqual(lock.artifact.sha256, historical.artifact.sha256, "Historical bytes cannot accept a new Bun source");
     assert.notEqual(lock.artifact.sha256, baseline.artifacts.find(a => a.abi === "x86_64").sha256);
@@ -60,10 +65,10 @@ export function validateRebasedCandidate(lock) {
     for (const build of lock.builds) {
         const driver = build.driver;
         assert.equal(driver.exitCode, 0, "Require the actual retained build-driver exit, not a dry run");
-        assert.equal(driver.head, REBASED_HEAD);
-        assert.equal(driver.headAfter, REBASED_HEAD);
-        assert.equal(driver.tree, REBASED_TREE);
-        assert.equal(driver.treeAfter, REBASED_TREE);
+        assert.equal(driver.head, profile.head);
+        assert.equal(driver.headAfter, profile.head);
+        assert.equal(driver.tree, profile.tree);
+        assert.equal(driver.treeAfter, profile.tree);
         assert.equal(driver.cleanBefore, true);
         assert.equal(driver.cleanAfter, true);
         assert.equal(driver.newWebKitBuilds, 0);
@@ -72,7 +77,7 @@ export function validateRebasedCandidate(lock) {
         for (const key of ["log", "receipt", "ninjaLog"]) hashFact(driver[key]);
         hashFact(build.inputDriver);
         assert.equal(build.receipt.kind, "clean-bun-with-locked-large-page-jsc");
-        assert.equal(build.receipt.source, REBASED_HEAD);
+        assert.equal(build.receipt.source, profile.head);
         assert.equal(build.receipt.sourceInputCount, 22);
         assert.equal(build.receipt.cargoArchiveCount, 206);
         assert.equal(build.receipt.bunArchiveCount, 125);

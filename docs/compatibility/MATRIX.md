@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 79 份源报告, 180 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 80 份源报告, 180 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -874,6 +874,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-13-m2-pending-wait-runtime-evidence.json](2026-09-13-m2-pending-wait-runtime-evidence.json).
 
 保留两次实际 driver exit 0、独立干净源码、完整日志与四份 ELF 绑定; 只索引构建证据, 不增加设备通过数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M5 十二补丁 JSC 双 clean Bun 构建
+
+来源: [2026-09-13-m5-twelve-patch-jsc-builds.json](2026-09-13-m5-twelve-patch-jsc-builds.json).
+
+两个实际 driver exit 0, 21 项构建输入未漂移, 两个完整成品一致. 精确复用原独立 JSC 库/config 与 ICU, 不计为设备或新 WebKit 构建验收.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
