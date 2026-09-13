@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "kind": "pending-wait-samsung-device-checkpoint",
+  "capturedAt": "2026-09-13T11:33:11Z",
+  "projectBaseCommit": "0fba050a70ce25dc54a7412653a48e2c18b120aa",
+  "scope": "Supplemental twelve-patch native ARM64 API 32 / 4 KiB device/source/APK/cleanup records. No added test or build counts; original suite archives are authoritative.",
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "newNativeBuilds": 0,
+  "newApkBuilds": 0,
+  "device": {
+    "model": "SM-F936U",
+    "manufacturer": "samsung",
+    "api": "32",
+    "abi": "arm64-v8a",
+    "pages": "4096",
+    "machine": "aarch64",
+    "kernel": "5.10.81-android12-9-25063374-abF936USQS4AVII",
+    "bridge": "0",
+    "fingerprint": "samsung/q4qsqw/q4q:12/SP2A.220305.013/F936USQS4AVII:user/release-keys",
+    "capturedAt": "2026-09-13T11:28:44Z",
+    "shellMappingPages": {
+      "KernelPageSize": [
+        4096
+      ],
+      "MMUPageSize": [
+        4096
+      ]
+    },
+    "smaps": {
+      "bytes": 110918,
+      "sha256": "5337a80df52d48df46ceb47cbffe2aafc040072a564fa5447895f0eece3362bd"
+    }
+  },
+  "serial": "localhost:49909",
+  "startedAt": "2026-09-13T11:28:40Z",
+  "finishedAt": "2026-09-13T11:31:00Z",
+  "apkSource": {
+    "binderProjectBaseCommit": "dbd0fde638816bceb4ab759d6e0750aa51e34a55",
+    "binderInputsMatchedToGit": 81,
+    "probeInputsUnchanged": 30,
+    "probeDefinitionsUnchanged": 33,
+    "allThreeApksIdenticalToApi36Batch": true,
+    "probeBuildIdenticalToPreviousFiveEnvironmentBatch": true,
+    "binderReadyBatchVerification": {
+      "bytes": 2575,
+      "sha256": "00221ee9a73a252d1b215de145e2db9c9a0d6d43f6cc826bcf4db1b35e5f619a"
+    },
+    "api36Archives": [
+      {
+        "file": "2026-09-13-m3-pending-wait-native-arm64-api36-probes.json",
+        "bytes": 319541,
+        "sha256": "38a0b39a99758777d15566a61959e9402a2bf7fb38d581e6793fa3800a39411e"
+      },
+      {
+        "file": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
+        "bytes": 45745,
+        "sha256": "f071aadd46233d5739e262b1fe4c7b16cb3e81ece6115d3c516c2da2c99d17a4"
+      }
+    ],
+    "note": "The detached baseline worktree retains the exact 81 compiled inputs; no use of mainroot JSC 83-input checks to relax stale-input validation."
+  },
+  "native": {
+    "sourceCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+    "revision": "1.4.0+06e518f73",
+    "bytes": 87923328,
+    "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+    "baselineBuildEvidence": {
+      "file": "2026-09-13-m2-pending-wait-runtime-evidence.json",
+      "bytes": 18339,
+      "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+    }
+  },
+  "archives": [
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api32-probes.json",
+      "bytes": 319691,
+      "sha256": "cb0365e58ca6f48f06ff6201470b1e78b24d6e959f10a1e0d0c280b8f949a703"
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api32-binder.json",
+      "bytes": 45722,
+      "sha256": "1e0a7c7867d0d7fc7efbbb5475739614c0fec79221472a8733fb3e195554881b"
+    }
+  ],
+  "suites": [
+    {
+      "suite": "probes",
+      "startedAt": "2026-09-13T11:28:44Z",
+      "finishedAt": "2026-09-13T11:29:37Z",
+      "exitCode": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe": 10328
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T11:29:39Z",
+      "processSnapshot": {
+        "bytes": 27252,
+        "sha256": "a5d045291626abed7efa18f91ac58b82780f58ad19fac2739c9b92f99ff33ab1"
+      },
+      "log": {
+        "bytes": 141,
+        "sha256": "7fdc057fc305681b0640e19c549917ee0b597fce9a660f0739b31b75475e9126"
+      },
+      "archive": {
+        "name": "2026-09-13-m3-pending-wait-native-arm64-api32-probes.json",
+        "bytes": 319691,
+        "sha256": "cb0365e58ca6f48f06ff6201470b1e78b24d6e959f10a1e0d0c280b8f949a703"
+      }
+    },
+    {
+      "suite": "binder",
+      "startedAt": "2026-09-13T11:29:39Z",
+      "finishedAt": "2026-09-13T11:30:57Z",
+      "exitCode": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10329,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10330
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T11:31:00Z",
+      "processSnapshot": {
+        "bytes": 26636,
+        "sha256": "f573826a323fa187e365d0e7c32294b4b187b498fa745439f90a28cf0ac2e98d"
+      },
+      "log": {
+        "bytes": 98,
+        "sha256": "9d501c0e1f2c9d7926e3b482f57d41324027d69c322b00bcd6c47a55600a71e5"
+      },
+      "archive": {
+        "name": "2026-09-13-m3-pending-wait-native-arm64-api32-binder.json",
+        "bytes": 45722,
+        "sha256": "1e0a7c7867d0d7fc7efbbb5475739614c0fec79221472a8733fb3e195554881b"
+      }
+    }
+  ],
+  "driverReceipt": {
+    "bytes": 4308,
+    "sha256": "3df94a33aeef83009fa2efc93e1b4be468648f6794c9598664a52701246a0ea0"
+  },
+  "pendingSignalObservations": [
+    {
+      "round": 1,
+      "id": "sigsys-pending-async-native",
+      "callerPid": 6044,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        6044
+      ]
+    },
+    {
+      "round": 1,
+      "id": "sigsys-pending-async-trap",
+      "callerPid": 6057,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        6057
+      ]
+    },
+    {
+      "round": 2,
+      "id": "sigsys-pending-async-native",
+      "callerPid": 6561,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        6561
+      ]
+    },
+    {
+      "round": 2,
+      "id": "sigsys-pending-async-trap",
+      "callerPid": 6578,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        6578
+      ]
+    }
+  ],
+  "transport": {
+    "preexistingServer": "Existing localhost:5037 server was left untouched. No localhost:5038 listener was present at initial inventory.",
+    "startupPathPreflight": {
+      "receipt": {
+        "bytes": 397,
+        "sha256": "156da2cda022fcdbb98b6b87de796b3c1b41cc6aac71098dc0ab6c6dc1cd405f"
+      },
+      "actualExit": 1,
+      "beforeServerLaunch": true,
+      "error": "FileExistsError: exclusive creation refused the prior-phase adb-server.out.log",
+      "cause": "Windows Path string replacement did not match the forward-slash source literal",
+      "priorOutputsOverwritten": false,
+      "deviceCommandsExecuted": 0,
+      "resolution": "Separate corrected startup helper uses the exact new phase path"
+    },
+    "initialAuthentication": {
+      "receipt": {
+        "bytes": 98,
+        "sha256": "1fa3c37b24858d31bd42a6df825edde871b2d3183237d32d10306588bad8642a"
+      },
+      "state": "unauthorized",
+      "resolution": "USB-debugging authorization requested; actual device state and identity succeeded before installation."
+    },
+    "archivePreflight": {
+      "receipt": {
+        "bytes": 221,
+        "sha256": "b81b9ec90f3c8922648db45c5759d779b16c7969923cde1472913009708eb1e1"
+      },
+      "actualExit": 1,
+      "beforeWriting": true,
+      "reason": "Original supplementary collector rejected the not-yet-persisted private-server stopped flag",
+      "deviceSuitesRerun": false,
+      "acceptanceChanged": false
+    },
+    "privateServer": {
+      "startedAt": "2026-09-13T11:27:47Z",
+      "pid": 54560,
+      "port": 5039,
+      "arguments": [
+        "-L",
+        "tcp:5039",
+        "--one-device",
+        "localhost:49909",
+        "server",
+        "nodaemon"
+      ],
+      "serverSocket": "tcp:127.0.0.1:5039",
+      "mdnsAutoConnect": "0",
+      "owned": true,
+      "stopped": true,
+      "listenerAbsent": true,
+      "ownedProcessAbsent": true,
+      "stopConfirmedAt": "2026-09-13T11:33:06Z",
+      "stopCommand": {
+        "status": null,
+        "capturedResultRetained": false,
+        "note": "The original helper reached post-kill confirmation after checking kill-server success, but did not persist that result before its no-matching-port query failed. No original timestamp or exit receipt is reconstructed."
+      },
+      "confirmationRecovery": {
+        "readOnly": true,
+        "newStopCommands": 0,
+        "originalHelperExit": 1,
+        "reason": "Get-NetTCPConnection -LocalPort returned exit 1 with no matching listener; check_output treated absence as a failure.",
+        "priorOwnershipReceipt": {
+          "bytes": 314,
+          "sha256": "52e72f434f8873ca094cca4399390667c76e3342b3c33cfae5dd11e9c0fdb5f9"
+        },
+        "actualReadOnlyChecks": {
+          "listener": {
+            "actualExit": 0,
+            "stdout": "",
+            "stderr": ""
+          },
+          "process": {
+            "actualExit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      }
+    },
+    "avdsStarted": 0,
+    "avdsStopped": 0,
+    "sharedServerProcessesChanged": false
+  },
+  "cleanup": {
+    "allThreePackagesRemoved": true,
+    "allThreeUidsEmpty": true,
+    "uids": [
+      10328,
+      10329,
+      10330
+    ],
+    "userToldDeviceCanBeReleased": true,
+    "privateAdbServerStopped": true
+  },
+  "limits": [
+    "New-source API32 evidence is distinct from previous nine/ten-patch device acceptance",
+    "Raw openat2 unavailable before filters does not establish first-entry high-level EIO/TRAP reachability",
+    "Original 33-probe and eight-test Binder scopes only; remaining syscall/API/FD/OEM, FD70000/UNSHARE, watch/reload, cgroup/clone3, pressure/performance and Release gates remain open",
+    "Official API33+, payloads and separate JSC candidate results remain unchanged"
+  ]
+}

@@ -692,6 +692,39 @@
       "note": "即时 spawn 保留 pending, 但异步等待后提前交付. 原 31 项通过不构成完整 33 项门禁通过; 历史十补丁失败不变."
     },
     {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api32-binder.json",
+      "sha256": "1e0a7c7867d0d7fc7efbbb5475739614c0fec79221472a8733fb3e195554881b",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁三星 ARM64 API 32 Binder",
+      "note": "真实生产服务/权限和原 Binder 方法, 与原生大页批次复用相同 APK; 与应用探针和 Release 门禁分开."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api32-device-facts.json",
+      "sha256": "57d51d24b7bfb808be34661270e89d6b09d16e0813043480672f0555af688fe8",
+      "schema": 1,
+      "kind": "pending-wait-samsung-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十二补丁三星 API 32 设备及清理",
+      "note": "绑定实际系统与页大小, 源码/APK, 各包 UID 清理和独立 ADB 服务关闭; 前置检查不增加设备套件计数."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api32-probes.json",
+      "sha256": "cb0365e58ca6f48f06ff6201470b1e78b24d6e959f10a1e0d0c280b8f949a703",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁三星 ARM64 API 32 探针",
+      "note": "原定义和既有 APK 复用, pending/blocked async 与硬 FD 上限保持原语义预算; 不转移旧源码或 JSC 成绩."
+    },
+    {
       "file": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
       "sha256": "f071aadd46233d5739e262b1fe4c7b16cb3e81ece6115d3c516c2da2c99d17a4",
       "schema": 1,

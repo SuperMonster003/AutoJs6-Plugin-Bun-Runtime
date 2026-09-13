@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 87 份源报告, 187 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 90 份源报告, 189 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -537,6 +537,26 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
 | /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
 
+### M3 十二补丁三星 ARM64 API 32 Binder
+
+来源: [2026-09-13-m3-pending-wait-native-arm64-api32-binder.json](2026-09-13-m3-pending-wait-native-arm64-api32-binder.json).
+
+真实生产服务/权限和原 Binder 方法, 与原生大页批次复用相同 APK; 与应用探针和 Release 门禁分开.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-F936U<br>API 32 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M3 十二补丁三星 ARM64 API 32 探针
+
+来源: [2026-09-13-m3-pending-wait-native-arm64-api32-probes.json](2026-09-13-m3-pending-wait-native-arm64-api32-probes.json).
+
+原定义和既有 APK 复用, pending/blocked async 与硬 FD 上限保持原语义预算; 不转移旧源码或 JSC 成绩.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-F936U<br>API 32 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
+
 ### M3 十二补丁三星 ARM64 硬件大页 Binder
 
 来源: [2026-09-13-m3-pending-wait-native-arm64-api36-binder.json](2026-09-13-m3-pending-wait-native-arm64-api36-binder.json).
@@ -944,6 +964,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-13-m3-blocked-pidfd-samsung-device-facts.json](2026-09-13-m3-blocked-pidfd-samsung-device-facts.json).
 
 只补充独立设备与清理快照, 不产生新测试轮次; 不把后补字段自动复制进此前报告.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M3 十二补丁三星 API 32 设备及清理
+
+来源: [2026-09-13-m3-pending-wait-native-arm64-api32-device-facts.json](2026-09-13-m3-pending-wait-native-arm64-api32-device-facts.json).
+
+绑定实际系统与页大小, 源码/APK, 各包 UID 清理和独立 ADB 服务关闭; 前置检查不增加设备套件计数.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
