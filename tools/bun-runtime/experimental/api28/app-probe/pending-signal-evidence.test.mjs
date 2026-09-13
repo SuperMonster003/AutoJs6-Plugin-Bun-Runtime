@@ -3,6 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import { PENDING_SIGNAL_MODES, validatePendingSignalEvidence } from "./pending-signal-evidence.mjs";
+import { WATCH_RELOAD_MODES } from "./watch-reload-evidence.mjs";
 import { pendingSignalFixture } from "./pending-signal-fixture.test-support.mjs";
 import { hardLimitFilter } from "./hard-limit-evidence.mjs";
 import { materializePendingSignalSource, materializeProbes, validateProbes, validateFdEvidence, inputFacts, hash } from "./probe-common.mjs";
@@ -10,7 +11,7 @@ import { materializePendingSignalSource, materializeProbes, validateProbes, vali
 const probes = JSON.parse(readFileSync(new URL("probes.json", import.meta.url), "utf8"));
 test("pending-signal additions preserve all 31 definitions and every old fixture/validator byte", () => {
   const baseline = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.json", import.meta.url), "utf8"));
-  const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
+  const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id) && !Object.hasOwn(WATCH_RELOAD_MODES, p.id));
   assert.equal(original.length, 31);
   assert.deepEqual(original, baseline.probes.map(p => p.id === "revision"
     ? { ...p, stdout: "1.4.0+06e518f73" } : p));

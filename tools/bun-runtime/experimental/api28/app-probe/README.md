@@ -15,6 +15,26 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The live suite now has **35 probes**. The [fixed watch/reload gate](../../../../../docs/compatibility/2026-09-13-m3-watch-reload.md)
+fails on the unchanged twelve-patch runtime: four native ARM64 / 4 KiB devices
+retain all original 33 successes (264/264), while the two new modes pass 2/16 and
+fail 14/16. All 32 actual reloads are observed; 28 retain the non-CLOEXEC sentinel.
+The Sony API 33 / kernel 5.15 native mode passes twice and its forced-TRAP mode fails
+twice. Explicit CLOEXEC, stdio and ordinary SIGSYS controls remain intact.
+All packages and UIDs are cleaned up. Native code is not repaired or rebuilt.
+
+Only the new fixed assets receive a 12 KiB cap; existing definitions, fixture
+sources and budgets remain unchanged. Java only adds fixed asset/record bindings.
+The new child has a 6 s deadline, 8 KiB combined stream cap and 2048-byte evidence cap.
+Three APK batches bind 32 inputs each; only the host watch validator differs,
+with earlier pipe-only/ENOSYS-only versions retained beside their exact receipts.
+Failed records have a separate strict archiver and can never enter passing
+acceptance. The original 33 baseline subsequently completed both Samsung gates
+(462/462 probes, 112/112 Binder in seven native environments); these new failed
+watch observations do not change those historical totals or distributionReady=false.
+
+### Historical twelve-patch original-suite checkpoint
+
 The new [twelve-patch epoll repair](../../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md)
 has passed source/host controls and two fresh independent dual-ABI builds with
 actual driver exits 0, identical bytes and four ELF audits. The unchanged 33

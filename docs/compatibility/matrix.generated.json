@@ -1974,6 +1974,122 @@
       "summary": null
     },
     {
+      "file": "2026-09-13-m3-watch-reload-checkpoints.json",
+      "sha256": "e18d82d69d9766884ce970263a04b9f221fd2896d644bf7660451b882bfd80ba",
+      "schema": 1,
+      "kind": "watch-reload-source-and-cleanup-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 watch/reload 源码和清理绑定",
+      "note": "源码/构建/清理补充, 不新增执行接受数.",
+      "bytesUtf8Lf": 43760,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-einval-failure.json",
+      "sha256": "1cab02ab1ead9b60cae8ebf8d3ec9c1449e11277deb8375f548947d74722c83f",
+      "schema": 1,
+      "kind": "archived-watch-reload-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁 watch/reload EINVAL失败",
+      "note": "完整35项门禁失败. 原33项和原生成功对照不抵消watch FD泄漏; 三个APK批次分别绑定, 原生尚未修复.",
+      "bytesUtf8Lf": 361335,
+      "rows": 1,
+      "reportedScope": "Fixed 35-probe suite: original 33 pass; watch reload retains a non-CLOEXEC sentinel when close_range CLOEXEC is unavailable. Two actual same-PID reloads and ordinary SIGSYS controls are preserved. Failed compatibility gate; no native fix or Release acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 1,
+        "rounds": 2,
+        "probesPerRound": 35,
+        "totalProbes": 70,
+        "passedProbes": 66,
+        "failedProbes": 4,
+        "original33PassedProbes": 66,
+        "watchModes": 4,
+        "watchPassedModes": 0,
+        "watchFailedModes": 4,
+        "actualReloadTransitions": 8,
+        "watchedImages": 12,
+        "leakedSentinelObservations": 8,
+        "ordinarySigsysDeliveries": 12,
+        "ownedWatchedChildrenReaped": 4
+      }
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-initial-failure.json",
+      "sha256": "3a251a822cd4b03d1f592cab83714bfda563134da5e51b469856d5095586d751",
+      "schema": 1,
+      "kind": "archived-watch-reload-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁 watch/reload 初始失败",
+      "note": "完整35项门禁失败. 原33项和原生成功对照不抵消watch FD泄漏; 三个APK批次分别绑定, 原生尚未修复.",
+      "bytesUtf8Lf": 686483,
+      "rows": 2,
+      "reportedScope": "Fixed 35-probe suite: original 33 pass; watch reload retains a non-CLOEXEC sentinel when close_range CLOEXEC is unavailable. Two actual same-PID reloads and ordinary SIGSYS controls are preserved. Failed compatibility gate; no native fix or Release acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "probesPerRound": 35,
+        "totalProbes": 140,
+        "passedProbes": 132,
+        "failedProbes": 8,
+        "original33PassedProbes": 132,
+        "watchModes": 8,
+        "watchPassedModes": 0,
+        "watchFailedModes": 8,
+        "actualReloadTransitions": 16,
+        "watchedImages": 24,
+        "leakedSentinelObservations": 16,
+        "ordinarySigsysDeliveries": 24,
+        "ownedWatchedChildrenReaped": 8
+      }
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-control.json",
+      "sha256": "672c966882ce5b3aae42ed4b788cb77f3eb1bd580ac102e53ff9e7d4d5692a70",
+      "schema": 1,
+      "kind": "archived-watch-reload-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁 watch/reload 同设备原生对照",
+      "note": "完整35项门禁失败. 原33项和原生成功对照不抵消watch FD泄漏; 三个APK批次分别绑定, 原生尚未修复.",
+      "bytesUtf8Lf": 355830,
+      "rows": 1,
+      "reportedScope": "Fixed 35-probe suite: original 33 pass; watch reload retains a non-CLOEXEC sentinel when close_range CLOEXEC is unavailable. Two actual same-PID reloads and ordinary SIGSYS controls are preserved. Failed compatibility gate; no native fix or Release acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 1,
+        "rounds": 2,
+        "probesPerRound": 35,
+        "totalProbes": 70,
+        "passedProbes": 68,
+        "failedProbes": 2,
+        "original33PassedProbes": 66,
+        "watchModes": 4,
+        "watchPassedModes": 2,
+        "watchFailedModes": 2,
+        "actualReloadTransitions": 8,
+        "watchedImages": 12,
+        "leakedSentinelObservations": 4,
+        "ordinarySigsysDeliveries": 12,
+        "ownedWatchedChildrenReaped": 4
+      }
+    },
+    {
       "file": "2026-09-13-m5-ten-patch-jsc-binder.json",
       "sha256": "8b856da7b3ab5ef7630a331affa13f1d3be4f5ac3629a0fe480dcde6c064b20d",
       "schema": 1,
@@ -12025,6 +12141,252 @@
       "recordedOutcome": false,
       "status": "failed",
       "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-einval-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁 watch/reload EINVAL失败",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "db93193e3c44a00627ee91034fb127ecc3bbb056b774d4a67b85beb814be69bf",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-initial-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁 watch/reload 初始失败",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "2cc6c292f08a2709b7e5bf6f780bfefdb0d1683ab64598b0e2b0ab101cead631",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-initial-failure.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁 watch/reload 初始失败",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "2cc6c292f08a2709b7e5bf6f780bfefdb0d1683ab64598b0e2b0ab101cead631",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-native",
+            "watch-reload-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-native-control.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁 watch/reload 同设备原生对照",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "93b5d43cb2ed0725c97743b715ec066b613b891d4f227fd26060397df8bd0dde",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 34,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 34,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
       "acceptedForRecordedScope": false
     },
     {

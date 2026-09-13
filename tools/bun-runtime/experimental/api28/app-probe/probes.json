@@ -220,6 +220,20 @@
     "termination": "exited"
   },
   {
+    "id": "watch-reload-native",
+    "sourceFile": "watch-reload-probes.mjs",
+    "mode": "native",
+    "termination": "exited",
+    "stdout": "WATCH_RELOAD_RESULT="
+  },
+  {
+    "id": "watch-reload-trap",
+    "sourceFile": "watch-reload-probes.mjs",
+    "mode": "trap",
+    "termination": "exited",
+    "stdout": "WATCH_RELOAD_RESULT="
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

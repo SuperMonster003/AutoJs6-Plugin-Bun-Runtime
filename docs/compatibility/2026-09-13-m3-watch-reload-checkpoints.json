@@ -1,0 +1,974 @@
+{
+  "schemaVersion": 1,
+  "kind": "watch-reload-source-and-cleanup-checkpoints",
+  "capturedAt": "2026-09-13T12:32:02.451568+00:00",
+  "projectBaseCommit": "9485aa103e57001ef05c094883b0f6130859ddc7",
+  "diagnosticOnly": true,
+  "compatibilityAccepted": false,
+  "distributionReady": false,
+  "nativeSource": {
+    "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+    "tree": "1eb8d5ea945001f018bdf14bd00c261d40b02573",
+    "clean": true,
+    "revision": "1.4.0+06e518f73",
+    "sources": [
+      {
+        "path": "src/jsc/bindings/c-bindings.cpp",
+        "gitBlob": "fcc96d8712da400690a589ead3f43c9e85281772",
+        "bytes": 35163,
+        "sha256": "3911c10258c0ce294d8d02a3b3ab38d8c507adad41ff0ce737a65a2e65134d27"
+      },
+      {
+        "path": "src/bun_core/util.rs",
+        "gitBlob": "0d6eebe83c3c91395bbfb4ecbeabfd09652ee2f6",
+        "bytes": 212709,
+        "sha256": "06af1b493fb85916fe4e0e4331edbf5865fdeda9676143f57c6caacde2acf0ae"
+      },
+      {
+        "path": "src/jsc/hot_reloader.rs",
+        "gitBlob": "c6cba43498c59292580a6607ad208d55dff458b5",
+        "bytes": 64980,
+        "sha256": "3922a00ae37baf10b4683589b34eac955b18b9c038420d58cae48db0dba6c50e"
+      }
+    ],
+    "excerpts": {
+      "beforeReload": {
+        "firstLine": 376,
+        "bytes": 2053,
+        "sha256": "640f3d9707fc40c0289d9a8fc18b069bb8fd114313530375d6999e7f8084bcfd",
+        "text": "extern \"C\" void on_before_reload_process_posix()\n{\n    unset_cloexec(STDIN_FILENO);\n    unset_cloexec(STDOUT_FILENO);\n    unset_cloexec(STDERR_FILENO);\n\n#if OS(LINUX) || OS(FREEBSD)\n    // close all file descriptors except stdin, stdout, stderr and possibly IPC.\n    // if you're passing additional file descriptors to Bun, you're probably not passing more than 8.\n    // If this fails, it's ultimately okay, we're just trying our best to avoid leaking file descriptors.\n    bun_close_range(3, ~0U, CLOSE_RANGE_CLOEXEC);\n#endif\n\n    // Preserve the IPC channel to the parent across the execve: NODE_CHANNEL_FD survives in\n    // environ and the reloaded image re-attaches to it; CLOEXEC'd, the parent stops receiving\n    // 'message' events after the first reload.\n    if (const char* s = getenv(\"NODE_CHANNEL_FD\")) {\n        char* end = nullptr;\n        long fd = strtol(s, &end, 10);\n        if (end != s && *end == '\\0' && fd >= 3 && fd <= INT_MAX)\n            unset_cloexec(static_cast<int>(fd));\n    }\n\n    // Reset caught dispositions so a SIGTERM arriving between here and execve isn't queued-then-\n    // lost. Inherited SIG_IGN is left alone. SIGSEGV/SIGBUS/SIGSYS/RT/sigThreadSuspendResume are left\n    // for execve to reset atomically — resetting them here races JSC's sampler/GC threads fatally.\n    struct sigaction sa {};\n    sa.sa_handler = SIG_DFL;\n    sigemptyset(&sa.sa_mask);\n    for (int s = 1; s < NSIG; s++) {\n        if (s == SIGKILL || s == SIGSTOP || s == SIGSEGV || s == SIGBUS)\n            continue;\n#if OS(LINUX)\n        if (s == g_wtfConfig.sigThreadSuspendResume || s == SIGSYS)\n            continue;\n#endif\n#ifdef SIGRTMIN\n        if (s >= SIGRTMIN)\n            break;\n#endif\n        struct sigaction old {};\n        if (sigaction(s, nullptr, &old) != 0)\n            continue;\n        if (old.sa_handler == SIG_IGN || old.sa_handler == SIG_DFL)\n            continue;\n        sigaction(s, &sa, nullptr);\n    }\n\n    sigset_t signal_set;\n    sigemptyset(&signal_set);\n    sigprocmask(SIG_SETMASK, &signal_set, nullptr);\n}\n"
+      },
+      "startup": {
+        "firstLine": 691,
+        "bytes": 600,
+        "sha256": "dc17dd79f2112492df0c7a79c329067d53ed00db1cbeedad2ef45b539f0101f0",
+        "text": "extern \"C\" void bun_initialize_process()\n{\n    // Disable printf() buffering. We buffer it ourselves.\n    setvbuf(stdout, nullptr, _IONBF, 0);\n    setvbuf(stderr, nullptr, _IONBF, 0);\n\n#if OS(LINUX)\n    // Before bun_close_range: a seccomp policy may trap it.\n    installSIGSYSHandler();\n\n    // To avoid breaking --watch, we skip stdin, stdout, stderr and IPC.\n    if (bun_close_range(4, ~0U, CLOSE_RANGE_CLOEXEC) < 0 && bun_mark_inherited_fds_cloexec(4) < 0) {\n        fprintf(stderr, \"Bun: cannot mark inherited file descriptors close-on-exec (errno %d)\\n\", errno);\n        _exit(1);\n    }\n#endif\n"
+      },
+      "reloadExec": {
+        "firstLine": 4352,
+        "bytes": 4678,
+        "sha256": "561059497531c00dd7f088105df30ecf3a9d28c3392df4360cc9a6e9e9c53dfc",
+        "text": "pub fn reload_process(clear_terminal: bool, may_return: bool) {\n    // Exactly one thread may perform the reload: the JS thread and the watcher's grace-window\n    // fallback can both reach here, and concurrent execve prep crashes on musl. The swap elects a\n    // winner; a loser parks or returns. A thread that already owns the reload may re-enter.\n    let owns_reload = RELOAD_IN_PROGRESS_ON_CURRENT_THREAD.with(|c| c.get());\n    if !owns_reload && RELOAD_IN_PROGRESS.swap(true, AOrdering::SeqCst) {\n        if may_return {\n            return;\n        }\n        // Park (not pthread_exit): the loser may be the JS main thread, and\n        // running its TLS destructors concurrently with the winner's execve\n        // preparation is the same hazard class the swap exists to avoid.\n        loop {\n            std::thread::sleep(std::time::Duration::from_secs(3600));\n        }\n    }\n    RELOAD_IN_PROGRESS_ON_CURRENT_THREAD.with(|c| c.set(true));\n\n    if clear_terminal {\n        crate::output::flush();\n        crate::output::disable_buffering();\n        crate::output::reset_terminal_all();\n    }\n    crate::output::stdio::restore();\n\n    #[cfg(windows)]\n    {\n        // Signal the watcher-manager parent via magic exit code.\n        use crate::windows_sys::kernel32::{GetCurrentProcess, GetLastError};\n        unsafe extern \"system\" {\n            // `h` is an opaque kernel HANDLE (never dereferenced in-process);\n            // the kernel validates it and returns FALSE on a bad handle. No\n            // memory-safety preconditions.\n            safe fn TerminateProcess(h: *mut core::ffi::c_void, code: u32) -> i32;\n        }\n        // = 3224497970. Parent\n        // watcher-manager compares the child's exit code against exactly this.\n        const WATCHER_RELOAD_EXIT: u32 = 0xC031_EF32;\n        let rc = TerminateProcess(GetCurrentProcess(), WATCHER_RELOAD_EXIT);\n        if rc == 0 {\n            let err = GetLastError();\n            if may_return {\n                crate::output::err_generic(\"Failed to reload process: {}\", (err,));\n                return;\n            }\n            panic!(\"Error while reloading process: {}\", err);\n        } else {\n            if may_return {\n                crate::output::err_generic(\"Failed to reload process\", ());\n                return;\n            }\n            panic!(\"Unexpected error while reloading process\\n\");\n        }\n    }\n\n    #[cfg(unix)]\n    // SAFETY: FFI calls receive only locally-built NUL-terminated argv/envp arrays; on success\n    // `execve` never returns, on failure errno is read. No borrowed Rust state observed after.\n    unsafe {\n        {\n            unsafe extern \"C\" {\n                safe fn on_before_reload_process_posix();\n            }\n            on_before_reload_process_posix();\n        }\n\n        // We clone argv so that the memory address isn't the same as the libc one.\n        let args = argv_storage();\n        let dupe_argv: Vec<ZBox> = args\n            .iter()\n            .map(|z| ZBox::from_vec_with_nul(z.as_bytes().to_vec()))\n            .collect();\n        let mut newargv: Vec<*const core::ffi::c_char> =\n            dupe_argv.iter().map(|z| z.as_ptr()).collect();\n        newargv.push(core::ptr::null());\n\n        // We clone envp so that the memory address of environment variables isn't\n        // the same as the libc one.\n        let mut dupe_env: Vec<ZBox> = Vec::new();\n        let mut p = c_environ();\n        while !p.is_null() && !(*p).is_null() {\n            let s = crate::ffi::cstr(*p);\n            dupe_env.push(ZBox::from_vec_with_nul(s.to_bytes().to_vec()));\n            p = p.add(1);\n        }\n        let mut envp: Vec<*const core::ffi::c_char> = dupe_env.iter().map(|z| z.as_ptr()).collect();\n        envp.push(core::ptr::null());\n\n        // we must clone selfExePath in case argv[0] was not an absolute path\n        let exec_path = self_exe_path().expect(\"unreachable\").as_ptr();\n\n        libc::execve(exec_path, newargv.as_ptr().cast(), envp.as_ptr().cast());\n        // execve only returns on error.\n        let errno = std::io::Error::last_os_error().raw_os_error().unwrap_or(-1);\n        if may_return {\n            crate::output::pretty_errorln(format_args!(\n                \"error: Failed to reload process: errno {}\",\n                errno\n            ));\n            return;\n        }\n        panic!(\"Unexpected error while reloading: errno {}\", errno);\n    }\n\n    #[cfg(not(any(unix, windows)))]\n    {\n        // Bun only targets POSIX + Windows; any other target\n        // is a build-time error, not a runtime panic.\n        let _ = (clear_terminal, may_return);\n        compile_error!(\"unsupported platform for reload_process\");\n    }\n}\n"
+      }
+    }
+  },
+  "interpretation": "The actual reloaded image retains the same sentinel inode and sets CLOEXEC after exec. The pinned source ignores close_range failure before reload but marks inherited FDs on startup. Native CLOEXEC succeeds and prevents the leak on the Sony API33 kernel5.15 control; its forced-TRAP run fails. No reload syscall trace or blocked/pending-signal-across-exec equivalence is claimed.",
+  "nativeBuildsStarted": 0,
+  "nativePayloadsChanged": false,
+  "runtimes": {
+    "arm64-v8a": {
+      "bytes": 87923328,
+      "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6"
+    },
+    "x86_64": {
+      "bytes": 90449752,
+      "sha256": "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8"
+    }
+  },
+  "nativeEvidenceArchive": {
+    "path": "docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json",
+    "bytes": 18339,
+    "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+  },
+  "compiledInputsPerBatch": 32,
+  "identicalCompiledInputsAcrossThreeBatches": 31,
+  "identicalDeviceFixtureJavaDefinitionsAndBudgets": true,
+  "validatorCorrections": [
+    "Initial host validator accepted pipes only; Bun Android uses socketpairs too. Retain the original validator text and failed records, then build a separate source-bound APK batch.",
+    "The first FD-failure validator required ENOSYS only; native Linux5.10 returns EINVAL for unsupported CLOEXEC flags. Retain that version, add the exact EINVAL shape, and build the separately bound Sony native positive-control batch. Android fixture, Java, all35definitions and budgets are unchanged."
+  ],
+  "builds": [
+    {
+      "batch": "initial",
+      "driver": {
+        "startedAt": "2026-09-13T12:16:45.783062+00:00",
+        "completedAt": "2026-09-13T12:17:04.282388+00:00",
+        "actualExitCode": 0
+      },
+      "receipt": {
+        "bytes": 9637,
+        "sha256": "024e78af36cea3aec1fb4080272265cb9d85189febc24ef7880dc9a95798a717"
+      },
+      "stdout": {
+        "bytes": 195,
+        "sha256": "2b193ecaa0df2b083ce1b108321fc0a0a7e278c3157136553f5ae0e70f3028ed"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apks": [
+        {
+          "abi": "arm64-v8a",
+          "filename": "bun-api28-probe-arm64-v8a.apk",
+          "bytes": 35301211,
+          "sha256": "2cc6c292f08a2709b7e5bf6f780bfefdb0d1683ab64598b0e2b0ab101cead631",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "711075ffd2b817da3d87e5dc87d0a924850313c8f4b80f704a50600f1a1a0534"
+          }
+        },
+        {
+          "abi": "x86_64",
+          "filename": "bun-api28-probe-x86_64.apk",
+          "bytes": 36697941,
+          "sha256": "dab29cd3783bb18bae7db26cd889994b1b63e97466e39b30e99656321191259e",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "711075ffd2b817da3d87e5dc87d0a924850313c8f4b80f704a50600f1a1a0534"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+          "bytes": 914,
+          "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+          "bytes": 28370,
+          "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+          "bytes": 8246,
+          "sha256": "ce6fb946790af7640d830f31e21f1bce2199f0d8d03f1ceb1bee2bcdbec3cbc3"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+          "bytes": 12747,
+          "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+          "bytes": 8188,
+          "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+          "bytes": 4905,
+          "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+          "bytes": 7037,
+          "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+          "bytes": 3798,
+          "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+          "bytes": 10187,
+          "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+          "bytes": 3454,
+          "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+          "bytes": 9927,
+          "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+          "bytes": 3344,
+          "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+          "bytes": 8005,
+          "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+          "bytes": 2821,
+          "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+          "bytes": 10212,
+          "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+          "bytes": 1595,
+          "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+          "bytes": 9491,
+          "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+          "bytes": 3019,
+          "sha256": "db32785064ab4d19a9f25c0e3a70d7714ea0113021d72e4bac6d97a1501b3f1e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+          "bytes": 36965,
+          "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+          "bytes": 9741,
+          "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+          "bytes": 9537,
+          "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+          "bytes": 3727,
+          "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.c",
+          "bytes": 4394,
+          "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+          "bytes": 1018,
+          "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+          "bytes": 2128,
+          "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+          "bytes": 2200,
+          "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+          "bytes": 480,
+          "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/README.md",
+          "bytes": 5511,
+          "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+        },
+        {
+          "path": "tools/bun-runtime/verify-runtime.mjs",
+          "bytes": 19651,
+          "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+        },
+        {
+          "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+          "bytes": 15471,
+          "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+          "bytes": 18339,
+          "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+          "bytes": 42531,
+          "sha256": "0c3b67ec877f26d1b6d0981de63c01d264bc6332495965c55f502a948eef8bdb"
+        }
+      ]
+    },
+    {
+      "batch": "control",
+      "driver": {
+        "startedAt": "2026-09-13T12:23:03.316084+00:00",
+        "completedAt": "2026-09-13T12:23:23.235042+00:00",
+        "actualExitCode": 0
+      },
+      "receipt": {
+        "bytes": 9637,
+        "sha256": "c80953579fd617f0d0b1ae3cd6eaab235461bf8fbba0aeecbcecb9b230a80bf9"
+      },
+      "stdout": {
+        "bytes": 195,
+        "sha256": "6917227fa522813ce01c463ae11f28b2c6ab4e5ad3f7175bc663b473904f41cd"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apks": [
+        {
+          "abi": "arm64-v8a",
+          "filename": "bun-api28-probe-arm64-v8a.apk",
+          "bytes": 35301211,
+          "sha256": "db93193e3c44a00627ee91034fb127ecc3bbb056b774d4a67b85beb814be69bf",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "76e579f76209c779178743d6e6984542ecad160b5c86407ade7ef554928d87ca"
+          }
+        },
+        {
+          "abi": "x86_64",
+          "filename": "bun-api28-probe-x86_64.apk",
+          "bytes": 36697941,
+          "sha256": "009b9d3c181c0b117ded7291cc8946b5784636bfa52b2b392b9039663a59bf17",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "76e579f76209c779178743d6e6984542ecad160b5c86407ade7ef554928d87ca"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+          "bytes": 914,
+          "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+          "bytes": 28370,
+          "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+          "bytes": 8246,
+          "sha256": "ce6fb946790af7640d830f31e21f1bce2199f0d8d03f1ceb1bee2bcdbec3cbc3"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+          "bytes": 12747,
+          "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+          "bytes": 8188,
+          "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+          "bytes": 4905,
+          "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+          "bytes": 7037,
+          "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+          "bytes": 3798,
+          "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+          "bytes": 10187,
+          "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+          "bytes": 3454,
+          "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+          "bytes": 9927,
+          "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+          "bytes": 3344,
+          "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+          "bytes": 8005,
+          "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+          "bytes": 2821,
+          "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+          "bytes": 10212,
+          "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+          "bytes": 1595,
+          "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+          "bytes": 9491,
+          "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+          "bytes": 3911,
+          "sha256": "46f82a3fba1ca6f1890c7853fae266ee8abdf34c568fd5bc54cef60a112dcbde"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+          "bytes": 36965,
+          "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+          "bytes": 9741,
+          "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+          "bytes": 9537,
+          "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+          "bytes": 3727,
+          "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.c",
+          "bytes": 4394,
+          "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+          "bytes": 1018,
+          "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+          "bytes": 2128,
+          "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+          "bytes": 2200,
+          "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+          "bytes": 480,
+          "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/README.md",
+          "bytes": 5511,
+          "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+        },
+        {
+          "path": "tools/bun-runtime/verify-runtime.mjs",
+          "bytes": 19651,
+          "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+        },
+        {
+          "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+          "bytes": 15471,
+          "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+          "bytes": 18339,
+          "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+          "bytes": 42531,
+          "sha256": "0c3b67ec877f26d1b6d0981de63c01d264bc6332495965c55f502a948eef8bdb"
+        }
+      ]
+    },
+    {
+      "batch": "positive",
+      "driver": {
+        "startedAt": "2026-09-13T12:25:24.820389+00:00",
+        "completedAt": "2026-09-13T12:25:43.090243+00:00",
+        "actualExitCode": 0
+      },
+      "receipt": {
+        "bytes": 9637,
+        "sha256": "8373d9e9b8cea427e07023df4c7b088ba0c2e82b636da8b3ffddbccd3e6cc120"
+      },
+      "stdout": {
+        "bytes": 195,
+        "sha256": "c9804109cac70992c3fa8b84fb5e174c160afd6684e34ca1d5b4f4faa7a2018d"
+      },
+      "stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "apks": [
+        {
+          "abi": "arm64-v8a",
+          "filename": "bun-api28-probe-arm64-v8a.apk",
+          "bytes": 35301211,
+          "sha256": "93b5d43cb2ed0725c97743b715ec066b613b891d4f227fd26060397df8bd0dde",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "8933a9d837a19b974d26687798798dbf61c0b963222ea4aa383d72d10a5f782b"
+          }
+        },
+        {
+          "abi": "x86_64",
+          "filename": "bun-api28-probe-x86_64.apk",
+          "bytes": 36697941,
+          "sha256": "91fa8c224943d616daf0359fcf3869bdc69217d83858a13b2509da34a2373bbd",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "8933a9d837a19b974d26687798798dbf61c0b963222ea4aa383d72d10a5f782b"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+          "bytes": 914,
+          "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+          "bytes": 28370,
+          "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+          "bytes": 8246,
+          "sha256": "ce6fb946790af7640d830f31e21f1bce2199f0d8d03f1ceb1bee2bcdbec3cbc3"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+          "bytes": 12747,
+          "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+          "bytes": 8188,
+          "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+          "bytes": 4905,
+          "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+          "bytes": 7037,
+          "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+          "bytes": 3798,
+          "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+          "bytes": 10187,
+          "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+          "bytes": 3454,
+          "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+          "bytes": 9927,
+          "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+          "bytes": 3344,
+          "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+          "bytes": 8005,
+          "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+          "bytes": 2821,
+          "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+          "bytes": 10212,
+          "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+          "bytes": 1595,
+          "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+          "bytes": 9491,
+          "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+          "bytes": 3998,
+          "sha256": "b8240576d5d9a31feada09ff074121eff9d480488888655d8a3dea437338db2f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+          "bytes": 36965,
+          "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+          "bytes": 9741,
+          "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+          "bytes": 9537,
+          "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+          "bytes": 3727,
+          "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.c",
+          "bytes": 4394,
+          "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+          "bytes": 1018,
+          "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+          "bytes": 2128,
+          "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+          "bytes": 2200,
+          "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+          "bytes": 480,
+          "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/README.md",
+          "bytes": 5511,
+          "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+        },
+        {
+          "path": "tools/bun-runtime/verify-runtime.mjs",
+          "bytes": 19651,
+          "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+        },
+        {
+          "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+          "bytes": 15471,
+          "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+          "bytes": 18339,
+          "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+          "bytes": 42531,
+          "sha256": "0c3b67ec877f26d1b6d0981de63c01d264bc6332495965c55f502a948eef8bdb"
+        }
+      ]
+    }
+  ],
+  "devices": [
+    {
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "apiLevel": 28,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "4.4.148-perf+",
+        "pageSizeBytes": 4096,
+        "uid": 10768,
+        "selinuxContext": "u:r:untrusted_app:s0:c0,c259,c512,c768",
+        "seccomp": 2
+      },
+      "driver": {
+        "startedAt": "2026-09-13T12:17:04.284036+00:00",
+        "completedAt": "2026-09-13T12:17:35.379408+00:00",
+        "actualExitCode": 1
+      },
+      "stdout": {
+        "bytes": 141,
+        "sha256": "3cdb1394ab107daf2b61f3ac52d04db0f5693932d0fd43015a46149b2a9caddb"
+      },
+      "stderr": {
+        "bytes": 197,
+        "sha256": "f5303a525c8e7c79a466eaa279f39ae58d02d8a71e0d27259ef7653900807ba2"
+      },
+      "rounds": [
+        {
+          "passed": 33,
+          "total": 35
+        },
+        {
+          "passed": 33,
+          "total": 35
+        }
+      ],
+      "cleanup": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "rounds": [
+          {
+            "round": 1,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          }
+        ],
+        "uninstalled": true,
+        "installedUid": 10768,
+        "finalUidProcessCount": 0
+      }
+    },
+    {
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "apiLevel": 33,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "pageSizeBytes": 4096,
+        "uid": 10531,
+        "selinuxContext": "u:r:untrusted_app:s0:c19,c258,c512,c768",
+        "seccomp": 2
+      },
+      "driver": {
+        "startedAt": "2026-09-13T12:17:35.381876+00:00",
+        "completedAt": "2026-09-13T12:18:07.855136+00:00",
+        "actualExitCode": 1
+      },
+      "stdout": {
+        "bytes": 141,
+        "sha256": "1e0b285a9ee2ce34b8d393cef2826b58b0016d3d7ad935aab7d52df9388e61cc"
+      },
+      "stderr": {
+        "bytes": 198,
+        "sha256": "b3032aa7a2a9573586e03eb8a60c7b26e93415633065c5246b3e531d03905689"
+      },
+      "rounds": [
+        {
+          "passed": 33,
+          "total": 35
+        },
+        {
+          "passed": 33,
+          "total": 35
+        }
+      ],
+      "cleanup": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "rounds": [
+          {
+            "round": 1,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          }
+        ],
+        "uninstalled": true,
+        "installedUid": 10531,
+        "finalUidProcessCount": 0
+      }
+    },
+    {
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "apiLevel": 35,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "pageSizeBytes": 4096,
+        "uid": 11033,
+        "selinuxContext": "u:r:untrusted_app:s0:c9,c260,c512,c768",
+        "seccomp": 2
+      },
+      "driver": {
+        "startedAt": "2026-09-13T12:23:23.235756+00:00",
+        "completedAt": "2026-09-13T12:23:48.465255+00:00",
+        "actualExitCode": 1
+      },
+      "stdout": {
+        "bytes": 141,
+        "sha256": "bc554f95a61879dbfa13510f51083604389b7e3a5557cdc45cb19493aa8a25f4"
+      },
+      "stderr": {
+        "bytes": 199,
+        "sha256": "73fd4748a46dcf9aff1f089f7518d43aaadda1b4fa9fc56342714dcdfd351a18"
+      },
+      "rounds": [
+        {
+          "passed": 33,
+          "total": 35
+        },
+        {
+          "passed": 33,
+          "total": 35
+        }
+      ],
+      "cleanup": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "rounds": [
+          {
+            "round": 1,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          }
+        ],
+        "uninstalled": true,
+        "installedUid": 11033,
+        "finalUidProcessCount": 0
+      }
+    },
+    {
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "apiLevel": 33,
+        "abi": "arm64-v8a",
+        "kernelMachine": "aarch64",
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "pageSizeBytes": 4096,
+        "uid": 10654,
+        "selinuxContext": "u:r:untrusted_app:s0:c142,c258,c512,c768",
+        "seccomp": 2
+      },
+      "driver": {
+        "startedAt": "2026-09-13T12:25:43.091071+00:00",
+        "completedAt": "2026-09-13T12:26:07.949099+00:00",
+        "actualExitCode": 1
+      },
+      "stdout": {
+        "bytes": 141,
+        "sha256": "ecb84d95dc3ef148007747701529c504a6488accc73f8a621a9395d0eeeb76b0"
+      },
+      "stderr": {
+        "bytes": 194,
+        "sha256": "b5e7e85dd50b171eaf40ba7978f466efa92e8cec4232a8c013892adac743710d"
+      },
+      "rounds": [
+        {
+          "passed": 34,
+          "total": 35
+        },
+        {
+          "passed": 34,
+          "total": 35
+        }
+      ],
+      "cleanup": {
+        "installedByThisRun": true,
+        "forceStopVerified": true,
+        "rounds": [
+          {
+            "round": 1,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "packageProcessAbsent": true,
+            "uidProcessCount": 0
+          }
+        ],
+        "uninstalled": true,
+        "installedUid": 10654,
+        "finalUidProcessCount": 0
+      }
+    }
+  ],
+  "observations": {
+    "original33Passed": 264,
+    "watchModes": 16,
+    "watchModesPassed": 2,
+    "watchModesFailed": 14,
+    "actualReloads": 32,
+    "watchedImages": 48,
+    "leakedSentinelObservations": 28,
+    "explicitCloexecSentinelSurvivors": 0,
+    "ordinarySigsysDeliveries": 48,
+    "ownedWatchedChildrenReaped": 16,
+    "originalForcibleLifecycleCases": 24,
+    "terminationToExitMillis": {
+      "minimum": 301,
+      "maximum": 308
+    }
+  },
+  "cleanup": {
+    "allFourPackagesRemoved": true,
+    "allFourCapturedUidsEmpty": true,
+    "avdOperations": [],
+    "privateAdbServersStarted": 0
+  },
+  "preservedHistoricalReports": 90,
+  "openGates": [
+    "native reload FD fallback repair and new-source rebuild/regression",
+    "blocked or pending signals across reload",
+    "IPC FD preservation and concurrent FD races",
+    "Android FD70000 and CLOSE_RANGE_UNSHARE",
+    "new watch fixture x86_64 and native ARM64 16KiB",
+    "broader syscall/API/FD/OEM/pressure and signed Release"
+  ]
+}

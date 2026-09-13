@@ -3,12 +3,13 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { ASYNC_SIGNAL_MODES, validateAsyncSignalEvidence } from "./async-signal-evidence.mjs";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
+import { WATCH_RELOAD_MODES } from "./watch-reload-evidence.mjs";
 import { asyncSignalFixture } from "./async-signal-fixture.test-support.mjs";
 import { materializeAsyncSignalSource, materializeProbes, validateProbes, inputFacts, hash } from "./probe-common.mjs";
 
 const probes = JSON.parse(readFileSync(new URL("probes.json", import.meta.url), "utf8"));
 test("async fixtures preserve the original 29 definitions and fixed source-only bindings", () => {
-  const original = probes.filter(p => !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id) && !Object.hasOwn(PENDING_SIGNAL_MODES, p.id))
+  const original = probes.filter(p => !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id) && !Object.hasOwn(PENDING_SIGNAL_MODES, p.id) && !Object.hasOwn(WATCH_RELOAD_MODES, p.id))
     .map(p => p.id === "revision" ? { ...p, stdout: "1.4.0+7b9ac2668" } : p);
   assert.equal(original.length, 29);
   assert.equal(hash(JSON.stringify(original)), "3c1d33410d09c6ca15ba01f01cc43734275511b5078713cf7723c37ea1faee3f");

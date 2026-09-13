@@ -1,15 +1,18 @@
 // Failure evidence only. Never manufacture a passing full-suite record.
 import assert from "node:assert/strict";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
-import { hash, validateProbes, validateReport } from "./probe-common.mjs";
+import { hash, validateReport } from "./probe-common.mjs";
 import { environmentKey } from "./archive-probe.mjs";
 import { hardLimitFilterSha256 } from "./hard-limit-evidence.mjs";
 import { readFileSync } from "node:fs";
 
 // Fixed eleven-patch failed APK receipt; historical ten-patch evidence stays separate.
 const BUILD_SHA256 = "0f580bd74a96e8b32cef3a2e14f4ce72e9213c262873caf3e7cf4475e91b21e0";
-const prior = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json", import.meta.url), "utf8"));
-const probes = validateProbes(prior.probes.map(p => p.id === "revision" ? { ...p, stdout: "1.4.0+946f082ab" } : p));
+const priorText = readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json", import.meta.url), "utf8").replace(/\r\n/g, "\n");
+assert.equal(hash(Buffer.from(priorText)), "560a11991a039a50c1970557c990871dcf530ad6ef99b9c7f03bca6b98e602a4", "historical pending failure archive drifted");
+const prior = JSON.parse(priorText);
+const probes = prior.probes.map(p => p.id === "revision" ? { ...p, stdout: "1.4.0+946f082ab" } : p);
+assert.equal(probes.length, 33, "fixed historical inventory, separate from the expanded live suite");
 const ids = Object.keys(PENDING_SIGNAL_MODES);
 export function validatePendingWaitFailureProof(proof, mode, abi, uid) {
   assert.equal(proof.schemaVersion, 1); assert.equal(proof.mode, mode); assert.equal(proof.passed, false);

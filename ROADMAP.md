@@ -4,6 +4,16 @@
 
 更新日期: 2026-09-13
 
+当前新增 M3 watch/reload 阻断已完成复现与归档, native 尚未修复. 原 33 项保留,
+新增 native/TRAP 两模式形成 35 项套件. 四个 ARM64 / 4 KiB 真机环境各两轮,
+原 33 项通过 264/264, 新模式 2/16 通过、14/16 失败, 全体 266/280.
+32 次实际重载中有 28 次 FD256 泄漏; Sony API33 / kernel5.15 的原生控制通过,
+同设备强制 TRAP 失败. 每次 SIGSYS/stdio 对照正常, 显式 CLOEXEC FD257 均关闭.
+三个 APK 批次和先期校验器修正独立绑定, 四包/四 UID 已清理, 无 native build 或 AVD 操作.
+优先补齐重载前 CLOEXEC 的后备处理及错误传播, 再做新源码构建和固定夹具回归.
+见 [失败与源码定位](docs/compatibility/2026-09-13-m3-watch-reload.md). 既有 baseline
+462/462 probes、112/112 Binder 及独立 JSC 结果不改写, distributionReady=false.
+
 最新十二补丁三星 API 32 门禁也已完成: SM-F936U / native ARM64 / 4 KiB,
 两轮原 33 项 66/66, 完整八项 Binder 16/16, 无测试失败或重试. 与上一台三星 API 36
 使用完全相同的三个 APK, 四十个 pending 保持检查点与十二个 child 观测通过.
@@ -52,7 +62,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十二补丁原 33 项与八项 Binder 七环境已过 462/462, 112/112, 含三星 ARM64 API 32 与硬件 16 KiB; 原套件的两项三星门禁已补齐; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | 新 watch/reload FD 门禁失败14/16, 已定位未修复, 优先于继续扩展覆盖; 十二补丁原 33 项与八项 Binder 七环境已过 462/462, 112/112, 含三星 ARM64 API 32 与硬件 16 KiB; 原套件的两项三星门禁已补齐; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -237,6 +247,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 **边界:** 所有兼容声明先标为实验性, 并继续限定 64 位 ABI 与 `run --no-install` 单源码能力.
 
 ### M3-A: seccomp 与 syscall fallback
+
+- [x] (测试) 新增两个有界 watch/reload 模式并完成四个 ARM64 / 4 KiB 真机环境的故障复现和同设备正向对照. 原 33 项 264/264; 新模式2/16, 14个失败模式产生28次 FD256 泄漏. 原生可用的 Sony5.15 模式两轮通过, 相同设备 TRAP 两轮失败. 原生字节、旧定义及预算不变, 所有包/UID已清理. 2026-09-13 G2 故障证据, [报告](docs/compatibility/2026-09-13-m3-watch-reload.md); 不代表门禁通过.
+- [ ] (上游/测试) 修复 `on_before_reload_process_posix` 忽略 `close_range(CLOEXEC)` 失败的路径, 在 exec 前完成 FD 标记并传播不完整清理错误, 保留 stdio/IPC 和已有信号语义. 固定35项和原33项不得放宽; 修复需独立构建及新源码设备证据. blocked/pending 跨reload、并发FD、FD70000、UNSHARE和大页另行验证.
 
 - [x] (构建/测试/设备) 新增独立 test-only APK 工具 [app-probe](tools/bun-runtime/experimental/api28/app-probe/README.md), 不注册为 AutoJs6 插件、不使用正式签名或替换官方 payload. 输入两轮锁定 ELF, 输出双 ABI 单包, 核验真实 Manifest、APK 签名、16 KB ZIP 对齐及精确 payload. Sony G8441 API 28、Sony XQ-AT72 API 31、Redmi 22120RN86C API 33、Xiaomi 23046RP50C API 35 均在原生 arm64 / 4096-byte 页、普通应用 UID、untrusted_app、seccomp=2 下从只读 nativeLibraryDir 执行. (2026-09-08, G1/G2)
 - [x] (设备) 上述四台真机各运行两轮: version/revision、子进程应用域、JS/TS/Unicode/stdout+stderr、spawn/spawnSync、文件 I/O、loopback fetch、普通用户 SIGSYS 与终止后新执行这 10 项通过. 每轮 12 项中强制终止的 2 项失败, 总体结果明确为 failed; force-stop 与探针卸载后已确认无探针 UID 残留进程. 完整证据见 [M3 应用进程报告](docs/compatibility/2026-09-08-m3-application-probe.json). (2026-09-08, G2, 不是完整 Binder 通过)

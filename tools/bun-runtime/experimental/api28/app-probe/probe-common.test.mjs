@@ -19,33 +19,53 @@ import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
 import { asyncSignalResult } from "./async-signal-fixture.test-support.mjs";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
 import { pendingSignalResult } from "./pending-signal-fixture.test-support.mjs";
+import { WATCH_RELOAD_MODES } from "./watch-reload-evidence.mjs";
+import { watchReloadResult } from "./watch-reload-fixture.test-support.mjs";
+const withoutWatch = rows => rows.filter(p => !Object.hasOwn(WATCH_RELOAD_MODES, p.id));
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 
-test("pending-mask repair preserves all 33 definitions and the fifteen existing fixture inputs", () => {
+test("watch expansion preserves all 33 definitions and fourteen unchanged fixture inputs", () => {
   const archived = json(join(ROOT, "docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json"));
   const oldRevision = archived.probes.find(probe => probe.id === "revision").stdout;
-  assert.deepEqual(probes.map(probe => probe.id === "revision" ? { ...probe, stdout: oldRevision } : probe), archived.probes);
-  const names = ["ProbeInstrumentation.java", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs",
+  assert.deepEqual(withoutWatch(probes).map(probe => probe.id === "revision" ? { ...probe, stdout: oldRevision } : probe), archived.probes);
+  const names = ["fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs",
     "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs",
     "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "async-signal-probes.mjs", "async-signal-evidence.mjs",
     "pending-signal-probes.mjs", "pending-signal-evidence.mjs"];
   const paths = [...names.map(name => "tools/bun-runtime/experimental/api28/app-probe/" + name), SHARED_PROCESS];
   const current = new Map(inputFacts().map(input => [input.path, input]));
-  assert.equal(paths.length, 15);
+  assert.equal(paths.length, 14);
   for (const path of paths) {
     assert.deepEqual(current.get(path), archived.inputs.find(input => input.path === path), path + " must not drift");
   }
-  // Keep the old inline FD semantic validator and all runner budgets intact too.
-  const common = "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs";
-  assert.deepEqual(current.get(common), archived.inputs.find(input => input.path === common));
+  // The old inline FD semantic validator stays byte-identical. New Java asset
+  // bindings receive a new APK receipt; old acceptance is never relabeled.
+  const common = readFileSync(join(HERE, "probe-common.mjs"), "utf8").replace(/\r\n/g, "\n");
+  const oldFdValidator = common.split("export function validateFdEvidence(")[1].split("export function validateReceipt(")[0];
+  assert.equal(hash(oldFdValidator), "e65e5a6b207192a9eeca34cf811faffe672c5aaeaf63bab71593c598dd7eedc9");
+});
+
+test("the Java watch extension preserves every byte of the original harness around its fixed bindings", () => {
+  const archived = json(join(ROOT, "docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json"));
+  const path = "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java";
+  let source = readFileSync(join(ROOT,path), "utf8").replace(/\r\n/g, "\n");
+  const branches = source.match(/^                } else if \(watchReload\) \{[\s\S]*?(?=^                } else if \(pendingSignal\))/gm);
+  assert.equal(branches?.length, 1);
+  source = source.replace(branches[0], "");
+  for (const extension of ['        boolean watchReload = id.startsWith("watch-reload-");\n',
+    ' || sourceFile.equals("watch-reload-probes.mjs")',
+    ': watchReload ? "WATCH_RELOAD_RESULT=" ', ': watchReload ? "watchReloadEvidence" ']) {
+    assert.equal(source.split(extension).length, 2); source = source.replace(extension, "");
+  }
+  assert.deepEqual({ path, bytes: Buffer.byteLength(source), sha256: hash(source) }, archived.inputs.find(input => input.path === path));
 });
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
 const ninePatchRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+7b9ac2668"} : p);
-const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id) && !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
+const withoutHardLimits = rows => withoutWatch(rows).filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id) && !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
 const withoutLchmod = rows => withoutHardLimits(rows).filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
@@ -110,6 +130,7 @@ function fixture() {
       ...(probe.sourceFile === "hard-limit-probes.mjs" ? hardLimitResult(probe.mode) : {}),
       ...(probe.sourceFile === "async-signal-probes.mjs" ? asyncSignalResult(probe.mode) : {}),
       ...(probe.sourceFile === "pending-signal-probes.mjs" ? pendingSignalResult(probe.mode) : {}),
+      ...(probe.sourceFile === "watch-reload-probes.mjs" ? watchReloadResult(probe.mode) : {}),
     })),
   } };
 }
@@ -117,7 +138,7 @@ function fixture() {
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
 test("the expanded suite keeps the historical pidfd repair definitions and native fixtures", () => {
   const historical = json(join(ROOT, "docs/compatibility/2026-09-13-m3-blocked-async-passing.json"));
-  const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
+  const original = withoutWatch(probes).filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
   assert.equal(original.length, 31);
   assert.deepEqual(ninePatchRevision(original), historical.probes);
   // Java gains fixed asset/record bindings; the 11 old native fixtures and
@@ -212,6 +233,8 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       assert(Buffer.byteLength(source) <= 12288);
     } else if (probe.sourceFile === "async-signal-probes.mjs") {
       assert.deepEqual(actual, {...probe, sourceAsset: "async-signal-" + probe.mode + ".mjs"});
+    } else if (probe.sourceFile === "watch-reload-probes.mjs") {
+      assert.deepEqual(actual, {...probe, sourceAsset: "watch-reload-" + probe.mode + ".mjs"});
     } else if (probe.sourceFile === "pending-signal-probes.mjs") {
       assert.deepEqual(actual, {...probe, sourceAsset: "pending-signal-" + probe.mode + ".mjs"});
     } else assert.deepEqual(actual, probe);
@@ -225,6 +248,18 @@ test("pending-signal records must match stdout, all child checks and independent
     r => { r.probes[30].stdout = "PENDING_SIGNAL_RESULT={}"; }, r => { r.probes[30].stdout += r.probes[30].stdout; },
     r => { r.probes[0].pendingSignalEvidence = r.probes[30].pendingSignalEvidence; },
     r => { r.probes[30].pendingSignalEvidence.pending.checks[9][1] = 1; }]) {
+    const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
+  }
+});
+
+test("watch records must bind exact output, Java UID, FD controls and both reload transitions", () => {
+  for (const change of [r => { delete r.probes[32].watchReloadEvidence; },
+    r => { r.probes[32].watchReloadEvidence.uid++; },
+    r => { r.probes[32].stdout = "WATCH_RELOAD_RESULT={}"; },
+    r => { r.probes[32].stdout += r.probes[32].stdout; },
+    r => { r.probes[0].watchReloadEvidence = r.probes[32].watchReloadEvidence; },
+    r => { r.probes[32].watchReloadEvidence.rows[1].inherited = [1,true,-1]; },
+    r => { r.probes[32].watchReloadEvidence.rows.pop(); }]) {
     const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
   }
 });
@@ -298,7 +333,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 33);
+    assert.equal(report.probes.length, 35);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);
