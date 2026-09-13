@@ -1104,6 +1104,23 @@
       "summary": null
     },
     {
+      "file": "2026-09-13-m2-pending-wait-runtime-evidence.json",
+      "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f",
+      "schema": 3,
+      "kind": null,
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M2 十二补丁独立构建证据",
+      "note": "保留两次实际 driver exit 0、独立干净源码、完整日志与四份 ELF 绑定; 只索引构建证据, 不增加设备通过数.",
+      "bytesUtf8Lf": 18339,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": null,
+      "summary": null
+    },
+    {
       "file": "2026-09-13-m3-blocked-async-api28-failure.json",
       "sha256": "aaee10915208b6448ecb976318c2d8a702004c2763f1868ad0280d0f1b126dbc",
       "schema": 1,

@@ -1,3 +1,32 @@
+# 会话交接: 第十二补丁独立构建完成, 新设备门禁待运行
+
+2026-09-13 (Asia/Shanghai). 从干净 master `86200f1` 继续.
+完整阅读 `AGENTS.md`、本文件与 `E:/.codex-tmp/pending-wait-fix-20260913/SESSION_HANDOFF.local.md`.
+本机 `AFTER_BUILDS.md` 的构建收集/晋升步骤已经完成, 不要重复执行或重启 native 构建.
+
+- 新 head `06e518f73b4fccc6c3ffb17412ea166bf886bed0`, tree `1eb8d5ea945001f018bdf14bd00c261d40b02573`.
+- Patch 12 只修改 epoll_kqueue.c: Android wait 使用 NULL mask, 调用点维持已有 epoll_pwait2 禁用.
+  不清 pending、不临时放开 SIGSYS、不预热 waiter; 非 Android 策略和 timeout/EINTR 不变.
+- GCC 13/Clang 21 各 45 次有界执行通过; 十二补丁完整重放、五补丁 prefix 等价和 28 blobs 通过.
+- 全量 Node 229/229、Python 38/38、Markdown 10 语言/36 产物和 matrix 74 报告/168 行通过.
+  production 四项 Gradle 验证实际 exit 0; IDE 工具 timeout 原样保留, 对应后台命令成功另记.
+- **两份全新 native 构建已结束, 不重复启动.** 本机 driver-run-1/2.json 均为 actual exit 0;
+  clean head/tree、16 配方、完整日志和最终 Ninja 边已核对. 两个 ABI 各两份成品一致, 四份 ELF 通过.
+  新导出位于 WSL `pending-wait-evidence/run-{1,2}`, current runtime-evidence 和 source binding 已晋升.
+  原上游 WebKit/JSC/ICU 复用, 没有新库构建. runtimeProduced=true/distributionReady=false.
+- 新设备门禁仍待运行, 不转移旧源码通过或失败数. 本轮尚无 APK/设备操作或 owned AVD.
+  完成源码/构建提交后运行本机 build-device-apks.py probe/binder, 然后 run-device.py.
+  Sony API 28/31 优先, 全部 33 定义、15 源输入、完整 validator/预算和八项 Binder 保持原样.
+- 三星当前无等待窗口; APK 就绪后按 SM-F936U API 32/4 KiB 与 SM-A566B API 36/native 16 KiB
+  请求新 10 分钟 localhost:50781 接入, 同时继续本地独立工作. 所有事实仍需现场测量.
+- 只读库存中其他任务的 emulator-5568 后来不再在线; 本轮未控制它, 不推断消失原因.
+  本轮未 push、Release、委派 agent、读取签名秘密或修复缓存.
+
+[修复报告](compatibility/2026-09-13-m3-pending-wait-fix.md) 与
+[新构建证据](compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json). 后续设备状态须更新本节和本机记录.
+
+## 此前完成的十一补丁构建与 wait 阻断
+
 # 会话交接: 十一补丁独立构建完成, 新 epoll wait 阻断已复现并动态定位
 
 更新: 2026-09-13 (Asia/Shanghai). 从干净 `86b18b5` 继续.

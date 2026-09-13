@@ -503,7 +503,7 @@ export function verifyRuntimeEvidenceManifest(evidence) {
   require(evidence.identity?.officialArtifact === false, "experimental runtime cannot be an official artifact");
   require(evidence.identity?.distributionReady === false, "experimental runtime cannot be distribution-ready");
   require(evidence.source?.upstreamCommit === "34cbb9a40b4bd1bd767d134a7065e66c2432a676", "runtime evidence upstream commit drifted");
-  require(evidence.source?.downstreamHeadCommit === "946f082ab8ede2b7cbd6ba9fddb90463a94f0330", "runtime evidence downstream commit drifted");
+  require(evidence.source?.downstreamHeadCommit === "06e518f73b4fccc6c3ffb17412ea166bf886bed0", "runtime evidence downstream commit drifted");
   require(evidence.build?.hostImageManifestDigest === "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa", "runtime evidence host image drifted");
   require(evidence.build?.hostImageConfigDigest === "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b", "runtime evidence host config drifted");
   require(evidence.build?.entry === "run-locked-build.mjs", "runtime evidence build entry drifted");
@@ -606,7 +606,7 @@ function verifyCapturedBuildCompletion(evidence) {
   for (const [index, run] of completion.runs.entries()) {
     require(run.run === index + 1 && run.exitCode === 0, "captured run order or driver exit drifted");
     require(run.head === evidence.source.downstreamHeadCommit && run.headAfter === run.head, "driver source head drifted");
-    require(run.tree === "73476190d9341d338a96c8a9793db947ea415d15" && run.treeAfter === run.tree, "driver source tree drifted");
+    require(run.tree === "1eb8d5ea945001f018bdf14bd00c261d40b02573" && run.treeAfter === run.tree, "driver source tree drifted");
     require(run.freshCheckout === true && run.cleanBefore === true && run.cleanAfter === true && run.recipesUnchanged === true, "driver source/recipe cleanliness missing");
     require(run.entry === "run-locked-build.mjs" && run.execute === true && run.abi === "all", "full dual-ABI driver invocation required");
     const start = Date.parse(run.buildStartedAt), end = Date.parse(run.buildFinishedAt);
