@@ -1,0 +1,3193 @@
+{
+  "schemaVersion": 1,
+  "archivedAt": "2026-09-13T16:20:16.260Z",
+  "kind": "jsc16k-experimental-plugin-binder",
+  "projectBaseCommit": "ba5418e87ec3bcc3259b336e00ef1d2112a3bde2",
+  "passed": true,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+  "sourceBinding": "Each retained APK embeds the exact build-input receipt shown below; later documentation-only builds are not substituted for these tested bytes.",
+  "officialMinimumApi": 33,
+  "officialBunAndSupervisorUnchanged": true,
+  "tests": [
+    "installedNativeRuntimeMatchesTheLockedPayload",
+    "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+    "checkedInSamplesExecuteWithinPublishedBoundaries",
+    "sigtermIgnoringTimeoutReapsTheChild",
+    "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+    "sigtermIgnoringOutputLimitReapsTheChild",
+    "timeoutCancellationAndInvalidRequestAreBounded",
+    "manifestPublishesWakeInfoAndRuntimeContracts"
+  ],
+  "summary": {
+    "environments": 2,
+    "rounds": 4,
+    "passedTests": 32,
+    "totalTests": 32,
+    "lifecycleObservations": 20
+  },
+  "validation": [
+    {
+      "path": "tools/bun-runtime/experimental/api28/binder/binder-common.mjs",
+      "bytes": 6732,
+      "sha256": "06112224e4b66f105a6fd9f158de7194d011f2699a474fde89e620f78d85ece9"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/binder/run-binder.mjs",
+      "bytes": 13242,
+      "sha256": "ce73fa76d564df6549ce08e64197dee10e74f560a0491359f58ae81354aacc13"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/binder/archive-binder.mjs",
+      "bytes": 3564,
+      "sha256": "c7fdadee49a63150a6d9b30d66d48e9b345b646be84269d21f6017f908f44856"
+    }
+  ],
+  "reports": [
+    {
+      "inputReport": {
+        "bytes": 82460,
+        "sha256": "99c8c000bad38756a27d8d2b7e0c6fa21e5ac5f8929aa1c2d084d3b1076f0145"
+      },
+      "schemaVersion": 1,
+      "kind": "experimental-plugin-binder",
+      "capturedAt": "2026-09-13T16:10:42.238Z",
+      "serial": "emulator-5580",
+      "expected": {
+        "abi": "x86_64",
+        "api": 36,
+        "pages": 4096
+      },
+      "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k",
+      "runtime": {
+        "status": "reproducible-static-audit-complete",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "officialArtifact": false,
+        "distributionReady": false
+      },
+      "apk": {
+        "bytes": 42944605,
+        "sha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8"
+      },
+      "testApk": {
+        "bytes": 2387553,
+        "sha256": "b56653582a826dad4e13c3f5c4232b5c41accec7139fd29ba321d3d90226f9b8"
+      },
+      "build": {
+        "schemaVersion": 1,
+        "inputEncoding": "git-canonical-utf8-lf",
+        "inputs": [
+          {
+            "path": "app/build.gradle.kts",
+            "bytes": 12196,
+            "sha256": "6648b7ce64f7a2d26a955a3fa603d521ead409d748e5804b5c4a67db38b4a045"
+          },
+          {
+            "path": "app/src/androidTest/AndroidManifest.xml",
+            "bytes": 735,
+            "sha256": "f261fa80facc6514dd38714961636d54edb45a7cd7014c97de3e96085e027eeb"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt",
+            "bytes": 37143,
+            "sha256": "a491a65c9f7a09842424d6ff4f728c19dc3a2dc2b6a6eeac1e7ff10ee04e88de"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessagesInstrumentedTest.kt",
+            "bytes": 13471,
+            "sha256": "e7b98fbedcba8805e618becf1e2b35400817eb17b695e86a042fb9ccf3a6aab9"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbeInstrumentedTest.kt",
+            "bytes": 6867,
+            "sha256": "a4384f859e8a54f1fd7654693f877523e35622e323de2e753b92649c37e75189"
+          },
+          {
+            "path": "app/src/main/AndroidManifest.xml",
+            "bytes": 2134,
+            "sha256": "434ddeaba75404b657ac4924e4af5ab412277ac57cd41c76be168d43d33a7027"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ar.md",
+            "bytes": 41544,
+            "sha256": "8533a846cb9ca0233fb1731b3904b3cbdf40b645f6e97af88fd505a00074f835"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-en.md",
+            "bytes": 28095,
+            "sha256": "3292336d35969383de265b6cde28ba797feae2734c26ea6b96800868095beb29"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-es.md",
+            "bytes": 31326,
+            "sha256": "869a753d531916a0d5390e845858a7471268ce954e85a2cc716ca332111a31f0"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-fr.md",
+            "bytes": 32590,
+            "sha256": "3a57be73db76a743fbba141d72dbe5e20f50e68f4c04dc5d0e005fe6d05893ee"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ja.md",
+            "bytes": 32518,
+            "sha256": "5ed74cb724817b848d7e558576ff47f3c763e5c7c42b06f3190488060410dc72"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ko.md",
+            "bytes": 30835,
+            "sha256": "d15471eaee909f74d1daa3623ad0620c5631eaa8ee1f85c7fe2b84d7d392d4fe"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ru.md",
+            "bytes": 50487,
+            "sha256": "084f517a6ae3b86621e695335bb50c752ef46a4408caafbe8f57b8db57d9f741"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hans.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-HK.md",
+            "bytes": 24638,
+            "sha256": "132dc110d5c73799534fa4a49779af31f3e9d4083083eec6a05ce22f01026378"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-TW.md",
+            "bytes": 24818,
+            "sha256": "0bd1f47025d196e9ef7ff1f480bba2c81ed97bff822e474aa94b6b1676abd401"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-rHK.md",
+            "bytes": 24638,
+            "sha256": "132dc110d5c73799534fa4a49779af31f3e9d4083083eec6a05ce22f01026378"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-rTW.md",
+            "bytes": 24818,
+            "sha256": "0bd1f47025d196e9ef7ff1f480bba2c81ed97bff822e474aa94b6b1676abd401"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/BUN-LICENSE.md",
+            "bytes": 5614,
+            "sha256": "51402e15bdab948668eb5bcca05c096bc8c47beaf96f0db4b41777faf546ba4f"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
+            "bytes": 25585,
+            "sha256": "2f4345f29dc139686637dac2ca7f92d47dc36da2ce19a681314d9dd8026be649"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-APPLE",
+            "bytes": 1314,
+            "sha256": "f306398704cb2a73bc038b1be2845640d05037e0aaa03fba8fdcde8b5ac7ceb2"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2",
+            "bytes": 25379,
+            "sha256": "40a06e4454e7b332faf03b0ffb214bd8cb1a273b41290d87742c7ef93d3614e1"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2.1",
+            "bytes": 26537,
+            "sha256": "c058901ca17b2c0977e31919e016b838a2d546169cfdaea468a1bf877d8d712f"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt",
+            "bytes": 4753,
+            "sha256": "b81afdf5a2687fc30a9fcdc70256bd7a8f8240718731d7bb4789e5fb13f19b8e"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginInfoService.kt",
+            "bytes": 774,
+            "sha256": "5778e3ba2ab3c0c18a3ed552d6adf7ad7c2847d5a0cbcc56d956bdadfb296f79"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginMetadata.kt",
+            "bytes": 3000,
+            "sha256": "613fdbb095e7da1ad7b9e8039847a47c2b6c9501c37ad714729c9b45695b960e"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeBinary.kt",
+            "bytes": 5169,
+            "sha256": "3301382dcfb818f9f85b0c113b3389e04c69a6241700ff751fdbee4bf889bfe4"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessages.kt",
+            "bytes": 3438,
+            "sha256": "9c27fee9617de5b53291bf8f198d99d19414287d66e1fac9ed62e3c5e275aa1b"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbe.kt",
+            "bytes": 7142,
+            "sha256": "d753664e4ade2866a5f02a611ef81ce90fa69edf82a148c9a7a83665e1e61961"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeService.kt",
+            "bytes": 22944,
+            "sha256": "b603a2ae043bfd320ede828532ecf694d7cc87c23310023025d8cf2094b369e8"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/WakeActivity.kt",
+            "bytes": 275,
+            "sha256": "500179cc07f7f74c520b3357a4ebf4c78ab44e45aecc0127d58f62e2f7ed18a8"
+          },
+          {
+            "path": "app/src/main/res/drawable/ic_launcher.xml",
+            "bytes": 539,
+            "sha256": "8c671bf639dee09ca51db4b5ae0492cd4d13f12ab34d5b96aa8eda2f92802092"
+          },
+          {
+            "path": "app/src/main/res/raw-ar/plugin_instruction.md",
+            "bytes": 4489,
+            "sha256": "817dbfb1a53e4a448c2a75592e875220ef45ade4402e466b6810d30e6770ca3e"
+          },
+          {
+            "path": "app/src/main/res/raw-en/plugin_instruction.md",
+            "bytes": 3479,
+            "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+          },
+          {
+            "path": "app/src/main/res/raw-es/plugin_instruction.md",
+            "bytes": 3929,
+            "sha256": "c5aa6837f44c09d368bf9890db2535765a209e1897da56660ce66092df5ecbb5"
+          },
+          {
+            "path": "app/src/main/res/raw-fr/plugin_instruction.md",
+            "bytes": 3984,
+            "sha256": "a52066538a35ab5ca67fdb36f369ba484bad42f83c26dc005b4bce3192df7676"
+          },
+          {
+            "path": "app/src/main/res/raw-ja/plugin_instruction.md",
+            "bytes": 4471,
+            "sha256": "0959bbcd8c5b3f945182453ce0fa2064dafd13e61dc8f35e74b73a0e87c5ca4c"
+          },
+          {
+            "path": "app/src/main/res/raw-ko/plugin_instruction.md",
+            "bytes": 4063,
+            "sha256": "35049db59edbc4871f77b52042cbfb189ef29bd4f469b03460d8e48a757f6dcb"
+          },
+          {
+            "path": "app/src/main/res/raw-ru/plugin_instruction.md",
+            "bytes": 5847,
+            "sha256": "be6c3eae5d8a00be4ae097347789820d44eeba242246e6ad5a1fe12dbd2d92e1"
+          },
+          {
+            "path": "app/src/main/res/raw-zh-rHK/plugin_instruction.md",
+            "bytes": 3142,
+            "sha256": "5d16846716f46fb43af69022f3ba7bb57a229508fa2caa4673664205012a44ad"
+          },
+          {
+            "path": "app/src/main/res/raw-zh-rTW/plugin_instruction.md",
+            "bytes": 3187,
+            "sha256": "91b65d24cd49a1b209cc49fb04a00a995dc6956badfbeaf950cf00d26a2edfba"
+          },
+          {
+            "path": "app/src/main/res/raw-zh/plugin_instruction.md",
+            "bytes": 3098,
+            "sha256": "5f14f5cf5bff46a405c1a189efa3777cc8ee3edbe809cf99bdeeb16093a89c5e"
+          },
+          {
+            "path": "app/src/main/res/raw/plugin_instruction.md",
+            "bytes": 3479,
+            "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+          },
+          {
+            "path": "app/src/main/res/values-ar/strings.xml",
+            "bytes": 3648,
+            "sha256": "d86ecfc0cc03cd5a4a3bedfd2467c94a6f36533f343e62055a4526a5bf31f742"
+          },
+          {
+            "path": "app/src/main/res/values-en/strings.xml",
+            "bytes": 2970,
+            "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+          },
+          {
+            "path": "app/src/main/res/values-es/strings.xml",
+            "bytes": 3321,
+            "sha256": "f65a8aa7bb5ca0860fc3051c4eeba557f913cc570bf9387227fa4584832f015f"
+          },
+          {
+            "path": "app/src/main/res/values-fr/strings.xml",
+            "bytes": 3338,
+            "sha256": "6e149beb8b3e0da5696843db9e2911387fa3ff8ce26e28423d27dd565fd897a6"
+          },
+          {
+            "path": "app/src/main/res/values-ja/strings.xml",
+            "bytes": 3773,
+            "sha256": "d01b8bd73fd23d02dd37989c7c3935a4599bcc88bc6db8402ed699660ea2551e"
+          },
+          {
+            "path": "app/src/main/res/values-ko/strings.xml",
+            "bytes": 3547,
+            "sha256": "5f2a7767eba92cdf04f840e508d3762e3099f787f6f58d5835ad18d8c006b623"
+          },
+          {
+            "path": "app/src/main/res/values-ru/strings.xml",
+            "bytes": 4645,
+            "sha256": "811cc21fc82697357765d4f1a0843ada148b0d2d9f083ef2c564d45e9c7cc06e"
+          },
+          {
+            "path": "app/src/main/res/values-zh-rHK/strings.xml",
+            "bytes": 2790,
+            "sha256": "feb86f6752b49590c277aa0dd39430822b5ffc95ce09c4ab725883223098c965"
+          },
+          {
+            "path": "app/src/main/res/values-zh-rTW/strings.xml",
+            "bytes": 2862,
+            "sha256": "a08b9e6c46408df15e8daa18058ca1f8d21b7d3ae170164f8aa5ea4385348e19"
+          },
+          {
+            "path": "app/src/main/res/values-zh/strings.xml",
+            "bytes": 2720,
+            "sha256": "5970022d3b3146a860fe35ee60c7bbb7e7f1d9cbc4901b5c6ad5f25fc3ffb537"
+          },
+          {
+            "path": "app/src/main/res/values/strings.xml",
+            "bytes": 2970,
+            "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+          },
+          {
+            "path": "build.gradle.kts",
+            "bytes": 676,
+            "sha256": "d12f6e4061c11bbf8504e731171cd16d70df1a234ba006f8f6d80cdf51b05125"
+          },
+          {
+            "path": "gradle/libs.versions.toml",
+            "bytes": 10596,
+            "sha256": "97d5ba3d82fe4df4d1a3c7db42a34f77d4f1d2362eab958d1ee0e6807f43806c"
+          },
+          {
+            "path": "libs/api-artifacts.lock.json",
+            "bytes": 503,
+            "sha256": "57a866e6ac55efdbbc3f85f45bbca7b55d00db603762a8d5b5d4117e48a9d041"
+          },
+          {
+            "path": "libs/bun-runtime-api.aar",
+            "bytes": 13547,
+            "sha256": "6fac4aa0332c09f399ff6e554bc088507c86b779ea08ec118e687e3836ee48a4"
+          },
+          {
+            "path": "libs/common-plugin-api.aar",
+            "bytes": 10578,
+            "sha256": "f9ff9676543f45b2ff2b64bb832d377dbd5b7003acf3bb4239e98556c68b246f"
+          },
+          {
+            "path": "samples/fetch.bun.js",
+            "bytes": 874,
+            "sha256": "1fa9a61fda1299f3f476f4204de54e3f630658c5cefb8e6e98ab0c405a983bd5"
+          },
+          {
+            "path": "samples/file-io.bun.js",
+            "bytes": 529,
+            "sha256": "86c6ed2c63be36a37bea76255841cd263262993e2b487dd4f3463257ca68b04d"
+          },
+          {
+            "path": "samples/hello.bun.js",
+            "bytes": 226,
+            "sha256": "2843b9c6263da46426584f1d091f5d13c65ef4ec1305f37327acafc6cddb7def"
+          },
+          {
+            "path": "samples/output-streams.bun.js",
+            "bytes": 449,
+            "sha256": "24bcfe22401c2906b52660b5ca56bd5a49288e494a30641fac18010ad3ee3710"
+          },
+          {
+            "path": "samples/typescript.bun.ts",
+            "bytes": 480,
+            "sha256": "e1dd672755c7bdec145b64d4516600bae2ac32c9460295829b0a70b026fa413a"
+          },
+          {
+            "path": "settings.gradle.kts",
+            "bytes": 1051,
+            "sha256": "ae085488af6d39f1581415ff8ead6952590d91afe1d5840754ec1a8e7c0181b6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/AndroidManifest.xml",
+            "bytes": 243,
+            "sha256": "9687d1a5ec1ead9be37675eb59ac98da2e760a53cfdbee219ac09c9a3c20c7dd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/binder-common.mjs",
+            "bytes": 6732,
+            "sha256": "06112224e4b66f105a6fd9f158de7194d011f2699a474fde89e620f78d85ece9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/build.gradle.kts",
+            "bytes": 8376,
+            "sha256": "e4504dfb48ab17edce3578a6e37c10322d7282e40dbe42b797bba3d1afbd7e49"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/prepare-runtime.mjs",
+            "bytes": 3296,
+            "sha256": "8e025d38488a913367b81108410ed5f883cde82181806a6fa5d72c6b3ce64f9b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18339,
+            "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.mjs",
+            "bytes": 1740,
+            "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets/jsc-pressure.mjs",
+            "bytes": 10049,
+            "sha256": "35ad7c4f0ca1bf75ba1b925481c6e0b5b71c92ab5b47fb24ec782f030983921d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java/JscPressureInstrumentedTest.kt",
+            "bytes": 8527,
+            "sha256": "f1dd9119056ee8d07c6392c6d21f4b522a6e0bb9999403a9c6fedafe08c5dd99"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
+            "bytes": 25663,
+            "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.mjs",
+            "bytes": 6487,
+            "sha256": "196e3c7a5a28d4299eab3df1941dd79ac2d68e25dc24ea89917565a709785a44"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/record-candidate.mjs",
+            "bytes": 3120,
+            "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-candidate.lock.json",
+            "bytes": 36075,
+            "sha256": "c95ea90c63c6405b6aa9d64b31ca9754d874e2bd58022702d39f06b90817b87a"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-common.mjs",
+            "bytes": 2617,
+            "sha256": "e6521dd9959acd04284bb9ebd8c82e045c6c2201c56de03221096b2e7a59a80b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-candidate.lock.json",
+            "bytes": 36143,
+            "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-common.mjs",
+            "bytes": 8394,
+            "sha256": "4802bf8b0d98014adaf5be112b3ab5f1cf8d5e534e5a9ea2ce203fb552a30503"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "version.properties",
+            "bytes": 466,
+            "sha256": "edc9d6e7139acf8e9acf4a67a5b0e432000b91fa9fbba9ff7a7d6c4224b36ad5"
+          }
+        ],
+        "runtime": {
+          "status": "reproducible-static-audit-complete",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "officialArtifact": false,
+          "distributionReady": false
+        },
+        "source": {
+          "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+          "downstreamHeadCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11"
+        },
+        "jscCandidate": {
+          "schemaVersion": 2,
+          "kind": "clean-rebased-large-page-jsc-candidate",
+          "evidenceDate": "2026-09-13",
+          "distributionReady": false,
+          "officialArtifact": false,
+          "cleanBunBuilds": 2,
+          "newWebKitBuilds": 0,
+          "reusedIndependentWebKitBuilds": 2,
+          "bunCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+          "bunTree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+          "revision": "1.4.0+e8b129616",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+          "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+          "sourceDateEpoch": 1788278400,
+          "x86PageSizeCeiling": 65536,
+          "config": {
+            "USE_64KB_PAGE_BLOCK": 1,
+            "ENABLE_JIT": 1,
+            "ENABLE_DFG_JIT": 1,
+            "ENABLE_FTL_JIT": 1,
+            "ENABLE_C_LOOP": 0,
+            "ENABLE_SAMPLING_PROFILER": 1,
+            "USE_MIMALLOC": 1,
+            "USE_EXTERNAL_MIMALLOC": 1,
+            "USE_SYSTEM_MALLOC": 0,
+            "USE_ISO_MALLOC": 1,
+            "ENABLE_WEBASSEMBLY": 1,
+            "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+            "ENABLE_WEBASSEMBLY_OMGJIT": 1
+          },
+          "generatedConfig": {
+            "bytes": 6982,
+            "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+          },
+          "libraries": {
+            "libJavaScriptCore.a": {
+              "bytes": 361142888,
+              "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+            },
+            "libWTF.a": {
+              "bytes": 12718664,
+              "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+            },
+            "libbmalloc.a": {
+              "bytes": 246530,
+              "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+            }
+          },
+          "bindings": {
+            "historicalCandidate": {
+              "bytes": 4604,
+              "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+            },
+            "historicalCleanBuilds": {
+              "bytes": 16273,
+              "sha256": "4a879c6ed99f28b0792cb96695419abfa0d78b469ca7a07dcbfcb2bac6612060"
+            },
+            "priorRebasedCandidate": {
+              "bytes": 25663,
+              "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+            },
+            "priorTwelvePatchCandidate": {
+              "bytes": 36143,
+              "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad"
+            },
+            "baselineRuntimeEvidence": {
+              "bytes": 18339,
+              "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+            },
+            "recipes": {
+              "run-clean-bun.mjs": {
+                "bytes": 2041,
+                "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+              },
+              "build-clean-bun.mjs": {
+                "bytes": 2918,
+                "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+              },
+              "jsc-common.mjs": {
+                "bytes": 1740,
+                "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+              },
+              "record-candidate.mjs": {
+                "bytes": 3120,
+                "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+              },
+              "candidate.lock.json": {
+                "bytes": 4604,
+                "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+              }
+            },
+            "api28Recipes": {
+              "run-locked-build.mjs": {
+                "bytes": 10514,
+                "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+              },
+              "build-experiment.mjs": {
+                "bytes": 18890,
+                "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+              },
+              "config/arm64-v8a.configure.json": {
+                "bytes": 262,
+                "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+              },
+              "config/x86_64.configure.json": {
+                "bytes": 254,
+                "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+              },
+              "source-inputs.lock.json": {
+                "bytes": 15880,
+                "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+              },
+              "toolchain-inputs.lock.json": {
+                "bytes": 11636,
+                "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+              },
+              "build-network-inputs.lock.json": {
+                "bytes": 5633,
+                "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+              },
+              "cargo-inputs.lock.json": {
+                "bytes": 64745,
+                "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+              },
+              "bun-inputs.lock.json": {
+                "bytes": 124300,
+                "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+              },
+              "patches/series.lock.json": {
+                "bytes": 21497,
+                "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+              },
+              "experiment.lock.json": {
+                "bytes": 9648,
+                "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+              },
+              "verify-experiment.mjs": {
+                "bytes": 83864,
+                "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+              },
+              "materialize-cargo-inputs.mjs": {
+                "bytes": 40231,
+                "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+              },
+              "materialize-bun-inputs.mjs": {
+                "bytes": 63238,
+                "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+              },
+              "materialize-source-inputs.mjs": {
+                "bytes": 11821,
+                "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+              },
+              "materialize-toolchain-inputs.mjs": {
+                "bytes": 7059,
+                "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+              }
+            }
+          },
+          "artifact": {
+            "abi": "x86_64",
+            "bytes": 90609496,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d50",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "331309c87afe49cf8008ae059e1075a6a7d7be09",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1067,
+                "definedCount": 672,
+                "undefinedCount": 394,
+                "tableSha256": "ac7fbb0956b051e5d8e55bc16c536f72a89b1b5a3b52257aba357af73f8ccda3",
+                "recordsSha256": "a6c2b59e36295d78ad8837ca599cf6515fa488231bcf5efc0fb07abfefa15709",
+                "definedRecordsSha256": "d976ba6eb1bc2d2522147d2a4a64729f4a342083b64d6a7267e557f129844ffa",
+                "undefinedRecordsSha256": "7ea254a61557e6242aaa04c5c032bb34b9193fbb0e852bc8bb247a9535eea6a2"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          },
+          "builds": [
+            {
+              "run": 1,
+              "inputDriver": {
+                "bytes": 4727,
+                "sha256": "4f9ecede2e7f101be477da5372b726f6f654e976bbb7b4387fbc8ee1b5cb8bbf"
+              },
+              "driver": {
+                "schema": 1,
+                "startedAt": "2026-09-13T15:33:41Z",
+                "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "cleanBefore": true,
+                "freshCheckout": true,
+                "recipes": {
+                  "run-clean-bun.mjs": {
+                    "bytes": 2041,
+                    "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+                  },
+                  "build-clean-bun.mjs": {
+                    "bytes": 2918,
+                    "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+                  },
+                  "jsc-common.mjs": {
+                    "bytes": 1740,
+                    "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+                  },
+                  "record-candidate.mjs": {
+                    "bytes": 3120,
+                    "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+                  },
+                  "candidate.lock.json": {
+                    "bytes": 4604,
+                    "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+                  }
+                },
+                "api28Recipes": {
+                  "run-locked-build.mjs": {
+                    "bytes": 10514,
+                    "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+                  },
+                  "build-experiment.mjs": {
+                    "bytes": 18890,
+                    "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+                  },
+                  "config/arm64-v8a.configure.json": {
+                    "bytes": 262,
+                    "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+                  },
+                  "config/x86_64.configure.json": {
+                    "bytes": 254,
+                    "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+                  },
+                  "source-inputs.lock.json": {
+                    "bytes": 15880,
+                    "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+                  },
+                  "toolchain-inputs.lock.json": {
+                    "bytes": 11636,
+                    "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+                  },
+                  "build-network-inputs.lock.json": {
+                    "bytes": 5633,
+                    "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+                  },
+                  "cargo-inputs.lock.json": {
+                    "bytes": 64745,
+                    "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+                  },
+                  "bun-inputs.lock.json": {
+                    "bytes": 124300,
+                    "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+                  },
+                  "patches/series.lock.json": {
+                    "bytes": 21497,
+                    "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+                  },
+                  "experiment.lock.json": {
+                    "bytes": 9648,
+                    "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+                  },
+                  "verify-experiment.mjs": {
+                    "bytes": 83864,
+                    "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+                  },
+                  "materialize-cargo-inputs.mjs": {
+                    "bytes": 40231,
+                    "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+                  },
+                  "materialize-bun-inputs.mjs": {
+                    "bytes": 63238,
+                    "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+                  },
+                  "materialize-source-inputs.mjs": {
+                    "bytes": 11821,
+                    "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+                  },
+                  "materialize-toolchain-inputs.mjs": {
+                    "bytes": 7059,
+                    "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+                  }
+                },
+                "newWebKitBuilds": 0,
+                "exitCode": 0,
+                "state": "complete",
+                "buildStartedAt": "2026-09-13T15:33:43Z",
+                "buildFinishedAt": "2026-09-13T15:46:09Z",
+                "cleanAfter": true,
+                "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "recipesUnchanged": true,
+                "api28RecipesUnchanged": true,
+                "artifact": {
+                  "bytes": 90609496,
+                  "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+                },
+                "receipt": {
+                  "bytes": 5651,
+                  "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+                },
+                "ninjaLog": {
+                  "bytes": 230444,
+                  "sha256": "d7d38faaa054091aea9f488e3b821f4c22690a27887c4b8b2ef09fdec9e00f46"
+                },
+                "finishedAt": "2026-09-13T15:46:10Z",
+                "log": {
+                  "bytes": 35919,
+                  "sha256": "01b2f55ffe63e18ee95eff8ad003c01bf94728578b33fdd358a62b4047bb6817"
+                }
+              },
+              "finalEdges": [
+                {
+                  "output": "bun-profile",
+                  "start": 605083,
+                  "end": 607789,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun-profile.linker-map",
+                  "start": 605083,
+                  "end": 607789,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun",
+                  "start": 607790,
+                  "end": 607933,
+                  "commandHash": "ef51bbd9db115d99"
+                }
+              ],
+              "webkit": {
+                "config": {
+                  "bytes": 6982,
+                  "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                },
+                "libraries": {
+                  "libJavaScriptCore.a": {
+                    "bytes": 361142888,
+                    "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                  },
+                  "libWTF.a": {
+                    "bytes": 12718664,
+                    "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                  },
+                  "libbmalloc.a": {
+                    "bytes": 246530,
+                    "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                  }
+                }
+              },
+              "api28RecipeEncodings": {
+                "run-locked-build.mjs": "utf8-lf",
+                "build-experiment.mjs": "utf8-lf",
+                "config/arm64-v8a.configure.json": "utf8-lf",
+                "config/x86_64.configure.json": "utf8-lf",
+                "source-inputs.lock.json": "utf8-lf",
+                "toolchain-inputs.lock.json": "utf8-lf",
+                "build-network-inputs.lock.json": "utf8-lf",
+                "cargo-inputs.lock.json": "utf8-lf",
+                "bun-inputs.lock.json": "utf8-lf",
+                "patches/series.lock.json": "utf8-lf",
+                "experiment.lock.json": "utf8-lf",
+                "verify-experiment.mjs": "utf8-lf",
+                "materialize-cargo-inputs.mjs": "utf8-lf",
+                "materialize-bun-inputs.mjs": "utf8-lf",
+                "materialize-source-inputs.mjs": "utf8-lf",
+                "materialize-toolchain-inputs.mjs": "utf8-lf"
+              },
+              "receipt": {
+                "kind": "clean-bun-with-locked-large-page-jsc",
+                "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "sourceInputCount": 22,
+                "cargoArchiveCount": 206,
+                "bunArchiveCount": 125,
+                "toolVersions": {
+                  "node": "v24.3.0",
+                  "bun": "1.3.13",
+                  "cmake": "cmake version 3.30.5",
+                  "ninja": "1.13.2",
+                  "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+                  "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+                  "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+                  "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+                  "packageCount": 243,
+                  "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+                },
+                "jsc": {
+                  "schemaVersion": 1,
+                  "kind": "diagnostic-incremental-large-page-jsc-candidate",
+                  "distributionReady": false,
+                  "officialArtifact": false,
+                  "cleanBunBuilds": 0,
+                  "evidenceDate": "2026-09-12",
+                  "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+                  "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+                  "revision": "1.4.0+7b9ac2668",
+                  "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+                  "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+                  "sourceDateEpoch": 1788278400,
+                  "x86PageSizeCeiling": 65536,
+                  "config": {
+                    "USE_64KB_PAGE_BLOCK": 1,
+                    "ENABLE_JIT": 1,
+                    "ENABLE_DFG_JIT": 1,
+                    "ENABLE_FTL_JIT": 1,
+                    "ENABLE_C_LOOP": 0,
+                    "ENABLE_SAMPLING_PROFILER": 1,
+                    "USE_MIMALLOC": 1,
+                    "USE_EXTERNAL_MIMALLOC": 1,
+                    "USE_SYSTEM_MALLOC": 0,
+                    "USE_ISO_MALLOC": 1,
+                    "ENABLE_WEBASSEMBLY": 1,
+                    "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+                    "ENABLE_WEBASSEMBLY_OMGJIT": 1
+                  },
+                  "generatedConfig": {
+                    "bytes": 6982,
+                    "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                  },
+                  "libraries": {
+                    "libJavaScriptCore.a": {
+                      "bytes": 361142888,
+                      "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                    },
+                    "libWTF.a": {
+                      "bytes": 12718664,
+                      "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                    },
+                    "libbmalloc.a": {
+                      "bytes": 246530,
+                      "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                    }
+                  },
+                  "recipes": [
+                    {
+                      "path": "build-webkit.sh",
+                      "bytes": 3428,
+                      "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+                    },
+                    {
+                      "path": "relink-bun.sh",
+                      "bytes": 1181,
+                      "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+                    }
+                  ],
+                  "artifact": {
+                    "abi": "x86_64",
+                    "bytes": 90609480,
+                    "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+                    "elf": {
+                      "class": "ELF64",
+                      "data": "little-endian",
+                      "osAbi": "System V",
+                      "type": "ET_DYN",
+                      "machine": 62,
+                      "machineName": "Advanced Micro Devices X86-64",
+                      "entryPoint": "0x107800",
+                      "programHeaderCount": 8,
+                      "sectionHeaderCount": 33,
+                      "interpreter": "/system/bin/linker64",
+                      "loadAlignments": [
+                        16384,
+                        65536
+                      ],
+                      "minimumLoadAlignment": 16384,
+                      "writableExecutableLoad": false,
+                      "executableStack": false,
+                      "neededLibraries": [
+                        "libc.so",
+                        "libm.so",
+                        "libdl.so"
+                      ],
+                      "flags1": "0x8000000",
+                      "pie": true,
+                      "androidRelr": {
+                        "address": "0x10d08",
+                        "bytes": 19896,
+                        "entryBytes": 8
+                      },
+                      "androidIdent": {
+                        "api": 28,
+                        "ndkVersion": "r27c",
+                        "ndkBuildNumber": "12479018"
+                      },
+                      "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+                      "versionDefinitions": [
+                        {
+                          "index": 1,
+                          "name": "bun-profile",
+                          "base": true
+                        },
+                        {
+                          "index": 2,
+                          "name": "BUN_1.2",
+                          "base": false
+                        }
+                      ],
+                      "versionNeeds": [
+                        {
+                          "file": "libc.so",
+                          "names": [
+                            "LIBC",
+                            "LIBC_N",
+                            "LIBC_O",
+                            "LIBC_P"
+                          ]
+                        },
+                        {
+                          "file": "libm.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        },
+                        {
+                          "file": "libdl.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        }
+                      ],
+                      "dynamicSymbols": {
+                        "entryCount": 1066,
+                        "definedCount": 672,
+                        "undefinedCount": 393,
+                        "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                        "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                        "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                        "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+                      },
+                      "symbolTable": {
+                        "present": true,
+                        "entryCount": 1708,
+                        "bytes": 40992,
+                        "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+                      },
+                      "debugSections": []
+                    }
+                  },
+                  "limits": [
+                    "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+                    "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+                    "No device or Binder success inferred from compilation",
+                    "Official and nine-patch runtime locks unchanged"
+                  ]
+                }
+              }
+            },
+            {
+              "run": 2,
+              "inputDriver": {
+                "bytes": 4727,
+                "sha256": "1f68e7ce576474ad9d6694a3e94f6357ee3848e7ee861af63d0084fb67c01c82"
+              },
+              "driver": {
+                "schema": 1,
+                "startedAt": "2026-09-13T15:46:10Z",
+                "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "cleanBefore": true,
+                "freshCheckout": true,
+                "recipes": {
+                  "run-clean-bun.mjs": {
+                    "bytes": 2041,
+                    "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+                  },
+                  "build-clean-bun.mjs": {
+                    "bytes": 2918,
+                    "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+                  },
+                  "jsc-common.mjs": {
+                    "bytes": 1740,
+                    "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+                  },
+                  "record-candidate.mjs": {
+                    "bytes": 3120,
+                    "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+                  },
+                  "candidate.lock.json": {
+                    "bytes": 4604,
+                    "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+                  }
+                },
+                "api28Recipes": {
+                  "run-locked-build.mjs": {
+                    "bytes": 10514,
+                    "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+                  },
+                  "build-experiment.mjs": {
+                    "bytes": 18890,
+                    "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+                  },
+                  "config/arm64-v8a.configure.json": {
+                    "bytes": 262,
+                    "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+                  },
+                  "config/x86_64.configure.json": {
+                    "bytes": 254,
+                    "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+                  },
+                  "source-inputs.lock.json": {
+                    "bytes": 15880,
+                    "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+                  },
+                  "toolchain-inputs.lock.json": {
+                    "bytes": 11636,
+                    "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+                  },
+                  "build-network-inputs.lock.json": {
+                    "bytes": 5633,
+                    "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+                  },
+                  "cargo-inputs.lock.json": {
+                    "bytes": 64745,
+                    "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+                  },
+                  "bun-inputs.lock.json": {
+                    "bytes": 124300,
+                    "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+                  },
+                  "patches/series.lock.json": {
+                    "bytes": 21497,
+                    "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+                  },
+                  "experiment.lock.json": {
+                    "bytes": 9648,
+                    "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+                  },
+                  "verify-experiment.mjs": {
+                    "bytes": 83864,
+                    "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+                  },
+                  "materialize-cargo-inputs.mjs": {
+                    "bytes": 40231,
+                    "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+                  },
+                  "materialize-bun-inputs.mjs": {
+                    "bytes": 63238,
+                    "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+                  },
+                  "materialize-source-inputs.mjs": {
+                    "bytes": 11821,
+                    "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+                  },
+                  "materialize-toolchain-inputs.mjs": {
+                    "bytes": 7059,
+                    "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+                  }
+                },
+                "newWebKitBuilds": 0,
+                "exitCode": 0,
+                "state": "complete",
+                "buildStartedAt": "2026-09-13T15:46:12Z",
+                "buildFinishedAt": "2026-09-13T15:56:00Z",
+                "cleanAfter": true,
+                "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "recipesUnchanged": true,
+                "api28RecipesUnchanged": true,
+                "artifact": {
+                  "bytes": 90609496,
+                  "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+                },
+                "receipt": {
+                  "bytes": 5651,
+                  "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+                },
+                "ninjaLog": {
+                  "bytes": 229548,
+                  "sha256": "0df59c9b98cacff30a8fda0b2261861b7702e34456cf3d41231ba7c0e90baa56"
+                },
+                "finishedAt": "2026-09-13T15:56:00Z",
+                "log": {
+                  "bytes": 35662,
+                  "sha256": "67d18590c67ca13ba18cb7bcdba6cdd411959ca0577c137aeb03ca015b38b0ef"
+                }
+              },
+              "finalEdges": [
+                {
+                  "output": "bun-profile",
+                  "start": 474064,
+                  "end": 476800,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun-profile.linker-map",
+                  "start": 474064,
+                  "end": 476800,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun",
+                  "start": 476800,
+                  "end": 476946,
+                  "commandHash": "ef51bbd9db115d99"
+                }
+              ],
+              "webkit": {
+                "config": {
+                  "bytes": 6982,
+                  "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                },
+                "libraries": {
+                  "libJavaScriptCore.a": {
+                    "bytes": 361142888,
+                    "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                  },
+                  "libWTF.a": {
+                    "bytes": 12718664,
+                    "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                  },
+                  "libbmalloc.a": {
+                    "bytes": 246530,
+                    "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                  }
+                }
+              },
+              "api28RecipeEncodings": {
+                "run-locked-build.mjs": "utf8-lf",
+                "build-experiment.mjs": "utf8-lf",
+                "config/arm64-v8a.configure.json": "utf8-lf",
+                "config/x86_64.configure.json": "utf8-lf",
+                "source-inputs.lock.json": "utf8-lf",
+                "toolchain-inputs.lock.json": "utf8-lf",
+                "build-network-inputs.lock.json": "utf8-lf",
+                "cargo-inputs.lock.json": "utf8-lf",
+                "bun-inputs.lock.json": "utf8-lf",
+                "patches/series.lock.json": "utf8-lf",
+                "experiment.lock.json": "utf8-lf",
+                "verify-experiment.mjs": "utf8-lf",
+                "materialize-cargo-inputs.mjs": "utf8-lf",
+                "materialize-bun-inputs.mjs": "utf8-lf",
+                "materialize-source-inputs.mjs": "utf8-lf",
+                "materialize-toolchain-inputs.mjs": "utf8-lf"
+              },
+              "receipt": {
+                "kind": "clean-bun-with-locked-large-page-jsc",
+                "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "sourceInputCount": 22,
+                "cargoArchiveCount": 206,
+                "bunArchiveCount": 125,
+                "toolVersions": {
+                  "node": "v24.3.0",
+                  "bun": "1.3.13",
+                  "cmake": "cmake version 3.30.5",
+                  "ninja": "1.13.2",
+                  "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+                  "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+                  "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+                  "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+                  "packageCount": 243,
+                  "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+                },
+                "jsc": {
+                  "schemaVersion": 1,
+                  "kind": "diagnostic-incremental-large-page-jsc-candidate",
+                  "distributionReady": false,
+                  "officialArtifact": false,
+                  "cleanBunBuilds": 0,
+                  "evidenceDate": "2026-09-12",
+                  "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+                  "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+                  "revision": "1.4.0+7b9ac2668",
+                  "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+                  "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+                  "sourceDateEpoch": 1788278400,
+                  "x86PageSizeCeiling": 65536,
+                  "config": {
+                    "USE_64KB_PAGE_BLOCK": 1,
+                    "ENABLE_JIT": 1,
+                    "ENABLE_DFG_JIT": 1,
+                    "ENABLE_FTL_JIT": 1,
+                    "ENABLE_C_LOOP": 0,
+                    "ENABLE_SAMPLING_PROFILER": 1,
+                    "USE_MIMALLOC": 1,
+                    "USE_EXTERNAL_MIMALLOC": 1,
+                    "USE_SYSTEM_MALLOC": 0,
+                    "USE_ISO_MALLOC": 1,
+                    "ENABLE_WEBASSEMBLY": 1,
+                    "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+                    "ENABLE_WEBASSEMBLY_OMGJIT": 1
+                  },
+                  "generatedConfig": {
+                    "bytes": 6982,
+                    "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                  },
+                  "libraries": {
+                    "libJavaScriptCore.a": {
+                      "bytes": 361142888,
+                      "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                    },
+                    "libWTF.a": {
+                      "bytes": 12718664,
+                      "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                    },
+                    "libbmalloc.a": {
+                      "bytes": 246530,
+                      "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                    }
+                  },
+                  "recipes": [
+                    {
+                      "path": "build-webkit.sh",
+                      "bytes": 3428,
+                      "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+                    },
+                    {
+                      "path": "relink-bun.sh",
+                      "bytes": 1181,
+                      "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+                    }
+                  ],
+                  "artifact": {
+                    "abi": "x86_64",
+                    "bytes": 90609480,
+                    "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+                    "elf": {
+                      "class": "ELF64",
+                      "data": "little-endian",
+                      "osAbi": "System V",
+                      "type": "ET_DYN",
+                      "machine": 62,
+                      "machineName": "Advanced Micro Devices X86-64",
+                      "entryPoint": "0x107800",
+                      "programHeaderCount": 8,
+                      "sectionHeaderCount": 33,
+                      "interpreter": "/system/bin/linker64",
+                      "loadAlignments": [
+                        16384,
+                        65536
+                      ],
+                      "minimumLoadAlignment": 16384,
+                      "writableExecutableLoad": false,
+                      "executableStack": false,
+                      "neededLibraries": [
+                        "libc.so",
+                        "libm.so",
+                        "libdl.so"
+                      ],
+                      "flags1": "0x8000000",
+                      "pie": true,
+                      "androidRelr": {
+                        "address": "0x10d08",
+                        "bytes": 19896,
+                        "entryBytes": 8
+                      },
+                      "androidIdent": {
+                        "api": 28,
+                        "ndkVersion": "r27c",
+                        "ndkBuildNumber": "12479018"
+                      },
+                      "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+                      "versionDefinitions": [
+                        {
+                          "index": 1,
+                          "name": "bun-profile",
+                          "base": true
+                        },
+                        {
+                          "index": 2,
+                          "name": "BUN_1.2",
+                          "base": false
+                        }
+                      ],
+                      "versionNeeds": [
+                        {
+                          "file": "libc.so",
+                          "names": [
+                            "LIBC",
+                            "LIBC_N",
+                            "LIBC_O",
+                            "LIBC_P"
+                          ]
+                        },
+                        {
+                          "file": "libm.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        },
+                        {
+                          "file": "libdl.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        }
+                      ],
+                      "dynamicSymbols": {
+                        "entryCount": 1066,
+                        "definedCount": 672,
+                        "undefinedCount": 393,
+                        "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                        "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                        "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                        "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+                      },
+                      "symbolTable": {
+                        "present": true,
+                        "entryCount": 1708,
+                        "bytes": 40992,
+                        "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+                      },
+                      "debugSections": []
+                    }
+                  },
+                  "limits": [
+                    "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+                    "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+                    "No device or Binder success inferred from compilation",
+                    "Official and nine-patch runtime locks unchanged"
+                  ]
+                }
+              }
+            }
+          ],
+          "limits": [
+            "Two new independent clean Bun builds; exact prior independently built JSC libraries/config and upstream ICU reused",
+            "No new WebKit/ICU compilation or device acceptance inferred from these builds",
+            "Official, baseline thirteen-patch and historical nine/ten/twelve-patch payload evidence unchanged",
+            "Not Release acceptance"
+          ]
+        },
+        "runtimes": [
+          {
+            "abi": "arm64-v8a",
+            "bytes": 87923328,
+            "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+          },
+          {
+            "abi": "x86_64",
+            "bytes": 90609496,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+          }
+        ]
+      },
+      "payloads": [
+        {
+          "abi": "x86_64",
+          "entry": "lib/x86_64/libbun_exec.so",
+          "compression": "deflated",
+          "bytes": 90609496,
+          "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+          "supervisor": {
+            "entry": "lib/x86_64/libbun_supervisor.so",
+            "compression": "deflated",
+            "bytes": 7304,
+            "sha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+          }
+        }
+      ],
+      "rounds": [
+        {
+          "round": 1,
+          "status": 0,
+          "stdout": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4097 reaped=true exitCode=137 durationMillis=995 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4116 reaped=true exitCode=137 durationMillis=1051 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4147 reaped=true exitCode=137 durationMillis=483 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=4304 reaped=true exitCode=137 durationMillis=3343 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=4545 reaped=true exitCode=137 durationMillis=978 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 21.741\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "stderr": "",
+          "passedTests": [
+            "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+            "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+            "installedNativeRuntimeMatchesTheLockedPayload",
+            "sigtermIgnoringTimeoutReapsTheChild",
+            "sigtermIgnoringOutputLimitReapsTheChild",
+            "checkedInSamplesExecuteWithinPublishedBoundaries",
+            "manifestPublishesWakeInfoAndRuntimeContracts",
+            "timeoutCancellationAndInvalidRequestAreBounded"
+          ],
+          "remainingUidProcesses": 0
+        },
+        {
+          "round": 2,
+          "status": 0,
+          "stdout": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4859 reaped=true exitCode=137 durationMillis=441 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4878 reaped=true exitCode=137 durationMillis=328 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4889 reaped=true exitCode=137 durationMillis=335 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=4991 reaped=true exitCode=137 durationMillis=3334 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=5083 reaped=true exitCode=137 durationMillis=856 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 13.197\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "stderr": "",
+          "passedTests": [
+            "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+            "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+            "installedNativeRuntimeMatchesTheLockedPayload",
+            "sigtermIgnoringTimeoutReapsTheChild",
+            "sigtermIgnoringOutputLimitReapsTheChild",
+            "checkedInSamplesExecuteWithinPublishedBoundaries",
+            "manifestPublishesWakeInfoAndRuntimeContracts",
+            "timeoutCancellationAndInvalidRequestAreBounded"
+          ],
+          "remainingUidProcesses": 0
+        }
+      ],
+      "cleanup": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k",
+          "uninstalled": true
+        }
+      ],
+      "passed": true,
+      "distributionReady": false,
+      "signatures": [
+        {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+        },
+        {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+        }
+      ],
+      "manifest": "N: android=http://schemas.android.com/apk/res/android (line=2)\r\n  E: manifest (line=2)\r\n    A: http://schemas.android.com/apk/res/android:versionCode(0x0101021b)=7\r\n    A: http://schemas.android.com/apk/res/android:versionName(0x0101021c)=\"0.2.2-api28-binder-test-only\" (Raw: \"0.2.2-api28-binder-test-only\")\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersion(0x01010572)=36\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersionCodename(0x01010573)=\"16\" (Raw: \"16\")\r\n    A: package=\"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k\")\r\n    A: platformBuildVersionCode=36\r\n    A: platformBuildVersionName=16\r\n      E: uses-sdk (line=7)\r\n        A: http://schemas.android.com/apk/res/android:minSdkVersion(0x0101020c)=28\r\n        A: http://schemas.android.com/apk/res/android:targetSdkVersion(0x01010270)=36\r\n      E: uses-permission (line=11)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.permission.INTERNET\" (Raw: \"android.permission.INTERNET\")\r\n      E: uses-permission (line=12)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n      E: application (line=14)\r\n        A: http://schemas.android.com/apk/res/android:label(0x01010001)=@0x7f030000\r\n        A: http://schemas.android.com/apk/res/android:icon(0x01010002)=@0x7f010000\r\n        A: http://schemas.android.com/apk/res/android:debuggable(0x0101000f)=true\r\n        A: http://schemas.android.com/apk/res/android:testOnly(0x01010272)=true\r\n        A: http://schemas.android.com/apk/res/android:allowBackup(0x01010280)=false\r\n        A: http://schemas.android.com/apk/res/android:supportsRtl(0x010103af)=true\r\n        A: http://schemas.android.com/apk/res/android:extractNativeLibs(0x010104ea)=true\r\n          E: meta-data (line=22)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\" (Raw: \"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=true\r\n          E: meta-data (line=25)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\" (Raw: \"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=16384\r\n          E: meta-data (line=28)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.WAKE_ACTIVITY\" (Raw: \"org.autojs.plugin.WAKE_ACTIVITY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=\".WakeActivity\" (Raw: \".WakeActivity\")\r\n          E: meta-data (line=31)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.info.AUTHOR\" (Raw: \"org.autojs.plugin.info.AUTHOR\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=@0x7f030001\r\n          E: activity (line=35)\r\n            A: http://schemas.android.com/apk/res/android:theme(0x01010000)=@0x01030055\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:finishOnTaskLaunch(0x01010014)=true\r\n            A: http://schemas.android.com/apk/res/android:excludeFromRecents(0x01010017)=true\r\n              E: intent-filter (line=42)\r\n                  E: action (line=43)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.action.WAKE\" (Raw: \"org.autojs.plugin.action.WAKE\")\r\n                  E: category (line=45)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.intent.category.DEFAULT\" (Raw: \"android.intent.category.DEFAULT\")\r\n          E: service (line=49)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n              E: intent-filter (line=53)\r\n                  E: action (line=54)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.INFO\" (Raw: \"org.autojs.plugin.INFO\")\r\n                  E: category (line=56)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n          E: service (line=59)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:process(0x01010011)=\":bun_runtime\" (Raw: \":bun_runtime\")\r\n              E: intent-filter (line=64)\r\n                  E: action (line=65)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.bun.RUNTIME\" (Raw: \"org.autojs.plugin.bun.RUNTIME\")\r\n                  E: category (line=67)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n",
+      "device": {
+        "model": "sdk_gphone64_x86_64",
+        "api": "36",
+        "abi": "x86_64",
+        "pages": "4096",
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "bridge": "libndk_translation.so",
+        "machine": "x86_64",
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys"
+      },
+      "uid": 10226,
+      "installedApkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "installedTestApkSha256": "b56653582a826dad4e13c3f5c4232b5c41accec7139fd29ba321d3d90226f9b8",
+      "finalUidProcesses": 0
+    },
+    {
+      "inputReport": {
+        "bytes": 82469,
+        "sha256": "bc1507f8094b4d595b8220dc57f0686fcdfe950045dae82c519fcbfa9cd6129e"
+      },
+      "schemaVersion": 1,
+      "kind": "experimental-plugin-binder",
+      "capturedAt": "2026-09-13T16:13:09.029Z",
+      "serial": "emulator-5582",
+      "expected": {
+        "abi": "x86_64",
+        "api": 36,
+        "pages": 16384
+      },
+      "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k",
+      "runtime": {
+        "status": "reproducible-static-audit-complete",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "officialArtifact": false,
+        "distributionReady": false
+      },
+      "apk": {
+        "bytes": 42944605,
+        "sha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8"
+      },
+      "testApk": {
+        "bytes": 2387553,
+        "sha256": "b56653582a826dad4e13c3f5c4232b5c41accec7139fd29ba321d3d90226f9b8"
+      },
+      "build": {
+        "schemaVersion": 1,
+        "inputEncoding": "git-canonical-utf8-lf",
+        "inputs": [
+          {
+            "path": "app/build.gradle.kts",
+            "bytes": 12196,
+            "sha256": "6648b7ce64f7a2d26a955a3fa603d521ead409d748e5804b5c4a67db38b4a045"
+          },
+          {
+            "path": "app/src/androidTest/AndroidManifest.xml",
+            "bytes": 735,
+            "sha256": "f261fa80facc6514dd38714961636d54edb45a7cd7014c97de3e96085e027eeb"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt",
+            "bytes": 37143,
+            "sha256": "a491a65c9f7a09842424d6ff4f728c19dc3a2dc2b6a6eeac1e7ff10ee04e88de"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessagesInstrumentedTest.kt",
+            "bytes": 13471,
+            "sha256": "e7b98fbedcba8805e618becf1e2b35400817eb17b695e86a042fb9ccf3a6aab9"
+          },
+          {
+            "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbeInstrumentedTest.kt",
+            "bytes": 6867,
+            "sha256": "a4384f859e8a54f1fd7654693f877523e35622e323de2e753b92649c37e75189"
+          },
+          {
+            "path": "app/src/main/AndroidManifest.xml",
+            "bytes": 2134,
+            "sha256": "434ddeaba75404b657ac4924e4af5ab412277ac57cd41c76be168d43d33a7027"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ar.md",
+            "bytes": 41544,
+            "sha256": "8533a846cb9ca0233fb1731b3904b3cbdf40b645f6e97af88fd505a00074f835"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-en.md",
+            "bytes": 28095,
+            "sha256": "3292336d35969383de265b6cde28ba797feae2734c26ea6b96800868095beb29"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-es.md",
+            "bytes": 31326,
+            "sha256": "869a753d531916a0d5390e845858a7471268ce954e85a2cc716ca332111a31f0"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-fr.md",
+            "bytes": 32590,
+            "sha256": "3a57be73db76a743fbba141d72dbe5e20f50e68f4c04dc5d0e005fe6d05893ee"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ja.md",
+            "bytes": 32518,
+            "sha256": "5ed74cb724817b848d7e558576ff47f3c763e5c7c42b06f3190488060410dc72"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ko.md",
+            "bytes": 30835,
+            "sha256": "d15471eaee909f74d1daa3623ad0620c5631eaa8ee1f85c7fe2b84d7d392d4fe"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-ru.md",
+            "bytes": 50487,
+            "sha256": "084f517a6ae3b86621e695335bb50c752ef46a4408caafbe8f57b8db57d9f741"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hans.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-HK.md",
+            "bytes": 24638,
+            "sha256": "132dc110d5c73799534fa4a49779af31f3e9d4083083eec6a05ce22f01026378"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-TW.md",
+            "bytes": 24818,
+            "sha256": "0bd1f47025d196e9ef7ff1f480bba2c81ed97bff822e474aa94b6b1676abd401"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-rHK.md",
+            "bytes": 24638,
+            "sha256": "132dc110d5c73799534fa4a49779af31f3e9d4083083eec6a05ce22f01026378"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh-rTW.md",
+            "bytes": 24818,
+            "sha256": "0bd1f47025d196e9ef7ff1f480bba2c81ed97bff822e474aa94b6b1676abd401"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG-zh.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/CHANGELOG.md",
+            "bytes": 24093,
+            "sha256": "f9f6d113a3945b976a214c734d320932a9628cae28e06ecb159822d9bfcfd986"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/BUN-LICENSE.md",
+            "bytes": 5614,
+            "sha256": "51402e15bdab948668eb5bcca05c096bc8c47beaf96f0db4b41777faf546ba4f"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
+            "bytes": 25585,
+            "sha256": "2f4345f29dc139686637dac2ca7f92d47dc36da2ce19a681314d9dd8026be649"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-APPLE",
+            "bytes": 1314,
+            "sha256": "f306398704cb2a73bc038b1be2845640d05037e0aaa03fba8fdcde8b5ac7ceb2"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2",
+            "bytes": 25379,
+            "sha256": "40a06e4454e7b332faf03b0ffb214bd8cb1a273b41290d87742c7ef93d3614e1"
+          },
+          {
+            "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2.1",
+            "bytes": 26537,
+            "sha256": "c058901ca17b2c0977e31919e016b838a2d546169cfdaea468a1bf877d8d712f"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt",
+            "bytes": 4753,
+            "sha256": "b81afdf5a2687fc30a9fcdc70256bd7a8f8240718731d7bb4789e5fb13f19b8e"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginInfoService.kt",
+            "bytes": 774,
+            "sha256": "5778e3ba2ab3c0c18a3ed552d6adf7ad7c2847d5a0cbcc56d956bdadfb296f79"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginMetadata.kt",
+            "bytes": 3000,
+            "sha256": "613fdbb095e7da1ad7b9e8039847a47c2b6c9501c37ad714729c9b45695b960e"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeBinary.kt",
+            "bytes": 5169,
+            "sha256": "3301382dcfb818f9f85b0c113b3389e04c69a6241700ff751fdbee4bf889bfe4"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessages.kt",
+            "bytes": 3438,
+            "sha256": "9c27fee9617de5b53291bf8f198d99d19414287d66e1fac9ed62e3c5e275aa1b"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbe.kt",
+            "bytes": 7142,
+            "sha256": "d753664e4ade2866a5f02a611ef81ce90fa69edf82a148c9a7a83665e1e61961"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeService.kt",
+            "bytes": 22944,
+            "sha256": "b603a2ae043bfd320ede828532ecf694d7cc87c23310023025d8cf2094b369e8"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/WakeActivity.kt",
+            "bytes": 275,
+            "sha256": "500179cc07f7f74c520b3357a4ebf4c78ab44e45aecc0127d58f62e2f7ed18a8"
+          },
+          {
+            "path": "app/src/main/res/drawable/ic_launcher.xml",
+            "bytes": 539,
+            "sha256": "8c671bf639dee09ca51db4b5ae0492cd4d13f12ab34d5b96aa8eda2f92802092"
+          },
+          {
+            "path": "app/src/main/res/raw-ar/plugin_instruction.md",
+            "bytes": 4489,
+            "sha256": "817dbfb1a53e4a448c2a75592e875220ef45ade4402e466b6810d30e6770ca3e"
+          },
+          {
+            "path": "app/src/main/res/raw-en/plugin_instruction.md",
+            "bytes": 3479,
+            "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+          },
+          {
+            "path": "app/src/main/res/raw-es/plugin_instruction.md",
+            "bytes": 3929,
+            "sha256": "c5aa6837f44c09d368bf9890db2535765a209e1897da56660ce66092df5ecbb5"
+          },
+          {
+            "path": "app/src/main/res/raw-fr/plugin_instruction.md",
+            "bytes": 3984,
+            "sha256": "a52066538a35ab5ca67fdb36f369ba484bad42f83c26dc005b4bce3192df7676"
+          },
+          {
+            "path": "app/src/main/res/raw-ja/plugin_instruction.md",
+            "bytes": 4471,
+            "sha256": "0959bbcd8c5b3f945182453ce0fa2064dafd13e61dc8f35e74b73a0e87c5ca4c"
+          },
+          {
+            "path": "app/src/main/res/raw-ko/plugin_instruction.md",
+            "bytes": 4063,
+            "sha256": "35049db59edbc4871f77b52042cbfb189ef29bd4f469b03460d8e48a757f6dcb"
+          },
+          {
+            "path": "app/src/main/res/raw-ru/plugin_instruction.md",
+            "bytes": 5847,
+            "sha256": "be6c3eae5d8a00be4ae097347789820d44eeba242246e6ad5a1fe12dbd2d92e1"
+          },
+          {
+            "path": "app/src/main/res/raw-zh-rHK/plugin_instruction.md",
+            "bytes": 3142,
+            "sha256": "5d16846716f46fb43af69022f3ba7bb57a229508fa2caa4673664205012a44ad"
+          },
+          {
+            "path": "app/src/main/res/raw-zh-rTW/plugin_instruction.md",
+            "bytes": 3187,
+            "sha256": "91b65d24cd49a1b209cc49fb04a00a995dc6956badfbeaf950cf00d26a2edfba"
+          },
+          {
+            "path": "app/src/main/res/raw-zh/plugin_instruction.md",
+            "bytes": 3098,
+            "sha256": "5f14f5cf5bff46a405c1a189efa3777cc8ee3edbe809cf99bdeeb16093a89c5e"
+          },
+          {
+            "path": "app/src/main/res/raw/plugin_instruction.md",
+            "bytes": 3479,
+            "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+          },
+          {
+            "path": "app/src/main/res/values-ar/strings.xml",
+            "bytes": 3648,
+            "sha256": "d86ecfc0cc03cd5a4a3bedfd2467c94a6f36533f343e62055a4526a5bf31f742"
+          },
+          {
+            "path": "app/src/main/res/values-en/strings.xml",
+            "bytes": 2970,
+            "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+          },
+          {
+            "path": "app/src/main/res/values-es/strings.xml",
+            "bytes": 3321,
+            "sha256": "f65a8aa7bb5ca0860fc3051c4eeba557f913cc570bf9387227fa4584832f015f"
+          },
+          {
+            "path": "app/src/main/res/values-fr/strings.xml",
+            "bytes": 3338,
+            "sha256": "6e149beb8b3e0da5696843db9e2911387fa3ff8ce26e28423d27dd565fd897a6"
+          },
+          {
+            "path": "app/src/main/res/values-ja/strings.xml",
+            "bytes": 3773,
+            "sha256": "d01b8bd73fd23d02dd37989c7c3935a4599bcc88bc6db8402ed699660ea2551e"
+          },
+          {
+            "path": "app/src/main/res/values-ko/strings.xml",
+            "bytes": 3547,
+            "sha256": "5f2a7767eba92cdf04f840e508d3762e3099f787f6f58d5835ad18d8c006b623"
+          },
+          {
+            "path": "app/src/main/res/values-ru/strings.xml",
+            "bytes": 4645,
+            "sha256": "811cc21fc82697357765d4f1a0843ada148b0d2d9f083ef2c564d45e9c7cc06e"
+          },
+          {
+            "path": "app/src/main/res/values-zh-rHK/strings.xml",
+            "bytes": 2790,
+            "sha256": "feb86f6752b49590c277aa0dd39430822b5ffc95ce09c4ab725883223098c965"
+          },
+          {
+            "path": "app/src/main/res/values-zh-rTW/strings.xml",
+            "bytes": 2862,
+            "sha256": "a08b9e6c46408df15e8daa18058ca1f8d21b7d3ae170164f8aa5ea4385348e19"
+          },
+          {
+            "path": "app/src/main/res/values-zh/strings.xml",
+            "bytes": 2720,
+            "sha256": "5970022d3b3146a860fe35ee60c7bbb7e7f1d9cbc4901b5c6ad5f25fc3ffb537"
+          },
+          {
+            "path": "app/src/main/res/values/strings.xml",
+            "bytes": 2970,
+            "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+          },
+          {
+            "path": "build.gradle.kts",
+            "bytes": 676,
+            "sha256": "d12f6e4061c11bbf8504e731171cd16d70df1a234ba006f8f6d80cdf51b05125"
+          },
+          {
+            "path": "gradle/libs.versions.toml",
+            "bytes": 10596,
+            "sha256": "97d5ba3d82fe4df4d1a3c7db42a34f77d4f1d2362eab958d1ee0e6807f43806c"
+          },
+          {
+            "path": "libs/api-artifacts.lock.json",
+            "bytes": 503,
+            "sha256": "57a866e6ac55efdbbc3f85f45bbca7b55d00db603762a8d5b5d4117e48a9d041"
+          },
+          {
+            "path": "libs/bun-runtime-api.aar",
+            "bytes": 13547,
+            "sha256": "6fac4aa0332c09f399ff6e554bc088507c86b779ea08ec118e687e3836ee48a4"
+          },
+          {
+            "path": "libs/common-plugin-api.aar",
+            "bytes": 10578,
+            "sha256": "f9ff9676543f45b2ff2b64bb832d377dbd5b7003acf3bb4239e98556c68b246f"
+          },
+          {
+            "path": "samples/fetch.bun.js",
+            "bytes": 874,
+            "sha256": "1fa9a61fda1299f3f476f4204de54e3f630658c5cefb8e6e98ab0c405a983bd5"
+          },
+          {
+            "path": "samples/file-io.bun.js",
+            "bytes": 529,
+            "sha256": "86c6ed2c63be36a37bea76255841cd263262993e2b487dd4f3463257ca68b04d"
+          },
+          {
+            "path": "samples/hello.bun.js",
+            "bytes": 226,
+            "sha256": "2843b9c6263da46426584f1d091f5d13c65ef4ec1305f37327acafc6cddb7def"
+          },
+          {
+            "path": "samples/output-streams.bun.js",
+            "bytes": 449,
+            "sha256": "24bcfe22401c2906b52660b5ca56bd5a49288e494a30641fac18010ad3ee3710"
+          },
+          {
+            "path": "samples/typescript.bun.ts",
+            "bytes": 480,
+            "sha256": "e1dd672755c7bdec145b64d4516600bae2ac32c9460295829b0a70b026fa413a"
+          },
+          {
+            "path": "settings.gradle.kts",
+            "bytes": 1051,
+            "sha256": "ae085488af6d39f1581415ff8ead6952590d91afe1d5840754ec1a8e7c0181b6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/AndroidManifest.xml",
+            "bytes": 243,
+            "sha256": "9687d1a5ec1ead9be37675eb59ac98da2e760a53cfdbee219ac09c9a3c20c7dd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/binder-common.mjs",
+            "bytes": 6732,
+            "sha256": "06112224e4b66f105a6fd9f158de7194d011f2699a474fde89e620f78d85ece9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/build.gradle.kts",
+            "bytes": 8376,
+            "sha256": "e4504dfb48ab17edce3578a6e37c10322d7282e40dbe42b797bba3d1afbd7e49"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/binder/prepare-runtime.mjs",
+            "bytes": 3296,
+            "sha256": "8e025d38488a913367b81108410ed5f883cde82181806a6fa5d72c6b3ce64f9b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18339,
+            "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.mjs",
+            "bytes": 1740,
+            "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets/jsc-pressure.mjs",
+            "bytes": 10049,
+            "sha256": "35ad7c4f0ca1bf75ba1b925481c6e0b5b71c92ab5b47fb24ec782f030983921d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java/JscPressureInstrumentedTest.kt",
+            "bytes": 8527,
+            "sha256": "f1dd9119056ee8d07c6392c6d21f4b522a6e0bb9999403a9c6fedafe08c5dd99"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
+            "bytes": 25663,
+            "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.mjs",
+            "bytes": 6487,
+            "sha256": "196e3c7a5a28d4299eab3df1941dd79ac2d68e25dc24ea89917565a709785a44"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/record-candidate.mjs",
+            "bytes": 3120,
+            "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-candidate.lock.json",
+            "bytes": 36075,
+            "sha256": "c95ea90c63c6405b6aa9d64b31ca9754d874e2bd58022702d39f06b90817b87a"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-common.mjs",
+            "bytes": 2617,
+            "sha256": "e6521dd9959acd04284bb9ebd8c82e045c6c2201c56de03221096b2e7a59a80b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-candidate.lock.json",
+            "bytes": 36143,
+            "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-common.mjs",
+            "bytes": 8394,
+            "sha256": "4802bf8b0d98014adaf5be112b3ab5f1cf8d5e534e5a9ea2ce203fb552a30503"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "version.properties",
+            "bytes": 466,
+            "sha256": "edc9d6e7139acf8e9acf4a67a5b0e432000b91fa9fbba9ff7a7d6c4224b36ad5"
+          }
+        ],
+        "runtime": {
+          "status": "reproducible-static-audit-complete",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "officialArtifact": false,
+          "distributionReady": false
+        },
+        "source": {
+          "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+          "downstreamHeadCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11"
+        },
+        "jscCandidate": {
+          "schemaVersion": 2,
+          "kind": "clean-rebased-large-page-jsc-candidate",
+          "evidenceDate": "2026-09-13",
+          "distributionReady": false,
+          "officialArtifact": false,
+          "cleanBunBuilds": 2,
+          "newWebKitBuilds": 0,
+          "reusedIndependentWebKitBuilds": 2,
+          "bunCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+          "bunTree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+          "revision": "1.4.0+e8b129616",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+          "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+          "sourceDateEpoch": 1788278400,
+          "x86PageSizeCeiling": 65536,
+          "config": {
+            "USE_64KB_PAGE_BLOCK": 1,
+            "ENABLE_JIT": 1,
+            "ENABLE_DFG_JIT": 1,
+            "ENABLE_FTL_JIT": 1,
+            "ENABLE_C_LOOP": 0,
+            "ENABLE_SAMPLING_PROFILER": 1,
+            "USE_MIMALLOC": 1,
+            "USE_EXTERNAL_MIMALLOC": 1,
+            "USE_SYSTEM_MALLOC": 0,
+            "USE_ISO_MALLOC": 1,
+            "ENABLE_WEBASSEMBLY": 1,
+            "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+            "ENABLE_WEBASSEMBLY_OMGJIT": 1
+          },
+          "generatedConfig": {
+            "bytes": 6982,
+            "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+          },
+          "libraries": {
+            "libJavaScriptCore.a": {
+              "bytes": 361142888,
+              "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+            },
+            "libWTF.a": {
+              "bytes": 12718664,
+              "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+            },
+            "libbmalloc.a": {
+              "bytes": 246530,
+              "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+            }
+          },
+          "bindings": {
+            "historicalCandidate": {
+              "bytes": 4604,
+              "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+            },
+            "historicalCleanBuilds": {
+              "bytes": 16273,
+              "sha256": "4a879c6ed99f28b0792cb96695419abfa0d78b469ca7a07dcbfcb2bac6612060"
+            },
+            "priorRebasedCandidate": {
+              "bytes": 25663,
+              "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+            },
+            "priorTwelvePatchCandidate": {
+              "bytes": 36143,
+              "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad"
+            },
+            "baselineRuntimeEvidence": {
+              "bytes": 18339,
+              "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+            },
+            "recipes": {
+              "run-clean-bun.mjs": {
+                "bytes": 2041,
+                "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+              },
+              "build-clean-bun.mjs": {
+                "bytes": 2918,
+                "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+              },
+              "jsc-common.mjs": {
+                "bytes": 1740,
+                "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+              },
+              "record-candidate.mjs": {
+                "bytes": 3120,
+                "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+              },
+              "candidate.lock.json": {
+                "bytes": 4604,
+                "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+              }
+            },
+            "api28Recipes": {
+              "run-locked-build.mjs": {
+                "bytes": 10514,
+                "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+              },
+              "build-experiment.mjs": {
+                "bytes": 18890,
+                "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+              },
+              "config/arm64-v8a.configure.json": {
+                "bytes": 262,
+                "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+              },
+              "config/x86_64.configure.json": {
+                "bytes": 254,
+                "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+              },
+              "source-inputs.lock.json": {
+                "bytes": 15880,
+                "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+              },
+              "toolchain-inputs.lock.json": {
+                "bytes": 11636,
+                "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+              },
+              "build-network-inputs.lock.json": {
+                "bytes": 5633,
+                "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+              },
+              "cargo-inputs.lock.json": {
+                "bytes": 64745,
+                "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+              },
+              "bun-inputs.lock.json": {
+                "bytes": 124300,
+                "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+              },
+              "patches/series.lock.json": {
+                "bytes": 21497,
+                "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+              },
+              "experiment.lock.json": {
+                "bytes": 9648,
+                "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+              },
+              "verify-experiment.mjs": {
+                "bytes": 83864,
+                "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+              },
+              "materialize-cargo-inputs.mjs": {
+                "bytes": 40231,
+                "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+              },
+              "materialize-bun-inputs.mjs": {
+                "bytes": 63238,
+                "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+              },
+              "materialize-source-inputs.mjs": {
+                "bytes": 11821,
+                "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+              },
+              "materialize-toolchain-inputs.mjs": {
+                "bytes": 7059,
+                "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+              }
+            }
+          },
+          "artifact": {
+            "abi": "x86_64",
+            "bytes": 90609496,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d50",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "331309c87afe49cf8008ae059e1075a6a7d7be09",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1067,
+                "definedCount": 672,
+                "undefinedCount": 394,
+                "tableSha256": "ac7fbb0956b051e5d8e55bc16c536f72a89b1b5a3b52257aba357af73f8ccda3",
+                "recordsSha256": "a6c2b59e36295d78ad8837ca599cf6515fa488231bcf5efc0fb07abfefa15709",
+                "definedRecordsSha256": "d976ba6eb1bc2d2522147d2a4a64729f4a342083b64d6a7267e557f129844ffa",
+                "undefinedRecordsSha256": "7ea254a61557e6242aaa04c5c032bb34b9193fbb0e852bc8bb247a9535eea6a2"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          },
+          "builds": [
+            {
+              "run": 1,
+              "inputDriver": {
+                "bytes": 4727,
+                "sha256": "4f9ecede2e7f101be477da5372b726f6f654e976bbb7b4387fbc8ee1b5cb8bbf"
+              },
+              "driver": {
+                "schema": 1,
+                "startedAt": "2026-09-13T15:33:41Z",
+                "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "cleanBefore": true,
+                "freshCheckout": true,
+                "recipes": {
+                  "run-clean-bun.mjs": {
+                    "bytes": 2041,
+                    "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+                  },
+                  "build-clean-bun.mjs": {
+                    "bytes": 2918,
+                    "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+                  },
+                  "jsc-common.mjs": {
+                    "bytes": 1740,
+                    "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+                  },
+                  "record-candidate.mjs": {
+                    "bytes": 3120,
+                    "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+                  },
+                  "candidate.lock.json": {
+                    "bytes": 4604,
+                    "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+                  }
+                },
+                "api28Recipes": {
+                  "run-locked-build.mjs": {
+                    "bytes": 10514,
+                    "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+                  },
+                  "build-experiment.mjs": {
+                    "bytes": 18890,
+                    "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+                  },
+                  "config/arm64-v8a.configure.json": {
+                    "bytes": 262,
+                    "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+                  },
+                  "config/x86_64.configure.json": {
+                    "bytes": 254,
+                    "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+                  },
+                  "source-inputs.lock.json": {
+                    "bytes": 15880,
+                    "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+                  },
+                  "toolchain-inputs.lock.json": {
+                    "bytes": 11636,
+                    "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+                  },
+                  "build-network-inputs.lock.json": {
+                    "bytes": 5633,
+                    "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+                  },
+                  "cargo-inputs.lock.json": {
+                    "bytes": 64745,
+                    "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+                  },
+                  "bun-inputs.lock.json": {
+                    "bytes": 124300,
+                    "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+                  },
+                  "patches/series.lock.json": {
+                    "bytes": 21497,
+                    "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+                  },
+                  "experiment.lock.json": {
+                    "bytes": 9648,
+                    "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+                  },
+                  "verify-experiment.mjs": {
+                    "bytes": 83864,
+                    "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+                  },
+                  "materialize-cargo-inputs.mjs": {
+                    "bytes": 40231,
+                    "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+                  },
+                  "materialize-bun-inputs.mjs": {
+                    "bytes": 63238,
+                    "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+                  },
+                  "materialize-source-inputs.mjs": {
+                    "bytes": 11821,
+                    "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+                  },
+                  "materialize-toolchain-inputs.mjs": {
+                    "bytes": 7059,
+                    "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+                  }
+                },
+                "newWebKitBuilds": 0,
+                "exitCode": 0,
+                "state": "complete",
+                "buildStartedAt": "2026-09-13T15:33:43Z",
+                "buildFinishedAt": "2026-09-13T15:46:09Z",
+                "cleanAfter": true,
+                "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "recipesUnchanged": true,
+                "api28RecipesUnchanged": true,
+                "artifact": {
+                  "bytes": 90609496,
+                  "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+                },
+                "receipt": {
+                  "bytes": 5651,
+                  "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+                },
+                "ninjaLog": {
+                  "bytes": 230444,
+                  "sha256": "d7d38faaa054091aea9f488e3b821f4c22690a27887c4b8b2ef09fdec9e00f46"
+                },
+                "finishedAt": "2026-09-13T15:46:10Z",
+                "log": {
+                  "bytes": 35919,
+                  "sha256": "01b2f55ffe63e18ee95eff8ad003c01bf94728578b33fdd358a62b4047bb6817"
+                }
+              },
+              "finalEdges": [
+                {
+                  "output": "bun-profile",
+                  "start": 605083,
+                  "end": 607789,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun-profile.linker-map",
+                  "start": 605083,
+                  "end": 607789,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun",
+                  "start": 607790,
+                  "end": 607933,
+                  "commandHash": "ef51bbd9db115d99"
+                }
+              ],
+              "webkit": {
+                "config": {
+                  "bytes": 6982,
+                  "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                },
+                "libraries": {
+                  "libJavaScriptCore.a": {
+                    "bytes": 361142888,
+                    "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                  },
+                  "libWTF.a": {
+                    "bytes": 12718664,
+                    "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                  },
+                  "libbmalloc.a": {
+                    "bytes": 246530,
+                    "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                  }
+                }
+              },
+              "api28RecipeEncodings": {
+                "run-locked-build.mjs": "utf8-lf",
+                "build-experiment.mjs": "utf8-lf",
+                "config/arm64-v8a.configure.json": "utf8-lf",
+                "config/x86_64.configure.json": "utf8-lf",
+                "source-inputs.lock.json": "utf8-lf",
+                "toolchain-inputs.lock.json": "utf8-lf",
+                "build-network-inputs.lock.json": "utf8-lf",
+                "cargo-inputs.lock.json": "utf8-lf",
+                "bun-inputs.lock.json": "utf8-lf",
+                "patches/series.lock.json": "utf8-lf",
+                "experiment.lock.json": "utf8-lf",
+                "verify-experiment.mjs": "utf8-lf",
+                "materialize-cargo-inputs.mjs": "utf8-lf",
+                "materialize-bun-inputs.mjs": "utf8-lf",
+                "materialize-source-inputs.mjs": "utf8-lf",
+                "materialize-toolchain-inputs.mjs": "utf8-lf"
+              },
+              "receipt": {
+                "kind": "clean-bun-with-locked-large-page-jsc",
+                "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "sourceInputCount": 22,
+                "cargoArchiveCount": 206,
+                "bunArchiveCount": 125,
+                "toolVersions": {
+                  "node": "v24.3.0",
+                  "bun": "1.3.13",
+                  "cmake": "cmake version 3.30.5",
+                  "ninja": "1.13.2",
+                  "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+                  "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+                  "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+                  "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+                  "packageCount": 243,
+                  "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+                },
+                "jsc": {
+                  "schemaVersion": 1,
+                  "kind": "diagnostic-incremental-large-page-jsc-candidate",
+                  "distributionReady": false,
+                  "officialArtifact": false,
+                  "cleanBunBuilds": 0,
+                  "evidenceDate": "2026-09-12",
+                  "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+                  "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+                  "revision": "1.4.0+7b9ac2668",
+                  "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+                  "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+                  "sourceDateEpoch": 1788278400,
+                  "x86PageSizeCeiling": 65536,
+                  "config": {
+                    "USE_64KB_PAGE_BLOCK": 1,
+                    "ENABLE_JIT": 1,
+                    "ENABLE_DFG_JIT": 1,
+                    "ENABLE_FTL_JIT": 1,
+                    "ENABLE_C_LOOP": 0,
+                    "ENABLE_SAMPLING_PROFILER": 1,
+                    "USE_MIMALLOC": 1,
+                    "USE_EXTERNAL_MIMALLOC": 1,
+                    "USE_SYSTEM_MALLOC": 0,
+                    "USE_ISO_MALLOC": 1,
+                    "ENABLE_WEBASSEMBLY": 1,
+                    "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+                    "ENABLE_WEBASSEMBLY_OMGJIT": 1
+                  },
+                  "generatedConfig": {
+                    "bytes": 6982,
+                    "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                  },
+                  "libraries": {
+                    "libJavaScriptCore.a": {
+                      "bytes": 361142888,
+                      "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                    },
+                    "libWTF.a": {
+                      "bytes": 12718664,
+                      "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                    },
+                    "libbmalloc.a": {
+                      "bytes": 246530,
+                      "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                    }
+                  },
+                  "recipes": [
+                    {
+                      "path": "build-webkit.sh",
+                      "bytes": 3428,
+                      "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+                    },
+                    {
+                      "path": "relink-bun.sh",
+                      "bytes": 1181,
+                      "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+                    }
+                  ],
+                  "artifact": {
+                    "abi": "x86_64",
+                    "bytes": 90609480,
+                    "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+                    "elf": {
+                      "class": "ELF64",
+                      "data": "little-endian",
+                      "osAbi": "System V",
+                      "type": "ET_DYN",
+                      "machine": 62,
+                      "machineName": "Advanced Micro Devices X86-64",
+                      "entryPoint": "0x107800",
+                      "programHeaderCount": 8,
+                      "sectionHeaderCount": 33,
+                      "interpreter": "/system/bin/linker64",
+                      "loadAlignments": [
+                        16384,
+                        65536
+                      ],
+                      "minimumLoadAlignment": 16384,
+                      "writableExecutableLoad": false,
+                      "executableStack": false,
+                      "neededLibraries": [
+                        "libc.so",
+                        "libm.so",
+                        "libdl.so"
+                      ],
+                      "flags1": "0x8000000",
+                      "pie": true,
+                      "androidRelr": {
+                        "address": "0x10d08",
+                        "bytes": 19896,
+                        "entryBytes": 8
+                      },
+                      "androidIdent": {
+                        "api": 28,
+                        "ndkVersion": "r27c",
+                        "ndkBuildNumber": "12479018"
+                      },
+                      "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+                      "versionDefinitions": [
+                        {
+                          "index": 1,
+                          "name": "bun-profile",
+                          "base": true
+                        },
+                        {
+                          "index": 2,
+                          "name": "BUN_1.2",
+                          "base": false
+                        }
+                      ],
+                      "versionNeeds": [
+                        {
+                          "file": "libc.so",
+                          "names": [
+                            "LIBC",
+                            "LIBC_N",
+                            "LIBC_O",
+                            "LIBC_P"
+                          ]
+                        },
+                        {
+                          "file": "libm.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        },
+                        {
+                          "file": "libdl.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        }
+                      ],
+                      "dynamicSymbols": {
+                        "entryCount": 1066,
+                        "definedCount": 672,
+                        "undefinedCount": 393,
+                        "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                        "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                        "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                        "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+                      },
+                      "symbolTable": {
+                        "present": true,
+                        "entryCount": 1708,
+                        "bytes": 40992,
+                        "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+                      },
+                      "debugSections": []
+                    }
+                  },
+                  "limits": [
+                    "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+                    "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+                    "No device or Binder success inferred from compilation",
+                    "Official and nine-patch runtime locks unchanged"
+                  ]
+                }
+              }
+            },
+            {
+              "run": 2,
+              "inputDriver": {
+                "bytes": 4727,
+                "sha256": "1f68e7ce576474ad9d6694a3e94f6357ee3848e7ee861af63d0084fb67c01c82"
+              },
+              "driver": {
+                "schema": 1,
+                "startedAt": "2026-09-13T15:46:10Z",
+                "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "cleanBefore": true,
+                "freshCheckout": true,
+                "recipes": {
+                  "run-clean-bun.mjs": {
+                    "bytes": 2041,
+                    "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+                  },
+                  "build-clean-bun.mjs": {
+                    "bytes": 2918,
+                    "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+                  },
+                  "jsc-common.mjs": {
+                    "bytes": 1740,
+                    "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+                  },
+                  "record-candidate.mjs": {
+                    "bytes": 3120,
+                    "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+                  },
+                  "candidate.lock.json": {
+                    "bytes": 4604,
+                    "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+                  }
+                },
+                "api28Recipes": {
+                  "run-locked-build.mjs": {
+                    "bytes": 10514,
+                    "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+                  },
+                  "build-experiment.mjs": {
+                    "bytes": 18890,
+                    "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+                  },
+                  "config/arm64-v8a.configure.json": {
+                    "bytes": 262,
+                    "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+                  },
+                  "config/x86_64.configure.json": {
+                    "bytes": 254,
+                    "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+                  },
+                  "source-inputs.lock.json": {
+                    "bytes": 15880,
+                    "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+                  },
+                  "toolchain-inputs.lock.json": {
+                    "bytes": 11636,
+                    "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+                  },
+                  "build-network-inputs.lock.json": {
+                    "bytes": 5633,
+                    "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+                  },
+                  "cargo-inputs.lock.json": {
+                    "bytes": 64745,
+                    "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+                  },
+                  "bun-inputs.lock.json": {
+                    "bytes": 124300,
+                    "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+                  },
+                  "patches/series.lock.json": {
+                    "bytes": 21497,
+                    "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+                  },
+                  "experiment.lock.json": {
+                    "bytes": 9648,
+                    "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+                  },
+                  "verify-experiment.mjs": {
+                    "bytes": 83864,
+                    "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+                  },
+                  "materialize-cargo-inputs.mjs": {
+                    "bytes": 40231,
+                    "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+                  },
+                  "materialize-bun-inputs.mjs": {
+                    "bytes": 63238,
+                    "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+                  },
+                  "materialize-source-inputs.mjs": {
+                    "bytes": 11821,
+                    "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+                  },
+                  "materialize-toolchain-inputs.mjs": {
+                    "bytes": 7059,
+                    "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+                  }
+                },
+                "newWebKitBuilds": 0,
+                "exitCode": 0,
+                "state": "complete",
+                "buildStartedAt": "2026-09-13T15:46:12Z",
+                "buildFinishedAt": "2026-09-13T15:56:00Z",
+                "cleanAfter": true,
+                "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+                "recipesUnchanged": true,
+                "api28RecipesUnchanged": true,
+                "artifact": {
+                  "bytes": 90609496,
+                  "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+                },
+                "receipt": {
+                  "bytes": 5651,
+                  "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+                },
+                "ninjaLog": {
+                  "bytes": 229548,
+                  "sha256": "0df59c9b98cacff30a8fda0b2261861b7702e34456cf3d41231ba7c0e90baa56"
+                },
+                "finishedAt": "2026-09-13T15:56:00Z",
+                "log": {
+                  "bytes": 35662,
+                  "sha256": "67d18590c67ca13ba18cb7bcdba6cdd411959ca0577c137aeb03ca015b38b0ef"
+                }
+              },
+              "finalEdges": [
+                {
+                  "output": "bun-profile",
+                  "start": 474064,
+                  "end": 476800,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun-profile.linker-map",
+                  "start": 474064,
+                  "end": 476800,
+                  "commandHash": "1aee6811c2575c65"
+                },
+                {
+                  "output": "bun",
+                  "start": 476800,
+                  "end": 476946,
+                  "commandHash": "ef51bbd9db115d99"
+                }
+              ],
+              "webkit": {
+                "config": {
+                  "bytes": 6982,
+                  "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                },
+                "libraries": {
+                  "libJavaScriptCore.a": {
+                    "bytes": 361142888,
+                    "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                  },
+                  "libWTF.a": {
+                    "bytes": 12718664,
+                    "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                  },
+                  "libbmalloc.a": {
+                    "bytes": 246530,
+                    "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                  }
+                }
+              },
+              "api28RecipeEncodings": {
+                "run-locked-build.mjs": "utf8-lf",
+                "build-experiment.mjs": "utf8-lf",
+                "config/arm64-v8a.configure.json": "utf8-lf",
+                "config/x86_64.configure.json": "utf8-lf",
+                "source-inputs.lock.json": "utf8-lf",
+                "toolchain-inputs.lock.json": "utf8-lf",
+                "build-network-inputs.lock.json": "utf8-lf",
+                "cargo-inputs.lock.json": "utf8-lf",
+                "bun-inputs.lock.json": "utf8-lf",
+                "patches/series.lock.json": "utf8-lf",
+                "experiment.lock.json": "utf8-lf",
+                "verify-experiment.mjs": "utf8-lf",
+                "materialize-cargo-inputs.mjs": "utf8-lf",
+                "materialize-bun-inputs.mjs": "utf8-lf",
+                "materialize-source-inputs.mjs": "utf8-lf",
+                "materialize-toolchain-inputs.mjs": "utf8-lf"
+              },
+              "receipt": {
+                "kind": "clean-bun-with-locked-large-page-jsc",
+                "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+                "sourceInputCount": 22,
+                "cargoArchiveCount": 206,
+                "bunArchiveCount": 125,
+                "toolVersions": {
+                  "node": "v24.3.0",
+                  "bun": "1.3.13",
+                  "cmake": "cmake version 3.30.5",
+                  "ninja": "1.13.2",
+                  "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+                  "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+                  "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+                  "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+                  "packageCount": 243,
+                  "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+                },
+                "jsc": {
+                  "schemaVersion": 1,
+                  "kind": "diagnostic-incremental-large-page-jsc-candidate",
+                  "distributionReady": false,
+                  "officialArtifact": false,
+                  "cleanBunBuilds": 0,
+                  "evidenceDate": "2026-09-12",
+                  "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+                  "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+                  "revision": "1.4.0+7b9ac2668",
+                  "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+                  "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+                  "sourceDateEpoch": 1788278400,
+                  "x86PageSizeCeiling": 65536,
+                  "config": {
+                    "USE_64KB_PAGE_BLOCK": 1,
+                    "ENABLE_JIT": 1,
+                    "ENABLE_DFG_JIT": 1,
+                    "ENABLE_FTL_JIT": 1,
+                    "ENABLE_C_LOOP": 0,
+                    "ENABLE_SAMPLING_PROFILER": 1,
+                    "USE_MIMALLOC": 1,
+                    "USE_EXTERNAL_MIMALLOC": 1,
+                    "USE_SYSTEM_MALLOC": 0,
+                    "USE_ISO_MALLOC": 1,
+                    "ENABLE_WEBASSEMBLY": 1,
+                    "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+                    "ENABLE_WEBASSEMBLY_OMGJIT": 1
+                  },
+                  "generatedConfig": {
+                    "bytes": 6982,
+                    "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+                  },
+                  "libraries": {
+                    "libJavaScriptCore.a": {
+                      "bytes": 361142888,
+                      "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+                    },
+                    "libWTF.a": {
+                      "bytes": 12718664,
+                      "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+                    },
+                    "libbmalloc.a": {
+                      "bytes": 246530,
+                      "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+                    }
+                  },
+                  "recipes": [
+                    {
+                      "path": "build-webkit.sh",
+                      "bytes": 3428,
+                      "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+                    },
+                    {
+                      "path": "relink-bun.sh",
+                      "bytes": 1181,
+                      "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+                    }
+                  ],
+                  "artifact": {
+                    "abi": "x86_64",
+                    "bytes": 90609480,
+                    "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+                    "elf": {
+                      "class": "ELF64",
+                      "data": "little-endian",
+                      "osAbi": "System V",
+                      "type": "ET_DYN",
+                      "machine": 62,
+                      "machineName": "Advanced Micro Devices X86-64",
+                      "entryPoint": "0x107800",
+                      "programHeaderCount": 8,
+                      "sectionHeaderCount": 33,
+                      "interpreter": "/system/bin/linker64",
+                      "loadAlignments": [
+                        16384,
+                        65536
+                      ],
+                      "minimumLoadAlignment": 16384,
+                      "writableExecutableLoad": false,
+                      "executableStack": false,
+                      "neededLibraries": [
+                        "libc.so",
+                        "libm.so",
+                        "libdl.so"
+                      ],
+                      "flags1": "0x8000000",
+                      "pie": true,
+                      "androidRelr": {
+                        "address": "0x10d08",
+                        "bytes": 19896,
+                        "entryBytes": 8
+                      },
+                      "androidIdent": {
+                        "api": 28,
+                        "ndkVersion": "r27c",
+                        "ndkBuildNumber": "12479018"
+                      },
+                      "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+                      "versionDefinitions": [
+                        {
+                          "index": 1,
+                          "name": "bun-profile",
+                          "base": true
+                        },
+                        {
+                          "index": 2,
+                          "name": "BUN_1.2",
+                          "base": false
+                        }
+                      ],
+                      "versionNeeds": [
+                        {
+                          "file": "libc.so",
+                          "names": [
+                            "LIBC",
+                            "LIBC_N",
+                            "LIBC_O",
+                            "LIBC_P"
+                          ]
+                        },
+                        {
+                          "file": "libm.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        },
+                        {
+                          "file": "libdl.so",
+                          "names": [
+                            "LIBC"
+                          ]
+                        }
+                      ],
+                      "dynamicSymbols": {
+                        "entryCount": 1066,
+                        "definedCount": 672,
+                        "undefinedCount": 393,
+                        "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                        "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                        "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                        "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+                      },
+                      "symbolTable": {
+                        "present": true,
+                        "entryCount": 1708,
+                        "bytes": 40992,
+                        "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+                      },
+                      "debugSections": []
+                    }
+                  },
+                  "limits": [
+                    "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+                    "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+                    "No device or Binder success inferred from compilation",
+                    "Official and nine-patch runtime locks unchanged"
+                  ]
+                }
+              }
+            }
+          ],
+          "limits": [
+            "Two new independent clean Bun builds; exact prior independently built JSC libraries/config and upstream ICU reused",
+            "No new WebKit/ICU compilation or device acceptance inferred from these builds",
+            "Official, baseline thirteen-patch and historical nine/ten/twelve-patch payload evidence unchanged",
+            "Not Release acceptance"
+          ]
+        },
+        "runtimes": [
+          {
+            "abi": "arm64-v8a",
+            "bytes": 87923328,
+            "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+          },
+          {
+            "abi": "x86_64",
+            "bytes": 90609496,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+          }
+        ]
+      },
+      "payloads": [
+        {
+          "abi": "x86_64",
+          "entry": "lib/x86_64/libbun_exec.so",
+          "compression": "deflated",
+          "bytes": 90609496,
+          "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+          "supervisor": {
+            "entry": "lib/x86_64/libbun_supervisor.so",
+            "compression": "deflated",
+            "bytes": 7304,
+            "sha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+          }
+        }
+      ],
+      "rounds": [
+        {
+          "round": 1,
+          "status": 0,
+          "stdout": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=3753 reaped=true exitCode=137 durationMillis=620 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=3836 reaped=true exitCode=137 durationMillis=1320 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=3931 reaped=true exitCode=137 durationMillis=582 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=4137 reaped=true exitCode=137 durationMillis=3310 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=4510 reaped=true exitCode=137 durationMillis=817 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 18.699\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "stderr": "",
+          "passedTests": [
+            "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+            "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+            "installedNativeRuntimeMatchesTheLockedPayload",
+            "sigtermIgnoringTimeoutReapsTheChild",
+            "sigtermIgnoringOutputLimitReapsTheChild",
+            "checkedInSamplesExecuteWithinPublishedBoundaries",
+            "manifestPublishesWakeInfoAndRuntimeContracts",
+            "timeoutCancellationAndInvalidRequestAreBounded"
+          ],
+          "remainingUidProcesses": 0
+        },
+        {
+          "round": 2,
+          "status": 0,
+          "stdout": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4831 reaped=true exitCode=137 durationMillis=429 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4850 reaped=true exitCode=137 durationMillis=407 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=4865 reaped=true exitCode=137 durationMillis=307 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=4961 reaped=true exitCode=137 durationMillis=3305 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=5045 reaped=true exitCode=137 durationMillis=812 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 12.012\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "stderr": "",
+          "passedTests": [
+            "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+            "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+            "installedNativeRuntimeMatchesTheLockedPayload",
+            "sigtermIgnoringTimeoutReapsTheChild",
+            "sigtermIgnoringOutputLimitReapsTheChild",
+            "checkedInSamplesExecuteWithinPublishedBoundaries",
+            "manifestPublishesWakeInfoAndRuntimeContracts",
+            "timeoutCancellationAndInvalidRequestAreBounded"
+          ],
+          "remainingUidProcesses": 0
+        }
+      ],
+      "cleanup": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k",
+          "uninstalled": true
+        }
+      ],
+      "passed": true,
+      "distributionReady": false,
+      "signatures": [
+        {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+        },
+        {
+          "verifiedSchemes": [
+            "v2"
+          ],
+          "signerCount": 1,
+          "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+        }
+      ],
+      "manifest": "N: android=http://schemas.android.com/apk/res/android (line=2)\r\n  E: manifest (line=2)\r\n    A: http://schemas.android.com/apk/res/android:versionCode(0x0101021b)=7\r\n    A: http://schemas.android.com/apk/res/android:versionName(0x0101021c)=\"0.2.2-api28-binder-test-only\" (Raw: \"0.2.2-api28-binder-test-only\")\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersion(0x01010572)=36\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersionCodename(0x01010573)=\"16\" (Raw: \"16\")\r\n    A: package=\"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k\")\r\n    A: platformBuildVersionCode=36\r\n    A: platformBuildVersionName=16\r\n      E: uses-sdk (line=7)\r\n        A: http://schemas.android.com/apk/res/android:minSdkVersion(0x0101020c)=28\r\n        A: http://schemas.android.com/apk/res/android:targetSdkVersion(0x01010270)=36\r\n      E: uses-permission (line=11)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.permission.INTERNET\" (Raw: \"android.permission.INTERNET\")\r\n      E: uses-permission (line=12)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n      E: application (line=14)\r\n        A: http://schemas.android.com/apk/res/android:label(0x01010001)=@0x7f030000\r\n        A: http://schemas.android.com/apk/res/android:icon(0x01010002)=@0x7f010000\r\n        A: http://schemas.android.com/apk/res/android:debuggable(0x0101000f)=true\r\n        A: http://schemas.android.com/apk/res/android:testOnly(0x01010272)=true\r\n        A: http://schemas.android.com/apk/res/android:allowBackup(0x01010280)=false\r\n        A: http://schemas.android.com/apk/res/android:supportsRtl(0x010103af)=true\r\n        A: http://schemas.android.com/apk/res/android:extractNativeLibs(0x010104ea)=true\r\n          E: meta-data (line=22)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\" (Raw: \"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=true\r\n          E: meta-data (line=25)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\" (Raw: \"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=16384\r\n          E: meta-data (line=28)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.WAKE_ACTIVITY\" (Raw: \"org.autojs.plugin.WAKE_ACTIVITY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=\".WakeActivity\" (Raw: \".WakeActivity\")\r\n          E: meta-data (line=31)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.info.AUTHOR\" (Raw: \"org.autojs.plugin.info.AUTHOR\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=@0x7f030001\r\n          E: activity (line=35)\r\n            A: http://schemas.android.com/apk/res/android:theme(0x01010000)=@0x01030055\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:finishOnTaskLaunch(0x01010014)=true\r\n            A: http://schemas.android.com/apk/res/android:excludeFromRecents(0x01010017)=true\r\n              E: intent-filter (line=42)\r\n                  E: action (line=43)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.action.WAKE\" (Raw: \"org.autojs.plugin.action.WAKE\")\r\n                  E: category (line=45)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.intent.category.DEFAULT\" (Raw: \"android.intent.category.DEFAULT\")\r\n          E: service (line=49)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n              E: intent-filter (line=53)\r\n                  E: action (line=54)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.INFO\" (Raw: \"org.autojs.plugin.INFO\")\r\n                  E: category (line=56)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n          E: service (line=59)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:process(0x01010011)=\":bun_runtime\" (Raw: \":bun_runtime\")\r\n              E: intent-filter (line=64)\r\n                  E: action (line=65)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.bun.RUNTIME\" (Raw: \"org.autojs.plugin.bun.RUNTIME\")\r\n                  E: category (line=67)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n",
+      "device": {
+        "model": "sdk_gphone16k_x86_64",
+        "api": "36",
+        "abi": "x86_64",
+        "pages": "16384",
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "bridge": "libndk_translation.so",
+        "machine": "x86_64",
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys"
+      },
+      "uid": 10213,
+      "installedApkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "installedTestApkSha256": "b56653582a826dad4e13c3f5c4232b5c41accec7139fd29ba321d3d90226f9b8",
+      "finalUidProcesses": 0
+    }
+  ]
+}
