@@ -235,11 +235,12 @@ default timeout: 60 seconds
 
 _2026/09/12_
 
-- `修復` 修復實驗 Android epoll 等待提前交付呼叫者已封鎖的 pending 訊號: 保留 caller mask, 並在呼叫點維持既有 epoll_pwait2 停用. GCC/Clang 回歸直接編譯修復前後的完整等待函式; 全新 native 建置與原定義裝置套件獨立取證, 保留十一補丁失敗檔案及官方支援範圍. 原定義套件在五個原生 4 KiB 環境各兩輪通過: 應用程式探針 330/330, Binder 80/80. 兩次 API 28 ART 啟動失敗獨立封存, 第三次相同 APK 兩輪通過; 新原始碼 Samsung ARM64 API 32 門檻仍未完成; JSC rebase 已另行記錄
+- `修復` 修復實驗 Android epoll 等待提前交付呼叫者已封鎖的 pending 訊號: 保留 caller mask, 並在呼叫點維持既有 epoll_pwait2 停用. GCC/Clang 回歸直接編譯修復前後的完整等待函式; 全新 native 建置與原定義裝置套件獨立取證, 保留十一補丁失敗檔案及官方支援範圍. 原定義套件在五個原生 4 KiB 環境各兩輪通過: 應用程式探針 330/330, Binder 80/80. 兩次 API 28 ART 啟動失敗獨立封存, 第三次相同 APK 兩輪通過; 新原始碼原固定測試的 Samsung ARM64 裝置門檻已補齊; JSC rebase 已另行記錄
 - `修復` 歷史十一補丁結果: 修復實驗 Android spawn 提前交付 pending SIGSYS: 父執行緒保留呼叫者 mask, 僅子路徑允許設定階段的訊號處理, 呼叫者封鎖 SIGSYS 時使用既有子程序 cgroup 加入路徑. GCC/Clang 主機回歸涵蓋完整正式函式及舊原始碼失敗對照; 新原始碼建置與裝置證據獨立記錄, 不轉移歷史驗收或擴大官方支援. 裝置複測確認 spawn 返回時訊號保持, 但非同步等待期間仍提前交付; 獨立唯讀 epoll 暫存器/遮罩證據定位下一處阻斷, 完整 33 項門檻仍未通過
 - `修復` 修正執行環境啟動檢查的暫時失敗被永久快取的問題: 失敗完成後等待 30 秒, 在後續請求時重試, 並行請求共用同一次檢查; 各檢查輸出串流限制為 4 KiB. 保留本地化摘要, 加入 API, ABI, 階段, 執行環境身分, 結束碼和重試診斷, 明確標示訊號僅為推斷; 原生位元組及支援範圍不變
 - `修復` 修復實驗版 Android 在封鎖 SIGSYS 時首次非同步 spawn 的 pidfd 探測當機, 透過既有 waiter 備援路徑保留呼叫執行緒遮罩及 pending 訊號. 十修補執行階段在五個原生 4 KiB 環境通過原 31 項探針 (310/310) 和完整八項 Binder (80/80). 恢復建置完成證據時明確保留原退出碼缺失, 獨立封存首次 ART 啟動失敗. JSC rebase 及 Release 門檻仍未完成, 官方位元組不變
 - `修復` 修復實驗版原生 x86_64 16 KiB 的 JavaScriptCore 啟動中止: 以明確大頁/JIT/配置器設定重新編譯 pinned WebKit 並重新連結 Bun, 在 4 KiB 和 16 KiB AVD 各兩輪完整 Binder 通過 (32/32). 官方位元組及其 4 KiB 防護保持不變, Release 驗收另行進行
+- `優化` 完成十二補丁 Samsung SM-F936U / API 32 / 原生 ARM64 / 4 KiB 回歸: 兩輪原探針 66/66, 完整 Binder 16/16. 與 API 36 批次重用相同三個 APK, 40 個 pending 保持檢查點與十二個 child 觀測通過. 三個測試套件解除安裝, 三個 UID 處理程序清零, 專用 ADB 關閉且無 AVD 操作. 原固定測試的兩項 Samsung 裝置門檻已補齊, baseline 七環境累計 462/462 探針與 112/112 Binder; 廣泛 runtime, 壓力與 Release 門檻仍未完成
 - `優化` 完成十二補丁原位元組在 Samsung SM-A566B / API 36 / 原生 ARM64 / 硬體 16 KiB 的回歸: 兩輪原 33 項探針 66/66, 完整 Binder 16/16. 四個 pending 訊號模式保留 40 個檢查點及十二個 child 觀測, 最後各向原 caller 交付一次. 重用相同 APK, 無 native 重建; 解除安裝後三個 UID 處理程序清零, 關閉本輪專用 ADB 且無 AVD 操作. baseline 六環境累計 396/396 探針與 96/96 Binder; ARM64 API 32, 廣泛 runtime 與 Release 門檻仍未完成
 - `優化` 完成十二補丁大頁 JSC 候選在 API 36 原生 x86_64 的 4 KiB/16 KiB 使用者頁回歸: 同一 83 輸入 APK 的原 Binder 通過 32/32, 固定壓力模式通過 28/28. 初次低記憶體服務終止獨立封存, 相同 APK 在不改設定或預算的完整重試中通過. 解除安裝後獨立檢查兩個套件 UID 均無程序, 區分 x86 頁模擬, Samsung baseline 與 Release 門檻
 - `優化` 獨立鎖定十二補丁大頁 JSC 候選, 兩次全新 Bun 乾淨建置一致, 保留實際結束碼並驗證 21 項建置輸入未漂移. 精確重用原獨立 JSC 程式庫和 ICU, 保留歷史候選, 讓隔離 Binder 工具使用新的原始碼鎖. 原壓力測試, 語意驗證器與預算不變, 裝置和 Release 驗收另行記錄
