@@ -45,6 +45,13 @@ The [new lock](rebased-candidate.lock.json) retains the two log/driver/Ninja/nat
 receipts and exact reused WebKit inputs. The ELF is an x86_64 PIE with at least
 16 KiB PT_LOAD alignment. This build record alone does not accept any device run.
 
+The subsequent [2026-09-13 device batch](../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md)
+accepts these new bytes separately: 32/32 unchanged Binder tests and 28/28 original
+pressure modes across API 36 native x86_64 4 KiB/16 KiB userspace pages. Both suites
+reuse one APK pair whose 77 inputs match project commit `5738129`. The x86 16 KiB
+userspace ABI is emulated over 4 KiB kernel mappings. No new ARM64, baseline matrix,
+long-running soak, performance or Release acceptance is inferred.
+
 The candidate fixes the pinned WebKit x86 page-size ceiling by compiling
 `USE_64KB_PAGE_BLOCK=1`, keeping JIT/DFG/FTL and Wasm JIT enabled and retaining
 Bun's external mimalloc integration. `record-candidate.mjs` validates every

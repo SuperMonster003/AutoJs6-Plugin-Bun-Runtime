@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "kind": "ten-patch-jsc-session-checkpoints",
+  "evidenceDate": "2026-09-13",
+  "projectBaseCommit": "573812979506283492637aaea3375819c336e515",
+  "distributionReady": false,
+  "candidate": {
+    "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
+    "bytes": 25663,
+    "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+  },
+  "acceptedReports": [
+    {
+      "path": "docs/compatibility/2026-09-13-m5-ten-patch-jsc-binder.json",
+      "bytes": 150659,
+      "sha256": "8b856da7b3ab5ef7630a331affa13f1d3be4f5ac3629a0fe480dcde6c064b20d"
+    },
+    {
+      "path": "docs/compatibility/2026-09-13-m5-ten-patch-jsc-pressure.json",
+      "bytes": 370916,
+      "sha256": "6a2ec5495d2982ba02c74c6b82e2b56bb74a5c942431cd2407456b8e69884b18"
+    }
+  ],
+  "apkGitBinding": {
+    "projectBaseCommit": "573812979506283492637aaea3375819c336e515",
+    "matchedInputs": 77,
+    "binderBuildReceipt": {
+      "bytes": 42057,
+      "sha256": "c8c1d5faa0bd76ddfd314cb4e80f3c676f7019ddc958b08bed255b3c38f0e420"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42848253,
+        "sha256": "2c161a904f0f3e999a7070238e54563354126b77c748f3343be700132d2755fb"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2354641,
+        "sha256": "d203bf8211f66fe2f332f6767b662fe92b331e07f3f9356488cf4b6021186483"
+      }
+    ]
+  },
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "capturedAt": "2026-09-13T01:32:57.870270+00:00",
+      "avd": "bun-jsc-pressure-4k-20260912",
+      "bootCompleted": "1",
+      "ro.product.model": "sdk_gphone64_x86_64",
+      "ro.build.version.sdk": "36",
+      "ro.product.cpu.abi": "x86_64",
+      "ro.dalvik.vm.native.bridge": "libndk_translation.so",
+      "ro.build.fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+      "machine": "x86_64",
+      "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+      "getconfPageSize": 4096,
+      "shellMappingPages": [
+        "KernelPageSize:        4 kB",
+        "MMUPageSize:           4 kB"
+      ]
+    },
+    {
+      "serial": "emulator-5582",
+      "capturedAt": "2026-09-13T01:33:00.871797+00:00",
+      "avd": "bun-jsc-pressure-16k-20260912",
+      "bootCompleted": "1",
+      "ro.product.model": "sdk_gphone16k_x86_64",
+      "ro.build.version.sdk": "36",
+      "ro.product.cpu.abi": "x86_64",
+      "ro.dalvik.vm.native.bridge": "libndk_translation.so",
+      "ro.build.fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "machine": "x86_64",
+      "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+      "getconfPageSize": 16384,
+      "shellMappingPages": [
+        "KernelPageSize:        4 kB",
+        "MMUPageSize:           4 kB"
+      ]
+    }
+  ],
+  "deviceDrivers": [
+    {
+      "name": "binder-4k",
+      "serial": "emulator-5580",
+      "pages": 4096,
+      "startedAt": "2026-09-13T01:50:51Z",
+      "finishedAt": "2026-09-13T01:51:21Z",
+      "exitCode": 0
+    },
+    {
+      "name": "pressure-4k",
+      "serial": "emulator-5580",
+      "pages": 4096,
+      "startedAt": "2026-09-13T01:51:21Z",
+      "finishedAt": "2026-09-13T01:51:36Z",
+      "exitCode": 0
+    },
+    {
+      "name": "binder-16k",
+      "serial": "emulator-5582",
+      "pages": 16384,
+      "startedAt": "2026-09-13T01:51:36Z",
+      "finishedAt": "2026-09-13T01:52:08Z",
+      "exitCode": 0
+    },
+    {
+      "name": "pressure-16k",
+      "serial": "emulator-5582",
+      "pages": 16384,
+      "startedAt": "2026-09-13T01:52:08Z",
+      "finishedAt": "2026-09-13T01:52:23Z",
+      "exitCode": 0
+    }
+  ],
+  "cleanup": {
+    "checkpoints": [
+      {
+        "serial": "emulator-5580",
+        "avd": "bun-jsc-pressure-4k-20260912",
+        "packagesRemaining": 0,
+        "executionUids": [
+          {
+            "suite": "binder",
+            "uid": 10226,
+            "processes": 0
+          },
+          {
+            "suite": "pressure",
+            "uid": 10228,
+            "processes": 0
+          }
+        ],
+        "separatelyCapturedTestUids": [],
+        "rawPackages": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "rawProcesses": {
+          "bytes": 15953,
+          "sha256": "f1daa6c9b36eeccfa3b989f2dc9fab4e96de2748dcc6c58c3e80588b290988f9"
+        },
+        "ownedAvdStopped": true
+      },
+      {
+        "serial": "emulator-5582",
+        "avd": "bun-jsc-pressure-16k-20260912",
+        "packagesRemaining": 0,
+        "executionUids": [
+          {
+            "suite": "binder",
+            "uid": 10213,
+            "processes": 0
+          },
+          {
+            "suite": "pressure",
+            "uid": 10215,
+            "processes": 0
+          }
+        ],
+        "separatelyCapturedTestUids": [
+          {
+            "suite": "binder",
+            "uid": 10214,
+            "processes": 0
+          },
+          {
+            "suite": "pressure",
+            "uid": 10216,
+            "processes": 0
+          }
+        ],
+        "rawPackages": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "rawProcesses": {
+          "bytes": 12282,
+          "sha256": "6eff98d9f83873c8d8c7320077db5fdb930a30107cd3135079526645984159b6"
+        },
+        "ownedAvdStopped": true
+      }
+    ],
+    "housekeepingDiagnostic": {
+      "exitCode": 1,
+      "failedAssertion": "All three pre-existing AVD serials still present after owned cleanup",
+      "phase": "After package/UID checks, exact-name-checked owned emu kill calls and owned serial disappearance; before writing aggregate receipts",
+      "missingPreExistingSerials": [
+        "emulator-5560",
+        "emulator-5562"
+      ],
+      "controlCommandsToPreExistingAvds": false,
+      "interpretation": "Inventory changed; no cause inferred. Recover retained package/UID snapshots without rerunning tests or restarting any AVD.",
+      "script": {
+        "bytes": 3202,
+        "sha256": "13ee15f52dbdbb47b24afd3354b700f299f3076f48526c588fad3b444b55f746"
+      }
+    },
+    "deviceInventoryBefore": {
+      "bytes": 858,
+      "sha256": "691743e2d129bac1010b0ee21bc0a93d19f67ddba34b13cab377d19d79d12afd"
+    },
+    "deviceInventoryAfter": {
+      "bytes": 610,
+      "sha256": "0f94a4f14afc797b4201ee1af8c49586905b4f9f2143a7a31cc626057b76afbc"
+    }
+  },
+  "limits": [
+    "No new Samsung/ARM64 or baseline ten-patch suite observations",
+    "x86 16 KiB userspace ABI emulation over 4 KiB kernel mappings; verified x86 ELF executes without ARM translation",
+    "4 KiB test-package UIDs were not separately captured; all four execution UIDs and both captured 16 KiB test UIDs were checked",
+    "The retained housekeeping inventory assertion is not a device-suite failure; no cause is inferred for unrelated AVD inventory changes",
+    "No Release, long-running soak, exhaustive JIT/Wasm or performance acceptance"
+  ]
+}
