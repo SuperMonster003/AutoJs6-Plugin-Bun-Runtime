@@ -8,6 +8,8 @@ export const TWELVE_PATCH_HEAD = "06e518f73b4fccc6c3ffb17412ea166bf886bed0";
 export const TWELVE_PATCH_TREE = "1eb8d5ea945001f018bdf14bd00c261d40b02573";
 export const TWELVE_PATCH_REVISION = "1.4.0+06e518f73";
 export const TWELVE_PATCH_BASELINE = new URL("../../../../docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json", import.meta.url);
+const TWELVE_PATCH_ARCHIVE = new URL("../../../../docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json", import.meta.url);
+const TWELVE_PATCH_ARCHIVE_SHA256 = "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad";
 export const API28_RECIPES = Object.freeze([
     "run-locked-build.mjs", "build-experiment.mjs", "config/arm64-v8a.configure.json", "config/x86_64.configure.json",
     "source-inputs.lock.json", "toolchain-inputs.lock.json", "build-network-inputs.lock.json", "cargo-inputs.lock.json",
@@ -15,13 +17,18 @@ export const API28_RECIPES = Object.freeze([
     "materialize-cargo-inputs.mjs", "materialize-bun-inputs.mjs", "materialize-source-inputs.mjs", "materialize-toolchain-inputs.mjs",
 ]);
 
-export function twelvePatchSourceBindings() {
+function sharedSourceBindings() {
     return {
         historicalCandidate: canonicalFacts(new URL("candidate.lock.json", import.meta.url)),
         historicalCleanBuilds: canonicalFacts(new URL("../../../../docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json", import.meta.url)),
         priorRebasedCandidate: canonicalFacts(new URL("rebased-candidate.lock.json", import.meta.url)),
         baselineRuntimeEvidence: canonicalFacts(TWELVE_PATCH_BASELINE),
         recipes: Object.fromEntries(BUILD_RECIPES.map(name => [name, canonicalFacts(new URL(name, import.meta.url))])),
+    };
+}
+
+export function twelvePatchSourceBindings() {
+    return { ...sharedSourceBindings(),
         api28Recipes: Object.fromEntries(API28_RECIPES.map(name => [name, canonicalFacts(new URL(`../api28/${name}`, import.meta.url))])),
     };
 }
@@ -97,10 +104,25 @@ export function validateTwelvePatchCandidate(lock) {
 }
 
 export function loadTwelvePatchJscCandidate() {
-    return validateTwelvePatchCandidate(JSON.parse(readFileSync(new URL("twelve-patch-candidate.lock.json", import.meta.url), "utf8")));
+    const path = new URL("twelve-patch-candidate.lock.json", import.meta.url);
+    assert.equal(canonicalFacts(path).sha256, TWELVE_PATCH_ARCHIVE_SHA256, "Historical candidate bytes changed");
+    return validateArchivedTwelvePatchCandidate(JSON.parse(readFileSync(path, "utf8")));
+}
+
+// Historical loading binds every field, including the original physical recipe
+// bytes and line-ending maps, to the immutable accepted archive. It must not
+// reinterpret those recipes using a later API 28 source. New build recording
+// still uses validateTwelvePatchCandidate and its current-file encoding checks.
+export function validateArchivedTwelvePatchCandidate(lock) {
+    assert.equal(canonicalFacts(TWELVE_PATCH_ARCHIVE).sha256, TWELVE_PATCH_ARCHIVE_SHA256, "Historical build archive changed");
+    const archived = JSON.parse(readFileSync(TWELVE_PATCH_ARCHIVE, "utf8"));
+    assert.deepEqual(lock, archived, "Historical candidate must match its complete accepted build record");
+    return validateCleanRebase(lock, { schemaVersion: 2, head: TWELVE_PATCH_HEAD, tree: TWELVE_PATCH_TREE,
+        revision: TWELVE_PATCH_REVISION, baselineEvidence: TWELVE_PATCH_BASELINE,
+        bindings: { ...sharedSourceBindings(), api28Recipes: archived.bindings.api28Recipes } });
 }
 
 export function verifyTwelvePatchJscCandidate(path, lock = loadTwelvePatchJscCandidate()) {
-    validateTwelvePatchCandidate(lock);
+    validateArchivedTwelvePatchCandidate(lock);
     return verifyJscCandidate(path, lock);
 }

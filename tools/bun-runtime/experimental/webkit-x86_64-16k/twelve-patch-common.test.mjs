@@ -4,13 +4,38 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { canonicalFacts, loadRebasedJscCandidate, validateRebasedCandidate } from "./rebased-common.mjs";
 import { API28_RECIPES, TWELVE_PATCH_HEAD, TWELVE_PATCH_TREE, TWELVE_PATCH_REVISION,
-    loadTwelvePatchJscCandidate, twelvePatchSourceBindings, validateTwelvePatchCandidate, verifyApi28RecipeEncodings } from "./twelve-patch-common.mjs";
+    loadTwelvePatchJscCandidate, twelvePatchSourceBindings, validateTwelvePatchCandidate,
+    validateArchivedTwelvePatchCandidate, verifyApi28RecipeEncodings } from "./twelve-patch-common.mjs";
 
 test("the recorded twelve-patch candidate matches its separate immutable build archive", () => {
     const lock = loadTwelvePatchJscCandidate();
     assert.equal(lock.artifact.bytes, 90609496);
     assert.equal(lock.artifact.sha256, "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad");
     assert.deepEqual(lock, JSON.parse(readFileSync(new URL("../../../../docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json", import.meta.url), "utf8")));
+});
+
+test("historical twelve-patch loading preserves every archived field after the source advances", () => {
+    const original = loadTwelvePatchJscCandidate();
+    for (const mutate of [
+        x => { x.bunCommit = "e8b1296169a8e6f20c81e926dba6448afb25cd11"; },
+        x => { x.bindings.api28Recipes = twelvePatchSourceBindings().api28Recipes; },
+        x => { x.builds[0].driver.api28Recipes[API28_RECIPES[0]].sha256 = "0".repeat(64); },
+        x => { x.builds[0].api28RecipeEncodings[API28_RECIPES[0]] = "changed"; },
+        x => { x.builds[0].driver.exitCode = null; },
+        x => { x.builds[0].finalEdges.pop(); },
+        x => { x.distributionReady = true; },
+    ]) {
+        const changed = structuredClone(original); mutate(changed);
+        assert.throws(() => validateArchivedTwelvePatchCandidate(changed));
+    }
+});
+
+test("historical acceptance cannot bypass current recipe verification for a new build", () => {
+    const historical = loadTwelvePatchJscCandidate();
+    assert.notDeepEqual(historical.bindings.api28Recipes, twelvePatchSourceBindings().api28Recipes);
+    assert.throws(() => validateTwelvePatchCandidate(historical));
+    for (const build of historical.builds)
+        assert.throws(() => verifyApi28RecipeEncodings(build.driver.api28Recipes, build.api28RecipeEncodings));
 });
 
 // Synthetic metadata tests rejection, without claiming another native build.

@@ -14,7 +14,7 @@ test("pending-signal additions preserve all 31 definitions and every old fixture
   const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id) && !Object.hasOwn(WATCH_RELOAD_MODES, p.id));
   assert.equal(original.length, 31);
   assert.deepEqual(original, baseline.probes.map(p => p.id === "revision"
-    ? { ...p, stdout: "1.4.0+06e518f73" } : p));
+    ? { ...p, stdout: "1.4.0+e8b129616" } : p));
   const protectedInputs = inputFacts().filter(p => /\/(?:fd|syscall|openat2|lchmod|hard-limit|async-signal)-(?:probes|evidence)\.mjs$/.test(p.path));
   assert.equal(protectedInputs.length, 11);
   for (const input of protectedInputs) assert.deepEqual(input, baseline.inputs.find(p => p.path === input.path));

@@ -9,6 +9,20 @@ import { verifyBuildInputs, verifyExperiment } from "./verify-experiment.mjs";
 
 const experimentRoot = dirname(fileURLToPath(import.meta.url));
 
+test("the reload fix requires its reviewed origin, exact path and complete source context", () => {
+  for (const change of [p => { p.origin = "autojs6-spawn-fd"; },
+    p => { p.affectedPaths = ["src/jsc/bindings/bun-spawn.cpp"]; },
+    p => { p.formatPatchAdditionalOptions = ["--unified=20"]; },
+    p => { p.sourceCommit = "0".repeat(40); }]) {
+    withExperimentCopy(copy => {
+      const path = resolve(copy, "patches/series.lock.json"), series = JSON.parse(readFileSync(path, "utf8"));
+      change(series.downstreamBackport.patches[12]);
+      writeFileSync(path, JSON.stringify(series, null, 2) + "\n");
+      assert.throws(() => verifyBuildInputs(copy), /origin|affectedPaths|complete reload source context|sourceCommit/);
+    });
+  }
+});
+
 test("the epoll-mask patch requires its reviewed origin, path, context and uSockets license", () => {
   for (const change of [p => { p.origin = "autojs6-pending-spawn-mask"; },
     p => { p.affectedPaths = ["src/platform/linux.rs"]; },
@@ -45,7 +59,7 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
-  assert.equal(result.downstreamPatchCount, 12);
+  assert.equal(result.downstreamPatchCount, 13);
   assert.equal(result.runtimeEvidenceVerified, true);
   assert.equal(result.lockedGithubArchiveCount, 19);
   assert.equal(result.lockedToolchainDownloadCount, 17);
@@ -63,8 +77,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.deepEqual(
     result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
     [
-      ["arm64-v8a", "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6"],
-      ["x86_64", "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8"],
+      ["arm64-v8a", "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"],
+      ["x86_64", "cb3104fbd41fb55ac301a177756b41fa57065e2cf18fa836bafb2b13cf4043ac"],
     ],
   );
   assert.equal(result.packagedLicenseCount, 5);

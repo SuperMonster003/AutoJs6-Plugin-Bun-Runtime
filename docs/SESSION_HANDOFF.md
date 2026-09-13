@@ -1,3 +1,32 @@
+# 会话交接: 十三补丁独立构建完成, 新源码设备门禁待执行
+
+2026-09-13, 从干净 master `5d92ade` 继续. 完整阅读 `AGENTS.md`, 本文件和
+`E:/.codex-tmp/watch-reload-fix-20260913/SESSION_HANDOFF.local.md`.
+用户要求尽量完成更多Roadmap小节; 本轮仍需继续新源码APK/设备回归, 不能停在构建结果.
+
+- 新head `e8b1296169a8e6f20c81e926dba6448afb25cd11`, tree
+  `7d715cd177328d44b12b6346bcf0e07e835b3578`, 第13补丁仅改变Linux reload FD失败处理.
+  原CLOEXEC-only helper、stdio/显式IPC/信号、35定义/17输入和预算不变.
+- GCC13/Clang21各25模式通过, 原helper四组测试也分别通过. 完整13补丁重放/28blobs通过.
+- 两个native driver已实际exit0, 双ABI各两份成品一致, 完整四ELF通过.
+  新输出WSL `watch-reload-evidence/run-{1,2}`. collector/promotion已完成,
+  不重复构建或一次性脚本. runtimeProduced=true, distributionReady=false.
+- 原94历史JSON保持原样, 新M2报告只作构建索引, 不增加设备通过数.
+  新源码Android成绩为空. 下一步源码/构建验证提交后打包新APK, 两轮固定35+完整8Binder,
+  先Sony28/31, 再其余ARM33/35和owned x86API33. 原有AVD_API_37/5586及ADB5053不操作.
+  三星仅在APK就绪后新约API32/ARM4K与API36/ARM硬件16K窗口, 不转移旧源码结果.
+  十二补丁JSC候选仍为原source, 其重对齐/新设备门禁独立开放.
+- 最终全量 Node 247/247、Python 38/38、两个生成器检查通过. 初次 Node 243/245
+  失败暴露旧 JSC loader 对当前 API28 配方的依赖; 历史加载现固定完整归档,
+  新构建配方/换行检查仍严格, 原候选和历史记录未改. 十语言均已同步.
+  两轮生产四任务均 actual0, JVM 为 UP-TO-DATE 的既有21项结果, lint 0错误/44警告;
+  最终 IDE 直接成功, 仅既有两个 warning. 当前无 owned AVD/设备运行.
+
+[修复报告](compatibility/2026-09-13-m3-watch-reload-fix.md),
+[新独立构建](compatibility/2026-09-13-m2-watch-reload-runtime-evidence.json).
+
+## 此前已完成的故障归档
+
 # 会话交接: watch/reload FD 泄漏已复现并归档, native 修复待开始
 
 2026-09-13 (Asia/Shanghai), 从干净 master `9485aa1` 继续. 先完整阅读 `AGENTS.md`,

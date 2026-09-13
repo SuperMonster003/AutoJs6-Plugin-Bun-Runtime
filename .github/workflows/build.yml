@@ -47,6 +47,7 @@ jobs:
           python3 -B tools/bun-runtime/experimental/api28/scoped-open/test_scoped_open.py
           python3 -B tools/bun-runtime/experimental/api28/pending-mask/test_spawn_mask.py
           python3 -B tools/bun-runtime/experimental/api28/pending-wait/test_epoll_mask.py
+          (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/reload-fd/test_reload_fd.py)
           python3 -B tools/bun-runtime/experimental/api28/signal-trace/test_trace.py
           node tools/bun-runtime/experimental/api28/verify-experiment.mjs
           node tools/bun-runtime/experimental/api28/build-experiment.mjs

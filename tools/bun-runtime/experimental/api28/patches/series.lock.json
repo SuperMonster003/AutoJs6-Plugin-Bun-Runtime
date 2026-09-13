@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
-    "headTreeSha1": "1eb8d5ea945001f018bdf14bd00c261d40b02573",
+    "headCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+    "headTreeSha1": "7d715cd177328d44b12b6346bcf0e07e835b3578",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -370,8 +370,27 @@
           "--unified=10000"
         ],
         "licenseImpact": "No license change; Bun remains MIT-licensed, while these project-owned changes to its bundled uSockets event loop are provided under that file's Apache-2.0 license."
+      },
+      {
+        "order": 13,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "parent": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "sourceCommit": null,
+        "origin": "autojs6-reload-fd",
+        "path": "downstream/0013-fix-mark-reload-descriptors-before-exec-when-close_range-fails.patch",
+        "bytes": 37680,
+        "sha256": "c37110f91b7c1941073765f215653780852edfc268b2973a2bfb556a7189b6aa",
+        "stablePatchId": "287d82a96e49de0f0271b2d023b9246888d094d5",
+        "purpose": "Mark actual Linux descriptors CLOEXEC before reload exec when close_range fails, failing before exec on enumeration or marking errors while preserving existing stdio, IPC and signal behavior.",
+        "affectedPaths": [
+          "src/jsc/bindings/c-bindings.cpp"
+        ],
+        "formatPatchAdditionalOptions": [
+          "--unified=10000"
+        ],
+        "licenseImpact": "No license change; project-owned changes to Bun's reload descriptor handling are provided under Bun's MIT license."
       }
     ],
-    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged. Project-owned patch ten guards optional Android pidfd probing; patch eleven preserves pending SIGSYS across parent spawn setup with separate child mask handling. Both are outside the unchanged upstream-equivalent prefix. Project-owned patch twelve preserves Android epoll wait masks and keeps optional epoll_pwait2 disabled; non-Android wait policy is unchanged."
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged. Project-owned patch ten guards optional Android pidfd probing; patch eleven preserves pending SIGSYS across parent spawn setup with separate child mask handling. Both are outside the unchanged upstream-equivalent prefix. Project-owned patch twelve preserves Android epoll wait masks and keeps optional epoll_pwait2 disabled; non-Android wait policy is unchanged. Project-owned patch thirteen checks Linux reload CLOEXEC failure and reuses the unchanged fixed-stack enumeration helper before exec; stdio, explicit IPC and signal handling remain unchanged."
   }
 }
