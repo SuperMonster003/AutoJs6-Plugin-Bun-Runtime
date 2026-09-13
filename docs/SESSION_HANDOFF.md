@@ -1,7 +1,7 @@
-# 会话交接: 十补丁 pidfd 修复, 本地回归已完成
+# 会话交接: 十补丁构建恢复与七环境原套件回归完成
 
 更新: 2026-09-13 (Asia/Shanghai). 当前实验 revision 为 `1.4.0+a9c76a599`.
-**已有 native 成品的构建完成证据已恢复, 五个本地环境通过; 三星远程回归仍待设备.**
+**已有 native 成品的构建完成证据已恢复; 五个本地与两台三星共七环境原套件回归通过.**
 
 先完整阅读根 `AGENTS.md`、本文件和仓库外的
 `E:/.codex-tmp/bun-signal-trace-20260913/SESSION_HANDOFF.local.md`.
@@ -18,8 +18,9 @@
   无 AutoJs6 globals 或 Java bridge/有界输出与生命周期约束不变.
 - 不自行委派子智能体. 使用 noreply 作者邮箱 `30370009+SuperMonster003@users.noreply.github.com`.
   本次没有改写历史、push 或发布. 对应源码与 APK 分离、同一 Release 的 draft-first 技术验证规则不变.
-- 三星需要用户预约; 已在本地回归完成后通知需要 ARM64 API 32 / 4 KiB 和 API 36 / 原生 16 KiB.
-  用户随后要求重新下载 Gradle ZIP 以修复误删缓存, 尚未提供三星连接信息.
+- 用户已依次提供 Samsung SM-F936U API 32 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 16 KiB.
+  2026-09-13 08:55-09:05 的同批三个 APK 回归全部通过, 清理后已告知可结束租用.
+  前一阶段用户要求的 Gradle ZIP 下载和缓存修复已完成, 不再重复处理.
 
 ## 新 native 与构建恢复
 
@@ -50,7 +51,44 @@
 - [独立构建证据](compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json)
   和 [本轮完整说明](compatibility/2026-09-13-m3-blocked-pidfd-fix.md) 可直接复用.
 
-## 新 bytes 的设备结果
+## 三星补充回归已完成
+
+本轮从 master `df186ec54c2843c3eaa4847b7940accf520b8722` 的干净状态接续,
+复用相同 ARM64 native/probe APK. 只在 API 32 之前重打包一次 Binder 主 APK,
+75 个输入逐项匹配该提交; 两台三星使用相同主/test APK. 本轮没有重编译 Bun/WebKit.
+
+| 设备 | 实际 API | native ABI | 页大小 | 原 31 项两轮 | 原八项 Binder 两轮 |
+|---|---:|---|---:|---:|---:|
+| Samsung SM-F936U | 32 | arm64-v8a | 4096 | 62/62 | 16/16 |
+| Samsung SM-A566B | 36 | arm64-v8a | 16384 | 62/62 | 16/16 |
+
+两台 bridge=0, SM-A566B shell smaps 的 KernelPageSize/MMUPageSize 都是 16 kB.
+无失败/重试, 八个 blocked-async / 24 个 child 观测、16 个 hard-limit / 16 个 spawn API 检查、
+八个 soft-limit 和十二个 forcible lifecycle (301-306 ms) 通过, 另有二十条 Binder lifecycle.
+三个包每台都卸载, 两个执行 UID 每台都归零; API 36 还单独捕获并核对 test UID,
+API 32 没有第三个 UID 的独立记录. 没有操作 AVD, 期间接入的 emulator-5560 也不是本轮所有.
+
+分别见 [API 32](compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和
+[原生 ARM64 16 KiB](compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 的说明与四份 JSON.
+与下方本地历史分批累计, 七个 native 环境 **434/434 探针、112/112 Binder**,
+其中六个 4 KiB 和一个 ARM64 16 KiB; 31 定义/fixture/validator/预算均未改变.
+本机详细路径、同批 APK 快照和清理记录在 `samsung-20260913/` 下, 已更新本机交接.
+
+## 本次三星阶段的归档与最终验证
+
+- 四份新 probe/Binder JSON 通过原严格归档器和语义验证器. 原 31 定义与 probe APK
+  逐项匹配此前五环境批次; Binder 的 75 个输入逐项匹配 Git 基点 `df186ec`, 八个方法不变.
+  [设备观测补充](compatibility/2026-09-13-m3-blocked-pidfd-samsung-device-facts.json)
+  另存页大小和独立 UID/卸载记录原文与摘要, 绑定四份套件归档; API 32 第三个 UID 缺口明确保留.
+- 十语言 changelog 源已更新, 36 个 Markdown 产物按生成器同步; --check 和 11/11 Python tests 通过.
+- 生成资源后的生产四项标准 Gradle 检查 BUILD SUCCESSFUL, 46 秒,
+  96 tasks / 49 executed / 47 up-to-date. runtime/16 KiB ELF 与 ZIP gate、单元测试、
+  AndroidTest 打包及 lint 通过; `testDebugUnitTest` 本次使用既有成功结果 (UP-TO-DATE).
+- IDE 增量构建直接返回 `isSuccess=true`, 没有超时; 保留一个 SDK XML 版本读取 warning.
+  日志和工具原响应保存在本机 `samsung-20260913/production-verification.log` 与 `ide-validation.json`.
+  这些生产验证不替代上方实际设备测试的 APK 快照, 没有重复 native 构建或设备执行.
+
+## 此前五个本地环境的独立批次
 
 原 31 定义仅改预期 revision, fixture/Java instrumentation/语义 validator/资源预算均不变.
 每个环境均运行两轮完整 31 项 probe 和两轮原完整八项 Binder:
@@ -75,10 +113,11 @@ API 28 首次 Binder 批次第一轮 8/8, 第二轮测试开始前 ART 的 ADB-J
 
 所有包卸载后 UID 进程为零. 仅关闭本轮启动的 API 33 AVD (原端口 5560);
 原有/无关设备未干预, 用户 AutoJs6 未卸载. 已验证 probe APK 可原样复用.
-Binder APK 的测试快照保存在本机 `ten-patch-tested-binder-apks/`; 后续十语言文档生成改变了
-编译输入绑定, 三星前需重新构建 opt-in **APK** 并另归档该输入批次, 不重新构建 native.
+该本地 Binder APK 快照保存在 `ten-patch-tested-binder-apks/`. 三星前已按需要重打包一次
+opt-in APK, 其同批主/test/receipt 另存 `samsung-20260913/tested-binder-apks/`.
+此后文档更新产生的 APK 不替代已接受批次, 不重新构建 native 或重跑已完成设备回归.
 
-## 本轮验证与本机 Gradle 恢复
+## 前一阶段验证与本机 Gradle 恢复
 
 - 全部 Node tests **187/187**; Markdown generator 写入与 --check 通过,
   Python generator tests **11/11**. 当前 source/runtime/corresponding-source 验证通过.
@@ -97,15 +136,13 @@ Binder APK 的测试快照保存在本机 `ten-patch-tested-binder-apks/`; 后�
 
 ## 恢复后的下一步
 
-1. 本地验证和缓存恢复已完成. 先核对 Git 最新提交与本机最终记录;
-   无须重跑已经通过的本地设备矩阵、native 构建或诊断.
-2. 收到三星连接后核对实际 API/native ABI/bridge/page size. API 32 / 4 KiB 和 API 36 / 原生
-   ARM64 16 KiB 各运行同一 31 项 probe 两轮、原完整八项 Binder 两轮; 保留原 fixtures/budgets,
-   绑定当前 APK/source, 归档所有失败/成功并验证清理. 不复用九补丁成绩作十补丁验收.
-3. 九补丁大页 JSC 候选仍是历史九补丁 source. 当前 Binder 构建/runner 会拒绝将其冒充十补丁;
-   需要独立 rebase/build/regression, 不改写其初始 incremental origin 或历史 clean-build/pressure 报告.
-4. 远程门槛完成后再推进其余 syscall/API/FD/OEM 与 Release 门槛. Android FD 70000、UNSHARE、
-   watch/reload、任意 blocked syscall、长时压力、签名 Release 和 paired APK/source 发布均未闭合.
-   本轮 x86 是 native 4 KiB, 不提供新 x86 16 KiB 或 ARM64 硬件大页证据.
+1. 十补丁已有构建取证、五个本地环境及两台三星的原套件回归均已完成, 不重做 native 构建或诊断.
+   先核对 Git 最新提交和本机最终记录; 新文档 APK 不能替代已绑定的测试 bytes.
+2. 独立大页 JSC 候选仍基于九补丁. 如继续该门槛, 需单独对齐十补丁并取得新的构建/设备证据;
+   不能仅改候选锁或用历史 x86 16 KiB Binder/pressure 成绩验收新源码.
+3. 扩展 syscall/API/FD/OEM、Android FD 70000、UNSHARE、watch/reload、其他线程/信号边界、
+   长时压力与签名 Release / paired APK-source 发布继续开放. 当前声明仅覆盖原 31 项和八项 Binder.
+4. 官方 native x86_64 16 KiB 门槛与独立 JSC 候选分开. 本次三星通过不代表一般端到端 16 KiB 支持,
+   不改变官方 API 33+、payload 或 distributionReady=false.
 
-此前九补丁诊断、失败和通过报告全部保持历史原样. 十补丁接受范围仅限本文件列出的新证据.
+所有九补丁及此前十补丁的失败/成功报告保持历史原样, 新设备结果另档.

@@ -21,9 +21,14 @@ API 28/31/33/35 and x86_64 API 33, **310/310**. Only the expected revision chang
 to `1.4.0+a9c76a599`; all fixtures, semantic validators, Java instrumentation
 and budgets are unchanged. All 20 blocked-async and 60 child observations pass.
 The independent full Binder suite also passes 80/80 with separately bound APKs.
-All packages/UID processes and only the owned AVD are cleaned up. New Samsung
-ARM64 API 32/4 KiB and API 36/native 16 KiB observations are pending; historical
-nine-patch results and the separate JSC candidate cannot accept the new bytes.
+All packages/UID processes and only the owned AVD are cleaned up. The identical
+probe APK subsequently passes twice on Samsung ARM64 API 32/4 KiB and API 36/native
+16 KiB, adding 124/124 and bringing the seven-environment total to **434/434**.
+The same two devices add 32/32 Binder observations (112/112 overall) in a separately
+bound APK batch, with all packages/execution UIDs cleaned up and no AVD operations.
+See the [API 32](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md)
+and [native 16 KiB](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md)
+reports. Historical nine-patch results and the separate JSC candidate remain separate.
 
 ### Historical nine-patch blocked-async failure
 

@@ -1,6 +1,6 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 2026-09-13 已完成十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证: 双 ABI 各两份成品一致, 四项只读 Ninja 完成检查和完整 ELF 审计通过, 原构建驱动退出码缺失明确记为 null. 新 bytes 在五个原生 4 KiB 环境通过原 31 项探针 310/310 和完整八项 Binder 80/80. Sony API 28 首批 Binder 的 ART/ADB-JDWP 启动崩溃另存, 相同 APK 两轮复跑通过. 三星 API 32 ARM64/4 KiB 与 API 36 原生 ARM64/16 KiB 待接入; 九补丁和大页 JSC 历史不转移. 见 [修复与证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md).
+本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 接下来是 JSC 候选 rebase、扩展矩阵和 Release 门槛.
 
 更新日期: 2026-09-13
 
@@ -17,7 +17,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十补丁已关闭五环境的 blocked async 本地门禁 (310/310 探针、80/80 Binder); 三星 ARM64 API 32/4 KiB 和 API 36/原生 16 KiB 需用新 bytes 重验. 九补丁 406/406、192/192 及 JSC 28/28 压力仍是历史. JSC 候选 rebase、其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时性能和 paired APK/source Release 仍开放 |
+| 当前缺口 | 十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. JSC 候选仍为九补丁, 需独立 rebase/build/regression; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -80,7 +80,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 十补丁成品与源码取证完成, patched 分发待验收 | 两个原 clean checkout 的双 ABI 成品一致; 原驱动退出码未保留, 另存只读完成检查与最终 Ninja 边. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 十补丁五环境本地回归通过, 三星新 bytes 待验 | 原 31 定义只改 revision, 310/310 探针和 80/80 Binder; 历史失败、初次 ART 启动崩溃和通过批次分别保留. 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
+| M3 Android 9-12L 实验支持 | 十补丁七环境原套件回归通过, 扩展矩阵待验 | 原 31 项 434/434、完整八项 Binder 112/112, 含三星 ARM64 API 32 和原生 16 KiB; 各批 APK 分别绑定, 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -216,10 +216,10 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Android 新证据覆盖 fd 256 高于降低后的 hard limit 128, 但仍未覆盖 FD 70000 或超过原 65536 扫描上界; Linux 主机高位 FD 测试不能替代设备证据. 新四模式已有 ARM64 API 32 / 4 KiB 与 API 36 / 原生 16 KiB 证据; UNSHARE、watch/reload、阻塞异步 SIGSYS 和其余线程/错误边界另行验证; 现有 8 项 Binder 的通过不等于扩展矩阵完成.
 - [x] (测试/设备) 在不改运行时字节、不放宽原 20 项定义/断言的前提下新增三个固定 syscall 夹具和独立证据校验器. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/23, 共 230/230; 六个 syscall 的 raw TRAP→ENOSYS 对照共 60 次通过, 复制与异步等待另有 16 次先 EIO 证明调用路径、再 TRAP 证明回退的验证通过. API 28 的两次复制因 kernel 4.4 门控、两次 pidfd 因既有更高优先级策略无法观察 EIO, 单独记录且不计为高层分支触达. 原有 30 次强制回收为 301-307 ms, 测试包卸载且 UID 进程归零, 本轮 AVD 已关闭, 未主动操作原有 AVD; API 24 仍在线, 原有 API 36 大页 AVD 在最终只读检查时已离线, 原因未确定. 见 [syscall 报告与语义边界](docs/compatibility/2026-09-10-m3-syscall-fallbacks.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-syscall-fallbacks.json). (2026-09-10, G1/G2, 原始历史不变, 本轮无 16 KiB/完整 Binder/发布)
 - [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得出现非预期 SIGSYS, hang 或 FD 泄漏. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3, timer/fetch 视为 Android 主动禁用的 epoll_pwait2, 或 raw openat2 视为路径约束通过. openat2 目录约束已通过九补丁的 4 KiB 与原生 ARM64 16 KiB 复测, 但首次高层 EIO/TRAP 触达未完成. 内部 sys::lchmod 的固定 bare bun link 路径已在六个原生环境验证权限修改, 重复链接, no-follow, 被忽略的 EIO 和独立 SIGSYS 触达对照, 不能扩大为完整包管理器或公开 node:fs lchmod 支持. 其余错误/FD/线程边界仍待验证.
-- [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在五个原生 4 KiB 环境通过 20/20 新观测和 60 个 child 检查. watch/reload、其他线程、现有八项套件之外的插件边界及十补丁的 API 32/16 KiB 仍待覆盖.
+- [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在七个原生环境通过 28/28 新观测和 84 个 child 检查, 包含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. watch/reload、其他线程和现有八项套件之外的插件边界仍待覆盖.
 - [x] (测试/设备) 固定套件扩为 31 项而保留原 29 项定义/源码/预算, 双 ABI APK 绑定 28 个 canonical 输入. ARM64 API 31/33/35 与 x86_64 API 33 各两轮 31/31 (248/248), 含 16 次 blocked async 和 48 个短生命周期子进程观测. Sony API 28 两轮 29/31, 新两项共四次 exit 159 且无语义记录; 原 29 项 58/58. 成功/失败分别归档, 失败专用归档器不接受隐藏的其他回归, 不进入通过归档. 五个包/UID 均清理, 本轮 AVD 关闭, 预先在线 API 27 AVD 未操作. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-async.md)、[四环境通过 JSON](docs/compatibility/2026-09-13-m3-blocked-async-passing.json) 与 [API 28 失败 JSON](docs/compatibility/2026-09-13-m3-blocked-async-api28-failure.json). (2026-09-13 本地日期, G1/G2, 门禁失败, native/历史/Release 不变)
 - [x] (源码/测试/设备) 独立观察器确认 API 28 pidfd_open SIGSYS 后, 补丁 10 通过只读 mask 查询选择既有 waiter. 十补丁重放、28 个 blob、十个精确源码 host 用例、已有双 ABI 成品恢复审计通过. 原 31 项只改 revision, 五个本地原生 4 KiB 环境两轮探针 310/310、Binder 80/80. 旧失败和首次 ART 启动失败单独保留; 包/UID/owned AVD 全部清理. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md). (2026-09-13, G1/G2)
-- [ ] (设备, 下一优先项) 对十补丁新 bytes 完成 Samsung ARM64 API 32 / 4 KiB 和 API 36 / 原生 16 KiB 的原 31 项及完整八项 Binder 各两轮. 已通知用户预约; 九补丁的历史远程成绩不替代新验收.
+- [x] (设备) 十补丁同一 native 和三个 APK 在 Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB、SM-A566B API 36 / 原生 ARM64 / 16 KiB 各过两轮原 31 项及完整八项 Binder, 新增 124/124、32/32, 累计七环境 434/434、112/112. 原定义/预算未改, 无失败或重试; 包/执行 UID 均清理, 无 AVD 操作. 见 [API 32](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 与 [原生 16 KiB](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md). (2026-09-13, G2)
 
 - [x] (测试/设备) 在同一 `a260ef308` 字节上增加固定 openat2 目录约束夹具, 套件扩为 24 项; 新源码独立打包为 8 KiB 上限的 APK 资源, 保留原 23 项内容与原 128 KiB JSON/输出/超时门禁. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/24: 原 230 项观测全部通过, 新增 10 项均失败. 12 种 HTTP 路径分别在 native 与后置 TRAP 阶段检查; 普通文件、内部链接、编码穿越拒绝及 FIFO 非阻塞通过, 相对/绝对/魔术链接共 60 次返回配置根外的私有测试哨兵. 不接触用户数据, 不把失败改作通过; 原 30 次强制回收为 301-316 ms, 全部测试包卸载后 UID 进程归零, 本轮 AVD 已关闭. 所有设备在测试过滤器前已观察到 raw openat2=ENOSYS, 不声称 EIO/首次高层 TRAP 触达. 见 [目录约束阻断报告](docs/compatibility/2026-09-10-m3-openat2-confinement.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-openat2-confinement.json). (2026-09-10, G1/G2, 验收失败, 未改 native/未发布)
 - [x] (源码审计) 修正上一轮大小写敏感搜索的局限: `fchmodat2` 以 `SYS_FCHMODAT2` 直接出现在 `sys::lchmod`, 由 install/bin 的 chmod_on_ok 调用, ENOSYS 后走 libc fchmodat 且调用者忽略错误. Android 内部 Node lchmod 另返回 EOPNOTSUPP, 十轮实测两个公开 node:fs 导出均为 undefined. 本轮未运行依赖安装, 不据此通过内部 CLI fallback; 旧报告保持原样, 新报告明确记录修正.

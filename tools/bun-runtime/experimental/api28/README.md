@@ -15,9 +15,13 @@ AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 > (ARM64 API 28/31/33/35 and x86_64 API 33), 310/310; the original complete
 > eight-test plugin Binder suite passes twice in the same environments, 80/80.
 > An initial API 28 Binder ART/ADB-JDWP startup crash remains a separate failed
-> batch; the same APK retry passes. Samsung ARM64 API 32/4 KiB and API 36/native
-> 16 KiB need fresh acceptance. Official payloads and the nine-patch JSC candidate
-> are unchanged. See the [new report](../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md).
+> batch; the same APK retry passes. The subsequent Samsung ARM64 API 32/4 KiB
+> and API 36/native 16 KiB batches pass another 124/124 probes and 32/32 Binder
+> observations with the same APKs, totaling 434/434 and 112/112 across seven native
+> environments. Official payloads and the nine-patch JSC candidate are unchanged.
+> See the [local report](../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md),
+> [API 32 follow-up](../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md)
+> and [native ARM64 16 KiB follow-up](../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md).
 
 Historical nine-patch result: the [29-probe hard-limit follow-up](../../../../docs/compatibility/2026-09-12-m3-hard-nofile.md)
 passes twice in five native 4 KiB environments (290/290). The subsequent

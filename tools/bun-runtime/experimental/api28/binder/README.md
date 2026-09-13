@@ -88,7 +88,9 @@ hardware 16 KiB. Compiled input receipts bind the additional test sources/assets
 
 ## Evidence
 
-- [2026-09-13 ten-patch local matrix](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md): 80/80 in five native 4 KiB environments, using the unchanged eight methods. The initial API 28 ART/ADB-JDWP startup crash is archived separately and excluded; the identical APK retry passes two rounds. Samsung new-source gates are pending. The results below are historical nine-patch evidence.
+- [2026-09-13 ten-patch local matrix](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md): 80/80 in five native 4 KiB environments, using the unchanged eight methods. The initial API 28 ART/ADB-JDWP startup crash is archived separately and excluded; the identical APK retry passes two rounds. The later Samsung follow-up below completes both planned new-source device gates.
+
+- [2026-09-13 Samsung follow-up](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md): the same main/test APKs pass 16/16 each on SM-F936U API 32 / native ARM64 / 4 KiB and SM-A566B API 36 / native ARM64 / 16 KiB. This adds 32/32, bringing ten-patch totals to 112/112 across seven native environments in separately bound batches. The 75 inputs bound to project commit df186ec, installed hashes, lifecycle and cleanup pass; no native rebuild or AVD operation. The results below remain historical nine-patch evidence.
 
 - [2026-09-12 baseline Binder matrix](../../../../../docs/compatibility/2026-09-12-m3-experimental-binder.md): nine native environments, 144/144.
 - [2026-09-12 API 29/32 follow-up](../../../../../docs/compatibility/2026-09-12-m3-api29-api32.md): 32/32 additional native x86_64 / 4 KiB Binder observations, completing API 28-32 version coverage of this existing eight-test suite. The earlier matrix's APK/source bindings remain unchanged; ARM64 API 32 was still untested in that session.
