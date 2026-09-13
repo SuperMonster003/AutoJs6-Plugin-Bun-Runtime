@@ -15,6 +15,7 @@
         "Aligner le plugin en ligne platform-versions sur la version 1.7.4 fixée par le dépôt, sans modifier native-alignment"
       ],
       "improvement": [
+        "Ajouter une matrice générée des preuves de compatibilité avec un index complet des sources, les empreintes des archives et des contrôles CI de dérive; conserver les résultats par runtime, appareil et suite, y compris les échecs et diagnostics préliminaires, sans nouvelle validation sur appareil ni extension de la prise en charge officielle",
         "Valider le nouveau candidat x86 à grandes pages avec dix correctifs sur API 36, avec des pages utilisateur de 4 KiB et 16 KiB: Binder inchangé réussit 32/32 et les modes de pression fixes 28/28 avec une même paire APK liée à 77 entrées. Archiver les octets, résultats bruts et nettoyages séparément des preuves historiques; le mode x86 16 KiB reste émulé sur des pages noyau de 4 KiB, sans validation Release ni de performances",
         "Lier séparément un candidat JSC grandes pages à dix correctifs, avec deux compilations Bun propres identiques, les vrais codes de sortie conservés et les entrées JSC réutilisées exactes. Les outils Binder isolés utilisent le nouveau verrou lié aux sources; les binaires historiques et officiels sont conservés, et les validations appareil et Release restent distinctes",
         "Ajouter un guide de dépannage en chinois avec un script minimal, des vérifications symptôme/cause/action et des consignes de rapport limité; le relier aux dix langues du README sans modifier les capacités du runtime",

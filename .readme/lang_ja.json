@@ -34,7 +34,8 @@
     "システム: Android {{ min_android_version }} (API {{ android_min_sdk }}) 以降. `arm64-v8a` と baseline `x86_64` の公式 64-bit executable を提供します. Android 9 から 12L (API 28 から 32) は未対応で, 理由は上の FAQ を参照してください. API 33 と API 35 の実機テストは成功しています.",
     "ホスト: AutoJs6 build {{ required_host_version_code }} 以降と Bun runtime contract version {{ plugin_contract_version }}.",
     "実行ごとの上限: source は {{ max_source_size }} まで, stdout と stderr の合計出力は {{ max_output_size }} まで, default timeout は {{ default_timeout }} です.",
-    "パッケージ: single-ABI APK はサイズが小さく, 大きめの `universal` APK は対応する 2 つの ABI を含みます."
+    "パッケージ: single-ABI APK はサイズが小さく, 大きめの `universal` APK は対応する 2 つの ABI を含みます.",
+    "テストの証拠: [自動生成の互換性マトリクス (中国語)]({{ compatibility_matrix_url }}) に, 記録済みの各テストスイートの端末, API, ABI, ページサイズと結果を掲載しています. 公式版, 実験版, 翻訳実行, 失敗した実行はそれぞれの検証範囲を維持し, 公開済みのサポート範囲を拡大しません."
   ],
   "h3_limitations": "現在の制限",
   "limitations": [

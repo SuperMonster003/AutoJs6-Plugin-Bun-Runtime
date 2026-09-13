@@ -159,6 +159,7 @@ Bun 會呼叫 Linux 的 `close_range` 系統呼叫 (syscall 436), 而 Android 12
 - 宿主: AutoJs6 build 5278 或更新版本, Bun runtime contract version 1.
 - 單次執行上限: 源碼最多 16 MiB, stdout 和 stderr 合併輸出最多 8 MiB, 預設 timeout 為 60 seconds.
 - 安裝套件: 單一 ABI APK 體積較小, 較大的 `universal` APK 同時包含兩個受支援的 ABI.
+- 測試證據: [自動產生的兼容矩陣](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/compatibility/MATRIX.md) 列出各份報告的裝置, API, ABI, 分頁大小和測試結果. 官方, 實驗, 翻譯執行及失敗記錄各自保留驗證範圍, 不擴大已發佈的支援範圍.
 
 ******
 
@@ -222,6 +223,7 @@ _2026/09/12_
 
 - `修復` 修復實驗版 Android 在屏蔽 SIGSYS 時首次非同步 spawn 的 pidfd 探測崩潰, 透過既有 waiter 回退保留呼叫執行緒遮罩及 pending 訊號. 十補丁執行階段在五個原生 4 KiB 環境通過原 31 項探針 (310/310) 和完整八項 Binder (80/80). 恢復建置完成證據時明確保留原退出碼缺失, 獨立封存首次 ART 啟動失敗. JSC rebase 及 Release 門檻仍未完成, 官方位元組不變
 - `修復` 修復實驗版原生 x86_64 16 KiB 的 JavaScriptCore 啟動中止: 以明確大頁/JIT/分配器設定重新編譯 pinned WebKit 並重新連結 Bun, 在 4 KiB 和 16 KiB AVD 各兩輪完整 Binder 通過 (32/32). 官方位元組及其 4 KiB 防護保持不變, Release 驗收另行進行
+- `優化` 新增自動產生的兼容證據矩陣, 完整索引來源報告並綁定歷史封存摘要, 由 CI 檢查同步差異; 按執行環境, 裝置和測試套件保留結果及失敗/初步診斷, 不增加裝置驗收或擴大正式支援範圍
 - `優化` 新十補丁大頁 x86 候選在 API 36 的 4 KiB/16 KiB 使用者空間頁完成回歸: 同一對 APK 綁定 77 項輸入, 原 Binder 測試 32/32, 原固定壓力模式 28/28 全部通過. 精確位元組, 原始結果及清理另檔保留, 不改寫歷史; x86 16 KiB 仍是 4 KiB 核心頁上的 ABI 模擬, 不表示 Release 或效能驗收
 - `優化` 獨立綁定十補丁大頁 JSC 候選, 強制兩份一致的 clean Bun 建置, 保留真實驅動退出碼並精確重用原 JSC 輸入. 隔離 Binder 工具改用綁定新原始碼的獨立鎖, 歷史及官方位元組保持不變; 裝置與 Release 驗收另行記錄
 - `優化` 新增簡體中文排錯指南, 提供最小指令碼, 症狀/原因/處理對照及有界問題回報指引, 並從十語言 README 連結, 不改變執行階段能力

@@ -34,7 +34,8 @@
     "System: Android {{ min_android_version }} (API {{ android_min_sdk }}) or later, with official 64-bit executables for `arm64-v8a` and baseline `x86_64`. Android 9 through 12L (API 28 through 32) are not supported yet; the FAQ above explains why. Real-device tests on API 33 and API 35 passed.",
     "Host: AutoJs6 build {{ required_host_version_code }} or later, with Bun runtime contract version {{ plugin_contract_version }}.",
     "Per-run bounds: source up to {{ max_source_size }}, combined stdout and stderr output up to {{ max_output_size }}, and a default timeout of {{ default_timeout }}.",
-    "Packages: single-ABI APKs keep installs smaller, while the larger `universal` APK contains both supported ABIs."
+    "Packages: single-ABI APKs keep installs smaller, while the larger `universal` APK contains both supported ABIs.",
+    "Test evidence: the [generated compatibility matrix (Chinese)]({{ compatibility_matrix_url }}) lists devices, API levels, ABIs, page sizes and results for each recorded suite. Official, experimental, translated and failed runs retain their own scope; these records do not broaden published support."
   ],
   "h3_limitations": "Current Limitations",
   "limitations": [
