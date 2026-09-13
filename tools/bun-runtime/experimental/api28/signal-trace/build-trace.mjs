@@ -5,7 +5,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpa
 import { tmpdir } from "node:os";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { ROOT, SHARED_PROCESS, fileFacts, hash, inputFacts, lockedEvidence, materializeAsyncSignalSource, materializePendingSignalSource,
+import { ROOT, SHARED_PROCESS, fileFacts, hash, inputFacts, lockedEvidence, materializeAsyncSignalSource, materializePendingSignalSource, materializeWatchReloadSource,
   newOutputDirectory, parseOptions, requireFile, verifyRuntimePair } from "../app-probe/probe-common.mjs";
 import { supervisorLock, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
 import { verifyElfBuffer } from "../../../verify-runtime.mjs";
@@ -18,13 +18,14 @@ export const NDK="29.0.14206865";
 export const FLAGS=Object.freeze(["-std=c11","-Oz","-Wall","-Wextra","-Werror","-fPIE","-pie","-fstack-protector-strong","-D_FORTIFY_SOURCE=2",
   "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384","-Wl,--build-id=sha1","-Wl,--strip-all"]);
 export function fixtureAsset(fixtureSet, mode) {
-  assert(["blocked-async", "pending-async"].includes(fixtureSet), "fixed diagnostic fixture set required");
+  assert(["blocked-async", "pending-async", "watch-reload"].includes(fixtureSet), "fixed diagnostic fixture set required");
   assert(["native", "trap"].includes(mode), "fixed diagnostic mode required");
-  return (fixtureSet === "pending-async" ? "pending-signal-" : "async-signal-") + mode + ".mjs";
+  return (fixtureSet === "watch-reload" ? "watch-reload-" : fixtureSet === "pending-async" ? "pending-signal-" : "async-signal-") + mode + ".mjs";
 }
 export function fixtureSource(fixtureSet, mode) {
   fixtureAsset(fixtureSet, mode);
-  return fixtureSet === "pending-async" ? materializePendingSignalSource(mode) : materializeAsyncSignalSource(mode);
+  return fixtureSet === "watch-reload" ? materializeWatchReloadSource(mode)
+    : fixtureSet === "pending-async" ? materializePendingSignalSource(mode) : materializeAsyncSignalSource(mode);
 }
 export function traceInputs() {
   return [...inputFacts(), ...["trace.c","trace-launcher.mjs","TraceInstrumentation.java","AndroidManifest.xml","build-trace.mjs"].map(name=>{

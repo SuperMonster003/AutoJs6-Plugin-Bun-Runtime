@@ -1,0 +1,1158 @@
+{
+  "schemaVersion": 1,
+  "kind": "archived-watch-reload-trace-observations",
+  "archivedAt": "2026-09-13T15:56:32.965Z",
+  "projectBaseCommit": "7040456397c4e13eefc18402083a492d1b7a0f9a",
+  "compatibilityAcceptance": false,
+  "countedInAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "rootCauseResolved": false,
+  "scope": "Fixed unchanged watch fixtures, two rounds of native/TRAP plain/traced pairs per native ARM64 4 KiB environment. These bounded observations did not reproduce SIGABRT; they do not resolve or replace the original API 28 abort/clone EAGAIN failure, prove stability, or add baseline compatibility passes.",
+  "summary": {
+    "environments": 2,
+    "rounds": 4,
+    "plainObservations": 8,
+    "tracedObservations": 8,
+    "actualReloads": 32,
+    "images": 48,
+    "tracedOrdinarySigsysDeliveries": 24,
+    "observedAborts": 0,
+    "compatibilityPasses": 0
+  },
+  "originalFailure": {
+    "filename": "2026-09-13-m3-watch-reload-api28-abort-failure.json",
+    "bytes": 364688,
+    "sha256": "8de4beb496fc82430541bbc598193dfc0e8714dd789b51996b8bae5728b4f880"
+  },
+  "limits": "Fatal-stop snapshots observe bounded registers/frame-pointer candidates, mappings and process/memory facts without writing registers or changing signal delivery. No fatal stop occurred in these Android runs, so no Android abort stack or contemporaneous resource-limit cause was captured. Host SIGABRT controls validate the observer separately; they are not a reproduction of the original Android failure.",
+  "inputs": [
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+      "bytes": 914,
+      "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+      "bytes": 28370,
+      "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+      "bytes": 8246,
+      "sha256": "0fe0e041417dddc3a1df6a1585b220a5d2811c0245b3b19f1b8b222e9e06a2a3"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+      "bytes": 12747,
+      "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+      "bytes": 8188,
+      "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+      "bytes": 4905,
+      "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+      "bytes": 7037,
+      "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+      "bytes": 3798,
+      "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+      "bytes": 10187,
+      "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+      "bytes": 3454,
+      "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+      "bytes": 9927,
+      "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+      "bytes": 3344,
+      "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+      "bytes": 8005,
+      "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+      "bytes": 2821,
+      "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+      "bytes": 10212,
+      "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+      "bytes": 1595,
+      "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+      "bytes": 9491,
+      "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+      "bytes": 3998,
+      "sha256": "b8240576d5d9a31feada09ff074121eff9d480488888655d8a3dea437338db2f"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+      "bytes": 36965,
+      "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+      "bytes": 9741,
+      "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+      "bytes": 9537,
+      "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+      "bytes": 3727,
+      "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.c",
+      "bytes": 4394,
+      "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+      "bytes": 1018,
+      "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+      "bytes": 2128,
+      "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+      "bytes": 2200,
+      "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+      "bytes": 480,
+      "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/README.md",
+      "bytes": 5511,
+      "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+    },
+    {
+      "path": "tools/bun-runtime/verify-runtime.mjs",
+      "bytes": 19651,
+      "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+    },
+    {
+      "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+      "bytes": 15471,
+      "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+      "bytes": 18339,
+      "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+      "bytes": 42531,
+      "sha256": "0298f91b79632b0d09287e52b38d0a3ad34c545357a235b43a6549e2c9dc2fa3"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+      "bytes": 10964,
+      "sha256": "71bcebe1d635894290eadbda975706fb0e9adf127ac01cbc5d7a4fbe847c14d2"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+      "bytes": 1065,
+      "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+      "bytes": 9657,
+      "sha256": "fbc7b565d14a813ddd4078addc5f397c38ba48dd846d5b8fa984190dd2ff0670"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+      "bytes": 680,
+      "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+      "bytes": 10753,
+      "sha256": "b830e96e2d8981fa5bef4f8bd9198e954d119c28b540415c3e48d373343247a2"
+    }
+  ],
+  "validators": [
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/archive-watch-trace.mjs",
+      "bytes": 3950,
+      "sha256": "993eff156211285a734daf178cde2fdaacbcef954c5100a48a49bd1778f31369"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/watch-trace-evidence.mjs",
+      "bytes": 7112,
+      "sha256": "b6fc1f4275aaf9d0d99e9406ccddc9f700d5a34aca1fed81df65ef5802223934"
+    }
+  ],
+  "records": [
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-13T15:53:26.850Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "fixtureSet": "watch-reload",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 28370,
+            "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 8246,
+            "sha256": "0fe0e041417dddc3a1df6a1585b220a5d2811c0245b3b19f1b8b222e9e06a2a3"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+            "bytes": 10212,
+            "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+            "bytes": 1595,
+            "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+            "bytes": 9491,
+            "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+            "bytes": 3998,
+            "sha256": "b8240576d5d9a31feada09ff074121eff9d480488888655d8a3dea437338db2f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 36965,
+            "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9741,
+            "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18339,
+            "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 42531,
+            "sha256": "0298f91b79632b0d09287e52b38d0a3ad34c545357a235b43a6549e2c9dc2fa3"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 10964,
+            "sha256": "71bcebe1d635894290eadbda975706fb0e9adf127ac01cbc5d7a4fbe847c14d2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9657,
+            "sha256": "fbc7b565d14a813ddd4078addc5f397c38ba48dd846d5b8fa984190dd2ff0670"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 10753,
+            "sha256": "b830e96e2d8981fa5bef4f8bd9198e954d119c28b540415c3e48d373343247a2"
+          }
+        ],
+        "runtimeSourceCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923328,
+              "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 11312,
+              "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35255478,
+          "sha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "220e040f591057ddc1c3155f52a9fa7247608a46265c16c613de665dc57e9240"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5327,
+        "sha256": "93279780d27e0e1cbff59118efec3eddfabdbc2d53c74571bf1cd1f34b9431de"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "watch-reload",
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10774,
+            "selinux": "u:r:untrusted_app:s0:c6,c259,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 11312,
+                "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 909,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":16857,\"rows\":[{\"generation\":0,\"pid\":16865,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8839771]\",\"socket:[8839773]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,16865],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":16865,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8839771]\",\"socket:[8839773]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,16865],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":16865,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8839771]\",\"socket:[8839773]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,16865],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":16865,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 805,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17071,\"rows\":[{\"generation\":0,\"pid\":17078,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8842434]\",\"socket:[8842436]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17078],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":17078,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8842434]\",\"socket:[8842436]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17078],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":17078,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8842434]\",\"socket:[8842436]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17078],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":17078,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":17071,\"tid\":17071,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17071,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":-6,\"senderPid\":17078,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17082,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":-6,\"senderPid\":17078,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17094,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17071,\"tid\":17078,\"signo\":31,\"code\":-6,\"senderPid\":17078,\"senderUid\":10774}\nTRACE_DONE={\"leader\":17071,\"exitCode\":0,\"events\":110,\"signals\":17,\"exits\":21}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 914,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17104,\"rows\":[{\"generation\":0,\"pid\":17107,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840302]\",\"socket:[8840304]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17107],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":17107,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840302]\",\"socket:[8840304]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17107],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":17107,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840302]\",\"socket:[8840304]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17107],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":17107,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 1011,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17131,\"rows\":[{\"generation\":0,\"pid\":17134,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840306]\",\"socket:[8840308]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17134],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":17134,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840306]\",\"socket:[8840308]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17134],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":17134,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840306]\",\"socket:[8840308]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17134],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":17134,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":17131,\"tid\":17131,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17131,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17131,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":-6,\"senderPid\":17134,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17137,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":-6,\"senderPid\":17134,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17140,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":-6,\"senderPid\":17134,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17131,\"tid\":17134,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":17131,\"exitCode\":0,\"events\":89,\"signals\":24,\"exits\":14}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"watch-reload\",\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10774,\"selinux\":\"u:r:untrusted_app:s0:c6,c259,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":11312,\"sha256\":\"b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":909,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":16857,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":16865,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8839771]\\\",\\\"socket:[8839773]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,16865],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":16865,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8839771]\\\",\\\"socket:[8839773]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,16865],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":16865,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8839771]\\\",\\\"socket:[8839773]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,16865],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":16865,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":805,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17071,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17078,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8842434]\\\",\\\"socket:[8842436]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17078],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":17078,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8842434]\\\",\\\"socket:[8842436]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17078],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":17078,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8842434]\\\",\\\"socket:[8842436]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17078],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":17078,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17071,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17071,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17078,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17082,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17078,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17094,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17071,\\\"tid\\\":17078,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17078,\\\"senderUid\\\":10774}\\nTRACE_DONE={\\\"leader\\\":17071,\\\"exitCode\\\":0,\\\"events\\\":110,\\\"signals\\\":17,\\\"exits\\\":21}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":914,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17104,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17107,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840302]\\\",\\\"socket:[8840304]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17107],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":17107,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840302]\\\",\\\"socket:[8840304]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17107],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":17107,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840302]\\\",\\\"socket:[8840304]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17107],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":17107,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":1011,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17131,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17134,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840306]\\\",\\\"socket:[8840308]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17134],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":17134,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840306]\\\",\\\"socket:[8840308]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17134],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":17134,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840306]\\\",\\\"socket:[8840308]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17134],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":17134,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17131,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17131,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17131,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17134,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17137,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17134,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17140,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17134,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17131,\\\"tid\\\":17134,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":17131,\\\"exitCode\\\":0,\\\"events\\\":89,\\\"signals\\\":24,\\\"exits\\\":14}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 10664,
+          "sha256": "e1b4ccad2bacefeab746bd5df556e8ba261a11e7b261fc267b65549f1839511f"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "watch-reload",
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10774,
+            "selinux": "u:r:untrusted_app:s0:c6,c259,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 11312,
+                "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 913,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17194,\"rows\":[{\"generation\":0,\"pid\":17197,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840643]\",\"socket:[8840645]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17197],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":17197,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840643]\",\"socket:[8840645]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17197],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":17197,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840643]\",\"socket:[8840645]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17197],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":17197,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 1010,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17229,\"rows\":[{\"generation\":0,\"pid\":17233,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840649]\",\"socket:[8840651]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17233],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":17233,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840649]\",\"socket:[8840651]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17233],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":17233,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840649]\",\"socket:[8840651]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,17233],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":17233,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":17229,\"tid\":17229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17229,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":-6,\"senderPid\":17233,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17236,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":-6,\"senderPid\":17233,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17250,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17229,\"tid\":17233,\"signo\":31,\"code\":-6,\"senderPid\":17233,\"senderUid\":10774}\nTRACE_DONE={\"leader\":17229,\"exitCode\":0,\"events\":113,\"signals\":17,\"exits\":22}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 915,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17279,\"rows\":[{\"generation\":0,\"pid\":17282,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840654]\",\"socket:[8840656]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17282],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":17282,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840654]\",\"socket:[8840656]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17282],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":17282,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840654]\",\"socket:[8840656]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17282],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":17282,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 914,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10774,\"pid\":17307,\"rows\":[{\"generation\":0,\"pid\":17311,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840661]\",\"socket:[8840663]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17311],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":17311,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840661]\",\"socket:[8840663]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17311],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":17311,\"uid\":10774,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[8840661]\",\"socket:[8840663]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,17311],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":17311,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":17307,\"tid\":17307,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17307,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17307,\"signo\":31,\"code\":1,\"syscall\":434,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":-6,\"senderPid\":17311,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17314,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":-6,\"senderPid\":17311,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17317,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":291,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":-6,\"senderPid\":17311,\"senderUid\":10774}\nTRACE_SIGSYS={\"leader\":17307,\"tid\":17311,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":17307,\"exitCode\":0,\"events\":89,\"signals\":24,\"exits\":14}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"watch-reload\",\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10774,\"selinux\":\"u:r:untrusted_app:s0:c6,c259,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":11312,\"sha256\":\"b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":913,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17194,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17197,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840643]\\\",\\\"socket:[8840645]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17197],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":17197,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840643]\\\",\\\"socket:[8840645]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17197],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":17197,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840643]\\\",\\\"socket:[8840645]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17197],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":17197,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":1010,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17229,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17233,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840649]\\\",\\\"socket:[8840651]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17233],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":17233,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840649]\\\",\\\"socket:[8840651]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17233],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":17233,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840649]\\\",\\\"socket:[8840651]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17233],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":17233,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17233,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17236,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17233,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17250,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17229,\\\"tid\\\":17233,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17233,\\\"senderUid\\\":10774}\\nTRACE_DONE={\\\"leader\\\":17229,\\\"exitCode\\\":0,\\\"events\\\":113,\\\"signals\\\":17,\\\"exits\\\":22}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":915,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17279,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17282,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840654]\\\",\\\"socket:[8840656]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17282],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":17282,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840654]\\\",\\\"socket:[8840656]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17282],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":17282,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840654]\\\",\\\"socket:[8840656]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17282],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":17282,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":914,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10774,\\\"pid\\\":17307,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":17311,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840661]\\\",\\\"socket:[8840663]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17311],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":17311,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840661]\\\",\\\"socket:[8840663]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17311],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":17311,\\\"uid\\\":10774,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[8840661]\\\",\\\"socket:[8840663]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,17311],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":17311,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17307,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17307,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17307,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":434,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17311,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17314,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17311,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17317,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":291,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":17311,\\\"senderUid\\\":10774}\\nTRACE_SIGSYS={\\\"leader\\\":17307,\\\"tid\\\":17311,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":17307,\\\"exitCode\\\":0,\\\"events\\\":89,\\\"signals\\\":24,\\\"exits\\\":14}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 10664,
+          "sha256": "b1178daf1643ea7ee37c36492b03e0efee5b3ecdf05723ab875418f2cc3214a4"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 10774,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true,
+      "rawReport": {
+        "bytes": 59744,
+        "sha256": "557f588c4de43abaf5727c1d07547957e3bf6c2149fedc54d6dfe650aac29e4a"
+      },
+      "instrumentation": [
+        {
+          "filename": "instrumentation-1.txt",
+          "bytes": 10664,
+          "sha256": "e1b4ccad2bacefeab746bd5df556e8ba261a11e7b261fc267b65549f1839511f"
+        },
+        {
+          "filename": "instrumentation-2.txt",
+          "bytes": 10664,
+          "sha256": "b1178daf1643ea7ee37c36492b03e0efee5b3ecdf05723ab875418f2cc3214a4"
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-13T15:54:33.002Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "fixtureSet": "watch-reload",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 28370,
+            "sha256": "29fc3e1f96bbc180f4caa6b0afabc6efcf38beab615c14b00e6c25e392b13402"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 8246,
+            "sha256": "0fe0e041417dddc3a1df6a1585b220a5d2811c0245b3b19f1b8b222e9e06a2a3"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+            "bytes": 10212,
+            "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+            "bytes": 1595,
+            "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-probes.mjs",
+            "bytes": 9491,
+            "sha256": "f911374b52c814bd782cc5448aaa0badc4d8bfa5bfd1a943ddaad4f5b25eb986"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/watch-reload-evidence.mjs",
+            "bytes": 3998,
+            "sha256": "b8240576d5d9a31feada09ff074121eff9d480488888655d8a3dea437338db2f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 36965,
+            "sha256": "0d468276f1fc8177a90f00d0744ae00407a389dacadd239dc35720ce02f6cfb8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9741,
+            "sha256": "a817711413e1542b5f52df0605a69215690690a30871e023d6d5fdbe8bb3b331"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18339,
+            "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 42531,
+            "sha256": "0298f91b79632b0d09287e52b38d0a3ad34c545357a235b43a6549e2c9dc2fa3"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 10964,
+            "sha256": "71bcebe1d635894290eadbda975706fb0e9adf127ac01cbc5d7a4fbe847c14d2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9657,
+            "sha256": "fbc7b565d14a813ddd4078addc5f397c38ba48dd846d5b8fa984190dd2ff0670"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 10753,
+            "sha256": "b830e96e2d8981fa5bef4f8bd9198e954d119c28b540415c3e48d373343247a2"
+          }
+        ],
+        "runtimeSourceCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923328,
+              "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 11312,
+              "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35255478,
+          "sha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "220e040f591057ddc1c3155f52a9fa7247608a46265c16c613de665dc57e9240"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5327,
+        "sha256": "93279780d27e0e1cbff59118efec3eddfabdbc2d53c74571bf1cd1f34b9431de"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "watch-reload",
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15132,
+            "selinux": "u:r:untrusted_app:s0:c12,c276,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 11312,
+                "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 809,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":4908,\"rows\":[{\"generation\":0,\"pid\":4911,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086884]\",\"socket:[57086886]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4911],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":4911,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086884]\",\"socket:[57086886]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4911],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":4911,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086884]\",\"socket:[57086886]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4911],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":4911,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 907,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":4933,\"rows\":[{\"generation\":0,\"pid\":4937,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021712]\",\"socket:[57021714]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4937],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":4937,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021712]\",\"socket:[57021714]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4937],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":4937,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021712]\",\"socket:[57021714]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,4937],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":4937,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":4933,\"tid\":4933,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":-6,\"senderPid\":4937,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4939,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":-6,\"senderPid\":4937,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4946,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4933,\"tid\":4937,\"signo\":31,\"code\":-6,\"senderPid\":4937,\"senderUid\":15132}\nTRACE_DONE={\"leader\":4933,\"exitCode\":0,\"events\":92,\"signals\":13,\"exits\":18}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 808,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":4959,\"rows\":[{\"generation\":0,\"pid\":4964,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086897]\",\"socket:[57086899]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4964],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":4964,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086897]\",\"socket:[57086899]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4964],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":4964,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57086897]\",\"socket:[57086899]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4964],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":4964,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 807,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":4993,\"rows\":[{\"generation\":0,\"pid\":4997,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021718]\",\"socket:[57021720]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4997],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":4997,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021718]\",\"socket:[57021720]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4997],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":4997,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021718]\",\"socket:[57021720]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,4997],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":4997,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":4993,\"tid\":4993,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4993,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":-6,\"senderPid\":4997,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4999,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":-6,\"senderPid\":4997,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":5002,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":-6,\"senderPid\":4997,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":4993,\"tid\":4997,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":4993,\"exitCode\":0,\"events\":81,\"signals\":20,\"exits\":13}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"watch-reload\",\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15132,\"selinux\":\"u:r:untrusted_app:s0:c12,c276,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":11312,\"sha256\":\"b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":809,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":4908,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":4911,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086884]\\\",\\\"socket:[57086886]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4911],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":4911,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086884]\\\",\\\"socket:[57086886]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4911],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":4911,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086884]\\\",\\\"socket:[57086886]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4911],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":4911,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":907,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":4933,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":4937,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021712]\\\",\\\"socket:[57021714]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4937],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":4937,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021712]\\\",\\\"socket:[57021714]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4937],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":4937,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021712]\\\",\\\"socket:[57021714]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4937],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":4937,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4933,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4937,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4939,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4937,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4946,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4933,\\\"tid\\\":4937,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4937,\\\"senderUid\\\":15132}\\nTRACE_DONE={\\\"leader\\\":4933,\\\"exitCode\\\":0,\\\"events\\\":92,\\\"signals\\\":13,\\\"exits\\\":18}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":808,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":4959,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":4964,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086897]\\\",\\\"socket:[57086899]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4964],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":4964,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086897]\\\",\\\"socket:[57086899]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4964],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":4964,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57086897]\\\",\\\"socket:[57086899]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4964],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":4964,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":807,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":4993,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":4997,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021718]\\\",\\\"socket:[57021720]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4997],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":4997,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021718]\\\",\\\"socket:[57021720]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4997],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":4997,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021718]\\\",\\\"socket:[57021720]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,4997],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":4997,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4993,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4993,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4997,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4999,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4997,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":5002,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":4997,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":4993,\\\"tid\\\":4997,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":4993,\\\"exitCode\\\":0,\\\"events\\\":81,\\\"signals\\\":20,\\\"exits\\\":13}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 9753,
+          "sha256": "b69c92d0f603da9c8b0639ccc6cee0c702e2e233c833a121cde1f139c64ef25d"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "watch-reload",
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15132,
+            "selinux": "u:r:untrusted_app:s0:c12,c276,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 11312,
+                "sha256": "b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 813,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":5108,\"rows\":[{\"generation\":0,\"pid\":5113,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138301]\",\"socket:[57138303]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5113],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":5113,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138301]\",\"socket:[57138303]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5113],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":5113,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138301]\",\"socket:[57138303]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5113],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":5113,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 808,
+                "sourceSha256": "82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":5162,\"rows\":[{\"generation\":0,\"pid\":5165,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021723]\",\"socket:[57021725]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5165],\"afterRemoval\":[-1,22]},{\"generation\":1,\"pid\":5165,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021723]\",\"socket:[57021725]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5165],\"afterRemoval\":[-1,22]},{\"generation\":2,\"pid\":5165,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57021723]\",\"socket:[57021725]\"],\"rawClose\":[-1,38],\"marker\":[-1,22],\"prepared\":[0,1],\"delivery\":[1,5165],\"afterRemoval\":[-1,22]}],\"passed\":true,\"beforeMarker\":[-1,22],\"childPid\":5165,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":5162,\"tid\":5162,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":-6,\"senderPid\":5165,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5167,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":-6,\"senderPid\":5165,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5174,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5162,\"tid\":5165,\"signo\":31,\"code\":-6,\"senderPid\":5165,\"senderUid\":15132}\nTRACE_DONE={\"leader\":5162,\"exitCode\":0,\"events\":114,\"signals\":13,\"exits\":23}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 0,
+                "elapsedMillis": 805,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":5198,\"rows\":[{\"generation\":0,\"pid\":5204,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138310]\",\"socket:[57138312]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5204],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":5204,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138310]\",\"socket:[57138312]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5204],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":5204,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138310]\",\"socket:[57138312]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5204],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":5204,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 0,
+                "elapsedMillis": 908,
+                "sourceSha256": "fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1",
+                "stdout": "WATCH_RELOAD_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15132,\"pid\":5223,\"rows\":[{\"generation\":0,\"pid\":5229,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138319]\",\"socket:[57138321]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5229],\"afterRemoval\":[-1,38]},{\"generation\":1,\"pid\":5229,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138319]\",\"socket:[57138321]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5229],\"afterRemoval\":[-1,38]},{\"generation\":2,\"pid\":5229,\"uid\":15132,\"inherited\":[-1,false,-1],\"state\":[0,0],\"stdio\":[\"socket:[57138319]\",\"socket:[57138321]\"],\"rawClose\":[-1,38],\"marker\":[-1,38],\"prepared\":[0,1],\"delivery\":[1,5229],\"afterRemoval\":[-1,38]}],\"passed\":true,\"beforeMarker\":[-1,22],\"filterSha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\",\"childPid\":5229,\"reloads\":2,\"cleanup\":{\"signal\":\"SIGKILL\",\"gone\":true,\"timedOut\":false,\"overflow\":false,\"bytes\":735}}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":5223,\"tid\":5223,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5223,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":-6,\"senderPid\":5229,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5242,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":-6,\"senderPid\":5229,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5247,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":-6,\"senderPid\":5229,\"senderUid\":15132}\nTRACE_SIGSYS={\"leader\":5223,\"tid\":5229,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_DONE={\"leader\":5223,\"exitCode\":0,\"events\":83,\"signals\":20,\"exits\":14}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"watch-reload\",\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15132,\"selinux\":\"u:r:untrusted_app:s0:c12,c276,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":11312,\"sha256\":\"b3c3a40abff996bdcc47e34fb7e3a3e73be603f84b30b3390a6722494fdf07ac\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":813,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":5108,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":5113,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138301]\\\",\\\"socket:[57138303]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5113],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":5113,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138301]\\\",\\\"socket:[57138303]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5113],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":5113,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138301]\\\",\\\"socket:[57138303]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5113],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":5113,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":808,\"sourceSha256\":\"82a6acb8b691889917c663aeb9f9afa496d00f2601f3f9eb8f433cfd70d97abe\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":5162,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":5165,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021723]\\\",\\\"socket:[57021725]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5165],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":1,\\\"pid\\\":5165,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021723]\\\",\\\"socket:[57021725]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5165],\\\"afterRemoval\\\":[-1,22]},{\\\"generation\\\":2,\\\"pid\\\":5165,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57021723]\\\",\\\"socket:[57021725]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,22],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5165],\\\"afterRemoval\\\":[-1,22]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"childPid\\\":5165,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5162,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5165,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5167,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5165,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5174,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5162,\\\"tid\\\":5165,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5165,\\\"senderUid\\\":15132}\\nTRACE_DONE={\\\"leader\\\":5162,\\\"exitCode\\\":0,\\\"events\\\":114,\\\"signals\\\":13,\\\"exits\\\":23}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":0,\"elapsedMillis\":805,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":5198,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":5204,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138310]\\\",\\\"socket:[57138312]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5204],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":5204,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138310]\\\",\\\"socket:[57138312]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5204],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":5204,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138310]\\\",\\\"socket:[57138312]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5204],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":5204,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":0,\"elapsedMillis\":908,\"sourceSha256\":\"fc9d580cb4a0a59ba7adcdc5698d3c944beeea4ead18eea7e1df797b6e345dc1\",\"stdout\":\"WATCH_RELOAD_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15132,\\\"pid\\\":5223,\\\"rows\\\":[{\\\"generation\\\":0,\\\"pid\\\":5229,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138319]\\\",\\\"socket:[57138321]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5229],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":1,\\\"pid\\\":5229,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138319]\\\",\\\"socket:[57138321]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5229],\\\"afterRemoval\\\":[-1,38]},{\\\"generation\\\":2,\\\"pid\\\":5229,\\\"uid\\\":15132,\\\"inherited\\\":[-1,false,-1],\\\"state\\\":[0,0],\\\"stdio\\\":[\\\"socket:[57138319]\\\",\\\"socket:[57138321]\\\"],\\\"rawClose\\\":[-1,38],\\\"marker\\\":[-1,38],\\\"prepared\\\":[0,1],\\\"delivery\\\":[1,5229],\\\"afterRemoval\\\":[-1,38]}],\\\"passed\\\":true,\\\"beforeMarker\\\":[-1,22],\\\"filterSha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\",\\\"childPid\\\":5229,\\\"reloads\\\":2,\\\"cleanup\\\":{\\\"signal\\\":\\\"SIGKILL\\\",\\\"gone\\\":true,\\\"timedOut\\\":false,\\\"overflow\\\":false,\\\"bytes\\\":735}}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5223,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5223,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5229,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5242,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5229,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5247,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":5229,\\\"senderUid\\\":15132}\\nTRACE_SIGSYS={\\\"leader\\\":5223,\\\"tid\\\":5229,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_DONE={\\\"leader\\\":5223,\\\"exitCode\\\":0,\\\"events\\\":83,\\\"signals\\\":20,\\\"exits\\\":14}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 9754,
+          "sha256": "c96426919c4106b605c744f7b373f98d755eab7f161a2b3a0369f149cfd9505f"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 15132,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true,
+      "rawReport": {
+        "bytes": 55700,
+        "sha256": "9b3a6c971f66cb08df753badc64e5fc06649704973f3d561641617ebb2fca5b3"
+      },
+      "instrumentation": [
+        {
+          "filename": "instrumentation-1.txt",
+          "bytes": 9753,
+          "sha256": "b69c92d0f603da9c8b0639ccc6cee0c702e2e233c833a121cde1f139c64ef25d"
+        },
+        {
+          "filename": "instrumentation-2.txt",
+          "bytes": 9754,
+          "sha256": "c96426919c4106b605c744f7b373f98d755eab7f161a2b3a0369f149cfd9505f"
+        }
+      ]
+    }
+  ]
+}

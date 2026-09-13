@@ -7,6 +7,7 @@ import { KIND } from "./pressure-common.mjs";
 import { summarizePressureRuns, validatePressureRun } from "./archive-pressure.mjs";
 import { loadRebasedJscCandidate } from "../rebased-common.mjs";
 import { loadTwelvePatchJscCandidate, TWELVE_PATCH_BASELINE } from "../twelve-patch-common.mjs";
+import { loadThirteenPatchJscCandidate, THIRTEEN_PATCH_BASELINE } from "../thirteen-patch-common.mjs";
 
 export function observation(mode, pages = 16384) {
     const targets = { "jit-off": "LLInt", baseline: "Baseline", dfg: "DFG", ftl: "FTL" };
@@ -202,6 +203,31 @@ test("twelve-patch pressure records require the new candidate and exact baseline
         x => { x.build.source = runFixture().build.source; },
         x => { x.payloads[0].sha256 = loadRebasedJscCandidate().artifact.sha256; },
         x => { x.build.jscCandidate.bunCommit = "f".repeat(40); },
+        x => { x.build.jscCandidate.builds[1].driver.api28RecipesUnchanged = false; },
+    ]) {
+        const changed = structuredClone(r); mutate(changed);
+        assert.throws(() => validatePressureRun(changed, rawRounds(changed)));
+    }
+});
+
+test("thirteen-patch pressure cannot use an older candidate, source or incomplete driver", () => {
+    const r = runFixture(); // Synthetic validation control, never a device observation.
+    const candidate = loadThirteenPatchJscCandidate();
+    const baseline = JSON.parse(readFileSync(THIRTEEN_PATCH_BASELINE, "utf8"));
+    r.runtime = { ...baseline.identity, variant: candidate.variant };
+    r.build.runtime = r.runtime;
+    r.build.source = baseline.source;
+    r.build.jscCandidate = candidate;
+    r.build.runtimes = baseline.artifacts.map(a => a.abi === "x86_64" ? candidate.artifact : a)
+        .map(({ abi, bytes, sha256 }) => ({ abi, bytes, sha256 }));
+    r.payloads[0].bytes = candidate.artifact.bytes;
+    r.payloads[0].sha256 = candidate.artifact.sha256;
+    validatePressureRun(r, rawRounds(r));
+    for (const mutate of [
+        x => { x.build.jscCandidate = loadTwelvePatchJscCandidate(); },
+        x => { x.build.source = JSON.parse(readFileSync(TWELVE_PATCH_BASELINE, "utf8")).source; },
+        x => { x.payloads[0].sha256 = loadTwelvePatchJscCandidate().artifact.sha256; },
+        x => { x.build.jscCandidate.builds[1].driver.exitCode = null; },
         x => { x.build.jscCandidate.builds[1].driver.api28RecipesUnchanged = false; },
     ]) {
         const changed = structuredClone(r); mutate(changed);

@@ -1033,6 +1033,28 @@
       "note": "保留原定义与预算的固定套件. 首次 API 28 中止另档; 有限通过不关闭稳定性、其余信号/FD/大页或 Release 门禁."
     },
     {
+      "file": "2026-09-13-m3-watch-reload-trace-checkpoint.json",
+      "sha256": "1fee48a172f1a5bd2ea657428dffc16531d139fc4422b7b73295a08e09373877",
+      "schema": 1,
+      "kind": "archived-watch-trace-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3 watch 诊断工具/清理检查点",
+      "note": "宿主 SIGABRT 对照与 Python 3.8 初始工具失败单独保留, 非 Android 失败复现."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-trace.json",
+      "sha256": "7531a34c6db7bed8d6f7c06d71b460d194c32acbc68ec15f64c8a17b9252395c",
+      "schema": 1,
+      "kind": "archived-watch-reload-trace-observations",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 watch 有界未复现观察",
+      "note": "两轮 plain/traced, 原中止原因未解决, 零兼容通过数."
+    },
+    {
       "file": "2026-09-13-m5-ten-patch-jsc-binder.json",
       "sha256": "8b856da7b3ab5ef7630a331affa13f1d3be4f5ac3629a0fe480dcde6c064b20d",
       "schema": 1,
@@ -1064,6 +1086,17 @@
       "category": "experimental",
       "label": "M5 十补丁 JSC 有限压力回归",
       "note": "计数单位为压力模式, 与原八项 Binder 分开. 原生 x86 用户页 ABI 与内核映射页分别呈现; 不代表所有 JIT/Wasm 路径、长时压力或性能验收."
+    },
+    {
+      "file": "2026-09-13-m5-thirteen-patch-jsc-builds.json",
+      "sha256": "c95ea90c63c6405b6aa9d64b31ca9754d874e2bd58022702d39f06b90817b87a",
+      "schema": 2,
+      "kind": "clean-rebased-large-page-jsc-candidate",
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M5 十三补丁 JSC 双 clean Bun 构建",
+      "note": "两个实际 driver exit 0, 21 项构建输入未漂移, 两个完整成品一致. 精确复用原独立 JSC 库/config 与 ICU, 不计为设备或新 WebKit 构建验收."
     },
     {
       "file": "2026-09-13-m5-twelve-patch-jsc-binder-memory-failure.json",

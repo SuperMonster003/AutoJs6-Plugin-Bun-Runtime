@@ -1,0 +1,994 @@
+{
+  "schemaVersion": 2,
+  "kind": "clean-rebased-large-page-jsc-candidate",
+  "evidenceDate": "2026-09-13",
+  "distributionReady": false,
+  "officialArtifact": false,
+  "cleanBunBuilds": 2,
+  "newWebKitBuilds": 0,
+  "reusedIndependentWebKitBuilds": 2,
+  "bunCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+  "bunTree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+  "revision": "1.4.0+e8b129616",
+  "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+  "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+  "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+  "sourceDateEpoch": 1788278400,
+  "x86PageSizeCeiling": 65536,
+  "config": {
+    "USE_64KB_PAGE_BLOCK": 1,
+    "ENABLE_JIT": 1,
+    "ENABLE_DFG_JIT": 1,
+    "ENABLE_FTL_JIT": 1,
+    "ENABLE_C_LOOP": 0,
+    "ENABLE_SAMPLING_PROFILER": 1,
+    "USE_MIMALLOC": 1,
+    "USE_EXTERNAL_MIMALLOC": 1,
+    "USE_SYSTEM_MALLOC": 0,
+    "USE_ISO_MALLOC": 1,
+    "ENABLE_WEBASSEMBLY": 1,
+    "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+    "ENABLE_WEBASSEMBLY_OMGJIT": 1
+  },
+  "generatedConfig": {
+    "bytes": 6982,
+    "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+  },
+  "libraries": {
+    "libJavaScriptCore.a": {
+      "bytes": 361142888,
+      "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+    },
+    "libWTF.a": {
+      "bytes": 12718664,
+      "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+    },
+    "libbmalloc.a": {
+      "bytes": 246530,
+      "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+    }
+  },
+  "bindings": {
+    "historicalCandidate": {
+      "bytes": 4604,
+      "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+    },
+    "historicalCleanBuilds": {
+      "bytes": 16273,
+      "sha256": "4a879c6ed99f28b0792cb96695419abfa0d78b469ca7a07dcbfcb2bac6612060"
+    },
+    "priorRebasedCandidate": {
+      "bytes": 25663,
+      "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+    },
+    "priorTwelvePatchCandidate": {
+      "bytes": 36143,
+      "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad"
+    },
+    "baselineRuntimeEvidence": {
+      "bytes": 18339,
+      "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+    },
+    "recipes": {
+      "run-clean-bun.mjs": {
+        "bytes": 2041,
+        "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+      },
+      "build-clean-bun.mjs": {
+        "bytes": 2918,
+        "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+      },
+      "jsc-common.mjs": {
+        "bytes": 1740,
+        "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+      },
+      "record-candidate.mjs": {
+        "bytes": 3120,
+        "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+      },
+      "candidate.lock.json": {
+        "bytes": 4604,
+        "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+      }
+    },
+    "api28Recipes": {
+      "run-locked-build.mjs": {
+        "bytes": 10514,
+        "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+      },
+      "build-experiment.mjs": {
+        "bytes": 18890,
+        "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+      },
+      "config/arm64-v8a.configure.json": {
+        "bytes": 262,
+        "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+      },
+      "config/x86_64.configure.json": {
+        "bytes": 254,
+        "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+      },
+      "source-inputs.lock.json": {
+        "bytes": 15880,
+        "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+      },
+      "toolchain-inputs.lock.json": {
+        "bytes": 11636,
+        "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+      },
+      "build-network-inputs.lock.json": {
+        "bytes": 5633,
+        "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+      },
+      "cargo-inputs.lock.json": {
+        "bytes": 64745,
+        "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+      },
+      "bun-inputs.lock.json": {
+        "bytes": 124300,
+        "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+      },
+      "patches/series.lock.json": {
+        "bytes": 21497,
+        "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+      },
+      "experiment.lock.json": {
+        "bytes": 9648,
+        "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+      },
+      "verify-experiment.mjs": {
+        "bytes": 83864,
+        "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+      },
+      "materialize-cargo-inputs.mjs": {
+        "bytes": 40231,
+        "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+      },
+      "materialize-bun-inputs.mjs": {
+        "bytes": 63238,
+        "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+      },
+      "materialize-source-inputs.mjs": {
+        "bytes": 11821,
+        "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+      },
+      "materialize-toolchain-inputs.mjs": {
+        "bytes": 7059,
+        "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+      }
+    }
+  },
+  "artifact": {
+    "abi": "x86_64",
+    "bytes": 90609496,
+    "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+    "elf": {
+      "class": "ELF64",
+      "data": "little-endian",
+      "osAbi": "System V",
+      "type": "ET_DYN",
+      "machine": 62,
+      "machineName": "Advanced Micro Devices X86-64",
+      "entryPoint": "0x107800",
+      "programHeaderCount": 8,
+      "sectionHeaderCount": 33,
+      "interpreter": "/system/bin/linker64",
+      "loadAlignments": [
+        16384,
+        65536
+      ],
+      "minimumLoadAlignment": 16384,
+      "writableExecutableLoad": false,
+      "executableStack": false,
+      "neededLibraries": [
+        "libc.so",
+        "libm.so",
+        "libdl.so"
+      ],
+      "flags1": "0x8000000",
+      "pie": true,
+      "androidRelr": {
+        "address": "0x10d50",
+        "bytes": 19896,
+        "entryBytes": 8
+      },
+      "androidIdent": {
+        "api": 28,
+        "ndkVersion": "r27c",
+        "ndkBuildNumber": "12479018"
+      },
+      "buildId": "331309c87afe49cf8008ae059e1075a6a7d7be09",
+      "versionDefinitions": [
+        {
+          "index": 1,
+          "name": "bun-profile",
+          "base": true
+        },
+        {
+          "index": 2,
+          "name": "BUN_1.2",
+          "base": false
+        }
+      ],
+      "versionNeeds": [
+        {
+          "file": "libc.so",
+          "names": [
+            "LIBC",
+            "LIBC_N",
+            "LIBC_O",
+            "LIBC_P"
+          ]
+        },
+        {
+          "file": "libm.so",
+          "names": [
+            "LIBC"
+          ]
+        },
+        {
+          "file": "libdl.so",
+          "names": [
+            "LIBC"
+          ]
+        }
+      ],
+      "dynamicSymbols": {
+        "entryCount": 1067,
+        "definedCount": 672,
+        "undefinedCount": 394,
+        "tableSha256": "ac7fbb0956b051e5d8e55bc16c536f72a89b1b5a3b52257aba357af73f8ccda3",
+        "recordsSha256": "a6c2b59e36295d78ad8837ca599cf6515fa488231bcf5efc0fb07abfefa15709",
+        "definedRecordsSha256": "d976ba6eb1bc2d2522147d2a4a64729f4a342083b64d6a7267e557f129844ffa",
+        "undefinedRecordsSha256": "7ea254a61557e6242aaa04c5c032bb34b9193fbb0e852bc8bb247a9535eea6a2"
+      },
+      "symbolTable": {
+        "present": true,
+        "entryCount": 1708,
+        "bytes": 40992,
+        "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+      },
+      "debugSections": []
+    }
+  },
+  "builds": [
+    {
+      "run": 1,
+      "inputDriver": {
+        "bytes": 4727,
+        "sha256": "4f9ecede2e7f101be477da5372b726f6f654e976bbb7b4387fbc8ee1b5cb8bbf"
+      },
+      "driver": {
+        "schema": 1,
+        "startedAt": "2026-09-13T15:33:41Z",
+        "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+        "cleanBefore": true,
+        "freshCheckout": true,
+        "recipes": {
+          "run-clean-bun.mjs": {
+            "bytes": 2041,
+            "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+          },
+          "build-clean-bun.mjs": {
+            "bytes": 2918,
+            "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+          },
+          "jsc-common.mjs": {
+            "bytes": 1740,
+            "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+          },
+          "record-candidate.mjs": {
+            "bytes": 3120,
+            "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+          },
+          "candidate.lock.json": {
+            "bytes": 4604,
+            "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+          }
+        },
+        "api28Recipes": {
+          "run-locked-build.mjs": {
+            "bytes": 10514,
+            "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+          },
+          "build-experiment.mjs": {
+            "bytes": 18890,
+            "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+          },
+          "config/arm64-v8a.configure.json": {
+            "bytes": 262,
+            "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+          },
+          "config/x86_64.configure.json": {
+            "bytes": 254,
+            "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+          },
+          "source-inputs.lock.json": {
+            "bytes": 15880,
+            "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+          },
+          "toolchain-inputs.lock.json": {
+            "bytes": 11636,
+            "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+          },
+          "build-network-inputs.lock.json": {
+            "bytes": 5633,
+            "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+          },
+          "cargo-inputs.lock.json": {
+            "bytes": 64745,
+            "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+          },
+          "bun-inputs.lock.json": {
+            "bytes": 124300,
+            "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+          },
+          "patches/series.lock.json": {
+            "bytes": 21497,
+            "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+          },
+          "experiment.lock.json": {
+            "bytes": 9648,
+            "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+          },
+          "verify-experiment.mjs": {
+            "bytes": 83864,
+            "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+          },
+          "materialize-cargo-inputs.mjs": {
+            "bytes": 40231,
+            "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+          },
+          "materialize-bun-inputs.mjs": {
+            "bytes": 63238,
+            "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+          },
+          "materialize-source-inputs.mjs": {
+            "bytes": 11821,
+            "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+          },
+          "materialize-toolchain-inputs.mjs": {
+            "bytes": 7059,
+            "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+          }
+        },
+        "newWebKitBuilds": 0,
+        "exitCode": 0,
+        "state": "complete",
+        "buildStartedAt": "2026-09-13T15:33:43Z",
+        "buildFinishedAt": "2026-09-13T15:46:09Z",
+        "cleanAfter": true,
+        "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+        "recipesUnchanged": true,
+        "api28RecipesUnchanged": true,
+        "artifact": {
+          "bytes": 90609496,
+          "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+        },
+        "receipt": {
+          "bytes": 5651,
+          "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+        },
+        "ninjaLog": {
+          "bytes": 230444,
+          "sha256": "d7d38faaa054091aea9f488e3b821f4c22690a27887c4b8b2ef09fdec9e00f46"
+        },
+        "finishedAt": "2026-09-13T15:46:10Z",
+        "log": {
+          "bytes": 35919,
+          "sha256": "01b2f55ffe63e18ee95eff8ad003c01bf94728578b33fdd358a62b4047bb6817"
+        }
+      },
+      "finalEdges": [
+        {
+          "output": "bun-profile",
+          "start": 605083,
+          "end": 607789,
+          "commandHash": "1aee6811c2575c65"
+        },
+        {
+          "output": "bun-profile.linker-map",
+          "start": 605083,
+          "end": 607789,
+          "commandHash": "1aee6811c2575c65"
+        },
+        {
+          "output": "bun",
+          "start": 607790,
+          "end": 607933,
+          "commandHash": "ef51bbd9db115d99"
+        }
+      ],
+      "webkit": {
+        "config": {
+          "bytes": 6982,
+          "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+        },
+        "libraries": {
+          "libJavaScriptCore.a": {
+            "bytes": 361142888,
+            "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+          },
+          "libWTF.a": {
+            "bytes": 12718664,
+            "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+          },
+          "libbmalloc.a": {
+            "bytes": 246530,
+            "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+          }
+        }
+      },
+      "api28RecipeEncodings": {
+        "run-locked-build.mjs": "utf8-lf",
+        "build-experiment.mjs": "utf8-lf",
+        "config/arm64-v8a.configure.json": "utf8-lf",
+        "config/x86_64.configure.json": "utf8-lf",
+        "source-inputs.lock.json": "utf8-lf",
+        "toolchain-inputs.lock.json": "utf8-lf",
+        "build-network-inputs.lock.json": "utf8-lf",
+        "cargo-inputs.lock.json": "utf8-lf",
+        "bun-inputs.lock.json": "utf8-lf",
+        "patches/series.lock.json": "utf8-lf",
+        "experiment.lock.json": "utf8-lf",
+        "verify-experiment.mjs": "utf8-lf",
+        "materialize-cargo-inputs.mjs": "utf8-lf",
+        "materialize-bun-inputs.mjs": "utf8-lf",
+        "materialize-source-inputs.mjs": "utf8-lf",
+        "materialize-toolchain-inputs.mjs": "utf8-lf"
+      },
+      "receipt": {
+        "kind": "clean-bun-with-locked-large-page-jsc",
+        "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "sourceInputCount": 22,
+        "cargoArchiveCount": 206,
+        "bunArchiveCount": 125,
+        "toolVersions": {
+          "node": "v24.3.0",
+          "bun": "1.3.13",
+          "cmake": "cmake version 3.30.5",
+          "ninja": "1.13.2",
+          "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+          "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+          "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+          "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+          "packageCount": 243,
+          "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+        },
+        "jsc": {
+          "schemaVersion": 1,
+          "kind": "diagnostic-incremental-large-page-jsc-candidate",
+          "distributionReady": false,
+          "officialArtifact": false,
+          "cleanBunBuilds": 0,
+          "evidenceDate": "2026-09-12",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+          "revision": "1.4.0+7b9ac2668",
+          "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+          "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+          "sourceDateEpoch": 1788278400,
+          "x86PageSizeCeiling": 65536,
+          "config": {
+            "USE_64KB_PAGE_BLOCK": 1,
+            "ENABLE_JIT": 1,
+            "ENABLE_DFG_JIT": 1,
+            "ENABLE_FTL_JIT": 1,
+            "ENABLE_C_LOOP": 0,
+            "ENABLE_SAMPLING_PROFILER": 1,
+            "USE_MIMALLOC": 1,
+            "USE_EXTERNAL_MIMALLOC": 1,
+            "USE_SYSTEM_MALLOC": 0,
+            "USE_ISO_MALLOC": 1,
+            "ENABLE_WEBASSEMBLY": 1,
+            "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+            "ENABLE_WEBASSEMBLY_OMGJIT": 1
+          },
+          "generatedConfig": {
+            "bytes": 6982,
+            "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+          },
+          "libraries": {
+            "libJavaScriptCore.a": {
+              "bytes": 361142888,
+              "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+            },
+            "libWTF.a": {
+              "bytes": 12718664,
+              "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+            },
+            "libbmalloc.a": {
+              "bytes": 246530,
+              "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+            }
+          },
+          "recipes": [
+            {
+              "path": "build-webkit.sh",
+              "bytes": 3428,
+              "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+            },
+            {
+              "path": "relink-bun.sh",
+              "bytes": 1181,
+              "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+            }
+          ],
+          "artifact": {
+            "abi": "x86_64",
+            "bytes": 90609480,
+            "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d08",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1066,
+                "definedCount": 672,
+                "undefinedCount": 393,
+                "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          },
+          "limits": [
+            "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+            "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+            "No device or Binder success inferred from compilation",
+            "Official and nine-patch runtime locks unchanged"
+          ]
+        }
+      }
+    },
+    {
+      "run": 2,
+      "inputDriver": {
+        "bytes": 4727,
+        "sha256": "1f68e7ce576474ad9d6694a3e94f6357ee3848e7ee861af63d0084fb67c01c82"
+      },
+      "driver": {
+        "schema": 1,
+        "startedAt": "2026-09-13T15:46:10Z",
+        "head": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "tree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+        "cleanBefore": true,
+        "freshCheckout": true,
+        "recipes": {
+          "run-clean-bun.mjs": {
+            "bytes": 2041,
+            "sha256": "d7a81c44b48a1391412b1b55b519af3d70e1b6014b61130759b332e26416c07f"
+          },
+          "build-clean-bun.mjs": {
+            "bytes": 2918,
+            "sha256": "d6e3714ff9390fdab1064ce07fadb139e4ad0458ab95d2b7d38e18b458a27f95"
+          },
+          "jsc-common.mjs": {
+            "bytes": 1740,
+            "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+          },
+          "record-candidate.mjs": {
+            "bytes": 3120,
+            "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+          },
+          "candidate.lock.json": {
+            "bytes": 4604,
+            "sha256": "77e0651f5eb71bb14070b46a28ccf7104d752341fd3a80c4aaeb960f9ae5fe4b"
+          }
+        },
+        "api28Recipes": {
+          "run-locked-build.mjs": {
+            "bytes": 10514,
+            "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+          },
+          "build-experiment.mjs": {
+            "bytes": 18890,
+            "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+          },
+          "config/arm64-v8a.configure.json": {
+            "bytes": 262,
+            "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+          },
+          "config/x86_64.configure.json": {
+            "bytes": 254,
+            "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+          },
+          "source-inputs.lock.json": {
+            "bytes": 15880,
+            "sha256": "2d01eb490ad553ab22bedbd8a8fe23581f189121d6fbc5eef2bf95acc316f060"
+          },
+          "toolchain-inputs.lock.json": {
+            "bytes": 11636,
+            "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+          },
+          "build-network-inputs.lock.json": {
+            "bytes": 5633,
+            "sha256": "625ea9ec956b8157ca6a468390e5eccb169f746e0ce4d972ea92c0ba355ee170"
+          },
+          "cargo-inputs.lock.json": {
+            "bytes": 64745,
+            "sha256": "4c5c903ae61297a1121eb0ee8958f4c3ef58f34a756365a9675a26913a56df42"
+          },
+          "bun-inputs.lock.json": {
+            "bytes": 124300,
+            "sha256": "94b276a33660b0ebdfe4366dd7f7e3cf2d2ab0c73b4dae8dc99cf19136ac41f5"
+          },
+          "patches/series.lock.json": {
+            "bytes": 21497,
+            "sha256": "e8552b673e4aa9e2f1912b025e8b40ecb55aff76fdb0e6cb272356536c9aa955"
+          },
+          "experiment.lock.json": {
+            "bytes": 9648,
+            "sha256": "9f8249b10f8559ac7de44479eac297a49e6ad6732df15e5765187e110bf780ff"
+          },
+          "verify-experiment.mjs": {
+            "bytes": 83864,
+            "sha256": "b60657d444a81ef6b87054dc293e5e51196df2ef7fcca97e5dd91e2340a6c301"
+          },
+          "materialize-cargo-inputs.mjs": {
+            "bytes": 40231,
+            "sha256": "1a9ad72cce89152594ce54487fa0df17780ca597f82124dcbce7bf515beca6c7"
+          },
+          "materialize-bun-inputs.mjs": {
+            "bytes": 63238,
+            "sha256": "23300b19750b48156324a7a4e197c2e0706ea6f0e9321f0d94f5736234d09453"
+          },
+          "materialize-source-inputs.mjs": {
+            "bytes": 11821,
+            "sha256": "edf15759e56c11480b1159fc69f881768394e87e572497264f8589c03bb4512a"
+          },
+          "materialize-toolchain-inputs.mjs": {
+            "bytes": 7059,
+            "sha256": "59bfc1e6f158502ad9f68460976883231f97e7e150fa46c3de16b0faf21ba554"
+          }
+        },
+        "newWebKitBuilds": 0,
+        "exitCode": 0,
+        "state": "complete",
+        "buildStartedAt": "2026-09-13T15:46:12Z",
+        "buildFinishedAt": "2026-09-13T15:56:00Z",
+        "cleanAfter": true,
+        "headAfter": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "treeAfter": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+        "recipesUnchanged": true,
+        "api28RecipesUnchanged": true,
+        "artifact": {
+          "bytes": 90609496,
+          "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8"
+        },
+        "receipt": {
+          "bytes": 5651,
+          "sha256": "eec43c9dd443e83141355d09bdceac2acd223a124509db7e4b340a75c7dd9f40"
+        },
+        "ninjaLog": {
+          "bytes": 229548,
+          "sha256": "0df59c9b98cacff30a8fda0b2261861b7702e34456cf3d41231ba7c0e90baa56"
+        },
+        "finishedAt": "2026-09-13T15:56:00Z",
+        "log": {
+          "bytes": 35662,
+          "sha256": "67d18590c67ca13ba18cb7bcdba6cdd411959ca0577c137aeb03ca015b38b0ef"
+        }
+      },
+      "finalEdges": [
+        {
+          "output": "bun-profile",
+          "start": 474064,
+          "end": 476800,
+          "commandHash": "1aee6811c2575c65"
+        },
+        {
+          "output": "bun-profile.linker-map",
+          "start": 474064,
+          "end": 476800,
+          "commandHash": "1aee6811c2575c65"
+        },
+        {
+          "output": "bun",
+          "start": 476800,
+          "end": 476946,
+          "commandHash": "ef51bbd9db115d99"
+        }
+      ],
+      "webkit": {
+        "config": {
+          "bytes": 6982,
+          "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+        },
+        "libraries": {
+          "libJavaScriptCore.a": {
+            "bytes": 361142888,
+            "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+          },
+          "libWTF.a": {
+            "bytes": 12718664,
+            "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+          },
+          "libbmalloc.a": {
+            "bytes": 246530,
+            "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+          }
+        }
+      },
+      "api28RecipeEncodings": {
+        "run-locked-build.mjs": "utf8-lf",
+        "build-experiment.mjs": "utf8-lf",
+        "config/arm64-v8a.configure.json": "utf8-lf",
+        "config/x86_64.configure.json": "utf8-lf",
+        "source-inputs.lock.json": "utf8-lf",
+        "toolchain-inputs.lock.json": "utf8-lf",
+        "build-network-inputs.lock.json": "utf8-lf",
+        "cargo-inputs.lock.json": "utf8-lf",
+        "bun-inputs.lock.json": "utf8-lf",
+        "patches/series.lock.json": "utf8-lf",
+        "experiment.lock.json": "utf8-lf",
+        "verify-experiment.mjs": "utf8-lf",
+        "materialize-cargo-inputs.mjs": "utf8-lf",
+        "materialize-bun-inputs.mjs": "utf8-lf",
+        "materialize-source-inputs.mjs": "utf8-lf",
+        "materialize-toolchain-inputs.mjs": "utf8-lf"
+      },
+      "receipt": {
+        "kind": "clean-bun-with-locked-large-page-jsc",
+        "source": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "sourceInputCount": 22,
+        "cargoArchiveCount": 206,
+        "bunArchiveCount": 125,
+        "toolVersions": {
+          "node": "v24.3.0",
+          "bun": "1.3.13",
+          "cmake": "cmake version 3.30.5",
+          "ninja": "1.13.2",
+          "clang": "Ubuntu clang version 21.1.5 (++20251023083255+45afac62e373-1~exp1~20251023083404.50)",
+          "rustc": "rustc 1.99.0-nightly (9f36de775 2026-07-19)",
+          "cargo": "cargo 1.99.0-nightly (3efb1f477 2026-07-17)",
+          "gcc": "gcc-13 (Ubuntu 13.1.0-8ubuntu1~20.04.2) 13.1.0",
+          "packageCount": 243,
+          "packageManifestSha256": "35d66d960d51dd0e58a7b170ba29be14a3f9c7f49529b7fad3cfaf22fe25677b"
+        },
+        "jsc": {
+          "schemaVersion": 1,
+          "kind": "diagnostic-incremental-large-page-jsc-candidate",
+          "distributionReady": false,
+          "officialArtifact": false,
+          "cleanBunBuilds": 0,
+          "evidenceDate": "2026-09-12",
+          "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+          "bunCommit": "7b9ac266888abda7ee6ec0b8ac11a74236420030",
+          "revision": "1.4.0+7b9ac2668",
+          "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+          "hostImage": "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa",
+          "sourceDateEpoch": 1788278400,
+          "x86PageSizeCeiling": 65536,
+          "config": {
+            "USE_64KB_PAGE_BLOCK": 1,
+            "ENABLE_JIT": 1,
+            "ENABLE_DFG_JIT": 1,
+            "ENABLE_FTL_JIT": 1,
+            "ENABLE_C_LOOP": 0,
+            "ENABLE_SAMPLING_PROFILER": 1,
+            "USE_MIMALLOC": 1,
+            "USE_EXTERNAL_MIMALLOC": 1,
+            "USE_SYSTEM_MALLOC": 0,
+            "USE_ISO_MALLOC": 1,
+            "ENABLE_WEBASSEMBLY": 1,
+            "ENABLE_WEBASSEMBLY_BBQJIT": 1,
+            "ENABLE_WEBASSEMBLY_OMGJIT": 1
+          },
+          "generatedConfig": {
+            "bytes": 6982,
+            "sha256": "837f86456d7971b0a6970556ca12cddca6e65502bb6cccefa33e5ee17dc4f5a8"
+          },
+          "libraries": {
+            "libJavaScriptCore.a": {
+              "bytes": 361142888,
+              "sha256": "16f1c5c190623f6dc4cfa103c2da5737f223d2741fd3e05b8602bb23774cc278"
+            },
+            "libWTF.a": {
+              "bytes": 12718664,
+              "sha256": "c53dae666d506ea26108f5f259e0eaba5e24ef7da4e06df0a8be85784ef381a9"
+            },
+            "libbmalloc.a": {
+              "bytes": 246530,
+              "sha256": "d563ab9f3753bd5e9741a56fdf9864d33fc5afeae52fcca2e9da902bbf68ca88"
+            }
+          },
+          "recipes": [
+            {
+              "path": "build-webkit.sh",
+              "bytes": 3428,
+              "sha256": "34d9af64d17eb858cbe8d09155d6c8ebd4d72b65a1d2db2a640e131f3a57f2c4"
+            },
+            {
+              "path": "relink-bun.sh",
+              "bytes": 1181,
+              "sha256": "e67259bb859ee8b8664f5fc2e1669a92caa624d44d873de9c828e0eade7a5740"
+            }
+          ],
+          "artifact": {
+            "abi": "x86_64",
+            "bytes": 90609480,
+            "sha256": "704cc15634da42bbea46cbced53a4e3fd719ed9f88ce78bb975ee89113963e38",
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d08",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "9e1c47d8e1c98f68f0b99b1275033105256a89e9",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1066,
+                "definedCount": 672,
+                "undefinedCount": 393,
+                "tableSha256": "aaa95a865339f088ef43c07b4bbc7897eeef12c79dae084a095e696af7760167",
+                "recordsSha256": "6d7767e55d2ba43bdf6e54549ed9b1f314a2598987af2f7caaf97e6284cb0d4c",
+                "definedRecordsSha256": "9ad940f85293fc366deab244dbf297fca31986dae3ec2e0ec3f285837ae08394",
+                "undefinedRecordsSha256": "066f08514c2256875be2709729096fd9bd228a76d1c144a5204c7e68770315a3"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          },
+          "limits": [
+            "JSC and its generated configuration rebuilt; unchanged upstream ICU reused",
+            "Bun C/C++ recompiled and relinked in a dedicated copy; not a clean reproducibility gate",
+            "No device or Binder success inferred from compilation",
+            "Official and nine-patch runtime locks unchanged"
+          ]
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Two new independent clean Bun builds; exact prior independently built JSC libraries/config and upstream ICU reused",
+    "No new WebKit/ICU compilation or device acceptance inferred from these builds",
+    "Official, baseline thirteen-patch and historical nine/ten/twelve-patch payload evidence unchanged",
+    "Not Release acceptance"
+  ]
+}

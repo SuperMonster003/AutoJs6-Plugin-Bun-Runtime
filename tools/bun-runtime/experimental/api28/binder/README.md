@@ -65,12 +65,12 @@ declaration does not grant the real service permission.
 
 ## Large-page x86 candidate
 
-The baseline source has advanced to twelve patches. Historical nine/ten-patch
+The baseline source has advanced to thirteen patches. Historical nine/ten/twelve-patch
 JSC locks keep their original provenance and device records. The current
 `jsc16k` profile requires the separate
-[`twelve-patch-candidate.lock.json`](../../webkit-x86_64-16k/twelve-patch-candidate.lock.json)
-for `06e518f73b4fccc6c3ffb17412ea166bf886bed0` and two matching fresh Bun builds.
-The build and runner require that exact current source and reject both older
+[`thirteen-patch-candidate.lock.json`](../../webkit-x86_64-16k/thirteen-patch-candidate.lock.json)
+for `e8b1296169a8e6f20c81e926dba6448afb25cd11` and two matching fresh Bun builds.
+The build and runner require that exact current source and reject all three older
 candidates. Actual successful driver exits, clean heads/trees, all twenty-one
 build inputs, complete logs and output receipts must be bound before packaging.
 Both builds reuse the exact independently built JSC inputs and original ICU;
@@ -80,7 +80,7 @@ semantic validator, budgets and eight shared Binder test methods are unchanged.
 Add `-PexperimentalJscCandidateFile=<absolute-locked-candidate-bun>` to the same
 build command, then pass `--profile jsc16k --abi x86_64` to the runner. Both API 36
 4 KiB and 16 KiB environments are required. This selection checks the separate
-[twelve-patch JSC candidate lock](../../webkit-x86_64-16k/twelve-patch-candidate.lock.json); it cannot replace
+[thirteen-patch JSC candidate lock](../../webkit-x86_64-16k/thirteen-patch-candidate.lock.json); it cannot replace
 the baseline with arbitrary bytes or silently disable the official x86 page guard.
 Outputs are under `build/experimental-binder-jsc16k`; baseline outputs use
 `build/experimental-binder`, outside the immutable native experiment directory.

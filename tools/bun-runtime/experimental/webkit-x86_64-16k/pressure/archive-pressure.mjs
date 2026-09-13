@@ -9,11 +9,13 @@ import { PACKAGE, buildInputs, facts, validateDevice } from "../../api28/binder/
 import { loadJscCandidate } from "../jsc-common.mjs";
 import { REBASED_HEAD, loadRebasedJscCandidate } from "../rebased-common.mjs";
 import { TWELVE_PATCH_HEAD, TWELVE_PATCH_BASELINE, loadTwelvePatchJscCandidate } from "../twelve-patch-common.mjs";
+import { THIRTEEN_PATCH_HEAD, THIRTEEN_PATCH_BASELINE, loadThirteenPatchJscCandidate } from "../thirteen-patch-common.mjs";
 import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const pkg = PACKAGE + ".jsc16k";
 function sourceLineage(commit) {
+    if (commit === THIRTEEN_PATCH_HEAD) return { candidate: loadThirteenPatchJscCandidate(), baseline: THIRTEEN_PATCH_BASELINE };
     if (commit === TWELVE_PATCH_HEAD) return { candidate: loadTwelvePatchJscCandidate(), baseline: TWELVE_PATCH_BASELINE };
     if (commit === REBASED_HEAD) return { candidate: loadRebasedJscCandidate(),
         baseline: new URL("../../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json", import.meta.url) };

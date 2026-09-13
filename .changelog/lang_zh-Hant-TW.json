@@ -20,6 +20,8 @@
         "將線上 platform-versions 外掛與儲存庫要求的 1.7.4 對齊, 保持 native-alignment 外掛不變"
       ],
       "improvement": [
+        "獨立鎖定十三修補大頁 JSC 候選: 兩次全新 Bun 乾淨建置實際結束碼均為 0, 完整產物一致且 21 項建置輸入未漂移. 重用原獨立 JSC 程式庫及 ICU, 新 APK 與原 Binder/七模式壓力迴歸獨立綁定, 不轉移歷史成績或擴大發行範圍",
+        "為固定 watch/reload 診斷加入有界 SIGABRT 唯讀快照, 保留原訊號傳遞及預算. 原生 ARM64 API 28/31 共 16 次 plain/traced 觀察完成 32 次重新載入, 擷取 24 次一般 SIGSYS, 套件和 UID 已清理; 未重現的原 API 28 中止原因仍待查明, 不增加相容通過數",
         "新增固定 native/TRAP watch/reload 回歸, 保留十二補丁原生位元組和原33項. 四個 ARM64 / 4 KiB 實機環境中原項264/264通過, 新模式14/16失敗, 32次重新載入暴露28次 FD繼承洩漏; Sony 5.15原生對照通過, 強制TRAP失敗. 保留三個原始碼綁定APK批次和早期驗證器修正, 核對全部套件及UID清理. native修復, 擴展相容性和Release門檻仍未完成",
         "完成十二補丁 Samsung SM-F936U / API 32 / 原生 ARM64 / 4 KiB 回歸: 兩輪原探針 66/66, 完整 Binder 16/16. 與 API 36 批次重用相同三個 APK, 40 個 pending 保持檢查點與十二個 child 觀測通過. 三個測試套件解除安裝, 三個 UID 處理程序清零, 專用 ADB 關閉且無 AVD 操作. 原固定測試的兩項 Samsung 裝置門檻已補齊, baseline 七環境累計 462/462 探針與 112/112 Binder; 廣泛 runtime, 壓力與 Release 門檻仍未完成",
         "完成十二補丁原位元組在 Samsung SM-A566B / API 36 / 原生 ARM64 / 硬體 16 KiB 的回歸: 兩輪原 33 項探針 66/66, 完整 Binder 16/16. 四個 pending 訊號模式保留 40 個檢查點及十二個 child 觀測, 最後各向原 caller 交付一次. 重用相同 APK, 無 native 重建; 解除安裝後三個 UID 處理程序清零, 關閉本輪專用 ADB 且無 AVD 操作. baseline 六環境累計 396/396 探針與 96/96 Binder; ARM64 API 32, 廣泛 runtime 與 Release 門檻仍未完成",

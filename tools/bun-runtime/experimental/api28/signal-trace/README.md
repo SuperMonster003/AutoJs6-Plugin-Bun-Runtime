@@ -1,6 +1,6 @@
-# Test-only SIGSYS observer
+# Test-only signal observer
 
-This separate diagnostic APK observes fixed cold async fixtures.
+This separate diagnostic APK observes fixed cold async and watch fixtures.
 It is not the production plugin, a Binder test, or compatibility acceptance.
 Its package ends in `.signaltrace`, with `testOnly=true`, `debuggable=false`,
 no exported application components, and three exact read-only PIE payloads:
@@ -25,8 +25,9 @@ forwarded unchanged, including a fatal delivery. Synthetic attach/event stops
 are suppressed; these fixed fixtures do not generate user SIGSTOP requests.
 
 The CLI requires an explicit `--fixture-set`: `blocked-async` keeps the original
-cold async assets, and `pending-async` selects the two fixed pending-signal
-assets. This choice is bound into the APK receipt and instrumentation report.
+cold async assets, `pending-async` selects the two fixed pending-signal assets,
+and `watch-reload` uses the unchanged native/TRAP two-reload fixtures.
+This choice is bound into the APK receipt and instrumentation report.
 No arbitrary source or command is accepted. `SYS_SECCOMP` records retain their
 syscall/architecture fields. Other SIGSYS records instead contain sender PID/UID
 under `TRACE_USER_SIGSYS`; those siginfo union fields must not be read as a syscall.
@@ -67,7 +68,34 @@ payload hashes. Output `completed=true` means collection completed, **not** that
 the fixture passed or a diagnosis was accepted. Use the independent semantic
 validator, not that flag, to interpret results.
 
-## Pending-signal diagnosis
+## Watch abort observations
+
+The [2026-09-13 watch observation report](../../../../../docs/compatibility/2026-09-13-m3-watch-reload-trace.md)
+records two native/TRAP plain/traced rounds on each Sony ARM64 API 28/31 device
+at 4 KiB pages. All 16 observations complete the original two reloads and three
+images, with 24 directly observed ordinary SIGSYS deliveries in eight traces.
+These runs do not reproduce or resolve the original API 28 SIGABRT/clone EAGAIN.
+They add zero compatibility passes and do not establish stability.
+
+SIGABRT stops now capture bounded read-only registers, up to eight frame-pointer
+address candidates, mappings and process/resource facts. Missing reads and mapping
+or path caps are explicit. At most two fatal stops are sampled; the original
+12-second/256-event/32-SIGSYS limits and signal forwarding are preserved.
+Frame candidates are not a complete unwind or proof of a clone/resource cause.
+No SIGABRT occurs in the Android observations, so the snapshot is validated only
+by the separate Linux plain/traced abort control, which preserves exit 134 and reaps.
+The observer sees only its kernel-attached tracees; extra close_range TIDs do not
+establish a detailed thread/parent relationship. No arbitrary process is attached.
+
+```powershell
+node tools/bun-runtime/experimental/api28/signal-trace/archive-watch-trace.mjs docs/compatibility/NEW.json DEVICE_DIRECTORY...
+```
+
+The archiver requires unchanged fixture semantics, exact source/APK/raw bindings,
+two complete rounds, sender identities and cleanup. A fatal or incomplete trace
+must be retained separately and cannot use the non-reproduction result shape.
+
+## Historical pending-signal diagnosis
 
 The [new ten-patch diagnosis](../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys.md)
 uses `--fixture-set pending-async`. Two rounds on each native ARM64 API 28/31

@@ -5,14 +5,14 @@ import { fileURLToPath } from "node:url";
 import { verifyRuntimePair } from "../app-probe/probe-common.mjs";
 import { supervisorArtifacts, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
 import { buildInputs } from "./binder-common.mjs";
-import { loadTwelvePatchJscCandidate, verifyTwelvePatchJscCandidate } from "../../webkit-x86_64-16k/twelve-patch-common.mjs";
+import { loadThirteenPatchJscCandidate, verifyThirteenPatchJscCandidate } from "../../webkit-x86_64-16k/thirteen-patch-common.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, "../../../../..");
 const args = process.argv.slice(2);
 assert([6, 8].includes(args.length), "Expected input, repeat and output directories, optionally a locked JSC candidate");
 const options = Object.fromEntries(Array.from({ length: args.length / 2 }, (_, i) => [args[i * 2], args[i * 2 + 1]]));
-const jsc = options["--jsc-candidate-file"] ? loadTwelvePatchJscCandidate() : null;
+const jsc = options["--jsc-candidate-file"] ? loadThirteenPatchJscCandidate() : null;
 assert.deepEqual(Object.keys(options).sort(), ["--input-directory", "--output-directory", "--repeat-directory", ...(jsc ? ["--jsc-candidate-file"] : [])].sort());
 const inputs = realpathSync(options["--input-directory"]), repeat = realpathSync(options["--repeat-directory"]);
 const output = resolve(options["--output-directory"]);
@@ -22,7 +22,7 @@ assert.equal(evidence.identity.distributionReady, false);
 verifySupervisorSource();
 if (jsc) {
     assert.equal(jsc.bunCommit, evidence.source.downstreamHeadCommit, "The JSC candidate needs a separately verified rebase to the current Bun source");
-    verifyTwelvePatchJscCandidate(options["--jsc-candidate-file"], jsc);
+    verifyThirteenPatchJscCandidate(options["--jsc-candidate-file"], jsc);
     evidence.identity.variant = jsc.variant;
 }
 const assetOutput = resolve(output, "../binder-assets");

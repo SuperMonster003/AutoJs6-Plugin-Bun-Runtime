@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/prctl.h>
 #include <sys/syscall.h>
@@ -23,6 +24,7 @@ static void handle(int sig, siginfo_t *info, void *context) {
 int main(int argc, char **argv) {
     if (argc != 4 || strcmp(argv[1], "run") || strcmp(argv[2], "--no-install")) return 71;
     const char *mode = strrchr(argv[3], '/'); if (!mode) return 72; mode++;
+    if (!strcmp(mode,"abort")) abort();
     if (!strcmp(mode,"user-epoll")) {
         sigset_t blocked, empty, pending;
         sigemptyset(&blocked); sigaddset(&blocked,SIGSYS); sigemptyset(&empty);

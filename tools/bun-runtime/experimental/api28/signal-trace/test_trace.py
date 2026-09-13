@@ -40,7 +40,9 @@ class TraceTest(unittest.TestCase):
                 lines = traced.stderr.splitlines()
                 if mode == 'user-epoll':
                     self.assertEqual(len(lines), 3)
-                    context = json.loads(lines.pop(1).removeprefix('TRACE_USER_WAIT='))
+                    context_line = lines.pop(1)
+                    self.assertTrue(context_line.startswith('TRACE_USER_WAIT='))
+                    context = json.loads(context_line[len('TRACE_USER_WAIT='):])
                     self.assertEqual(context['syscallRegister'], 281)
                     self.assertTrue(context['maskRead'])
                     self.assertNotEqual(context['maskAddress'], '0000000000000000')
@@ -61,6 +63,38 @@ class TraceTest(unittest.TestCase):
                 self.assertEqual((done['leader'], done['exitCode'], done['signals'], done['exits']),
                                  (info['leader'], traced.returncode, 1, 1))
                 self.assertFalse(Path('/proc', str(info['leader'])).exists())
+
+    def test_abort_snapshot_preserves_the_fatal_signal_and_reaps_owned_target(self):
+        target, tracer = str(self.directory / 'target'), str(self.directory / 'trace')
+        plain = subprocess.run([target, 'run', '--no-install', '/abort'], capture_output=True, text=True, timeout=5)
+        traced = subprocess.run([tracer, target, '/abort'], capture_output=True, text=True, timeout=5)
+        self.assertEqual(plain.returncode, -signal.SIGABRT)
+        self.assertEqual(traced.returncode, 128 + signal.SIGABRT)
+        self.assertEqual(traced.stdout, plain.stdout)
+        lines = traced.stderr.splitlines()
+        self.assertLess(len(traced.stderr.encode()), 4096)
+        self.assertTrue(lines[0].startswith('TRACE_ABORT='))
+        info = json.loads(lines[0].split('=', 1)[1])
+        self.assertEqual((info['tid'], info['signo'], info['infoError'], info['registerError']), (info['leader'], 6, 0, 0))
+        self.assertGreater(int(info['pc'], 16), 0)
+        frames = [json.loads(line.split('=', 1)[1]) for line in lines if line.startswith('TRACE_ABORT_FRAME=')]
+        self.assertTrue(1 <= len(frames) <= 8)
+        self.assertEqual(frames[0]['address'], info['pc'])
+        self.assertTrue(frames[0]['mapped'])
+        self.assertEqual(frames[0]['mapError'], 0)
+        self.assertFalse(frames[0]['mapLimitReached'])
+        self.assertFalse(frames[0]['pathMayBeTruncated'])
+        self.assertIn('libc', bytes.fromhex(frames[0]['pathHex']).decode())
+        resources = json.loads(next(line.split('=', 1)[1] for line in lines if line.startswith('TRACE_ABORT_RESOURCES=')))
+        self.assertEqual((resources['tid'], resources['tgid'], resources['uid'], resources['statusError']),
+                         (info['leader'], info['leader'], os.getuid(), 0))
+        self.assertGreater(resources['threads'], 0)
+        self.assertEqual(resources['limitsError'], 0)
+        self.assertNotEqual(resources['nprocSoft'], 'unknown')
+        self.assertTrue(lines[-1].startswith('TRACE_DONE='))
+        done = json.loads(lines[-1][len('TRACE_DONE='):])
+        self.assertEqual((done['exitCode'], done['signals'], done['exits']), (134, 0, 1))
+        self.assertFalse(Path('/proc', str(info['leader'])).exists())
 
 
 if __name__ == '__main__':

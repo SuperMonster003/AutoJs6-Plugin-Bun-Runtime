@@ -84,6 +84,12 @@ export function validateTwelvePatchCandidate(lock) {
     validateCleanRebase(lock, { schemaVersion: 2, head: TWELVE_PATCH_HEAD, tree: TWELVE_PATCH_TREE,
         revision: TWELVE_PATCH_REVISION, baselineEvidence: TWELVE_PATCH_BASELINE, bindings });
     assert.notEqual(lock.artifact.sha256, loadRebasedJscCandidate().artifact.sha256, "Ten-patch bytes cannot accept twelve-patch source");
+    return validateCurrentBuildDrivers(lock);
+}
+
+// New source profiles share the same actual-exit, physical-byte and chronology
+// requirements. Historical loading remains bound to its immutable archive.
+export function validateCurrentBuildDrivers(lock) {
     for (const build of lock.builds) {
         const driver = build.driver;
         assert.equal(driver.state, "complete");

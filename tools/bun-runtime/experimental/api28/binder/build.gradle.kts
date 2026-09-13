@@ -12,7 +12,7 @@ plugins {
 val implementationRoot = rootProject.file("app/src")
 val jscCandidateFile = providers.gradleProperty("experimentalJscCandidateFile")
 @Suppress("UNCHECKED_CAST")
-val jscCandidate = if (jscCandidateFile.isPresent) JsonSlurper().parse(file("../../webkit-x86_64-16k/twelve-patch-candidate.lock.json")) as Map<String, Any> else null
+val jscCandidate = if (jscCandidateFile.isPresent) JsonSlurper().parse(file("../../webkit-x86_64-16k/thirteen-patch-candidate.lock.json")) as Map<String, Any> else null
 layout.buildDirectory.set(rootProject.layout.buildDirectory.dir(if (jscCandidate != null) "experimental-binder-jsc16k" else "experimental-binder"))
 val evidenceFile = file("../runtime-evidence.json")
 @Suppress("UNCHECKED_CAST")
