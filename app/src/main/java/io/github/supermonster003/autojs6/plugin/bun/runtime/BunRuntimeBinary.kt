@@ -3,7 +3,6 @@ package io.github.supermonster003.autojs6.plugin.bun.runtime
 import android.content.Context
 import android.system.Os
 import android.system.OsConstants
-import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 import java.io.File
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
@@ -14,20 +13,13 @@ internal data class BunRuntimeProbe(
     val abi: String?,
     val version: String?,
     val revision: String?,
-    val error: String?,
+    val failure: BunRuntimeFailure?,
 )
 
 internal fun lockedRuntimeAbiForSha256(sha256: String): String? =
     LOCKED_RUNTIME_SHA256_BY_ABI.entries.singleOrNull { (_, expectedSha256) ->
         sha256 == expectedSha256
     }?.key
-
-internal fun officialRuntimePageSizeError(abi: String, pageSizeBytes: Long): String? {
-    if (abi != "x86_64" || pageSizeBytes <= OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES) return null
-    return "Official Bun ${BunRuntimeContract.RUNTIME_VERSION} x86_64 runtime is incompatible with " +
-        "$pageSizeBytes-byte process pages because its pinned JavaScriptCore build has a " +
-        "$OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES-byte page-size ceiling"
-}
 
 internal class BunRuntimeBinary(private val context: Context) {
     @Volatile
@@ -62,8 +54,8 @@ internal class BunRuntimeBinary(private val context: Context) {
                 "Bun supervisor SHA-256 does not match the locked ABI payload"
             }
             val pageSize = Os.sysconf(OsConstants._SC_PAGESIZE)
-            if (abi == "x86_64" && pageSize > BuildConfig.BUN_X86_MAX_PAGE_SIZE_BYTES) {
-                error(officialRuntimePageSizeError(abi, pageSize) ?: "Unsupported process page size: $pageSize")
+            runtimePageSizeFailure(abi, pageSize)?.let { failure ->
+                return BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null, failure)
             }
             val version = executeProbe(runtime, "--version")
             require(version == BuildConfig.BUN_RUNTIME_VERSION) { "Unexpected Bun version: $version" }
@@ -72,7 +64,8 @@ internal class BunRuntimeBinary(private val context: Context) {
             executeProbe(runtime, "--eval", "void 0")
             BunRuntimeProbe(true, runtime.path, runtimeAbi, version, revision, null)
         }.getOrElse { error ->
-            BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null, error.message ?: error.toString())
+            BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null,
+                BunRuntimeFailure.Unavailable(error.message ?: error.toString()))
         }
     }
 
@@ -121,5 +114,3 @@ private val LOCKED_RUNTIME_SHA256_BY_ABI = mapOf(
     "arm64-v8a" to BuildConfig.BUN_RUNTIME_ARM64_V8A_SHA256,
     "x86_64" to BuildConfig.BUN_RUNTIME_X86_64_SHA256,
 )
-
-private const val OFFICIAL_X86_64_PAGE_SIZE_CEILING_BYTES = 4096L

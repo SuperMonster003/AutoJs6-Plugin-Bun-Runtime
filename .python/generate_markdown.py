@@ -83,6 +83,28 @@ ANDROID_INSTRUCTION_DIRECTORIES = {
 }
 ANDROID_DEFAULT_LANGUAGE = "en"
 
+# These resources are user-facing protocol summaries or shared troubleshooting text.
+# Require the keys even if accidentally removed from every locale at once.
+RUNTIME_MESSAGE_FORMATS = {
+    "runtime_diagnostic_label": [],
+    "runtime_error_busy": [],
+    "runtime_error_cancelled": [],
+    "runtime_error_internal": [],
+    "runtime_error_invalid_request": [],
+    "runtime_error_non_zero_exit": ["%1$d"],
+    "runtime_error_output_limit": [],
+    "runtime_error_page_size": ["%1$d", "%2$d"],
+    "runtime_error_permission": [],
+    "runtime_error_source_too_large": ["%1$d"],
+    "runtime_error_spawn_failed": [],
+    "runtime_error_timeout": [],
+    "runtime_error_unavailable": [],
+    "runtime_help_activation": [],
+    "runtime_help_android_version": [],
+    "runtime_help_heading": [],
+    "runtime_help_language": [],
+}
+
 CHANGELOG_CATEGORIES = ["hint", "feature", "fix", "improvement", "dependency"]
 CHANGELOG_LABEL_KEYS = [f"changelog_label_{category}" for category in CHANGELOG_CATEGORIES]
 CHANGELOG_DATA_KEY = "$data"
@@ -453,12 +475,14 @@ def validate_localized_resources(root: Path, languages: dict[str, dict[str, Any]
     default_strings = read_android_strings(resources / "values" / "strings.xml")
     reference_keys = set(default_strings)
     require("app_name" not in reference_keys, "app_name must be generated as a non-translatable resource")
+    validate_runtime_messages(default_strings, "values")
 
     directories = dict(ANDROID_STRING_DIRECTORIES)
     localized_strings: dict[str, dict[str, str]] = {}
     for code, directory in directories.items():
         strings = read_android_strings(resources / directory / "strings.xml")
         localized_strings[code] = strings
+        validate_runtime_messages(strings, directory)
         missing = sorted(reference_keys - set(strings))
         extra = sorted(set(strings) - reference_keys)
         require(
@@ -488,6 +512,31 @@ def validate_localized_resources(root: Path, languages: dict[str, dict[str, Any]
 # ---------------------------------------------------------------------------
 # Rendering helpers
 # ---------------------------------------------------------------------------
+
+def validate_runtime_messages(strings: dict[str, str], directory: str) -> None:
+    for key, expected in RUNTIME_MESSAGE_FORMATS.items():
+        text = strings.get(key, "")
+        require(bool(text.strip()), f"Missing or empty runtime message {directory}/{key}")
+        # Match only positional integer placeholders, allowing adjacent non-Latin text.
+        placeholders = re.findall(r"%[0-9]+\$d", text)
+        remainder = re.sub(r"%[0-9]+\$d", "", text)
+        require(sorted(placeholders) == expected and "%" not in remainder,
+                f"Runtime message format mismatch in {directory}/{key}")
+        require(not any(char in text for char in "，。；：！？“”‘’…"),
+                f"Runtime message must use ASCII punctuation in {directory}/{key}")
+
+
+def runtime_help_values(root: Path, code: str) -> dict[str, str]:
+    strings = read_android_strings(root / "app/src/main/res" / ANDROID_STRING_DIRECTORIES[code] / "strings.xml")
+    lines = [strings["runtime_help_language"], "",
+             f'- {strings["runtime_help_activation"]}',
+             f'- {strings["runtime_help_android_version"]}',
+             f'- `TIMEOUT`: {strings["runtime_error_timeout"]}',
+             f'- `OUTPUT_LIMIT`: {strings["runtime_error_output_limit"]}',
+             f'- `RUNTIME_UNAVAILABLE`: {strings["runtime_error_unavailable"]}']
+    return {"runtime_help_heading": strings["runtime_help_heading"],
+            "placeholder_runtime_help": "\n".join(lines)}
+
 
 def render_template(text: str, values: dict[str, Any]) -> str:
     def replace(match: re.Match[str]) -> str:
@@ -650,13 +699,15 @@ def build_artifacts(root: Path) -> dict[Path, str]:
             artifacts[android_changelog_dir / "CHANGELOG.md"] = output
 
     for code in LANGUAGE_CODES:
-        output = render_template(readme_template, build_readme_values(code, languages, changelogs))
+        values = {**build_readme_values(code, languages, changelogs), **runtime_help_values(root, code)}
+        output = render_template(readme_template, values)
         artifacts[readme_dir / f"README-{code}.md"] = output
         if code == LANGUAGE_CODE_DEFAULT:
             artifacts[root / "README.md"] = output
 
     for code in LANGUAGE_CODES:
-        output = render_template(instruction_template, build_readme_values(code, languages, changelogs))
+        values = {**build_readme_values(code, languages, changelogs), **runtime_help_values(root, code)}
+        output = render_template(instruction_template, values)
         directory = ANDROID_INSTRUCTION_DIRECTORIES[code]
         artifacts[android_resource_dir / directory / "plugin_instruction.md"] = output
         if code == ANDROID_DEFAULT_LANGUAGE:

@@ -52,6 +52,33 @@ class MarkdownGenerationTest(unittest.TestCase):
     def test_sample_library_matches_single_source_contract(self) -> None:
         generate_markdown.validate_samples(ROOT)
 
+    def test_runtime_messages_reject_missing_empty_and_malformed_placeholders(self) -> None:
+        reference = generate_markdown.read_android_strings(ROOT / "app/src/main/res/values/strings.xml")
+        mutations = [
+            ("runtime_error_timeout", ""),
+            ("runtime_error_page_size", "Only %1$d bytes"),
+            ("runtime_error_page_size", "%1$d then %1$d"),
+            ("runtime_error_non_zero_exit", "%1$s"),
+            ("runtime_error_timeout", "Invalid %s placeholder"),
+            ("runtime_error_timeout", "错误。"),
+        ]
+        for key, value in mutations:
+            with self.subTest(key=key, value=value):
+                changed = {**reference, key: value}
+                with self.assertRaises(generate_markdown.MarkdownGenerationError):
+                    generate_markdown.validate_runtime_messages(changed, "fixture")
+        del reference["runtime_help_activation"]
+        with self.assertRaises(generate_markdown.MarkdownGenerationError):
+            generate_markdown.validate_runtime_messages(reference, "fixture")
+
+    def test_runtime_help_uses_exact_android_resources_in_every_language(self) -> None:
+        for code, directory in generate_markdown.ANDROID_STRING_DIRECTORIES.items():
+            strings = generate_markdown.read_android_strings(ROOT / "app/src/main/res" / directory / "strings.xml")
+            help_text = generate_markdown.runtime_help_values(ROOT, code)["placeholder_runtime_help"]
+            for key in ["runtime_help_activation", "runtime_help_android_version", "runtime_error_timeout",
+                        "runtime_error_output_limit", "runtime_error_unavailable", "runtime_help_language"]:
+                self.assertIn(strings[key], help_text, f"{code}/{key}")
+
     def test_sample_directive_must_be_the_first_line(self) -> None:
         source = (
             "// A comment before the directive is not allowed.\n"

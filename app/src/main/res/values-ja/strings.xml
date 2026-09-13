@@ -1,4 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plugin_description">独立した Android プロセスで Bun エンジンを使って JavaScript と TypeScript を実行します</string>
-    <string name="plugin_instruction">JS または TS ファイルの 1 行目に &quot;bun&quot;; だけを書き, いつも通り AutoJs6 から実行します. 各実行はそのファイル 1 つだけを実行し, npm dependency が自動でインストールされることはなく, AutoJs6 の内蔵関数も Bun 内では使えません.</string>
+    <string name="plugin_instruction">JS または TS ファイルの 1 行目に \"bun\"; だけを書き, いつも通り AutoJs6 から実行します. 各実行はそのファイル 1 つだけを実行し, npm dependency が自動でインストールされることはなく, AutoJs6 の内蔵関数も Bun 内では使えません.</string>
+    <string name="runtime_diagnostic_label">診断の詳細:</string>
+    <string name="runtime_error_busy">Bun Runtime は使用中です. 現在のスクリプトが終了するのを待つかキャンセルして, 再試行してください.</string>
+    <string name="runtime_error_cancelled">Bun の実行がキャンセルされました.</string>
+    <string name="runtime_error_internal">Bun の実行に失敗しました. 診断の詳細を確認して再試行してください.</string>
+    <string name="runtime_error_invalid_request">Bun の実行リクエストが無効です. リクエストの設定を確認し, 必要に応じて AutoJs6 とプラグインを更新してください.</string>
+    <string name="runtime_error_non_zero_exit">Bun がコード %1$d で終了しました. スクリプトのエラー出力を確認してください.</string>
+    <string name="runtime_error_output_limit">Bun の出力が設定されたバイト数の上限を超えました. stdout と stderr の出力を減らして, スクリプトを再実行してください.</string>
+    <string name="runtime_error_page_size">この Bun x86_64 ビルドは %1$d バイトのプロセスページでは実行できません. JavaScriptCore の上限は %2$d バイトです. 対応するデバイスを使用してください. APK のアライメントだけではこの制限は解消されません.</string>
+    <string name="runtime_error_permission">Bun Runtime へのアクセスには AutoJs6 のプラグイン権限が必要です.</string>
+    <string name="runtime_error_source_too_large">ソースが %1$d バイトの上限を超えています. スクリプトのサイズを減らして再試行してください.</string>
+    <string name="runtime_error_spawn_failed">Bun プロセスを起動できませんでした. 診断の詳細とデバイスの互換性を確認してください.</string>
+    <string name="runtime_error_timeout">Bun の実行がタイムアウトしました. タスクを短くするか, 許容範囲内で実行の制限時間を調整してください.</string>
+    <string name="runtime_error_unavailable">Bun Runtime を利用できません. デバイスの互換性を確認し, ファイルが不足している場合はプラグインを再インストールしてください.</string>
+    <string name="runtime_help_activation">Bun Runtime が起動または有効化されていない場合は, AutoJs6 のプラグインセンターでプラグインを承認して有効化し, ホストに起動操作が表示されていれば実行してください.</string>
+    <string name="runtime_help_android_version">公式プラグインには Android 13 (API 33) 以降が必要です. Android 9 から 12L では実行できません. マニフェストの要件を下げてもランタイムの互換性は得られません.</string>
+    <string name="runtime_help_heading">実行エラーと対処方法</string>
+    <string name="runtime_help_language">メッセージはプラグインの Android 言語設定に従います. 低レベルの診断の詳細や Bun の出力は英語のままの場合があります.</string>
 </resources>

@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 57 份源报告, 144 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 60 份源报告, 148 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -97,6 +97,17 @@ v0.2.1 开发 Debug APK, 不属于已发布 Release APK 验收. 初始采集器�
 | 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
 | / | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M9 本地化服务原八项 Binder 回归
+
+来源: [2026-09-13-m9-localized-errors-binder.json](2026-09-13-m9-localized-errors-binder.json).
+
+新服务配官方 Bun, 两台 ARM64 4 KiB 设备各两轮; 仅隔离 Debug APK, 不扩大 native 或 Release 支持.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | XQ-DQ72<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
 
 ## 实验运行时的设备记录
 
@@ -599,6 +610,25 @@ ptrace 观察器执行前失败, 未成功捕获 syscall, 不能从后续诊断�
 | 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
 | /record | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 7b9ac266888a<br>SHA 22b7e0778c53 | 未记录/1 观测 | 诊断, 不计入接受结果; 记录失败 |
+
+### M9 十语言错误及帮助回归
+
+来源: [2026-09-13-m9-localized-errors.json](2026-09-13-m9-localized-errors.json).
+
+每轮两项独立 JUnit: 十语言资源/帮助与 60 次真实错误及 finished 一致性. 此处测试单位不是语言或错误观察数, 不累计为原八项 Binder.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | XQ-DQ72<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 2/2 测试; 2/2 测试 | 诊断, 不计入接受结果; 观测通过 |
+| /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 2/2 测试; 2/2 测试 | 诊断, 不计入接受结果; 观测通过 |
+
+### M9 官方 x86 大页拒绝本地化
+
+来源: [2026-09-13-m9-localized-page-refusal.json](2026-09-13-m9-localized-page-refusal.json).
+
+API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
 ## 构建证据
 

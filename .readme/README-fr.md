@@ -175,6 +175,20 @@ Consultez le [guide de dépannage (en chinois)](https://github.com/SuperMonster0
 
 ******
 
+### Erreurs d'exécution et dépannage
+
+******
+
+Les messages suivent le réglage de langue Android du plugin. Les détails du diagnostic de bas niveau et la sortie de Bun peuvent rester en anglais.
+
+- Si Bun Runtime n'est pas activé, ouvrez le Centre de plugins dans AutoJs6, autorisez et activez le plugin, puis utilisez l'action Activer si l'hôte la propose.
+- Le plugin officiel nécessite Android 13 (API 33) ou une version ultérieure. Il ne fonctionne pas sur Android 9 à 12L; abaisser l'exigence du manifeste ne rend pas le moteur compatible.
+- `TIMEOUT`: Le délai d'exécution de Bun a expiré. Raccourcissez la tâche ou ajustez le délai dans la limite autorisée.
+- `OUTPUT_LIMIT`: La sortie de Bun a dépassé la limite configurée en octets. Réduisez les sorties stdout et stderr, puis relancez le script.
+- `RUNTIME_UNAVAILABLE`: Bun Runtime est indisponible. Vérifiez la compatibilité de l'appareil et réinstallez le plugin si ses fichiers sont incomplets.
+
+******
+
 ### Interface du plugin
 
 ******
@@ -223,6 +237,7 @@ _2026/09/12_
 
 - `Correctif` Corrige le sondage pidfd Android expérimental lorsque le premier spawn asynchrone démarre avec SIGSYS bloqué, en préservant le masque appelant et les signaux en attente via le repli waiter existant. Le runtime à dix correctifs réussit les 31 sondes inchangées (310/310) et les huit tests Binder complets (80/80) dans cinq environnements natifs 4 KiB. Les preuves de fin de compilation indiquent explicitement les codes de sortie originaux perdus; le premier échec de démarrage ART est archivé séparément. Le rebase JSC et Release restent à valider pour ces nouveaux binaires; les binaires officiels sont inchangés
 - `Correctif` Corriger l'arrêt de JavaScriptCore expérimental au démarrage sur x86_64 natif 16 KiB en recompilant le WebKit épinglé avec des réglages explicites de grandes pages, JIT et allocateurs puis en rééditant les liens de Bun: deux passages Binder réussissent sur les AVD 4 KiB et 16 KiB (32/32). Les binaires officiels et leur garde 4 KiB restent inchangés; la validation Release est distincte
+- `Amélioration` Traduire les résumés d'erreurs dans les dix langues, conserver les codes stables et les détails techniques bornés, et générer l'aide sur l'activation, Android, les délais et la limite de sortie à partir des mêmes ressources Android. Afficher les refus de taille de page mis en cache dans la langue actuelle et préserver les caractères Unicode entiers lors de la troncature des diagnostics
 - `Amélioration` Ajouter une matrice générée des preuves de compatibilité avec un index complet des sources, les empreintes des archives et des contrôles CI de dérive; conserver les résultats par runtime, appareil et suite, y compris les échecs et diagnostics préliminaires, sans nouvelle validation sur appareil ni extension de la prise en charge officielle
 - `Amélioration` Valider le nouveau candidat x86 à grandes pages avec dix correctifs sur API 36, avec des pages utilisateur de 4 KiB et 16 KiB: Binder inchangé réussit 32/32 et les modes de pression fixes 28/28 avec une même paire APK liée à 77 entrées. Archiver les octets, résultats bruts et nettoyages séparément des preuves historiques; le mode x86 16 KiB reste émulé sur des pages noyau de 4 KiB, sans validation Release ni de performances
 - `Amélioration` Lier séparément un candidat JSC grandes pages à dix correctifs, avec deux compilations Bun propres identiques, les vrais codes de sortie conservés et les entrées JSC réutilisées exactes. Les outils Binder isolés utilisent le nouveau verrou lié aux sources; les binaires historiques et officiels sont conservés, et les validations appareil et Release restent distinctes

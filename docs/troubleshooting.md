@@ -37,10 +37,16 @@ console.log("Bun is running", Bun.version);
 
 ## 读懂终态和诊断
 
-`Bun execution timed out`、`Bun output exceeded the configured byte limit` 和
-`Bun execution was cancelled` 分别表示超时、输出超限和取消. 它们属于不同的终止原因.
-`Bun exited with code ...` 表示运行进程异常结束, 需要结合 stderr 和设备环境判断.
+提示文字使用 Android 为插件设置的语言, 并保留稳定的错误码.
+`TIMEOUT`、`OUTPUT_LIMIT` 和 `CANCELLED` 分别表示超时、输出超限和取消.
+`NON_ZERO_EXIT` 表示运行进程以非零代码结束, 需要结合 stderr 和设备环境判断.
 单凭一个非零退出码不能确定具体 syscall; 应用/系统崩溃也不能自动归因到 Bun 的同一处代码.
+
+启动失败、无效请求等消息先给出本地化摘要, 后附有界的诊断详情; 底层异常和 Bun 自身的
+输出可能仍为英文. 每条终态/预热诊断最多为 16 KiB UTF-8, 截断不会拆开有效 Unicode 字符.
+宿主自己的语言选择与插件的 Android 语言配置可能不同, 当前契约不传递宿主 locale.
+未安装、未授权、未启用等发生在绑定前的错误由宿主处理; 系统版本不满足安装要求时,
+插件服务无法返回运行错误. 十语言 README 和插件说明中的相应帮助取自同一组 Android 资源.
 
 宿主接收的 stdout/stderr 是持续发送的有界片段. terminal Bundle 和 `finished` 事件只提供
 状态及诊断摘要, 不包含全部输出. 接口调用者需要在回调中按顺序收集片段, 并处理终态;

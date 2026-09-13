@@ -1,4 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plugin_description">يشغل JavaScript و TypeScript باستخدام محرك Bun المستقل داخل عملية Android معزولة</string>
-    <string name="plugin_instruction">ضع &quot;bun&quot;; وحده في السطر الأول من ملف JS أو TS, ثم شغل الملف من AutoJs6 كالمعتاد. ينفذ كل تشغيل هذا الملف وحده: لا يتم تثبيت npm dependency تلقائيا أبدا, ودوال AutoJs6 المدمجة غير متاحة داخل Bun script.</string>
+    <string name="plugin_instruction">ضع \"bun\"; وحده في السطر الأول من ملف JS أو TS, ثم شغل الملف من AutoJs6 كالمعتاد. ينفذ كل تشغيل هذا الملف وحده: لا يتم تثبيت npm dependency تلقائيا أبدا, ودوال AutoJs6 المدمجة غير متاحة داخل Bun script.</string>
+    <string name="runtime_diagnostic_label">تفاصيل التشخيص:</string>
+    <string name="runtime_error_busy">Bun Runtime مشغول. انتظر انتهاء السكربت الحالي أو ألغ تشغيله, ثم حاول مجددا.</string>
+    <string name="runtime_error_cancelled">تم إلغاء تشغيل Bun.</string>
+    <string name="runtime_error_internal">فشل تشغيل Bun. تحقق من تفاصيل التشخيص وحاول مجددا.</string>
+    <string name="runtime_error_invalid_request">طلب تشغيل Bun غير صالح. تحقق من إعدادات الطلب وحدث AutoJs6 والإضافة عند الحاجة.</string>
+    <string name="runtime_error_non_zero_exit">انتهى Bun بالرمز %1$d. تحقق من مخرجات أخطاء السكربت.</string>
+    <string name="runtime_error_output_limit">تجاوزت مخرجات Bun حد البايتات المحدد. قلل مخرجات stdout وstderr, ثم شغل السكربت مجددا.</string>
+    <string name="runtime_error_page_size">لا يمكن تشغيل بنية Bun x86_64 هذه بصفحات عملية بحجم %1$d بايت; حد JavaScriptCore هو %2$d بايت. استخدم جهازا متوافقا. محاذاة APK وحدها لا تحل هذا القيد.</string>
+    <string name="runtime_error_permission">يتطلب الوصول إلى Bun Runtime إذن إضافات AutoJs6.</string>
+    <string name="runtime_error_source_too_large">يتجاوز المصدر الحد البالغ %1$d بايت. قلل حجم السكربت وحاول مجددا.</string>
+    <string name="runtime_error_spawn_failed">تعذر بدء عملية Bun. تحقق من تفاصيل التشخيص وتوافق الجهاز.</string>
+    <string name="runtime_error_timeout">انتهت مهلة تشغيل Bun. اختصر المهمة أو عدل مهلة التشغيل ضمن الحد المسموح.</string>
+    <string name="runtime_error_unavailable">Bun Runtime غير متاح. تحقق من توافق الجهاز وأعد تثبيت الإضافة إذا كانت ملفاتها غير مكتملة.</string>
+    <string name="runtime_help_activation">إذا لم يكن Bun Runtime مفعلا, افتح مركز الإضافات في AutoJs6 وامنح الإضافة الإذن ومكنها, واستخدم إجراء التنشيط إذا عرضه المضيف.</string>
+    <string name="runtime_help_android_version">تتطلب الإضافة الرسمية Android 13 (API 33) أو أحدث. لا يمكن تشغيلها على Android 9 إلى 12L; خفض المتطلب في ملف البيان لا يجعل بيئة التشغيل متوافقة.</string>
+    <string name="runtime_help_heading">أخطاء التشغيل واستكشاف الأخطاء</string>
+    <string name="runtime_help_language">تستخدم الرسائل إعداد لغة Android للإضافة. قد تبقى تفاصيل التشخيص منخفضة المستوى ومخرجات Bun باللغة الإنجليزية.</string>
 </resources>

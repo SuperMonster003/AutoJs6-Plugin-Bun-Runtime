@@ -1,4 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plugin_description">Runs JavaScript and TypeScript with the independent Bun engine in an isolated Android process</string>
-    <string name="plugin_instruction">Put &quot;bun&quot;; alone on the first line of a JS or TS file, then run it from AutoJs6 as usual. Each run executes that single file only: npm dependencies are never auto-installed, and AutoJs6 built-in functions are not available inside Bun scripts.</string>
+    <string name="plugin_instruction">Put \"bun\"; alone on the first line of a JS or TS file, then run it from AutoJs6 as usual. Each run executes that single file only: npm dependencies are never auto-installed, and AutoJs6 built-in functions are not available inside Bun scripts.</string>
+    <string name="runtime_diagnostic_label">Diagnostic details:</string>
+    <string name="runtime_error_busy">Bun Runtime is busy. Wait for the current script to finish or cancel it, then try again.</string>
+    <string name="runtime_error_cancelled">Bun execution was cancelled.</string>
+    <string name="runtime_error_internal">Bun execution failed. Check the diagnostic details and try again.</string>
+    <string name="runtime_error_invalid_request">The Bun execution request is invalid. Check the request settings and update AutoJs6 and the plugin if needed.</string>
+    <string name="runtime_error_non_zero_exit">Bun exited with code %1$d. Check the script error output.</string>
+    <string name="runtime_error_output_limit">Bun output exceeded the configured byte limit. Reduce stdout and stderr output, then run the script again.</string>
+    <string name="runtime_error_page_size">This Bun x86_64 build cannot run with %1$d-byte process pages; its JavaScriptCore limit is %2$d bytes. Use a compatible device. APK alignment alone does not resolve this limit.</string>
+    <string name="runtime_error_permission">Access to Bun Runtime requires the AutoJs6 plugin permission.</string>
+    <string name="runtime_error_source_too_large">The source exceeds the %1$d-byte limit. Reduce the script size and try again.</string>
+    <string name="runtime_error_spawn_failed">The Bun process could not start. Check the diagnostic details and device compatibility.</string>
+    <string name="runtime_error_timeout">Bun execution timed out. Shorten the task or adjust the execution timeout within the allowed limit.</string>
+    <string name="runtime_error_unavailable">Bun Runtime is unavailable. Check device compatibility and reinstall the plugin if its files are incomplete.</string>
+    <string name="runtime_help_activation">If Bun Runtime is not activated or enabled, open Plugin Center in AutoJs6, authorize and enable the plugin, and use Activate if the host shows it.</string>
+    <string name="runtime_help_android_version">The official plugin requires Android 13 (API 33) or later. Android 9 through 12L cannot run it; lowering the manifest requirement does not make the runtime compatible.</string>
+    <string name="runtime_help_heading">Execution errors and troubleshooting</string>
+    <string name="runtime_help_language">Messages use the Android language setting for the plugin. Low-level diagnostic details and Bun output may remain in English.</string>
 </resources>

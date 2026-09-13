@@ -1,4 +1,39 @@
-# 会话交接: M9 兼容矩阵生成器完成
+# 会话交接: M9 运行错误与十语言诊断审计完成
+
+更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `b1d2606` 继续,
+完成 M9 最后一项错误/诊断文案审计. 继续前完整阅读 `AGENTS.md`、本文件及
+`E:/.codex-tmp/runtime-messages-20260913/SESSION_HANDOFF.local.md`.
+实现与证据见 [审计报告](compatibility/2026-09-13-m9-localized-errors.md) 和
+[复核工具](../tools/diagnostics/README.md).
+
+- 新增 17 个错误/帮助资源, 10 个稳定错误码使用十语言摘要. 预热缓存保留失败事实,
+  在返回时使用插件当前 Android 语言; 诊断受 16 KiB UTF-8 限制, 不拆开有效 Unicode 字符.
+  README/插件说明的激活、Android 13 要求、超时和输出超限帮助取自同一组 strings.xml.
+  绑定前宿主错误与系统安装门槛没有改造成虚假的插件服务返回结果.
+- 同一隔离 Debug APK 批次绑定 85 项输入, 官方 Bun/supervisor 原字节不变.
+  Sony XQ-DQ72 API 33 与 Xiaomi 23046RP50C API 35 (native ARM64 / 4096) 各两轮:
+  原八项 Binder 合计 32/32, 独立语言 JUnit 合计 8/8, 含 240 个真实错误/finished 观察.
+- 本轮拥有的 x86 API 36 / 16384 用户页 ABI AVD 另通过两轮 4/4 资源/拒绝 JUnit,
+  验证十语言下缓存的 prewarm/info/run 拒绝一致; 内核映射为 4096. Bun 在执行前被拒绝,
+  不能把该记录算作官方 x86 16 KiB 运行成功. 三份 JSON 独立归档, 原历史报告不改.
+- 三环境的两个测试包均卸载, 六个 UID 最终为零进程. 只启动并关闭本轮
+  `bun-jsc-pressure-16k-20260912` / `emulator-5582`; 原有 `emulator-5554` 未操作.
+  没有使用三星或开启等待窗口. 没有 native 构建、Gradle 缓存修复、push 或 Release.
+- JVM 10/10、Python 37/37、Node 191/191、36 文件生成器及兼容矩阵 --check 通过.
+  矩阵现登记 60 份 JSON / 148 条设备尝试; 拒绝报告仅诊断索引, 不增加执行通过数.
+  隔离与标准生产四项 Gradle 检查均成功 (各 15 秒), IDE build 通过.
+  Lint 按 issue 节点计为 0 errors/44 warnings; 本次五条分别是固定字节页大小的复数建议、Python 消费的
+  帮助资源和按仓库要求使用 ASCII 连字符, 具体解释见审计报告.
+- 接受 APK 已保存在本机 `apks/`, 不要用随后生产包的输出覆盖它们.
+  新受控构建 helper 是接受 APK 构建后补充的, 仅语法检查; 初始批次使用受控 Gradle
+  命令及构建后外部 receipt. 不追溯声称 helper 已运行, 不无理由重建或重跑设备.
+
+M9 本轮选定的小节包含服务实现、十语言资源、生成器、设备回归和归档, 已完整完成.
+下一步从 Roadmap 的实验 syscall/API/FD/OEM 边界、持续上游审阅或其他未完成项选择
+明确范围继续. 十补丁/JSC 的既有构建和设备证据保持成立于其原 APK/源码批次;
+本轮服务呈现更新没有自动重验实验线或签名 Release. 如需三星, 仍按 10 分钟/50781 约定.
+
+## 此前: M9 兼容矩阵生成器完成
 
 更新: 2026-09-13 (Asia/Shanghai). 从干净 `7d5ac1e` 继续,
 本轮完成独立兼容证据索引, 未改 native/runtime/service 或历史报告.
