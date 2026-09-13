@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "kind": "pending-wait-samsung-device-checkpoint",
+  "capturedAt": "2026-09-13T11:07:10Z",
+  "projectBaseCommit": "d2dedb2802897ca3ba8ca23dc4920da2685c3c79",
+  "scope": "Supplemental twelve-patch native ARM64 API 36 hardware 16 KiB device/source/APK/cleanup records. No added test or build counts; original suite archives are authoritative.",
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "newNativeBuilds": 0,
+  "newApkBuilds": 0,
+  "device": {
+    "model": "SM-A566B",
+    "manufacturer": "samsung",
+    "api": "36",
+    "abi": "arm64-v8a",
+    "pages": "16384",
+    "machine": "aarch64",
+    "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+    "bridge": "0",
+    "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+    "capturedAt": "2026-09-13T11:01:34Z",
+    "shellMappingPages": {
+      "KernelPageSize": [
+        16384
+      ],
+      "MMUPageSize": [
+        16384
+      ]
+    },
+    "smaps": {
+      "bytes": 128327,
+      "sha256": "5a95c11d8c52ec240ea0b5d2c6b8677541ecbfa5217c3304d4e99dba5292f99c"
+    }
+  },
+  "serial": "localhost:49909",
+  "startedAt": "2026-09-13T11:01:30Z",
+  "finishedAt": "2026-09-13T11:03:42Z",
+  "apkSource": {
+    "binderProjectBaseCommit": "dbd0fde638816bceb4ab759d6e0750aa51e34a55",
+    "binderInputsMatchedToGit": 81,
+    "probeInputsUnchanged": 30,
+    "probeDefinitionsUnchanged": 33,
+    "probeBuildIdenticalToPreviousFiveEnvironmentBatch": true,
+    "binderReadyBatchVerification": {
+      "bytes": 2575,
+      "sha256": "00221ee9a73a252d1b215de145e2db9c9a0d6d43f6cc826bcf4db1b35e5f619a"
+    },
+    "note": "The detached baseline worktree retains its exact 81 compiled inputs. Current mainroot JSC tooling has a separate 83-input batch. No stale-input check is relaxed."
+  },
+  "native": {
+    "sourceCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+    "revision": "1.4.0+06e518f73",
+    "bytes": 87923328,
+    "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+    "baselineBuildEvidence": {
+      "file": "2026-09-13-m2-pending-wait-runtime-evidence.json",
+      "bytes": 18339,
+      "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+    }
+  },
+  "archives": [
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api36-probes.json",
+      "bytes": 319541,
+      "sha256": "38a0b39a99758777d15566a61959e9402a2bf7fb38d581e6793fa3800a39411e"
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
+      "bytes": 45745,
+      "sha256": "f071aadd46233d5739e262b1fe4c7b16cb3e81ece6115d3c516c2da2c99d17a4"
+    }
+  ],
+  "suites": [
+    {
+      "suite": "probes",
+      "startedAt": "2026-09-13T11:01:34Z",
+      "finishedAt": "2026-09-13T11:02:28Z",
+      "exitCode": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe": 10320
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T11:02:29Z",
+      "processSnapshot": {
+        "bytes": 28237,
+        "sha256": "41f504319c4521c3a004717adfb5e3540ac9d8eca5ea6c284d521c7dee00d671"
+      },
+      "log": {
+        "bytes": 141,
+        "sha256": "b9b7909e01b0b4d1c990f38edeabd18585ba8017adb3b2b6b3e03f14adb0446d"
+      },
+      "archive": {
+        "name": "2026-09-13-m3-pending-wait-native-arm64-api36-probes.json",
+        "bytes": 319541,
+        "sha256": "38a0b39a99758777d15566a61959e9402a2bf7fb38d581e6793fa3800a39411e"
+      }
+    },
+    {
+      "suite": "binder",
+      "startedAt": "2026-09-13T11:02:30Z",
+      "finishedAt": "2026-09-13T11:03:41Z",
+      "exitCode": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10321,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10322
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T11:03:42Z",
+      "processSnapshot": {
+        "bytes": 28414,
+        "sha256": "5c293d820dae80724f20d9bce29d54158762148529efdd97112399be56777395"
+      },
+      "log": {
+        "bytes": 98,
+        "sha256": "9d501c0e1f2c9d7926e3b482f57d41324027d69c322b00bcd6c47a55600a71e5"
+      },
+      "archive": {
+        "name": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
+        "bytes": 45745,
+        "sha256": "f071aadd46233d5739e262b1fe4c7b16cb3e81ece6115d3c516c2da2c99d17a4"
+      }
+    }
+  ],
+  "driverReceipt": {
+    "bytes": 4325,
+    "sha256": "0eceeb86db84cab89f1519edcbf07e0ba2533f64cb9019bc66a5a792011439de"
+  },
+  "pendingSignalObservations": [
+    {
+      "round": 1,
+      "id": "sigsys-pending-async-native",
+      "callerPid": 20343,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        20343
+      ]
+    },
+    {
+      "round": 1,
+      "id": "sigsys-pending-async-trap",
+      "callerPid": 20357,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        20357
+      ]
+    },
+    {
+      "round": 2,
+      "id": "sigsys-pending-async-native",
+      "callerPid": 20834,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        20834
+      ]
+    },
+    {
+      "round": 2,
+      "id": "sigsys-pending-async-trap",
+      "callerPid": 20846,
+      "preservedCheckpoints": 10,
+      "childObservations": 3,
+      "deliveryTids": [
+        20846
+      ]
+    }
+  ],
+  "transport": {
+    "defaultServerPreflight": "The default localhost:5037 ADB service failed before installation. Its existing process and another task's localhost:5038 service were not stopped or changed.",
+    "initialPrivateListenerFailure": {
+      "log": {
+        "bytes": 153,
+        "sha256": "ec62772b0d8dd657af7005ee39022a4bd515da15cec5b92faf77b30d8f61eff2"
+      },
+      "message": "Explicit listener hostname unsupported; this server exited before device connection."
+    },
+    "initialAuthentication": {
+      "receipt": {
+        "bytes": 98,
+        "sha256": "1fa3c37b24858d31bd42a6df825edde871b2d3183237d32d10306588bad8642a"
+      },
+      "state": "unauthorized",
+      "resolution": "USB-debugging authorization requested; subsequent get-state/device identity succeeded before installation."
+    },
+    "privateServer": {
+      "startedAt": "2026-09-13T10:59:43Z",
+      "pid": 51752,
+      "port": 5039,
+      "arguments": [
+        "-L",
+        "tcp:5039",
+        "--one-device",
+        "localhost:49909",
+        "server",
+        "nodaemon"
+      ],
+      "serverSocket": "tcp:127.0.0.1:5039",
+      "mdnsAutoConnect": "0",
+      "owned": true,
+      "stopped": true,
+      "listenerBeforeStop": {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 5039,
+        "OwningProcess": 51752
+      },
+      "stopCommandAt": "2026-09-13T11:05:26Z",
+      "stopCommand": {
+        "status": 0,
+        "stdout": "",
+        "stderr": ""
+      },
+      "stopConfirmedAt": "2026-09-13T11:05:31Z",
+      "listenerAbsent": true,
+      "ownedProcessAbsent": true
+    },
+    "avdsStarted": 0,
+    "avdsStopped": 0,
+    "sharedServerProcessesChanged": false
+  },
+  "cleanup": {
+    "allThreePackagesRemoved": true,
+    "allThreeUidsEmpty": true,
+    "uids": [
+      10320,
+      10321,
+      10322
+    ],
+    "userToldDeviceCanBeReleased": true,
+    "privateAdbServerStopped": true
+  },
+  "limits": [
+    "This new source has its own hardware ARM64 16 KiB results; prior nine/ten-patch acceptance is not transferred",
+    "Raw openat2 remains unavailable before filters; finite raw controls do not accept all high-level syscall fallbacks",
+    "Original 33-probe and eight-test Binder scopes, fixtures and budgets only; not FD70000/UNSHARE, watch/reload, cgroup/clone3, broad API/OEM, JSC pressure or Release acceptance",
+    "Official API33+ and payloads, all historical reports and separate JSC candidate results remain unchanged"
+  ]
+}

@@ -4,16 +4,23 @@
 
 更新日期: 2026-09-13
 
+最新三星十二补丁 baseline 回归已完成: SM-A566B / API 36 / native ARM64 / 硬件 16 KiB
+两轮原 33 项通过 66/66, 完整八项 Binder 通过 16/16. 四个 pending 模式的 40 个保持
+检查点和十二个 child 观测通过; 原 APK/native 直接复用, 无测试失败或重试.
+三个包/三个 UID 与本轮私有 ADB server 已清理, 无 AVD 操作.
+累计六个原生环境 396/396 probes 和 96/96 Binder, 新源码 ARM64 API 32 仍待接入.
+见 [硬件 16 KiB 报告](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md).
+
 最新十二补丁 JSC rebase 已完成两份新 Bun 一致构建, 实际 driver exit 0/0. 同一新 APK 的
 83 输入绑定 `0210e82`, 在 x86 API 36 的 4 KiB/16 KiB 用户页各过两轮原八项 Binder 和
 七模式压力, 分别 32/32 与 28/28. 初次 16 KiB lowmemorykiller 服务终止独立保留, 完整
 同 APK 重试通过; 两个 UID 和本轮两个 AVD 清理完成. [完整结果](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md).
-16 KiB x86 仍是 4 KiB 内核上的用户页 ABI 模拟. 十二补丁 baseline 三星新源码门禁仍待接入.
+16 KiB x86 仍是 4 KiB 内核上的用户页 ABI 模拟. 十二补丁 baseline 三星 API 36 硬件页证据见上文, ARM64 API 32 仍待接入.
 
 最新第 12 补丁 `06e518f73` 保留 Android epoll 等待期间的完整 caller mask/pending 信号,
 并在调用点维持 Android 已有的 epoll_pwait2 禁用. GCC/Clang 各 45 个有界主机执行、完整重放和
 28 source blobs 已通过. 两份全新双 ABI 构建均实际 exit 0, 每 ABI 两份成品一致且四份 ELF 审计通过.
-新 33 项在五个原生 4 KiB 环境两轮通过 330/330, 完整八项 Binder 通过 80/80. API 28 两次 ART 启动失败独立保留, 第三次同 APK 两轮通过; 三星新源码门禁待接入.
+新 33 项在五个原生 4 KiB 环境两轮通过 330/330, 完整八项 Binder 通过 80/80. API 28 两次 ART 启动失败独立保留, 第三次同 APK 两轮通过. 加上随后三星 API 36 独立批次, 当前累计为 396/396 probes 和 96/96 Binder; 新源码 ARM64 API 32 仍待接入.
 见 [wait 修复报告](docs/compatibility/2026-09-13-m3-pending-wait-fix.md) 与 [新构建证据](docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json). runtimeProduced=true, distributionReady=false.
 
 此前 M3 pending-SIGSYS 阻断已有第 11 补丁源码修复, 双 ABI 各两次独立构建一致且实际退出码均为 0; 完整 ELF 审计通过, 但 Sony API 28/31 各两轮仍为 31/33. 即时 spawn 已保留 pending, 后续 epoll wait 临时传入空 mask 导致早交付; 八次只读寄存器/掩码观测已确认, 见 [新阻断](docs/compatibility/2026-09-13-m3-pending-wait.md).
@@ -38,7 +45,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十二补丁本地原 33 项与八项 Binder 已过 330/330、80/80, 三星新源码待验; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | 十二补丁原 33 项与八项 Binder 六环境已过 396/396, 96/96, 含三星 ARM64 硬件 16 KiB; 新源码 ARM64 API 32 待验; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -101,7 +108,7 @@
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 十二补丁双 ABI 独立构建完成, 旧证据独立归档 | 两个全新 clean checkout 的双 ABI 成品一致, 两个实际 driver exit 0; 四份 ELF、源码与最终 Ninja 边已核对. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 十二补丁五环境原 33 项与 Binder 通过, 三星新源码待验 | 新源码 330/330 探针、80/80 Binder; 十补丁七环境 434/434、112/112 保持历史范围, 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
+| M3 Android 9-12L 实验支持 | 十二补丁六环境原 33 项与 Binder 通过, ARM64 API 32 待验 | 新源码 396/396 探针, 96/96 Binder; 十补丁七环境 434/434、112/112 保持历史范围, 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
@@ -241,7 +248,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (上游/测试) 第 12 补丁保留 Android epoll caller mask, 维持已有可选 syscall 禁用, 完整源码 GCC/Clang 各 45 次有界对照及十二补丁重放/28 blobs 通过. [源码与主机范围](docs/compatibility/2026-09-13-m3-pending-wait-fix.md).
 - [x] (构建) 第 12 补丁两份全新双 ABI 构建实际退出码均为 0, 每 ABI 成品一致, 四份 ELF、完整日志、16 配方和最终 Ninja 边通过. [独立证据](docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json).
 - [x] (设备) 第 12 补丁保持原定义的 33 项探针/八项 Binder 在五个原生 4 KiB 环境通过 330/330、80/80. 含二十次 pending async/六十 child 检查; 两次 API 28 ART 启动失败独立保留, 第三次同 APK 两轮通过. Sony API 33 前置检查断线后改用实测 Redmi; 全部包/执行 UID 清理, 只关闭 owned AVD. [新源码报告](docs/compatibility/2026-09-13-m3-pending-wait-fix.md). (2026-09-13, G1/G2)
-- [ ] (设备) 第 12 补丁 Samsung ARM64 API 32/4 KiB 与 API 36/native 16 KiB 的原 33 项/八项 Binder 新证据. 最新 17:48:42-17:58:42 接入窗口 40 次轮询均 offline; 独立 `dbd0fde` 的 81 输入宿主签名 APK 已备妥. 大页 JSC rebase 已在 M5 单独完成, 不转移旧源码或候选成绩.
+- [x] (设备) 第 12 补丁 Samsung SM-A566B / API 36 / 原生 ARM64 / 硬件 16 KiB 两轮原 33 项 66/66, 完整八项 Binder 16/16. 40 个 pending 保持检查点和十二个 child 观测通过, 无测试失败或重试. 复用原 probe APK 与独立 `dbd0fde` 的 81 输入 Binder 批次, 未重建 native/APK; 三包/三个 UID 和本轮私有 ADB 已清理, 无 AVD 操作. 六环境累计 396/396 probes, 96/96 Binder. [独立报告](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md). (2026-09-13, G2)
+- [ ] (设备) 第 12 补丁 Samsung ARM64 API 32/4 KiB 的原 33 项/八项 Binder 新证据. 既有 81 输入宿主签名 APK 和匹配 detached worktree 保留, 接入新设备时核对实际 API/ABI/页大小并另建结果目录. 历史离线窗口不改写, 不转移十补丁 API 32 或独立 JSC 成绩.
 - [x] (测试/诊断) 新增两个固定 pending-SIGSYS 异步探针, 原 31 定义/旧 fixture/预算不变; native ARM64 API 28/31 各两轮 31/33, 原 31 项 124/124, 新模式 0/8. 同一线程 tgkill 排入的信号在第一次 spawn 返回时不再 pending, mask 检查仍通过且 JS 尚未交付. 独立两轮 native/TRAP plain/ptrace 共 16 次复现, 八次追踪直接捕获 SI_TKILL 及精确 sender/receiver, 对应父线程 vfork 前临时解除 SIGSYS 阻塞的源码路径. [失败和动态诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md) 分档, 仅完成回归/诊断, 未修复或验收新兼容能力. (2026-09-13, G1/G2, failed gate)
 - [x] (上游/构建/测试, 固定本地套件已关闭历史阻断) 完成 posix_spawn_bun 与后续 wait 阶段 pending SIGSYS 修复的独立双 ABI 构建和本地设备门禁. 第 11 补丁双 ABI 独立构建、actual exit 0 与四份 ELF 审计已通过. 它分开处理 Android 父线程追加阻塞与 vfork 子路径 mask, blocked caller 的 cgroup 走已有 child join 且不污染全局 clone3 状态. GCC/Clang 各 14 场景与两个旧源码失败对照通过, 完整重放/28 blob 不变. Sony API 28/31 的原 31 项过 124/124, 新模式 0/8, 失败后移到 async wait. 已捕获八次 epoll_pwait/空 mask 只读上下文, 第 12 补丁完成 wait mask 修复、可选 syscall 审查和新独立构建, 原 33 项在五个原生 4 KiB 环境通过 330/330, 同源码原 Binder 80/80; 不预热 pidfd、不提前清空 pending、不放宽原断言. 十补丁字节和失败记录保持历史范围, 见 [修复进度](docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在七个原生环境通过 28/28 新观测和 84 个 child 检查, 包含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. watch/reload、其他线程和现有八项套件之外的插件边界仍待覆盖.
@@ -284,6 +292,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 **M4 升阶门:** Android 9+ 的支持声明由完整 G3 证据支撑; patched runtime 的来源, 补丁, 许可证和设备矩阵随每个发布版本可追溯, 且不存在必须靠二进制热补丁或特定 OEM 放宽策略才能运行的路径.
 
 ## M5: 16 KB page size 与发布完整性
+
+- [x] (设备/ARM64) 十二补丁 baseline 在 SM-A566B / API 36 的实际 16384-byte 内核/MMU 页上, 原 33 项与八项 Binder 各两轮通过 66/66 和 16/16, bridge=0. 沿用既有 APK/native, pending 保持/一次投递和原 FD/生命周期断言通过, 三包/三个 UID 已清理. [同一 M3/M5 设备批次](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md), 不重复计数, 不代表 ARM64 压力或 Release 验收. (2026-09-13, G2)
 
 本轮十二补丁 JSC 新构建完成: 两份全新 clean Bun 成品一致, 实际退出码 0/0, 21 项构建输入未漂移,
 复用原两套独立 JSC 库/config 和 ICU. [单独源码/构建报告](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md)

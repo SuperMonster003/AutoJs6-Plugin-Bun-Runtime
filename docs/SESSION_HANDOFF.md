@@ -1,3 +1,48 @@
+# 会话交接: 十二补丁三星 ARM64 硬件 16 KiB 完成, API 32 待接入
+
+2026-09-13 (Asia/Shanghai). 本轮从干净 master `d2dedb2` 继续, 用户提供 `localhost:49909`.
+先完整阅读 `AGENTS.md`, 本文件与
+`E:/.codex-tmp/jsc-twelve-patch-20260913/samsung-49909/SESSION_HANDOFF.local.md`.
+三星设备阶段已完成, 不要重跑 native/APK/device driver, archiver 或一次性文档脚本.
+
+- SM-A566B 实测 API36, native arm64-v8a/aarch64, PAGE_SIZE=16384, bridge=0;
+  shell smaps 的 KernelPageSize/MMUPageSize 也均为 16384. 十二补丁 head `06e518f73`,
+  ARM64 Bun 87923328 bytes / SHA-256 `86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6`.
+- 19:01:30-19:03:42 完成原 33 项两轮 66/66 和完整八项 Binder 两轮 16/16,
+  两个 runner actual exit 0, 无测试失败/跳过/重试. 四个 pending 模式的四十个保持
+  检查点和十二个 child 观测通过, 最后各在原 caller 交付一次; 原 blocked/FD/预算不变.
+  hard-limit 八次, spawn API 八次, soft-limit 四次, forcible 六次 (301-304 ms).
+- 三星回归使用的实验 native/APK 构建为零. 复用此前 30 输入/33 定义 probe APK,
+  Binder 使用上一阶段 `samsung-ready-baseline-apks` 的现成 81 输入批次,
+  三个实际 APK 摘要见报告. 从 detached `baseline-checkout` (`dbd0fde`) 执行原 runner
+  与 archiver; 81 输入逐一匹配 Git. 主目录的 83 输入 JSC profile 未用于放宽旧 APK 门禁.
+- 三个包已卸载, UID10320/10321/10322 均已独立核对零进程, 已通知用户可以结束租用.
+  无 AVD 操作. 默认 ADB5037 前置异常及私有 server 初次监听参数/授权状态保留;
+  有效的 owned5039/PID51752 在全部清理后关闭, 监听与 PID 均消失. 5037/5038 未操作.
+- 新源码 baseline 六环境累计 396/396 probes 和 96/96 Binder. 独立十二补丁 JSC
+  32/32 Binder 和 28/28 pressure 另计, 九/十/十一补丁及先前五环境历史不改写.
+  新源码 ARM64 API32/4KiB 待设备接入; 已向用户询问 SM-F936U, 不把无回复当作接入.
+  后续使用现成匹配 APK/runner, 新端口核对实际设备事实, 另建 API32 结果和传输 ownership,
+  不重用本次已完成的 wx 输出或已关闭的私有 server 状态.
+- 当前没有 native/APK/device driver 待续. 其余 syscall/API/FD/OEM, watch/reload,
+  cgroup/clone3, FD70000/UNSHARE, ARM64/长时压力和 Release 仍开放;
+  官方 API33+, production service/AAR, payload/锁, fixture/validator/budget,
+  所有历史归档及 distributionReady=false 不变.
+- 最终 Node 234/234, Python 38/38, Markdown 10 语言/36 产物, matrix 87 报告/187 行通过;
+  官方 Bun/supervisor 的摘要和 ELF 门禁通过. 更新文档后的 production 四项 Gradle
+  actual exit 0 (18s, 96 tasks, 49 executed/47 up-to-date), 三个 Debug APK 的 runtime
+  与 16 KiB ZIP 检查通过. JVM 21 项由 Gradle 判定 up-to-date; lint 0 error/44 warnings.
+  IDE 工具本次直接 isSuccess=true, 无 timeout, 一个既有 Bundle.get 弃用警告.
+  84 个历史归档及索引条目, 21 个物理构建输入, 全部 native 锁, production/AAR 和
+  fixture/validator/预算未漂移. 新 JSON 未含私钥或本机 SDK 路径; 本机 final-audit.json 保留核对结果.
+
+[完整报告](compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md),
+[Probe](compatibility/2026-09-13-m3-pending-wait-native-arm64-api36-probes.json),
+[Binder](compatibility/2026-09-13-m3-pending-wait-native-arm64-api36-binder.json),
+[设备/源码/APK/清理补充](compatibility/2026-09-13-m3-pending-wait-native-arm64-api36-device-facts.json).
+
+## 此前 JSC 完成与三星尚未接入时的记录
+
 # 会话交接: 十二补丁 JSC 双页大小回归完成, 三星 baseline 新源码待接入
 
 2026-09-13 (Asia/Shanghai). 本轮从干净 `dbd0fde` 继续, 源码/构建提交为 `0210e82`.
