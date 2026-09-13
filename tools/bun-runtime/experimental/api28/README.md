@@ -8,8 +8,13 @@ revision `1.4.0+e8b129616`. The [reload FD repair](reload-fd/README.md) checks
 pre-exec CLOEXEC setup, preserving existing stdio/IPC/signal behavior. Complete
 source replay and both host compiler controls pass. Two new independent dual-ABI
 builds completed with actual driver exits 0, identical complete outputs per ABI
-and four ELF audits. `runtimeProduced=true`; unchanged35/full8 new-source device
-gates remain pending. See the [current report](../../../../docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
+and four ELF audits. `runtimeProduced=true`. The unchanged 35-probe suite and
+complete eight-test Binder suite each pass twice in six native 4 KiB environments
+(420/420 probes and 96/96 Binder observations), using APK inputs bound to bf5cb72.
+An initial API 28 watch abort (69/70, preceding clone EAGAIN without a crash stack)
+remains separately archived; one identical-APK retry passes. Samsung ARM64
+API 32/4 KiB and API 36/hardware 16 KiB, watch stability/pressure and a
+thirteen-patch JSC rebase remain open. See the [current report](../../../../docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
 `distributionReady=false`; official payloads and all historical reports remain intact.
 
 Historical source: twelve patches at `06e518f73b4fccc6c3ffb17412ea166bf886bed0`,

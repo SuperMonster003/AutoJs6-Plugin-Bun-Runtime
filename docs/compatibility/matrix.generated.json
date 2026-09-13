@@ -1991,6 +1991,70 @@
       "summary": null
     },
     {
+      "file": "2026-09-13-m3-watch-reload-api28-abort-failure.json",
+      "sha256": "8de4beb496fc82430541bbc598193dfc0e8714dd789b51996b8bae5728b4f880",
+      "schema": 1,
+      "kind": "archived-watch-reload-abort-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M3 十三补丁 watch/reload API 28 首次中止",
+      "note": "完整尝试保留为失败. 子进程 SIGABRT 前出现 clone EAGAIN; 无崩溃栈, 原因未确认, 不计入后续通过批次.",
+      "bytesUtf8Lf": 364688,
+      "rows": 1,
+      "reportedScope": "Initial thirteen-patch API 28 attempt: one watched child aborted after two emitted images; preserve the entire 69/70 attempt outside accepted suite counts. No descriptor leak was observed in the emitted images. The unchanged repeat round passed, but does not erase the first-round failure.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 1,
+        "rounds": 2,
+        "probesPerRound": 35,
+        "totalProbes": 70,
+        "passedProbes": 69,
+        "failedProbes": 1
+      }
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-binder.json",
+      "sha256": "34080aca036370468714f483df8d852d2761e50999247a031d121e6fb2fad46c",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "note": "固定八项生产服务 Binder 回归; 与应用探针、历史源码、大页候选及 Release 分别计数.",
+      "bytesUtf8Lf": 267810,
+      "rows": 6,
+      "reportedScope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 6,
+        "rounds": 12,
+        "passedTests": 96,
+        "totalTests": 96,
+        "lifecycleObservations": 60
+      }
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-checkpoint.json",
+      "sha256": "c6ccf8538b57385a0af5b14654ae12382eaa0beda02bd47534b4096801d94e5a",
+      "schema": 1,
+      "kind": "watch-reload-fix-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十三补丁 watch/reload 源码与清理检查点",
+      "note": "源码/主机/编译输入/独立 UID 清理和本地验证补充, 不新增设备执行接受数.",
+      "bytesUtf8Lf": 44954,
+      "rows": 0,
+      "reportedScope": "Source/host controls, new APK build receipts, independent package UID cleanup and local verification. Adds no device observations to the separately validated suites.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
       "file": "2026-09-13-m3-watch-reload-checkpoints.json",
       "sha256": "e18d82d69d9766884ce970263a04b9f221fd2896d644bf7660451b882bfd80ba",
       "schema": 1,
@@ -2104,6 +2168,46 @@
         "leakedSentinelObservations": 4,
         "ordinarySigsysDeliveries": 12,
         "ownedWatchedChildrenReaped": 4
+      }
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-probes.json",
+      "sha256": "1166af5129d0c72c9cd8f9ba0b928f1919186c0a9f6ad61a8cb8e6a225e95beb",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "note": "保留原定义与预算的固定套件. 首次 API 28 中止另档; 有限通过不关闭稳定性、其余信号/FD/大页或 Release 门禁.",
+      "bytesUtf8Lf": 1989438,
+      "rows": 6,
+      "reportedScope": "Two process-restarted rounds of the fixed 35-probe test-only application suite per native environment. Not the full syscall/API/FD, plugin Binder or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 6,
+        "rounds": 12,
+        "probesPerRound": 35,
+        "passedProbes": 420,
+        "totalProbes": 420,
+        "loweredSoftLimitObservations": 24,
+        "loweredHardLimitObservations": 48,
+        "hardLimitStartupObservations": 24,
+        "hardLimitSpawnObservations": 24,
+        "hardLimitSpawnApiObservations": 48,
+        "blockedAsyncSignalObservations": 24,
+        "blockedAsyncChildObservations": 72,
+        "pendingAsyncSignalObservations": 24,
+        "pendingAsyncChildObservations": 72,
+        "watchReloadModes": 24,
+        "watchReloadTransitions": 48,
+        "watchImageObservations": 72,
+        "forcibleLifecycleObservations": 36,
+        "terminationToExitMillis": {
+          "minimum": 301,
+          "maximum": 307
+        }
       }
     },
     {
@@ -12161,6 +12265,400 @@
       "acceptedForRecordedScope": false
     },
     {
+      "source": "2026-09-13-m3-watch-reload-api28-abort-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "diagnostic",
+      "scope": "M3 十三补丁 watch/reload API 28 首次中止",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 34,
+          "total": 35,
+          "reportedPassed": false,
+          "failedIds": [
+            "watch-reload-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "/proc/self/smaps KernelPageSize (getconf unavailable); instrumentation also asserts Os.sysconf",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/2",
+      "environmentPointer": "/reports/2/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/3",
+      "environmentPointer": "/reports/3/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/4",
+      "environmentPointer": "/reports/4/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-binder.json",
+      "pointer": "/reports/5",
+      "environmentPointer": "/reports/5/device",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "cb3104fbd41fb55ac301a177756b41fa57065e2cf18fa836bafb2b13cf4043ac",
+        "bytes": 90449752,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "b18ec6ea29e37d832219fe4d046ac2387848f0aa93c47675a30e56666b88dc85",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
       "source": "2026-09-13-m3-watch-reload-einval-failure.json",
       "pointer": "/reports/0",
       "environmentPointer": "/reports/0/runs/0/environment",
@@ -12405,6 +12903,342 @@
       "status": "failed",
       "sourceReportedPassed": false,
       "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/2",
+      "environmentPointer": "/reports/2/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/3",
+      "environmentPointer": "/reports/3/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/4",
+      "environmentPointer": "/reports/4/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "ca99d69a68491404db92d3baa8fbc1ed352bf0ee76d394c1efd4e4c75d9e970a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-probes.json",
+      "pointer": "/reports/5",
+      "environmentPointer": "/reports/5/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "environment": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+e8b129616",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "cb3104fbd41fb55ac301a177756b41fa57065e2cf18fa836bafb2b13cf4043ac",
+        "bytes": 90449752,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "bb3f33e599dbd44d60c7e98de548576103dda6976e66c9116ac3dba921899822",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 35,
+          "total": 35,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
     },
     {
       "source": "2026-09-13-m5-ten-patch-jsc-binder.json",

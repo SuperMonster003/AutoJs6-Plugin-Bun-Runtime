@@ -18,8 +18,15 @@ Its label is deliberately different from the production application name.
 The [thirteen-patch repair](../../../../../docs/compatibility/2026-09-13-m3-watch-reload-fix.md)
 now supplies the checked Linux reload FD fallback. It preserves all 35 definitions
 and seventeen fixture/validator/Java inputs; only the expected runtime revision
-will change. Independent native builds and new-source device acceptance remain
-separate gates. The following failed results belong to the historical twelve-patch bytes.
+changed. Two independent dual-ABI builds match. New APKs pass both complete
+35-probe rounds in six native 4 KiB environments (420/420); the same runtime also
+passes the separate original Binder suite (96/96). The 24 watch modes observe
+48 actual reloads with both sentinels absent, 72 same-PID/stdio/signal images,
+and complete cleanup. One initial API 28 watch abort remains separately archived
+(69/70, preceding clone EAGAIN, no available crash stack); one unchanged-APK retry
+passes without altering budgets. Watch stability/pressure, both new-source Samsung
+gates and broader boundaries remain open. The following FD-leak failures belong
+to the historical twelve-patch bytes.
 
 The live suite now has **35 probes**. The [fixed watch/reload gate](../../../../../docs/compatibility/2026-09-13-m3-watch-reload.md)
 fails on the unchanged twelve-patch runtime: four native ARM64 / 4 KiB devices

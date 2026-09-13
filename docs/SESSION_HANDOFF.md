@@ -1,29 +1,48 @@
-# 会话交接: 十三补丁独立构建完成, 新源码设备门禁待执行
+# 会话交接: 十三补丁本地回归完成, 三星与 watch 稳定性待继续
 
-2026-09-13, 从干净 master `5d92ade` 继续. 完整阅读 `AGENTS.md`, 本文件和
+2026-09-13, 从干净 master `5d92ade` 继续, 源码/构建提交为 `bf5cb72`.
+先完整阅读 `AGENTS.md`, 本文件与
 `E:/.codex-tmp/watch-reload-fix-20260913/SESSION_HANDOFF.local.md`.
-用户要求尽量完成更多Roadmap小节; 本轮仍需继续新源码APK/设备回归, 不能停在构建结果.
+用户希望每次尽量推进多个有边界的小节; 本轮已完成 M3 修复/主机对照,
+M2 双 ABI 独立构建, M3 六环境原套件回归与历史 JSC 校验修正.
 
-- 新head `e8b1296169a8e6f20c81e926dba6448afb25cd11`, tree
-  `7d715cd177328d44b12b6346bcf0e07e835b3578`, 第13补丁仅改变Linux reload FD失败处理.
-  原CLOEXEC-only helper、stdio/显式IPC/信号、35定义/17输入和预算不变.
-- GCC13/Clang21各25模式通过, 原helper四组测试也分别通过. 完整13补丁重放/28blobs通过.
-- 两个native driver已实际exit0, 双ABI各两份成品一致, 完整四ELF通过.
-  新输出WSL `watch-reload-evidence/run-{1,2}`. collector/promotion已完成,
-  不重复构建或一次性脚本. runtimeProduced=true, distributionReady=false.
-- 原94历史JSON保持原样, 新M2报告只作构建索引, 不增加设备通过数.
-  新源码Android成绩为空. 下一步源码/构建验证提交后打包新APK, 两轮固定35+完整8Binder,
-  先Sony28/31, 再其余ARM33/35和owned x86API33. 原有AVD_API_37/5586及ADB5053不操作.
-  三星仅在APK就绪后新约API32/ARM4K与API36/ARM硬件16K窗口, 不转移旧源码结果.
-  十二补丁JSC候选仍为原source, 其重对齐/新设备门禁独立开放.
-- 最终全量 Node 247/247、Python 38/38、两个生成器检查通过. 初次 Node 243/245
-  失败暴露旧 JSC loader 对当前 API28 配方的依赖; 历史加载现固定完整归档,
-  新构建配方/换行检查仍严格, 原候选和历史记录未改. 十语言均已同步.
-  两轮生产四任务均 actual0, JVM 为 UP-TO-DATE 的既有21项结果, lint 0错误/44警告;
-  最终 IDE 直接成功, 仅既有两个 warning. 当前无 owned AVD/设备运行.
+- Native head `e8b1296169a8e6f20c81e926dba6448afb25cd11`, tree
+  `7d715cd177328d44b12b6346bcf0e07e835b3578`. 两次独立双 ABI 构建均 actual exit 0,
+  每 ABI 字节一致且四份 ELF 完整审计通过. collector/promotion/source-replay/
+  corresponding-source 均完成. 不再启动原构建或一次性采集脚本.
+- 35 定义、17 个 fixture/validator/Java 输入和预算未变, 只更新 expected revision.
+  六个原生 4 KiB 环境 (Sony ARM64 API 28/31/33, Redmi ARM64 API 33,
+  Xiaomi ARM64 API 35, x86_64 API 33 AVD) 各过两轮 35 probes 和完整八项 Binder,
+  合计 420/420 与 96/96. 24 watch 模式、48 重载、72 镜像的 FD/PID/stdio/信号通过.
+  探针 32 输入/Binder 83 输入逐项匹配 `bf5cb72`, 每 ABI 同 APK 复用.
+- 初始 Sony28 probe-sony28 失败 69/70, 子 PID 9283 在两个正常镜像后 SIGABRT,
+  logcat 有 clone EAGAIN, 无对应崩溃栈. 不将其归因于 ART/JDWP 或确定的资源上限.
+  一次同 APK probe-sony28-r2 通过 70/70; 原尝试单独归档, 不计入接受数.
+  下一步需有界捕获稳定性/资源失败根因, 不改旧夹具或预算来消除失败.
+- 每设备三包/三个 UID, 加首次失败 UID, 均独立观察并确认零进程.
+  唯一自有 emulator-5584 / bun-hard-limit-api33-20260912 已关闭.
+  未操作此前 API37 AVD 或 ADB5053; 不推断其清单缺席原因. 默认 ADB/RDB 未动.
+- APK 就绪后已询问三星 SM-A566B API36 / 原生 ARM64 / 硬件16KiB,
+  其次 SM-F936U 实际API32 / ARM64 /4KiB, 约10分钟窗口. 无新回复;
+  49909 TCP 可连但一次私有 ADB 接入失败, 没有设备身份或安装.
+  自有私有ADB5039/PID59268已独立确认消失. 不重复 kill-server.
+  后续重新确认可用窗口, 直接复用本机 probe-apks/binder-apks 快照;
+  若当前构建输入已变, 使用 `bf5cb72` 的隔离检出核验, 不放宽 current-input 检查.
+- 新源码两项三星门禁、十三补丁 JSC 候选重对齐/新回归、watch 中止诊断与
+  其余 syscall/API/FD/OEM/压力/Release 仍开放. 十二补丁 JSC 的原候选及成绩保持原样.
+  历史 loader 现在绑定完整旧归档, 新构建/候选源码匹配仍严格.
+- Node 最终247/247 (首次243/245失败保留), Python38/38, 两个生成器检查通过.
+  两次生产四任务均 actual0, JVM为UP-TO-DATE的既有21项结果,
+  lint0错误/44既有警告; 最终IDE直接构建成功, 仅两个既有warning.
+  十语言已同步, 官方payload/service/AAR/API33及distributionReady=false不变.
+  原94历史JSON、registry与193个矩阵行逐项保持原样.
 
-[修复报告](compatibility/2026-09-13-m3-watch-reload-fix.md),
-[新独立构建](compatibility/2026-09-13-m2-watch-reload-runtime-evidence.json).
+[修复与完整设备范围](compatibility/2026-09-13-m3-watch-reload-fix.md),
+[独立构建](compatibility/2026-09-13-m2-watch-reload-runtime-evidence.json),
+[探针](compatibility/2026-09-13-m3-watch-reload-probes.json),
+[Binder](compatibility/2026-09-13-m3-watch-reload-binder.json),
+[首次中止](compatibility/2026-09-13-m3-watch-reload-api28-abort-failure.json),
+[独立检查点](compatibility/2026-09-13-m3-watch-reload-checkpoint.json).
 
 ## 此前已完成的故障归档
 

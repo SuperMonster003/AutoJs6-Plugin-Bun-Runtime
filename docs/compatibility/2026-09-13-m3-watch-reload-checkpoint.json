@@ -1,0 +1,1288 @@
+{
+  "schemaVersion": 1,
+  "kind": "watch-reload-fix-checkpoint",
+  "capturedAt": "2026-09-13T14:35:59.211504+00:00",
+  "countedInAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "Source/host controls, new APK build receipts, independent package UID cleanup and local verification. Adds no device observations to the separately validated suites.",
+  "projectBaseCommit": "bf5cb72529172b628475f1307d0d08606330b778",
+  "nativeSource": {
+    "baseCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+    "sourceCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+    "sourceTree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+    "path": "src/jsc/bindings/c-bindings.cpp",
+    "oldBlob": "fcc96d8712da400690a589ead3f43c9e85281772",
+    "newBlob": "c0a0271bba6e85061c3bef2e28b11e7ab6501f4f",
+    "patch": {
+      "path": "downstream/0013-fix-mark-reload-descriptors-before-exec-when-close_range-fails.patch",
+      "bytes": 37680,
+      "sha256": "c37110f91b7c1941073765f215653780852edfc268b2973a2bfb556a7189b6aa",
+      "stablePatchId": "287d82a96e49de0f0271b2d023b9246888d094d5"
+    },
+    "sourceBytes": 35459,
+    "sourceSha256": "584beba41330e45010458959554701d91661df03f91ccce3d33014bdc692e4d5"
+  },
+  "hostControls": [
+    {
+      "compiler": "GCC 13",
+      "scope": "initial-header-compilation-failure",
+      "actualExitCode": 1,
+      "startedAt": "2026-09-13T13:05:44Z",
+      "finishedAt": "2026-09-13T13:05:46Z",
+      "fixedModes": null,
+      "testGroups": null,
+      "initialTestsExecuted": 0,
+      "driver": {
+        "filename": "host-gcc-13.json",
+        "bytes": 889,
+        "sha256": "a45ec32ca4ede5ba13bdcd9cbe60f1f76d10740e496d3e13819a573f1956b0ed"
+      },
+      "log": {
+        "filename": "host-gcc-13.log",
+        "bytes": 1039,
+        "sha256": "e20c60c6dce3aa80922bf39dcfee97628b2445e3a8808d1d0c6fce77c6717c05"
+      }
+    },
+    {
+      "compiler": "GCC 13",
+      "scope": "complete-reload-functions",
+      "actualExitCode": 0,
+      "startedAt": "2026-09-13T13:06:06Z",
+      "finishedAt": "2026-09-13T13:06:10Z",
+      "fixedModes": 25,
+      "testGroups": null,
+      "initialTestsExecuted": null,
+      "driver": {
+        "filename": "host-r2-gcc-13.json",
+        "bytes": 888,
+        "sha256": "f57226096bca4af608e4a3662caddeeb6988fda178d57332dc51305b5073d071"
+      },
+      "log": {
+        "filename": "host-r2-gcc-13.log",
+        "bytes": 438,
+        "sha256": "8a20896d2f4336e4590ce572f3735b796485ce08e22864b675a863478cf4bc9b"
+      }
+    },
+    {
+      "compiler": "Clang 21",
+      "scope": "complete-reload-functions",
+      "actualExitCode": 0,
+      "startedAt": "2026-09-13T13:06:10Z",
+      "finishedAt": "2026-09-13T13:06:13Z",
+      "fixedModes": 25,
+      "testGroups": null,
+      "initialTestsExecuted": null,
+      "driver": {
+        "filename": "host-r2-clang-21.json",
+        "bytes": 892,
+        "sha256": "70e6b44df77b0506e43d6e23af82ff63124f4fb6b7f61c8f8b13c16766ed2690"
+      },
+      "log": {
+        "filename": "host-r2-clang-21.log",
+        "bytes": 438,
+        "sha256": "8b2a92dee0c4d519a455404802ea1c69a8e89448f54d58b2eab3b42db013d7fa"
+      }
+    },
+    {
+      "compiler": "GCC 13",
+      "scope": "unchanged-shared-spawn-helper",
+      "actualExitCode": 0,
+      "startedAt": "2026-09-13T13:16:10Z",
+      "finishedAt": "2026-09-13T13:16:12Z",
+      "fixedModes": null,
+      "testGroups": 4,
+      "initialTestsExecuted": null,
+      "driver": {
+        "filename": "host-spawn-gcc-13.json",
+        "bytes": 886,
+        "sha256": "9ea25e18ad831c8174222070deae662da114238a1da924fbd28ab745c6d71cc3"
+      },
+      "log": {
+        "filename": "host-spawn-gcc-13.log",
+        "bytes": 405,
+        "sha256": "71fcf72ea9807d26ddc6de986c0cd3f8168c7ec7928e3e5690d8e96f729b47af"
+      }
+    },
+    {
+      "compiler": "Clang 21",
+      "scope": "unchanged-shared-spawn-helper",
+      "actualExitCode": 0,
+      "startedAt": "2026-09-13T13:16:12Z",
+      "finishedAt": "2026-09-13T13:16:14Z",
+      "fixedModes": null,
+      "testGroups": 4,
+      "initialTestsExecuted": null,
+      "driver": {
+        "filename": "host-spawn-clang-21.json",
+        "bytes": 890,
+        "sha256": "30b435dfe85777369703ffb70ba938afe03b3ebfdeceea2ca91732d1aaae07da"
+      },
+      "log": {
+        "filename": "host-spawn-clang-21.log",
+        "bytes": 405,
+        "sha256": "2c4389fe59a4fc78f9011473d8a097c0756b1d07b2a419bc36eae719a287b721"
+      }
+    }
+  ],
+  "hostBoundary": "Linux host controls only; the four non-Linux macro cases do not execute on FreeBSD or Darwin. FD 70000/IPC host checks do not accept those Android boundaries.",
+  "nativeEvidence": {
+    "filename": "2026-09-13-m2-watch-reload-runtime-evidence.json",
+    "bytes": 18339,
+    "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88"
+  },
+  "acceptedDeviceArchives": {
+    "probes": {
+      "filename": "2026-09-13-m3-watch-reload-probes.json",
+      "bytes": 1989438,
+      "sha256": "1166af5129d0c72c9cd8f9ba0b928f1919186c0a9f6ad61a8cb8e6a225e95beb"
+    },
+    "binder": {
+      "filename": "2026-09-13-m3-watch-reload-binder.json",
+      "bytes": 267810,
+      "sha256": "34080aca036370468714f483df8d852d2761e50999247a031d121e6fb2fad46c"
+    }
+  },
+  "apkBuilds": [
+    {
+      "mode": "probe",
+      "projectCommit": "bf5cb72529172b628475f1307d0d08606330b778",
+      "nativeHead": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+      "startedAt": "2026-09-13T14:11:06.375972+00:00",
+      "finishedAt": "2026-09-13T14:11:24.387532+00:00",
+      "exitCode": 0,
+      "driver": {
+        "filename": "build-probe-apks.driver.json",
+        "bytes": 1476,
+        "sha256": "fda50e615441ad9480baba5dcfe3a695e08d2d597b6433a2de93d65853314acc"
+      },
+      "log": {
+        "filename": "build-probe-apks.log",
+        "bytes": 195,
+        "sha256": "7eed7d53f56a346b65c41d17ade6e76ee2b4c9b5514d1c049cce12baee577beb"
+      }
+    },
+    {
+      "mode": "binder",
+      "projectCommit": "bf5cb72529172b628475f1307d0d08606330b778",
+      "nativeHead": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+      "startedAt": "2026-09-13T14:12:04.119269+00:00",
+      "finishedAt": "2026-09-13T14:12:26.779942+00:00",
+      "exitCode": 0,
+      "driver": {
+        "filename": "build-binder-apks.driver.json",
+        "bytes": 947,
+        "sha256": "e2e54cc5b26b227807333a56efb0ca4007669555304f5555b6c4d9d354af3325"
+      },
+      "log": {
+        "filename": "build-binder-apks.log",
+        "bytes": 8182,
+        "sha256": "34919b196f4992589a984cfa4e1deee3dfda75de59351e8828e22e2008808ebf"
+      }
+    }
+  ],
+  "apkSourceCommitAudit": {
+    "projectCommit": "bf5cb72529172b628475f1307d0d08606330b778",
+    "probeInputs": 32,
+    "binderInputs": 83,
+    "allCanonicalInputBytesMatchCommit": true
+  },
+  "retainedBinderApks": [
+    {
+      "filename": "experimental-binder-debug-androidTest.apk",
+      "bytes": 2373072,
+      "sha256": "7302f3e4c47868d9d391d66758c706c6532b1da0302f479c300864892e5bfd2a"
+    },
+    {
+      "filename": "experimental-binder-arm64-v8a-debug.apk",
+      "bytes": 41110967,
+      "sha256": "a89d6a117b6c0b125892d8c41cfda058437294186f142e610107f862abafe16f"
+    },
+    {
+      "filename": "experimental-binder-x86_64-debug.apk",
+      "bytes": 42932809,
+      "sha256": "b18ec6ea29e37d832219fe4d046ac2387848f0aa93c47675a30e56666b88dc85"
+    }
+  ],
+  "independentPackageUidCleanup": [
+    {
+      "original": {
+        "filename": "binder-redmi33-observed.json",
+        "bytes": 1507,
+        "sha256": "2dcf1dba9fad008714b7859c9cfc04a48e18a425bbcf9ef63c135bcb13c8bd25"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "redmi33",
+      "serial": "bek749scrwv4wo8h",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:27:59Z",
+      "finishedAt": "2026-09-13T14:28:42Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:28:05Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10533,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10533\n"
+        },
+        {
+          "at": "2026-09-13T14:28:07Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10534,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10534\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10533\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10533,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10534,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "binder-sony28-observed.json",
+        "bytes": 1589,
+        "sha256": "533a4a859c249d9dafb198c25a4c7c00e74a196fe6c481ac0a041aa066ecf503"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "sony28",
+      "serial": "BH900ASK9E",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 28,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:19:11Z",
+      "finishedAt": "2026-09-13T14:19:53Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:19:20Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10772,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10772\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10771\n"
+        },
+        {
+          "at": "2026-09-13T14:19:20Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10771,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10772\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10771\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10771,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10772,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "binder-sony31-observed.json",
+        "bytes": 1589,
+        "sha256": "9cf82b6f95b769e09b7f16ad78a98f1f3058f48f99e77acc102a68ebd73ac329"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "sony31",
+      "serial": "QV710AF65F",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 31,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:22:51Z",
+      "finishedAt": "2026-09-13T14:23:30Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:22:58Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 15131,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:15131\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:15130\n"
+        },
+        {
+          "at": "2026-09-13T14:22:58Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 15130,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:15131\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:15130\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 15130,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 15131,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "binder-sony33-observed.json",
+        "bytes": 1500,
+        "sha256": "7f6584553ba2e179dec6f27b525e59650ab7a79e6359e3223d2b960bbe427fff"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "sony33",
+      "serial": "QV770340J7",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:25:21Z",
+      "finishedAt": "2026-09-13T14:25:51Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:25:25Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10657,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10657\n"
+        },
+        {
+          "at": "2026-09-13T14:25:28Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10658,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10658\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10657\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10657,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10658,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "binder-x86api33-observed.json",
+        "bytes": 1591,
+        "sha256": "12200c2ded214d626f097c8fb3aff19be13085bfa86e851ce91625b3c81f6880"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "x86api33",
+      "serial": "emulator-5584",
+      "expected": {
+        "abi": "x86_64",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:34:48Z",
+      "finishedAt": "2026-09-13T14:35:17Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:34:54Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10176,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10176\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10175\n"
+        },
+        {
+          "at": "2026-09-13T14:34:54Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10175,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10176\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10175\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 10175,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 10176,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "binder-xiaomi35-observed.json",
+        "bytes": 1589,
+        "sha256": "d489ece54cbcecd8b4f4f5953c3192166ba8dab4936623ef09acec0f58c7c981"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "binder",
+      "label": "xiaomi35",
+      "serial": "968e9f18",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 35,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:33:02Z",
+      "finishedAt": "2026-09-13T14:33:36Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:33:08Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 11036,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:11036\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:11035\n"
+        },
+        {
+          "at": "2026-09-13T14:33:08Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 11035,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:11036\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:11035\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uid": 11035,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uid": 11036,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-redmi33-observed.json",
+        "bytes": 907,
+        "sha256": "03e6349050b208bf0d47be70f5de1d26c40412812f806ad557ee1e2481ee416c"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "redmi33",
+      "serial": "bek749scrwv4wo8h",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:27:00Z",
+      "finishedAt": "2026-09-13T14:27:34Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:27:06Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10532,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:10532\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10532,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-sony28-observed.json",
+        "bytes": 900,
+        "sha256": "ec9f47d767d2f68b2dbb7f88eecd48dacd6e6c377f9695bdb82e258149497cb7"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "sony28",
+      "serial": "BH900ASK9E",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 28,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:12:30Z",
+      "finishedAt": "2026-09-13T14:13:02Z",
+      "actualRunnerExitCode": 1,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:12:36Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10769,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:10769\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10769,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-sony28-r2-observed.json",
+        "bytes": 903,
+        "sha256": "c240c47c087012928451887928099bc73d33de58c8a328a4bc1978a186a31ee7"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "sony28-r2",
+      "serial": "BH900ASK9E",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 28,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:18:07Z",
+      "finishedAt": "2026-09-13T14:18:39Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:18:13Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10770,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:10770\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10770,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-sony31-observed.json",
+        "bytes": 900,
+        "sha256": "232ebcc6ca89d1dd585425e8a47bd1d86d5c4b351e8456ef7f5d87aedc4329bb"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "sony31",
+      "serial": "QV710AF65F",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 31,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:20:32Z",
+      "finishedAt": "2026-09-13T14:21:04Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:20:36Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 15129,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:15129\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 15129,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-sony33-observed.json",
+        "bytes": 900,
+        "sha256": "ecafecf4e474c25e5a90a2d4651dc74afe259c4e1c5b7c1067c135a67b8289ca"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "sony33",
+      "serial": "QV770340J7",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:24:02Z",
+      "finishedAt": "2026-09-13T14:24:28Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:24:06Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10656,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:10656\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10656,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-x86api33-observed.json",
+        "bytes": 902,
+        "sha256": "a380ad798c06aa4250c7aee6707245879b9e96c6c62c7e919308da9091a20d0b"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "x86api33",
+      "serial": "emulator-5584",
+      "expected": {
+        "abi": "x86_64",
+        "api": 33,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:33:45Z",
+      "finishedAt": "2026-09-13T14:34:06Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:33:50Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10174,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:10174\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 10174,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    },
+    {
+      "original": {
+        "filename": "probe-xiaomi35-observed.json",
+        "bytes": 900,
+        "sha256": "c72d80b88570b8effac5086498245523e8d48840a35a592c5eae17e089df88a1"
+      },
+      "kind": "owned-suite-package-uid-observation",
+      "mode": "probe",
+      "label": "xiaomi35",
+      "serial": "968e9f18",
+      "expected": {
+        "abi": "arm64-v8a",
+        "api": 35,
+        "pages": 4096
+      },
+      "startedAt": "2026-09-13T14:29:39Z",
+      "finishedAt": "2026-09-13T14:30:05Z",
+      "actualRunnerExitCode": 0,
+      "observerError": null,
+      "installedUidObservations": [
+        {
+          "at": "2026-09-13T14:29:44Z",
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 11034,
+          "raw": "package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe uid:11034\n"
+        }
+      ],
+      "postflight": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe",
+          "uid": 11034,
+          "remainingPackageLines": [],
+          "remainingUidProcessLines": [],
+          "uidIndependentlyObserved": true
+        }
+      ]
+    }
+  ],
+  "ownedAvd": {
+    "name": "bun-hard-limit-api33-20260912",
+    "serial": "emulator-5584",
+    "stopped": true,
+    "receipt": {
+      "filename": "avd-owned.json",
+      "bytes": 1698,
+      "sha256": "52e70f9e7ad88c6b086e4a0b6529cbc3a7f229927d80e97dfb5510fbe3ea0434"
+    }
+  },
+  "unrelatedAvds": "No commands targeted the pre-existing API 37 AVD or its private ADB server; no continued availability is inferred.",
+  "productionChecks": {
+    "production": {
+      "startedAt": "2026-09-13T14:05:33.403705+00:00",
+      "completedAt": "2026-09-13T14:05:51.085215+00:00",
+      "actualExitCode": 0
+    },
+    "productionLogs": [
+      {
+        "filename": "production-r2.stdout.log",
+        "bytes": 8875,
+        "sha256": "e3198f3b790b1adee94facef8f3345a017f35d65f39c94d780a95422d5ad6376"
+      },
+      {
+        "filename": "production-r2.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "jvmTaskState": "UP-TO-DATE; existing passing test results, not new executions",
+    "existingJvmTests": 21,
+    "jvmReports": [
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+        "timestamp": "2026-09-13T03:29:21.120Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest.xml",
+          "bytes": 1097,
+          "sha256": "4a7310999b325ce649351f37db6999cd7c2255d59467e9475713fcbdd5f72459"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+        "timestamp": "2026-09-13T03:29:21.214Z",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest.xml",
+          "bytes": 556,
+          "sha256": "cc70efdf169f29ea49355c73687a3552b87c730784908115a3c211979fef8b43"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+        "timestamp": "2026-09-13T03:29:21.218Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest.xml",
+          "bytes": 745,
+          "sha256": "9e685a76251eba2ff8db2f4288a35b167fe86e257b981d16ae8349585469ac86"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+        "timestamp": "2026-09-13T03:29:21.242Z",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest.xml",
+          "bytes": 2278,
+          "sha256": "8165af653e8dc4eb2b0b6ca451299432ff54d8ce01b5d8839020d1923fcc7f27"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+        "timestamp": "2026-09-13T03:29:21.825Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest.xml",
+          "bytes": 890,
+          "sha256": "16a608a7c6bebb2c96fab6b1a61e5a130d97f89de43b42ad68a5b4c7519cc5b3"
+        }
+      }
+    ],
+    "lint": {
+      "errors": 0,
+      "warnings": 44,
+      "report": {
+        "filename": "lint-results-debug.txt",
+        "bytes": 17482,
+        "sha256": "ef67b290a3c3a9377e5fb100de7358d78e66508f6c9ffc7c41ebb6a0601e3c51"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "warningCount": 2,
+      "warnings": [
+        "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+        "'fun get(p0: String!): Any?' is deprecated. Deprecated in Java."
+      ],
+      "rawToolResult": {
+        "filename": "ide-build-final.json",
+        "bytes": 2516,
+        "sha256": "faacf4c8cd1691024e30b47e7dd3fd9812152bc4acfa653aaa47030ca8bc51bc"
+      }
+    }
+  },
+  "earlierProductionChecks": {
+    "production": {
+      "startedAt": "2026-09-13T13:15:38.513982+00:00",
+      "completedAt": "2026-09-13T13:15:49.855346+00:00",
+      "actualExitCode": 0
+    },
+    "productionLogs": [
+      {
+        "filename": "production.stdout.log",
+        "bytes": 8886,
+        "sha256": "830f097a74a9ab3cf271e65762294490f2d77bd883429021866ee3c67a09d20c"
+      },
+      {
+        "filename": "production.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "jvmTaskState": "UP-TO-DATE; existing passing test results, not new executions",
+    "existingJvmTests": 21,
+    "jvmReports": [
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+        "timestamp": "2026-09-13T03:29:21.120Z",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest.xml",
+          "bytes": 1097,
+          "sha256": "4a7310999b325ce649351f37db6999cd7c2255d59467e9475713fcbdd5f72459"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+        "timestamp": "2026-09-13T03:29:21.214Z",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest.xml",
+          "bytes": 556,
+          "sha256": "cc70efdf169f29ea49355c73687a3552b87c730784908115a3c211979fef8b43"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+        "timestamp": "2026-09-13T03:29:21.218Z",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest.xml",
+          "bytes": 745,
+          "sha256": "9e685a76251eba2ff8db2f4288a35b167fe86e257b981d16ae8349585469ac86"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+        "timestamp": "2026-09-13T03:29:21.242Z",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest.xml",
+          "bytes": 2278,
+          "sha256": "8165af653e8dc4eb2b0b6ca451299432ff54d8ce01b5d8839020d1923fcc7f27"
+        }
+      },
+      {
+        "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+        "timestamp": "2026-09-13T03:29:21.825Z",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "report": {
+          "filename": "TEST-io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest.xml",
+          "bytes": 890,
+          "sha256": "16a608a7c6bebb2c96fab6b1a61e5a130d97f89de43b42ad68a5b4c7519cc5b3"
+        }
+      }
+    ],
+    "lint": {
+      "errors": 0,
+      "warnings": 44,
+      "report": {
+        "filename": "lint-results-debug.txt",
+        "bytes": 17482,
+        "sha256": "ef67b290a3c3a9377e5fb100de7358d78e66508f6c9ffc7c41ebb6a0601e3c51"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "warningCount": 2,
+      "warnings": [
+        "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+        "'fun get(p0: String!): Any?' is deprecated. Deprecated in Java."
+      ],
+      "rawToolResult": {
+        "filename": "ide-build-result.json",
+        "bytes": 2516,
+        "sha256": "faacf4c8cd1691024e30b47e7dd3fd9812152bc4acfa653aaa47030ca8bc51bc"
+      }
+    }
+  },
+  "localChecks": [
+    {
+      "name": "node-all-r2",
+      "startedAt": "2026-09-13T14:05:33.456794+00:00",
+      "completedAt": "2026-09-13T14:05:52.552395+00:00",
+      "actualExitCode": 0,
+      "testFiles": 38,
+      "summary": {
+        "tests": 247,
+        "pass": 247,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0
+      },
+      "stdout": {
+        "filename": "node-all-r2.stdout.log",
+        "bytes": 53046,
+        "sha256": "a5438ccf0bd782efaac6c4ab60dc02b82c20ef2d883bef8e5978991632b69a55"
+      },
+      "stderr": {
+        "filename": "node-all-r2.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "official-runtime",
+      "startedAt": "2026-09-13T14:05:52.554294+00:00",
+      "completedAt": "2026-09-13T14:05:53.119240+00:00",
+      "actualExitCode": 0,
+      "stdout": {
+        "filename": "official-runtime.stdout.log",
+        "bytes": 476,
+        "sha256": "146e2ff047921745fd6a391ffff1c4c51b4c0fbc00a9a9b792068cb18643819a"
+      },
+      "stderr": {
+        "filename": "official-runtime.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "supervisor",
+      "startedAt": "2026-09-13T14:05:53.119952+00:00",
+      "completedAt": "2026-09-13T14:05:53.212371+00:00",
+      "actualExitCode": 0,
+      "stdout": {
+        "filename": "supervisor.stdout.log",
+        "bytes": 247,
+        "sha256": "35af31ba76f2c61b79d2bc5679ba7c68ca946d28acdfad85d5a4a46fb4cdb8de"
+      },
+      "stderr": {
+        "filename": "supervisor.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "markdown-check",
+      "startedAt": "2026-09-13T14:05:53.212924+00:00",
+      "completedAt": "2026-09-13T14:05:53.457895+00:00",
+      "actualExitCode": 0,
+      "stdout": {
+        "filename": "markdown-check.stdout.log",
+        "bytes": 50,
+        "sha256": "1b22950299b550db747e2646fe7c04ce3181c27200e40c9ca220015893765c81"
+      },
+      "stderr": {
+        "filename": "markdown-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "matrix-check",
+      "startedAt": "2026-09-13T14:05:53.458494+00:00",
+      "completedAt": "2026-09-13T14:05:53.848859+00:00",
+      "actualExitCode": 0,
+      "stdout": {
+        "filename": "matrix-check.stdout.log",
+        "bytes": 69,
+        "sha256": "9cbb577b08d051f02869f0e4b7657e004845f678f0d047cc4d7a0399c65a0f9a"
+      },
+      "stderr": {
+        "filename": "matrix-check.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "python-tests",
+      "startedAt": "2026-09-13T14:05:53.850106+00:00",
+      "completedAt": "2026-09-13T14:05:54.972926+00:00",
+      "actualExitCode": 0,
+      "stdout": {
+        "filename": "python-tests.stdout.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "filename": "python-tests.stderr.log",
+        "bytes": 142,
+        "sha256": "56a2e085bd437c19e39b9483e8f35ee98ff795d0156b73e03b7cce52c650b01f"
+      }
+    },
+    {
+      "name": "source-replay",
+      "startedAt": "2026-09-13T14:00:32.535509+00:00",
+      "finishedAt": "2026-09-13T14:00:42.985995+00:00",
+      "actualExitCode": 0,
+      "log": {
+        "filename": "source-replay.log",
+        "bytes": 427,
+        "sha256": "fca9803ceb37d0d66998b711b01f586583b0e75bf7de0cb7e1fc9484aa9cf141"
+      },
+      "driver": {
+        "filename": "source-replay.json",
+        "bytes": 281,
+        "sha256": "0768ff72069d89bde0f7054839f1c0ebf8085bd7f50199c4493d975d364c26df"
+      }
+    },
+    {
+      "name": "corresponding-source",
+      "startedAt": "2026-09-13T14:00:42.993915+00:00",
+      "finishedAt": "2026-09-13T14:00:54.706354+00:00",
+      "actualExitCode": 0,
+      "log": {
+        "filename": "corresponding-source.log",
+        "bytes": 404,
+        "sha256": "6bf7b278e43fe0488398840999c1a7c1a339d50807a452536f9d8575783e97a8"
+      },
+      "driver": {
+        "filename": "corresponding-source.json",
+        "bytes": 288,
+        "sha256": "d0920cae0d6ff3c975e3101db325d1b2e915259702944483a5860739e6981332"
+      }
+    }
+  ],
+  "initialNodeFailure": {
+    "startedAt": "2026-09-13T14:00:32.607439+00:00",
+    "completedAt": "2026-09-13T14:00:45.326401+00:00",
+    "actualExitCode": 1,
+    "testFiles": 38,
+    "summary": {
+      "tests": 245,
+      "pass": 243,
+      "fail": 2,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    "passedTests": 243,
+    "totalTests": 245,
+    "stdout": {
+      "filename": "node-all.stdout.log",
+      "bytes": 75419,
+      "sha256": "7194a94943c06493d6edbe029986b48ac0c1e5dea385846f4a8d24ff85c782a9"
+    },
+    "stderr": {
+      "filename": "node-all.stderr.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "scope": "Historical twelve-patch JSC loader used current API28 inputs; fixed and followed by 247/247. Earlier failure is retained."
+  },
+  "retainedDeviceFailure": {
+    "filename": "2026-09-13-m3-watch-reload-api28-abort-failure.json",
+    "bytes": 364688,
+    "sha256": "8de4beb496fc82430541bbc598193dfc0e8714dd789b51996b8bae5728b4f880"
+  },
+  "samsungAccess": {
+    "deviceIdentityEstablished": false,
+    "apkInstalled": false,
+    "connection": {
+      "status": 0,
+      "stdout": "failed to connect to localhost:49909\n",
+      "stderr": ""
+    },
+    "privateAdb": {
+      "startedAt": "2026-09-13T14:24:36Z",
+      "pid": 59268,
+      "port": 5039,
+      "arguments": [
+        "-L",
+        "tcp:5039",
+        "--one-device",
+        "localhost:49909",
+        "server",
+        "nodaemon"
+      ],
+      "serverSocket": "tcp:127.0.0.1:5039",
+      "mdnsAutoConnect": "0",
+      "owned": true,
+      "stopped": true,
+      "listenerAbsent": true,
+      "ownedProcessAbsent": true,
+      "stopConfirmedAt": "2026-09-13T14:26:52.602453+00:00",
+      "readOnlyConfirmation": {
+        "listener": {
+          "exitCode": 0,
+          "stdout": "[]\n",
+          "stderr": ""
+        },
+        "process": {
+          "exitCode": 0,
+          "stdout": "[]\n",
+          "stderr": ""
+        }
+      },
+      "stopAttempt": {
+        "driverExitCode": 1,
+        "killServerExitCodeRetained": null,
+        "scope": "The initial stop helper passed its kill-server exit assertion, then failed because an empty Get-NetTCPConnection query returned PowerShell exit 1. No second stop or process kill was issued; independent read-only queries confirm the exact owned listener and PID absent."
+      }
+    },
+    "tcpPoll": {
+      "capturedAt": "2026-09-13T14:20:22.919271+00:00",
+      "ports": [
+        {
+          "port": 49909,
+          "tcpConnectExitCode": 0,
+          "deviceIdentityEstablished": false
+        },
+        {
+          "port": 50781,
+          "tcpConnectExitCode": 10035,
+          "deviceIdentityEstablished": false
+        }
+      ]
+    },
+    "scope": "The previously supplied localhost:49909 accepted TCP but ADB failed to connect. No device identity or acceptance is inferred from an open port or unanswered availability question. Only the owned private server was stopped."
+  },
+  "preservedHistory": {
+    "capturedAt": "2026-09-13T14:35:58.757259+00:00",
+    "baseCommit": "5d92adebe51f391f4acd9cacd7130e11dd7a2974",
+    "historicalReportsUnchanged": 94,
+    "historicalRegistryEntriesUnchanged": 94,
+    "historicalMatrixRowsUnchanged": 193,
+    "protectedProductionPaths": 60,
+    "officialLfsBytes": "Separate runtime/supervisor verifier logs"
+  },
+  "localHelperBindings": [
+    {
+      "filename": "observe-device.py",
+      "bytes": 4172,
+      "sha256": "21ee690a9be1049874c81c10ccea5bdd8fdd3fb9cec715af2540551f98b112d1"
+    },
+    {
+      "filename": "run-device.py",
+      "bytes": 2007,
+      "sha256": "a137e131f3b3e87e08952269b0ccaca5eab20bd66b530a23c31792a7e086c1e4"
+    },
+    {
+      "filename": "avd.py",
+      "bytes": 3074,
+      "sha256": "34fc2b1510ac602a3144344de526cf8f4169bfee2783d67d5c98cbb2d004477d"
+    },
+    {
+      "filename": "build-device-apks.py",
+      "bytes": 3752,
+      "sha256": "ccf89e119638523b18f79c98062279be446624a0b0d3d4f09d1674fc2af0762e"
+    },
+    {
+      "filename": "archive-checkpoint.py",
+      "bytes": 7742,
+      "sha256": "1360d47eaa9276806ff88224edd2fba804d581bff246a2bfcf84544fe5e7b1cd"
+    },
+    {
+      "filename": "archive-abort-failure.mjs",
+      "bytes": 8540,
+      "sha256": "c76786ebe02b982c2329b9f7cc6a3803cc255f01ba80d2e8c8476c7bdffe1906"
+    },
+    {
+      "filename": "audit-preserved.py",
+      "bytes": 2747,
+      "sha256": "9510df101a087c384ae42d6bc5c8fa11ccf7055b4beeb82470b6126e23df364a"
+    },
+    {
+      "filename": "start-samsung-adb.py",
+      "bytes": 2241,
+      "sha256": "d36c6d8dc945dddfe257a087e4bb337fb52471d8733ff60008b6ce6b495fa293"
+    },
+    {
+      "filename": "stop-samsung-adb.py",
+      "bytes": 2123,
+      "sha256": "108b4393c808242901b97d7461e2df6a4ff945aa852e68bc032589c3cc9f0b1b"
+    }
+  ]
+}
