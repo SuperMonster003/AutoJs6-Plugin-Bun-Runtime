@@ -14,7 +14,7 @@ CPP = 'src/jsc/bindings/bun-spawn.cpp'
 
 def locked_sources():
     series = json.loads((ROOT / 'patches/series.lock.json').read_text())
-    record = series['downstreamBackport']['patches'][-1]
+    record = series['downstreamBackport']['patches'][10]
     if record['order'] != 11 or record['affectedPaths'] != [CPP]:
         raise ValueError('exact eleventh spawn-mask patch required')
     patch = (ROOT / 'patches' / record['path']).read_bytes()

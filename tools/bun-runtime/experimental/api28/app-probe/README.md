@@ -15,6 +15,12 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The new [twelve-patch epoll repair](../../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md)
+has passed source/host controls and two fresh independent dual-ABI builds with
+actual driver exits 0, identical bytes and four ELF audits. New 33-probe/Binder
+device gates are pending. The previous failed records below are unchanged.
+`runtimeProduced=true` and `distributionReady=false`.
+
 The [eleven-patch pending-mask source repair](../../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md)
 has passed its complete-production-function host regressions and two independent
 dual-ABI builds with actual exit-zero receipts and full ELF audits. New Sony API

@@ -42,8 +42,8 @@ test("the checked-in runtime evidence satisfies the non-distribution schema", ()
   assert.equal(verifyRuntimeEvidenceManifest(evidence), evidence);
 });
 
-test("previous reproducible runtimes cannot be accepted for the pending-mask source", () => {
-  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json", "2026-09-10-m2-spawn-runtime-evidence.json", "2026-09-10-m2-scoped-open-runtime-evidence.json", "2026-09-13-m2-blocked-pidfd-runtime-evidence.json"]) {
+test("previous reproducible runtimes cannot be accepted for the pending-wait source", () => {
+  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json", "2026-09-10-m2-spawn-runtime-evidence.json", "2026-09-10-m2-scoped-open-runtime-evidence.json", "2026-09-13-m2-blocked-pidfd-runtime-evidence.json", "2026-09-13-m2-pending-mask-runtime-evidence.json"]) {
     const previous = JSON.parse(readFileSync(resolve(repositoryRoot, "docs/compatibility", filename), "utf8"));
     assert.equal(previous.build.byteForByteIdentical, true);
     assert.throws(() => verifyRuntimeEvidenceManifest(previous), /unsupported runtime evidence schema|runtime evidence downstream commit drifted/);

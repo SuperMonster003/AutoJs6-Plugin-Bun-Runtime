@@ -3,13 +3,21 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-Current source: eleven patches at `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`,
+Current source: twelve patches at `06e518f73b4fccc6c3ffb17412ea166bf886bed0`,
+revision `1.4.0+06e518f73`. The [epoll mask repair](pending-wait/README.md)
+preserves Android caller signals during waits and enforces the existing exclusion
+of optional epoll_pwait2. Complete-source GCC/Clang controls and deterministic
+replay pass. Two new independent dual-ABI builds completed with actual driver
+exits 0, identical complete outputs per ABI and four ELF audits;
+`runtimeProduced=true` / `distributionReady=false`. New device gates remain separate. See the [new source report](../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md).
+
+Historical eleven-patch source: eleven patches at `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`,
 revision `1.4.0+946f082ab`. The [pending-mask repair](pending-mask/README.md)
 passes complete-source GCC/Clang host controls and deterministic patch replay.
 Two new independent dual-ABI builds completed with actual captured driver exits 0,
 identical outputs and four complete ELF audits; `runtimeProduced=true`.
 New Sony API 28/31 rounds still fail the 33-probe gate at asynchronous waiting: 124/132 overall, zero of eight pending modes pass. Read-only epoll register/mask evidence and the earlier spawn failure stay in separate archives; see the [wait-stage diagnosis](../../../../docs/compatibility/2026-09-13-m3-pending-wait.md).
-See the [current report](../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
+See the [eleven-patch report](../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
 
 > Historical ten-patch source `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,
 > revision `1.4.0+a9c76a599`, has two identical output pairs recovered from the
@@ -201,8 +209,10 @@ Patch 9 implements the selected bounded, read-only [directory-confinement fallba
 Patch 10 adds the [mask-preserving Android pidfd fallback](blocked-pidfd/README.md).
 Patch 11 preserves the Android parent signal mask and pending SIGSYS while
 handling child setup and optional cgroup probes separately; see [host controls](pending-mask/README.md).
-The final source head is `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`; its startup,
-spawn and scoped-open code intentionally differ from the upstream PR. The replay verifier checks every
+Patch 12 preserves Android epoll masks and excludes the optional new wait syscall;
+see [wait controls](pending-wait/README.md).
+The final source head is `06e518f73b4fccc6c3ffb17412ea166bf886bed0`; its startup,
+spawn, scoped-open and Android wait code intentionally differ from the upstream PR. The replay verifier checks every
 patch's actual affected paths and the exact final commit/tree while retaining
 the complete upstream equivalence check at prefix
 `373d612de197f05bb5a7abdbd09d421ea0e8c02c`. No upstream comparison path is dropped.
@@ -328,7 +338,7 @@ and [seven-patch startup-fix record](../../../../docs/compatibility/2026-09-10-m
 are retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all eleven downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all twelve downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
@@ -367,6 +377,7 @@ api28/
   spawn-fd/                        exact-patch vfork FD regressions and old failure controls
   blocked-pidfd/                    exact-patch mask/pending-signal host regressions
   pending-mask/                     complete production spawn before/after host controls
+  pending-wait/                     complete epoll function before/after host controls
   build-experiment.mjs              read-only plan, offline preflight, gated build
   build-host-image.mjs              locked host-image builder and evidence recorder
   run-locked-build.mjs              isolated digest-locked container build entry

@@ -11,7 +11,7 @@ const SHA1 = /^[0-9a-f]{40}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 const EXPECTED_VARIANT = "bun-1.4.0-android-api28-patched-experimental";
 const EXPECTED_UPSTREAM_COMMIT = "34cbb9a40b4bd1bd767d134a7065e66c2432a676";
-const EXPECTED_DOWNSTREAM_COMMIT = "946f082ab8ede2b7cbd6ba9fddb90463a94f0330";
+const EXPECTED_DOWNSTREAM_COMMIT = "06e518f73b4fccc6c3ffb17412ea166bf886bed0";
 const EXPECTED_WEBKIT_COMMIT = "0f966e81b78c84bb23213e391bc679c4ef83e56b";
 const REQUIRED_REDISTRIBUTION_FLAGS = Object.freeze([
   "includeBunNotice",
@@ -130,7 +130,7 @@ export function verifyDistributionSourceManifest(lock) {
   require(SHA1.test(lock.bunSource?.baseTreeSha1), "Bun source base tree is invalid");
   requireEqual(lock.bunSource?.downstreamCommit, EXPECTED_DOWNSTREAM_COMMIT, "Bun downstream commit");
   require(SHA1.test(lock.bunSource?.downstreamTreeSha1), "Bun downstream tree is invalid");
-  requireEqual(lock.bunSource?.downstreamPatchCount, 11, "Bun downstream patch count");
+  requireEqual(lock.bunSource?.downstreamPatchCount, 12, "Bun downstream patch count");
   verifyArchiveRecord(lock.bunSource?.archive, "Bun source archive");
   requireEqual(lock.bunSource.archive.url, `https://github.com/oven-sh/bun/archive/${EXPECTED_UPSTREAM_COMMIT}.tar.gz`, "Bun source archive URL");
   requireEqual(lock.bunSource.archive.archiveRoot, `bun-${EXPECTED_UPSTREAM_COMMIT}`, "Bun source archive root");
