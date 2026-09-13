@@ -17,8 +17,13 @@ Its label is deliberately different from the production application name.
 
 The new [twelve-patch epoll repair](../../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md)
 has passed source/host controls and two fresh independent dual-ABI builds with
-actual driver exits 0, identical bytes and four ELF audits. New 33-probe/Binder
-device gates are pending. The previous failed records below are unchanged.
+actual driver exits 0, identical bytes and four ELF audits. The unchanged 33
+probes pass twice in five native 4 KiB environments (330/330), including all
+twenty pending-async modes and sixty child observations. The separate original
+eight-test Binder suite passes 80/80; two API 28 ART startup failures remain
+excluded, with an identical-APK third attempt passing both rounds. Samsung
+new-source API 32/native ARM64 16 KiB gates remain pending. The previous failed
+records below are unchanged.
 `runtimeProduced=true` and `distributionReady=false`.
 
 The [eleven-patch pending-mask source repair](../../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md)

@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "kind": "pending-wait-device-checkpoint",
+  "capturedAt": "2026-09-13T09:16:42.034032+00:00",
+  "countedInAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "Build/snapshot, preflight, retry identity and owned-environment cleanup supplement. Adds no test observations to the separately validated probe/Binder archives.",
+  "projectBaseCommit": "bb61b9c225524fb0b1527501234945e32924afdb",
+  "nativeSourceCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+  "apkBuilds": [
+    {
+      "mode": "probe",
+      "projectCommit": "bb61b9c225524fb0b1527501234945e32924afdb",
+      "nativeHead": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+      "startedAt": "2026-09-13T09:03:30.432770+00:00",
+      "finishedAt": "2026-09-13T09:03:47.200199+00:00",
+      "exitCode": 0,
+      "originalDriver": {
+        "filename": "build-probe-apks.driver.json",
+        "bytes": 1476,
+        "sha256": "5a268d547e5146977a0d668038092a3875534d2077fcf628f93c51900d9aac1c"
+      },
+      "log": {
+        "filename": "build-probe-apks.log",
+        "bytes": 195,
+        "sha256": "540b4c3431708dd3811e251f8714bbbd7d37f25467c682f962200df0b743364f"
+      }
+    },
+    {
+      "mode": "binder",
+      "projectCommit": "bb61b9c225524fb0b1527501234945e32924afdb",
+      "nativeHead": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+      "startedAt": "2026-09-13T09:03:49.842249+00:00",
+      "finishedAt": "2026-09-13T09:04:10.172144+00:00",
+      "exitCode": 0,
+      "originalDriver": {
+        "filename": "build-binder-apks.driver.json",
+        "bytes": 947,
+        "sha256": "83e3c7f31f27a2a4a17f7aeae0ee8065a6d08924ae0460ef729b50a3de1a9b27"
+      },
+      "log": {
+        "filename": "build-binder-apks.log",
+        "bytes": 7739,
+        "sha256": "157fb3b5518701fd1691fd25e7076952f07cf92bbe389fe419507361b73d2e50"
+      }
+    }
+  ],
+  "initialSnapshotFailure": {
+    "stage": "post-build snapshot inventory",
+    "helperExit": 1,
+    "actualGradleExit": 0,
+    "expectedIncorrectly": 4,
+    "actualIntendedApks": 3,
+    "universalExplicitlyDisabled": true,
+    "source": "tools/bun-runtime/experimental/api28/binder/build.gradle.kts",
+    "originalRecord": {
+      "filename": "binder-snapshot-initial-failure.json",
+      "bytes": 738,
+      "sha256": "e5749e7ea1fad38d172a06b780f4d0722ae24a7358e903b3b3d83a6a9ef3a3a2"
+    },
+    "resolution": "Verified the existing two single-ABI main APKs and test APK without rebuilding or changing configuration."
+  },
+  "retainedBinderApks": [
+    {
+      "bytes": 79169247,
+      "sha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "filename": "experimental-binder-arm64-v8a-debug.apk"
+    },
+    {
+      "bytes": 2469417,
+      "sha256": "281ec93fa44acc2de3e8736e30d7375f39c5761fa21e9e2439c0868faebd6a15",
+      "filename": "experimental-binder-debug-androidTest.apk"
+    },
+    {
+      "bytes": 82811197,
+      "sha256": "2e1a0068830409a491d1a8bd76be63ca5a46e88d59ad0d8e026d09fd01b46c78",
+      "filename": "experimental-binder-x86_64-debug.apk"
+    }
+  ],
+  "unavailableSony33": {
+    "serial": "QV770340J7",
+    "stage": "get-state before output directory or installation",
+    "originalDriver": {
+      "filename": "probe-sony33.driver.json",
+      "bytes": 1002,
+      "sha256": "405d6a6644e44282b4ab37bf1f8bffee77be6fbf0074c070828693c172b39cd0"
+    },
+    "log": {
+      "filename": "probe-sony33.log",
+      "bytes": 49,
+      "sha256": "4fa1f82044e2976860d23ff75504c7845492c885a9ce087ce4af95a7c3f23c69"
+    },
+    "exitCode": 1,
+    "installed": false,
+    "instrumentationStarted": false,
+    "replacement": "Online Redmi 22120RN86C, measured native ARM64/API33/4096/bridge0; separately identified in accepted reports. No cause is inferred for the Sony disconnect."
+  },
+  "api28RetryIdentity": {
+    "attempts": 3,
+    "failedAttempts": 2,
+    "acceptedAttempts": 1,
+    "identicalApk": true,
+    "identicalTestApk": true,
+    "identicalCompiledInputs": true,
+    "identicalPayloads": true,
+    "identicalSignatures": true,
+    "firstAttemptsExcluded": true,
+    "deviceOrFixtureWorkaround": false,
+    "originals": [
+      {
+        "filename": "report.json",
+        "bytes": 34325,
+        "sha256": "7acf97decdf2ed9b03168a9ebf91f8a91498667f1023435dc261c906164e8127",
+        "label": "sony28"
+      },
+      {
+        "filename": "report.json",
+        "bytes": 34326,
+        "sha256": "2d2e4bc0e097d28e3ae0f65b0391d95fe7f1d894aa494a0f4c2da3c54ffd6a7d",
+        "label": "sony28retry"
+      },
+      {
+        "filename": "report.json",
+        "bytes": 41499,
+        "sha256": "9bb5e5c11ae9ec1a902f810bef19ded2f1d735a657ede0eaf8c33ebd09c8a106",
+        "label": "sony28retry2"
+      }
+    ]
+  },
+  "executionUidCleanup": [
+    {
+      "serial": "BH900ASK9E",
+      "uid": 10766,
+      "remaining": 0,
+      "packages": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uninstalled": true
+        }
+      ]
+    },
+    {
+      "serial": "QV710AF65F",
+      "uid": 15127,
+      "remaining": 0,
+      "packages": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uninstalled": true
+        }
+      ]
+    },
+    {
+      "serial": "bek749scrwv4wo8h",
+      "uid": 10529,
+      "remaining": 0,
+      "packages": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uninstalled": true
+        }
+      ]
+    },
+    {
+      "serial": "968e9f18",
+      "uid": 11031,
+      "remaining": 0,
+      "packages": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uninstalled": true
+        }
+      ]
+    },
+    {
+      "serial": "emulator-5584",
+      "uid": 10175,
+      "remaining": 0,
+      "packages": [
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+          "uninstalled": true
+        },
+        {
+          "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+          "uninstalled": true
+        }
+      ]
+    }
+  ],
+  "probeUidCleanup": [
+    {
+      "serial": "BH900ASK9E",
+      "uninstalled": true,
+      "installedUid": 10761,
+      "finalUidProcessCount": 0
+    },
+    {
+      "serial": "QV710AF65F",
+      "uninstalled": true,
+      "installedUid": 15126,
+      "finalUidProcessCount": 0
+    },
+    {
+      "serial": "bek749scrwv4wo8h",
+      "uninstalled": true,
+      "installedUid": 10528,
+      "finalUidProcessCount": 0
+    },
+    {
+      "serial": "968e9f18",
+      "uninstalled": true,
+      "installedUid": 11030,
+      "finalUidProcessCount": 0
+    },
+    {
+      "serial": "emulator-5584",
+      "uninstalled": true,
+      "installedUid": 10174,
+      "finalUidProcessCount": 0
+    }
+  ],
+  "ownedAvdStart": {
+    "avd": "bun-hard-limit-api33-20260912",
+    "serial": "emulator-5584",
+    "launcherPid": 24912,
+    "startedAt": "2026-09-13T09:05:52.5121506Z",
+    "arguments": [
+      "-avd",
+      "bun-hard-limit-api33-20260912",
+      "-port",
+      "5584",
+      "-no-window",
+      "-no-audio",
+      "-no-snapshot-load",
+      "-no-snapshot-save",
+      "-memory",
+      "2048",
+      "-cores",
+      "2",
+      "-gpu",
+      "swiftshader_indirect",
+      "-feature",
+      "-Vulkan"
+    ],
+    "configSha256": "8969b2840da971439b34010fb3c73942e484ed0e1bbd8d53b62fb9426fd3d2c4"
+  },
+  "ownedAvdCleanup": {
+    "stoppedAt": "2026-09-13T09:13:57.6954819Z",
+    "serial": "emulator-5584",
+    "verifiedAvdName": [
+      "bun-hard-limit-api33-20260912",
+      "",
+      "OK",
+      ""
+    ],
+    "stopExit": 0,
+    "stopOutput": [
+      "OK: killing emulator, bye bye",
+      "",
+      "OK",
+      ""
+    ],
+    "finalDevices": [
+      "List of devices attached",
+      "968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3",
+      "BH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2",
+      "QV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:4",
+      "bek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:5",
+      "localhost:50781        offline transport_id:45",
+      ""
+    ]
+  },
+  "samsung": {
+    "window": {
+      "startedAt": "2026-09-13T09:05:01.217093+00:00",
+      "endsAt": "2026-09-13T09:15:01.217093+00:00",
+      "serial": "localhost:50781",
+      "purpose": "new twelve-patch 33-probe and eight-test Binder suites",
+      "requestedModels": [
+        "SM-F936U",
+        "SM-A566B"
+      ]
+    },
+    "completedAt": "2026-09-13T09:15:10.053677+00:00",
+    "finalPoll": {
+      "at": "2026-09-13T09:15:10.053677+00:00",
+      "status": 1,
+      "stdout": "",
+      "stderr": "error: device offline\n"
+    },
+    "deviceOperationPerformed": false,
+    "note": "Repeated read-only polls remained offline during the 10-minute window; no Samsung installation or test ran."
+  },
+  "retainedSamsungPolls": [
+    {
+      "at": "2026-09-13T09:12:14.916139+00:00",
+      "status": 1,
+      "stdout": "",
+      "stderr": "error: device offline\n"
+    },
+    {
+      "at": "2026-09-13T09:14:36.450192+00:00",
+      "status": 1,
+      "stdout": "",
+      "stderr": "error: device offline\n"
+    },
+    {
+      "at": "2026-09-13T09:15:10.053677+00:00",
+      "status": 1,
+      "stdout": "",
+      "stderr": "error: device offline\n"
+    }
+  ],
+  "unchangedOtherAvdOperation": "No pre-existing AVD was started, stopped or tested. The earlier unrelated emulator-5568 disappeared from read-only inventory before the owned AVD launch; cause unknown."
+}

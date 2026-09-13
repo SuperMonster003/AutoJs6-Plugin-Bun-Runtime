@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 74 份源报告, 168 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 79 份源报告, 180 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -512,6 +512,20 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/31 探针; 31/31 探针 | 通过 (限定范围) |
 
+### M3 十二补丁本地 Binder 回归
+
+来源: [2026-09-13-m3-pending-wait-binder.json](2026-09-13-m3-pending-wait-binder.json).
+
+既有八项 Binder 的新源码批次; 两次 API 28 ART 启动失败独立保留, 不加入通过数.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /reports/2 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /reports/3 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /reports/4 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA f44f4197def1 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
 ### M3 十一补丁 pending wait 失败门禁
 
 来源: [2026-09-13-m3-pending-wait-failure.json](2026-09-13-m3-pending-wait-failure.json).
@@ -522,6 +536,20 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
 | /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
+
+### M3 十二补丁本地 33 项探针
+
+来源: [2026-09-13-m3-pending-wait-probes.json](2026-09-13-m3-pending-wait-probes.json).
+
+原 33 定义与预算保持不变; 不转移旧源码成绩或扩大到其他页大小/版本.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
+| /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
+| /reports/2 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
+| /reports/3 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
+| /reports/4 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA f44f4197def1 | 33/33 探针; 33/33 探针 | 通过 (限定范围) |
 
 ### M3-B 十补丁新服务原八项 Binder
 
@@ -656,6 +684,34 @@ shell UID 2000, 不经过应用 zygote seccomp、Binder 或 APK nativeLibraryDir
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
 | /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
+
+### M3 十二补丁 API 28 Binder 重试启动失败
+
+来源: [2026-09-13-m3-pending-wait-binder-retry-failure.json](2026-09-13-m3-pending-wait-binder-retry-failure.json).
+
+同一 APK 的第二次尝试仍在第二轮测试前 ART/ADB-JDWP 崩溃; 不计入随后通过批次.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /report | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/未记录 测试; 未记录/未记录 测试 | 诊断, 不计入接受结果; 记录失败 |
+
+### M3 十二补丁 API 28 Binder 首次启动失败
+
+来源: [2026-09-13-m3-pending-wait-binder-startup-failure.json](2026-09-13-m3-pending-wait-binder-startup-failure.json).
+
+第一轮八项通过, 第二轮测试开始前 ART/ADB-JDWP 崩溃; 整次尝试不接受.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /report | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 06e518f73b4f<br>SHA 86d1b4d0fd74 | 8/未记录 测试; 未记录/未记录 测试 | 诊断, 不计入接受结果; 记录失败 |
+
+### M3 十二补丁构建/设备清理补充
+
+来源: [2026-09-13-m3-pending-wait-checkpoint.json](2026-09-13-m3-pending-wait-checkpoint.json).
+
+保留快照脚本错误、未安装的断线前置检查、APK 一致性、owned AVD 清理和离线三星窗口; 不新增测试数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
 ### M3 epoll 空掩码提前交付动态诊断
 

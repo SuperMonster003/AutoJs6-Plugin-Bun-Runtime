@@ -1470,6 +1470,80 @@
       }
     },
     {
+      "file": "2026-09-13-m3-pending-wait-binder-retry-failure.json",
+      "sha256": "48440d703964cc1b14da27a5807beb590ae09ab0c778315e57be3181bd99fc7a",
+      "schema": 1,
+      "kind": "experimental-binder-startup-failure",
+      "adapter": "binder",
+      "collection": "report",
+      "category": "diagnostic",
+      "label": "M3 十二补丁 API 28 Binder 重试启动失败",
+      "note": "同一 APK 的第二次尝试仍在第二轮测试前 ART/ADB-JDWP 崩溃; 不计入随后通过批次.",
+      "bytesUtf8Lf": 57084,
+      "rows": 1,
+      "reportedScope": "One complete 8/8 round, then instrumentation startup failure before any second-round test. The entire attempt is failed and excluded from accepted totals; separate retries never overwrite it.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-binder-startup-failure.json",
+      "sha256": "5036fcbd861026f2229106a4e706a2654a6e02439a65510d8557fb5f4651c3e8",
+      "schema": 1,
+      "kind": "experimental-binder-startup-failure",
+      "adapter": "binder",
+      "collection": "report",
+      "category": "diagnostic",
+      "label": "M3 十二补丁 API 28 Binder 首次启动失败",
+      "note": "第一轮八项通过, 第二轮测试开始前 ART/ADB-JDWP 崩溃; 整次尝试不接受.",
+      "bytesUtf8Lf": 48773,
+      "rows": 1,
+      "reportedScope": "One complete 8/8 round, then instrumentation startup failure before any second-round test. The entire attempt is failed and excluded from accepted totals; separate retries never overwrite it.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-binder.json",
+      "sha256": "324996e7bccfe21e15b02d4c7e35e60413119842c34ab68e26f33712b384ee6d",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁本地 Binder 回归",
+      "note": "既有八项 Binder 的新源码批次; 两次 API 28 ART 启动失败独立保留, 不加入通过数.",
+      "bytesUtf8Lf": 221070,
+      "rows": 5,
+      "reportedScope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 5,
+        "rounds": 10,
+        "passedTests": 80,
+        "totalTests": 80,
+        "lifecycleObservations": 50
+      }
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-checkpoint.json",
+      "sha256": "554c5d8b9ee36a7b40aa611d7cc4589827af2506a4c35ff963e97d37fcbc4cf4",
+      "schema": 1,
+      "kind": "pending-wait-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3 十二补丁构建/设备清理补充",
+      "note": "保留快照脚本错误、未安装的断线前置检查、APK 一致性、owned AVD 清理和离线三星窗口; 不新增测试数.",
+      "bytesUtf8Lf": 10272,
+      "rows": 0,
+      "reportedScope": "Build/snapshot, preflight, retry identity and owned-environment cleanup supplement. Adds no test observations to the separately validated probe/Binder archives.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
       "file": "2026-09-13-m3-pending-wait-diagnosis.json",
       "sha256": "e19a9f35b4d3b64358ac48efdbadf874faf7c06bc9f153ec1b67b96722dd1232",
       "schema": 1,
@@ -1517,6 +1591,43 @@
         "failedProbes": 8,
         "original31PassedProbes": 124,
         "pendingAsyncPassedProbes": 0
+      }
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-probes.json",
+      "sha256": "c7e428daacd066f8d6d08c4a392f6d2bd98080bcf3f23989c824f31557ccef68",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁本地 33 项探针",
+      "note": "原 33 定义与预算保持不变; 不转移旧源码成绩或扩大到其他页大小/版本.",
+      "bytesUtf8Lf": 1495380,
+      "rows": 5,
+      "reportedScope": "Two process-restarted rounds of the fixed 33-probe test-only application suite per native environment. Not the full syscall/API/FD, plugin Binder or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 5,
+        "rounds": 10,
+        "probesPerRound": 33,
+        "passedProbes": 330,
+        "totalProbes": 330,
+        "loweredSoftLimitObservations": 20,
+        "loweredHardLimitObservations": 40,
+        "hardLimitStartupObservations": 20,
+        "hardLimitSpawnObservations": 20,
+        "hardLimitSpawnApiObservations": 40,
+        "blockedAsyncSignalObservations": 20,
+        "blockedAsyncChildObservations": 60,
+        "pendingAsyncSignalObservations": 20,
+        "pendingAsyncChildObservations": 60,
+        "forcibleLifecycleObservations": 30,
+        "terminationToExitMillis": {
+          "minimum": 301,
+          "maximum": 308
+        }
       }
     },
     {
@@ -9802,6 +9913,398 @@
       "acceptedForRecordedScope": false
     },
     {
+      "source": "2026-09-13-m3-pending-wait-binder-retry-failure.json",
+      "pointer": "/report",
+      "environmentPointer": "/report/device",
+      "category": "diagnostic",
+      "scope": "M3 十二补丁 API 28 Binder 重试启动失败",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "/proc/self/smaps KernelPageSize (getconf unavailable); instrumentation also asserts Os.sysconf",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": null,
+          "total": null,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder-startup-failure.json",
+      "pointer": "/report",
+      "environmentPointer": "/report/device",
+      "category": "diagnostic",
+      "scope": "M3 十二补丁 API 28 Binder 首次启动失败",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "/proc/self/smaps KernelPageSize (getconf unavailable); instrumentation also asserts Os.sysconf",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": null,
+          "total": null,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 Binder 回归",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "/proc/self/smaps KernelPageSize (getconf unavailable); instrumentation also asserts Os.sysconf",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 Binder 回归",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder.json",
+      "pointer": "/reports/2",
+      "environmentPointer": "/reports/2/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 Binder 回归",
+      "environment": {
+        "manufacturer": null,
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder.json",
+      "pointer": "/reports/3",
+      "environmentPointer": "/reports/3/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 Binder 回归",
+      "environment": {
+        "manufacturer": null,
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-binder.json",
+      "pointer": "/reports/4",
+      "environmentPointer": "/reports/4/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 Binder 回归",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8",
+        "bytes": 90449752,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "2e1a0068830409a491d1a8bd76be63ca5a46e88d59ad0d8e026d09fd01b46c78",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
       "source": "2026-09-13-m3-pending-wait-diagnosis.json",
       "pointer": "/records/0",
       "environmentPointer": "/records/0/runs/0/report",
@@ -10036,6 +10539,286 @@
       "status": "failed",
       "sourceReportedPassed": false,
       "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-probes.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 33 项探针",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "350d70bb5f655a0e79a8abe060c7110fcb41c1ecbb26901897aed68fb3b0a1fe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-probes.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 33 项探针",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "350d70bb5f655a0e79a8abe060c7110fcb41c1ecbb26901897aed68fb3b0a1fe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-probes.json",
+      "pointer": "/reports/2",
+      "environmentPointer": "/reports/2/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 33 项探针",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "350d70bb5f655a0e79a8abe060c7110fcb41c1ecbb26901897aed68fb3b0a1fe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-probes.json",
+      "pointer": "/reports/3",
+      "environmentPointer": "/reports/3/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 33 项探针",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "350d70bb5f655a0e79a8abe060c7110fcb41c1ecbb26901897aed68fb3b0a1fe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-probes.json",
+      "pointer": "/reports/4",
+      "environmentPointer": "/reports/4/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁本地 33 项探针",
+      "environment": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8",
+        "bytes": 90449752,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "691bbbfd86b3f401de255957d960d0039104e171a1ffe56196cf57eedbea7154",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
     },
     {
       "source": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
