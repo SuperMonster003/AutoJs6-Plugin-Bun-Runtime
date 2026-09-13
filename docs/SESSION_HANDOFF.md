@@ -1,10 +1,13 @@
-# 会话交接: M3 pending SIGSYS 修复已完成独立构建, 待新设备回归
+# 会话交接: 十一补丁独立构建完成, 新 epoll wait 阻断已复现并动态定位
 
 更新: 2026-09-13 (Asia/Shanghai). 从干净 `86b18b5` 继续.
 完整阅读 `AGENTS.md`、本文件及 `E:/.codex-tmp/pending-mask-20260913/SESSION_HANDOFF.local.md`.
 本机 `PROMOTION_NEXT.md` 是原先待办, 以本记录与追加状态为准.
-[当前报告](compatibility/2026-09-13-m3-pending-mask-fix.md) 与
-[新构建证据](compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json) 分别保存.
+[spawn 修复/构建报告](compatibility/2026-09-13-m3-pending-mask-fix.md) 与
+[构建证据](compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json) 已提交于 `b984684`.
+**新 33 项 Android 门禁仍失败**, 见 [wait 阶段报告](compatibility/2026-09-13-m3-pending-wait.md)、
+[失败归档](compatibility/2026-09-13-m3-pending-wait-failure.json) 与
+[独立动态诊断](compatibility/2026-09-13-m3-pending-wait-diagnosis.json).
 
 - 新 11 补丁 head `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`, tree `73476190d9341d338a96c8a9793db947ea415d15`.
   Android 父线程追加阻塞并保留 pending SIGSYS, 仅子路径安装 setup mask;
@@ -18,15 +21,32 @@
 - 新导出在 WSL `pending-mask-evidence/run-{1,2}`; current runtime-evidence 和对应源码绑定已晋升,
   runtimeProduced=true / distributionReady=false. 原上游 WebKit/JSC/ICU 复用, 没有新库构建.
 - 15 个 fixture/validator/Java 源码、完整 probe-common 校验器和原 33 定义按旧归档保护;
-  仅 expected revision 改为 `1.4.0+946f082ab`. 当前尚未 Android/Binder/Samsung 运行,
-  未操作 AVD; 旧 434/434、112/112 和 JSC 均保持原范围.
+  仅 expected revision 改为 `1.4.0+946f082ab`. 同一新 ARM64 probe APK 在 Sony API 28/31
+  各两轮 31/33: 原 31 项 124/124, pending 模式 0/8. 即时 spawn 保留信号, await 后提前交付.
+  `[[1,0],[1,0],[1,0],[0,1]]` 与历史十补丁 `[[1,0],[1,0],[0,0]]` 不同, 原始失败分别保留.
+- 新 observer 在自己拥有的 signal-stop tracee 只读 GETREGSET, 仅 epoll wait 上下文读一个 mask word;
+  原样转交 SIGSYS, 不改寄存器、mask 或 syscall. 两台各两轮 native/TRAP plain/traced, 八次只读观察
+  全部捕获 child close_range 之后的主线程 SI_TKILL, ARM64 x8=22, x4 指向实际零 mask.
+  `packages/bun-usockets/src/eventing/epoll_kqueue.c:126` 给两种 wait API 传入空 mask 与此吻合.
+  未采集调用栈/PC, 不算 epoll_pwait2 首次可达性或兼容通过.
+- 两套新 probe APK、Binder 主/测试 APK 已构建; 因首个应用门禁失败, Binder 未运行,
+  其余设备不增加本轮通过数. Probe UID 10759/15124、trace UID 10760/15125 全部卸载清零.
+  仅启动/关闭 owned API 33 AVD `bun-hard-limit-api33-20260912` / 5584, 未在其运行套件.
+  最终其 serial 消失; 未控制其他 AVD, 不推断无关库存变化原因.
+- 三星窗口约 15:52:40-16:02:40 local, 多次轮询 localhost:50781 始终 offline/不可用;
+  没有三星安装/测试, 当前无待用设备. 旧 434/434、112/112 和 JSC 均保持原范围.
 - 十语言 changelog 与生成产物已更新. 标准生产 Gradle 四项检查实际 exit 0 (8m13s, 96 tasks);
   单元测试任务沿用已有 21 项, lint 0 errors/44 warnings, 三个 Debug APK 字节/16 KiB ZIP 对齐通过.
   IDE build 调用一次, 工具 60 秒超时保留; 精确匹配的 Gradle command 随后成功
   (2m3s, 6 tasks up-to-date), 原始工具返回值保持不变.
-- 完整 Node 222/222、Python 38/38、生成器/矩阵/官方 Bun/supervisor 校验通过.
-  矩阵为 71 份/164 行, 构建记录不增设备通过数. 源码/构建提交后以新 APK 先复测 Sony API 28/31,
-  再其余可用设备; 不继承历史通过数. 未 push、Release、委派 agent 或修复缓存.
+- 最新完整 Node 228/228、Python 38/38、生成器/矩阵检查通过. 矩阵为 73 份/168 行,
+  新两条失败行与两条诊断行没有增加完整套件通过. 观察器 Linux plain/traced 五场景通过;
+  首次 WSL 本机因缺 cc 未能编译, 改用已存在的固定工具镜像完成, 未安装/修复环境.
+  新生成文档后生产 Gradle 同四任务再次实际 exit 0 (28s, 96 tasks), JVM 21 项仍为 up-to-date.
+- **下一步**: 修复 Android wait 的 caller mask 生命周期并审查 blocked SIGSYS 下可选新 wait syscall.
+  不能只改 fallback 参数而遗漏原始 epoll_pwait2 的可选探测风险; 做固定源码主机对照后再全新双构建,
+  保留本轮十一补丁 source/build/failure 全部记录. 第 12 补丁尚未创建, 没有新 native 构建运行.
+  不提前清 pending、不预热 waiter、不放宽原 33 项断言. 未 push、Release、委派 agent 或修复缓存.
 
 ## 此前: M3 pending SIGSYS 新阻断已复现并完成动态诊断
 

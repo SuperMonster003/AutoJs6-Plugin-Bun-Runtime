@@ -10,6 +10,7 @@
 #include <sys/prctl.h>
 #include <sys/syscall.h>
 #include <sys/wait.h>
+#include <sys/epoll.h>
 #include <ucontext.h>
 #include <unistd.h>
 static volatile sig_atomic_t received;
@@ -22,6 +23,20 @@ static void handle(int sig, siginfo_t *info, void *context) {
 int main(int argc, char **argv) {
     if (argc != 4 || strcmp(argv[1], "run") || strcmp(argv[2], "--no-install")) return 71;
     const char *mode = strrchr(argv[3], '/'); if (!mode) return 72; mode++;
+    if (!strcmp(mode,"user-epoll")) {
+        sigset_t blocked, empty, pending;
+        sigemptyset(&blocked); sigaddset(&blocked,SIGSYS); sigemptyset(&empty);
+        if (signal(SIGSYS,handle_user)==SIG_ERR || sigprocmask(SIG_BLOCK,&blocked,NULL) || raise(SIGSYS)) return 73;
+        if (sigpending(&pending) || sigismember(&pending,SIGSYS)!=1 || received) return 74;
+        int epfd=epoll_create1(EPOLL_CLOEXEC); struct epoll_event event;
+        if (epfd<0) return 75;
+        errno=0;
+        if (epoll_pwait(epfd,&event,1,10,&empty)!=-1 || errno!=EINTR || received!=1) return 77;
+        close(epfd);
+        if (sigpending(&pending) || sigismember(&pending,SIGSYS)!=0) return 78;
+        puts("TARGET_USER_EPOLL");
+        return 0;
+    }
     if (!strcmp(mode,"user-handled") || !strcmp(mode,"user-fatal")) {
         if (!strcmp(mode,"user-handled") && signal(SIGSYS,handle_user)==SIG_ERR) return 73;
         if (raise(SIGSYS) || received!=1) return 77;

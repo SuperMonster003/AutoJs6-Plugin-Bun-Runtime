@@ -615,6 +615,28 @@
       "note": "原 31 项通过 124/124, 两个新模式 0/8; 全部受控 exit 1, 整体门禁失败, 不分配兼容验收."
     },
     {
+      "file": "2026-09-13-m3-pending-wait-diagnosis.json",
+      "sha256": "e19a9f35b4d3b64358ac48efdbadf874faf7c06bc9f153ec1b67b96722dd1232",
+      "schema": 1,
+      "kind": "archived-pending-wait-diagnosis",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 epoll 空掩码提前交付动态诊断",
+      "note": "八次只读 ARM64 epoll_pwait 寄存器/掩码观测与八次普通执行配对; 诊断不增加兼容通过数, 不代表 epoll_pwait2 首次可达性."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-failure.json",
+      "sha256": "db9403503d08bc463d3c3d18e8c4301a7771291dc7ae9beb272756b0cdb704b4",
+      "schema": 1,
+      "kind": "archived-pending-wait-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十一补丁 pending wait 失败门禁",
+      "note": "即时 spawn 保留 pending, 但异步等待后提前交付. 原 31 项通过不构成完整 33 项门禁通过; 历史十补丁失败不变."
+    },
+    {
       "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
       "sha256": "33f49563765447af9a18596b9b2274bf9b1fda8ece87d0bb0541d4b6fc8ae121",
       "schema": 1,

@@ -28,16 +28,23 @@ class TraceTest(unittest.TestCase):
 
     def test_forwarding_does_not_suppress_fatal_or_handled_signal(self):
         target, tracer = str(self.directory / 'target'), str(self.directory / 'trace')
-        for mode in ['fatal', 'handled', 'user-fatal', 'user-handled']:
+        for mode in ['fatal', 'handled', 'user-fatal', 'user-handled', 'user-epoll']:
             with self.subTest(mode=mode):
                 plain = subprocess.run([target, 'run', '--no-install', '/' + mode], capture_output=True, text=True, timeout=5)
                 traced = subprocess.run([tracer, target, '/' + mode], capture_output=True, text=True, timeout=5)
-                expected = 0 if mode.endswith('handled') else -signal.SIGSYS
+                expected = 0 if mode.endswith('handled') or mode == 'user-epoll' else -signal.SIGSYS
                 self.assertEqual(plain.returncode, expected)
                 self.assertEqual(traced.returncode, expected if expected == 0 else 128 - expected)
                 self.assertEqual(traced.stdout, plain.stdout)
                 self.assertEqual(plain.stderr, '')
                 lines = traced.stderr.splitlines()
+                if mode == 'user-epoll':
+                    self.assertEqual(len(lines), 3)
+                    context = json.loads(lines.pop(1).removeprefix('TRACE_USER_WAIT='))
+                    self.assertEqual(context['syscallRegister'], 281)
+                    self.assertTrue(context['maskRead'])
+                    self.assertNotEqual(context['maskAddress'], '0000000000000000')
+                    self.assertEqual(context['maskWord'], '0000000000000000')
                 self.assertEqual(len(lines), 2)
                 info = json.loads(lines[0].split('=', 1)[1])
                 if mode.startswith('user-'):

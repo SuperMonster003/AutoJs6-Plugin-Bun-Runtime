@@ -17,8 +17,10 @@ Its label is deliberately different from the production application name.
 
 The [eleven-patch pending-mask source repair](../../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md)
 has passed its complete-production-function host regressions and two independent
-dual-ABI builds with actual exit-zero receipts and full ELF audits. Its Android
-result is not established yet. The
+dual-ABI builds with actual exit-zero receipts and full ELF audits. New Sony API
+28/31 rounds preserve pending SIGSYS immediately after spawn but fail at the next
+async wait: original 31 pass 124/124, pending modes 0/8. The [wait-stage failure and
+read-only diagnosis](../../../../../docs/compatibility/2026-09-13-m3-pending-wait.md) remain a failed gate. The
 current 33 definitions, fixture bytes and validators remain protected against
 drift; only the expected revision changes for the new runtime.
 

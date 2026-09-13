@@ -2,7 +2,7 @@
 
 2026-09-13. 本轮从项目 `86b18b5` 继续处理
 [十补丁失败与动态诊断](2026-09-13-m3-pending-sigsys.md).
-新源码已完成修复、主机回归、双 ABI 独立构建及完整 ELF 审计; 尚无新 Android 验收结论.
+新源码完成 spawn 设置阶段修复、主机回归、双 ABI 独立构建及完整 ELF 审计. 随后的 Android 33 项门禁仍失败于异步等待阶段, 见 [独立后续报告](2026-09-13-m3-pending-wait.md).
 官方 API 33+、生产 Bun/supervisor 字节、服务/API 契约和 `distributionReady=false` 不变.
 
 ## 源码修复
@@ -62,7 +62,7 @@ Android RELR、非可执行栈与至少 16 KiB PT_LOAD 对齐等完整审计.
 本轮复用精确锁定的上游 WebKit/JSC/ICU, 没有重新构建这些库. `runtimeProduced=true`,
 `distributionReady=false`; 原十补丁构建档案保持原样. 初次晋升后离线检查发现 blocker 校验器
 仍固定期待未构建状态, 已改为与 runtimeProduced 同步; 完整 runtime 门禁仍要求当前双构建证据.
-新源码尚未通过 Android 33-probe 或完整八项 Binder, 原历史 434/434、112/112 和 JSC 候选成绩均不转移.
+新源码随后在 Sony API 28/31 各两轮 31/33: 即时 spawn pending 保持通过, 后续 wait 仍提前交付. 新失败/诊断分别归档; 完整八项 Binder 尚未运行, 原历史 434/434、112/112 和 JSC 候选成绩均不转移.
 
 历史 pending 失败解析器现在固定绑定原归档摘要、原 APK receipt 和 revision; 旧 JSON 未修改.
 实时 runner 的当前输入校验不变, 历史失败也不能被重新归档成当前源码运行记录.
