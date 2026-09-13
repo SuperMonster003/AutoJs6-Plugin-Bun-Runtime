@@ -1,4 +1,39 @@
-# 会话交接: M9 运行错误与十语言诊断审计完成
+# 会话交接: M3-B 启动检查诊断与重试生命周期完成
+
+更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `4195101` 继续, 完成 M3-B 的
+runtime probe 诊断和失败缓存/重试两个小节. 继续前完整阅读 `AGENTS.md`、本文件及
+`E:/.codex-tmp/probe-lifecycle-20260913/SESSION_HANDOFF.local.md`.
+[完整报告](compatibility/2026-09-13-m3-probe-lifecycle.md) 和
+[构建/运行/归档工具](../tools/diagnostics/PROBES.md) 是新入口.
+
+- 生产检查现在持续读取 stdout/stderr, 每流 4 KiB; 使用原监督器有界终止/回收.
+  保留本地化摘要并补充 API/ABI/阶段/identity/退出与重试事实, signal 只按退出惯例推断.
+  不增加协议 key、AAR 或 native 改动, 不收集普通 Binder fingerprint 或用户源码.
+- 成功和固定完整性/版本/页大小失败缓存至服务重建; 已完成清理的临时失败在完成后
+  冷却 30 秒, 后续请求触发一次重试, 并发共享检查. 无后台重试, 未回收/未排空则禁止重试.
+- 两个独立 Debug APK 批次复用原官方/十补丁成品. ARM64 官方 API 33/35 与实验
+  API 28/31, 加实验 x86 API 33 (均原生 4 KiB), 两轮原八项 Binder 共 80/80,
+  新三项 probe 共 30/30. 注入故障与虚拟冷却时钟明确是测试条件, 不当作自然设备故障.
+  官方两台另通过语言 JUnit 8/8, 含 240 个错误/finished 观察.
+- 官方 x86 API 36 / 16384 用户页的资源/缓存拒绝两轮 4/4; shell 内核映射仍 4096,
+  Bun 在执行前被拒绝. 用同一官方 APK 的 receipt 格式适配, 没有重编或重打包.
+- 两次首次失败分别保留: API 28 第二轮测试开始前 owned ART/ADB-JDWP SIGSEGV;
+  16 KiB AVD 第八个语言后 `lowmemorykiller` 杀服务导致 DeadObjectException.
+  两者原 APK/断言/设置/预算均不变, 新目录重试通过, 原失败不计入成功数.
+- 所有安装尝试的两个包/UID 都清理. 仅关闭本轮 5584 与 5582 两台 AVD,
+  精确名称核对及最终 serial 消失已记录; 原有 5554/5560 未操作. 无三星窗口.
+- JVM 21/21 (新增 11 项)、Node 193/193、Python 37/37, Markdown 与兼容矩阵检查通过;
+  矩阵登记 68 份 JSON / 160 条记录, 原 60 份报告未改. 生产四项 Gradle 17 秒成功,
+  lint 0 errors/44 warnings, IDE build 成功. 没有 native build、缓存修复、push 或 Release.
+
+实测 APK 在本机 `official-apks`、`experimental-apks`、`refusal-apks`, 归档后才生成当前
+changelog, 不要用后续生产输出替换它们或放宽旧输入检查. 原 31-probe 没有重跑,
+历史十补丁 434/434、112/112 与 JSC/Samsung 结果不自动重验到本轮服务.
+下一步可继续 M3 syscall/FD/线程/watch 边界、M8 上游只读审阅等未完成小节.
+更广矩阵/压力/签名 Release 仍开放. 官方 API 33+ 与 distributionReady=false 不变;
+如需三星, 仍按下方 10 分钟/50781 约定, 不自行委派 agent.
+
+## 此前: M9 运行错误与十语言诊断审计完成
 
 更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `b1d2606` 继续,
 完成 M9 最后一项错误/诊断文案审计. 继续前完整阅读 `AGENTS.md`、本文件及

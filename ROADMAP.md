@@ -4,6 +4,12 @@
 
 更新日期: 2026-09-13
 
+最新完成 M3-B 的启动检查诊断与缓存重试: 五个原生 4 KiB 环境的新服务/APK 批次通过
+原八项 Binder 80/80、受控 probe 30/30, 另有语言与执行前页大小拒绝回归.
+临时失败在清理完成后冷却 30 秒按需重试, 固定不匹配仍缓存至服务重建;
+两次首次环境失败及同 APK 重试分别归档. 见 [完整报告](docs/compatibility/2026-09-13-m3-probe-lifecycle.md).
+本轮没有重编 native 或运行原 31-probe, 既有实验/Samsung/JSC 与 Release 边界保持不变.
+
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
 一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁原 25 项探针已有六环境证据; 相同 29 项套件在七个原生环境累计通过 406/406, 含六个 4 KiB 环境及 Samsung ARM64 16 KiB, 四种硬 FD 上限模式均已有大页证据; 现有完整 8 项插件 Binder 分批累计十二原生环境 192/192, 含三星 ARM64 16 KiB, 已补齐 API 28-32 x86 版本覆盖), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 历史九补丁大页 JSC 候选已通过 x86_64 双页大小 Binder 32/32, 并新增有界七模式压力 28/28; x86 的 16 KiB 用户空间页为模拟模式, 与 ARM64 硬件页、官方发行线及最终 Release 验收分开.
@@ -232,8 +238,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 ### M3-B: 插件诊断与实验分发
 
 - [x] (插件/测试/设备) 新增 opt-in `minSdk=28`、独立包名、`testOnly=true` 且禁用 Release variant 的实验插件模块, 复用真实生产服务和同一 8 项 Binder instrumentation. 原九补丁双 ABI 与 supervisor 不变, API 28/31/33/35 ARM64 真机、API 36 ARM64 16 KiB 三星真机及 API 28/30/31/36 native x86 4 KiB AVD 各两轮 8/8, 合计 144/144. 绑定 APK 内嵌源码 receipt、安装后摘要、90 条生命周期诊断和卸载后零 UID 进程; 权限签名或早期工具解析失败独立保留, 不绕过真实服务权限. 见 [实验 Binder 报告](docs/compatibility/2026-09-12-m3-experimental-binder.md). (2026-09-12, G1/G2, 现有完整套件, 非全部语义/OEM/Release)
-- [ ] (插件/API) 改善 runtime probe 诊断, 报告 API, ABI, probe 阶段, 退出码, 可能的 signal, runtime identity 和有界 stderr; 不把设备 fingerprint 或用户内容写入普通 Binder 错误.
-- [ ] (插件) 明确失败缓存和重试生命周期, 使一次启动失败不会产生不可解释的永久不可用状态, 同时避免并发重复启动 probe.
+- [x] (插件/测试) 完善 runtime probe 诊断: 保留十语言摘要并附 API、验证得到的 ABI、阶段、运行时身份、退出/清理事实和各流最多 4 KiB 的固定检查输出; 明确标记 possibleSignal 仅按退出惯例推断. 持续排空并有界终止, 不收集用户源码、任意异常消息或 fingerprint, 不增加 AIDL/Bundle 协议. 五个原生 4 KiB 环境的原八项 Binder 合计 80/80、新三项受控 probe 测试 30/30; 独立语言回归 8/8 和 x86 16 KiB 执行前拒绝 4/4. 两个失败尝试与同 APK 重试分别保留, 详见 [M3-B 报告](docs/compatibility/2026-09-13-m3-probe-lifecycle.md). (2026-09-13, G1/G2, 服务回归, 非 native/Release 扩围)
+- [x] (插件/测试) 明确失败缓存: 成功/固定完整性/版本/页大小结果保持至服务重建; 已完成清理的临时失败冷却 30 秒后按需重试, 并发调用共享一次检查且无后台重试. 未回收或未排空时禁用重试. JVM 覆盖冷却起点、并发、中断、输出和失败清理; 五环境通过真实 payload 的受控注入/虚拟时钟回归, 不把注入故障视为自然设备故障. [实现与边界](tools/diagnostics/PROBES.md). (2026-09-13, G1/G2)
 - [ ] (测试) 构建 `minSdk=28` 实验 APK, 验证 Java/Kotlin API 28 路径, native payload 提取, 只读 `nativeLibraryDir` exec, SELinux 和应用 zygote seccomp 继承.
 - [x] (设备) API 28, 29, 30, 31, 32 各完成 `x86_64` AVD 的现有完整 8 项 Binder instrumentation, 每版本各两轮共 80/80. 原 API 28/30/31 证据不改写; 本轮补齐 API 29/32 native 4 KiB 的 32/32, 并以同一九补丁字节运行未改动的 25 项独立探针 100/100. 新增 20 条 Binder 生命周期诊断、8 次 FD 软限制降低和 12 次强制回收 (302-304 ms); API 29 pidfd 的两次 policy-gated 观测仍排除于 EIO 高层触达, 两版本 openat2 均在过滤器前不可用. 测试包与 UID 进程清理, 仅关闭本轮启动的两台新 AVD. Android 12 与 12L 分开, 不推断 ARM64 API 32 或其余 syscall/FD/CLI 通过. 见 [API 29/32 复测报告](docs/compatibility/2026-09-12-m3-api29-api32.md). (2026-09-12, G2, 非 Release)
 - [x] (设备) Samsung Remote Test Lab Galaxy Z Fold4 SM-F936U 实测 SDK=32, 原生 arm64-v8a / aarch64, PAGE_SIZE=4096, native bridge=0; 系统显示 Android 12 不影响 API 32 / Android 12L 的判定. 九补丁字节和既有定义不变, 两轮现有 Binder 16/16, 原 29 项应用探针 58/58. 含 8 次硬上限观测、8 次 spawn API 检查、4 次软上限和 6 次强制回收 (301-302 ms), 另有 10 条 Binder 生命周期诊断. 绑定本轮重新构建的 Binder APK 与复用的探针 APK, 三个测试包卸载, 三个 UID 均清零; 未启动/关闭 AVD. 见 [原生 ARM64 API 32 报告](docs/compatibility/2026-09-12-m3-native-arm64-api32.md) 及独立 Binder/探针 JSON. (2026-09-12, G2, 非 16 KiB/完整矩阵/Release)

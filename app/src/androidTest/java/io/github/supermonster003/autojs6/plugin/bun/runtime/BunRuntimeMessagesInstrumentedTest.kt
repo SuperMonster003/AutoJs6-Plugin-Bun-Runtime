@@ -124,9 +124,12 @@ class BunRuntimeMessagesInstrumentedTest {
                 val expected = language.getString(R.string.runtime_error_page_size, pages, BuildConfig.BUN_X86_MAX_PAGE_SIZE_BYTES)
                 for (probe in listOf(runtime.prewarmRuntime(), runtime.runtimeInfo)) {
                     assertFalse(probe.getBoolean(BunRuntimeContract.KEY_RUNTIME_READY))
-                    assertEquals(expected, probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE))
+                    val message = requireNotNull(probe.getString(BunRuntimeContract.KEY_ERROR_MESSAGE))
+                    assertTrue(message, message.startsWith(expected + "\n"))
+                    assertTrue(message.contains("stage=page-size reason=unsupported-page-size"))
+                    assertTrue(message.contains("retry=service-recreation"))
                 }
-                assertFailure(run(runtime), BunRuntimeContract.ERROR_RUNTIME_UNAVAILABLE, expected)
+                assertFailure(run(runtime), BunRuntimeContract.ERROR_RUNTIME_UNAVAILABLE, expected, prefix = true)
                 status("page-refusal locale=$tag pages=$pages prewarmInfoRun=true finishedMatches=true")
             }
         }

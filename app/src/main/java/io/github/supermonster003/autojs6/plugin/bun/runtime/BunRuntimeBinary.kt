@@ -1,29 +1,26 @@
 package io.github.supermonster003.autojs6.plugin.bun.runtime
 
 import android.content.Context
+import android.os.Build
+import android.os.SystemClock
 import android.system.Os
 import android.system.OsConstants
 import java.io.File
 import java.security.MessageDigest
-import java.util.concurrent.TimeUnit
-
-internal data class BunRuntimeProbe(
-    val ready: Boolean,
-    val path: String,
-    val abi: String?,
-    val version: String?,
-    val revision: String?,
-    val failure: BunRuntimeFailure?,
-)
 
 internal fun lockedRuntimeAbiForSha256(sha256: String): String? =
     LOCKED_RUNTIME_SHA256_BY_ABI.entries.singleOrNull { (_, expectedSha256) ->
         sha256 == expectedSha256
     }?.key
 
-internal class BunRuntimeBinary(private val context: Context) {
-    @Volatile
-    private var cachedProbe: BunRuntimeProbe? = null
+internal class BunRuntimeBinary(
+    private val context: Context,
+    nowMillis: () -> Long = SystemClock::elapsedRealtime,
+    private val startProbe: (List<String>, File) -> Process = { command, helper ->
+        SupervisedProcess.start(ProcessBuilder(command), helper)
+    },
+) {
+    private val cache = BunRuntimeProbeCache(nowMillis, ::inspect)
 
     val file: File
         get() = File(context.applicationInfo.nativeLibraryDir, FILE_NAME)
@@ -31,63 +28,61 @@ internal class BunRuntimeBinary(private val context: Context) {
     val supervisor: File
         get() = File(context.applicationInfo.nativeLibraryDir, SupervisedProcess.SUPERVISOR_NAME)
 
-    fun probe(): BunRuntimeProbe = cachedProbe ?: synchronized(this) {
-        cachedProbe ?: inspect().also { cachedProbe = it }
-    }
+    fun probe(): BunRuntimeProbe = cache.probe()
 
     private fun inspect(): BunRuntimeProbe {
         val runtime = file
         var runtimeAbi: String? = null
-        return runCatching {
-            require(runtime.isFile) { "Bun executable is missing from the native library directory" }
+        var version: String? = null
+        var revision: String? = null
+        var stage = "runtime-integrity"
+        fun failed(reason: String, retryable: Boolean = false, command: BunProbeCommandResult? = null): BunRuntimeProbe =
+            BunRuntimeProbe(false, runtime.path, runtimeAbi, version, revision,
+                BunRuntimeFailure.Unavailable(probeDiagnostic(Build.VERSION.SDK_INT, runtimeAbi, stage, reason,
+                    retryable, version, revision, command)), retryable)
+        return try {
+            if (!runtime.isFile) return failed("runtime-missing")
             val actual = sha256(runtime)
-            val abi = requireNotNull(lockedRuntimeAbiForSha256(actual)) {
-                "Bun executable SHA-256 does not match any locked ABI payload"
-            }
+            val abi = lockedRuntimeAbiForSha256(actual) ?: return failed("runtime-hash-mismatch")
             runtimeAbi = abi
+            stage = "supervisor-integrity"
             val expectedSupervisor = when (abi) {
                 "arm64-v8a" -> BuildConfig.BUN_SUPERVISOR_ARM64_V8A_SHA256
                 "x86_64" -> BuildConfig.BUN_SUPERVISOR_X86_64_SHA256
                 else -> error("Unexpected Bun ABI: $abi")
             }
-            require(supervisor.isFile && sha256(supervisor) == expectedSupervisor) {
-                "Bun supervisor SHA-256 does not match the locked ABI payload"
-            }
+            if (!supervisor.isFile || sha256(supervisor) != expectedSupervisor) return failed("supervisor-hash-mismatch")
+            stage = "page-size"
             val pageSize = Os.sysconf(OsConstants._SC_PAGESIZE)
+            if (pageSize <= 0) return failed("page-size-unavailable", retryable = true)
             runtimePageSizeFailure(abi, pageSize)?.let { failure ->
-                return BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null, failure)
+                return BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null, failure.copy(
+                    diagnostic = probeDiagnostic(Build.VERSION.SDK_INT, runtimeAbi, stage, "unsupported-page-size",
+                        false, null, null),
+                ))
             }
-            val version = executeProbe(runtime, "--version")
-            require(version == BuildConfig.BUN_RUNTIME_VERSION) { "Unexpected Bun version: $version" }
-            val revision = executeProbe(runtime, "--revision")
-            require(revision == BuildConfig.BUN_RUNTIME_REVISION) { "Unexpected Bun revision: $revision" }
-            executeProbe(runtime, "--eval", "void 0")
+            val runner = BunProbeCommandRunner(start = { arguments ->
+                startProbe(listOf(runtime.path) + arguments, supervisor)
+            })
+            stage = "version"
+            val versionResult = runner.run(listOf("--version"))
+            if (!versionResult.succeeded) return failed(requireNotNull(versionResult.reason), versionResult.retryable, versionResult)
+            version = versionResult.stdout.trim()
+            if (version != BuildConfig.BUN_RUNTIME_VERSION) return failed("version-mismatch", command = versionResult)
+            stage = "revision"
+            val revisionResult = runner.run(listOf("--revision"))
+            if (!revisionResult.succeeded) return failed(requireNotNull(revisionResult.reason), revisionResult.retryable, revisionResult)
+            revision = revisionResult.stdout.trim()
+            if (revision != BuildConfig.BUN_RUNTIME_REVISION) return failed("revision-mismatch", command = revisionResult)
+            stage = "smoke"
+            val smoke = runner.run(listOf("--eval", "void 0"))
+            if (!smoke.succeeded) return failed(requireNotNull(smoke.reason), smoke.retryable, smoke)
             BunRuntimeProbe(true, runtime.path, runtimeAbi, version, revision, null)
-        }.getOrElse { error ->
-            BunRuntimeProbe(false, runtime.path, runtimeAbi, null, null,
-                BunRuntimeFailure.Unavailable(error.message ?: error.toString()))
-        }
-    }
-
-    private fun executeProbe(runtime: File, vararg arguments: String): String {
-        val label = arguments.joinToString(" ")
-        val process = SupervisedProcess.start(
-            ProcessBuilder(listOf(runtime.path) + arguments).redirectErrorStream(true), supervisor,
-        )
-        return try {
-            if (!process.waitFor(PROBE_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
-                process.destroyForcibly()
-                require(process.waitFor(2, TimeUnit.SECONDS)) { "Bun $label probe could not be reaped" }
-                error("Bun $label probe timed out")
-            }
-            val output = process.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }.trim()
-            require(process.exitValue() == 0) { "Bun $label probe failed: $output" }
-            output
-        } finally {
-            process.destroyForcibly()
-            runCatching { process.waitFor(2, TimeUnit.SECONDS) }
-            runCatching { process.inputStream.close() }
-            runCatching { process.errorStream.close() }
+        } catch (_: java.io.IOException) {
+            failed("integrity-read-failed", retryable = true)
+        } catch (_: Exception) {
+            // Fixed facts only: exceptions can embed paths or inherited environment values.
+            failed("inspection-failed")
         }
     }
 
@@ -106,7 +101,6 @@ internal class BunRuntimeBinary(private val context: Context) {
 
     private companion object {
         const val FILE_NAME = "libbun_exec.so"
-        const val PROBE_TIMEOUT_SECONDS = 10L
     }
 }
 

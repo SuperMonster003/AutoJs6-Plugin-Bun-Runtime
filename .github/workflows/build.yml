@@ -40,6 +40,7 @@ jobs:
           node --test tools/bun-runtime/supervisor/supervisor-common.test.mjs
           node --test tools/bun-runtime/verify-apk-runtime.test.mjs
           node --test tools/diagnostics/runtime-message-common.test.mjs
+          node --test tools/diagnostics/probe-lifecycle-common.test.mjs
           python3 -B tools/bun-runtime/supervisor/test_supervisor.py
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/startup-cloexec/test_startup_cloexec.py)
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/spawn-fd/test_spawn_fd.py)
