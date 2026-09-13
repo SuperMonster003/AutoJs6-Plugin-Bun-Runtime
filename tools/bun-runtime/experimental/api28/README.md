@@ -8,7 +8,7 @@ revision `1.4.0+946f082ab`. The [pending-mask repair](pending-mask/README.md)
 passes complete-source GCC/Clang host controls and deterministic patch replay.
 Two new independent dual-ABI builds completed with actual captured driver exits 0,
 identical outputs and four complete ELF audits; `runtimeProduced=true`.
-No previous device result accepts this source; new Android gates remain pending.
+New Sony API 28/31 rounds still fail the 33-probe gate at asynchronous waiting: 124/132 overall, zero of eight pending modes pass. Read-only epoll register/mask evidence and the earlier spawn failure stay in separate archives; see the [wait-stage diagnosis](../../../../docs/compatibility/2026-09-13-m3-pending-wait.md).
 See the [current report](../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
 
 > Historical ten-patch source `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,

@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 71 份源报告, 164 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 73 份源报告, 168 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -512,6 +512,17 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/31 探针; 31/31 探针 | 通过 (限定范围) |
 
+### M3 十一补丁 pending wait 失败门禁
+
+来源: [2026-09-13-m3-pending-wait-failure.json](2026-09-13-m3-pending-wait-failure.json).
+
+即时 spawn 保留 pending, 但异步等待后提前交付. 原 31 项通过不构成完整 33 项门禁通过; 历史十补丁失败不变.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
+| /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+946f082ab<br>SHA 5ea6914e5fd2 | 31/33 探针; 31/33 探针 | 未通过 |
+
 ### M3-B 十补丁新服务原八项 Binder
 
 来源: [2026-09-13-m3-probe-lifecycle-experimental-binder.json](2026-09-13-m3-probe-lifecycle-experimental-binder.json).
@@ -645,6 +656,17 @@ shell UID 2000, 不经过应用 zygote seccomp、Binder 或 APK nativeLibraryDir
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
 | /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
+
+### M3 epoll 空掩码提前交付动态诊断
+
+来源: [2026-09-13-m3-pending-wait-diagnosis.json](2026-09-13-m3-pending-wait-diagnosis.json).
+
+八次只读 ARM64 epoll_pwait 寄存器/掩码观测与八次普通执行配对; 诊断不增加兼容通过数, 不代表 epoll_pwait2 首次可达性.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 946f082ab8ed<br>SHA 5ea6914e5fd2 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
+| /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 946f082ab8ed<br>SHA 5ea6914e5fd2 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
 
 ### M3-B 十补丁启动检查受控回归
 

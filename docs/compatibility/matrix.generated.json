@@ -1453,6 +1453,56 @@
       }
     },
     {
+      "file": "2026-09-13-m3-pending-wait-diagnosis.json",
+      "sha256": "e19a9f35b4d3b64358ac48efdbadf874faf7c06bc9f153ec1b67b96722dd1232",
+      "schema": 1,
+      "kind": "archived-pending-wait-diagnosis",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 epoll 空掩码提前交付动态诊断",
+      "note": "八次只读 ARM64 epoll_pwait 寄存器/掩码观测与八次普通执行配对; 诊断不增加兼容通过数, 不代表 epoll_pwait2 首次可达性.",
+      "bytesUtf8Lf": 87717,
+      "rows": 2,
+      "reportedScope": "Two native ARM64 4 KiB environments; fixed native/TRAP cases are paired plain/traced twice. SI_TKILL reaches the main thread after child close_range; read-only register context records ARM64 epoll_pwait (22) and an actual zero signal-mask word at its non-null pointer. No registers, masks or signals are modified.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "plainObservations": 8,
+        "tracedObservations": 8,
+        "earlyUserSignals": 8,
+        "compatibilityPasses": 0
+      }
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-failure.json",
+      "sha256": "db9403503d08bc463d3c3d18e8c4301a7771291dc7ae9beb272756b0cdb704b4",
+      "schema": 1,
+      "kind": "archived-pending-wait-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十一补丁 pending wait 失败门禁",
+      "note": "即时 spawn 保留 pending, 但异步等待后提前交付. 原 31 项通过不构成完整 33 项门禁通过; 历史十补丁失败不变.",
+      "bytesUtf8Lf": 569955,
+      "rows": 2,
+      "reportedScope": "Fixed 33-probe suite: original 31 pass; both pending-SIGSYS modes preserve the pending signal on return from spawn but fail after the first asynchronous child wait with early JS delivery. A failed gate, never expected-failure acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "probesPerRound": 33,
+        "totalProbes": 132,
+        "passedProbes": 124,
+        "failedProbes": 8,
+        "original31PassedProbes": 124,
+        "pendingAsyncPassedProbes": 0
+      }
+    },
+    {
       "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
       "sha256": "33f49563765447af9a18596b9b2274bf9b1fda8ece87d0bb0541d4b6fc8ae121",
       "schema": 1,
@@ -9706,6 +9756,242 @@
         "webkitCommit": null
       },
       "apkSha256": "7c3d3285fea0cea51f88b05d1342b68ebaa3c3c56f003dae3f488e48e3900d5a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-diagnosis.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 epoll 空掩码提前交付动态诊断",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+        "variant": null,
+        "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-diagnosis.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 epoll 空掩码提前交付动态诊断",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+        "variant": null,
+        "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十一补丁 pending wait 失败门禁",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+946f082ab",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "c2bd3edad1271ead61516659348c04de8961f2ae95f354eef8de30ba06a1c83e",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-failure.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十一补丁 pending wait 失败门禁",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+946f082ab",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "c2bd3edad1271ead61516659348c04de8961f2ae95f354eef8de30ba06a1c83e",
       "apkVariant": null,
       "rounds": [
         {

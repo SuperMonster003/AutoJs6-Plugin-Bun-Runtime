@@ -31,6 +31,14 @@ No arbitrary source or command is accepted. `SYS_SECCOMP` records retain their
 syscall/architecture fields. Other SIGSYS records instead contain sender PID/UID
 under `TRACE_USER_SIGSYS`; those siginfo union fields must not be read as a syscall.
 
+For ordinary SIGSYS stops, the observer now reads registers with PTRACE_GETREGSET.
+Only an epoll wait register context triggers one word of PTRACE_PEEKDATA at its
+signal-mask argument. This read-only context is separate from siginfo union fields;
+no registers, masks, syscall results or signal deliveries are changed. The
+[eleven-patch wait diagnosis](../../../../../docs/compatibility/2026-09-13-m3-pending-wait.md)
+captures eight ARM64 syscall-22/empty-mask contexts after child close_range,
+with matching plain controls. Earlier ten-patch traces remain unchanged.
+
 The observer has a 12-second alarm, 256-event and 32-signal caps, and
 `PTRACE_O_EXITKILL`. The unchanged supervisor bounds observer termination;
 instrumentation bounds collection/output and removes its exact private job.

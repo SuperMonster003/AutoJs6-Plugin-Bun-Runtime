@@ -1,0 +1,1126 @@
+{
+  "schemaVersion": 1,
+  "kind": "archived-pending-wait-diagnosis",
+  "archivedAt": "2026-09-13T08:00:32.146Z",
+  "projectBaseCommit": "b984684b58c88e039dc39d62d576953c9ca72a6d",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "Two native ARM64 4 KiB environments; fixed native/TRAP cases are paired plain/traced twice. SI_TKILL reaches the main thread after child close_range; read-only register context records ARM64 epoll_pwait (22) and an actual zero signal-mask word at its non-null pointer. No registers, masks or signals are modified.",
+  "summary": {
+    "environments": 2,
+    "rounds": 4,
+    "plainObservations": 8,
+    "tracedObservations": 8,
+    "earlyUserSignals": 8,
+    "compatibilityPasses": 0
+  },
+  "sourceReview": {
+    "commit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+    "path": "packages/bun-usockets/src/eventing/epoll_kqueue.c",
+    "gitBlob": "5431a0b9959b6a7a5009c27ff5461c7742a96ddb",
+    "bytes": 42888,
+    "sha256": "7e95bd26dbe8fcba5b382c6595026c021caf1d392a042fea32f6683de0a8b708",
+    "line": 126,
+    "interpretation": "bun_epoll_pwait2 builds an empty sigset and supplies it to both wait APIs. Eight read-only Android signal stops show epoll_pwait with this empty pointed-to mask after the spawn-stage preservation. No instruction address, call stack or epoll_pwait2 first-entry coverage is claimed."
+  },
+  "inputs": [
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+      "bytes": 914,
+      "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+      "bytes": 27362,
+      "sha256": "c82b1126f1864cfb290b2f5158bd5843b4b02e524de8c67e9690891b103d7539"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+      "bytes": 7900,
+      "sha256": "7aee6c8d43cfbb7b32bed389c99c1b8192445346fec50a5d26ea77c6416a7418"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+      "bytes": 12747,
+      "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+      "bytes": 8188,
+      "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+      "bytes": 4905,
+      "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+      "bytes": 7037,
+      "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+      "bytes": 3798,
+      "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+      "bytes": 10187,
+      "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+      "bytes": 3454,
+      "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+      "bytes": 9927,
+      "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+      "bytes": 3344,
+      "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+      "bytes": 8005,
+      "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+      "bytes": 2821,
+      "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+      "bytes": 10212,
+      "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+      "bytes": 1595,
+      "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+      "bytes": 35184,
+      "sha256": "0833352a547a359560f33fb44eda91b7b8d264b656353e4aa313cefda2e8e207"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+      "bytes": 9472,
+      "sha256": "a7114529f767accaba57135e0818ca9c46fef2b5ad58cebba4c6895f45687b5b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+      "bytes": 9537,
+      "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+    },
+    {
+      "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+      "bytes": 3727,
+      "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.c",
+      "bytes": 4394,
+      "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+      "bytes": 1018,
+      "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+      "bytes": 2128,
+      "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+      "bytes": 2200,
+      "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+      "bytes": 480,
+      "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+    },
+    {
+      "path": "tools/bun-runtime/supervisor/README.md",
+      "bytes": 5511,
+      "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+    },
+    {
+      "path": "tools/bun-runtime/verify-runtime.mjs",
+      "bytes": 19651,
+      "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+    },
+    {
+      "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+      "bytes": 15471,
+      "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+      "bytes": 18357,
+      "sha256": "7674c10ab9eab518c2cb795d39069fd76ece2840c04c1424bbf9f22d06951dad"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+      "bytes": 42531,
+      "sha256": "44bbf299a0b9c87ebceff6a668e80941a5f565e7e6fa5574ba606379de4b15e8"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+      "bytes": 5374,
+      "sha256": "f7be6e093d5505d48b67db08f5612a55815155f90aafe7853b4b894b730cfb95"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+      "bytes": 1065,
+      "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+      "bytes": 9570,
+      "sha256": "8803fe81f984b24e24488b77380d2b45be64de4cc6bc8395f47d51729f4577f0"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+      "bytes": 680,
+      "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+      "bytes": 10584,
+      "sha256": "002a535468b91189c4e31015540b8e6ffbca122749de2f34cf8256c608ed812a"
+    }
+  ],
+  "validators": [
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/archive-pending-wait-trace.mjs",
+      "bytes": 3699,
+      "sha256": "c85ce8d619c81215d057baa3730cc717f4a19fa0fa42854fd2724a72979eefc0"
+    },
+    {
+      "path": "tools/bun-runtime/experimental/api28/signal-trace/pending-wait-trace-evidence.mjs",
+      "bytes": 6514,
+      "sha256": "2a0a58edc5ae4a030cc95d6578e878c5214cf97fa0fb2398b3c50948e0ee4ea9"
+    }
+  ],
+  "records": [
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-13T07:58:35.722Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "fixtureSet": "pending-async",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 27362,
+            "sha256": "c82b1126f1864cfb290b2f5158bd5843b4b02e524de8c67e9690891b103d7539"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 7900,
+            "sha256": "7aee6c8d43cfbb7b32bed389c99c1b8192445346fec50a5d26ea77c6416a7418"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+            "bytes": 10212,
+            "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+            "bytes": 1595,
+            "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 35184,
+            "sha256": "0833352a547a359560f33fb44eda91b7b8d264b656353e4aa313cefda2e8e207"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9472,
+            "sha256": "a7114529f767accaba57135e0818ca9c46fef2b5ad58cebba4c6895f45687b5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18357,
+            "sha256": "7674c10ab9eab518c2cb795d39069fd76ece2840c04c1424bbf9f22d06951dad"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 42531,
+            "sha256": "44bbf299a0b9c87ebceff6a668e80941a5f565e7e6fa5574ba606379de4b15e8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 5374,
+            "sha256": "f7be6e093d5505d48b67db08f5612a55815155f90aafe7853b4b894b730cfb95"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9570,
+            "sha256": "8803fe81f984b24e24488b77380d2b45be64de4cc6bc8395f47d51729f4577f0"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 10584,
+            "sha256": "002a535468b91189c4e31015540b8e6ffbca122749de2f34cf8256c608ed812a"
+          }
+        ],
+        "runtimeSourceCommit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923328,
+              "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 7704,
+              "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35255482,
+          "sha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "020b1186f26487b281a7d3c68add37bfde3f6f5f43b9eb2c6e7c12ec33361433"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5327,
+        "sha256": "93279780d27e0e1cbff59118efec3eddfabdbc2d53c74571bf1cd1f34b9431de"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "pending-async",
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10760,
+            "selinux": "u:r:untrusted_app:s0:c248,c258,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7704,
+                "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 103,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25818,\"before\":[25818,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 101,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25833,\"before\":[25833,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":25833,\"tid\":25833,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25833,\"tid\":25833,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25833,\"tid\":25836,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":25833,\"tid\":25833,\"signo\":31,\"code\":-6,\"senderPid\":25833,\"senderUid\":10760}\nTRACE_USER_WAIT={\"leader\":25833,\"tid\":25833,\"syscallRegister\":22,\"maskAddress\":\"0000007fe65e2fe0\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":25833,\"exitCode\":1,\"events\":33,\"signals\":4,\"exits\":7}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 102,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25843,\"before\":[25843,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 102,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25856,\"before\":[25856,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":25856,\"tid\":25856,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25856,\"tid\":25856,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25856,\"tid\":25856,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25856,\"tid\":25856,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25856,\"tid\":25859,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":25856,\"tid\":25856,\"signo\":31,\"code\":-6,\"senderPid\":25856,\"senderUid\":10760}\nTRACE_USER_WAIT={\"leader\":25856,\"tid\":25856,\"syscallRegister\":22,\"maskAddress\":\"0000007ff2d1d230\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":25856,\"exitCode\":1,\"events\":35,\"signals\":6,\"exits\":7}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"pending-async\",\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10760,\"selinux\":\"u:r:untrusted_app:s0:c248,c258,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7704,\"sha256\":\"5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":103,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25818,\\\"before\\\":[25818,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":101,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25833,\\\"before\\\":[25833,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":25833,\\\"tid\\\":25833,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25833,\\\"tid\\\":25833,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25833,\\\"tid\\\":25836,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":25833,\\\"tid\\\":25833,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":25833,\\\"senderUid\\\":10760}\\nTRACE_USER_WAIT={\\\"leader\\\":25833,\\\"tid\\\":25833,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007fe65e2fe0\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":25833,\\\"exitCode\\\":1,\\\"events\\\":33,\\\"signals\\\":4,\\\"exits\\\":7}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":102,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25843,\\\"before\\\":[25843,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":102,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25856,\\\"before\\\":[25856,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25859,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":25856,\\\"senderUid\\\":10760}\\nTRACE_USER_WAIT={\\\"leader\\\":25856,\\\"tid\\\":25856,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007ff2d1d230\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":25856,\\\"exitCode\\\":1,\\\"events\\\":35,\\\"signals\\\":6,\\\"exits\\\":7}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 5671,
+          "sha256": "18f14db2a0f220bcadd787116b0b26706566794c013b4c719c5d7082b46fc565"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "pending-async",
+            "api": 28,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 10760,
+            "selinux": "u:r:untrusted_app:s0:c248,c258,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.4.148-perf+",
+            "model": "G8441",
+            "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+            "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7704,
+                "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 103,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25905,\"before\":[25905,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 205,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25921,\"before\":[25921,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":25921,\"tid\":25921,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25921,\"tid\":25921,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25921,\"tid\":25924,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":25921,\"tid\":25921,\"signo\":31,\"code\":-6,\"senderPid\":25921,\"senderUid\":10760}\nTRACE_USER_WAIT={\"leader\":25921,\"tid\":25921,\"syscallRegister\":22,\"maskAddress\":\"0000007ff0a77650\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":25921,\"exitCode\":1,\"events\":33,\"signals\":4,\"exits\":7}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 108,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25931,\"before\":[25931,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 307,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":10760,\"pid\":25944,\"before\":[25944,\"0000000000000000\"],\"blocked\":\"0000000040000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":25944,\"tid\":25944,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25944,\"tid\":25944,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25944,\"tid\":25944,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25944,\"tid\":25944,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":25944,\"tid\":25947,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":25944,\"tid\":25944,\"signo\":31,\"code\":-6,\"senderPid\":25944,\"senderUid\":10760}\nTRACE_USER_WAIT={\"leader\":25944,\"tid\":25944,\"syscallRegister\":22,\"maskAddress\":\"0000007fc6ab40f0\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":25944,\"exitCode\":1,\"events\":35,\"signals\":6,\"exits\":7}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"pending-async\",\"api\":28,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":10760,\"selinux\":\"u:r:untrusted_app:s0:c248,c258,c512,c768\",\"seccomp\":2,\"kernel\":\"4.4.148-perf+\",\"model\":\"G8441\",\"fingerprint\":\"Sony\\/G8441\\/G8441:9\\/47.2.A.4.45\\/3677320370:user\\/release-keys\",\"apkSha256\":\"3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7704,\"sha256\":\"5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":103,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25905,\\\"before\\\":[25905,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":205,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25921,\\\"before\\\":[25921,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":25921,\\\"tid\\\":25921,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25921,\\\"tid\\\":25921,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25921,\\\"tid\\\":25924,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":25921,\\\"tid\\\":25921,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":25921,\\\"senderUid\\\":10760}\\nTRACE_USER_WAIT={\\\"leader\\\":25921,\\\"tid\\\":25921,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007ff0a77650\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":25921,\\\"exitCode\\\":1,\\\"events\\\":33,\\\"signals\\\":4,\\\"exits\\\":7}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":108,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25931,\\\"before\\\":[25931,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":307,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":10760,\\\"pid\\\":25944,\\\"before\\\":[25944,\\\"0000000000000000\\\"],\\\"blocked\\\":\\\"0000000040000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25947,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":25944,\\\"senderUid\\\":10760}\\nTRACE_USER_WAIT={\\\"leader\\\":25944,\\\"tid\\\":25944,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007fc6ab40f0\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":25944,\\\"exitCode\\\":1,\\\"events\\\":35,\\\"signals\\\":6,\\\"exits\\\":7}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 5671,
+          "sha256": "04db1605be67a388a49158b17b2edc6824de02a8f7c61dec167ff45de73fc16f"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 10760,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true,
+      "rawReport": {
+        "bytes": 37119,
+        "sha256": "e33de1a7903771b5cc706696cb52675295c55d57197d3524e980f3535e934cc2"
+      },
+      "instrumentation": [
+        {
+          "filename": "instrumentation-1.txt",
+          "bytes": 5671,
+          "sha256": "18f14db2a0f220bcadd787116b0b26706566794c013b4c719c5d7082b46fc565"
+        },
+        {
+          "filename": "instrumentation-2.txt",
+          "bytes": 5671,
+          "sha256": "04db1605be67a388a49158b17b2edc6824de02a8f7c61dec167ff45de73fc16f"
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "kind": "test-only-signal-trace-runs",
+      "compatibilityAcceptance": false,
+      "capturedAt": "2026-09-13T07:58:35.731Z",
+      "build": {
+        "schemaVersion": 1,
+        "kind": "test-only-signal-trace-build",
+        "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace",
+        "runner": "io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace/io.github.supermonster003.autojs6.plugin.bun.runtime.signaltrace.TraceInstrumentation",
+        "abi": "arm64-v8a",
+        "fixtureSet": "pending-async",
+        "compatibilityAcceptance": false,
+        "inputs": [
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/AndroidManifest.xml",
+            "bytes": 914,
+            "sha256": "9a6584574951141a85401f8088d26298dee582165c3bb43f8510779782a6ea5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/ProbeInstrumentation.java",
+            "bytes": 27362,
+            "sha256": "c82b1126f1864cfb290b2f5158bd5843b4b02e524de8c67e9690891b103d7539"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probes.json",
+            "bytes": 7900,
+            "sha256": "7aee6c8d43cfbb7b32bed389c99c1b8192445346fec50a5d26ea77c6416a7418"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/fd-probes.mjs",
+            "bytes": 12747,
+            "sha256": "5fb0ccee4d5f4b263ff93276a6ec389aa169b882fd4275e78b3ae6cdbccd3d3f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-probes.mjs",
+            "bytes": 8188,
+            "sha256": "1828ed6672005680850d7d3859575d540941033d51c9025ecd0e8140f94a0c2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/syscall-evidence.mjs",
+            "bytes": 4905,
+            "sha256": "993a18ca0039e4b9438ab2ccc45f8fed0c48bd68a502d79c932b4fb43ad07ca2"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-probes.mjs",
+            "bytes": 7037,
+            "sha256": "c9cd9e2e5068d8e97a087885b1a487c13f75e3833c993ddadcd390e6774f7d6f"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/openat2-evidence.mjs",
+            "bytes": 3798,
+            "sha256": "52fc93f309a704946bc55b82f7dc1bd0920d50fd1d2bcf8e8ef34c2b40ec1dd6"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-probes.mjs",
+            "bytes": 10187,
+            "sha256": "912c445d8d252928d52e0b90bbff06310b60e1b3401be5b4f55357cd407f4e7c"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.mjs",
+            "bytes": 3454,
+            "sha256": "b06eec5e176dc0415a198d6494e15cde7e902af940a9177cfdb3ce29bb3e2628"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-probes.mjs",
+            "bytes": 9927,
+            "sha256": "564e1262654509efcf8049899eaa0ac2faf1b1ed9aae9260bdb10f49f0b86342"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.mjs",
+            "bytes": 3344,
+            "sha256": "93ec67b6b44b55b9ce63aaf9f4b65ffbda16dbbe60b47a99b334269d16b118f9"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-probes.mjs",
+            "bytes": 8005,
+            "sha256": "c0f9ed348c7a9a6811d9caf19ccfc55a77dddff243f52fce27d61f8aae51610e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.mjs",
+            "bytes": 2821,
+            "sha256": "fddc00e7428f752d23eb2c3e83fe8954735173bd38a356f3f9118441d1005b5d"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-probes.mjs",
+            "bytes": 10212,
+            "sha256": "b8ea9e24bb577996dc3ecf944ede73dca1df546c2095f5361d58319b836ca5cd"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.mjs",
+            "bytes": 1595,
+            "sha256": "e938e6e5b33f52f58704c9665a650db74b889d407ee7a881436214aa07c776a8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs",
+            "bytes": 35184,
+            "sha256": "0833352a547a359560f33fb44eda91b7b8d264b656353e4aa313cefda2e8e207"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/build-probe.mjs",
+            "bytes": 9472,
+            "sha256": "a7114529f767accaba57135e0818ca9c46fef2b5ad58cebba4c6895f45687b5b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/app-probe/run-probe.mjs",
+            "bytes": 9537,
+            "sha256": "4baf07c895c2ffe554531f6dcd90770ac969bfbe43903cccf9b546292e8dc362"
+          },
+          {
+            "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+            "bytes": 3727,
+            "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.c",
+            "bytes": 4394,
+            "sha256": "27f2112e1e859485cd2e9d6f1e71c7ab4c0647a4331734a7a92552a926f44de8"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+            "bytes": 1018,
+            "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/build-supervisor.mjs",
+            "bytes": 2128,
+            "sha256": "59e757a668d2589b6acc9445f97da852df1c66625778c9db4c194aa12480fc1e"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/supervisor-common.mjs",
+            "bytes": 2200,
+            "sha256": "b4dfc8d54d52d8919f150d04a5d63217c2200573cbb11ab29c0ab08d1dbc6749"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/verify-supervisor.mjs",
+            "bytes": 480,
+            "sha256": "3addd4dd9c43ffb7987de562920679ed193e4d494ff232e9e42270cc255df2ad"
+          },
+          {
+            "path": "tools/bun-runtime/supervisor/README.md",
+            "bytes": 5511,
+            "sha256": "e87f30879e98643e3600487e03a35d4f18febcf6152782b7c47bb2324886f5d5"
+          },
+          {
+            "path": "tools/bun-runtime/verify-runtime.mjs",
+            "bytes": 19651,
+            "sha256": "6b5bca03838e3a8ded2a99c1185103af14e17cd80b6290210cb2dc94aeef3df8"
+          },
+          {
+            "path": "tools/bun-runtime/verify-apk-runtime.mjs",
+            "bytes": 15471,
+            "sha256": "ffc6c33de0e9f5c5511c98e5f2b6ca972123005dc81b6b5a54054109468b399e"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+            "bytes": 18357,
+            "sha256": "7674c10ab9eab518c2cb795d39069fd76ece2840c04c1424bbf9f22d06951dad"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/verify-built-runtime.mjs",
+            "bytes": 42531,
+            "sha256": "44bbf299a0b9c87ebceff6a668e80941a5f565e7e6fa5574ba606379de4b15e8"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+            "bytes": 5374,
+            "sha256": "f7be6e093d5505d48b67db08f5612a55815155f90aafe7853b4b894b730cfb95"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-launcher.mjs",
+            "bytes": 1065,
+            "sha256": "c54dbb703cc4833787da53f0c5527d1134c04bc826c405d31e66f8984fc5af2b"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/TraceInstrumentation.java",
+            "bytes": 9570,
+            "sha256": "8803fe81f984b24e24488b77380d2b45be64de4cc6bc8395f47d51729f4577f0"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/AndroidManifest.xml",
+            "bytes": 680,
+            "sha256": "6660c50a673233f10443e209db11a10f648c80e383fa41066ca18026afa5f165"
+          },
+          {
+            "path": "tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs",
+            "bytes": 10584,
+            "sha256": "002a535468b91189c4e31015540b8e6ffbca122749de2f34cf8256c608ed812a"
+          }
+        ],
+        "runtimeSourceCommit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+        "ndkVersion": "29.0.14206865",
+        "flags": [
+          "-std=c11",
+          "-Oz",
+          "-Wall",
+          "-Wextra",
+          "-Werror",
+          "-fPIE",
+          "-pie",
+          "-fstack-protector-strong",
+          "-D_FORTIFY_SOURCE=2",
+          "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384",
+          "-Wl,--build-id=sha1",
+          "-Wl,--strip-all"
+        ],
+        "traceElf": {
+          "androidIdentApi": 28,
+          "interpreter": "/system/bin/linker64",
+          "neededLibraries": [
+            "libdl.so",
+            "libc.so"
+          ]
+        },
+        "toolchain": {
+          "clang": {
+            "bytes": 126826136,
+            "sha256": "f2e1b93d9dd27b847773e7de61b00f1b49ae27eb20ba434297cc020f768a1dfb"
+          },
+          "androidJar": {
+            "bytes": 27768026,
+            "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a"
+          },
+          "apksigner": {
+            "bytes": 1181416,
+            "sha256": "2defad215d7ff52968a409cde528cdaef7918b115e276b8e3378ca7a178e4180"
+          }
+        },
+        "payloads": {
+          "arm64-v8a": {
+            "libbun_exec.so": {
+              "bytes": 87923328,
+              "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+            },
+            "libbun_supervisor.so": {
+              "bytes": 7440,
+              "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+            },
+            "libbun_signal_trace.so": {
+              "bytes": 7704,
+              "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+            }
+          }
+        },
+        "apk": {
+          "filename": "bun-signal-trace-arm64-v8a.apk",
+          "bytes": 35255482,
+          "sha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+          "signing": {
+            "verifiedSchemes": [
+              "v2"
+            ],
+            "signerCount": 1,
+            "certificateSha256": "020b1186f26487b281a7d3c68add37bfde3f6f5f43b9eb2c6e7c12ec33361433"
+          }
+        }
+      },
+      "runner": {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs",
+        "bytes": 5327,
+        "sha256": "93279780d27e0e1cbff59118efec3eddfabdbc2d53c74571bf1cd1f34b9431de"
+      },
+      "runs": [
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "pending-async",
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15125,
+            "selinux": "u:r:untrusted_app:s0:c5,c276,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7704,
+                "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 204,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14421,\"before\":[14421,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 205,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14435,\"before\":[14435,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":14435,\"tid\":14435,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14435,\"tid\":14435,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14435,\"tid\":14438,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":14435,\"tid\":14435,\"signo\":31,\"code\":-6,\"senderPid\":14435,\"senderUid\":15125}\nTRACE_USER_WAIT={\"leader\":14435,\"tid\":14435,\"syscallRegister\":22,\"maskAddress\":\"0000007ff2a47db0\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":14435,\"exitCode\":1,\"events\":33,\"signals\":4,\"exits\":7}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 207,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14446,\"before\":[14446,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 207,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14461,\"before\":[14461,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":14461,\"tid\":14461,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14461,\"tid\":14461,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14461,\"tid\":14461,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14461,\"tid\":14461,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14461,\"tid\":14464,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":14461,\"tid\":14461,\"signo\":31,\"code\":-6,\"senderPid\":14461,\"senderUid\":15125}\nTRACE_USER_WAIT={\"leader\":14461,\"tid\":14461,\"syscallRegister\":22,\"maskAddress\":\"0000007fd10af8d0\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":14461,\"exitCode\":1,\"events\":35,\"signals\":6,\"exits\":7}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"pending-async\",\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15125,\"selinux\":\"u:r:untrusted_app:s0:c5,c276,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7704,\"sha256\":\"5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":204,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14421,\\\"before\\\":[14421,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":205,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14435,\\\"before\\\":[14435,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":14435,\\\"tid\\\":14435,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14435,\\\"tid\\\":14435,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14435,\\\"tid\\\":14438,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":14435,\\\"tid\\\":14435,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":14435,\\\"senderUid\\\":15125}\\nTRACE_USER_WAIT={\\\"leader\\\":14435,\\\"tid\\\":14435,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007ff2a47db0\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":14435,\\\"exitCode\\\":1,\\\"events\\\":33,\\\"signals\\\":4,\\\"exits\\\":7}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":207,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14446,\\\"before\\\":[14446,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":207,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14461,\\\"before\\\":[14461,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14464,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":14461,\\\"senderUid\\\":15125}\\nTRACE_USER_WAIT={\\\"leader\\\":14461,\\\"tid\\\":14461,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007fd10af8d0\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":14461,\\\"exitCode\\\":1,\\\"events\\\":35,\\\"signals\\\":6,\\\"exits\\\":7}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 5697,
+          "sha256": "630b3c4b5b5117f862c32c2cf7a24732e74623b0e8c7cb5b20c4db7d488e69b5"
+        },
+        {
+          "report": {
+            "kind": "test-only-signal-trace-observation",
+            "compatibilityAcceptance": false,
+            "fixtureSet": "pending-async",
+            "api": 31,
+            "abi": "arm64-v8a",
+            "pageSize": 4096,
+            "uid": 15125,
+            "selinux": "u:r:untrusted_app:s0:c5,c276,c512,c768",
+            "seccomp": 2,
+            "kernel": "4.19.157-perf+",
+            "model": "XQ-AT72",
+            "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+            "apkSha256": "3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd",
+            "payloads": {
+              "libbun_exec.so": {
+                "bytes": 87923328,
+                "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+              },
+              "libbun_supervisor.so": {
+                "bytes": 7440,
+                "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+              },
+              "libbun_signal_trace.so": {
+                "bytes": 7704,
+                "sha256": "5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1"
+              }
+            },
+            "rows": [
+              {
+                "mode": "native",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 210,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14540,\"before\":[14540,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "native",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 205,
+                "sourceSha256": "0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"native\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14554,\"before\":[14554,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":14554,\"tid\":14554,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14554,\"tid\":14554,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14554,\"tid\":14557,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":14554,\"tid\":14554,\"signo\":31,\"code\":-6,\"senderPid\":14554,\"senderUid\":15125}\nTRACE_USER_WAIT={\"leader\":14554,\"tid\":14554,\"syscallRegister\":22,\"maskAddress\":\"0000007ff1ae43e0\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":14554,\"exitCode\":1,\"events\":37,\"signals\":4,\"exits\":8}\n",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": false,
+                "exitCode": 1,
+                "elapsedMillis": 207,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14566,\"before\":[14566,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "",
+                "processReaped": true
+              },
+              {
+                "mode": "trap",
+                "traced": true,
+                "exitCode": 1,
+                "elapsedMillis": 205,
+                "sourceSha256": "3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273",
+                "stdout": "PENDING_SIGNAL_RESULT={\"schemaVersion\":1,\"mode\":\"trap\",\"arch\":\"arm64\",\"uid\":15125,\"pid\":14579,\"before\":[14579,\"0000000080000000\"],\"blocked\":\"00000000c0000000\",\"rows\":[],\"passed\":false,\"fd\":256,\"nativeCloseRange\":{\"result\":-1,\"errno\":38},\"policy\":{\"before\":{\"result\":-1,\"errno\":22},\"after\":{\"result\":-1,\"errno\":38},\"sha256\":\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\"},\"trap\":{\"result\":-1,\"errno\":38},\"pending\":{\"before\":\"0000000000000000\",\"checks\":[[1,0],[1,0],[1,0],[0,1]],\"queueResult\":{\"result\":0,\"errno\":0},\"queued\":\"0000000040000000\"},\"error\":\"pending SIGSYS remains queued without early JS delivery\"}\n",
+                "stderr": "TRACE_SIGSYS={\"leader\":14579,\"tid\":14579,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14579,\"tid\":14579,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14579,\"tid\":14579,\"signo\":31,\"code\":1,\"syscall\":167,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14579,\"tid\":14579,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_SIGSYS={\"leader\":14579,\"tid\":14584,\"signo\":31,\"code\":1,\"syscall\":436,\"arch\":3221225655}\nTRACE_USER_SIGSYS={\"leader\":14579,\"tid\":14579,\"signo\":31,\"code\":-6,\"senderPid\":14579,\"senderUid\":15125}\nTRACE_USER_WAIT={\"leader\":14579,\"tid\":14579,\"syscallRegister\":22,\"maskAddress\":\"0000007fc3771160\",\"maskWord\":\"0000000000000000\",\"maskRead\":true}\nTRACE_DONE={\"leader\":14579,\"exitCode\":1,\"events\":35,\"signals\":6,\"exits\":7}\n",
+                "processReaped": true
+              }
+            ],
+            "workspaceRemoved": true,
+            "completed": true
+          },
+          "raw": "INSTRUMENTATION_RESULT: report={\"kind\":\"test-only-signal-trace-observation\",\"compatibilityAcceptance\":false,\"fixtureSet\":\"pending-async\",\"api\":31,\"abi\":\"arm64-v8a\",\"pageSize\":4096,\"uid\":15125,\"selinux\":\"u:r:untrusted_app:s0:c5,c276,c512,c768\",\"seccomp\":2,\"kernel\":\"4.19.157-perf+\",\"model\":\"XQ-AT72\",\"fingerprint\":\"Sony\\/XQ-AT72_CN\\/XQ-AT72:12\\/58.2.A.10.44A\\/058002A0100044A0891821322:user\\/release-keys\",\"apkSha256\":\"3b5c6fbae2d7b3384a059f538712ae61eba383cf812568832af7fee47af8b2cd\",\"payloads\":{\"libbun_exec.so\":{\"bytes\":87923328,\"sha256\":\"5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7\"},\"libbun_supervisor.so\":{\"bytes\":7440,\"sha256\":\"25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537\"},\"libbun_signal_trace.so\":{\"bytes\":7704,\"sha256\":\"5540eb31e59c2b801fb8b96e9f0a537a9c450eda5ced51b94518af567c2c88f1\"}},\"rows\":[{\"mode\":\"native\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":210,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14540,\\\"before\\\":[14540,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"native\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":205,\"sourceSha256\":\"0d3dfdcfdbdce8ae19950583a89d1afd62b2362a3e3cef5d93bf2588957df9db\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"native\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14554,\\\"before\\\":[14554,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":14554,\\\"tid\\\":14554,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14554,\\\"tid\\\":14554,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14554,\\\"tid\\\":14557,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":14554,\\\"tid\\\":14554,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":14554,\\\"senderUid\\\":15125}\\nTRACE_USER_WAIT={\\\"leader\\\":14554,\\\"tid\\\":14554,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007ff1ae43e0\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":14554,\\\"exitCode\\\":1,\\\"events\\\":37,\\\"signals\\\":4,\\\"exits\\\":8}\\n\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":false,\"exitCode\":1,\"elapsedMillis\":207,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14566,\\\"before\\\":[14566,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"\",\"processReaped\":true},{\"mode\":\"trap\",\"traced\":true,\"exitCode\":1,\"elapsedMillis\":205,\"sourceSha256\":\"3e4eb910f942b6e6ad1aee52f32ee15bcd7e7d39b74678da09afe3799b23f273\",\"stdout\":\"PENDING_SIGNAL_RESULT={\\\"schemaVersion\\\":1,\\\"mode\\\":\\\"trap\\\",\\\"arch\\\":\\\"arm64\\\",\\\"uid\\\":15125,\\\"pid\\\":14579,\\\"before\\\":[14579,\\\"0000000080000000\\\"],\\\"blocked\\\":\\\"00000000c0000000\\\",\\\"rows\\\":[],\\\"passed\\\":false,\\\"fd\\\":256,\\\"nativeCloseRange\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"policy\\\":{\\\"before\\\":{\\\"result\\\":-1,\\\"errno\\\":22},\\\"after\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"sha256\\\":\\\"b6e4dd8c87c153b5776e1981334a0882077e550c80251340484397b441de64a1\\\"},\\\"trap\\\":{\\\"result\\\":-1,\\\"errno\\\":38},\\\"pending\\\":{\\\"before\\\":\\\"0000000000000000\\\",\\\"checks\\\":[[1,0],[1,0],[1,0],[0,1]],\\\"queueResult\\\":{\\\"result\\\":0,\\\"errno\\\":0},\\\"queued\\\":\\\"0000000040000000\\\"},\\\"error\\\":\\\"pending SIGSYS remains queued without early JS delivery\\\"}\\n\",\"stderr\":\"TRACE_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":167,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14584,\\\"signo\\\":31,\\\"code\\\":1,\\\"syscall\\\":436,\\\"arch\\\":3221225655}\\nTRACE_USER_SIGSYS={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"signo\\\":31,\\\"code\\\":-6,\\\"senderPid\\\":14579,\\\"senderUid\\\":15125}\\nTRACE_USER_WAIT={\\\"leader\\\":14579,\\\"tid\\\":14579,\\\"syscallRegister\\\":22,\\\"maskAddress\\\":\\\"0000007fc3771160\\\",\\\"maskWord\\\":\\\"0000000000000000\\\",\\\"maskRead\\\":true}\\nTRACE_DONE={\\\"leader\\\":14579,\\\"exitCode\\\":1,\\\"events\\\":35,\\\"signals\\\":6,\\\"exits\\\":7}\\n\",\"processReaped\":true}],\"workspaceRemoved\":true,\"completed\":true}\r\nINSTRUMENTATION_CODE: -1\r\n",
+          "bytes": 5697,
+          "sha256": "4eb319bed75f77c4e30de8f00037deafe97aa3525c21306f0735e2ec95ede9bd"
+        }
+      ],
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 15125,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      },
+      "completed": true,
+      "rawReport": {
+        "bytes": 37223,
+        "sha256": "041c69d2d3f1102b15b09f6f8b6bd7fa667dff2737723277eb9fd2ffcbc4efd8"
+      },
+      "instrumentation": [
+        {
+          "filename": "instrumentation-1.txt",
+          "bytes": 5697,
+          "sha256": "630b3c4b5b5117f862c32c2cf7a24732e74623b0e8c7cb5b20c4db7d488e69b5"
+        },
+        {
+          "filename": "instrumentation-2.txt",
+          "bytes": 5697,
+          "sha256": "4eb319bed75f77c4e30de8f00037deafe97aa3525c21306f0735e2ec95ede9bd"
+        }
+      ]
+    }
+  ]
+}
