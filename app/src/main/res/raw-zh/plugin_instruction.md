@@ -26,4 +26,14 @@ console.log(process.platform);
 - 不承诺完整的 Bun 工具链: `bunx`, 设备端生成可执行文件, 运行时 C 编译和任意 native addon 均不在支持范围内.
 - 不是安全沙箱: Bun 脚本以受信任代码身份在插件进程中运行, 可以使用授予插件的权限, 请只运行你信任的脚本.
 
+### 运行错误与排查
+
+提示使用 Android 为插件设置的语言. 底层诊断详情和 Bun 输出可能仍为英文.
+
+- 如果 Bun Runtime 未激活或未启用, 请在 AutoJs6 的插件中心授权并启用插件; 如果宿主显示激活操作, 请执行激活.
+- 官方插件需要 Android 13 (API 33) 或更高版本. Android 9 至 12L 无法运行; 降低清单中的版本要求不会使运行时兼容.
+- `TIMEOUT`: Bun 执行超时. 请缩短任务, 或在允许范围内调整执行超时时间.
+- `OUTPUT_LIMIT`: Bun 输出超过设定的字节上限. 请减少 stdout 和 stderr 输出后重新运行脚本.
+- `RUNTIME_UNAVAILABLE`: Bun Runtime 不可用. 请检查设备兼容性; 如插件文件不完整, 请重新安装插件.
+
 关于兼容性, 权限, 安装包选择和全部当前限制, 请查看[项目 README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime).

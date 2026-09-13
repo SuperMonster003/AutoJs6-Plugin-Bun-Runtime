@@ -624,6 +624,39 @@
       "category": "experimental",
       "label": "M5 十补丁 JSC 有限压力回归",
       "note": "计数单位为压力模式, 与原八项 Binder 分开. 原生 x86 用户页 ABI 与内核映射页分别呈现; 不代表所有 JIT/Wasm 路径、长时压力或性能验收."
+    },
+    {
+      "file": "2026-09-13-m9-localized-errors-binder.json",
+      "sha256": "59cd12123b0a0b0a71138d9e5bffa37a583809747e5d8263a1d1c436046fabc4",
+      "schema": 1,
+      "kind": "runtime-message-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "official",
+      "label": "M9 本地化服务原八项 Binder 回归",
+      "note": "新服务配官方 Bun, 两台 ARM64 4 KiB 设备各两轮; 仅隔离 Debug APK, 不扩大 native 或 Release 支持."
+    },
+    {
+      "file": "2026-09-13-m9-localized-errors.json",
+      "sha256": "f4b6df08df667435214a503f4994922a00b3111d6baba09b08d03251d167ac33",
+      "schema": 1,
+      "kind": "runtime-message-messages",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M9 十语言错误及帮助回归",
+      "note": "每轮两项独立 JUnit: 十语言资源/帮助与 60 次真实错误及 finished 一致性. 此处测试单位不是语言或错误观察数, 不累计为原八项 Binder."
+    },
+    {
+      "file": "2026-09-13-m9-localized-page-refusal.json",
+      "sha256": "ddfd8b4c6e95ecc18520e190f78c9f949a569d30c72e1d5fffee2930ea0cec2f",
+      "schema": 1,
+      "kind": "runtime-message-page-refusal",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M9 官方 x86 大页拒绝本地化",
+      "note": "API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功."
     }
   ]
 }

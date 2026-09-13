@@ -1475,6 +1475,75 @@
         "workersExited": 64,
         "workerTransferredBytes": 67108864
       }
+    },
+    {
+      "file": "2026-09-13-m9-localized-errors-binder.json",
+      "sha256": "59cd12123b0a0b0a71138d9e5bffa37a583809747e5d8263a1d1c436046fabc4",
+      "schema": 1,
+      "kind": "runtime-message-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "official",
+      "label": "M9 本地化服务原八项 Binder 回归",
+      "note": "新服务配官方 Bun, 两台 ARM64 4 KiB 设备各两轮; 仅隔离 Debug APK, 不扩大 native 或 Release 支持.",
+      "bytesUtf8Lf": 81710,
+      "rows": 2,
+      "reportedScope": "Unchanged eight-test Binder suite with the newly localized production service and official Bun; isolated Debug APKs.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "deviceCount": 2,
+        "roundCount": 4,
+        "passedTests": 32,
+        "totalTests": 32,
+        "failedTests": 0
+      }
+    },
+    {
+      "file": "2026-09-13-m9-localized-errors.json",
+      "sha256": "f4b6df08df667435214a503f4994922a00b3111d6baba09b08d03251d167ac33",
+      "schema": 1,
+      "kind": "runtime-message-messages",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M9 十语言错误及帮助回归",
+      "note": "每轮两项独立 JUnit: 十语言资源/帮助与 60 次真实错误及 finished 一致性. 此处测试单位不是语言或错误观察数, 不累计为原八项 Binder.",
+      "bytesUtf8Lf": 79529,
+      "rows": 2,
+      "reportedScope": "Ten-language resources and six real terminal errors with matching finished events; separate presentation suite.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "deviceCount": 2,
+        "roundCount": 4,
+        "passedTests": 8,
+        "totalTests": 8,
+        "failedTests": 0
+      }
+    },
+    {
+      "file": "2026-09-13-m9-localized-page-refusal.json",
+      "sha256": "ddfd8b4c6e95ecc18520e190f78c9f949a569d30c72e1d5fffee2930ea0cec2f",
+      "schema": 1,
+      "kind": "runtime-message-page-refusal",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M9 官方 x86 大页拒绝本地化",
+      "note": "API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功.",
+      "bytesUtf8Lf": 41361,
+      "rows": 0,
+      "reportedScope": "Ten-language cached page-size refusal before Bun execution; official x86_64 remains incompatible with 16 KiB process pages.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "deviceCount": 1,
+        "roundCount": 2,
+        "passedTests": 4,
+        "totalTests": 4,
+        "failedTests": 0
+      }
     }
   ],
   "rows": [
@@ -9462,6 +9531,230 @@
       "status": "passed",
       "sourceReportedPassed": true,
       "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m9-localized-errors-binder.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/device",
+      "category": "official",
+      "scope": "M9 本地化服务原八项 Binder 回归",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "626611ced7d9b6ac9cdcfda48bf18f5f45f0dd28a2ac03d6c0c4c95e4ab46d68",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m9-localized-errors-binder.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/device",
+      "category": "official",
+      "scope": "M9 本地化服务原八项 Binder 回归",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "626611ced7d9b6ac9cdcfda48bf18f5f45f0dd28a2ac03d6c0c4c95e4ab46d68",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m9-localized-errors.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/device",
+      "category": "diagnostic",
+      "scope": "M9 十语言错误及帮助回归",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "626611ced7d9b6ac9cdcfda48bf18f5f45f0dd28a2ac03d6c0c4c95e4ab46d68",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 2,
+          "total": 2,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 2,
+          "total": 2,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m9-localized-errors.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/device",
+      "category": "diagnostic",
+      "scope": "M9 十语言错误及帮助回归",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "626611ced7d9b6ac9cdcfda48bf18f5f45f0dd28a2ac03d6c0c4c95e4ab46d68",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 2,
+          "total": 2,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 2,
+          "total": 2,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": false
     }
   ]
 }

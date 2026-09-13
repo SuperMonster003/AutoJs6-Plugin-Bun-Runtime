@@ -1,4 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plugin_description">Запускает JavaScript и TypeScript в независимом движке Bun в изолированном процессе Android</string>
-    <string name="plugin_instruction">Поместите &quot;bun&quot;; отдельной первой строкой файла JS или TS, затем запустите файл из AutoJs6 обычным способом. Каждый запуск выполняет только этот файл: npm-зависимости никогда не устанавливаются автоматически, а встроенные функции AutoJs6 внутри Bun недоступны.</string>
+    <string name="plugin_instruction">Поместите \"bun\"; отдельной первой строкой файла JS или TS, затем запустите файл из AutoJs6 обычным способом. Каждый запуск выполняет только этот файл: npm-зависимости никогда не устанавливаются автоматически, а встроенные функции AutoJs6 внутри Bun недоступны.</string>
+    <string name="runtime_diagnostic_label">Диагностические сведения:</string>
+    <string name="runtime_error_busy">Bun Runtime занят. Дождитесь завершения текущего скрипта или отмените его, затем повторите попытку.</string>
+    <string name="runtime_error_cancelled">Выполнение Bun отменено.</string>
+    <string name="runtime_error_internal">Не удалось выполнить Bun. Проверьте диагностические сведения и повторите попытку.</string>
+    <string name="runtime_error_invalid_request">Недопустимый запрос на выполнение Bun. Проверьте параметры запроса и при необходимости обновите AutoJs6 и плагин.</string>
+    <string name="runtime_error_non_zero_exit">Bun завершился с кодом %1$d. Проверьте вывод ошибок скрипта.</string>
+    <string name="runtime_error_output_limit">Вывод Bun превысил заданный предел в байтах. Уменьшите вывод stdout и stderr, затем запустите скрипт снова.</string>
+    <string name="runtime_error_page_size">Эта сборка Bun x86_64 не работает со страницами процесса размером %1$d байт; предел JavaScriptCore составляет %2$d байт. Используйте совместимое устройство. Одно лишь выравнивание APK не устраняет это ограничение.</string>
+    <string name="runtime_error_permission">Для доступа к Bun Runtime требуется разрешение плагина AutoJs6.</string>
+    <string name="runtime_error_source_too_large">Исходный код превышает предел в %1$d байт. Уменьшите размер скрипта и повторите попытку.</string>
+    <string name="runtime_error_spawn_failed">Не удалось запустить процесс Bun. Проверьте диагностические сведения и совместимость устройства.</string>
+    <string name="runtime_error_timeout">Время выполнения Bun истекло. Сократите задачу или измените время ожидания в допустимых пределах.</string>
+    <string name="runtime_error_unavailable">Bun Runtime недоступен. Проверьте совместимость устройства и переустановите плагин, если его файлы неполны.</string>
+    <string name="runtime_help_activation">Если Bun Runtime не активирован или не включен, откройте Центр плагинов в AutoJs6, авторизуйте и включите плагин, затем используйте действие активации, если оно доступно в хосте.</string>
+    <string name="runtime_help_android_version">Официальному плагину требуется Android 13 (API 33) или новее. Он не работает на Android 9-12L; снижение требования в манифесте не делает среду выполнения совместимой.</string>
+    <string name="runtime_help_heading">Ошибки выполнения и их устранение</string>
+    <string name="runtime_help_language">Сообщения используют настройку языка Android для плагина. Низкоуровневые диагностические сведения и вывод Bun могут оставаться на английском языке.</string>
 </resources>

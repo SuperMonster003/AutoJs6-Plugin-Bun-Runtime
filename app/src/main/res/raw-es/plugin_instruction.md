@@ -26,4 +26,14 @@ Si todo funciona, la primera línea de salida es `Bun 1.4.0` y la segunda es `an
 - Sin promesa de toolchain completo de Bun: `bunx`, la generación de ejecutables en el dispositivo, la compilación C en runtime y los addons nativos arbitrarios quedan fuera del alcance admitido.
 - No es un sandbox de seguridad: un script Bun se ejecuta como código de confianza en el proceso del plugin y puede usar los permisos concedidos al plugin, así que ejecuta solo scripts en los que confíes.
 
+### Errores de ejecución y soluciones
+
+Los mensajes usan el idioma de Android para el complemento. Los detalles de diagnóstico de bajo nivel y la salida de Bun pueden seguir en inglés.
+
+- Si Bun Runtime no está activado o habilitado, abre el Centro de complementos en AutoJs6, autoriza y habilita el complemento y usa Activar si el anfitrión lo muestra.
+- El complemento oficial requiere Android 13 (API 33) o posterior. No puede ejecutarse en Android 9 a 12L; reducir el requisito del manifiesto no hace compatible el entorno de ejecución.
+- `TIMEOUT`: La ejecución de Bun agotó el tiempo de espera. Acorta la tarea o ajusta el tiempo de ejecución dentro del límite permitido.
+- `OUTPUT_LIMIT`: La salida de Bun superó el límite de bytes configurado. Reduce la salida de stdout y stderr y ejecuta el script de nuevo.
+- `RUNTIME_UNAVAILABLE`: Bun Runtime no está disponible. Comprueba la compatibilidad del dispositivo y reinstala el complemento si sus archivos están incompletos.
+
 Consulta el [README del proyecto](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) para ver compatibilidad, permisos, selección de paquete y la lista completa de limitaciones actuales.

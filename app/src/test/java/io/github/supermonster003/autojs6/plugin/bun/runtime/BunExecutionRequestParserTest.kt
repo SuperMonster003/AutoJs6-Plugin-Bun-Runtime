@@ -41,12 +41,8 @@ class BunExecutionRequestParserTest {
 
     @Test
     fun officialX86RuntimeRejectsNon4KiBProcessPagesBeforeExecution() {
-        assertEquals(null, officialRuntimePageSizeError("x86_64", 4096))
-        assertEquals(null, officialRuntimePageSizeError("arm64-v8a", 16384))
-
-        val error = requireNotNull(officialRuntimePageSizeError("x86_64", 16384))
-        assertTrue(error.contains("Bun 1.4.0 x86_64"))
-        assertTrue(error.contains("16384-byte process pages"))
-        assertTrue(error.contains("4096-byte page-size ceiling"))
+        assertEquals(null, runtimePageSizeFailure("x86_64", 4096))
+        assertEquals(null, runtimePageSizeFailure("arm64-v8a", 16384))
+        assertEquals(BunRuntimeFailure.PageSize(16384, 4096), runtimePageSizeFailure("x86_64", 16384))
     }
 }

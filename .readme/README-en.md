@@ -175,6 +175,20 @@ See the [troubleshooting guide (Chinese)](https://github.com/SuperMonster003/Aut
 
 ******
 
+### Execution errors and troubleshooting
+
+******
+
+Messages use the Android language setting for the plugin. Low-level diagnostic details and Bun output may remain in English.
+
+- If Bun Runtime is not activated or enabled, open Plugin Center in AutoJs6, authorize and enable the plugin, and use Activate if the host shows it.
+- The official plugin requires Android 13 (API 33) or later. Android 9 through 12L cannot run it; lowering the manifest requirement does not make the runtime compatible.
+- `TIMEOUT`: Bun execution timed out. Shorten the task or adjust the execution timeout within the allowed limit.
+- `OUTPUT_LIMIT`: Bun output exceeded the configured byte limit. Reduce stdout and stderr output, then run the script again.
+- `RUNTIME_UNAVAILABLE`: Bun Runtime is unavailable. Check device compatibility and reinstall the plugin if its files are incomplete.
+
+******
+
 ### Plugin Interface
 
 ******
@@ -223,6 +237,7 @@ _2026/09/12_
 
 - `Fix` Fix experimental Android pidfd probing when asynchronous spawn starts with SIGSYS blocked, preserving the caller mask and pending signals through the existing waiter fallback. The ten-patch runtime passes the unchanged 31-probe suite (310/310) and full eight-test Binder suite (80/80) in five native 4 KiB environments. Record recovered build completion without inventing missing original exit codes, and preserve the initial ART startup failure separately. JSC rebase and Release gates remain open; official payloads are unchanged
 - `Fix` Fix the experimental native x86_64 16 KiB JavaScriptCore startup abort by rebuilding pinned WebKit with explicit large-page, JIT and allocator settings and relinking Bun; all eight Binder tests pass twice on both 4 KiB and 16 KiB AVDs (32/32). Official payloads and their 4 KiB guard remain unchanged; Release acceptance is separate
+- `Improvement` Localize runtime error summaries in all ten languages, preserve stable error codes and bounded technical details, and generate activation, Android requirement, timeout and output-limit help directly from the same Android resources. Render cached page-size refusals in the current plugin language and preserve complete Unicode characters when truncating diagnostics
 - `Improvement` Add a generated compatibility evidence matrix with a complete source index, archive hashes and CI drift checks; preserve per-runtime, per-device and per-suite results, including failures and preliminary diagnostics, without adding new device acceptance or broadening official support
 - `Improvement` Verify the new ten-patch large-page x86 candidate on API 36 at 4 KiB and 16 KiB userspace pages: unchanged Binder tests pass 32/32 and fixed pressure modes pass 28/28 using one APK pair bound to 77 inputs. Archive exact bytes, raw results and cleanup separately from historical evidence; the x86 16 KiB ABI remains emulated over 4 KiB kernel pages, with no Release or performance claim
 - `Improvement` Bind a separate ten-patch large-page JSC candidate, requiring two matching clean Bun builds with retained real driver exits and exact reused JSC inputs. Route isolated Binder tooling through the new source-bound lock while preserving historical and official payloads; device and Release acceptance remain separate

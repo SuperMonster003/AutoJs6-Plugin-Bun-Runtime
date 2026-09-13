@@ -114,6 +114,9 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Localization and generated documentation
 
+- Runtime error summaries use the plugin's current Android resource configuration. Preserve protocol error codes, bounded technical details and the `MAX_TERMINAL_MESSAGE_BYTES` UTF-8 budget without splitting valid Unicode characters. Cache readiness failure facts rather than localized text. Activation/authorization before binding belongs to the host; unsupported Android installation cannot be reported by a service that cannot run.
+- The separate M9 presentation regression is archived in `docs/compatibility/2026-09-13-m9-localized-errors.md`: official Bun with the localized production service passes the unchanged eight-test Binder suite twice on native ARM64 API 33/35 at 4 KiB (32/32), plus 240 ten-language error/finished observations. Native payloads are unchanged. The official x86 API 36 / 16 KiB user-page test verifies cached refusal before Bun execution, not runtime compatibility. Keep these Debug batches separate from experimental native and Release acceptance.
+
 - Maintain these 10 languages: default English plus explicit English, Arabic, Spanish, French, Japanese, Korean, Russian, Simplified Chinese, Hong Kong Traditional Chinese, and Taiwan Traditional Chinese.
 - Locale `strings.xml` files contain no `app_name`. Keep default `values/strings.xml` and `values-en/strings.xml` identical, sort string names, use ASCII punctuation, and keep `plugin_description` free of terminal punctuation.
 - Treat `.readme/lang_*.json`, `.readme/common.json`, `.changelog/lang_*.json`, and the Markdown templates as the source of truth.

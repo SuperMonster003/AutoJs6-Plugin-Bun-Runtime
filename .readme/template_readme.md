@@ -113,6 +113,14 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
+### {{ runtime_help_heading }}
+
+******
+
+{{ placeholder_runtime_help }}
+
+******
+
 ### {{ h3_plugin_interface }}
 
 ******

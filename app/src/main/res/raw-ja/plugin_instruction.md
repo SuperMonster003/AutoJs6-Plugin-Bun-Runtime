@@ -26,4 +26,14 @@ console.log(process.platform);
 - 完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.
 - Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください.
 
+### 実行エラーと対処方法
+
+メッセージはプラグインの Android 言語設定に従います. 低レベルの診断の詳細や Bun の出力は英語のままの場合があります.
+
+- Bun Runtime が起動または有効化されていない場合は, AutoJs6 のプラグインセンターでプラグインを承認して有効化し, ホストに起動操作が表示されていれば実行してください.
+- 公式プラグインには Android 13 (API 33) 以降が必要です. Android 9 から 12L では実行できません. マニフェストの要件を下げてもランタイムの互換性は得られません.
+- `TIMEOUT`: Bun の実行がタイムアウトしました. タスクを短くするか, 許容範囲内で実行の制限時間を調整してください.
+- `OUTPUT_LIMIT`: Bun の出力が設定されたバイト数の上限を超えました. stdout と stderr の出力を減らして, スクリプトを再実行してください.
+- `RUNTIME_UNAVAILABLE`: Bun Runtime を利用できません. デバイスの互換性を確認し, ファイルが不足している場合はプラグインを再インストールしてください.
+
 互換性, 権限, パッケージ選択, 現在の制限の全リストは[プロジェクト README](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime) を参照してください.

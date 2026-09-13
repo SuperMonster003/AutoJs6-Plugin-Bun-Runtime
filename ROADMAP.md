@@ -336,7 +336,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (文档) 新增 [排错指南](docs/troubleshooting.md): 用最小脚本与 "症状 -> 原因 -> 处理" 表覆盖引擎识别、激活/权限、ABI/API/页大小、超时、输出超限、源码上限、npm/相对导入、AutoJs6 globals/Java bridge 及生命周期问题. 十语言 README FAQ 均有明确语言的入口, 与正式 API 33+ 和实验/Release 边界一致; generator 与 11 项 Python tests 通过. (2026-09-13, G0/G1)
 - [x] (发布/测试) 新增 [自动生成的兼容证据矩阵](docs/compatibility/MATRIX.md) 与 [机器索引](docs/compatibility/matrix.generated.json): 完整登记 57 份历史 JSON, 生成 144 条设备/尝试记录, 按设备/API/执行 ABI/页大小/运行时摘要与各轮套件呈现结果. 官方、实验、shell、失败和初步诊断分别保留范围, 构建/补充记录不增加设备通过数; 不跨报告、APK、运行时或计数单位累加. 源文件 UTF-8/LF SHA-256、结构适配、轮次/摘要一致性和只读 `--check` 接入 Markdown CI, [维护说明](tools/compatibility/README.md) 与十语言 README/changelog 已同步. Python 专项负向/历史回归与标准构建验证通过; 历史报告及 native 字节未变, 没有新增设备验收. (2026-09-13, G0/G1)
 - [x] (测试/文档) 为固定 25 项独立探针新增可重复归档工具, 对两轮原始 instrumentation 与 JSON、当前构建 receipt/源码、安装后 APK/runtime/helper 摘要及每轮/最终 UID 清理重新校验, 拒绝失败、混用 APK 与重复环境, 使用独占创建保留历史文件. 新增四组含负向变体的单元测试并接入 CI; 首次用于 API 29/32 的 100/100 报告. 这不是完整历史兼容矩阵生成器. (2026-09-12, G1/G2)
-- [ ] (插件/发布) 审计脚本运行失败时用户可见的错误与诊断文案, 确保关键失败场景 (未激活, 超时, 输出超限, 系统版本不支持) 在 10 种语言资源中都有可理解的提示, 并与 `strings.xml` 保持一致.
+- [x] (插件/发布/测试) 完成 [运行错误与诊断审计](docs/compatibility/2026-09-13-m9-localized-errors.md): 17 个错误/帮助资源覆盖十语言, 10 个稳定错误码使用本地化摘要, 预热缓存保留事实并在返回时翻译, 16 KiB 诊断截断保留完整 Unicode 字符. 未激活/未启用与 Android 13 要求的帮助直接从同一组 `strings.xml` 生成到 README/插件说明, 明确绑定前宿主与系统安装门槛的归属. 两台 native ARM64 API 33/35 / 4 KiB 的原八项 Binder 两轮共 32/32; 独立语言回归含 240 个真实错误/finished 观察. x86 API 36 / 16 KiB 用户页 ABI 两轮确认十语言缓存拒绝, 不计作 Bun 执行成功. 三环境新增 JUnit 共 12/12, 包/六个 UID 与本轮 AVD 均清理. 原 native、AAR、历史报告和 Release 边界保持不变. (2026-09-13, G0/G1/G2)
 
 **M9 验收条件:** 新用户只读 README 与示例即可完成首次运行; 常见失败在排错指南中有对应条目; 兼容矩阵与设备报告不脱节.
 

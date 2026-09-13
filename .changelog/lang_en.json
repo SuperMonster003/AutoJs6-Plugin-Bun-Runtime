@@ -15,6 +15,7 @@
         "Align the online platform-versions plugin with the repository-pinned 1.7.4; leave the native-alignment plugin unchanged"
       ],
       "improvement": [
+        "Localize runtime error summaries in all ten languages, preserve stable error codes and bounded technical details, and generate activation, Android requirement, timeout and output-limit help directly from the same Android resources. Render cached page-size refusals in the current plugin language and preserve complete Unicode characters when truncating diagnostics",
         "Add a generated compatibility evidence matrix with a complete source index, archive hashes and CI drift checks; preserve per-runtime, per-device and per-suite results, including failures and preliminary diagnostics, without adding new device acceptance or broadening official support",
         "Verify the new ten-patch large-page x86 candidate on API 36 at 4 KiB and 16 KiB userspace pages: unchanged Binder tests pass 32/32 and fixed pressure modes pass 28/28 using one APK pair bound to 77 inputs. Archive exact bytes, raw results and cleanup separately from historical evidence; the x86 16 KiB ABI remains emulated over 4 KiB kernel pages, with no Release or performance claim",
         "Bind a separate ten-patch large-page JSC candidate, requiring two matching clean Bun builds with retained real driver exits and exact reused JSC inputs. Route isolated Binder tooling through the new source-bound lock while preserving historical and official payloads; device and Release acceptance remain separate",

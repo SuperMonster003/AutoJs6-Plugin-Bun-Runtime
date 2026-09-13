@@ -79,10 +79,10 @@ class BunRuntimeService : Service() {
                 requireNotNull(source) { "Source descriptor is missing" }
                 requireNotNull(callback) { "Runtime callback is missing" }
                 if (consumePendingCancellation(request.executionId)) {
-                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, "Execution was cancelled", startedAt, cancelled = true)
+                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
                 if (!executionGate.tryAcquire()) {
-                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_BUSY, "Bun runtime is busy", startedAt)
+                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_BUSY, null, startedAt)
                 }
                 gateAcquired = true
                 handle = ExecutionHandle()
@@ -96,12 +96,13 @@ class BunRuntimeService : Service() {
                         callback,
                         request.executionId,
                         BunRuntimeContract.ERROR_RUNTIME_UNAVAILABLE,
-                        probe.error ?: "Bun runtime is unavailable",
+                        null,
                         startedAt,
+                        runtimeFailure = probe.failure,
                     )
                 }
                 if (handle.cancelled.get()) {
-                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, "Execution was cancelled", startedAt, cancelled = true)
+                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
 
                 workspace = createWorkspace(request.executionId)
@@ -111,7 +112,7 @@ class BunRuntimeService : Service() {
                     copySource(descriptor, sourceFile)
                 }
                 if (handle.cancelled.get()) {
-                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, "Execution was cancelled", startedAt, cancelled = true)
+                    return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
                 return execute(request, sourceFile, workspace, callback, handle, startedAt)
             } catch (error: SourceTooLargeException) {
@@ -119,7 +120,7 @@ class BunRuntimeService : Service() {
                     callback,
                     request?.executionId.orEmpty(),
                     BunRuntimeContract.ERROR_SOURCE_TOO_LARGE,
-                    error.message ?: "Source exceeds the size limit",
+                    null,
                     startedAt,
                 )
             } catch (error: IllegalArgumentException) {
@@ -127,7 +128,7 @@ class BunRuntimeService : Service() {
                     callback,
                     request?.executionId.orEmpty(),
                     BunRuntimeContract.ERROR_INVALID_REQUEST,
-                    error.message ?: "Invalid Bun runtime request",
+                    error.message,
                     startedAt,
                 )
             } catch (error: Throwable) {
@@ -155,7 +156,7 @@ class BunRuntimeService : Service() {
     private fun enforcePluginCaller() {
         enforceCallingPermission(
             BunRuntimeContract.PLUGIN_PERMISSION,
-            "Bun runtime access requires the AutoJs6 plugin permission",
+            getString(R.string.runtime_error_permission),
         )
     }
 
@@ -188,7 +189,7 @@ class BunRuntimeService : Service() {
                 callback,
                 request.executionId,
                 BunRuntimeContract.ERROR_SPAWN_FAILED,
-                error.message ?: "Unable to start Bun",
+                error.message ?: error.javaClass.simpleName,
                 startedAt,
             )
         }
@@ -260,7 +261,7 @@ class BunRuntimeService : Service() {
             putString(BunRuntimeContract.KEY_STDOUT, "")
             putString(BunRuntimeContract.KEY_STDERR, "")
             putString(BunRuntimeContract.KEY_ERROR_CODE, errorCode)
-            putString(BunRuntimeContract.KEY_ERROR_MESSAGE, errorMessage(errorCode, exitCode))
+            putString(BunRuntimeContract.KEY_ERROR_MESSAGE, runtimeErrorMessage(errorCode, exitCode))
             putLong(BunRuntimeContract.KEY_DURATION_MILLIS, SystemClock.elapsedRealtime() - startedAt)
             putBoolean(BunRuntimeContract.KEY_CANCELLED, cancelled)
             putBoolean(BunRuntimeContract.KEY_TIMED_OUT, timedOut)
@@ -359,7 +360,7 @@ class BunRuntimeService : Service() {
         putString(BunRuntimeContract.KEY_RUNTIME_VERSION, probe.version)
         putString(BunRuntimeContract.KEY_RUNTIME_REVISION, probe.revision)
         putString(BunRuntimeContract.KEY_RUNTIME_PATH, probe.path)
-        putString(BunRuntimeContract.KEY_ERROR_MESSAGE, probe.error)
+        putString(BunRuntimeContract.KEY_ERROR_MESSAGE, runtimeFailureMessage(probe.failure))
         putString(BunRuntimeContract.KEY_PROCESS_NAME, Application.getProcessName())
         putString(BunRuntimeContract.KEY_PROCESS_ABI, probe.abi)
         putStringArray(BunRuntimeContract.KEY_SUPPORTED_ABIS, packagedAbis)
@@ -370,9 +371,10 @@ class BunRuntimeService : Service() {
     private fun failure(
         executionId: String,
         code: String,
-        message: String,
+        diagnostic: String?,
         startedAt: Long,
         cancelled: Boolean = false,
+        runtimeFailure: BunRuntimeFailure? = null,
     ): Bundle = Bundle().apply {
         putInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, BunRuntimeContract.PROTOCOL_VERSION)
         putString(BunRuntimeContract.KEY_EXECUTION_ID, executionId)
@@ -381,7 +383,8 @@ class BunRuntimeService : Service() {
         putString(BunRuntimeContract.KEY_STDOUT, "")
         putString(BunRuntimeContract.KEY_STDERR, "")
         putString(BunRuntimeContract.KEY_ERROR_CODE, code)
-        putString(BunRuntimeContract.KEY_ERROR_MESSAGE, boundedTerminalMessage(message))
+        putString(BunRuntimeContract.KEY_ERROR_MESSAGE, runtimeFailureMessage(runtimeFailure)
+            ?: runtimeErrorMessage(code, diagnostic = diagnostic))
         putLong(BunRuntimeContract.KEY_DURATION_MILLIS, SystemClock.elapsedRealtime() - startedAt)
         putBoolean(BunRuntimeContract.KEY_CANCELLED, cancelled)
         putBoolean(BunRuntimeContract.KEY_TIMED_OUT, code == BunRuntimeContract.ERROR_TIMEOUT)
@@ -391,10 +394,11 @@ class BunRuntimeService : Service() {
         callback: IBunRuntimeCallback?,
         executionId: String,
         code: String,
-        message: String,
+        diagnostic: String?,
         startedAt: Long,
         cancelled: Boolean = false,
-    ): Bundle = failure(executionId, code, message, startedAt, cancelled).also { result ->
+        runtimeFailure: BunRuntimeFailure? = null,
+    ): Bundle = failure(executionId, code, diagnostic, startedAt, cancelled, runtimeFailure).also { result ->
         callback?.let {
             emit(
                 callback = it,
@@ -444,34 +448,6 @@ class BunRuntimeService : Service() {
                 terminal = terminal,
             )
         }
-    }
-
-    private fun errorMessage(errorCode: String?, exitCode: Int): String? = when (errorCode) {
-        null -> null
-        BunRuntimeContract.ERROR_OUTPUT_LIMIT -> "Bun output exceeded the configured byte limit"
-        BunRuntimeContract.ERROR_TIMEOUT -> "Bun execution timed out"
-        BunRuntimeContract.ERROR_CANCELLED -> "Bun execution was cancelled"
-        BunRuntimeContract.ERROR_NON_ZERO_EXIT -> "Bun exited with code $exitCode"
-        else -> "Bun execution failed"
-    }
-
-    private fun boundedTerminalMessage(message: String): String {
-        if (message.toByteArray(StandardCharsets.UTF_8).size <= BunRuntimeContract.MAX_TERMINAL_MESSAGE_BYTES) {
-            return message
-        }
-        var low = 0
-        var high = message.length
-        while (low < high) {
-            val middle = (low + high + 1) ushr 1
-            if (message.substring(0, middle).toByteArray(StandardCharsets.UTF_8).size <=
-                BunRuntimeContract.MAX_TERMINAL_MESSAGE_BYTES
-            ) {
-                low = middle
-            } else {
-                high = middle - 1
-            }
-        }
-        return message.substring(0, low)
     }
 
     private class ExecutionHandle {

@@ -1,4 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="plugin_description">在隔離的 Android 行程中使用獨立 Bun 引擎執行 JavaScript 和 TypeScript</string>
-    <string name="plugin_instruction">在 JS 或 TS 檔案第一行單獨加入 &quot;bun&quot;;, 然後照常從 AutoJs6 執行該檔案. 每次執行只會執行這一個檔案: 不會自動安裝 npm dependency, Bun 腳本中也無法使用 AutoJs6 內建函數.</string>
+    <string name="plugin_instruction">在 JS 或 TS 檔案第一行單獨加入 \"bun\";, 然後照常從 AutoJs6 執行該檔案. 每次執行只會執行這一個檔案: 不會自動安裝 npm dependency, Bun 腳本中也無法使用 AutoJs6 內建函數.</string>
+    <string name="runtime_diagnostic_label">診斷詳細資訊:</string>
+    <string name="runtime_error_busy">Bun Runtime 忙碌中. 請等待目前指令碼結束或取消執行後再試.</string>
+    <string name="runtime_error_cancelled">Bun 執行已取消.</string>
+    <string name="runtime_error_internal">Bun 執行失敗. 請查看診斷詳細資訊後再試.</string>
+    <string name="runtime_error_invalid_request">Bun 執行要求無效. 請檢查要求設定, 必要時更新 AutoJs6 和外掛程式.</string>
+    <string name="runtime_error_non_zero_exit">Bun 已結束, 結束代碼為 %1$d. 請查看指令碼的錯誤輸出.</string>
+    <string name="runtime_error_output_limit">Bun 輸出超過設定的位元組上限. 請減少 stdout 和 stderr 輸出後重新執行指令碼.</string>
+    <string name="runtime_error_page_size">此 Bun x86_64 組建無法在處理序分頁大小為 %1$d 位元組的環境中執行; 其 JavaScriptCore 上限為 %2$d 位元組. 請使用相容裝置. 僅通過 APK 對齊不能解決此限制.</string>
+    <string name="runtime_error_permission">存取 Bun Runtime 需要 AutoJs6 外掛程式權限.</string>
+    <string name="runtime_error_source_too_large">原始碼超過 %1$d 位元組的上限. 請縮小指令碼後再試.</string>
+    <string name="runtime_error_spawn_failed">無法啟動 Bun 處理序. 請查看診斷詳細資訊並檢查裝置相容性.</string>
+    <string name="runtime_error_timeout">Bun 執行逾時. 請縮短工作, 或在允許範圍內調整執行逾時時間.</string>
+    <string name="runtime_error_unavailable">Bun Runtime 無法使用. 請檢查裝置相容性; 如外掛程式檔案不完整, 請重新安裝外掛程式.</string>
+    <string name="runtime_help_activation">如果 Bun Runtime 尚未啟動或啟用, 請在 AutoJs6 的外掛程式中心授權並啟用外掛程式; 如果主程式顯示啟動操作, 請執行啟動.</string>
+    <string name="runtime_help_android_version">官方外掛程式需要 Android 13 (API 33) 或更新版本. Android 9 至 12L 無法執行; 降低資訊清單中的版本要求不會使執行階段相容.</string>
+    <string name="runtime_help_heading">執行錯誤與疑難排解</string>
+    <string name="runtime_help_language">提示使用 Android 為外掛程式設定的語言. 底層診斷詳細資訊和 Bun 輸出可能仍為英文.</string>
 </resources>
