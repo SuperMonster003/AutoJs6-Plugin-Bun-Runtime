@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { PACKAGE, RUNNER, verifyTraceApk } from "./build-trace.mjs";
-import { countUidProcesses, fileFacts, newOutputDirectory, parseOptions, requireFile, hash, materializeAsyncSignalSource } from "../app-probe/probe-common.mjs";
+import { PACKAGE, RUNNER, verifyTraceApk, fixtureSource } from "./build-trace.mjs";
+import { countUidProcesses, fileFacts, newOutputDirectory, parseOptions, requireFile, hash } from "../app-probe/probe-common.mjs";
 const o=parseOptions(process.argv.slice(2),["--adb","--serial","--api","--page-size","--apk-directory","--output-directory","--sdk","--jdk"]);
 const adb=requireFile(o["--adb"]),serial=o["--serial"];
 assert(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(serial));
@@ -36,6 +36,7 @@ try {
     const raw=r.stdout+r.stderr; writeFileSync(join(output,`instrumentation-${round}.txt`),raw,{flag:"wx"});
     const line=r.stdout.split(/\r?\n/).filter(t=>t.startsWith("INSTRUMENTATION_RESULT: report="));assert.equal(line.length,1);
     const report=JSON.parse(line[0].slice("INSTRUMENTATION_RESULT: report=".length));record.runs.push({report,raw,bytes:Buffer.byteLength(raw),sha256:hash(raw)});
+    assert.equal(report.fixtureSet,build.fixtureSet);
     assert.equal(report.completed,true);assert.equal(report.compatibilityAcceptance,false);assert.equal(report.uid,uid);
     assert.equal(report.kind,"test-only-signal-trace-observation");assert.equal(report.apkSha256,build.apk.sha256);
     assert.equal(report.api,Number(o["--api"]));assert.equal(report.abi,build.abi);assert.equal(report.pageSize,Number(o["--page-size"]));
@@ -43,7 +44,7 @@ try {
     assert.deepEqual(report.payloads,build.payloads[build.abi]);assert.equal(report.seccomp,2);
     assert.deepEqual(report.rows.map(row=>[row.mode,row.traced]),[["native",false],["native",true],["trap",false],["trap",true]]);
     for(const row of report.rows) {
-      assert.equal(row.sourceSha256,hash(materializeAsyncSignalSource(row.mode)));assert.equal(row.processReaped,true);
+      assert.equal(row.sourceSha256,hash(fixtureSource(build.fixtureSet,row.mode)));assert.equal(row.processReaped,true);
       assert(Buffer.byteLength(row.stdout)+Buffer.byteLength(row.stderr)<=16384);assert(row.elapsedMillis<15000);
       console.log(JSON.stringify({round,mode:row.mode,traced:row.traced,exitCode:row.exitCode,stderr:row.stderr}));
     }

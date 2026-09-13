@@ -5,7 +5,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, realpa
 import { tmpdir } from "node:os";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { ROOT, SHARED_PROCESS, fileFacts, hash, inputFacts, lockedEvidence, materializeAsyncSignalSource,
+import { ROOT, SHARED_PROCESS, fileFacts, hash, inputFacts, lockedEvidence, materializeAsyncSignalSource, materializePendingSignalSource,
   newOutputDirectory, parseOptions, requireFile, verifyRuntimePair } from "../app-probe/probe-common.mjs";
 import { supervisorLock, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
 import { verifyElfBuffer } from "../../../verify-runtime.mjs";
@@ -17,6 +17,15 @@ export const RUNNER=PACKAGE+"/"+PACKAGE+".TraceInstrumentation";
 export const NDK="29.0.14206865";
 export const FLAGS=Object.freeze(["-std=c11","-Oz","-Wall","-Wextra","-Werror","-fPIE","-pie","-fstack-protector-strong","-D_FORTIFY_SOURCE=2",
   "-Wl,-z,relro,-z,now,-z,noexecstack,-z,max-page-size=16384","-Wl,--build-id=sha1","-Wl,--strip-all"]);
+export function fixtureAsset(fixtureSet, mode) {
+  assert(["blocked-async", "pending-async"].includes(fixtureSet), "fixed diagnostic fixture set required");
+  assert(["native", "trap"].includes(mode), "fixed diagnostic mode required");
+  return (fixtureSet === "pending-async" ? "pending-signal-" : "async-signal-") + mode + ".mjs";
+}
+export function fixtureSource(fixtureSet, mode) {
+  fixtureAsset(fixtureSet, mode);
+  return fixtureSet === "pending-async" ? materializePendingSignalSource(mode) : materializeAsyncSignalSource(mode);
+}
 export function traceInputs() {
   return [...inputFacts(), ...["trace.c","trace-launcher.mjs","TraceInstrumentation.java","AndroidManifest.xml","build-trace.mjs"].map(name=>{
     const path="tools/bun-runtime/experimental/api28/signal-trace/"+name;
@@ -44,11 +53,12 @@ export function verifyTraceApk(path,receipt,java,jar,apksigner,zipalign) {
   }
   const embedded=JSON.parse(readBoundedApkEntry(path,"assets/trace-build.json",131072));
   const {apk,...base}=receipt; assert.deepEqual(embedded,base);
-  for(const mode of ["native","trap"]) assert.equal(readBoundedApkEntry(path,`assets/async-signal-${mode}.mjs`,12288).toString(),materializeAsyncSignalSource(mode));
+  for(const mode of ["native","trap"]) assert.equal(readBoundedApkEntry(path,`assets/${fixtureAsset(receipt.fixtureSet,mode)}`,12288).toString(),fixtureSource(receipt.fixtureSet,mode));
   assert.equal(readBoundedApkEntry(path,"assets/trace-launcher.mjs",4096).toString(),readFileSync(join(HERE,"trace-launcher.mjs"),"utf8").replace(/\r\n/g,"\n"));
   return receipt;
 }
 export function buildTrace(o) {
+  const fixtureSet=o["--fixture-set"] ?? "blocked-async"; fixtureAsset(fixtureSet,"native");
   const output=newOutputDirectory(o["--output-directory"]),sdk=realpathSync(o["--sdk"]),jdk=realpathSync(o["--jdk"]),ndk=realpathSync(o["--ndk"]);
   assert(readFileSync(join(ndk,"source.properties"),"utf8").split(/\r?\n/).includes("Pkg.Revision = "+NDK));
   const abi=o["--abi"]; assert(["arm64-v8a","x86_64"].includes(abi));
@@ -72,12 +82,12 @@ export function buildTrace(o) {
     copyFileSync(join(ROOT,helper.binaryPath),join(staging,"lib",abi,"libbun_supervisor.so"));
     run(requireFile(join(jdkBin,"javac"+exe)),["-encoding","UTF-8","-source","8","-target","8","-bootclasspath",androidJar,"-d",join(staging,"classes"),join(HERE,"TraceInstrumentation.java"),join(ROOT,SHARED_PROCESS)]);
     run(java,["-cp",requireFile(join(bt,"lib/d8.jar")),"com.android.tools.r8.D8","--min-api","28","--lib",androidJar,"--output",join(staging,"dex"),...classes(join(staging,"classes"))]);
-    const receipt={schemaVersion:1,kind:"test-only-signal-trace-build",packageName:PACKAGE,runner:RUNNER,abi,compatibilityAcceptance:false,
+    const receipt={schemaVersion:1,kind:"test-only-signal-trace-build",packageName:PACKAGE,runner:RUNNER,abi,fixtureSet,compatibilityAcceptance:false,
       inputs:traceInputs(),runtimeSourceCommit:lockedEvidence().source.downstreamHeadCommit,ndkVersion:NDK,flags:FLAGS,traceElf,
       toolchain:{clang:fileFacts(clang),androidJar:fileFacts(androidJar),apksigner:fileFacts(apksigner)},
       payloads:{[abi]:{"libbun_exec.so":{bytes:runtime.bytes,sha256:runtime.sha256},"libbun_supervisor.so":{bytes:helper.binaryBytes,sha256:helper.binarySha256},"libbun_signal_trace.so":fileFacts(tracePath)}}};
     writeFileSync(join(staging,"assets/trace-build.json"),JSON.stringify(receipt));
-    for(const mode of ["native","trap"]) writeFileSync(join(staging,`assets/async-signal-${mode}.mjs`),materializeAsyncSignalSource(mode));
+    for(const mode of ["native","trap"]) writeFileSync(join(staging,`assets/${fixtureAsset(fixtureSet,mode)}`),fixtureSource(fixtureSet,mode));
     writeFileSync(join(staging,"assets/trace-launcher.mjs"),readFileSync(join(HERE,"trace-launcher.mjs"),"utf8").replace(/\r\n/g,"\n"));
     for(const name of ["BUN-LICENSE.md","WEBKIT-JAVASCRIPTCORE-COPYING.LIB","WEBKIT-WEBCORE-LICENSE-LGPL-2","WEBKIT-WEBCORE-LICENSE-LGPL-2.1","WEBKIT-WEBCORE-LICENSE-APPLE"])
       copyFileSync(join(ROOT,"app/src/main/assets/doc/licenses",name),join(staging,"assets",name));
@@ -100,4 +110,4 @@ export function buildTrace(o) {
   }
 }
 if(process.argv[1] && import.meta.url===pathToFileURL(resolve(process.argv[1])).href)
-  buildTrace(parseOptions(process.argv.slice(2),["--sdk","--jdk","--ndk","--abi","--runtime","--repeat-runtime","--output-directory"]));
+  buildTrace(parseOptions(process.argv.slice(2),["--sdk","--jdk","--ndk","--abi","--runtime","--repeat-runtime","--output-directory","--fixture-set"]));

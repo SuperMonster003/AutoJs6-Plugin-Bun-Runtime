@@ -15,6 +15,33 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The new fixed **33-probe** suite preserves all original 31 definitions and old
+fixture bytes, adding two pending-SIGSYS asynchronous spawn modes. On native
+ARM64 API 28 and 31 / 4 KiB, both modes fail twice: original 31 pass **124/124**,
+but the new gate is **0/8**, overall **124/132**. The caller's pending signal is
+delivered early during spawn, before the final mask restoration. Independent
+plain/ptrace pairs confirm SI_TKILL delivery to the original main thread; this
+is a controlled exit 1, not the earlier fatal pidfd SIGSYS. See the
+[failure and diagnosis](../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys.md).
+The ten-patch bytes remain unchanged and this gate is open.
+
+The two new fixed assets alone receive a 12 KiB source cap. All old source,
+time, output and lifecycle limits remain unchanged. Queueing uses thread-directed
+tgkill after blocking SIGSYS; parent/child pending state, original mask/TID,
+delayed single JS delivery and listener removal are required, never bypassed.
+The current failure occurs before those later success assertions can complete.
+
+```powershell
+node tools/bun-runtime/experimental/api28/app-probe/archive-pending-signal-failure.mjs NEW_FAILURE.json DEVICE_DIRECTORY...
+```
+
+This failure-only archiver independently checks both failed raw rounds, the
+successful original 31, exact pending observations, source/APK bindings and UID
+cleanup. It cannot create acceptance. The legacy blocked-async failure archiver
+is explicitly limited to its original 31-case shape and rejects expanded runs.
+
+### Historical ten-patch 31-probe acceptance
+
 The [ten-patch pidfd repair](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md)
 passes the same 31 probes twice in five native 4 KiB environments: ARM64
 API 28/31/33/35 and x86_64 API 33, **310/310**. Only the expected revision changes

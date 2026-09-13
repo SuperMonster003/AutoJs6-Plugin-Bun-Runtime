@@ -4,11 +4,12 @@
 
 更新日期: 2026-09-13
 
-最新完成 M3-B 的启动检查诊断与缓存重试: 五个原生 4 KiB 环境的新服务/APK 批次通过
-原八项 Binder 80/80、受控 probe 30/30, 另有语言与执行前页大小拒绝回归.
-临时失败在清理完成后冷却 30 秒按需重试, 固定不匹配仍缓存至服务重建;
-两次首次环境失败及同 APK 重试分别归档. 见 [完整报告](docs/compatibility/2026-09-13-m3-probe-lifecycle.md).
-本轮没有重编 native 或运行原 31-probe, 既有实验/Samsung/JSC 与 Release 边界保持不变.
+最新 M3 pending-SIGSYS 回归发现未修复阻断: 保留原 31 项, 新增 native/TRAP 两模式.
+原生 ARM64 API 28/31 各两轮均为 31/33, 原 31 项合计 124/124, 新模式 0/8.
+独立 plain/ptrace 对照捕获八次 SI_TKILL 在 spawn 父线程提前交付, 对应源码临时 mask
+移除 SIGSYS 的路径. 这是受控 exit 1, 不是此前 pidfd SIGSYS 崩溃. [失败与诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md)
+已独立归档; 尚未修改 native, distributionReady=false, 下一步先修复父/子路径的 mask 生命周期.
+此前 [M3-B 启动检查/缓存重试](docs/compatibility/2026-09-13-m3-probe-lifecycle.md) 已完成并保持原验收范围.
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
@@ -222,6 +223,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [ ] (测试) 完成启动和 spawn child 的其余 `close_range`/`CLOSE_RANGE_CLOEXEC` 语义门禁. Android 新证据覆盖 fd 256 高于降低后的 hard limit 128, 但仍未覆盖 FD 70000 或超过原 65536 扫描上界; Linux 主机高位 FD 测试不能替代设备证据. 新四模式已有 ARM64 API 32 / 4 KiB 与 API 36 / 原生 16 KiB 证据; UNSHARE、watch/reload、阻塞异步 SIGSYS 和其余线程/错误边界另行验证; 现有 8 项 Binder 的通过不等于扩展矩阵完成.
 - [x] (测试/设备) 在不改运行时字节、不放宽原 20 项定义/断言的前提下新增三个固定 syscall 夹具和独立证据校验器. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/23, 共 230/230; 六个 syscall 的 raw TRAP→ENOSYS 对照共 60 次通过, 复制与异步等待另有 16 次先 EIO 证明调用路径、再 TRAP 证明回退的验证通过. API 28 的两次复制因 kernel 4.4 门控、两次 pidfd 因既有更高优先级策略无法观察 EIO, 单独记录且不计为高层分支触达. 原有 30 次强制回收为 301-307 ms, 测试包卸载且 UID 进程归零, 本轮 AVD 已关闭, 未主动操作原有 AVD; API 24 仍在线, 原有 API 36 大页 AVD 在最终只读检查时已离线, 原因未确定. 见 [syscall 报告与语义边界](docs/compatibility/2026-09-10-m3-syscall-fallbacks.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-syscall-fallbacks.json). (2026-09-10, G1/G2, 原始历史不变, 本轮无 16 KiB/完整 Binder/发布)
 - [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得出现非预期 SIGSYS, hang 或 FD 泄漏. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3, timer/fetch 视为 Android 主动禁用的 epoll_pwait2, 或 raw openat2 视为路径约束通过. openat2 目录约束已通过九补丁的 4 KiB 与原生 ARM64 16 KiB 复测, 但首次高层 EIO/TRAP 触达未完成. 内部 sys::lchmod 的固定 bare bun link 路径已在六个原生环境验证权限修改, 重复链接, no-follow, 被忽略的 EIO 和独立 SIGSYS 触达对照, 不能扩大为完整包管理器或公开 node:fs lchmod 支持. 其余错误/FD/线程边界仍待验证.
+- [x] (测试/诊断) 新增两个固定 pending-SIGSYS 异步探针, 原 31 定义/旧 fixture/预算不变; native ARM64 API 28/31 各两轮 31/33, 原 31 项 124/124, 新模式 0/8. 同一线程 tgkill 排入的信号在第一次 spawn 返回时不再 pending, mask 检查仍通过且 JS 尚未交付. 独立两轮 native/TRAP plain/ptrace 共 16 次复现, 八次追踪直接捕获 SI_TKILL 及精确 sender/receiver, 对应父线程 vfork 前临时解除 SIGSYS 阻塞的源码路径. [失败和动态诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md) 分档, 仅完成回归/诊断, 未修复或验收新兼容能力. (2026-09-13, G1/G2, failed gate)
+- [ ] (上游/构建/测试, 当前阻断) 修复 posix_spawn_bun 父线程临时 mask 提前交付 pending SIGSYS 的问题, 分开处理父线程和 vfork 子路径, 审查可选 clone3/cgroup 与子路径 syscall trap. 新源码须独立可复现构建并通过原 31 项与新增 pending 门禁; 不预热 pidfd、不提前清空 pending、不放宽原断言. 十补丁当前字节与失败记录保持原样.
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在七个原生环境通过 28/28 新观测和 84 个 child 检查, 包含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. watch/reload、其他线程和现有八项套件之外的插件边界仍待覆盖.
 - [x] (测试/设备) 固定套件扩为 31 项而保留原 29 项定义/源码/预算, 双 ABI APK 绑定 28 个 canonical 输入. ARM64 API 31/33/35 与 x86_64 API 33 各两轮 31/31 (248/248), 含 16 次 blocked async 和 48 个短生命周期子进程观测. Sony API 28 两轮 29/31, 新两项共四次 exit 159 且无语义记录; 原 29 项 58/58. 成功/失败分别归档, 失败专用归档器不接受隐藏的其他回归, 不进入通过归档. 五个包/UID 均清理, 本轮 AVD 关闭, 预先在线 API 27 AVD 未操作. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-async.md)、[四环境通过 JSON](docs/compatibility/2026-09-13-m3-blocked-async-passing.json) 与 [API 28 失败 JSON](docs/compatibility/2026-09-13-m3-blocked-async-api28-failure.json). (2026-09-13 本地日期, G1/G2, 门禁失败, native/历史/Release 不变)
 - [x] (源码/测试/设备) 独立观察器确认 API 28 pidfd_open SIGSYS 后, 补丁 10 通过只读 mask 查询选择既有 waiter. 十补丁重放、28 个 blob、十个精确源码 host 用例、已有双 ABI 成品恢复审计通过. 原 31 项只改 revision, 五个本地原生 4 KiB 环境两轮探针 310/310、Binder 80/80. 旧失败和首次 ART 启动失败单独保留; 包/UID/owned AVD 全部清理. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md). (2026-09-13, G1/G2)

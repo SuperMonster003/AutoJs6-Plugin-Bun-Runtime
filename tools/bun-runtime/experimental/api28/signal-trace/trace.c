@@ -62,8 +62,14 @@ int main(int argc, char **argv) {
             siginfo_t info;
             if (ptrace(PTRACE_GETSIGINFO, tid, 0, &info)) fail("siginfo");
             if (++signals > 32) fail("signal-budget");
-            fprintf(stderr, "TRACE_SIGSYS={\"leader\":%d,\"tid\":%d,\"signo\":%d,\"code\":%d,\"syscall\":%d,\"arch\":%u}\n",
-                leader, tid, info.si_signo, info.si_code, info.si_syscall, info.si_arch);
+            if (info.si_code == 1 /* SYS_SECCOMP */) {
+                fprintf(stderr, "TRACE_SIGSYS={\"leader\":%d,\"tid\":%d,\"signo\":%d,\"code\":%d,\"syscall\":%d,\"arch\":%u}\n",
+                    leader, tid, info.si_signo, info.si_code, info.si_syscall, info.si_arch);
+            } else {
+                /* The siginfo union has sender identity here, not a syscall/arch. */
+                fprintf(stderr, "TRACE_USER_SIGSYS={\"leader\":%d,\"tid\":%d,\"signo\":%d,\"code\":%d,\"senderPid\":%d,\"senderUid\":%u}\n",
+                    leader, tid, info.si_signo, info.si_code, info.si_pid, info.si_uid);
+            }
             fflush(stderr);
             /* Including fatal blocked SIGSYS: never suppress or convert it. */
         }

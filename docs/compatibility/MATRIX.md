@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 68 份源报告, 160 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 70 份源报告, 164 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -623,6 +623,28 @@ shell UID 2000, 不经过应用 zygote seccomp、Binder 或 APK nativeLibraryDir
 | --- | --- | --- | --- | --- | --- | --- |
 | /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 7b9ac266888a<br>SHA 22b7e0778c53 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
 | /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 7b9ac266888a<br>SHA 22b7e0778c53 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
+
+### M3 pending SIGSYS 提前交付动态诊断
+
+来源: [2026-09-13-m3-pending-sigsys-diagnosis.json](2026-09-13-m3-pending-sigsys-diagnosis.json).
+
+八次 SI_TKILL 追踪与八次 plain 对照; 捕获 sender/receiver 和事件顺序, 非 rt_sigprocmask 参数或修复验收.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit a9c76a599bac<br>SHA 96c8460903ed | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
+| /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit a9c76a599bac<br>SHA 96c8460903ed | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
+
+### M3 十补丁 pending SIGSYS 失败门禁
+
+来源: [2026-09-13-m3-pending-sigsys-failure.json](2026-09-13-m3-pending-sigsys-failure.json).
+
+原 31 项通过 124/124, 两个新模式 0/8; 全部受控 exit 1, 整体门禁失败, 不分配兼容验收.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
+| /reports/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/33 探针; 31/33 探针 | 诊断, 不计入接受结果; 记录失败 |
 
 ### M3-B 十补丁启动检查受控回归
 

@@ -68,8 +68,11 @@ jobs:
             tools/bun-runtime/experimental/api28/app-probe/lchmod-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/hard-limit-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/async-signal-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/pending-signal-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/app-probe/pending-signal-failure.test.mjs \
             tools/bun-runtime/experimental/api28/app-probe/archive-async-signal-failure.test.mjs \
             tools/bun-runtime/experimental/api28/signal-trace/trace-evidence.test.mjs \
+            tools/bun-runtime/experimental/api28/signal-trace/pending-trace-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/binder/binder-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.test.mjs \
