@@ -1,4 +1,41 @@
-# 会话交接: M3-B 启动检查诊断与重试生命周期完成
+# 会话交接: M3 pending SIGSYS 新阻断已复现并完成动态诊断
+
+更新: 2026-09-13 (Asia/Shanghai). 从干净 `57679d1` 继续, 本轮完成两个固定 pending
+探针及独立观察器诊断. **兼容门禁失败, runtime 尚未修复.** 继续前读完整 `AGENTS.md`、
+本文件及 `E:/.codex-tmp/pending-sigsys-20260913/SESSION_HANDOFF.local.md`.
+[完整报告](compatibility/2026-09-13-m3-pending-sigsys.md)、
+[失败](compatibility/2026-09-13-m3-pending-sigsys-failure.json) 与
+[诊断](compatibility/2026-09-13-m3-pending-sigsys-diagnosis.json) 分开保存.
+
+- 33-probe 套件保留原 31 定义、六个旧 fixture、五个独立 validator 及 FD validator 函数.
+  新增 native/TRAP pending 模式, 只给两个新 asset 12 KiB cap; 原预算/recovery-last 不变.
+- Sony G8441 API 28 与 Sony XQ-AT72 API 31 (原生 ARM64 / 4096) 使用同一 APK,
+  各两轮 31/33. 原 31 项 124/124, 新模式 0/8; 每次都是第一次 spawn 返回后 pending
+  位消失, mask 检查通过但 JS 尚未收到信号. 受控 exit 1, 不是 SIGSYS 崩溃或超时.
+- 独立 observer 新增 fixed `pending-async` profile, 区分 SYS_SECCOMP 与 SI_TKILL 的
+  siginfo union 字段. 两设备各两轮 native/TRAP plain/traced, 共 16 次复现;
+  八次追踪均捕获主线程 SI_TKILL, sender PID/UID 精确匹配且先于 child close_range.
+  不改变寄存器、mask、syscall 结果或信号交付. 没有抓取 rt_sigprocmask 参数或调用栈.
+- 精确十补丁 `bun-spawn.cpp:253` 在父线程 vfork 前临时从 mask 移除 SIGSYS,
+  与早交付吻合. Patch 10 的 pidfd shim 保证不能扩大为整个 spawn 的 pending 保持.
+  下一步先修复父/子 mask 生命周期, 同时审查 parent clone3/cgroup; 新源码单独构建和验收.
+  不预热 pidfd、不提前清 pending、不放宽新失败断言或覆盖原报告.
+- Probe APK 绑定 30 输入, observer APK 绑定 35 输入; 两次固定 NDK 编译仅构建小 observer,
+  不是 Bun/WebKit. 全部 native/source locks、生产 service/AAR、官方 API 33+、distributionReady=false 不变.
+- 两台 probe UID 10757/15122、trace UID 10758/15123 均卸载清零; 私有目录全部清理.
+  仅启动/关闭 owned AVD 5584, 未在其运行套件. 精确名称与 serial 消失记录已保存;
+  其他 AVD 无控制命令, 不推断初末无关库存变化原因. 无三星窗口、push 或 Release.
+- 新 archiver 仅接收精确失败与动态证据. 旧 31 项失败工具拒绝扩展套件, 防止复用旧计数.
+  原 68 份 JSON 保持不变, 新矩阵 70 份/164 条. 新回归不增加历史 434/434、112/112,
+  没有新 Binder、x86 执行、三星/16 KiB、watch/reload 或 Release 通过结论.
+- 最终 Node 204/204、Python 37/37, Markdown 与矩阵生成检查通过. 生产四项 Gradle
+  2m 31s 成功 (48 executed / 48 up-to-date); JVM 原 21 项结果有效, 本轮任务为
+  UP-TO-DATE, 不声称重新执行. lint 0 errors/44 warnings, 三种 Debug APK 摘要/16 KiB ZIP
+  校验通过. observer Linux host 四模式/eight plain-traced executions 通过.
+  IDE 补充 build 的 60 秒调用超时, 仅返回 SDK XML 版本警告; 原始返回留在本机,
+  不将超时当成功, 也未修复缓存或重复启动 native 构建. 后续状态见本机交接.
+
+## 此前: M3-B 启动检查诊断与重试生命周期完成
 
 更新: 2026-09-13 (Asia/Shanghai). 本轮从干净 `4195101` 继续, 完成 M3-B 的
 runtime probe 诊断和失败缓存/重试两个小节. 继续前完整阅读 `AGENTS.md`、本文件及

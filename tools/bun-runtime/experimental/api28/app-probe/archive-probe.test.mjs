@@ -7,6 +7,8 @@ import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
 import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
 import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
 import { asyncSignalResult } from "./async-signal-fixture.test-support.mjs";
+import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
+import { pendingSignalResult } from "./pending-signal-fixture.test-support.mjs";
 
 function fixture() {
   const historical = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-11-m3-lchmod-bin-link.json", import.meta.url), "utf8"));
@@ -26,7 +28,8 @@ function fixture() {
   }
   for (const run of record.runs) run.probes.splice(run.probes.length - 1, 0,
     ...Object.values(HARD_LIMIT_MODES).map(mode => hardLimitResult(mode, run.environment.abi, run.environment.uid)),
-    ...Object.values(ASYNC_SIGNAL_MODES).map(mode => asyncSignalResult(mode, run.environment.abi, run.environment.uid)));
+    ...Object.values(ASYNC_SIGNAL_MODES).map(mode => asyncSignalResult(mode, run.environment.abi, run.environment.uid)),
+    ...Object.values(PENDING_SIGNAL_MODES).map(mode => pendingSignalResult(mode, run.environment.abi, run.environment.uid)));
   return record;
 }
 const raw = record => record.runs.map(run => "INSTRUMENTATION_RESULT: report=" + JSON.stringify(run) + "\nINSTRUMENTATION_CODE: -1\n");
@@ -37,10 +40,12 @@ test("archive revalidates both complete application rounds and counts only their
   const summary = summarizeRecords([record]);
   assert.equal(summary.environments, 1);
   assert.equal(summary.rounds, 2);
-  assert.equal(summary.passedProbes, 62);
-  assert.equal(summary.totalProbes, 62);
+  assert.equal(summary.passedProbes, 66);
+  assert.equal(summary.totalProbes, 66);
   assert.equal(summary.blockedAsyncSignalObservations, 4);
   assert.equal(summary.blockedAsyncChildObservations, 12);
+  assert.equal(summary.pendingAsyncSignalObservations, 4);
+  assert.equal(summary.pendingAsyncChildObservations, 12);
   assert.equal(summary.loweredSoftLimitObservations, 4);
   assert.equal(summary.forcibleLifecycleObservations, 6);
   assert.equal(summary.loweredHardLimitObservations, 8);
@@ -82,6 +87,11 @@ test("a changed UID, time or directory is not a new environment; APK builds stay
     for (const probe of run.probes.filter(p => p.hardLimitEvidence)) {
       probe.hardLimitEvidence.uid++;
       probe.stdout = "HARD_LIMIT_RESULT=" + JSON.stringify(probe.hardLimitEvidence) + "\n";
+    }
+    for (const probe of run.probes.filter(p => p.pendingSignalEvidence)) {
+      probe.pendingSignalEvidence.uid++;
+      probe.pendingSignalEvidence.rows[2].uid++;
+      probe.stdout = "PENDING_SIGNAL_RESULT=" + JSON.stringify(probe.pendingSignalEvidence) + "\n";
     }
     for (const probe of run.probes.filter(p => p.asyncSignalEvidence)) {
       probe.asyncSignalEvidence.uid++;

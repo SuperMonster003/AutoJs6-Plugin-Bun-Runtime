@@ -46,6 +46,8 @@ public final class TraceInstrumentation extends Instrumentation {
         try {
             JSONObject build = new JSONObject(asset("trace-build.json"));
             check(build.getString("kind").equals("test-only-signal-trace-build"),"diagnostic identity");
+            String fixtureSet = build.getString("fixtureSet");
+            check(fixtureSet.equals("blocked-async") || fixtureSet.equals("pending-async"),"fixed fixture set");
             int uid = android.os.Process.myUid();
             String abi = arguments.getString("abi");
             check(Build.SUPPORTED_ABIS[0].equals(abi) && (abi.equals("arm64-v8a") ? Os.uname().machine.equals("aarch64") : Os.uname().machine.equals("x86_64")), "native ABI");
@@ -64,7 +66,7 @@ public final class TraceInstrumentation extends Instrumentation {
                 check(file.length()==expected.getLong("bytes") && digest(file).equals(expected.getString("sha256")),"installed payload hash");
             }
             report.put("kind","test-only-signal-trace-observation").put("compatibilityAcceptance",false)
-                .put("api",Build.VERSION.SDK_INT).put("abi",abi).put("pageSize",Os.sysconf(OsConstants._SC_PAGESIZE))
+                .put("fixtureSet",fixtureSet).put("api",Build.VERSION.SDK_INT).put("abi",abi).put("pageSize",Os.sysconf(OsConstants._SC_PAGESIZE))
                 .put("uid",uid).put("selinux",context).put("seccomp",2).put("kernel",Os.uname().release)
                 .put("model",Build.MODEL).put("fingerprint",Build.FINGERPRINT).put("apkSha256",digest(apk)).put("payloads",payloads);
             job = new File(getTargetContext().getCacheDir(),"signal-trace-"+SystemClock.elapsedRealtime()); check(job.mkdir(),"new workspace");
@@ -72,7 +74,7 @@ public final class TraceInstrumentation extends Instrumentation {
             for (String mode:new String[]{"native","trap"}) for(boolean traced:new boolean[]{false,true}) {
                 File work = new File(job,mode+(traced?"-traced":"-plain")); check(work.mkdir(),"new case workspace");
                 File entry = new File(work,"entry.mjs");
-                String source = asset("async-signal-"+mode+".mjs"); check(source.getBytes(StandardCharsets.UTF_8).length<=12288,"fixed asset bound");
+                String source = asset((fixtureSet.equals("pending-async")?"pending-signal-":"async-signal-")+mode+".mjs"); check(source.getBytes(StandardCharsets.UTF_8).length<=12288,"fixed asset bound");
                 try(OutputStream output=new FileOutputStream(entry)) { output.write(source.getBytes(StandardCharsets.UTF_8)); }
                 List<String> command = new ArrayList<>();
                 command.add(new File(nativeDir,"libbun_exec.so").getAbsolutePath());

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { inputFacts, lockedEvidence } from "./probe-common.mjs";
 import { validateRunRecord } from "./archive-probe.mjs";
+import { pendingSignalResult } from "./pending-signal-fixture.test-support.mjs";
 import { validateAsyncSignalFailure } from "./archive-async-signal-failure.mjs";
 const archived = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-blocked-async-api28-failure.json", import.meta.url), "utf8"));
 function fixture() {
@@ -42,6 +43,12 @@ test("failure archival rejects hidden regressions, missing signals, source drift
     const record = fixture(); change(record); assert.throws(() => validateAsyncSignalFailure(record, raw(record)));
   }
 });
+test("legacy failure archival refuses an expanded suite instead of reusing historical counts", () => {
+  const record = fixture();
+  for (const run of record.runs) run.probes.splice(-1, 0, pendingSignalResult("native", run.environment.abi, run.environment.uid));
+  assert.throws(() => validateAsyncSignalFailure(record, raw(record)));
+});
+
 test("failure raw output must retain the failed instrumentation code and exact original observations", () => {
   const record = fixture(), rounds = raw(record);
   for (const changed of [rounds.slice(0,1), [rounds[0].replace("INSTRUMENTATION_CODE: 0", "INSTRUMENTATION_CODE: -1"), rounds[1]],

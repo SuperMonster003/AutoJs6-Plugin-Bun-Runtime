@@ -80,6 +80,8 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Execution contract
 
+- The fixed suite now has 33 probes, retaining all original 31 definitions and old fixture bytes. Both new pending-SIGSYS modes fail twice on native ARM64 API 28 and 31 / 4 KiB: the original 31 pass 124/124, but the new gate is 0/8 (overall 124/132). Independent paired plain/ptrace diagnostics capture eight early SI_TKILL deliveries to the spawning main thread before child close_range, with matching sender PID/UID; they are not seccomp signal deaths. The ten-patch parent posix_spawn_bun temporarily excludes SIGSYS from its mask before vfork; patch 10's pidfd-shim guarantees must not be expanded to the whole spawn lifecycle. Preserve docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json and the separate diagnosis unchanged. Do not warm pidfd, unblock early, weaken pending-signal assertions, or count this as compatibility acceptance. Native/source locks remain ten-patch and distributionReady=false. A new parent/child-mask repair, independent builds and new device acceptance are still required; watch/reload, clone3/cgroup and broader gates remain open.
+
 - Bun is an independent engine, not a Rhino or Node.js alias. The AutoJs6 host routes the standalone `"bun";` directive to this plugin.
 - Version 0.1 accepts one immutable JavaScript or TypeScript source snapshot through `ParcelFileDescriptor`.
 - Execute with the argument vector equivalent to `bun run --no-install <source>`. Do not invoke a shell, concatenate an untrusted command, or install missing dependencies automatically.

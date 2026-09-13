@@ -136,6 +136,7 @@ public final class ProbeInstrumentation extends Instrumentation {
         String id = probe.getString("id");
         boolean hardLimit = id.startsWith("fd-hard-");
         boolean asyncSignal = id.startsWith("sigsys-blocked-async-");
+        boolean pendingSignal = id.startsWith("sigsys-pending-async-");
         long[] parentBefore = hardLimit ? readNofileLimits() : null;
         File work = new File(job, id);
         check(work.mkdir(), "new per-probe directory");
@@ -157,6 +158,15 @@ public final class ProbeInstrumentation extends Instrumentation {
                     sourceText = asset("hard-limit-" + mode + ".mjs");
                     check(sourceText.getBytes(StandardCharsets.UTF_8).length <= 12288 &&
                             sourceText.startsWith("const HARD_LIMIT_MODE = \"" + mode + "\";\n"), "bounded fixed hard-limit source asset");
+                } else if (pendingSignal) {
+                    String mode = probe.getString("mode");
+                    check(java.util.Arrays.asList("native", "trap").contains(mode) &&
+                            id.equals("sigsys-pending-async-" + mode) && probe.getString("sourceFile").equals("pending-signal-probes.mjs") &&
+                            probe.getString("sourceAsset").equals("pending-signal-" + mode + ".mjs") && !probe.has("source"),
+                            "fixed pending-signal source asset binding");
+                    sourceText = asset("pending-signal-" + mode + ".mjs");
+                    check(sourceText.getBytes(StandardCharsets.UTF_8).length <= 12288 &&
+                            sourceText.startsWith("const PENDING_SIGNAL_MODE = \"" + mode + "\";\n"), "bounded fixed pending-signal source asset");
                 } else if (asyncSignal) {
                     String mode = probe.getString("mode");
                     check(java.util.Arrays.asList("native", "trap").contains(mode) &&
@@ -260,12 +270,12 @@ public final class ProbeInstrumentation extends Instrumentation {
                 String sourceFile = probe.getString("sourceFile");
                 check(sourceFile.equals("fd-probes.mjs") || sourceFile.equals("syscall-probes.mjs") ||
                         sourceFile.equals("openat2-probes.mjs") || sourceFile.equals("lchmod-probes.mjs") ||
-                        sourceFile.equals("hard-limit-probes.mjs") || sourceFile.equals("async-signal-probes.mjs"), "fixed fixture source");
+                        sourceFile.equals("hard-limit-probes.mjs") || sourceFile.equals("async-signal-probes.mjs") || sourceFile.equals("pending-signal-probes.mjs"), "fixed fixture source");
                 boolean fd = sourceFile.equals("fd-probes.mjs");
                 boolean openat2 = sourceFile.equals("openat2-probes.mjs");
                 boolean lchmod = sourceFile.equals("lchmod-probes.mjs");
-                String prefix = fd ? "FD_PROBE_RESULT=" : openat2 ? "OPENAT2_PROBE_RESULT=" : lchmod ? "LCHMOD_PROBE_RESULT=" : hardLimit ? "HARD_LIMIT_RESULT=" : asyncSignal ? "ASYNC_SIGNAL_RESULT=" : "SYSCALL_PROBE_RESULT=";
-                evidenceKey = fd ? "fdEvidence" : openat2 ? "openat2Evidence" : lchmod ? "lchmodEvidence" : hardLimit ? "hardLimitEvidence" : asyncSignal ? "asyncSignalEvidence" : "syscallEvidence";
+                String prefix = fd ? "FD_PROBE_RESULT=" : openat2 ? "OPENAT2_PROBE_RESULT=" : lchmod ? "LCHMOD_PROBE_RESULT=" : hardLimit ? "HARD_LIMIT_RESULT=" : asyncSignal ? "ASYNC_SIGNAL_RESULT=" : pendingSignal ? "PENDING_SIGNAL_RESULT=" : "SYSCALL_PROBE_RESULT=";
+                evidenceKey = fd ? "fdEvidence" : openat2 ? "openat2Evidence" : lchmod ? "lchmodEvidence" : hardLimit ? "hardLimitEvidence" : asyncSignal ? "asyncSignalEvidence" : pendingSignal ? "pendingSignalEvidence" : "syscallEvidence";
                 String line = out.trim();
                 check(line.startsWith(prefix) && !line.contains("\n") && line.length() <= 2048,
                         "exactly one bounded fixture evidence record");

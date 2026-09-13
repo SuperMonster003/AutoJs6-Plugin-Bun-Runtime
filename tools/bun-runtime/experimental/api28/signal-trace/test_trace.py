@@ -28,21 +28,27 @@ class TraceTest(unittest.TestCase):
 
     def test_forwarding_does_not_suppress_fatal_or_handled_signal(self):
         target, tracer = str(self.directory / 'target'), str(self.directory / 'trace')
-        for mode in ['fatal', 'handled']:
+        for mode in ['fatal', 'handled', 'user-fatal', 'user-handled']:
             with self.subTest(mode=mode):
                 plain = subprocess.run([target, 'run', '--no-install', '/' + mode], capture_output=True, text=True, timeout=5)
                 traced = subprocess.run([tracer, target, '/' + mode], capture_output=True, text=True, timeout=5)
-                expected = 0 if mode == 'handled' else -signal.SIGSYS
+                expected = 0 if mode.endswith('handled') else -signal.SIGSYS
                 self.assertEqual(plain.returncode, expected)
                 self.assertEqual(traced.returncode, expected if expected == 0 else 128 - expected)
                 self.assertEqual(traced.stdout, plain.stdout)
                 self.assertEqual(plain.stderr, '')
                 lines = traced.stderr.splitlines()
                 self.assertEqual(len(lines), 2)
-                self.assertTrue(lines[0].startswith('TRACE_SIGSYS='))
                 info = json.loads(lines[0].split('=', 1)[1])
-                self.assertEqual((info['tid'], info['signo'], info['code'], info['syscall'], info['arch']),
-                                 (info['leader'], 31, 1, 39, 0xc000003e))
+                if mode.startswith('user-'):
+                    self.assertTrue(lines[0].startswith('TRACE_USER_SIGSYS='))
+                    self.assertEqual(set(info), {'leader', 'tid', 'signo', 'code', 'senderPid', 'senderUid'})
+                    self.assertEqual((info['tid'], info['signo'], info['code'], info['senderPid'], info['senderUid']),
+                                     (info['leader'], 31, -6, info['leader'], os.getuid()))
+                else:
+                    self.assertTrue(lines[0].startswith('TRACE_SIGSYS='))
+                    self.assertEqual((info['tid'], info['signo'], info['code'], info['syscall'], info['arch']),
+                                     (info['leader'], 31, 1, 39, 0xc000003e))
                 self.assertTrue(lines[1].startswith('TRACE_DONE='))
                 done = json.loads(lines[1].split('=', 1)[1])
                 self.assertEqual((done['leader'], done['exitCode'], done['signals'], done['exits']),

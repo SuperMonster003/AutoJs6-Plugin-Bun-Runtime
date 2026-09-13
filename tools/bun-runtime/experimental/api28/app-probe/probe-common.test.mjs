@@ -17,6 +17,8 @@ import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
 import { hardLimitResult } from "./hard-limit-fixture.test-support.mjs";
 import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
 import { asyncSignalResult } from "./async-signal-fixture.test-support.mjs";
+import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
+import { pendingSignalResult } from "./pending-signal-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
@@ -24,7 +26,7 @@ const evidence = lockedEvidence();
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
 const ninePatchRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+7b9ac2668"} : p);
-const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id));
+const withoutHardLimits = rows => rows.filter(p => !Object.hasOwn(HARD_LIMIT_MODES, p.id) && !Object.hasOwn(ASYNC_SIGNAL_MODES, p.id) && !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
 const withoutLchmod = rows => withoutHardLimits(rows).filter(p => !Object.hasOwn(LCHMOD_MODES, p.id));
 function fdFixture(mode, abi = "arm64-v8a") {
   const lowered = mode === "lowered-native" || mode === "lowered-trap";
@@ -88,19 +90,24 @@ function fixture() {
         stdout: "LCHMOD_PROBE_RESULT=" + JSON.stringify(lchmodFixture()) + "\n" } : {}),
       ...(probe.sourceFile === "hard-limit-probes.mjs" ? hardLimitResult(probe.mode) : {}),
       ...(probe.sourceFile === "async-signal-probes.mjs" ? asyncSignalResult(probe.mode) : {}),
+      ...(probe.sourceFile === "pending-signal-probes.mjs" ? pendingSignalResult(probe.mode) : {}),
     })),
   } };
 }
 
 test("checked-in probe definitions have bounded commands and unique safe paths", () => validateProbes(probes));
-test("the pidfd repair preserves all 31 definitions and every existing fixture and semantic validator", () => {
+test("the expanded suite keeps the historical pidfd repair definitions and native fixtures", () => {
   const historical = json(join(ROOT, "docs/compatibility/2026-09-13-m3-blocked-async-passing.json"));
-  assert.equal(probes.length, 31);
-  assert.deepEqual(ninePatchRevision(probes), historical.probes);
-  const protectedInputs = inputFacts().filter(input => /\/(?:ProbeInstrumentation\.java|(?:fd|syscall|openat2|lchmod|hard-limit|async-signal)-(?:probes|evidence)\.mjs|probe-common\.mjs)$/.test(input.path));
-  assert.equal(protectedInputs.length, 13);
+  const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
+  assert.equal(original.length, 31);
+  assert.deepEqual(ninePatchRevision(original), historical.probes);
+  // Java gains fixed asset/record bindings; the 11 old native fixtures and
+  // semantic validators, plus every old definition and budget, remain exact.
+  const protectedInputs = inputFacts().filter(input => /\/(?:fd|syscall|openat2|lchmod|hard-limit|async-signal)-(?:probes|evidence)\.mjs$/.test(input.path));
+  assert.equal(protectedInputs.length, 11);
   for (const input of protectedInputs) assert.deepEqual(input, historical.inputs.find(old => old.path === input.path));
 });
+
 test("hard-limit additions preserve all 25 definitions and allow only the four fixed assets", () => {
   assert.equal(withoutHardLimits(probes).length, 25);
   assert.equal(hash(JSON.stringify(ninePatchRevision(withoutHardLimits(probes)))), "2c905e8eed2e455c1ab5324410811d6847b9f5011fdc0946776ab9445f94a270");
@@ -186,11 +193,23 @@ test("fixed FD fixtures are materialized deterministically with canonical source
       assert(Buffer.byteLength(source) <= 12288);
     } else if (probe.sourceFile === "async-signal-probes.mjs") {
       assert.deepEqual(actual, {...probe, sourceAsset: "async-signal-" + probe.mode + ".mjs"});
+    } else if (probe.sourceFile === "pending-signal-probes.mjs") {
+      assert.deepEqual(actual, {...probe, sourceAsset: "pending-signal-" + probe.mode + ".mjs"});
     } else assert.deepEqual(actual, probe);
   }
   assert.throws(() => validateProbes(materialized), /ambiguous FD fixture/);
   assert(inputFacts().some(input => input.path.endsWith("/fd-probes.mjs")));
 });
+test("pending-signal records must match stdout, all child checks and independent application UID", () => {
+  for (const change of [r => { delete r.probes[30].pendingSignalEvidence; },
+    r => { r.probes[30].pendingSignalEvidence.uid++; r.probes[30].pendingSignalEvidence.rows[2].uid++; },
+    r => { r.probes[30].stdout = "PENDING_SIGNAL_RESULT={}"; }, r => { r.probes[30].stdout += r.probes[30].stdout; },
+    r => { r.probes[0].pendingSignalEvidence = r.probes[30].pendingSignalEvidence; },
+    r => { r.probes[30].pendingSignalEvidence.pending.checks[9][1] = 1; }]) {
+    const { report, options } = fixture(); change(report); assert.throws(() => validateReport(report, options));
+  }
+});
+
 test("all FD modes require concrete CLOEXEC, filter, child and listener observations on both ABIs", () => {
   for (const abi of ABIS) for (const mode of Object.values(FD_MODES)) {
     const proof = fdFixture(mode, abi);
@@ -260,7 +279,7 @@ test("lowered-limit fixtures preserve the original probe suite and cannot disgui
   for (const id of ["fd-spawn-lowered-native", "fd-spawn-lowered-trap"]) {
     const index = probes.findIndex(probe => probe.id === id);
     const { report, options } = fixture();
-    assert.equal(report.probes.length, 31);
+    assert.equal(report.probes.length, 33);
     report.probes[index].fdEvidence.sync = { sentinelAbsent: false, sentinelIdentity: true, exitCode: 0 };
     report.probes[index].stdout = "FD_PROBE_RESULT=" + JSON.stringify(report.probes[index].fdEvidence) + "\n";
     assert.throws(() => validateReport(report, options), /child inherited sentinel/);

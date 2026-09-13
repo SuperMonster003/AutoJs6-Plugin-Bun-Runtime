@@ -1386,6 +1386,56 @@
       "summary": null
     },
     {
+      "file": "2026-09-13-m3-pending-sigsys-diagnosis.json",
+      "sha256": "1ea68a93b89fabd8bcae79641f74e110bdf530382fbf71db11d5663dabce2e69",
+      "schema": 1,
+      "kind": "archived-pending-signal-diagnosis",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 pending SIGSYS 提前交付动态诊断",
+      "note": "八次 SI_TKILL 追踪与八次 plain 对照; 捕获 sender/receiver 和事件顺序, 非 rt_sigprocmask 参数或修复验收.",
+      "bytesUtf8Lf": 84395,
+      "rows": 2,
+      "reportedScope": "Two native ARM64 4 KiB environments; fixed native/TRAP cases are paired plain/traced twice. SI_TKILL reaches the spawning main thread before the child close_range trap. No registers, masks or signals are modified by the observer.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "plainObservations": 8,
+        "tracedObservations": 8,
+        "earlyUserSignals": 8,
+        "compatibilityPasses": 0
+      }
+    },
+    {
+      "file": "2026-09-13-m3-pending-sigsys-failure.json",
+      "sha256": "560a11991a039a50c1970557c990871dcf530ad6ef99b9c7f03bca6b98e602a4",
+      "schema": 1,
+      "kind": "archived-pending-signal-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M3 十补丁 pending SIGSYS 失败门禁",
+      "note": "原 31 项通过 124/124, 两个新模式 0/8; 全部受控 exit 1, 整体门禁失败, 不分配兼容验收.",
+      "bytesUtf8Lf": 568689,
+      "rows": 2,
+      "reportedScope": "Fixed 33-probe suite: original 31 pass; both pending-SIGSYS modes fail immediately after their first async spawn. A failed gate, never expected-failure acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "probesPerRound": 33,
+        "totalProbes": 132,
+        "passedProbes": 124,
+        "failedProbes": 8,
+        "original31PassedProbes": 124,
+        "pendingAsyncPassedProbes": 0
+      }
+    },
+    {
       "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
       "sha256": "33f49563765447af9a18596b9b2274bf9b1fda8ece87d0bb0541d4b6fc8ae121",
       "schema": 1,
@@ -9430,6 +9480,242 @@
       "status": "passed",
       "sourceReportedPassed": true,
       "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-sigsys-diagnosis.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 pending SIGSYS 提前交付动态诊断",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+        "variant": null,
+        "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "81eaf387965cc01c818d728da75a0de835dd6046fd8436205bbc86e76ede77b0",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-sigsys-diagnosis.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 pending SIGSYS 提前交付动态诊断",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+        "variant": null,
+        "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "81eaf387965cc01c818d728da75a0de835dd6046fd8436205bbc86e76ede77b0",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-sigsys-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "diagnostic",
+      "scope": "M3 十补丁 pending SIGSYS 失败门禁",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+a9c76a599",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "7c3d3285fea0cea51f88b05d1342b68ebaa3c3c56f003dae3f488e48e3900d5a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-sigsys-failure.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/runs/0/environment",
+      "category": "diagnostic",
+      "scope": "M3 十补丁 pending SIGSYS 失败门禁",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+a9c76a599",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "7c3d3285fea0cea51f88b05d1342b68ebaa3c3c56f003dae3f488e48e3900d5a",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        },
+        {
+          "unit": "probes",
+          "passed": 31,
+          "total": 33,
+          "reportedPassed": false,
+          "failedIds": [
+            "sigsys-pending-async-native",
+            "sigsys-pending-async-trap"
+          ]
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
     },
     {
       "source": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",

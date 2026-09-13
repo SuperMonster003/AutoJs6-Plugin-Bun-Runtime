@@ -13,6 +13,7 @@
 #include <ucontext.h>
 #include <unistd.h>
 static volatile sig_atomic_t received;
+static void handle_user(int sig) { if (sig != SIGSYS) _exit(70); received++; }
 static void handle(int sig, siginfo_t *info, void *context) {
     if (sig != SIGSYS || info->si_code != 1 /* SYS_SECCOMP */ || info->si_syscall != SYS_getpid) _exit(70);
     ((ucontext_t *)context)->uc_mcontext.gregs[REG_RAX] = -ENOSYS;
@@ -21,6 +22,12 @@ static void handle(int sig, siginfo_t *info, void *context) {
 int main(int argc, char **argv) {
     if (argc != 4 || strcmp(argv[1], "run") || strcmp(argv[2], "--no-install")) return 71;
     const char *mode = strrchr(argv[3], '/'); if (!mode) return 72; mode++;
+    if (!strcmp(mode,"user-handled") || !strcmp(mode,"user-fatal")) {
+        if (!strcmp(mode,"user-handled") && signal(SIGSYS,handle_user)==SIG_ERR) return 73;
+        if (raise(SIGSYS) || received!=1) return 77;
+        puts("TARGET_USER_HANDLED");
+        return 0;
+    }
     if (!strcmp(mode,"handled")) {
         struct sigaction action = { .sa_sigaction = handle, .sa_flags = SA_SIGINFO };
         if (sigaction(SIGSYS,&action,NULL)) return 73;

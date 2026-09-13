@@ -582,6 +582,28 @@
       "note": "只补充独立设备与清理快照, 不产生新测试轮次; 不把后补字段自动复制进此前报告."
     },
     {
+      "file": "2026-09-13-m3-pending-sigsys-diagnosis.json",
+      "sha256": "1ea68a93b89fabd8bcae79641f74e110bdf530382fbf71db11d5663dabce2e69",
+      "schema": 1,
+      "kind": "archived-pending-signal-diagnosis",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 pending SIGSYS 提前交付动态诊断",
+      "note": "八次 SI_TKILL 追踪与八次 plain 对照; 捕获 sender/receiver 和事件顺序, 非 rt_sigprocmask 参数或修复验收."
+    },
+    {
+      "file": "2026-09-13-m3-pending-sigsys-failure.json",
+      "sha256": "560a11991a039a50c1970557c990871dcf530ad6ef99b9c7f03bca6b98e602a4",
+      "schema": 1,
+      "kind": "archived-pending-signal-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M3 十补丁 pending SIGSYS 失败门禁",
+      "note": "原 31 项通过 124/124, 两个新模式 0/8; 全部受控 exit 1, 整体门禁失败, 不分配兼容验收."
+    },
+    {
       "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
       "sha256": "33f49563765447af9a18596b9b2274bf9b1fda8ece87d0bb0541d4b6fc8ae121",
       "schema": 1,

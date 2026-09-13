@@ -206,6 +206,20 @@
     "termination": "exited"
   },
   {
+    "id": "sigsys-pending-async-native",
+    "sourceFile": "pending-signal-probes.mjs",
+    "mode": "native",
+    "stdout": "PENDING_SIGNAL_RESULT=",
+    "termination": "exited"
+  },
+  {
+    "id": "sigsys-pending-async-trap",
+    "sourceFile": "pending-signal-probes.mjs",
+    "mode": "trap",
+    "stdout": "PENDING_SIGNAL_RESULT=",
+    "termination": "exited"
+  },
+  {
     "id": "recovery-after-termination",
     "source": "console.log('recovery-ok');",
     "stdout": "recovery-ok",

@@ -1,6 +1,6 @@
 # Test-only SIGSYS observer
 
-This separate diagnostic APK observes the **unchanged** cold async fixtures.
+This separate diagnostic APK observes fixed cold async fixtures.
 It is not the production plugin, a Binder test, or compatibility acceptance.
 Its package ends in `.signaltrace`, with `testOnly=true`, `debuggable=false`,
 no exported application components, and three exact read-only PIE payloads:
@@ -24,6 +24,13 @@ It never writes registers, masks or syscall results. Every real SIGSYS is
 forwarded unchanged, including a fatal delivery. Synthetic attach/event stops
 are suppressed; these fixed fixtures do not generate user SIGSTOP requests.
 
+The CLI requires an explicit `--fixture-set`: `blocked-async` keeps the original
+cold async assets, and `pending-async` selects the two fixed pending-signal
+assets. This choice is bound into the APK receipt and instrumentation report.
+No arbitrary source or command is accepted. `SYS_SECCOMP` records retain their
+syscall/architecture fields. Other SIGSYS records instead contain sender PID/UID
+under `TRACE_USER_SIGSYS`; those siginfo union fields must not be read as a syscall.
+
 The observer has a 12-second alarm, 256-event and 32-signal caps, and
 `PTRACE_O_EXITKILL`. The unchanged supervisor bounds observer termination;
 instrumentation bounds collection/output and removes its exact private job.
@@ -37,7 +44,7 @@ applications or turn it into a permissive ptrace service.
 node tools/bun-runtime/experimental/api28/signal-trace/build-trace.mjs `
   --sdk <sdk> --jdk <jdk> --ndk <ndk-29.0.14206865> --abi arm64-v8a `
   --runtime <verified-first-bun-file> --repeat-runtime <verified-second-bun-file> `
-  --output-directory <new-external-apk-directory>
+  --output-directory <new-external-apk-directory> --fixture-set blocked-async
 
 node tools/bun-runtime/experimental/api28/signal-trace/run-trace.mjs `
   --adb <adb-executable> --serial <explicit-serial> --api 28 --page-size 4096 `
@@ -51,6 +58,26 @@ canonical source hashes, the original fixture assets, toolchain, and installed
 payload hashes. Output `completed=true` means collection completed, **not** that
 the fixture passed or a diagnosis was accepted. Use the independent semantic
 validator, not that flag, to interpret results.
+
+## Pending-signal diagnosis
+
+The [new ten-patch diagnosis](../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys.md)
+uses `--fixture-set pending-async`. Two rounds on each native ARM64 API 28/31
+device pair every native/TRAP case with a plain control: eight traced and eight
+plain cases reproduce the controlled failure. All eight traces capture SI_TKILL
+on the main thread before child close_range. The parent mask setup in pinned
+posix_spawn_bun explains the early delivery; the observer does not capture the
+rt_sigprocmask arguments or a call stack. The runtime remains unfixed.
+
+```powershell
+node tools/bun-runtime/experimental/api28/signal-trace/archive-pending-trace.mjs NEW_DIAGNOSIS.json DEVICE_DIRECTORY...
+```
+
+This separate archiver checks the pending profile, exact source/native/APK
+bindings, complete raw pairs, sender/receiver identities, event order and UID
+cleanup. The historical nine-patch archiver remains specific to its old source.
+The Linux observer control now compares handled/fatal seccomp and handled/fatal
+ordinary user signals with plain execution, preserving each outcome and reaping.
 
 ## Archived baseline diagnosis
 
