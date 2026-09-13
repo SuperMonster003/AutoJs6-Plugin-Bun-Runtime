@@ -483,6 +483,17 @@
       "note": "保留两次实际 driver exit 0、独立干净源码、完整日志与四份 ELF 绑定; 只索引构建证据, 不增加设备通过数."
     },
     {
+      "file": "2026-09-13-m2-watch-reload-runtime-evidence.json",
+      "sha256": "9631f629e1721bd80c02308aa9b8ef8ca774a8a74a72c8e5be144ef67c6a2e88",
+      "schema": 3,
+      "kind": null,
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M2 十三补丁独立构建证据",
+      "note": "两次实际 driver exit 0, 干净独立源码, 完整日志/最终边与四份 ELF; 只索引构建, 不增加设备通过数."
+    },
+    {
       "file": "2026-09-13-m3-blocked-async-api28-failure.json",
       "sha256": "aaee10915208b6448ecb976318c2d8a702004c2763f1868ad0280d0f1b126dbc",
       "schema": 1,

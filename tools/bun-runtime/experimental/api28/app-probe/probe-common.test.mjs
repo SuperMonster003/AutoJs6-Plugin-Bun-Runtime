@@ -26,6 +26,22 @@ const withoutWatch = rows => rows.filter(p => !Object.hasOwn(WATCH_RELOAD_MODES,
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
 
+test("the reload native repair preserves all 35 definitions and seventeen fixture inputs", () => {
+  const archived = json(join(ROOT, "docs/compatibility/2026-09-13-m3-watch-reload-native-control.json"));
+  const oldRevision = archived.probes.find(p => p.id === "revision").stdout;
+  assert.equal(probes.length, 35);
+  assert.deepEqual(probes.map(p => p.id === "revision" ? {...p, stdout: oldRevision} : p), archived.probes);
+  const names = ["fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs",
+    "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs",
+    "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "async-signal-probes.mjs", "async-signal-evidence.mjs",
+    "pending-signal-probes.mjs", "pending-signal-evidence.mjs", "watch-reload-probes.mjs",
+    "watch-reload-evidence.mjs", "ProbeInstrumentation.java"];
+  const paths = [...names.map(name => "tools/bun-runtime/experimental/api28/app-probe/" + name), SHARED_PROCESS];
+  assert.equal(paths.length, 17);
+  const current = new Map(inputFacts().map(input => [input.path, input]));
+  for (const path of paths) assert.deepEqual(current.get(path), archived.inputs.find(i => i.path === path), path);
+});
+
 test("watch expansion preserves all 33 definitions and fourteen unchanged fixture inputs", () => {
   const archived = json(join(ROOT, "docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json"));
   const oldRevision = archived.probes.find(probe => probe.id === "revision").stdout;
@@ -181,7 +197,7 @@ test("async-signal semantic records must match stdout and the independent applic
   }
 });
 test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+06e518f73");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+e8b129616");
   assert.equal(hash(JSON.stringify(previousRevision(withoutLchmod(probes)))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
 });
 test("probe definitions reject traversal, duplication, arbitrary arguments, and unbounded work", () => {
@@ -390,7 +406,7 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
 
 test("openat2 additions preserve the original 23 definitions and assets apart from the expected revision", () => {
   const original=withoutLchmod(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+06e518f73");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+e8b129616");
   assert.equal(hash(JSON.stringify(previousRevision(original))),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
   const oldAssets=withoutLchmod(materializeProbes(probes)).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);

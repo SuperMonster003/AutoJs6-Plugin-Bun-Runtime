@@ -4,7 +4,12 @@
 
 更新日期: 2026-09-13
 
-当前新增 M3 watch/reload 阻断已完成复现与归档, native 尚未修复. 原 33 项保留,
+当前第 13 补丁已修复 Linux reload 前忽略 CLOEXEC 失败的路径, 保留既有 stdio/IPC/信号语义.
+完整源码 GCC/Clang 各 25 个模式和确定性重放通过, 两次全新双 ABI 构建实际 exit0且每ABI字节一致, 四份ELF审计通过.
+原 35 项和 17 份 fixture/validator/Java 输入已锁定, 新源码设备门禁待新 APK 打包后执行.
+见 [修复与验证](docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
+
+此前十二补丁 M3 watch/reload 阻断已完成复现与归档, 该历史 native 未修复. 原 33 项保留,
 新增 native/TRAP 两模式形成 35 项套件. 四个 ARM64 / 4 KiB 真机环境各两轮,
 原 33 项通过 264/264, 新模式 2/16 通过、14/16 失败, 全体 266/280.
 32 次实际重载中有 28 次 FD256 泄漏; Sony API33 / kernel5.15 的原生控制通过,
@@ -62,7 +67,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 新 watch/reload FD 门禁失败14/16, 已定位未修复, 优先于继续扩展覆盖; 十二补丁原 33 项与八项 Binder 七环境已过 462/462, 112/112, 含三星 ARM64 API 32 与硬件 16 KiB; 原套件的两项三星门禁已补齐; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | watch/reload 的第13补丁源码和主机回归完成, 两次独立双ABI构建完成, 新源码设备门禁待运行; 历史失败14/16保留; 十二补丁原 33 项与八项 Binder 七环境已过 462/462, 112/112, 含三星 ARM64 API 32 与硬件 16 KiB; 原套件的两项三星门禁已补齐; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -185,6 +190,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ## M2: patched Bun 可复现构建
 
+- [x] (构建) 第 13 补丁在两份全新、独立的 Bun checkout 中分别完成双 ABI 构建, 两个实际 driver exit 为 0. 每 ABI 的两个完整成品逐字节一致, 16 份配方无漂移, clean head/tree、完整日志和最终 Ninja 边均绑定到 schema 3, 四份 ELF 审计通过. 精确复用原锁定 JSC/ICU, 不计作新的 WebKit/ICU 构建或设备验收. [独立证据](docs/compatibility/2026-09-13-m2-watch-reload-runtime-evidence.json). (2026-09-13, G1)
+
 历史十一补丁: [独立 schema-3 构建证据](docs/compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json) 记录两个全新 checkout 的双 ABI 一致输出、实际 driver exit 0、完整日志与四份 ELF 审计; 复用锁定上游 JSC/ICU, 不继承旧设备成绩.
 
 历史十补丁: [2026-09-13 构建证据](docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json) 保留两个原 clean checkout 的相同输出、四项只读完成检查及原驱动退出码缺失, 没有重编译或覆盖九补丁证据. 十补丁源码及对应源码绑定已同步.
@@ -248,6 +255,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ### M3-A: seccomp 与 syscall fallback
 
+- [x] (源码/测试) 第 13 补丁修复 Linux reload 前忽略 `close_range(CLOEXEC)` 失败的问题, 复用未改动的 raw FD helper 标记分支, 不完整设置在 exec 前退出. 原 stdio、显式 IPC 和完整信号段不变. 精确源码 GCC 13/Clang 21 各 25 个模式通过, 包括真实 exec、高于 hard limit 的 FD、旧源码失败对照和有界错误; 共享 helper 原四组测试分别通过. 全套 35 项 Android 定义与 17 份输入防漂移门禁已补齐. [修复范围](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1; 新源码构建/设备另计)
 - [x] (测试) 新增两个有界 watch/reload 模式并完成四个 ARM64 / 4 KiB 真机环境的故障复现和同设备正向对照. 原 33 项 264/264; 新模式2/16, 14个失败模式产生28次 FD256 泄漏. 原生可用的 Sony5.15 模式两轮通过, 相同设备 TRAP 两轮失败. 原生字节、旧定义及预算不变, 所有包/UID已清理. 2026-09-13 G2 故障证据, [报告](docs/compatibility/2026-09-13-m3-watch-reload.md); 不代表门禁通过.
 - [ ] (上游/测试) 修复 `on_before_reload_process_posix` 忽略 `close_range(CLOEXEC)` 失败的路径, 在 exec 前完成 FD 标记并传播不完整清理错误, 保留 stdio/IPC 和已有信号语义. 固定35项和原33项不得放宽; 修复需独立构建及新源码设备证据. blocked/pending 跨reload、并发FD、FD70000、UNSHARE和大页另行验证.
 

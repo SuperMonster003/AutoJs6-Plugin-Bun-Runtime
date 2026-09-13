@@ -1,6 +1,6 @@
 # Downstream backport patches
 
-This directory contains a deterministic ten-patch series reviewed against exact
+This directory contains a deterministic thirteen-patch series reviewed against exact
 Bun commit `34cbb9a40b4bd1bd767d134a7065e66c2432a676`.
 
 The first five patches replay the immutable upstream compatibility commits
@@ -28,6 +28,18 @@ Project-owned MIT patch 0010 changes only the Android pidfd shim. It queries
 the caller's mask and uses the existing waiter fallback when SIGSYS is blocked,
 preserving pending signals without unblocking or warming the waiter cache.
 The [exact-source host harness](../../blocked-pidfd/README.md) covers ten cases.
+
+Project-owned MIT patch 0011 preserves Android parent spawn masks and pending
+SIGSYS, with child-only setup and checked failures. Patch 0012 preserves the
+complete Android epoll caller mask and excludes optional epoll_pwait2 at the call
+site; its changes to bundled uSockets follow that file's Apache-2.0 license.
+
+Project-owned MIT patch 0013 repairs the ignored Linux reload CLOEXEC result,
+reusing the unchanged patch-8 enumeration helper's marking arm. Failed setup
+exits before exec, and the original stdio, IPC and signal lifecycle stays intact.
+The [reload regression](../../reload-fd/README.md) compiles both complete source
+versions from the `--unified=10000` patch and checks real exec plus failure controls.
+Patches 0011 and 0012 also retain complete source context for their host tests.
 
 The stable patch IDs of compatibility patches 0001-0005 equal their
 corresponding upstream reference patches. At that five-patch prefix,

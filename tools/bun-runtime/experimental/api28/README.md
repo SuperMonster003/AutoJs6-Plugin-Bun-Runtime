@@ -3,7 +3,16 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-Current source: twelve patches at `06e518f73b4fccc6c3ffb17412ea166bf886bed0`,
+Current source: thirteen patches at `e8b1296169a8e6f20c81e926dba6448afb25cd11`,
+revision `1.4.0+e8b129616`. The [reload FD repair](reload-fd/README.md) checks
+pre-exec CLOEXEC setup, preserving existing stdio/IPC/signal behavior. Complete
+source replay and both host compiler controls pass. Two new independent dual-ABI
+builds completed with actual driver exits 0, identical complete outputs per ABI
+and four ELF audits. `runtimeProduced=true`; unchanged35/full8 new-source device
+gates remain pending. See the [current report](../../../../docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
+`distributionReady=false`; official payloads and all historical reports remain intact.
+
+Historical source: twelve patches at `06e518f73b4fccc6c3ffb17412ea166bf886bed0`,
 revision `1.4.0+06e518f73`. The [epoll mask repair](pending-wait/README.md)
 preserves Android caller signals during waits and enforces the existing exclusion
 of optional epoll_pwait2. Complete-source GCC/Clang controls and deterministic

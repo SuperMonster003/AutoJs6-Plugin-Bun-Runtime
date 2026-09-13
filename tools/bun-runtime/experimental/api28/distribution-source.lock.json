@@ -12,12 +12,12 @@
     {
       "abi": "arm64-v8a",
       "bytes": 87923328,
-      "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6"
+      "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160"
     },
     {
       "abi": "x86_64",
       "bytes": 90449752,
-      "sha256": "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8"
+      "sha256": "cb3104fbd41fb55ac301a177756b41fa57065e2cf18fa836bafb2b13cf4043ac"
     }
   ],
   "bunSource": {
@@ -33,9 +33,9 @@
       "archiveRoot": "bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676"
     },
     "patchSeries": "patches/series.lock.json",
-    "downstreamCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
-    "downstreamTreeSha1": "1eb8d5ea945001f018bdf14bd00c261d40b02573",
-    "downstreamPatchCount": 12,
+    "downstreamCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+    "downstreamTreeSha1": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+    "downstreamPatchCount": 13,
     "licenseSourcePath": "LICENSE.md",
     "licenseSourceBytes": 5613,
     "licenseSourceSha256": "b9caf52728691b4057e371232c221a132883198be2f3d2ddf92c90404c984b1a"

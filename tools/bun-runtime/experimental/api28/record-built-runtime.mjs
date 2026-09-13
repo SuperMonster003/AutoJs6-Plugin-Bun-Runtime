@@ -8,8 +8,8 @@ import { inspectBuiltRuntime, verifyRuntimeEvidenceManifest } from "./verify-bui
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "../../../..");
-const HEAD = "06e518f73b4fccc6c3ffb17412ea166bf886bed0";
-const TREE = "1eb8d5ea945001f018bdf14bd00c261d40b02573";
+const HEAD = "e8b1296169a8e6f20c81e926dba6448afb25cd11";
+const TREE = "7d715cd177328d44b12b6346bcf0e07e835b3578";
 const ABIS = ["arm64-v8a", "x86_64"];
 const facts = path => {
   const bytes = readFileSync(path);
@@ -32,7 +32,7 @@ export function recordBuiltRuntime({ checkouts, driverRecords, output }) {
   assert.equal(new Set(checkouts).size, 2); assert.equal(new Set(driverRecords).size, 2);
   const target = join(realpathSync(dirname(resolve(output))), basename(output)), rel = relative(ROOT, target);
   assert(rel.startsWith(".." + sep) && relative(target, ROOT).startsWith(".." + sep), "output must be outside project and ancestors");
-  const old = json(join(ROOT, "docs/compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json"));
+  const old = json(join(ROOT, "docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json"));
   const repositoryInputs = old.build.repositoryInputs.map(({ path }) => ({ path, ...facts(join(HERE, path)) }));
   const driverSource = facts(join(dirname(driverRecords[0]), "drive-build.py"));
   const inspections = [], runs = [];

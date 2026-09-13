@@ -15,6 +15,12 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The [thirteen-patch repair](../../../../../docs/compatibility/2026-09-13-m3-watch-reload-fix.md)
+now supplies the checked Linux reload FD fallback. It preserves all 35 definitions
+and seventeen fixture/validator/Java inputs; only the expected runtime revision
+will change. Independent native builds and new-source device acceptance remain
+separate gates. The following failed results belong to the historical twelve-patch bytes.
+
 The live suite now has **35 probes**. The [fixed watch/reload gate](../../../../../docs/compatibility/2026-09-13-m3-watch-reload.md)
 fails on the unchanged twelve-patch runtime: four native ARM64 / 4 KiB devices
 retain all original 33 successes (264/264), while the two new modes pass 2/16 and
