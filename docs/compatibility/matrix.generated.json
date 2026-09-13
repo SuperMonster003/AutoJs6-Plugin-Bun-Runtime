@@ -1594,6 +1594,83 @@
       }
     },
     {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
+      "sha256": "f071aadd46233d5739e262b1fe4c7b16cb3e81ece6115d3c516c2da2c99d17a4",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁三星 ARM64 硬件大页 Binder",
+      "note": "真实生产服务/权限和原 Binder 方法, 精确输入独立 APK 批次; 与应用探针和 Release 门禁分开.",
+      "bytesUtf8Lf": 45745,
+      "rows": 1,
+      "reportedScope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 1,
+        "rounds": 2,
+        "passedTests": 16,
+        "totalTests": 16,
+        "lifecycleObservations": 10
+      }
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api36-device-facts.json",
+      "sha256": "16b4b933eacd030929d2bdb732faff3316566b40a2ba16e4376f6fa0a1d15f39",
+      "schema": 1,
+      "kind": "pending-wait-samsung-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十二补丁三星大页设备及清理",
+      "note": "绑定硬件页, 源码/APK, 各包 UID 清理和独立 ADB 服务关闭; 连接前置问题不增加或扣除设备套件计数.",
+      "bytesUtf8Lf": 8200,
+      "rows": 0,
+      "reportedScope": "Supplemental twelve-patch native ARM64 API 36 hardware 16 KiB device/source/APK/cleanup records. No added test or build counts; original suite archives are authoritative.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-native-arm64-api36-probes.json",
+      "sha256": "38a0b39a99758777d15566a61959e9402a2bf7fb38d581e6793fa3800a39411e",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁三星 ARM64 硬件大页探针",
+      "note": "原定义和既有 APK 复用, pending/blocked async 与硬 FD 上限保持原语义预算; 不转移旧源码或 JSC 成绩.",
+      "bytesUtf8Lf": 319541,
+      "rows": 1,
+      "reportedScope": "Two process-restarted rounds of the fixed 33-probe test-only application suite per native environment. Not the full syscall/API/FD, plugin Binder or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 1,
+        "rounds": 2,
+        "probesPerRound": 33,
+        "passedProbes": 66,
+        "totalProbes": 66,
+        "loweredSoftLimitObservations": 4,
+        "loweredHardLimitObservations": 8,
+        "hardLimitStartupObservations": 4,
+        "hardLimitSpawnObservations": 4,
+        "hardLimitSpawnApiObservations": 8,
+        "blockedAsyncSignalObservations": 4,
+        "blockedAsyncChildObservations": 12,
+        "pendingAsyncSignalObservations": 4,
+        "pendingAsyncChildObservations": 12,
+        "forcibleLifecycleObservations": 6,
+        "terminationToExitMillis": {
+          "minimum": 301,
+          "maximum": 304
+        }
+      }
+    },
+    {
       "file": "2026-09-13-m3-pending-wait-probes.json",
       "sha256": "c7e428daacd066f8d6d08c4a392f6d2bd98080bcf3f23989c824f31557ccef68",
       "schema": 1,
@@ -10647,6 +10724,118 @@
       "status": "failed",
       "sourceReportedPassed": false,
       "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-native-arm64-api36-binder.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M3 十二补丁三星 ARM64 硬件大页 Binder",
+      "environment": {
+        "manufacturer": null,
+        "model": "SM-A566B",
+        "api": 36,
+        "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+        "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "f2591f13cdf0d7af9cc28e00bc09e3a43d3ab0f5f930941578b3bace08051a1c",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-pending-wait-native-arm64-api36-probes.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/runs/0/environment",
+      "category": "experimental",
+      "scope": "M3 十二补丁三星 ARM64 硬件大页探针",
+      "environment": {
+        "manufacturer": "samsung",
+        "model": "SM-A566B",
+        "api": 36,
+        "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+        "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 16384,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+06e518f73",
+        "commit": null,
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "350d70bb5f655a0e79a8abe060c7110fcb41c1ecbb26901897aed68fb3b0a1fe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "probes",
+          "passed": 33,
+          "total": 33,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
     },
     {
       "source": "2026-09-13-m3-pending-wait-probes.json",
