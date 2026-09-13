@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 99 份源报告, 206 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 105 份源报告, 210 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -639,6 +639,46 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | /reports/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/35 探针; 33/35 探针 | 未通过 |
 | /reports/1 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+06e518f73<br>SHA 86d1b4d0fd74 | 33/35 探针; 33/35 探针 | 未通过 |
 
+### M3 十三补丁 Samsung API 32 原 Binder 套件
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api32-binder.json](2026-09-13-m3-watch-reload-native-arm64-api32-binder.json).
+
+同一生产服务和 APK 的完整原套件双轮回归; 与应用探针、历史版本和独立候选分别计数.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-F936U<br>API 32 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit e8b1296169a8<br>SHA c8f2513f3bea | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M3 十三补丁 Samsung API 32 固定应用探针
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api32-probes.json](2026-09-13-m3-watch-reload-native-arm64-api32-probes.json).
+
+同一 APK 和未变定义/预算的双轮原套件; 各设备分别绑定, 不抵消历史失败或新增 JSC/Release 接受数.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-F936U<br>API 32 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+e8b129616<br>SHA c8f2513f3bea | 35/35 探针; 35/35 探针 | 通过 (限定范围) |
+
+### M3 十三补丁 Samsung API 36 原 Binder 套件
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api36-binder.json](2026-09-13-m3-watch-reload-native-arm64-api36-binder.json).
+
+同一生产服务和 APK 的完整原套件双轮回归; 与应用探针、历史版本和独立候选分别计数.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | commit e8b1296169a8<br>SHA c8f2513f3bea | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M3 十三补丁 Samsung API 36 固定应用探针
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api36-probes.json](2026-09-13-m3-watch-reload-native-arm64-api36-probes.json).
+
+同一 APK 和未变定义/预算的双轮原套件; 各设备分别绑定, 不抵消历史失败或新增 JSC/Release 接受数.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+e8b129616<br>SHA c8f2513f3bea | 35/35 探针; 35/35 探针 | 通过 (限定范围) |
+
 ### M3 十二补丁 watch/reload 同设备原生对照
 
 来源: [2026-09-13-m3-watch-reload-native-control.json](2026-09-13-m3-watch-reload-native-control.json).
@@ -1075,6 +1115,22 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-13-m3-watch-reload-checkpoints.json](2026-09-13-m3-watch-reload-checkpoints.json).
 
 源码/构建/清理补充, 不新增执行接受数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M3 十三补丁 Samsung API 32 设备与清理绑定
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api32-device-facts.json](2026-09-13-m3-watch-reload-native-arm64-api32-device-facts.json).
+
+原生身份、硬件映射页、APK 复用及三个 UID/自有 ADB 清理补充, 不新增设备执行次数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M3 十三补丁 Samsung API 36 设备与清理绑定
+
+来源: [2026-09-13-m3-watch-reload-native-arm64-api36-device-facts.json](2026-09-13-m3-watch-reload-native-arm64-api36-device-facts.json).
+
+原生身份、硬件映射页、APK 复用及三个 UID/自有 ADB 清理补充, 不新增设备执行次数.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 

@@ -945,6 +945,72 @@
       "note": "完整35项门禁失败. 原33项和原生成功对照不抵消watch FD泄漏; 三个APK批次分别绑定, 原生尚未修复."
     },
     {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api32-binder.json",
+      "sha256": "4965151679adacf23df028211fb632867dcd9f9166ae7af7bd103c0fd48c1ff2",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 Samsung API 32 原 Binder 套件",
+      "note": "同一生产服务和 APK 的完整原套件双轮回归; 与应用探针、历史版本和独立候选分别计数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api32-device-facts.json",
+      "sha256": "42963b1752f84df99e1010f8833fb7655e554ad339c7d9549a76700ab470ccb7",
+      "schema": 1,
+      "kind": "watch-reload-native-arm64-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十三补丁 Samsung API 32 设备与清理绑定",
+      "note": "原生身份、硬件映射页、APK 复用及三个 UID/自有 ADB 清理补充, 不新增设备执行次数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api32-probes.json",
+      "sha256": "73ed20d0ebbad972129437ada84d59fc31f08703d9eac1837de696b7072c63f0",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 Samsung API 32 固定应用探针",
+      "note": "同一 APK 和未变定义/预算的双轮原套件; 各设备分别绑定, 不抵消历史失败或新增 JSC/Release 接受数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api36-binder.json",
+      "sha256": "55ef5bfde0e4d857e804794e5e894c653f610b209cc1fe9f19d5c68415cb2806",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 Samsung API 36 原 Binder 套件",
+      "note": "同一生产服务和 APK 的完整原套件双轮回归; 与应用探针、历史版本和独立候选分别计数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api36-device-facts.json",
+      "sha256": "43dd6590f6a6d3acb1e6bc33d80220a435fefdf1438886152980f332e77e24b7",
+      "schema": 1,
+      "kind": "watch-reload-native-arm64-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十三补丁 Samsung API 36 设备与清理绑定",
+      "note": "原生身份、硬件映射页、APK 复用及三个 UID/自有 ADB 清理补充, 不新增设备执行次数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-native-arm64-api36-probes.json",
+      "sha256": "70ad61024dbc47afe8e3b2a5951af021c88e30230867b8ba8e4ed15d1f5e0672",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 Samsung API 36 固定应用探针",
+      "note": "同一 APK 和未变定义/预算的双轮原套件; 各设备分别绑定, 不抵消历史失败或新增 JSC/Release 接受数."
+    },
+    {
       "file": "2026-09-13-m3-watch-reload-native-control.json",
       "sha256": "672c966882ce5b3aae42ed4b788cb77f3eb1bd580ac102e53ff9e7d4d5692a70",
       "schema": 1,

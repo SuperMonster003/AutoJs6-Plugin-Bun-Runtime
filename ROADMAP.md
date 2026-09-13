@@ -4,13 +4,20 @@
 
 更新日期: 2026-09-13
 
+十三补丁的两项三星固定套件门禁已补齐: SM-F936U 实际 API 32 / 原生 ARM64 / 4 KiB,
+SM-A566B API 36 / 原生 ARM64 / 硬件 16 KiB, 均 bridge=0. 相同三个 APK 各过
+两轮 35 项与原八项 Binder, 新增 140/140 和 32/32, 无失败/重试或构建.
+八个原生环境现累计 560/560 probes、128/128 Binder; 新增 16 次实际 watch 重载
+和 24 个镜像观测均通过. 两台设备的三包/三个 UID 与自有私有 ADB 已清理.
+[三星完整报告](docs/compatibility/2026-09-13-m3-watch-reload-samsung.md).
+
 当前第 13 补丁已修复 Linux reload 前忽略 CLOEXEC 失败的路径, 保留既有 stdio/IPC/信号语义.
 完整源码 GCC/Clang 各 25 个模式和确定性重放通过, 两次全新双 ABI 构建实际 exit0且每ABI字节一致, 四份ELF审计通过.
 原 35 项和 17 份 fixture/validator/Java 输入未变, 新 APK 的 32/83 输入匹配 `bf5cb72`.
 六个原生 4 KiB 环境各两轮探针 420/420、完整 Binder 96/96; 48 次实际重载无哨兵继承,
 72 个镜像的 PID/stdio/普通 SIGSYS 对照通过. 首次 API28 中止 69/70 独立保留,
-中止前 clone EAGAIN 的根因未定, 仅一次同 APK 重试通过. 三星新源码、大页 JSC
-重对齐及 watch 稳定性/压力仍待后续证据.
+中止前 clone EAGAIN 的根因未定, 仅一次同 APK 重试通过. 随后的三星门禁见上文;
+大页 JSC 重对齐及 watch 稳定性/压力仍待后续证据.
 见 [修复与验证](docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
 
 此前十二补丁 M3 watch/reload 阻断已完成复现与归档, 该历史 native 未修复. 原 33 项保留,
@@ -71,7 +78,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十三补丁已有独立双 ABI 构建和六个原生 4 KiB 环境的固定探针 420/420、原 Binder 96/96. 首次 API 28 watch SIGABRT/clone EAGAIN 需进一步诊断; 新源码三星 API 32 / ARM64 4 KiB 与 API 36 / ARM64 硬件 16 KiB、独立 JSC 重对齐和新回归仍开放. 其余 syscall/API/FD/OEM、跨 reload 的 blocked/pending 信号与 IPC、Android FD 70000/UNSHARE、长时压力和 paired APK/source Release 仍开放. 历史十二/十/九补丁成绩按原批次保留 |
+| 当前缺口 | 十三补丁独立双 ABI 构建与八个原生环境的固定探针 560/560、原 Binder 128/128 已完成, 包含三星 ARM64 API 32 / 4 KiB 与 API 36 / 硬件 16 KiB. 首次 API 28 watch SIGABRT/clone EAGAIN 根因与稳定性、十三补丁大页 JSC 重对齐及新回归仍开放. 其余 syscall/API/FD/OEM、跨 reload 的 blocked/pending 信号与 IPC、Android FD 70000/UNSHARE、长时压力和 paired APK/source Release 仍开放. 历史版本与独立 JSC 成绩按原批次保留 |
 
 ## 如何阅读这份路线图
 
@@ -259,6 +266,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ### M3-A: seccomp 与 syscall fallback
 
+- [x] (设备/测试) 十三补丁同一 ARM64 APK 在 Samsung SM-F936U API 32 / 4 KiB 与 SM-A566B API 36 / 硬件 16 KiB 各过两轮固定 35 项与原八项 Binder, 新增 140/140 probes 和 32/32 Binder, 原定义/输入/预算不变. 八个 watch 模式产生 16 次重载、24 个镜像, FD/PID/stdio/普通信号及原 blocked/pending/hard/soft-limit/强制生命周期均通过. 六个包/UID 和两次自有私有 ADB 全部清理; 无重试、构建或 AVD 操作. [两项三星门禁](docs/compatibility/2026-09-13-m3-watch-reload-samsung.md). (2026-09-13, G2, 有限套件, 非稳定性/JSC/Release 通过)
+
 - [x] (设备/测试) 第 13 补丁保持 35 项定义与全部既有 fixture/预算, 六个原生 4 KiB 环境各两轮通过 420/420 probes、96/96 原八项 Binder. 新 APK 输入匹配 `bf5cb72`; 24 watch 模式产生 48 次实际重载, 72 镜像均符合 FD/PID/stdio/普通信号断言. 原 hard/soft limit、blocked/pending 与强制生命周期仍通过, 回收 301-307 ms. 三包/三个 UID 每环境独立清理, 只关闭自有 AVD/私有 ADB. 初始 API28 69/70 中止另档, 只做一次同 APK 复测. [设备与边界](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G2, 有限套件, 非稳定性/三星/大页/Release 通过)
 - [ ] (诊断/测试) 用有界、独立诊断补齐 API 28 watch 中止调用链与 clone EAGAIN 的资源条件; 保留首次失败, 不以偶发复测成功代替稳定性证据或扩大现有预算.
 - [x] (源码/测试) 第 13 补丁修复 Linux reload 前忽略 `close_range(CLOEXEC)` 失败的问题, 复用未改动的 raw FD helper 标记分支, 不完整设置在 exec 前退出. 原 stdio、显式 IPC 和完整信号段不变. 精确源码 GCC 13/Clang 21 各 25 个模式通过, 包括真实 exec、高于 hard limit 的 FD、旧源码失败对照和有界错误; 共享 helper 原四组测试分别通过. 全套 35 项 Android 定义与 17 份输入防漂移门禁已补齐. [修复范围](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1; 新源码构建/设备另计)
@@ -326,6 +335,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 **M4 升阶门:** Android 9+ 的支持声明由完整 G3 证据支撑; patched runtime 的来源, 补丁, 许可证和设备矩阵随每个发布版本可追溯, 且不存在必须靠二进制热补丁或特定 OEM 放宽策略才能运行的路径.
 
 ## M5: 16 KB page size 与发布完整性
+
+- [x] (设备/ARM64) 十三补丁 baseline 在 SM-A566B / API 36 / bridge=0 的实际 16384-byte 内核/MMU 页上, 同一 APK 的固定 35 项与完整八项 Binder 各两轮通过 70/70 和 16/16. 八次实际 watch 重载无哨兵继承, 十二个镜像的 PID/stdio/普通 SIGSYS 与原 FD/信号/生命周期均通过, 三包/三个 UID 已清理. [同一 M3/M5 三星批次](docs/compatibility/2026-09-13-m3-watch-reload-samsung.md), 不重复计数, 不作为 x86 大页 JSC、ARM64 压力或 Release 验收. (2026-09-13, G2)
 
 - [x] (设备/ARM64) 十二补丁 baseline 在 SM-A566B / API 36 的实际 16384-byte 内核/MMU 页上, 原 33 项与八项 Binder 各两轮通过 66/66 和 16/16, bridge=0. 沿用既有 APK/native, pending 保持/一次投递和原 FD/生命周期断言通过, 三包/三个 UID 已清理. [同一 M3/M5 设备批次](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md), 不重复计数, 不代表 ARM64 压力或 Release 验收. (2026-09-13, G2)
 
