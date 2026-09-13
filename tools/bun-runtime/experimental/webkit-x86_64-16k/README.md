@@ -5,6 +5,46 @@ nine-patch API 28 runtime evidence. The initial candidate is explicitly
 diagnostic/incremental; any subsequent clean-build receipt is separate.
 `distributionReady=false`. No binaries or source archives belong in this directory.
 
+## Current ten-patch workflow
+
+The current isolated `jsc16k` Binder profile requires a separate
+`rebased-candidate.lock.json` for Bun `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`
+(`1.4.0+a9c76a599`). The original `candidate.lock.json`, its diagnostic origin and
+all nine-patch reports remain unchanged. The new loader rejects historical Bun
+bytes, a different source/tree, JSC input drift, incomplete or repeated build
+receipts, and missing/nonzero actual driver exits.
+
+Use two fresh ten-patch Bun checkouts and the two already verified independent
+WebKit build directories. `run-clean-bun.mjs` uses the current API 28 build plan
+and full offline preflight; run it once for each new checkout, with the five
+explicit paths shown below. Preserve each actual driver exit, start/end times,
+source head/tree/clean status, recipe hashes, complete log and output receipts.
+The current local handoff records the capture commands and paths. Neither a
+read-only Ninja check nor an old Bun output can replace this new build evidence.
+
+After both succeed, the recorder takes six explicit paths:
+
+```bash
+node tools/bun-runtime/experimental/webkit-x86_64-16k/record-rebased.mjs \
+  /absolute/new-bun-1 /absolute/new-bun-2 \
+  /absolute/original-jsc-1/build /absolute/original-jsc-2/build \
+  /absolute/evidence/driver-run-1.json /absolute/evidence/driver-run-2.json
+```
+
+It refuses to overwrite the new lock, checks both complete Bun binaries and ELF,
+binds the actual retained driver/native/Ninja logs and final link/map/strip edges,
+and validates the exact reused JSC libraries/config. The lock records **two new
+clean Bun builds, zero new WebKit builds**, and two reused independent JSC builds.
+ICU remains the exact original upstream input. Device and Release gates are
+separate from this build evidence.
+
+On 2026-09-13 both new builds completed with actual exit 0 and clean unchanged
+Bun source. Both complete x86_64 binaries are 90,609,488 bytes, SHA-256
+`a237dc8c13fbef6366a36769ea9a6d729fd24307b0df93bb051be8d997f8dcd5`.
+The [new lock](rebased-candidate.lock.json) retains the two log/driver/Ninja/native
+receipts and exact reused WebKit inputs. The ELF is an x86_64 PIE with at least
+16 KiB PT_LOAD alignment. This build record alone does not accept any device run.
+
 The candidate fixes the pinned WebKit x86 page-size ceiling by compiling
 `USE_64KB_PAGE_BLOCK=1`, keeping JIT/DFG/FTL and Wasm JIT enabled and retaining
 Bun's external mimalloc integration. `record-candidate.mjs` validates every
@@ -55,7 +95,11 @@ which would lack Bun's external mimalloc. Reused ICU is not claimed as a new ICU
 source build. Compare all three libraries and `cmakeconfig.h`, not just Bun's
 eventual exit status. The two WebKit output sets from this session match exactly.
 
-## Rebuild Bun from a clean checkout
+## Historical nine-patch Bun rebuilds
+
+The commands and results in this section describe the original nine-patch batch.
+Use the matching historical project revision to reproduce that batch; the current
+build plan pins ten patches and its results belong in the separate lock above.
 
 Use a fresh replay-verified nine-patch Bun checkout at
 `7b9ac266888abda7ee6ec0b8ac11a74236420030`, with no `build/autojs6-api28` output.

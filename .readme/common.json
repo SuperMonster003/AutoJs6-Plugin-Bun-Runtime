@@ -38,5 +38,6 @@
   "arm64_binary_sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
   "x64_asset": "bun-linux-x64-android-baseline.zip",
   "x64_archive_sha256": "1b917b67209ae4b90da619e95167b9fe958a412130f399482b65bf9823998944",
-  "x64_binary_sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df"
+  "x64_binary_sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
+  "troubleshooting_url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/troubleshooting.md"
 }

@@ -18,6 +18,8 @@ export function buildInputs() {
         "tools/bun-runtime/supervisor/supervisor.lock.json",
         "tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.mjs",
         "tools/bun-runtime/experimental/webkit-x86_64-16k/record-candidate.mjs",
+        "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.mjs",
+        "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
         "tools/bun-runtime/experimental/api28/runtime-evidence.json",
         ...walk("app/src/main/java"), ...walk("app/src/main/res"), ...walk("app/src/main/assets"),
         ...walk("app/src/androidTest/java"), ...walk("samples"),

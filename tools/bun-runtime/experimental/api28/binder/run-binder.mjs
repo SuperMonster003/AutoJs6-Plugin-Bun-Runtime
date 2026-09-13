@@ -7,7 +7,7 @@ import { inspectApkRuntime, readBoundedApkEntry } from "../../../verify-apk-runt
 import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 import { countUidProcesses } from "../app-probe/probe-common.mjs";
 import { PACKAGE, TEST_PACKAGE, TEST_CLASS, facts, buildInputs, parseBinderUid, validateDevice, validateInstrumentation } from "./binder-common.mjs";
-import { loadJscCandidate } from "../../webkit-x86_64-16k/jsc-common.mjs";
+import { loadRebasedJscCandidate } from "../../webkit-x86_64-16k/rebased-common.mjs";
 import { parseApkSignerOutput } from "../../../release/assemble-corresponding-source.mjs";
 import { KIND, MODES, PRESSURE_CLASS, PRESSURE_TEST, validatePressureInstrumentation } from "../../webkit-x86_64-16k/pressure/pressure-common.mjs";
 
@@ -18,7 +18,7 @@ for (let i = 0; i < args.length; i += 2) {
     options[args[i]] = args[i + 1];
 }
 assert(!options["--profile"] || options["--profile"] === "jsc16k");
-const jsc = options["--profile"] ? loadJscCandidate() : null;
+const jsc = options["--profile"] ? loadRebasedJscCandidate() : null;
 const pressure = options["--suite"] === "jsc-pressure";
 assert(!options["--suite"] || (pressure && jsc), "Pressure suite requires the explicit jsc16k profile");
 const pkg = PACKAGE + (jsc ? ".jsc16k" : ""), testPkg = pkg + ".test";

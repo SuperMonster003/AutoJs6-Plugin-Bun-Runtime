@@ -7,6 +7,7 @@ import { spawnSync } from "node:child_process";
 import { KIND, MODES, PRESSURE_TEST, fixtureFacts, validatePressureInstrumentation } from "./pressure-common.mjs";
 import { PACKAGE, buildInputs, facts, validateDevice } from "../../api28/binder/binder-common.mjs";
 import { loadJscCandidate } from "../jsc-common.mjs";
+import { REBASED_KIND, loadRebasedJscCandidate } from "../rebased-common.mjs";
 import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
@@ -25,12 +26,13 @@ export function validatePressureRun(record, rawRounds) {
     assert(Number.isSafeInteger(record.uid) && record.uid >= 10000 && record.uid % 100000 >= 10000);
     assert.equal(record.finalUidProcesses, 0);
     assert.deepEqual(record.cleanup, [{ package: pkg + ".test", uninstalled: true }, { package: pkg, uninstalled: true }]);
-    const candidate = loadJscCandidate();
+    const rebased = record.build.jscCandidate?.kind === REBASED_KIND;
+    const candidate = rebased ? loadRebasedJscCandidate() : loadJscCandidate();
     assert.deepEqual(record.build.inputs, buildInputs(), "Archive before changing compiled inputs; never substitute a later APK");
     assert.deepEqual(record.build.jscCandidate, candidate);
-    // This immutable candidate still contains nine-patch Bun. A newer baseline
-    // runtime lock must not silently relabel its source or historical results.
-    const baseline = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url), "utf8"));
+    // Select the actual source lineage; a new candidate cannot relabel historical bytes.
+    const baseline = JSON.parse(readFileSync(new URL(rebased ? "../../api28/runtime-evidence.json"
+        : "../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url), "utf8"));
     assert.equal(baseline.source.downstreamHeadCommit, candidate.bunCommit);
     assert.deepEqual(record.runtime, { ...baseline.identity, variant: candidate.variant });
     assert.deepEqual(record.build.runtime, record.runtime);
@@ -113,7 +115,7 @@ function main() {
     const validation = ["pressure-common.mjs", "archive-pressure.mjs", "../../api28/binder/run-binder.mjs"].map(path => ({
         path: `tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/${path}`, ...facts(new URL(path, import.meta.url)),
     }));
-    const archive = { schemaVersion: 1, kind: `jsc-pressure-${kind}`, evidenceDate: "2026-09-12",
+    const archive = { schemaVersion: 1, kind: `jsc-pressure-${kind}`, evidenceDate: new Date().toISOString().slice(0, 10),
         projectBaseCommit: git.stdout.trim(), passed: kind === "acceptance", distributionReady: false,
         productionReleaseAcceptance: false, officialBunAndSupervisorUnchanged: true,
         scope: kind === "acceptance" ? "Fixed, offline, bounded seven-mode JSC pressure fixture through the real plugin Binder service, two restarted rounds per native x86_64 API 36 userspace page size. The 16 KiB x86 userspace ABI is emulated over 4 KiB kernel mappings, not ARM64 hardware 16 KiB evidence. Separate from the original eight-test Binder suite, performance, exhaustive JIT/Wasm coverage and Release acceptance."
