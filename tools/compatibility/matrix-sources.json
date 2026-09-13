@@ -1185,6 +1185,50 @@
       "category": "diagnostic",
       "label": "M9 官方 x86 大页拒绝本地化",
       "note": "API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功."
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
+      "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759",
+      "schema": 1,
+      "kind": "jsc16k-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十三补丁 JSC 原八项 Binder",
+      "note": "新候选在 x86 API36 两种用户页各两轮, 同一85输入APK; 与baseline和旧候选分开."
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-checkpoints.json",
+      "sha256": "d663d218a1b8114401873a7018e7718c104d3410bf4520ce69f590bc4f2963b9",
+      "schema": 1,
+      "kind": "thirteen-patch-jsc-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 十三补丁 JSC 来源和清理补充",
+      "note": "85输入APK、37输入独立诊断源码绑定、标准检查和两个UID/ownedAVD清理; 不增加设备计数."
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json",
+      "sha256": "d535d87bf83a037483a1112124e1343e891af18d87063f56c55ccb609d1ec3f9",
+      "schema": 1,
+      "kind": "jsc-pressure-diagnostics",
+      "adapter": "pressure",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M5 十三补丁 JSC DFG 采样不足失败",
+      "note": "初始16KiB第二轮仅2个DFG样本, 低于原3个门槛; 整批不计入接受, 同APK完整重试另档."
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure.json",
+      "sha256": "08e51ece40c786fef4f80e7bdd7241ee9897ab07637295fade406f0583d9e97f",
+      "schema": 1,
+      "kind": "jsc-pressure-acceptance",
+      "adapter": "pressure",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十三补丁 JSC 有界压力",
+      "note": "原七模式及预算不变; x86 16KiB为用户页模拟, 非ARM64硬件或长时压力/性能."
     }
   ]
 }

@@ -33,6 +33,15 @@ Build a separately bound APK pair and run the original eight Binder tests and
 seven pressure modes twice at each API 36 x86 page size. Device results and
 Release remain separate gates; the original pressure assets and budgets stay exact.
 
+The [2026-09-14 thirteen-patch batch](../../../../docs/compatibility/2026-09-14-m5-thirteen-patch-jsc.md)
+now passes 32/32 original Binder tests and 28/28 original pressure modes across
+native x86 API36 4KiB/16KiB userspace pages. One APK pair binds 85 inputs to
+`ba5418e`. The initial 16 KiB pressure round 2 fails with two DFG samples below the
+unchanged three-sample gate; that full attempt is archived separately. One
+identical-APK complete retry passes without settings, source or budget changes. Both package UIDs per suite and only the two owned AVDs are cleaned up. The 16KiB x86 userspace ABI is
+emulated over 4KiB kernel mappings; baseline 560/128, ARM64 pressure, broader
+runtime, long-running stability/performance and Release gates remain separate.
+
 ## Historical twelve-patch workflow
 
 The historical `jsc16k` profile required a separate `twelve-patch-candidate.lock.json`

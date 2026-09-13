@@ -1,24 +1,44 @@
-# 会话交接: 十三补丁 JSC 构建完成, 新 APK 设备阶段待继续
+# 会话交接: 十三补丁 JSC 回归与 watch 有界诊断完成
 
-2026-09-13 至 14, 从干净 master `7040456` 继续. 当前本机记录:
+2026-09-13 至 14, 从干净 master `7040456` 继续, 源码/构建提交为 `ba5418e`.
+先完整阅读 `AGENTS.md`、本文件与
 `E:/.codex-tmp/jsc-thirteen-patch-20260913/SESSION_HANDOFF.local.md`.
-之前三星两项十三补丁固定套件门禁已完成, 不再请求或重复运行该轮设备.
+用户要求单次推进更多有边界小节; 本轮完成 M5 新候选/双clean构建/双页大小Binder/压力,
+以及 M3 有界SIGABRT观察器与固定watch未复现诊断. 不重复本轮builders/collector/APK/device脚本.
 
-- 两份全新独立 JSC/Bun 构建均已实际 exit0, driver-pair/native日志及完整ELF均已采集.
-  两份90609496-byte成品SHA `17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8`.
-  源码e8b129616/tree7d715cd1, 21输入未变; 精确复用原两套JSC库/config和ICU,
-  新WebKit/ICU构建0/0. 独立13候选锁和build JSON已保存, 不重复builder/collector.
-- 新live jsc16k profile严格绑定13候选, 9/10/12锁与历史结果不改写.
-  下一步提交源码/构建输入, 构建一批新APK, 然后原8Binder/7pressure双页大小各两轮.
-  原fixture/Java/semantic validator/预算保持原样. 未启动AVD, 还没有新候选设备结果.
-- watch独立APK使用不变13baseline与固定native/TRAP夹具, Sony28/31各两轮
-  plain/traced共16观察完成32重载/48镜像, 捕获24普通SIGSYS. 未复现SIGABRT,
-  原API28 69/70与clone EAGAIN原因仍开放. 新readonly fatal快照仅有Linux
-  SIGABRT对照验证, 不声称Android崩溃栈. 两台包/UID10774/15132已清理.
-  默认ADB未重启, 无三星/privateADB/AVD操作. 不加baseline560/128计数.
-- 三份新JSON暂已注册, 原105历史JSON/registry和210矩阵行须逐项保持原样.
-  新十语言条目同步; 标准Node/Python/Gradle/IDE及源绑定检查尚待最终记录.
-  后续设备阶段只关闭本轮启动的AVD, 必须先检查进程和端口所有权.
+- 十三补丁源e8b129616/tree7d715cd1, 两个全新独立clean Bun构建actual exit0/0.
+  两份完整90609496-byte成品SHA `17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8`.
+  21项输入未漂移, 两份完整ELF审计通过. 精确复用原两套独立JSC库/config与ICU;
+  新WebKit/ICU构建0/0. 新13锁与9/10/12候选、baseline严格分开, 不再重建原成品.
+- 一批新main/test APK的85输入逐项匹配`ba5418e`, 同一APK在API36原生x86_64
+  4KiB/16KiB用户页各两轮原八项Binder通过32/32, 原七模式压力通过28/28.
+  Binder无失败/重试. 初次16KiB压力第二轮只有2个DFG目标样本, 原门槛3个,
+  compiles=3; 是固定断言exit1, 未捕获native崩溃或确定资源原因. 原整批失败独立保留,
+  不拼接局部成功观测; 唯一同APK完整两轮复测通过, 原设置/JIT选项/预算未变.
+  采样稳定性仍开放. 实际LLInt/Baseline/DFG/FTL、GC/Wasm与64个worker正常退出通过.
+- ELF AT_PAGESZ/sysconf/getconf一致, 两台x86内核/MMU映射均4096.
+  x86用户16KiB是模拟ABI, 不替代三星ARM64硬件证据. 所有成功/失败包和两个UID
+  独立检查为空; 仅关闭本轮两个AVD(5580/5582), 默认ADB30928未重启/终止,
+  五台原有本地ARM64设备仍在线. 没有Samsung或privateADB操作, 无待清理设备任务.
+- 独立watch APK的37输入也精确匹配`ba5418e`, 原13baseline/native与固定夹具不变.
+  Sony28/31各两轮native/TRAP plain/traced, 共16观察、32重载、48镜像、24普通SIGSYS.
+  UID10774/15132已清理. 未复现原SIGABRT; 新fatal快照只有Linux对照验证,
+  不声称有新Android崩溃栈或EAGAIN原因. 原69/70失败和一次原APK复测保持原样.
+  Linux2个unittest方法含5种旧SIGSYS与新SIGABRT的plain/traced控制通过;
+  Python3.8的初始removeprefix工具失败单独保留, 不作为Android失败.
+- Node254/254、Python38/38、官方Bun/监督器字节、Markdown十语言和矩阵检查通过.
+  生产四项Gradleactual0, JVM21项UP-TO-DATE不声称重跑; lint0error/44既有warning.
+  IDE直接构建成功, 仅既有SDK XML和Bundle.get警告. 新APK Gradleactual0.
+  原105历史JSON/registry与210矩阵行、原pressure/35probe定义和全部旧fixture保持不变.
+- Baseline仍为八原生环境560/560probes、128/128Binder, 两项三星门禁已完成.
+  新JSC与诊断不增加baseline计数. 下一步优先原API28 watch SIGABRT/clone EAGAIN
+  的有界调用链/资源诊断及DFG采样稳定性, 然后更广syscall/API/FD/OEM、
+  blocked/pending跨reload、IPC/并发FD、Android FD70000/UNSHARE、长时压力/Release.
+  官方API33/service/AAR/native与distributionReady=false不变, 没有待用户回答的问题,
+  当前无需追加设备或手动操作. 不重复请求已完成的三星固定套件.
+
+[JSC构建/设备/压力与失败范围](compatibility/2026-09-14-m5-thirteen-patch-jsc.md),
+[watch诊断与未解决边界](compatibility/2026-09-13-m3-watch-reload-trace.md).
 
 ## 此前三星完整检查点
 

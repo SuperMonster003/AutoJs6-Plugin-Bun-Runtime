@@ -2681,6 +2681,97 @@
         "totalTests": 4,
         "failedTests": 0
       }
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
+      "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759",
+      "schema": 1,
+      "kind": "jsc16k-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十三补丁 JSC 原八项 Binder",
+      "note": "新候选在 x86 API36 两种用户页各两轮, 同一85输入APK; 与baseline和旧候选分开.",
+      "bytesUtf8Lf": 179654,
+      "rows": 2,
+      "reportedScope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "passedTests": 32,
+        "totalTests": 32,
+        "lifecycleObservations": 20
+      }
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-checkpoints.json",
+      "sha256": "d663d218a1b8114401873a7018e7718c104d3410bf4520ce69f590bc4f2963b9",
+      "schema": 1,
+      "kind": "thirteen-patch-jsc-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 十三补丁 JSC 来源和清理补充",
+      "note": "85输入APK、37输入独立诊断源码绑定、标准检查和两个UID/ownedAVD清理; 不增加设备计数.",
+      "bytesUtf8Lf": 24050,
+      "rows": 0,
+      "reportedScope": "Supplemental source/APK/cleanup and verification records only; no added Binder, pressure, trace or native-build counts. Original build, device and watch diagnostic archives remain separate.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json",
+      "sha256": "d535d87bf83a037483a1112124e1343e891af18d87063f56c55ccb609d1ec3f9",
+      "schema": 1,
+      "kind": "jsc-pressure-diagnostics",
+      "adapter": "pressure",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M5 十三补丁 JSC DFG 采样不足失败",
+      "note": "初始16KiB第二轮仅2个DFG样本, 低于原3个门槛; 整批不计入接受, 同APK完整重试另档.",
+      "bytesUtf8Lf": 151389,
+      "rows": 1,
+      "reportedScope": "Exact preliminary receipts and outcomes, excluded from final acceptance counts. Later fixes/runs never overwrite these records; each build binds its own earlier fixture bytes.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure.json",
+      "sha256": "08e51ece40c786fef4f80e7bdd7241ee9897ab07637295fade406f0583d9e97f",
+      "schema": 1,
+      "kind": "jsc-pressure-acceptance",
+      "adapter": "pressure",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十三补丁 JSC 有界压力",
+      "note": "原七模式及预算不变; x86 16KiB为用户页模拟, 非ARM64硬件或长时压力/性能.",
+      "bytesUtf8Lf": 399204,
+      "rows": 2,
+      "reportedScope": "Fixed, offline, bounded seven-mode JSC pressure fixture through the real plugin Binder service, two restarted rounds per native x86_64 API 36 userspace page size. The 16 KiB x86 userspace ABI is emulated over 4 KiB kernel mappings, not ARM64 hardware 16 KiB evidence. Separate from the original eight-test Binder suite, performance, exhaustive JIT/Wasm coverage and Release acceptance.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "passedJUnitTests": 4,
+        "totalJUnitTests": 4,
+        "passedPressureModes": 28,
+        "totalPressureModes": 28,
+        "sampledTierObservations": 16,
+        "retainedTargetTierFrames": 48,
+        "explicitMainThreadFullGcCalls": 100,
+        "explicitMainThreadEdenGcCalls": 96,
+        "explicitWorkerFullGcCalls": 64,
+        "wasmModules": 128,
+        "wasmCalls": 8388608,
+        "wasmMemoryGrows": 252,
+        "workersExited": 64,
+        "workerTransferredBytes": 67108864
+      }
     }
   ],
   "rows": [
@@ -14524,6 +14615,286 @@
       "status": "passed",
       "sourceReportedPassed": true,
       "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M5 十三补丁 JSC 原八项 Binder",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 36,
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+e8b129616",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M5 十三补丁 JSC 原八项 Binder",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+e8b129616",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "diagnostic",
+      "scope": "M5 十三补丁 JSC DFG 采样不足失败",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": 4096,
+        "userPageSizeEmulated": true
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+e8b129616",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "modes",
+          "passed": null,
+          "total": 7,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-14-m5-thirteen-patch-jsc-pressure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M5 十三补丁 JSC 有界压力",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 36,
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": 4096,
+        "userPageSizeEmulated": false
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+e8b129616",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-14-m5-thirteen-patch-jsc-pressure.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M5 十三补丁 JSC 有界压力",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": 4096,
+        "userPageSizeEmulated": true
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+e8b129616",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
     }
   ]
 }

@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 108 份源报告, 212 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 112 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -748,6 +748,28 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | /reports/0 | sdk_gphone64_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 4096 / 4096 | 1.4.0+06e518f73<br>大页 JSC 候选<br>SHA 34edd4b99d74 | 7/7 压力模式; 7/7 压力模式 | 通过 (限定范围) |
 | /reports/1 | sdk_gphone16k_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 16384 / 4096<br>用户页 ABI 模拟 | 1.4.0+06e518f73<br>大页 JSC 候选<br>SHA 34edd4b99d74 | 7/7 压力模式; 7/7 压力模式 | 通过 (限定范围) |
 
+### M5 十三补丁 JSC 原八项 Binder
+
+来源: [2026-09-14-m5-thirteen-patch-jsc-binder.json](2026-09-14-m5-thirteen-patch-jsc-binder.json).
+
+新候选在 x86 API36 两种用户页各两轮, 同一85输入APK; 与baseline和旧候选分开.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | sdk_gphone64_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 1.4.0+e8b129616<br>大页 JSC 候选<br>SHA 17c7941a3266 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /reports/1 | sdk_gphone16k_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 16384 / 未记录 | 1.4.0+e8b129616<br>大页 JSC 候选<br>SHA 17c7941a3266 | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M5 十三补丁 JSC 有界压力
+
+来源: [2026-09-14-m5-thirteen-patch-jsc-pressure.json](2026-09-14-m5-thirteen-patch-jsc-pressure.json).
+
+原七模式及预算不变; x86 16KiB为用户页模拟, 非ARM64硬件或长时压力/性能.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | sdk_gphone64_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 4096 / 4096 | 1.4.0+e8b129616<br>大页 JSC 候选<br>SHA 17c7941a3266 | 7/7 压力模式; 7/7 压力模式 | 通过 (限定范围) |
+| /reports/1 | sdk_gphone16k_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 16384 / 4096<br>用户页 ABI 模拟 | 1.4.0+e8b129616<br>大页 JSC 候选<br>SHA 17c7941a3266 | 7/7 压力模式; 7/7 压力模式 | 通过 (限定范围) |
+
 ## ADB shell 冒烟记录
 
 ### M2 实验运行时 shell 冒烟
@@ -1013,6 +1035,16 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
+### M5 十三补丁 JSC DFG 采样不足失败
+
+来源: [2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json](2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json).
+
+初始16KiB第二轮仅2个DFG样本, 低于原3个门槛; 整批不计入接受, 同APK完整重试另档.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /reports/0 | sdk_gphone16k_x86_64<br>API 36 | x86_64 → x86_64<br>原生 | 16384 / 4096<br>用户页 ABI 模拟 | 1.4.0+e8b129616<br>大页 JSC 候选<br>SHA 17c7941a3266 | 7/7 压力模式; 未记录/7 压力模式 | 诊断, 不计入接受结果; 记录失败 |
+
 ## 构建证据
 
 ### M2 初始补丁的构建证据
@@ -1174,5 +1206,13 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-13-m5-twelve-patch-jsc-checkpoints.json](2026-09-13-m5-twelve-patch-jsc-checkpoints.json).
 
 绑定构建原始换行/归档失败、83输入APK、两个UID清理和ownedAVD关闭. 三星81输入APK准备及offline窗口不增加设备计数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M5 十三补丁 JSC 来源和清理补充
+
+来源: [2026-09-14-m5-thirteen-patch-jsc-checkpoints.json](2026-09-14-m5-thirteen-patch-jsc-checkpoints.json).
+
+85输入APK、37输入独立诊断源码绑定、标准检查和两个UID/ownedAVD清理; 不增加设备计数.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.

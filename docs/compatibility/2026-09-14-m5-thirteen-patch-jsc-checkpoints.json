@@ -1,0 +1,690 @@
+{
+  "schemaVersion": 1,
+  "kind": "thirteen-patch-jsc-checkpoints",
+  "capturedAt": "2026-09-13T16:20:17Z",
+  "projectBaseCommit": "ba5418e87ec3bcc3259b336e00ef1d2112a3bde2",
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "Supplemental source/APK/cleanup and verification records only; no added Binder, pressure, trace or native-build counts. Original build, device and watch diagnostic archives remain separate.",
+  "candidateBuilds": {
+    "archive": {
+      "file": "2026-09-13-m5-thirteen-patch-jsc-builds.json",
+      "bytes": 36075,
+      "sha256": "c95ea90c63c6405b6aa9d64b31ca9754d874e2bd58022702d39f06b90817b87a"
+    },
+    "originalDrivers": [
+      {
+        "run": 1,
+        "bytes": 4727,
+        "sha256": "4f9ecede2e7f101be477da5372b726f6f654e976bbb7b4387fbc8ee1b5cb8bbf"
+      },
+      {
+        "run": 2,
+        "bytes": 4727,
+        "sha256": "1f68e7ce576474ad9d6694a3e94f6357ee3848e7ee861af63d0084fb67c01c82"
+      }
+    ],
+    "collectorActualExit": 0,
+    "collectorLog": {
+      "bytes": 133,
+      "sha256": "fd166195b1c22413b76e5099731fa166d6c2454c7d1ea46bd308173a43a69cb8"
+    },
+    "completeElfAudit": {
+      "bytes": 5387,
+      "sha256": "06b04a9deabe9c468241a5c4ba5df8d1704b85898d5b21668eb3d58009374199",
+      "record": {
+        "at": "2026-09-13T15:57:05.012Z",
+        "passed": true,
+        "runs": [
+          {
+            "run": 1,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+            "bytes": 90609496,
+            "completeElfMatches": true,
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d50",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "331309c87afe49cf8008ae059e1075a6a7d7be09",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1067,
+                "definedCount": 672,
+                "undefinedCount": 394,
+                "tableSha256": "ac7fbb0956b051e5d8e55bc16c536f72a89b1b5a3b52257aba357af73f8ccda3",
+                "recordsSha256": "a6c2b59e36295d78ad8837ca599cf6515fa488231bcf5efc0fb07abfefa15709",
+                "definedRecordsSha256": "d976ba6eb1bc2d2522147d2a4a64729f4a342083b64d6a7267e557f129844ffa",
+                "undefinedRecordsSha256": "7ea254a61557e6242aaa04c5c032bb34b9193fbb0e852bc8bb247a9535eea6a2"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          },
+          {
+            "run": 2,
+            "sha256": "17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8",
+            "bytes": 90609496,
+            "completeElfMatches": true,
+            "elf": {
+              "class": "ELF64",
+              "data": "little-endian",
+              "osAbi": "System V",
+              "type": "ET_DYN",
+              "machine": 62,
+              "machineName": "Advanced Micro Devices X86-64",
+              "entryPoint": "0x107800",
+              "programHeaderCount": 8,
+              "sectionHeaderCount": 33,
+              "interpreter": "/system/bin/linker64",
+              "loadAlignments": [
+                16384,
+                65536
+              ],
+              "minimumLoadAlignment": 16384,
+              "writableExecutableLoad": false,
+              "executableStack": false,
+              "neededLibraries": [
+                "libc.so",
+                "libm.so",
+                "libdl.so"
+              ],
+              "flags1": "0x8000000",
+              "pie": true,
+              "androidRelr": {
+                "address": "0x10d50",
+                "bytes": 19896,
+                "entryBytes": 8
+              },
+              "androidIdent": {
+                "api": 28,
+                "ndkVersion": "r27c",
+                "ndkBuildNumber": "12479018"
+              },
+              "buildId": "331309c87afe49cf8008ae059e1075a6a7d7be09",
+              "versionDefinitions": [
+                {
+                  "index": 1,
+                  "name": "bun-profile",
+                  "base": true
+                },
+                {
+                  "index": 2,
+                  "name": "BUN_1.2",
+                  "base": false
+                }
+              ],
+              "versionNeeds": [
+                {
+                  "file": "libc.so",
+                  "names": [
+                    "LIBC",
+                    "LIBC_N",
+                    "LIBC_O",
+                    "LIBC_P"
+                  ]
+                },
+                {
+                  "file": "libm.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                },
+                {
+                  "file": "libdl.so",
+                  "names": [
+                    "LIBC"
+                  ]
+                }
+              ],
+              "dynamicSymbols": {
+                "entryCount": 1067,
+                "definedCount": 672,
+                "undefinedCount": 394,
+                "tableSha256": "ac7fbb0956b051e5d8e55bc16c536f72a89b1b5a3b52257aba357af73f8ccda3",
+                "recordsSha256": "a6c2b59e36295d78ad8837ca599cf6515fa488231bcf5efc0fb07abfefa15709",
+                "definedRecordsSha256": "d976ba6eb1bc2d2522147d2a4a64729f4a342083b64d6a7267e557f129844ffa",
+                "undefinedRecordsSha256": "7ea254a61557e6242aaa04c5c032bb34b9193fbb0e852bc8bb247a9535eea6a2"
+              },
+              "symbolTable": {
+                "present": true,
+                "entryCount": 1708,
+                "bytes": 40992,
+                "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
+              },
+              "debugSections": []
+            }
+          }
+        ]
+      }
+    },
+    "note": "Both original native drivers exit 0, complete artifacts match, 21 physical/canonical inputs remain unchanged. Reuse original independent JSC/config and ICU; zero new WebKit/ICU builds."
+  },
+  "apks": {
+    "projectBaseCommit": "ba5418e87ec3bcc3259b336e00ef1d2112a3bde2",
+    "matchedInputs": 85,
+    "actualGradleExit": 0,
+    "driver": {
+      "bytes": 17863,
+      "sha256": "ebd38dc121ae4c5c4f385b595aa982b6a52c12e8eabf7421fa80c3cc7458b0f4"
+    },
+    "buildLog": {
+      "bytes": 8100,
+      "sha256": "845ec7dd1abb1dd70b9e1467c615fe9325ea8141556055ed04d87dbaad9a2e18"
+    },
+    "receipt": {
+      "bytes": 56236,
+      "sha256": "22308fcb12f983b869ce5e80a3a41dd7ce262c83fd9550911271d33aad9ed59e"
+    },
+    "files": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42944605,
+        "sha256": "e7d4317baf124c90dd246cb471e4fcf735d17c3a65aaa93f05bc87d057ad9ef8"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2387553,
+        "sha256": "b56653582a826dad4e13c3f5c4232b5c41accec7139fd29ba321d3d90226f9b8"
+      }
+    ]
+  },
+  "deviceSuites": [
+    {
+      "name": "binder-4k",
+      "serial": "emulator-5580",
+      "pages": 4096,
+      "startedAt": "2026-09-13T16:10:36Z",
+      "finishedAt": "2026-09-13T16:11:52Z",
+      "actualRunnerExit": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10226,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10227
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T16:11:52Z",
+      "rawReport": {
+        "bytes": 82460,
+        "sha256": "99c8c000bad38756a27d8d2b7e0c6fa21e5ac5f8929aa1c2d084d3b1076f0145"
+      },
+      "driverLog": {
+        "bytes": 94,
+        "sha256": "8c8572032c249b5c2fe13171d6f8ad54139f817971930770cfc7cbab9eae0e40"
+      },
+      "postflightSnapshot": {
+        "bytes": 17086,
+        "sha256": "259d662d8f2ee94200a8162487ccc1a892ee6e6ca85ef57fd82a2cac028df45e"
+      }
+    },
+    {
+      "name": "pressure-4k",
+      "serial": "emulator-5580",
+      "pages": 4096,
+      "startedAt": "2026-09-13T16:11:52Z",
+      "finishedAt": "2026-09-13T16:12:10Z",
+      "actualRunnerExit": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10228,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10229
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T16:12:10Z",
+      "rawReport": {
+        "bytes": 187765,
+        "sha256": "e169c191def235331efb5506f63f161dcd7c2112f92ea0009d621e4e87173243"
+      },
+      "driverLog": {
+        "bytes": 106,
+        "sha256": "9a951fbb63fd75accf7c647b60ae48561fbce424095c96fc82b412a2a821fa98"
+      },
+      "postflightSnapshot": {
+        "bytes": 17082,
+        "sha256": "55b59a4b3da8582601021199a36a16c871b311c10499509484518f7ee9f9db26"
+      }
+    },
+    {
+      "name": "binder-16k",
+      "serial": "emulator-5582",
+      "pages": 16384,
+      "startedAt": "2026-09-13T16:13:04Z",
+      "finishedAt": "2026-09-13T16:14:19Z",
+      "actualRunnerExit": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10213,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10214
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T16:14:20Z",
+      "rawReport": {
+        "bytes": 82469,
+        "sha256": "bc1507f8094b4d595b8220dc57f0686fcdfe950045dae82c519fcbfa9cd6129e"
+      },
+      "driverLog": {
+        "bytes": 94,
+        "sha256": "fda4dd10f740b5da446b23f239025e5e7cb4d7bd0e9beb469c52628f56622719"
+      },
+      "postflightSnapshot": {
+        "bytes": 14889,
+        "sha256": "c99a32e6c07a2d1a28ae5f319361bb65d278301b3123e748bdb05557bcb3a695"
+      }
+    },
+    {
+      "name": "pressure-16k-retry",
+      "serial": "emulator-5582",
+      "pages": 16384,
+      "startedAt": "2026-09-13T16:17:07Z",
+      "finishedAt": "2026-09-13T16:17:25Z",
+      "actualRunnerExit": 0,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10217,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10218
+      },
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T16:17:25Z",
+      "rawReport": {
+        "bytes": 187558,
+        "sha256": "a0f39b4c947a763b76064cbbfb062135ecd7f6df764eb416fbce6db579beb0c3"
+      },
+      "driverLog": {
+        "bytes": 106,
+        "sha256": "c5beb3ba166082bd718be83ae0ecf334ccdc1c883cee2c703d0568210f4548cc"
+      },
+      "postflightSnapshot": {
+        "bytes": 14958,
+        "sha256": "ca751b2559d9c55b7176cae3f9be09903e5708da761e6a876b14fbb3dd1c2d41"
+      }
+    }
+  ],
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "model": "sdk_gphone64_x86_64",
+      "api": "36",
+      "abi": "x86_64",
+      "machine": "x86_64",
+      "pages": "4096",
+      "bridge": "libndk_translation.so",
+      "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+      "capturedAt": "2026-09-13T16:10:36Z",
+      "shellMappingPages": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      }
+    },
+    {
+      "serial": "emulator-5582",
+      "model": "sdk_gphone16k_x86_64",
+      "api": "36",
+      "abi": "x86_64",
+      "machine": "x86_64",
+      "pages": "16384",
+      "bridge": "libndk_translation.so",
+      "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+      "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "capturedAt": "2026-09-13T16:13:04Z",
+      "shellMappingPages": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      }
+    }
+  ],
+  "shellSmaps": [
+    {
+      "pages": 4096,
+      "bytes": 122391,
+      "sha256": "962c9f8866950da4d3637e47f621a347b02edb8b0eaffde9770bafc9debf0b90"
+    },
+    {
+      "pages": 16384,
+      "bytes": 102503,
+      "sha256": "686c6212a408abab2fc0fe9f2a394581020285143f6268a714836ea781b71272"
+    }
+  ],
+  "ownedAvds": [
+    {
+      "name": "bun-jsc-pressure-4k-20260912",
+      "serial": "emulator-5580",
+      "port": 5580,
+      "pages": 4096,
+      "launcherPid": 30160,
+      "arguments": [
+        "-avd",
+        "bun-jsc-pressure-4k-20260912",
+        "-port",
+        "5580",
+        "-no-window",
+        "-no-snapshot",
+        "-no-boot-anim",
+        "-no-audio",
+        "-gpu",
+        "swiftshader_indirect"
+      ],
+      "startedAt": "2026-09-13T16:09:38Z",
+      "bootConfirmedAt": "2026-09-13T16:10:36Z",
+      "nameBeforeStop": "bun-jsc-pressure-4k-20260912",
+      "stopCommandAt": "2026-09-13T16:12:10Z",
+      "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+      "stopped": true,
+      "stopConfirmedAt": "2026-09-13T16:12:12Z"
+    },
+    {
+      "name": "bun-jsc-pressure-16k-20260912",
+      "serial": "emulator-5582",
+      "port": 5582,
+      "pages": 16384,
+      "launcherPid": 42988,
+      "arguments": [
+        "-avd",
+        "bun-jsc-pressure-16k-20260912",
+        "-port",
+        "5582",
+        "-no-window",
+        "-no-snapshot",
+        "-no-boot-anim",
+        "-no-audio",
+        "-gpu",
+        "swiftshader_indirect"
+      ],
+      "startedAt": "2026-09-13T16:12:18Z",
+      "bootConfirmedAt": "2026-09-13T16:13:04Z",
+      "nameBeforeStop": "bun-jsc-pressure-16k-20260912",
+      "stopCommandAt": "2026-09-13T16:17:26Z",
+      "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+      "stopped": true,
+      "stopConfirmedAt": "2026-09-13T16:17:29Z"
+    }
+  ],
+  "ownershipReceipt": {
+    "bytes": 3657,
+    "sha256": "8f97cb340dbcd5d4cb70bac577f311bc47ed7cdb9256299da2541fadacae4567"
+  },
+  "driverReceipt": {
+    "bytes": 4439,
+    "sha256": "101710ca486cabda59473311e3a9d3c237aa1014fa29587cd8a903f0c60ef73e"
+  },
+  "recoveryDriverReceipt": {
+    "bytes": 4733,
+    "sha256": "2f3852b6d1a0ed1138265c52c85f84beceb124aeee27d556a8bfb706571869d4"
+  },
+  "initialPressureFailure": {
+    "archive": {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json",
+      "bytes": 151389,
+      "sha256": "d535d87bf83a037483a1112124e1343e891af18d87063f56c55ccb609d1ec3f9"
+    },
+    "actualRunnerExit": 1,
+    "postflight": {
+      "name": "pressure-16k",
+      "serial": "emulator-5582",
+      "pages": 16384,
+      "startedAt": "2026-09-13T16:14:20Z",
+      "exitCode": 1,
+      "installedUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10215,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10216
+      },
+      "finishedAt": "2026-09-13T16:14:37Z",
+      "finalUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "postflightAt": "2026-09-13T16:17:07Z"
+    },
+    "ownedUidLogcat": {
+      "bytes": 28882,
+      "sha256": "edf46447417dc3cc72b600882c9111721cde534796345e2304dc3722fa52e9d2"
+    },
+    "postFailureMeminfo": {
+      "bytes": 1366,
+      "sha256": "620d30e922b3d050f243634b37178d7083df69eb1df487ca88ebda6688d725d0"
+    },
+    "reason": "First round passes 7/7. Second round emits valid LLInt/Baseline records, then fails the unchanged requirement of three DFG samples: only two are captured, compiles=3. FTL/GC/Wasm/workers do not execute in that round. This is a controlled assertion/exit1, not a captured native crash or a proven resource cause.",
+    "acceptance": "Entire original attempt excluded. One complete two-round same-APK retry passes with unchanged sources, settings, JIT options and budgets. Sampling stability and wider pressure coverage remain open."
+  },
+  "archives": [
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
+      "bytes": 179654,
+      "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759"
+    },
+    {
+      "file": "2026-09-14-m5-thirteen-patch-jsc-pressure.json",
+      "bytes": 399204,
+      "sha256": "08e51ece40c786fef4f80e7bdd7241ee9897ab07637295fade406f0583d9e97f"
+    }
+  ],
+  "validation": {
+    "checks": [
+      {
+        "name": "node-1",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:48.819694+00:00",
+        "finishedAt": "2026-09-13T16:06:05.385758+00:00",
+        "receipt": {
+          "bytes": 3520,
+          "sha256": "a121970420097da37c11b380c71297baff6d8a28c414c6cc80f380a85e4d1155"
+        },
+        "log": {
+          "bytes": 22628,
+          "sha256": "92e10052d936306e622216001513c81a52544051d6abdb88f73e97f6ee1622a9"
+        }
+      },
+      {
+        "name": "docs-1",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:48.795062+00:00",
+        "finishedAt": "2026-09-13T16:05:49.152581+00:00",
+        "receipt": {
+          "bytes": 211,
+          "sha256": "6b909d593192a0608d0b3ade89265068a197516d24f1b348284c6a4672fb5a0d"
+        },
+        "log": {
+          "bytes": 50,
+          "sha256": "1b22950299b550db747e2646fe7c04ce3181c27200e40c9ca220015893765c81"
+        }
+      },
+      {
+        "name": "docs-2",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:49.153874+00:00",
+        "finishedAt": "2026-09-13T16:05:50.115743+00:00",
+        "receipt": {
+          "bytes": 223,
+          "sha256": "18ee30c28e61be085c32c8badd84fb3b633e9d753e00393773dd126da66eea65"
+        },
+        "log": {
+          "bytes": 69,
+          "sha256": "9cbb577b08d051f02869f0e4b7657e004845f678f0d047cc4d7a0399c65a0f9a"
+        }
+      },
+      {
+        "name": "docs-3",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:50.118838+00:00",
+        "finishedAt": "2026-09-13T16:05:52.439510+00:00",
+        "receipt": {
+          "bytes": 270,
+          "sha256": "c92d81988f0db0d1bea25fd7524406e5727d26d86b304756cf49291b22e8615e"
+        },
+        "log": {
+          "bytes": 142,
+          "sha256": "d6c56c65e938c12ec7edabe88c1237718a7333dace717768e1f851a53e802af0"
+        }
+      },
+      {
+        "name": "gradle-1",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:48.791239+00:00",
+        "finishedAt": "2026-09-13T16:06:11.845402+00:00",
+        "receipt": {
+          "bytes": 412,
+          "sha256": "e3a86a384b0d737535cfb4c2214d0669dacffc897ba1c89bc63c485054c41f75"
+        },
+        "log": {
+          "bytes": 8787,
+          "sha256": "e4396561d397df219638d81bfe7678e97725bcec6b3721d1feb129273138a136"
+        }
+      },
+      {
+        "name": "runtime-1",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:48.799890+00:00",
+        "finishedAt": "2026-09-13T16:05:52.444012+00:00",
+        "receipt": {
+          "bytes": 205,
+          "sha256": "b5974596d78dab38a9ba424cd7568d69b12a660590521c9e04354325e499572e"
+        },
+        "log": {
+          "bytes": 476,
+          "sha256": "146e2ff047921745fd6a391ffff1c4c51b4c0fbc00a9a9b792068cb18643819a"
+        }
+      },
+      {
+        "name": "runtime-2",
+        "actualExit": 0,
+        "startedAt": "2026-09-13T16:05:52.445194+00:00",
+        "finishedAt": "2026-09-13T16:05:52.584011+00:00",
+        "receipt": {
+          "bytes": 219,
+          "sha256": "57b500e93196514f0be3625c7153f928acf80966ce963339a1e266f27a5cb6f1"
+        },
+        "log": {
+          "bytes": 247,
+          "sha256": "35af31ba76f2c61b79d2bc5679ba7c68ca946d28acdfad85d5a4a46fb4cdb8de"
+        }
+      }
+    ],
+    "nodeTests": 254,
+    "pythonTests": 38,
+    "jvmUnitTests": {
+      "count": 21,
+      "task": "UP-TO-DATE",
+      "newExecutionClaimed": false
+    },
+    "productionLint": {
+      "errors": 0,
+      "existingWarnings": 44
+    },
+    "ide": {
+      "recordType": "summary-of-direct-IDE-tool-result",
+      "isSuccess": true,
+      "timedOut": false,
+      "warnings": [
+        "Android SDK XML version 4 encountered by tooling that understands versions up to 3",
+        "Existing deprecated Bundle.get usage in BunExecutionRequest.kt"
+      ],
+      "errors": 0
+    }
+  },
+  "watchDiagnosticSourceBinding": {
+    "archive": "2026-09-13-m3-watch-reload-trace.json",
+    "originalProjectBaseCommit": "7040456397c4e13eefc18402083a492d1b7a0f9a",
+    "sourceCommit": "ba5418e87ec3bcc3259b336e00ef1d2112a3bde2",
+    "matchedInputs": 37,
+    "buildReceipt": {
+      "bytes": 9549,
+      "sha256": "45babd9d1ad4a818fcd790ad92e02824aa68d68a78ece9df3651a8254edb5d6c"
+    },
+    "note": "The new diagnostic inputs, separately hash-bound when observed, now match this committed source exactly. No Android abort reproduced, original failure unchanged, no baseline compatibility passes added."
+  },
+  "limits": [
+    "Native x86_64 16 KiB userspace ABI emulation over 4 KiB kernel mappings is not ARM64 hardware evidence",
+    "Original seven pressure modes and eight Binder methods unchanged; no long soak, performance, full JIT/Wasm or broader syscall/API/FD/OEM acceptance",
+    "Baseline remains 560/560 probes and 128/128 Binder; official/native/historical payloads unchanged; distributionReady=false"
+  ]
+}
