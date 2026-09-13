@@ -1,3 +1,36 @@
+# 会话交接: 十三补丁两项三星门禁完成
+
+2026-09-13, 从干净 master `2d23e46` 继续. 先完整阅读 `AGENTS.md`, 本文件与
+`E:/.codex-tmp/watch-reload-samsung-37478-20260913/SESSION_HANDOFF.local.md`,
+以及其中的 `api32/SESSION_HANDOFF.local.md`. 更早的构建/本地回归记录仍在
+`E:/.codex-tmp/watch-reload-fix-20260913/SESSION_HANDOFF.local.md`.
+
+- 用户先后在同一 `localhost:37478` 提供两台设备, 每台都重新核对身份.
+  SM-A566B 实际 API36 / 原生 ARM64 / 硬件16KiB / bridge0;
+  SM-F936U 实际 API32 / 原生 ARM64 /4KiB /bridge0. 两台 shell 内核/MMU 页
+  分别是16384/4096, 应用页另外硬断言. 设备/原始记录/物理及canonical smaps摘要分别绑定.
+- 原样复用 `bf5cb72` 的32输入probe与83输入Binder三个APK, 当前输入仍匹配.
+  Native仍为e8b1296169a8e6f20c81e926dba6448afb25cd11, ARM SHA c8f2513f...427160.
+  无Bun/WebKit/ICU/监督器/Gradle/APK构建, 无定义/夹具/校验器/预算变化.
+- 每台两轮固定35项70/70、完整八项Binder16/16, 无失败/跳过/重试.
+  新增16次实际watch重载、24镜像, 哨兵FD均关闭, PID/stdio/普通SIGSYS保持.
+  原blocked/pending、hard/soft limit和强制清理继续通过. 回收301-307ms.
+  此前六环境加本轮两台, 同一十三补丁baseline八环境560/560 probes、128/128Binder.
+  API36先归档的7环境490/112不改写, API32后续另绑定8环境结果.
+- 三个测试包/UID逐台独立捕获并清理: API36为10320/10321/10322,
+  API32为10328/10329/10330. 自有私有ADB5039前后PID14364/59528均已关闭,
+  两次实际stop exit0, 只读确认PID/监听端口消失. 默认ADB/RDB未重启或终止;
+  没有AVD操作, 无运行中设备任务或待清理进程. 已告知用户两台设备可以结束连接.
+- 六份新JSON按API/套件/设备补充分开保存; 原99份JSON和206个矩阵行保持原样.
+  [三星完整报告](compatibility/2026-09-13-m3-watch-reload-samsung.md)与各原始归档相互链接.
+- 下一步是原API28watch SIGABRT/clone EAGAIN的独立有界诊断、十三补丁大页x86
+  JSC重对齐与新设备/压力证据, 以及其余syscall/API/FD/OEM/IPC/跨reload信号/
+  FD70000/UNSHARE/长时压力/Release. 本轮通过不解释或抹去原API28中止.
+  两项三星固定套件门禁已完成, 不再重复请求同一轮设备. 当前没有待答设备问题.
+  官方payload/service/AAR/API33与distributionReady=false保持不变.
+
+## 此前六环境本地阶段
+
 # 会话交接: 十三补丁本地回归完成, 三星与 watch 稳定性待继续
 
 2026-09-13, 从干净 master `5d92ade` 继续, 源码/构建提交为 `bf5cb72`.

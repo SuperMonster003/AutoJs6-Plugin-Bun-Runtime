@@ -24,8 +24,13 @@ passes the separate original Binder suite (96/96). The 24 watch modes observe
 48 actual reloads with both sentinels absent, 72 same-PID/stdio/signal images,
 and complete cleanup. One initial API 28 watch abort remains separately archived
 (69/70, preceding clone EAGAIN, no available crash stack); one unchanged-APK retry
-passes without altering budgets. Watch stability/pressure, both new-source Samsung
-gates and broader boundaries remain open. The following FD-leak failures belong
+passes without altering budgets. The same three ARM64 APKs subsequently pass
+70/70 probes and 16/16 Binder on each Samsung API 32/native 4 KiB and
+API 36/native hardware 16 KiB, without failures or retries. The original fixed
+suites now total 560/560 probes and 128/128 Binder in eight native environments;
+[Samsung evidence](../../../../../docs/compatibility/2026-09-13-m3-watch-reload-samsung.md)
+remains separate. Watch stability/pressure, the thirteen-patch JSC rebase and
+broader boundaries remain open. The following FD-leak failures belong
 to the historical twelve-patch bytes.
 
 The live suite now has **35 probes**. The [fixed watch/reload gate](../../../../../docs/compatibility/2026-09-13-m3-watch-reload.md)
