@@ -39,6 +39,16 @@ constitute new WebKit or ICU compilation. Verify both complete ELF files before
 building new APKs. The unchanged eight-test Binder and seven-mode pressure
 fixtures require fresh, separately bound device results for this candidate.
 
+The [2026-09-13 twelve-patch batch](../../../../docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md)
+now records both actual successful clean builds and the new `34edd4b9...a75b1ad`
+payload's device results: 32/32 original Binder tests and 28/28 unchanged pressure
+modes on native x86_64 API 36 with 4 KiB/16 KiB userspace pages. One APK pair binds
+83 inputs to project commit `0210e82`. The initial 16 KiB low-memory service death
+is archived separately; the identical-APK full retry passes without changed
+settings or budgets. Both package UIDs and only the two owned AVDs are cleaned up.
+The x86 16 KiB userspace ABI is emulated over 4 KiB kernel mappings. Samsung
+twelve-patch baseline, broader pressure/runtime and Release gates remain separate.
+
 ## Historical ten-patch workflow
 
 The commands in this section require their matching historical project revision.

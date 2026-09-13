@@ -1,8 +1,14 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 十补丁大页 JSC 已完成两次一致 clean Bun 构建 (actual exit 0), 新候选在 API 36 x86 4 KiB/16 KiB 用户空间页的原 Binder 32/32、原压力模式 28/28 均通过, 见 [独立报告](docs/compatibility/2026-09-13-m5-ten-patch-jsc.md). M9 排错指南也已完成; 扩展矩阵与 Release 门槛仍开放.
+本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 历史十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 十补丁大页 JSC 已完成两次一致 clean Bun 构建 (actual exit 0), 新候选在 API 36 x86 4 KiB/16 KiB 用户空间页的原 Binder 32/32、原压力模式 28/28 均通过, 见 [独立报告](docs/compatibility/2026-09-13-m5-ten-patch-jsc.md). M9 排错指南也已完成; 扩展矩阵与 Release 门槛仍开放.
 
 更新日期: 2026-09-13
+
+最新十二补丁 JSC rebase 已完成两份新 Bun 一致构建, 实际 driver exit 0/0. 同一新 APK 的
+83 输入绑定 `0210e82`, 在 x86 API 36 的 4 KiB/16 KiB 用户页各过两轮原八项 Binder 和
+七模式压力, 分别 32/32 与 28/28. 初次 16 KiB lowmemorykiller 服务终止独立保留, 完整
+同 APK 重试通过; 两个 UID 和本轮两个 AVD 清理完成. [完整结果](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md).
+16 KiB x86 仍是 4 KiB 内核上的用户页 ABI 模拟. 十二补丁 baseline 三星新源码门禁仍待接入.
 
 最新第 12 补丁 `06e518f73` 保留 Android epoll 等待期间的完整 caller mask/pending 信号,
 并在调用点维持 Android 已有的 epoll_pwait2 禁用. GCC/Clang 各 45 个有界主机执行、完整重放和
@@ -32,7 +38,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十二补丁本地原 33 项与八项 Binder 已过 330/330、80/80, 三星新源码与 JSC rebase 待验. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | 十二补丁本地原 33 项与八项 Binder 已过 330/330、80/80, 三星新源码待验; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -235,7 +241,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (上游/测试) 第 12 补丁保留 Android epoll caller mask, 维持已有可选 syscall 禁用, 完整源码 GCC/Clang 各 45 次有界对照及十二补丁重放/28 blobs 通过. [源码与主机范围](docs/compatibility/2026-09-13-m3-pending-wait-fix.md).
 - [x] (构建) 第 12 补丁两份全新双 ABI 构建实际退出码均为 0, 每 ABI 成品一致, 四份 ELF、完整日志、16 配方和最终 Ninja 边通过. [独立证据](docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json).
 - [x] (设备) 第 12 补丁保持原定义的 33 项探针/八项 Binder 在五个原生 4 KiB 环境通过 330/330、80/80. 含二十次 pending async/六十 child 检查; 两次 API 28 ART 启动失败独立保留, 第三次同 APK 两轮通过. Sony API 33 前置检查断线后改用实测 Redmi; 全部包/执行 UID 清理, 只关闭 owned AVD. [新源码报告](docs/compatibility/2026-09-13-m3-pending-wait-fix.md). (2026-09-13, G1/G2)
-- [ ] (设备/构建) 第 12 补丁 Samsung ARM64 API 32/4 KiB 与 API 36/native 16 KiB 的原 33 项/八项 Binder 新证据, 以及单独大页 JSC rebase. 17:05-17:15 接入窗口 offline; 不转移旧源码成绩.
+- [ ] (设备) 第 12 补丁 Samsung ARM64 API 32/4 KiB 与 API 36/native 16 KiB 的原 33 项/八项 Binder 新证据. 最新 17:48:42-17:58:42 接入窗口 40 次轮询均 offline; 独立 `dbd0fde` 的 81 输入宿主签名 APK 已备妥. 大页 JSC rebase 已在 M5 单独完成, 不转移旧源码或候选成绩.
 - [x] (测试/诊断) 新增两个固定 pending-SIGSYS 异步探针, 原 31 定义/旧 fixture/预算不变; native ARM64 API 28/31 各两轮 31/33, 原 31 项 124/124, 新模式 0/8. 同一线程 tgkill 排入的信号在第一次 spawn 返回时不再 pending, mask 检查仍通过且 JS 尚未交付. 独立两轮 native/TRAP plain/ptrace 共 16 次复现, 八次追踪直接捕获 SI_TKILL 及精确 sender/receiver, 对应父线程 vfork 前临时解除 SIGSYS 阻塞的源码路径. [失败和动态诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md) 分档, 仅完成回归/诊断, 未修复或验收新兼容能力. (2026-09-13, G1/G2, failed gate)
 - [x] (上游/构建/测试, 固定本地套件已关闭历史阻断) 完成 posix_spawn_bun 与后续 wait 阶段 pending SIGSYS 修复的独立双 ABI 构建和本地设备门禁. 第 11 补丁双 ABI 独立构建、actual exit 0 与四份 ELF 审计已通过. 它分开处理 Android 父线程追加阻塞与 vfork 子路径 mask, blocked caller 的 cgroup 走已有 child join 且不污染全局 clone3 状态. GCC/Clang 各 14 场景与两个旧源码失败对照通过, 完整重放/28 blob 不变. Sony API 28/31 的原 31 项过 124/124, 新模式 0/8, 失败后移到 async wait. 已捕获八次 epoll_pwait/空 mask 只读上下文, 第 12 补丁完成 wait mask 修复、可选 syscall 审查和新独立构建, 原 33 项在五个原生 4 KiB 环境通过 330/330, 同源码原 Binder 80/80; 不预热 pidfd、不提前清空 pending、不放宽原断言. 十补丁字节和失败记录保持历史范围, 见 [修复进度](docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在七个原生环境通过 28/28 新观测和 84 个 child 检查, 包含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. watch/reload、其他线程和现有八项套件之外的插件边界仍待覆盖.
@@ -281,7 +287,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 本轮十二补丁 JSC 新构建完成: 两份全新 clean Bun 成品一致, 实际退出码 0/0, 21 项构建输入未漂移,
 复用原两套独立 JSC 库/config 和 ICU. [单独源码/构建报告](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md)
-与九/十补丁历史证据分开. 新 APK 的双页大小 Binder 和压力回归待单独记录, 不转移既有成绩.
+与九/十补丁历史证据分开. 同一 83 输入新 APK 双页大小的原 Binder 32/32 和原压力模式 28/28 已独立通过; 初次低内存服务终止及完整同 APK 重试分开保留, 不转移 baseline 或历史成绩.
 
 **目标:** 保证发布的每个 APK 从 ELF 对齐到安装后字节都可验证, 并最终在真实 16 KB 页环境跑通. 背景: 新的 Android 设备可能使用 16 KB 内存页, `PT_LOAD` 对齐不足的可执行文件在这类设备上无法加载.
 
@@ -298,6 +304,10 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - 2026-09-10 通过用户接入的 Samsung Remote Test Lab SM-A566B, 首次完成官方 Bun + 监督器的 v0.2.1 开发版原生 arm64 / 16 KiB 完整 Binder 两轮 8/8. 同设备的旧实验运行时 `c240d6c68` 两轮 19/20 失败记录保留; 新八补丁 `a260ef308` 已另行通过不放宽断言的两轮 20/20, 见 [spawn 修复报告](docs/compatibility/2026-09-10-m3-spawn-fd-fix.json). x86_64 large-page、最终 Release APK 与实验完整 Binder 验收未完成, 因此不扩大通用 16 KB 支持声明.
 
 条目清单:
+
+- [x] (构建/x86_64) 独立 rebase 到十二补丁 `06e518f73`, 两个全新 clean Bun 构建实际 exit 0/0, 21 输入和 source head/tree 均未漂移. 两份完整 90609496-byte 成品 `34edd4b9...a75b1ad` 一致且完整 ELF 审计通过. 精确复用两套独立 JSC 库/config 和原 ICU, 新 WebKit/ICU 构建 0/0. [构建归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json) 保留原始换行摘要/精确映射及此前 recorder 失败, 不重新编译或改写旧证据. (2026-09-13, G1)
+- [x] (设备/x86_64) 十二补丁候选在 API 36 的 4 KiB/16 KiB 用户页各两轮原八项 Binder 通过 32/32. 同一 APK 的 83 输入匹配 `0210e82`, 安装字节/签名/完整 payload、二十条生命周期和两个 UID 清理通过. 初次 16 KiB lowmemorykiller 导致预热 DeadObjectException 的整批失败独立归档; 同 APK 完整两轮重试通过, 无配置/源码/预算 workaround. [Binder 与失败范围](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md). (2026-09-13, G2, 非 Release)
+- [x] (测试/x86_64) 同一十二补丁 APK 双页大小各两轮原七模式压力通过 28/28, 原 fixture/validator/预算不变. LLInt/Baseline/DFG/FTL 实际采样、GC/Wasm 和 64 个 worker 正常退出均通过; AT_PAGESZ/sysconf/getconf 一致, 两台内核/MMU 页均为 4 KiB. [压力归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-pressure.json) 与 [清理补充](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-checkpoints.json) 分开. 仅关闭本轮两个 AVD, 不计入 baseline 330/330 或 80/80, 不扩张为 ARM64 硬件页/压力、全 JIT/Wasm、长时性能或 Release. (2026-09-13, G1/G2)
 
 - [x] (构建/x86_64) 将大页 JSC 候选独立 rebase 到十补丁 `a9c76a599`: 两个新 Bun checkout 完成完整离线构建, 两个 actual driver exit 均为 0, source head/tree/clean 与最终 link/map/strip 日志已绑定. 两份完整 Bun 均为 90609488 bytes / `a237dc8c...7f8dcd5`, ELF 至少 16 KiB 对齐; 精确复用两套已独立构建的 JSC 库/config 和原上游 ICU, 新 WebKit/ICU 构建数为 0. [独立候选锁](tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json) 与原九补丁锁及十补丁 baseline 证据分开, 不继承旧设备成绩; 新防漂移门禁纳入 189 项 Node tests. (2026-09-13, G1, 新设备/Release 另计)
 - [x] (设备/x86_64) 十补丁大页 JSC 新成品 `a237dc8c...7f8dcd5` 在 API 36 native x86_64 的 4 KiB/16 KiB 用户空间页各通过两轮原完整八项 Binder, 合计 32/32. 同一主/测试 APK 的 77 输入逐项绑定提交 `5738129`, 安装前后签名/字节/对齐、20 条生命周期及执行 UID 清理通过; 仅关闭本轮两个 AVD. [原始 Binder 归档](docs/compatibility/2026-09-13-m5-ten-patch-jsc-binder.json) 与 baseline 十补丁 112/112 和九补丁成绩分开. (2026-09-13, G2, 非 Release)
