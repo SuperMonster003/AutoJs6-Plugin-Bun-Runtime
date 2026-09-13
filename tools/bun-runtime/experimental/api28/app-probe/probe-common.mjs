@@ -12,6 +12,7 @@ import { LCHMOD_MODES, validateLchmodEvidence } from "./lchmod-evidence.mjs";
 import { HARD_LIMIT_MODES, validateHardLimitEvidence } from "./hard-limit-evidence.mjs";
 import { ASYNC_SIGNAL_MODES, validateAsyncSignalEvidence } from "./async-signal-evidence.mjs";
 import { PENDING_SIGNAL_MODES, validatePendingSignalEvidence } from "./pending-signal-evidence.mjs";
+import { WATCH_RELOAD_MODES, validateWatchReloadEvidence } from "./watch-reload-evidence.mjs";
 
 export const HERE = dirname(fileURLToPath(import.meta.url));
 export const ROOT = resolve(HERE, "../../../../..");
@@ -21,7 +22,7 @@ export const ABIS = ["arm64-v8a", "x86_64"];
 export const SHA256 = /^[a-f0-9]{64}$/;
 export const SHARED_PROCESS = "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java";
 export const INPUTS = [
-  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs", "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "async-signal-probes.mjs", "async-signal-evidence.mjs", "pending-signal-probes.mjs", "pending-signal-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
+  ...["AndroidManifest.xml", "ProbeInstrumentation.java", "probes.json", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs", "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs", "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "async-signal-probes.mjs", "async-signal-evidence.mjs", "pending-signal-probes.mjs", "pending-signal-evidence.mjs", "watch-reload-probes.mjs", "watch-reload-evidence.mjs", "probe-common.mjs", "build-probe.mjs", "run-probe.mjs"]
     .map(path => "tools/bun-runtime/experimental/api28/app-probe/" + path),
   SHARED_PROCESS,
   ...["supervisor.c", "supervisor.lock.json", "build-supervisor.mjs", "supervisor-common.mjs", "verify-supervisor.mjs", "README.md"]
@@ -37,7 +38,7 @@ export const FD_MODES = {
 };
 export const PROBE_IDS = ["version", "revision", "application-domain", "javascript-unicode-streams", "typescript",
   "spawn-and-spawn-sync", "file-io", "fetch-loopback", "user-sigsys-handler", "timeout-forcible-cleanup",
-  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), ...Object.keys(OPENAT2_MODES), ...Object.keys(LCHMOD_MODES), ...Object.keys(HARD_LIMIT_MODES), ...Object.keys(ASYNC_SIGNAL_MODES), ...Object.keys(PENDING_SIGNAL_MODES), "recovery-after-termination"];
+  "bounded-output", "cancel-after-ready", ...Object.keys(FD_MODES), ...Object.keys(SYSCALL_MODES), ...Object.keys(OPENAT2_MODES), ...Object.keys(LCHMOD_MODES), ...Object.keys(HARD_LIMIT_MODES), ...Object.keys(ASYNC_SIGNAL_MODES), ...Object.keys(PENDING_SIGNAL_MODES), ...Object.keys(WATCH_RELOAD_MODES), "recovery-after-termination"];
 export const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
 export const json = (path) => JSON.parse(readFileSync(path, "utf8"));
 export const fileFacts = (path) => {
@@ -109,7 +110,7 @@ export function verifyRuntimePair(primaryPath, repeatPath, artifact) {
 
 export function validateProbes(probes) {
   assert(Array.isArray(probes), "probe array required");
-  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 33-probe inventory required");
+  assert.deepEqual(probes.map(probe => probe.id), PROBE_IDS, "exact ordered 35-probe inventory required");
   const ids = new Set();
   for (const probe of probes) {
     assert(!Object.hasOwn(probe, "sourceAsset"), "asset binding belongs to the builder, not probe definitions");
@@ -138,10 +139,11 @@ export function validateProbes(probes) {
     const fixedHardLimit = Object.hasOwn(HARD_LIMIT_MODES, probe.id);
     const fixedAsyncSignal = Object.hasOwn(ASYNC_SIGNAL_MODES, probe.id);
     const fixedPendingSignal = Object.hasOwn(PENDING_SIGNAL_MODES, probe.id);
-    if (fixedFd || fixedSyscall || fixedOpenat2 || fixedLchmod || fixedHardLimit || fixedAsyncSignal || fixedPendingSignal) {
-      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : fixedSyscall ? "syscall-probes.mjs" : fixedOpenat2 ? "openat2-probes.mjs" : fixedLchmod ? "lchmod-probes.mjs" : fixedHardLimit ? "hard-limit-probes.mjs" : fixedAsyncSignal ? "async-signal-probes.mjs" : "pending-signal-probes.mjs", "only the fixed source fixture is allowed");
-      assert.equal(probe.mode, (fixedFd ? FD_MODES : fixedSyscall ? SYSCALL_MODES : fixedOpenat2 ? OPENAT2_MODES : fixedLchmod ? LCHMOD_MODES : fixedHardLimit ? HARD_LIMIT_MODES : fixedAsyncSignal ? ASYNC_SIGNAL_MODES : PENDING_SIGNAL_MODES)[probe.id], "fixed mode required");
-      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : fixedSyscall ? "SYSCALL_PROBE_RESULT=" : fixedOpenat2 ? "OPENAT2_PROBE_RESULT=" : fixedLchmod ? "LCHMOD_PROBE_RESULT=" : fixedHardLimit ? "HARD_LIMIT_RESULT=" : fixedAsyncSignal ? "ASYNC_SIGNAL_RESULT=" : "PENDING_SIGNAL_RESULT=");
+    const fixedWatchReload = Object.hasOwn(WATCH_RELOAD_MODES, probe.id);
+    if (fixedFd || fixedSyscall || fixedOpenat2 || fixedLchmod || fixedHardLimit || fixedAsyncSignal || fixedPendingSignal || fixedWatchReload) {
+      assert.equal(probe.sourceFile, fixedFd ? "fd-probes.mjs" : fixedSyscall ? "syscall-probes.mjs" : fixedOpenat2 ? "openat2-probes.mjs" : fixedLchmod ? "lchmod-probes.mjs" : fixedHardLimit ? "hard-limit-probes.mjs" : fixedAsyncSignal ? "async-signal-probes.mjs" : fixedPendingSignal ? "pending-signal-probes.mjs" : "watch-reload-probes.mjs", "only the fixed source fixture is allowed");
+      assert.equal(probe.mode, (fixedFd ? FD_MODES : fixedSyscall ? SYSCALL_MODES : fixedOpenat2 ? OPENAT2_MODES : fixedLchmod ? LCHMOD_MODES : fixedHardLimit ? HARD_LIMIT_MODES : fixedAsyncSignal ? ASYNC_SIGNAL_MODES : fixedPendingSignal ? PENDING_SIGNAL_MODES : WATCH_RELOAD_MODES)[probe.id], "fixed mode required");
+      assert.equal(probe.stdout, fixedFd ? "FD_PROBE_RESULT=" : fixedSyscall ? "SYSCALL_PROBE_RESULT=" : fixedOpenat2 ? "OPENAT2_PROBE_RESULT=" : fixedLchmod ? "LCHMOD_PROBE_RESULT=" : fixedHardLimit ? "HARD_LIMIT_RESULT=" : fixedAsyncSignal ? "ASYNC_SIGNAL_RESULT=" : fixedPendingSignal ? "PENDING_SIGNAL_RESULT=" : "WATCH_RELOAD_RESULT=");
       for (const key of ["source", "arguments", "extension"])
         assert(!Object.hasOwn(probe, key), "ambiguous FD fixture: " + key);
     } else if (probe.arguments) {
@@ -152,7 +154,7 @@ export function validateProbes(probes) {
       assert(typeof probe.source === "string" && Buffer.byteLength(probe.source) <= 8192, "invalid source");
       assert(["js", "ts"].includes(probe.extension ?? "js"), "invalid source extension");
     }
-    if (!fixedFd && !fixedSyscall && !fixedOpenat2 && !fixedLchmod && !fixedHardLimit && !fixedAsyncSignal && !fixedPendingSignal) {
+    if (!fixedFd && !fixedSyscall && !fixedOpenat2 && !fixedLchmod && !fixedHardLimit && !fixedAsyncSignal && !fixedPendingSignal && !fixedWatchReload) {
       assert(!Object.hasOwn(probe, "sourceFile") && !Object.hasOwn(probe, "mode"), "unexpected source fixture");
     }
   }
@@ -174,6 +176,10 @@ export function materializeProbes(probes) {
     if (probe.sourceFile === "hard-limit-probes.mjs") {
       materializeHardLimitSource(probe.mode);
       return { ...probe, sourceAsset: "hard-limit-" + probe.mode + ".mjs" };
+    }
+    if (probe.sourceFile === "watch-reload-probes.mjs") {
+      materializeWatchReloadSource(probe.mode);
+      return { ...probe, sourceAsset: "watch-reload-" + probe.mode + ".mjs" };
     }
     if (probe.sourceFile === "pending-signal-probes.mjs") {
       materializePendingSignalSource(probe.mode);
@@ -237,6 +243,15 @@ export function materializePendingSignalSource(mode) {
   const source = "const PENDING_SIGNAL_MODE = " + JSON.stringify(mode) + ";\n" +
     readFileSync(requireFile(join(HERE, "pending-signal-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
   assert(Buffer.byteLength(source) <= 12288, "fixed pending-signal asset exceeds 12 KiB");
+  return source;
+}
+
+// The two new watch assets alone receive 12 KiB. Old sources and budgets stay exact.
+export function materializeWatchReloadSource(mode) {
+  assert(Object.values(WATCH_RELOAD_MODES).includes(mode), "fixed watch-reload mode required");
+  const source = "const WATCH_RELOAD_MODE = " + JSON.stringify(mode) + ";\n" +
+    readFileSync(requireFile(join(HERE, "watch-reload-probes.mjs")), "utf8").replace(/\r\n/g, "\n");
+  assert(Buffer.byteLength(source) <= 12288, "fixed watch-reload asset exceeds 12 KiB");
   return source;
 }
 
@@ -510,6 +525,13 @@ export function validateReport(report, { abi, api, pageSize, apk, runtime, super
       assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("PENDING_SIGNAL_RESULT="), "bounded pending-signal evidence required");
       assert.deepEqual(JSON.parse(line.slice("PENDING_SIGNAL_RESULT=".length)), proof, "pending-signal evidence/output drift");
     } else assert(!result.pendingSignalEvidence, "unexpected pending-signal evidence");
+    if (expected.sourceFile === "watch-reload-probes.mjs") {
+      const proof = validateWatchReloadEvidence(result.watchReloadEvidence, expected.mode, abi);
+      assert.equal(proof.uid, env.uid, "watch child must retain application UID");
+      const line = result.stdout.trim();
+      assert(line.length <= 2048 && !line.includes("\n") && line.startsWith("WATCH_RELOAD_RESULT="), "bounded watch-reload evidence required");
+      assert.deepEqual(JSON.parse(line.slice("WATCH_RELOAD_RESULT=".length)), proof, "watch evidence/output drift");
+    } else assert(!result.watchReloadEvidence, "unexpected watch-reload evidence");
   }
   assert.equal(report.passed, true);
   return report;

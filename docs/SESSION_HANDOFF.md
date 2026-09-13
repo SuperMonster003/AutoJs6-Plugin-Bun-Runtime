@@ -1,3 +1,42 @@
+# 会话交接: watch/reload FD 泄漏已复现并归档, native 修复待开始
+
+2026-09-13 (Asia/Shanghai), 从干净 master `9485aa1` 继续. 先完整阅读 `AGENTS.md`,
+本文件和 `E:/.codex-tmp/watch-reload-20260913/SESSION_HANDOFF.local.md`.
+本轮设备阶段已结束, 不重跑任何已完成 builder、device driver、collector 或 wx 归档脚本.
+
+- 新固定 watch native/TRAP 两模式扩到35项, 原33定义、旧fixture和预算保留. Java只新增
+  asset/record绑定, 删除这部分后与旧Java逐字节相同. 新源码输入32项, native仍为十二补丁06e518f73.
+- 四个 native ARM64/4096 真机各两轮: SonyG8441 API28、Redmi22120RN86C API33、
+  Xiaomi23046RP50C API35均33/35; SonyXQ-DQ72 API33/kernel5.15两轮34/35.
+  该Sony原生raw CLOEXEC成功且watch通过, 同设备TRAP失败. 另两种native控制为ENOSYS/EINVAL.
+- 原33项264/264, 新模式2/16通过、14/16失败, 全体266/280. 32次真实重载/48镜像中
+  28次FD256仍指向同一sentinel并被startup补CLOEXEC, 显式CLOEXEC的FD257正常消失.
+  相同PID/stdio、48次普通SIGSYS投递及16个自有watched child回收均正常. 这是未修复门禁.
+- clean原生head/tree和三份完整source blob已只读绑定. reload前直接忽略bun_close_range失败,
+  startup只会给已继承FD补标记. 无reload syscall trace, 无blocked/pending跨exec、IPC或FD70000结论.
+- 三个APK批次均32输入且31项完全一致; 只有host watch validator先补实际socketpair, 再补
+  原生EINVAL失败形态. 原fixture/Java/35定义/预算相同; 两个先期validator完整文本与原摘要保留.
+  每批独立构建双ABI APK并验完整payload/签名/ZIP, 实际build exit0. x86只构建验证, 未设备执行.
+  native build为零, 官方/实验/JSC payload及锁不变. 不将新诊断加入旧462/462和112/112.
+- 四个runner实际exit1, 都是预期记录的FD语义失败, 清理通过. 包和UID10768/10531/11033/10654
+  全部为空. 24个旧forcible case301-308ms. 无AVD/privateADB操作, 其他任务的AVD_API_37不干预.
+- 下一步优先修复reload前FD fallback及错误传播, 保留stdio/IPC和既有信号语义, 再做独立native
+  构建与原固定夹具新源码回归. 不提前关闭sentinel、不用startup补标记替代exec前关闭、不改失败为通过.
+  新watch的x86/ARM64硬件16KiB、blocked/pending、IPC/并发FD、FD70000/UNSHARE、其余压力/Release仍开放.
+  当前不需要继续租用三星; 后续native修复后再安排新的设备门禁. distributionReady=false.
+- 最终 Node243/243, Python38/38, Markdown10语言/36产物和matrix94报告/193行通过.
+  生产四项Gradle实际exit0, 14s, 96tasks (48executed/48up-to-date); JVM21项up-to-date,
+  三个DebugAPK的runtime/16KiB ZIP门禁通过, lint0error/44warnings. IDE直接成功, 无timeout,
+  仅SDK XML版本和既有Bundle.get弃用两个warning. 历史90报告/registry和原生/生产输入不变.
+
+[完整报告](compatibility/2026-09-13-m3-watch-reload.md),
+[初始失败](compatibility/2026-09-13-m3-watch-reload-initial-failure.json),
+[EINVAL失败](compatibility/2026-09-13-m3-watch-reload-einval-failure.json),
+[同设备native/TRAP对照](compatibility/2026-09-13-m3-watch-reload-native-control.json),
+[源码/APK/清理绑定](compatibility/2026-09-13-m3-watch-reload-checkpoints.json).
+
+## 此前三星门禁完成记录
+
 # 会话交接: 十二补丁三星 API 32 完成, 两项三星原套件门禁补齐
 
 2026-09-13 (Asia/Shanghai). 本轮从干净 master `0fba050` 继续, 用户确认设备已接入,

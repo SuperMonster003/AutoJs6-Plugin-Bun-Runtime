@@ -7,11 +7,12 @@ import { pathToFileURL } from "node:url";
 import { verifyApkSignature } from "../../../release/assemble-corresponding-source.mjs";
 import { supervisorArtifacts, supervisorLock, verifySupervisorSource, verifySupervisorBytes } from "../../../supervisor/supervisor-common.mjs";
 import { ABIS, HERE, ROOT, PACKAGE, RUNNER, SHARED_PROCESS, fileFacts, inputFacts, json, lockedEvidence,
-  newOutputDirectory, parseOptions, requireFile, materializeProbes, materializeOpenat2Source, materializeLchmodSource, materializeHardLimitSource, materializeAsyncSignalSource, materializePendingSignalSource, validateReceipt,
+  newOutputDirectory, parseOptions, requireFile, materializeProbes, materializeOpenat2Source, materializeLchmodSource, materializeHardLimitSource, materializeAsyncSignalSource, materializePendingSignalSource, materializeWatchReloadSource, validateReceipt,
   validateManifestDump, verifyProbeApk, verifyRuntimePair } from "./probe-common.mjs";
 import { HARD_LIMIT_MODES } from "./hard-limit-evidence.mjs";
 import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
+import { WATCH_RELOAD_MODES } from "./watch-reload-evidence.mjs";
 
 function run(command, args) {
   const result = spawnSync(command, args, { encoding: "utf8", timeout: 60000, maxBuffer: 2 * 1024 * 1024, windowsHide: true });
@@ -85,6 +86,8 @@ export function buildProbe(options) {
       writeFileSync(join(staging, "assets", "async-signal-" + mode + ".mjs"), materializeAsyncSignalSource(mode));
     for (const mode of Object.values(PENDING_SIGNAL_MODES))
       writeFileSync(join(staging, "assets", "pending-signal-" + mode + ".mjs"), materializePendingSignalSource(mode));
+    for (const mode of Object.values(WATCH_RELOAD_MODES))
+      writeFileSync(join(staging, "assets", "watch-reload-" + mode + ".mjs"), materializeWatchReloadSource(mode));
     writeFileSync(join(staging, "assets", "build-facts.json"), JSON.stringify(receipt));
     for (const filename of ["BUN-LICENSE.md", "WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
       "WEBKIT-WEBCORE-LICENSE-LGPL-2", "WEBKIT-WEBCORE-LICENSE-LGPL-2.1", "WEBKIT-WEBCORE-LICENSE-APPLE"]) {

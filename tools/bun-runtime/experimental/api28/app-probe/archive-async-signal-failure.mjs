@@ -7,11 +7,13 @@ import { pathToFileURL } from "node:url";
 import { HERE, ROOT, fileFacts, inputFacts, json, validateProbes, validateReceipt, validateReport } from "./probe-common.mjs";
 import { ASYNC_SIGNAL_MODES } from "./async-signal-evidence.mjs";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
+import { WATCH_RELOAD_MODES } from "./watch-reload-evidence.mjs";
 import { environmentKey } from "./archive-probe.mjs";
 
 // This legacy archiver is deliberately limited to the historical 31-case shape.
 // It must reject expanded suites rather than publish their counts as 29/31.
-const probes = validateProbes(json(join(HERE, "probes.json"))).filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
+const probes = validateProbes(json(join(HERE, "probes.json"))).filter(p =>
+  !Object.hasOwn(PENDING_SIGNAL_MODES, p.id) && !Object.hasOwn(WATCH_RELOAD_MODES, p.id));
 assert.equal(probes.length, 31);
 const failureIds = Object.keys(ASYNC_SIGNAL_MODES);
 export function validateAsyncSignalFailure(record, rawRounds) {

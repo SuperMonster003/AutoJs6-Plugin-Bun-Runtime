@@ -1,7 +1,7 @@
 // Failure evidence only. Never manufacture a passing full-suite record.
 import assert from "node:assert/strict";
 import { PENDING_SIGNAL_MODES } from "./pending-signal-evidence.mjs";
-import { hash, validateProbes, validateReport } from "./probe-common.mjs";
+import { hash, validateReport } from "./probe-common.mjs";
 import { environmentKey } from "./archive-probe.mjs";
 import { hardLimitFilterSha256 } from "./hard-limit-evidence.mjs";
 import { readFileSync } from "node:fs";
@@ -11,7 +11,10 @@ import { readFileSync } from "node:fs";
 const historicalText = readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json", import.meta.url), "utf8").replace(/\r\n/g, "\n");
 assert.equal(hash(Buffer.from(historicalText)), "560a11991a039a50c1970557c990871dcf530ad6ef99b9c7f03bca6b98e602a4", "historical pending failure archive drifted");
 const historical = JSON.parse(historicalText);
-const probes = validateProbes(historical.probes), ids = Object.keys(PENDING_SIGNAL_MODES);
+// The complete archive hash above freezes these historical 33 definitions.
+// A newer live inventory cannot relabel or invalidate the old failed scope.
+const probes = historical.probes, ids = Object.keys(PENDING_SIGNAL_MODES);
+assert.equal(probes.length, 33);
 export function validatePendingFailureProof(proof, mode, abi, uid) {
   assert.equal(proof.schemaVersion, 1); assert.equal(proof.mode, mode); assert.equal(proof.passed, false);
   assert.equal(proof.error, "pending SIGSYS remains queued without early JS delivery");
