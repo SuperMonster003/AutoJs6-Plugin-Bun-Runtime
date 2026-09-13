@@ -1,0 +1,603 @@
+{
+  "schemaVersion": 1,
+  "kind": "experimental-binder-startup-failure",
+  "archivedAt": "2026-09-13T09:10:00.642830+00:00",
+  "passed": false,
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "productionReleaseAcceptance": false,
+  "scope": "One complete 8/8 round, then instrumentation startup failure before any second-round test. The entire attempt is failed and excluded from accepted totals; separate retries never overwrite it.",
+  "diagnosis": "Owned PID 29997, UID 10764, ADB-JDWP Connec TID 30004 receives SIGSEGV/SEGV_MAPERR during pre-initialized Android ART/DDMS startup. The owned process-start/death events and exact crash stack are bound below. This is not a captured Bun execution stack or SIGSYS. No device, mask, test, APK or native-byte workaround is applied.",
+  "originalReport": {
+    "bytes": 34326,
+    "sha256": "2d2e4bc0e097d28e3ae0f65b0391d95fe7f1d894aa494a0f4c2da3c54ffd6a7d"
+  },
+  "report": {
+    "schemaVersion": 1,
+    "kind": "experimental-plugin-binder",
+    "capturedAt": "2026-09-13T09:07:09.307Z",
+    "serial": "BH900ASK9E",
+    "expected": {
+      "abi": "arm64-v8a",
+      "api": 28,
+      "pages": 4096
+    },
+    "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+    "runtime": {
+      "status": "reproducible-static-audit-complete",
+      "variant": "bun-1.4.0-android-api28-patched-experimental",
+      "officialArtifact": false,
+      "distributionReady": false
+    },
+    "apk": {
+      "bytes": 79169247,
+      "sha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5"
+    },
+    "testApk": {
+      "bytes": 2469417,
+      "sha256": "281ec93fa44acc2de3e8736e30d7375f39c5761fa21e9e2439c0868faebd6a15"
+    },
+    "build": {
+      "schemaVersion": 1,
+      "inputEncoding": "git-canonical-utf8-lf",
+      "inputs": [
+        {
+          "path": "app/build.gradle.kts",
+          "bytes": 12196,
+          "sha256": "6648b7ce64f7a2d26a955a3fa603d521ead409d748e5804b5c4a67db38b4a045"
+        },
+        {
+          "path": "app/src/androidTest/AndroidManifest.xml",
+          "bytes": 735,
+          "sha256": "f261fa80facc6514dd38714961636d54edb45a7cd7014c97de3e96085e027eeb"
+        },
+        {
+          "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt",
+          "bytes": 37143,
+          "sha256": "a491a65c9f7a09842424d6ff4f728c19dc3a2dc2b6a6eeac1e7ff10ee04e88de"
+        },
+        {
+          "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessagesInstrumentedTest.kt",
+          "bytes": 13471,
+          "sha256": "e7b98fbedcba8805e618becf1e2b35400817eb17b695e86a042fb9ccf3a6aab9"
+        },
+        {
+          "path": "app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbeInstrumentedTest.kt",
+          "bytes": 6867,
+          "sha256": "a4384f859e8a54f1fd7654693f877523e35622e323de2e753b92649c37e75189"
+        },
+        {
+          "path": "app/src/main/AndroidManifest.xml",
+          "bytes": 2134,
+          "sha256": "434ddeaba75404b657ac4924e4af5ab412277ac57cd41c76be168d43d33a7027"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-ar.md",
+          "bytes": 34661,
+          "sha256": "9fe0ec9ec1a7207a59d6e0621abcf5b4aeade1858417b1cfb266d00e88896cc7"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-en.md",
+          "bytes": 23653,
+          "sha256": "5a0707a3d0c1b60017d01c9a0e5eb6c1d7cf51c3c87c2f9d8e7ed49731edcc07"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-es.md",
+          "bytes": 26406,
+          "sha256": "ed27731d1101cd9370e4d75e66ed347dd2f02dedd8b9eb5890c00deddc80e20d"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-fr.md",
+          "bytes": 27437,
+          "sha256": "239f47679b1ee9d8fc8a6660474292e7e0d0bc8dcbcc909d23de00106ee5133b"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-ja.md",
+          "bytes": 27616,
+          "sha256": "06c5032e482f18bb02f65f175c999196f8bd1dad4217fa96da9c9878daf0c310"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-ko.md",
+          "bytes": 25996,
+          "sha256": "03ba5e132ee28eb556b769821f1742864eabba5099b6f41697ccefba5a192dd8"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-ru.md",
+          "bytes": 42090,
+          "sha256": "af8c0787c7da2643b0e8fcaa0c1a2e35bb61cc8ffc933dd6b6297b1506c2c934"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh-Hans.md",
+          "bytes": 20499,
+          "sha256": "b71f5dd19287978cb60397ed7c78e589df1afa2191b8ff82b6a8fcd366463297"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-HK.md",
+          "bytes": 20948,
+          "sha256": "474a757ab4e47bb1f331e51b5600b45134c0555fba9279d85d5dcc0c7fdc978f"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh-Hant-TW.md",
+          "bytes": 21098,
+          "sha256": "84213fb8b5ec85c65e16558a341cdb27beccad714531cbd5c5d71ea219233834"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh-rHK.md",
+          "bytes": 20948,
+          "sha256": "474a757ab4e47bb1f331e51b5600b45134c0555fba9279d85d5dcc0c7fdc978f"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh-rTW.md",
+          "bytes": 21098,
+          "sha256": "84213fb8b5ec85c65e16558a341cdb27beccad714531cbd5c5d71ea219233834"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG-zh.md",
+          "bytes": 20499,
+          "sha256": "b71f5dd19287978cb60397ed7c78e589df1afa2191b8ff82b6a8fcd366463297"
+        },
+        {
+          "path": "app/src/main/assets/doc/CHANGELOG.md",
+          "bytes": 20499,
+          "sha256": "b71f5dd19287978cb60397ed7c78e589df1afa2191b8ff82b6a8fcd366463297"
+        },
+        {
+          "path": "app/src/main/assets/doc/licenses/BUN-LICENSE.md",
+          "bytes": 5614,
+          "sha256": "51402e15bdab948668eb5bcca05c096bc8c47beaf96f0db4b41777faf546ba4f"
+        },
+        {
+          "path": "app/src/main/assets/doc/licenses/WEBKIT-JAVASCRIPTCORE-COPYING.LIB",
+          "bytes": 25585,
+          "sha256": "2f4345f29dc139686637dac2ca7f92d47dc36da2ce19a681314d9dd8026be649"
+        },
+        {
+          "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-APPLE",
+          "bytes": 1314,
+          "sha256": "f306398704cb2a73bc038b1be2845640d05037e0aaa03fba8fdcde8b5ac7ceb2"
+        },
+        {
+          "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2",
+          "bytes": 25379,
+          "sha256": "40a06e4454e7b332faf03b0ffb214bd8cb1a273b41290d87742c7ef93d3614e1"
+        },
+        {
+          "path": "app/src/main/assets/doc/licenses/WEBKIT-WEBCORE-LICENSE-LGPL-2.1",
+          "bytes": 26537,
+          "sha256": "c058901ca17b2c0977e31919e016b838a2d546169cfdaea468a1bf877d8d712f"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt",
+          "bytes": 4753,
+          "sha256": "b81afdf5a2687fc30a9fcdc70256bd7a8f8240718731d7bb4789e5fb13f19b8e"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginInfoService.kt",
+          "bytes": 774,
+          "sha256": "5778e3ba2ab3c0c18a3ed552d6adf7ad7c2847d5a0cbcc56d956bdadfb296f79"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunPluginMetadata.kt",
+          "bytes": 3000,
+          "sha256": "613fdbb095e7da1ad7b9e8039847a47c2b6c9501c37ad714729c9b45695b960e"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeBinary.kt",
+          "bytes": 5169,
+          "sha256": "3301382dcfb818f9f85b0c113b3389e04c69a6241700ff751fdbee4bf889bfe4"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeMessages.kt",
+          "bytes": 3438,
+          "sha256": "9c27fee9617de5b53291bf8f198d99d19414287d66e1fac9ed62e3c5e275aa1b"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeProbe.kt",
+          "bytes": 7142,
+          "sha256": "d753664e4ade2866a5f02a611ef81ce90fa69edf82a148c9a7a83665e1e61961"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeService.kt",
+          "bytes": 22944,
+          "sha256": "b603a2ae043bfd320ede828532ecf694d7cc87c23310023025d8cf2094b369e8"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/SupervisedProcess.java",
+          "bytes": 3727,
+          "sha256": "5dc58673bbee52ebc2eff35e281b4c9180bbc7765b8179e44bc136bfb98dcaca"
+        },
+        {
+          "path": "app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/WakeActivity.kt",
+          "bytes": 275,
+          "sha256": "500179cc07f7f74c520b3357a4ebf4c78ab44e45aecc0127d58f62e2f7ed18a8"
+        },
+        {
+          "path": "app/src/main/res/drawable/ic_launcher.xml",
+          "bytes": 539,
+          "sha256": "8c671bf639dee09ca51db4b5ae0492cd4d13f12ab34d5b96aa8eda2f92802092"
+        },
+        {
+          "path": "app/src/main/res/raw-ar/plugin_instruction.md",
+          "bytes": 4489,
+          "sha256": "817dbfb1a53e4a448c2a75592e875220ef45ade4402e466b6810d30e6770ca3e"
+        },
+        {
+          "path": "app/src/main/res/raw-en/plugin_instruction.md",
+          "bytes": 3479,
+          "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+        },
+        {
+          "path": "app/src/main/res/raw-es/plugin_instruction.md",
+          "bytes": 3929,
+          "sha256": "c5aa6837f44c09d368bf9890db2535765a209e1897da56660ce66092df5ecbb5"
+        },
+        {
+          "path": "app/src/main/res/raw-fr/plugin_instruction.md",
+          "bytes": 3984,
+          "sha256": "a52066538a35ab5ca67fdb36f369ba484bad42f83c26dc005b4bce3192df7676"
+        },
+        {
+          "path": "app/src/main/res/raw-ja/plugin_instruction.md",
+          "bytes": 4471,
+          "sha256": "0959bbcd8c5b3f945182453ce0fa2064dafd13e61dc8f35e74b73a0e87c5ca4c"
+        },
+        {
+          "path": "app/src/main/res/raw-ko/plugin_instruction.md",
+          "bytes": 4063,
+          "sha256": "35049db59edbc4871f77b52042cbfb189ef29bd4f469b03460d8e48a757f6dcb"
+        },
+        {
+          "path": "app/src/main/res/raw-ru/plugin_instruction.md",
+          "bytes": 5847,
+          "sha256": "be6c3eae5d8a00be4ae097347789820d44eeba242246e6ad5a1fe12dbd2d92e1"
+        },
+        {
+          "path": "app/src/main/res/raw-zh-rHK/plugin_instruction.md",
+          "bytes": 3142,
+          "sha256": "5d16846716f46fb43af69022f3ba7bb57a229508fa2caa4673664205012a44ad"
+        },
+        {
+          "path": "app/src/main/res/raw-zh-rTW/plugin_instruction.md",
+          "bytes": 3187,
+          "sha256": "91b65d24cd49a1b209cc49fb04a00a995dc6956badfbeaf950cf00d26a2edfba"
+        },
+        {
+          "path": "app/src/main/res/raw-zh/plugin_instruction.md",
+          "bytes": 3098,
+          "sha256": "5f14f5cf5bff46a405c1a189efa3777cc8ee3edbe809cf99bdeeb16093a89c5e"
+        },
+        {
+          "path": "app/src/main/res/raw/plugin_instruction.md",
+          "bytes": 3479,
+          "sha256": "b9a49fef31020686b08f40607e3cb53e3a4a594b3ba3eea015adf3b0528d062d"
+        },
+        {
+          "path": "app/src/main/res/values-ar/strings.xml",
+          "bytes": 3648,
+          "sha256": "d86ecfc0cc03cd5a4a3bedfd2467c94a6f36533f343e62055a4526a5bf31f742"
+        },
+        {
+          "path": "app/src/main/res/values-en/strings.xml",
+          "bytes": 2970,
+          "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+        },
+        {
+          "path": "app/src/main/res/values-es/strings.xml",
+          "bytes": 3321,
+          "sha256": "f65a8aa7bb5ca0860fc3051c4eeba557f913cc570bf9387227fa4584832f015f"
+        },
+        {
+          "path": "app/src/main/res/values-fr/strings.xml",
+          "bytes": 3338,
+          "sha256": "6e149beb8b3e0da5696843db9e2911387fa3ff8ce26e28423d27dd565fd897a6"
+        },
+        {
+          "path": "app/src/main/res/values-ja/strings.xml",
+          "bytes": 3773,
+          "sha256": "d01b8bd73fd23d02dd37989c7c3935a4599bcc88bc6db8402ed699660ea2551e"
+        },
+        {
+          "path": "app/src/main/res/values-ko/strings.xml",
+          "bytes": 3547,
+          "sha256": "5f2a7767eba92cdf04f840e508d3762e3099f787f6f58d5835ad18d8c006b623"
+        },
+        {
+          "path": "app/src/main/res/values-ru/strings.xml",
+          "bytes": 4645,
+          "sha256": "811cc21fc82697357765d4f1a0843ada148b0d2d9f083ef2c564d45e9c7cc06e"
+        },
+        {
+          "path": "app/src/main/res/values-zh-rHK/strings.xml",
+          "bytes": 2790,
+          "sha256": "feb86f6752b49590c277aa0dd39430822b5ffc95ce09c4ab725883223098c965"
+        },
+        {
+          "path": "app/src/main/res/values-zh-rTW/strings.xml",
+          "bytes": 2862,
+          "sha256": "a08b9e6c46408df15e8daa18058ca1f8d21b7d3ae170164f8aa5ea4385348e19"
+        },
+        {
+          "path": "app/src/main/res/values-zh/strings.xml",
+          "bytes": 2720,
+          "sha256": "5970022d3b3146a860fe35ee60c7bbb7e7f1d9cbc4901b5c6ad5f25fc3ffb537"
+        },
+        {
+          "path": "app/src/main/res/values/strings.xml",
+          "bytes": 2970,
+          "sha256": "1e274767ceacab01254aca6a2dd655913217650d2978a7bc9bd6e7b1e1f63fb8"
+        },
+        {
+          "path": "build.gradle.kts",
+          "bytes": 676,
+          "sha256": "d12f6e4061c11bbf8504e731171cd16d70df1a234ba006f8f6d80cdf51b05125"
+        },
+        {
+          "path": "gradle/libs.versions.toml",
+          "bytes": 10596,
+          "sha256": "97d5ba3d82fe4df4d1a3c7db42a34f77d4f1d2362eab958d1ee0e6807f43806c"
+        },
+        {
+          "path": "libs/api-artifacts.lock.json",
+          "bytes": 503,
+          "sha256": "57a866e6ac55efdbbc3f85f45bbca7b55d00db603762a8d5b5d4117e48a9d041"
+        },
+        {
+          "path": "libs/bun-runtime-api.aar",
+          "bytes": 13547,
+          "sha256": "6fac4aa0332c09f399ff6e554bc088507c86b779ea08ec118e687e3836ee48a4"
+        },
+        {
+          "path": "libs/common-plugin-api.aar",
+          "bytes": 10578,
+          "sha256": "f9ff9676543f45b2ff2b64bb832d377dbd5b7003acf3bb4239e98556c68b246f"
+        },
+        {
+          "path": "samples/fetch.bun.js",
+          "bytes": 874,
+          "sha256": "1fa9a61fda1299f3f476f4204de54e3f630658c5cefb8e6e98ab0c405a983bd5"
+        },
+        {
+          "path": "samples/file-io.bun.js",
+          "bytes": 529,
+          "sha256": "86c6ed2c63be36a37bea76255841cd263262993e2b487dd4f3463257ca68b04d"
+        },
+        {
+          "path": "samples/hello.bun.js",
+          "bytes": 226,
+          "sha256": "2843b9c6263da46426584f1d091f5d13c65ef4ec1305f37327acafc6cddb7def"
+        },
+        {
+          "path": "samples/output-streams.bun.js",
+          "bytes": 449,
+          "sha256": "24bcfe22401c2906b52660b5ca56bd5a49288e494a30641fac18010ad3ee3710"
+        },
+        {
+          "path": "samples/typescript.bun.ts",
+          "bytes": 480,
+          "sha256": "e1dd672755c7bdec145b64d4516600bae2ac32c9460295829b0a70b026fa413a"
+        },
+        {
+          "path": "settings.gradle.kts",
+          "bytes": 1051,
+          "sha256": "ae085488af6d39f1581415ff8ead6952590d91afe1d5840754ec1a8e7c0181b6"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/binder/AndroidManifest.xml",
+          "bytes": 243,
+          "sha256": "9687d1a5ec1ead9be37675eb59ac98da2e760a53cfdbee219ac09c9a3c20c7dd"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/binder/binder-common.mjs",
+          "bytes": 6374,
+          "sha256": "b920024f32218ef0d0b021699e2705ab7f8305aedbfe60db911bb61732c77d21"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/binder/build.gradle.kts",
+          "bytes": 8369,
+          "sha256": "b64ffa3ccbd8ee758c396249398eb2735dd2074300dccbb49d86b5612930bc2f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/binder/prepare-runtime.mjs",
+          "bytes": 3265,
+          "sha256": "5182266c5be39b0307b08800a0468df78efed872664a843461e0484d62a32958"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/api28/runtime-evidence.json",
+          "bytes": 18339,
+          "sha256": "5f5da1d58141e25a0a6c38b774a57d935d61d54e733bc74fadd721f972bd838f"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.mjs",
+          "bytes": 1740,
+          "sha256": "4440163f2aa4239214aa87a0dac495ab9fa25b59142b0753c242f2feaf45ba5e"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets/jsc-pressure.mjs",
+          "bytes": 10049,
+          "sha256": "35ad7c4f0ca1bf75ba1b925481c6e0b5b71c92ab5b47fb24ec782f030983921d"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java/JscPressureInstrumentedTest.kt",
+          "bytes": 8527,
+          "sha256": "f1dd9119056ee8d07c6392c6d21f4b522a6e0bb9999403a9c6fedafe08c5dd99"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
+          "bytes": 25663,
+          "sha256": "901f6e01b55ebf3c3fb87acddb5f1abc12d87523631e54d7fb44180e164c2cbd"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.mjs",
+          "bytes": 6122,
+          "sha256": "5c3a2ea2b0de7ba5826a23206ce402e91d4346155df18357813974a958f6fe40"
+        },
+        {
+          "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/record-candidate.mjs",
+          "bytes": 3120,
+          "sha256": "3e30fc670b88890a519890b4fe39b36214f5cc405aa4a8397a2d5cd9766ae124"
+        },
+        {
+          "path": "tools/bun-runtime/supervisor/supervisor.lock.json",
+          "bytes": 1018,
+          "sha256": "190539a5e30a438b9080b0712679ad7653fbe33c5fedacb41ce4467015692ff3"
+        },
+        {
+          "path": "version.properties",
+          "bytes": 466,
+          "sha256": "edc9d6e7139acf8e9acf4a67a5b0e432000b91fa9fbba9ff7a7d6c4224b36ad5"
+        }
+      ],
+      "runtime": {
+        "status": "reproducible-static-audit-complete",
+        "variant": "bun-1.4.0-android-api28-patched-experimental",
+        "officialArtifact": false,
+        "distributionReady": false
+      },
+      "source": {
+        "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "downstreamHeadCommit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0"
+      },
+      "jscCandidate": null,
+      "runtimes": [
+        {
+          "abi": "arm64-v8a",
+          "bytes": 87923328,
+          "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6"
+        },
+        {
+          "abi": "x86_64",
+          "bytes": 90449752,
+          "sha256": "f44f4197def111f8e753f88bc2b9b3b13d653e0a55e26851b32e1f45993628b8"
+        }
+      ]
+    },
+    "payloads": [
+      {
+        "abi": "arm64-v8a",
+        "entry": "lib/arm64-v8a/libbun_exec.so",
+        "compression": "deflated",
+        "bytes": 87923328,
+        "sha256": "86d1b4d0fd74591655bc55e55f90ec75c7d3a0aba2116200be419ae626ed53d6",
+        "supervisor": {
+          "entry": "lib/arm64-v8a/libbun_supervisor.so",
+          "compression": "deflated",
+          "bytes": 7440,
+          "sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537"
+        }
+      }
+    ],
+    "rounds": [
+      {
+        "round": 1,
+        "status": 0,
+        "stdout": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29736 reaped=true exitCode=137 durationMillis=344 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29749 reaped=true exitCode=137 durationMillis=324 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29762 reaped=true exitCode=137 durationMillis=321 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=29835 reaped=true exitCode=137 durationMillis=3314 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=29871 reaped=true exitCode=137 durationMillis=826 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 13.475\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n",
+        "stderr": "",
+        "passedTests": [
+          "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
+          "discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip",
+          "installedNativeRuntimeMatchesTheLockedPayload",
+          "sigtermIgnoringTimeoutReapsTheChild",
+          "sigtermIgnoringOutputLimitReapsTheChild",
+          "checkedInSamplesExecuteWithinPublishedBoundaries",
+          "manifestPublishesWakeInfoAndRuntimeContracts",
+          "timeoutCancellationAndInvalidRequestAreBounded"
+        ],
+        "remainingUidProcesses": 0
+      },
+      {
+        "round": 2,
+        "status": 0,
+        "stdout": "INSTRUMENTATION_RESULT: shortMsg=Process crashed.\r\nINSTRUMENTATION_CODE: 0\r\n",
+        "stderr": "",
+        "error": "Every Binder test must pass exactly once\n+ actual - expected\n\n+ []\n- [\n-   'checkedInSamplesExecuteWithinPublishedBoundaries',\n-   'discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip',\n-   'installedNativeRuntimeMatchesTheLockedPayload',\n-   'manifestPublishesWakeInfoAndRuntimeContracts',\n-   'sigtermIgnoringCancellationAfterReadinessReapsTheChild',\n-   'sigtermIgnoringOutputLimitReapsTheChild',\n-   'sigtermIgnoringTimeoutReapsTheChild',\n-   'timeoutCancellationAndInvalidRequestAreBounded'\n- ]\n",
+        "remainingUidProcesses": 0
+      }
+    ],
+    "cleanup": [
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test",
+        "uninstalled": true
+      },
+      {
+        "package": "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder",
+        "uninstalled": true
+      }
+    ],
+    "passed": false,
+    "distributionReady": false,
+    "signatures": [
+      {
+        "verifiedSchemes": [
+          "v2"
+        ],
+        "signerCount": 1,
+        "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+      },
+      {
+        "verifiedSchemes": [
+          "v2"
+        ],
+        "signerCount": 1,
+        "certificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213"
+      }
+    ],
+    "manifest": "N: android=http://schemas.android.com/apk/res/android (line=2)\r\n  E: manifest (line=2)\r\n    A: http://schemas.android.com/apk/res/android:versionCode(0x0101021b)=7\r\n    A: http://schemas.android.com/apk/res/android:versionName(0x0101021c)=\"0.2.2-api28-binder-test-only\" (Raw: \"0.2.2-api28-binder-test-only\")\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersion(0x01010572)=36\r\n    A: http://schemas.android.com/apk/res/android:compileSdkVersionCodename(0x01010573)=\"16\" (Raw: \"16\")\r\n    A: package=\"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder\")\r\n    A: platformBuildVersionCode=36\r\n    A: platformBuildVersionName=16\r\n      E: uses-sdk (line=7)\r\n        A: http://schemas.android.com/apk/res/android:minSdkVersion(0x0101020c)=28\r\n        A: http://schemas.android.com/apk/res/android:targetSdkVersion(0x01010270)=36\r\n      E: uses-permission (line=11)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.permission.INTERNET\" (Raw: \"android.permission.INTERNET\")\r\n      E: uses-permission (line=12)\r\n        A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n      E: application (line=14)\r\n        A: http://schemas.android.com/apk/res/android:label(0x01010001)=@0x7f030000\r\n        A: http://schemas.android.com/apk/res/android:icon(0x01010002)=@0x7f010000\r\n        A: http://schemas.android.com/apk/res/android:debuggable(0x0101000f)=true\r\n        A: http://schemas.android.com/apk/res/android:testOnly(0x01010272)=true\r\n        A: http://schemas.android.com/apk/res/android:allowBackup(0x01010280)=false\r\n        A: http://schemas.android.com/apk/res/android:supportsRtl(0x010103af)=true\r\n        A: http://schemas.android.com/apk/res/android:extractNativeLibs(0x010104ea)=true\r\n          E: meta-data (line=22)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\" (Raw: \"autojs6.bun.EXPERIMENTAL_BINDER_TEST_ONLY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=true\r\n          E: meta-data (line=25)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\" (Raw: \"org.autojs.plugin.contract.NATIVE_PAGE_ALIGNMENT\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=16384\r\n          E: meta-data (line=28)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.WAKE_ACTIVITY\" (Raw: \"org.autojs.plugin.WAKE_ACTIVITY\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=\".WakeActivity\" (Raw: \".WakeActivity\")\r\n          E: meta-data (line=31)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.info.AUTHOR\" (Raw: \"org.autojs.plugin.info.AUTHOR\")\r\n            A: http://schemas.android.com/apk/res/android:value(0x01010024)=@0x7f030001\r\n          E: activity (line=35)\r\n            A: http://schemas.android.com/apk/res/android:theme(0x01010000)=@0x01030055\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.WakeActivity\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:finishOnTaskLaunch(0x01010014)=true\r\n            A: http://schemas.android.com/apk/res/android:excludeFromRecents(0x01010017)=true\r\n              E: intent-filter (line=42)\r\n                  E: action (line=43)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.action.WAKE\" (Raw: \"org.autojs.plugin.action.WAKE\")\r\n                  E: category (line=45)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"android.intent.category.DEFAULT\" (Raw: \"android.intent.category.DEFAULT\")\r\n          E: service (line=49)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunPluginInfoService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n              E: intent-filter (line=53)\r\n                  E: action (line=54)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.INFO\" (Raw: \"org.autojs.plugin.INFO\")\r\n                  E: category (line=56)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n          E: service (line=59)\r\n            A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\" (Raw: \"io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeService\")\r\n            A: http://schemas.android.com/apk/res/android:permission(0x01010006)=\"org.autojs.permission.PLUGIN\" (Raw: \"org.autojs.permission.PLUGIN\")\r\n            A: http://schemas.android.com/apk/res/android:exported(0x01010010)=true\r\n            A: http://schemas.android.com/apk/res/android:process(0x01010011)=\":bun_runtime\" (Raw: \":bun_runtime\")\r\n              E: intent-filter (line=64)\r\n                  E: action (line=65)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"org.autojs.plugin.bun.RUNTIME\" (Raw: \"org.autojs.plugin.bun.RUNTIME\")\r\n                  E: category (line=67)\r\n                    A: http://schemas.android.com/apk/res/android:name(0x01010003)=\"bun\" (Raw: \"bun\")\r\n",
+    "device": {
+      "model": "G8441",
+      "api": "28",
+      "abi": "arm64-v8a",
+      "pages": "4096",
+      "pageSizeSource": "/proc/self/smaps KernelPageSize (getconf unavailable); instrumentation also asserts Os.sysconf",
+      "bridge": "0",
+      "machine": "aarch64",
+      "kernel": "4.4.148-perf+",
+      "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys"
+    },
+    "uid": 10764,
+    "installedApkSha256": "136c788df8e5c1cb383af77ee4bcf7f82e08cf67fbb81fac673d3325db63c6d5",
+    "installedTestApkSha256": "281ec93fa44acc2de3e8736e30d7375f39c5761fa21e9e2439c0868faebd6a15",
+    "finalUidProcesses": 0
+  },
+  "rounds": [
+    {
+      "filename": "round-1.txt",
+      "bytes": 7016,
+      "sha256": "0582eac646d2f7dfc9938b2d20b4a255d99eddefcc66b9e131803430bf38a104",
+      "text": "INSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nio.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest:\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29736 reaped=true exitCode=137 durationMillis=344 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29749 reaped=true exitCode=137 durationMillis=324 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=CANCELLED childPid=29762 reaped=true exitCode=137 durationMillis=321 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=1\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringCancellationAfterReadinessReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=2\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=discoveryMetadataPrewarmJavaScriptAndTypeScriptRoundTrip\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=3\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=installedNativeRuntimeMatchesTheLockedPayload\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=TIMEOUT childPid=29835 reaped=true exitCode=137 durationMillis=3314 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=4\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringTimeoutReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: stream=\r\nBUN_LIFECYCLE error=OUTPUT_LIMIT childPid=29871 reaped=true exitCode=137 durationMillis=826 workspaceRemoved=true\r\n\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=5\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=sigtermIgnoringOutputLimitReapsTheChild\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=6\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=checkedInSamplesExecuteWithinPublishedBoundaries\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=7\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=manifestPublishesWakeInfoAndRuntimeContracts\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 1\r\nINSTRUMENTATION_STATUS: class=io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeInstrumentedTest\r\nINSTRUMENTATION_STATUS: current=8\r\nINSTRUMENTATION_STATUS: id=AndroidJUnitRunner\r\nINSTRUMENTATION_STATUS: numtests=8\r\nINSTRUMENTATION_STATUS: stream=.\r\nINSTRUMENTATION_STATUS: test=timeoutCancellationAndInvalidRequestAreBounded\r\nINSTRUMENTATION_STATUS_CODE: 0\r\nINSTRUMENTATION_RESULT: stream=\r\n\r\nTime: 13.475\r\n\r\nOK (8 tests)\r\n\r\n\r\nINSTRUMENTATION_CODE: -1\r\n"
+    },
+    {
+      "filename": "round-2.txt",
+      "bytes": 76,
+      "sha256": "f3ca40e0a3bf20eaf9ab861db129a85ecafc52160588fc2089c7bb0239bc1d94",
+      "text": "INSTRUMENTATION_RESULT: shortMsg=Process crashed.\r\nINSTRUMENTATION_CODE: 0\r\n"
+    }
+  ],
+  "driver": {
+    "mode": "binder",
+    "serial": "BH900ASK9E",
+    "abi": "arm64-v8a",
+    "api": 28,
+    "pages": 4096,
+    "startedAt": "2026-09-13T09:07:07.216783+00:00",
+    "finishedAt": "2026-09-13T09:07:36.908572+00:00",
+    "exitCode": 1
+  },
+  "crash": {
+    "filename": "owned-crash.txt",
+    "bytes": 11837,
+    "sha256": "dfed2b352510961000105cf8f2f1cb839b141a8e546da90361da34c88c5ff06d",
+    "text": "09-13 17:07:35.460 29997 30004 F libc    : Fatal signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x7a788ead58 in tid 30004 (ADB-JDWP Connec), pid 29997 (ime.api28binde)\n09-13 17:07:35.530 30021 30021 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***\n09-13 17:07:35.530 30021 30021 F DEBUG   : Build fingerprint: 'Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys'\n09-13 17:07:35.530 30021 30021 F DEBUG   : Revision: '0'\n09-13 17:07:35.530 30021 30021 F DEBUG   : ABI: 'arm64'\n09-13 17:07:35.530 30021 30021 F DEBUG   : pid: 29997, tid: 30004, name: ADB-JDWP Connec  >>> <pre-initialized> <<<\n09-13 17:07:35.530 30021 30021 F DEBUG   : signal 11 (SIGSEGV), code 1 (SEGV_MAPERR), fault addr 0x7a788ead58\n09-13 17:07:35.530 30021 30021 F DEBUG   :     x0  0000000000000000  x1  0000000070ea7f70  x2  0000000070ea7f70  x3  0000000000000001\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x4  0000000000000000  x5  0000007a5a1802f0  x6  6d2e607560694b20  x7  0000000000000000\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x8  0000007a788ea000  x9  0000000000080100  x10 000000009baaa000  x11 0000007a5a1800f0\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x12 0000007a5a18018c  x13 0000000000000000  x14 0000000000000000  x15 000000000000003c\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x16 0000007a788ec160  x17 0000007afe0aa370  x18 0000000000000000  x19 0000007a5a180168\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x20 0000007a5a1800d0  x21 0000007a72215800  x22 0000000000000000  x23 0000007a788f1048\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x24 0000000070ea7f70  x25 0000007a790ad700  x26 0000007a5a182588  x27 0000007a5a1800d8\n09-13 17:07:35.531 30021 30021 F DEBUG   :     x28 0000007a788f1048  x29 0000007a5a180040\n09-13 17:07:35.531 30021 30021 F DEBUG   :     sp  0000007a5a17ff90  lr  0000007a78510744  pc  0000007a787e1aec\n09-13 17:07:35.561 30021 30021 F DEBUG   : \n09-13 17:07:35.561 30021 30021 F DEBUG   : backtrace:\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #00 pc 0000000000524aec  /system/lib64/libart.so (MterpShouldSwitchInterpreters+4)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #01 pc 0000000000253740  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+348)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #02 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #03 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #04 pc 0000000000524e0c  /system/lib64/libart.so (MterpInvokeVirtual+588)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #05 pc 0000000000548414  /system/lib64/libart.so (ExecuteMterpImpl+14228)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #06 pc 00000000000d80e0  /system/framework/boot-core-oj.vdex (java.nio.Bits.putIntB+44)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #07 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #08 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #09 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #10 pc 0000000000526310  /system/lib64/libart.so (MterpInvokeStatic+204)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #11 pc 0000000000548594  /system/lib64/libart.so (ExecuteMterpImpl+14612)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #12 pc 000000000018543e  /system/framework/boot-core-oj.vdex (java.nio.Bits.putInt+4)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #13 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #14 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #15 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #16 pc 0000000000526310  /system/lib64/libart.so (MterpInvokeStatic+204)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #17 pc 0000000000548594  /system/lib64/libart.so (ExecuteMterpImpl+14612)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #18 pc 00000000000da53e  /system/framework/boot-core-oj.vdex (java.nio.HeapByteBuffer.putInt+30)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #19 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.561 30021 30021 F DEBUG   :     #20 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #21 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #22 pc 0000000000527e50  /system/lib64/libart.so (MterpInvokeVirtualQuick+584)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #23 pc 000000000054c194  /system/lib64/libart.so (ExecuteMterpImpl+29972)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #24 pc 0000000000563de2  /system/framework/boot-framework.vdex (android.ddm.DdmHandleHello.handleFEAT+156)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #25 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #26 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #27 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #28 pc 000000000052614c  /system/lib64/libart.so (MterpInvokeDirect+296)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #29 pc 0000000000548514  /system/lib64/libart.so (ExecuteMterpImpl+14484)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #30 pc 0000000000563d02  /system/framework/boot-framework.vdex (android.ddm.DdmHandleHello.handleChunk+30)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #31 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #32 pc 00000000002592c0  /system/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+216)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #33 pc 0000000000279aac  /system/lib64/libart.so (bool art::interpreter::DoCall<false, false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, art::JValue*)+940)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #34 pc 0000000000527e50  /system/lib64/libart.so (MterpInvokeVirtualQuick+584)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #35 pc 000000000054c194  /system/lib64/libart.so (ExecuteMterpImpl+29972)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #36 pc 000000000019cd76  /system/framework/boot-core-libart.vdex (org.apache.harmony.dalvik.ddmc.DdmServer.dispatch+102)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #37 pc 00000000002537cc  /system/lib64/libart.so (_ZN3art11interpreterL7ExecuteEPNS_6ThreadERKNS_20CodeItemDataAccessorERNS_11ShadowFrameENS_6JValueEb.llvm.1430790321+488)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #38 pc 00000000005156a0  /system/lib64/libart.so (artQuickToInterpreterBridge+1020)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #39 pc 000000000055eefc  /system/lib64/libart.so (art_quick_to_interpreter_bridge+92)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #40 pc 000000000055604c  /system/lib64/libart.so (art_quick_invoke_static_stub+604)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #41 pc 00000000000cf8e8  /system/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+232)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #42 pc 000000000045d04c  /system/lib64/libart.so (art::(anonymous namespace)::InvokeWithArgArray(art::ScopedObjectAccessAlreadyRunnable const&, art::ArtMethod*, art::(anonymous namespace)::ArgArray*, art::JValue*, char const*)+104)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #43 pc 000000000045ccac  /system/lib64/libart.so (art::InvokeWithVarArgs(art::ScopedObjectAccessAlreadyRunnable const&, _jobject*, _jmethodID*, std::__va_list)+424)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #44 pc 0000000000355ed0  /system/lib64/libart.so (art::JNI::CallStaticObjectMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+652)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #45 pc 00000000000ffb1c  /system/lib64/libart.so (art::(anonymous namespace)::CheckJNI::CallMethodV(char const*, _JNIEnv*, _jobject*, _jclass*, _jmethodID*, std::__va_list, art::Primitive::Type, art::InvokeType)+1504)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #46 pc 00000000000ee918  /system/lib64/libart.so (art::(anonymous namespace)::CheckJNI::CallStaticObjectMethodV(_JNIEnv*, _jclass*, _jmethodID*, std::__va_list)+92)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #47 pc 000000000017a56c  /system/lib64/libart.so (_JNIEnv::CallStaticObjectMethod(_jclass*, _jmethodID*, ...)+120)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #48 pc 000000000017a05c  /system/lib64/libart.so (art::Dbg::DdmHandleChunk(_JNIEnv*, unsigned int, art::ArrayRef<signed char const> const&, unsigned int*, std::__1::vector<unsigned char, std::__1::allocator<unsigned char>>*)+168)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #49 pc 0000000000007bbc  /system/lib64/libadbconnection.so (adbconnection::AdbConnectionState::HandleDataWithoutAgent(art::Thread*)+912)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #50 pc 0000000000006fcc  /system/lib64/libadbconnection.so (adbconnection::AdbConnectionState::RunPollLoop(art::Thread*)+1728)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #51 pc 0000000000005218  /system/lib64/libadbconnection.so (adbconnection::CallbackFunction(void*)+1060)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #52 pc 00000000000920a4  /system/lib64/libc.so (__pthread_start(void*)+36)\n09-13 17:07:35.562 30021 30021 F DEBUG   :     #53 pc 0000000000023968  /system/lib64/libc.so (__start_thread+68)\n"
+  },
+  "processOwnership": {
+    "pid": 29997,
+    "tid": 30004,
+    "uid": 10764,
+    "bytes": 338,
+    "sha256": "742fafe6f533f66a2246d7447a82fb73e979c06716c1b974241210aa10819016",
+    "text": "09-13 17:07:35.403  1225  1901 I am_proc_start: [0,29997,10764,io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder,added application,io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder]\n09-13 17:07:35.844  1225 16335 I am_proc_died: [0,29997,io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder,0,3]\n"
+  },
+  "originalDriver": {
+    "bytes": 740,
+    "sha256": "3b1c37f2b1fcf359bd698c311b3ef8f7c8a7539e604a10e32e68d571f2179111"
+  }
+}

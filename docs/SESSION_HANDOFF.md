@@ -1,29 +1,41 @@
-# 会话交接: 第十二补丁独立构建完成, 新设备门禁待运行
+# 会话交接: 十二补丁本地回归完成, 三星新源码与 JSC rebase 待继续
 
-2026-09-13 (Asia/Shanghai). 从干净 master `86200f1` 继续.
-完整阅读 `AGENTS.md`、本文件与 `E:/.codex-tmp/pending-wait-fix-20260913/SESSION_HANDOFF.local.md`.
-本机 `AFTER_BUILDS.md` 的构建收集/晋升步骤已经完成, 不要重复执行或重启 native 构建.
+2026-09-13 (Asia/Shanghai). 源码/构建已提交于 `bb61b9c`, 本轮最初为干净 master `86200f1`.
+完整阅读 `AGENTS.md`、本文件及 `E:/.codex-tmp/pending-wait-fix-20260913/SESSION_HANDOFF.local.md`.
+本机 AFTER_BUILDS.md 是已执行的阶段计划; **不要重跑 native driver、collector、promotion、APK builder 或一次性文档脚本**.
 
-- 新 head `06e518f73b4fccc6c3ffb17412ea166bf886bed0`, tree `1eb8d5ea945001f018bdf14bd00c261d40b02573`.
-- Patch 12 只修改 epoll_kqueue.c: Android wait 使用 NULL mask, 调用点维持已有 epoll_pwait2 禁用.
-  不清 pending、不临时放开 SIGSYS、不预热 waiter; 非 Android 策略和 timeout/EINTR 不变.
-- GCC 13/Clang 21 各 45 次有界执行通过; 十二补丁完整重放、五补丁 prefix 等价和 28 blobs 通过.
-- 全量 Node 229/229、Python 38/38、Markdown 10 语言/36 产物和 matrix 74 报告/168 行通过.
-  production 四项 Gradle 验证实际 exit 0; IDE 工具 timeout 原样保留, 对应后台命令成功另记.
-- **两份全新 native 构建已结束, 不重复启动.** 本机 driver-run-1/2.json 均为 actual exit 0;
-  clean head/tree、16 配方、完整日志和最终 Ninja 边已核对. 两个 ABI 各两份成品一致, 四份 ELF 通过.
-  新导出位于 WSL `pending-wait-evidence/run-{1,2}`, current runtime-evidence 和 source binding 已晋升.
-  原上游 WebKit/JSC/ICU 复用, 没有新库构建. runtimeProduced=true/distributionReady=false.
-- 新设备门禁仍待运行, 不转移旧源码通过或失败数. 本轮尚无 APK/设备操作或 owned AVD.
-  完成源码/构建提交后运行本机 build-device-apks.py probe/binder, 然后 run-device.py.
-  Sony API 28/31 优先, 全部 33 定义、15 源输入、完整 validator/预算和八项 Binder 保持原样.
-- 三星当前无等待窗口; APK 就绪后按 SM-F936U API 32/4 KiB 与 SM-A566B API 36/native 16 KiB
-  请求新 10 分钟 localhost:50781 接入, 同时继续本地独立工作. 所有事实仍需现场测量.
-- 只读库存中其他任务的 emulator-5568 后来不再在线; 本轮未控制它, 不推断消失原因.
-  本轮未 push、Release、委派 agent、读取签名秘密或修复缓存.
+- 当前 native head `06e518f73b4fccc6c3ffb17412ea166bf886bed0`, tree `1eb8d5ea945001f018bdf14bd00c261d40b02573`.
+  第 12 补丁保留 Android epoll caller mask/pending, 调用点维持已有 epoll_pwait2 禁用.
+  GCC 13/Clang 21 各 45 次对照、完整重放/28 blobs、两份双 ABI 构建及四份 ELF 均通过.
+  两个实际 driver exit 0, 每 ABI 字节一致; WSL 导出 `pending-wait-evidence/run-{1,2}`.
+- 同一新 probe APK 在 ARM64 API 28/31/33/35 和原生 x86_64 API 33 (均 4096 页) 各两轮 33/33,
+  总计 330/330. API 33 真机为 Redmi 22120RN86C, 原计划 Sony QV770340J7 在安装前断线.
+  二十次 pending async/六十 child 检查通过, 原 31 项保持, fixture/validator/预算均不变.
+- 新源码完整八项 Binder 在同五环境两轮通过 80/80. Sony28、sony28retry 都首轮 8/8,
+  第二轮测试前 ART/ADB-JDWP SIGSEGV; 两个失败归档独立保留且不计通过数.
+  第三次 sony28retry2 两轮通过. 三次 APK、81 编译输入、native、签名完全一致, 未加 workaround.
+- 测试 APK 在干净 `bb61b9c` 生成; probe 绑定 30 输入, Binder 81 输入. 已测字节/原始记录
+  保存在本机 probe-apks、binder-apks 和设备目录. 后续文档构建不能替换这些被验收的快照.
+  当前 changelog assets 已更新; 下次设备回归应保留原快照, 以当时提交重建 Binder APK 并另建批次,
+  不放宽 compiled-input 校验. Probe 输入与 native 未变, 可先按既有 verifier 核验后复用原 probe APK.
+  本机 snapshot helper 曾误要求 universal, 实验模块固定只有三个 APK; 错误另记, 没有重建.
+- 所有测试包卸载, 执行 UID 进程清零 (含两次失败). 本轮只启动并关闭 API 33 AVD:
+  bun-hard-limit-api33-20260912 / emulator-5584, launcher24912. native/APK/设备 driver 均已结束.
+  预先其他任务 emulator-5568 和 Sony33 后来不在库存, 未主动控制, 不推断原因.
+- 三星窗口 17:05-17:15 本地时间已结束, localhost:50781 多次只读检查 offline, 无三星安装/测试.
+  下一次接入需新的具体型号/API/页大小窗口. 优先 SM-F936U API 32/ARM64/4 KiB 和
+  SM-A566B API 36/ARM64/hardware 16 KiB 的相同 33 项/八项 Binder, 不转移十补丁结果.
+- 后续独立任务是十二补丁大页 JSC rebase; 现有十补丁候选不能改标签或换字节冒充.
+  syscall/FD/API/OEM、watch/reload、cgroup/clone3、FD70000/UNSHARE、压力/性能及 Release 仍开放.
+  官方 API 33+、payload/service/AAR 和 distributionReady=false 不变; 本轮未 push 或发布.
+- Node 229/229、Python 38/38、10 语言/36 生成产物及 production 四项 Gradle 验证通过;
+  最终文档修改后复验 Node 229/229、Python 38/38、matrix 79 报告/180 行和 Markdown 10/36 均通过.
+  production 四项 Gradle 再次实际 exit 0 (17s, 96 tasks). IDE 工具 timeout 原样保留, 对应后台命令成功另记.
 
-[修复报告](compatibility/2026-09-13-m3-pending-wait-fix.md) 与
-[新构建证据](compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json). 后续设备状态须更新本节和本机记录.
+[修复/完整结果](compatibility/2026-09-13-m3-pending-wait-fix.md),
+[Probe](compatibility/2026-09-13-m3-pending-wait-probes.json),
+[Binder](compatibility/2026-09-13-m3-pending-wait-binder.json),
+[构建/设备清理补充](compatibility/2026-09-13-m3-pending-wait-checkpoint.json).
 
 ## 此前完成的十一补丁构建与 wait 阻断
 

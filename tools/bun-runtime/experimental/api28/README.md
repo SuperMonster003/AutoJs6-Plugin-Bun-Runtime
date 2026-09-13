@@ -9,7 +9,11 @@ preserves Android caller signals during waits and enforces the existing exclusio
 of optional epoll_pwait2. Complete-source GCC/Clang controls and deterministic
 replay pass. Two new independent dual-ABI builds completed with actual driver
 exits 0, identical complete outputs per ABI and four ELF audits;
-`runtimeProduced=true` / `distributionReady=false`. New device gates remain separate. See the [new source report](../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md).
+`runtimeProduced=true` / `distributionReady=false`. The unchanged 33-probe suite
+and eight-test Binder suite pass twice in five native 4 KiB environments
+(330/330 and 80/80), bound to new-source APKs. Two API 28 ART/ADB-JDWP startup
+failures remain separate; the third identical-APK attempt passes both rounds.
+Samsung API 32/native ARM64 16 KiB and the new-source JSC rebase remain pending. See the [new source report](../../../../docs/compatibility/2026-09-13-m3-pending-wait-fix.md).
 
 Historical eleven-patch source: eleven patches at `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`,
 revision `1.4.0+946f082ab`. The [pending-mask repair](pending-mask/README.md)

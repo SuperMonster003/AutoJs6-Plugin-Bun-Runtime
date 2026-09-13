@@ -626,6 +626,50 @@
       "note": "原 31 项通过 124/124, 两个新模式 0/8; 全部受控 exit 1, 整体门禁失败, 不分配兼容验收."
     },
     {
+      "file": "2026-09-13-m3-pending-wait-binder-retry-failure.json",
+      "sha256": "48440d703964cc1b14da27a5807beb590ae09ab0c778315e57be3181bd99fc7a",
+      "schema": 1,
+      "kind": "experimental-binder-startup-failure",
+      "adapter": "binder",
+      "collection": "report",
+      "category": "diagnostic",
+      "label": "M3 十二补丁 API 28 Binder 重试启动失败",
+      "note": "同一 APK 的第二次尝试仍在第二轮测试前 ART/ADB-JDWP 崩溃; 不计入随后通过批次."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-binder-startup-failure.json",
+      "sha256": "5036fcbd861026f2229106a4e706a2654a6e02439a65510d8557fb5f4651c3e8",
+      "schema": 1,
+      "kind": "experimental-binder-startup-failure",
+      "adapter": "binder",
+      "collection": "report",
+      "category": "diagnostic",
+      "label": "M3 十二补丁 API 28 Binder 首次启动失败",
+      "note": "第一轮八项通过, 第二轮测试开始前 ART/ADB-JDWP 崩溃; 整次尝试不接受."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-binder.json",
+      "sha256": "324996e7bccfe21e15b02d4c7e35e60413119842c34ab68e26f33712b384ee6d",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁本地 Binder 回归",
+      "note": "既有八项 Binder 的新源码批次; 两次 API 28 ART 启动失败独立保留, 不加入通过数."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-checkpoint.json",
+      "sha256": "554c5d8b9ee36a7b40aa611d7cc4589827af2506a4c35ff963e97d37fcbc4cf4",
+      "schema": 1,
+      "kind": "pending-wait-device-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3 十二补丁构建/设备清理补充",
+      "note": "保留快照脚本错误、未安装的断线前置检查、APK 一致性、owned AVD 清理和离线三星窗口; 不新增测试数."
+    },
+    {
       "file": "2026-09-13-m3-pending-wait-diagnosis.json",
       "sha256": "e19a9f35b4d3b64358ac48efdbadf874faf7c06bc9f153ec1b67b96722dd1232",
       "schema": 1,
@@ -646,6 +690,17 @@
       "category": "experimental",
       "label": "M3 十一补丁 pending wait 失败门禁",
       "note": "即时 spawn 保留 pending, 但异步等待后提前交付. 原 31 项通过不构成完整 33 项门禁通过; 历史十补丁失败不变."
+    },
+    {
+      "file": "2026-09-13-m3-pending-wait-probes.json",
+      "sha256": "c7e428daacd066f8d6d08c4a392f6d2bd98080bcf3f23989c824f31557ccef68",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十二补丁本地 33 项探针",
+      "note": "原 33 定义与预算保持不变; 不转移旧源码成绩或扩大到其他页大小/版本."
     },
     {
       "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",

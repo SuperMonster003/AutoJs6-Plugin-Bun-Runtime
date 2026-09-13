@@ -89,13 +89,67 @@ WebKit/JSC/ICU bundle; no new builds of those libraries are claimed. This is
 reproducibility/static acceptance. New-source Android acceptance remains separate.
 `runtimeProduced=true` and `distributionReady=false`.
 
-The next acceptance step is the unchanged 33-probe application suite and complete
-eight-test production Binder suite on new-source APKs. All fifteen existing
-fixture/validator/Java inputs, the complete probe validator, definitions and
-budgets stay protected; only the expected revision may change. Samsung ARM64
-API 32/4 KiB and API 36/native 16 KiB require new evidence. Official API 33+,
-payloads, supervisor, production service and AARs are unchanged. The ten-patch
-large-page JSC candidate is a separate historical source and is not rebased here.
+The new-source APKs now pass the unchanged 33-probe application suite and
+complete eight-test production Binder suite twice in five native 4 KiB
+environments. All fifteen existing fixture/validator/Java inputs, the complete
+probe validator, definitions and budgets stay protected; only the expected
+revision changes. The accepted APKs were built at clean project commit
+`bb61b9c225524fb0b1527501234945e32924afdb`: 30 probe inputs and 81 Binder inputs
+are bound. Later documentation builds do not replace these tested APK snapshots.
+
+## New-source device results
+
+The [probe archive](2026-09-13-m3-pending-wait-probes.json) and
+[Binder archive](2026-09-13-m3-pending-wait-binder.json) retain separate raw
+rounds, source/APK/runtime receipts and zero-execution-UID cleanup.
+
+| Device | API | Native ABI | Page bytes | Two probe rounds | Two Binder rounds |
+|---|---:|---|---:|---:|---:|
+| Sony G8441 | 28 | arm64-v8a | 4096 | 66/66 | 16/16 |
+| Sony XQ-AT72 | 31 | arm64-v8a | 4096 | 66/66 | 16/16 |
+| Redmi 22120RN86C | 33 | arm64-v8a | 4096 | 66/66 | 16/16 |
+| Xiaomi 23046RP50C | 35 | arm64-v8a | 4096 | 66/66 | 16/16 |
+| sdk_gphone64_x86_64 AVD | 33 | x86_64 | 4096 | 66/66 | 16/16 |
+| Total for this source and batch | | | | 330/330 | 80/80 |
+
+All twenty pending-async modes and sixty associated child observations pass.
+The signal remains pending, with zero JavaScript delivery, through all ten
+checks around three asynchronous child launches/waits; explicit caller mask
+restoration then delivers it once on the caller thread. The previous native/TRAP
+wait-stage failures on Sony API 28/31 are resolved for this fixed suite.
+Twenty blocked-async modes and sixty child observations, forty hard-limit cases,
+forty hard-limit spawn API observations, twenty soft-limit cases and thirty
+forcible lifecycle cases also pass; forcible termination takes 301-308 ms.
+The Binder archive separately retains fifty lifecycle observations.
+
+Sony API 28 required three complete attempts with identical APKs, compiled
+inputs, native bytes and signatures. The [first attempt](2026-09-13-m3-pending-wait-binder-startup-failure.json)
+and [first retry](2026-09-13-m3-pending-wait-binder-retry-failure.json) each pass
+8/8 once, then fail before any second-round test. Owned process events bind
+PID/TID/UID 29359/29366/10762 and 29997/30004/10764 to pre-initialized ART/ADB-JDWP
+SIGSEGV/SEGV_MAPERR stacks in libart/libadbconnection. Those entire attempts are
+excluded. The third attempt passes both rounds without a device, mask, fixture,
+APK or native-byte workaround; finite later success does not erase the startup
+instability. This is direct platform-process crash evidence, not a Bun execution
+stack or SIGSYS diagnosis.
+
+The [checkpoint supplement](2026-09-13-m3-pending-wait-checkpoint.json) preserves
+the local post-build snapshot-count error (the test-only module intentionally
+builds three APKs, no universal), corrected without rebuilding. Sony XQ-DQ72
+disconnected before probe preflight: no output directory, installation or test
+was started. The available Redmi supplies the separately identified API 33 slot.
+All test packages are uninstalled and execution UIDs have zero processes,
+including both failed API 28 attempts. Only the owned API 33 AVD is closed;
+no pre-existing AVD is operated, and no cause is inferred for inventory changes.
+
+The 17:05-17:15 Asia/Shanghai Samsung window remained offline at localhost:50781,
+so no Samsung package or test was run. New-source ARM64 API 32/4 KiB and API 36
+with native hardware 16 KiB still require new evidence; earlier ten-patch results
+are not transferred. Official API 33+, payloads, supervisor, production service
+and AARs are unchanged. The ten-patch large-page JSC candidate is not rebased here.
+Broader syscall/API/FD/OEM, watch/reload, cgroup/clone3, Android FD 70000/UNSHARE,
+pressure/performance and signed paired APK/source Release gates remain open.
+`distributionReady=false`.
 
 ## Repository validation at the native checkpoint
 
@@ -115,3 +169,10 @@ Debug APKs pass their payload and 16 KiB ZIP gates. The IDE build tool's separat
 60-second timeout remains recorded as a timeout; the corresponding two owned
 Gradle command intervals later finish successfully and are retained independently.
 No IDE tool success is inferred from those command results.
+
+After device archival and final localization, the complete Node suite again
+passes 229/229, Python 38/38, Markdown 10 languages/36 artifacts and the matrix
+79 reports/180 rows. The four production Gradle checks again exit zero (17 s,
+96 tasks: 49 executed and 47 up to date). All 73 original JSON archives and the
+committed twelve-patch native evidence remain unchanged. The accepted experimental
+APK snapshots stay bound to the pre-documentation source commit and receipts.
