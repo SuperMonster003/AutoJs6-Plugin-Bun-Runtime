@@ -176,7 +176,7 @@
       "id": "v1.4.0-backport",
       "resolved": true,
       "blocksBuild": true,
-      "description": "Ten deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, patch eight provides the allocation-free Linux spawn FD fallback, patch nine preserves read-only directory confinement, and patch ten avoids optional Android pidfd probing when the calling thread blocks SIGSYS. All project-owned source differences are separately audited."
+      "description": "Eleven deterministic patches replay onto exact Bun v1.4.0. The five-patch compatibility prefix matches all upstream stable patch IDs and affected paths; patch six pins Brotli, patch seven fixes startup CLOEXEC, patch eight provides the allocation-free Linux spawn FD fallback, patch nine preserves read-only directory confinement, and patch ten avoids optional Android pidfd probing when the calling thread blocks SIGSYS. All project-owned source differences are separately audited. Patch eleven separates Android parent and child SIGSYS masks and conservatively skips a blocked parent clone3 probe."
     },
     {
       "id": "toolchain-byte-lock",
@@ -192,9 +192,9 @@
     },
     {
       "id": "build-and-runtime-evidence",
-      "resolved": false,
+      "resolved": true,
       "blocksBuild": false,
-      "description": "The ten-patch a9c76a599 source has two independent byte-identical output pairs with complete static ELF audits. Original driver exit statuses were lost across session recovery; four read-only Ninja completion checks and retained final edges verify the completed builds without recompilation, as explicitly recorded in schema-2 runtime evidence. New-source device/Binder and matching APK/source publication gates remain separate; no historical acceptance is reassigned."
+      "description": "Two fresh independent eleven-patch checkouts produce identical complete binaries per ABI, with actual captured driver exits 0, clean heads/trees, unchanged recipes, complete logs and final Ninja edges. Schema-3 evidence binds all four ELF audits. The locked upstream WebKit/JSC/ICU bundle is reused; no new builds of those libraries or historical device acceptance are claimed. New-source application and Binder gates remain separate."
     }
   ]
 }

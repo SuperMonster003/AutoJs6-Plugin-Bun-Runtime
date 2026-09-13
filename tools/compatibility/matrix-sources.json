@@ -461,6 +461,17 @@
       "note": "源码与构建绑定独立保留; 不从此报告推导任何设备通过数或缺失的构建退出码."
     },
     {
+      "file": "2026-09-13-m2-pending-mask-runtime-evidence.json",
+      "sha256": "7674c10ab9eab518c2cb795d39069fd76ece2840c04c1424bbf9f22d06951dad",
+      "schema": 3,
+      "kind": null,
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M2 十一补丁独立构建证据",
+      "note": "保留两次实际 driver exit 0、独立干净源码、完整日志与四份 ELF 绑定; 只索引构建证据, 不增加设备通过数."
+    },
+    {
       "file": "2026-09-13-m3-blocked-async-api28-failure.json",
       "sha256": "aaee10915208b6448ecb976318c2d8a702004c2763f1868ad0280d0f1b126dbc",
       "schema": 1,

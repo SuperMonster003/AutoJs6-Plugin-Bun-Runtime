@@ -15,7 +15,7 @@ function fixture() {
     const runtime = record.build.runtimes[run.environment.abi];
     run.runtimeBytes = runtime.bytes;
     run.runtimeSha256 = runtime.sha256;
-    run.probes.find(p => p.id === "revision").stdout = "1.4.0+a9c76a599";
+    run.probes.find(p => p.id === "revision").stdout = "1.4.0+946f082ab";
   }
   return record;
 }

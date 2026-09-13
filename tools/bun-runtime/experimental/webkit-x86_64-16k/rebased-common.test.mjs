@@ -3,7 +3,16 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { loadJscCandidate } from "./jsc-common.mjs";
-import { REBASED_KIND, REBASED_HEAD, REBASED_TREE, rebasedSourceBindings, validateRebasedCandidate } from "./rebased-common.mjs";
+import { REBASED_KIND, REBASED_HEAD, REBASED_TREE, rebasedSourceBindings, validateRebasedCandidate, loadRebasedJscCandidate } from "./rebased-common.mjs";
+
+test("the actual ten-patch JSC lock keeps its original archived baseline binding", () => {
+    const lock = loadRebasedJscCandidate();
+    assert.equal(lock.bunCommit, "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47");
+    assert.equal(lock.artifact.sha256, "a237dc8c13fbef6366a36769ea9a6d729fd24307b0df93bb051be8d997f8dcd5");
+    const changed = structuredClone(lock);
+    changed.bunCommit = "946f082ab8ede2b7cbd6ba9fddb90463a94f0330";
+    assert.throws(() => validateRebasedCandidate(changed));
+});
 
 // Synthetic metadata exercises rejection gates, never a claim of actual builds.
 function fixture() {

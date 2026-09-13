@@ -6,6 +6,9 @@ import { loadJscCandidate, verifyJscCandidate } from "./jsc-common.mjs";
 export const REBASED_KIND = "clean-rebased-large-page-jsc-candidate";
 export const REBASED_HEAD = "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47";
 export const REBASED_TREE = "cb762d12f6959834517c79f01f4c538346990962";
+// The ten-patch candidate retains its original baseline evidence after the API
+// 28 experiment advances. Binder preparation separately requires current source.
+const BASELINE_EVIDENCE = new URL("../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json", import.meta.url);
 export const BUILD_RECIPES = Object.freeze([
     "run-clean-bun.mjs", "build-clean-bun.mjs", "jsc-common.mjs", "record-candidate.mjs", "candidate.lock.json",
 ]);
@@ -17,14 +20,14 @@ export function rebasedSourceBindings() {
     return {
         historicalCandidate: canonicalFacts(new URL("candidate.lock.json", import.meta.url)),
         historicalCleanBuilds: canonicalFacts(new URL("../../../../docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json", import.meta.url)),
-        baselineRuntimeEvidence: canonicalFacts(new URL("../api28/runtime-evidence.json", import.meta.url)),
+        baselineRuntimeEvidence: canonicalFacts(BASELINE_EVIDENCE),
         recipes: Object.fromEntries(BUILD_RECIPES.map(name => [name, canonicalFacts(new URL(name, import.meta.url))])),
     };
 }
 export function validateRebasedCandidate(lock) {
     const historical = loadJscCandidate();
     const cleanHistory = JSON.parse(readFileSync(new URL("../../../../docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json", import.meta.url), "utf8"));
-    const baseline = JSON.parse(readFileSync(new URL("../api28/runtime-evidence.json", import.meta.url), "utf8"));
+    const baseline = JSON.parse(readFileSync(BASELINE_EVIDENCE, "utf8"));
     assert.equal(lock.schemaVersion, 1);
     assert.equal(lock.kind, REBASED_KIND);
     assert.equal(lock.distributionReady, false);

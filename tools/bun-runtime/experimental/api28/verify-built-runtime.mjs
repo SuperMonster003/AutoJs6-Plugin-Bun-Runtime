@@ -497,18 +497,18 @@ function inspectSymbolTable(data, sections, sectionByName) {
 }
 
 export function verifyRuntimeEvidenceManifest(evidence) {
-  require(evidence?.schemaVersion === 2, "unsupported runtime evidence schema");
+  require(evidence?.schemaVersion === 3, "unsupported runtime evidence schema");
   require(evidence.identity?.status === "reproducible-static-audit-complete", "runtime evidence status is incomplete");
   require(evidence.identity?.variant === "bun-1.4.0-android-api28-patched-experimental", "runtime evidence variant is invalid");
   require(evidence.identity?.officialArtifact === false, "experimental runtime cannot be an official artifact");
   require(evidence.identity?.distributionReady === false, "experimental runtime cannot be distribution-ready");
   require(evidence.source?.upstreamCommit === "34cbb9a40b4bd1bd767d134a7065e66c2432a676", "runtime evidence upstream commit drifted");
-  require(evidence.source?.downstreamHeadCommit === "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47", "runtime evidence downstream commit drifted");
+  require(evidence.source?.downstreamHeadCommit === "946f082ab8ede2b7cbd6ba9fddb90463a94f0330", "runtime evidence downstream commit drifted");
   require(evidence.build?.hostImageManifestDigest === "sha256:8f2f92e61f13defcfc91cd4a3722bbb55edced4163c6277fbc6375d05b6731aa", "runtime evidence host image drifted");
   require(evidence.build?.hostImageConfigDigest === "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b", "runtime evidence host config drifted");
   require(evidence.build?.entry === "run-locked-build.mjs", "runtime evidence build entry drifted");
   require(evidence.build?.cleanBuildCount === 2, "runtime evidence requires two clean builds");
-  verifyRecoveredBuildCompletion(evidence);
+  verifyCapturedBuildCompletion(evidence);
   require(evidence.build?.byteForByteIdentical === true, "runtime evidence is not byte-for-byte reproducible");
   require(evidence.build?.containerPolicy?.pull === "never", "runtime evidence pull policy drifted");
   require(evidence.build?.containerPolicy?.network === "none", "runtime evidence network policy drifted");
@@ -590,34 +590,40 @@ export function verifyRuntimeEvidenceManifest(evidence) {
   return evidence;
 }
 
-// The interrupted session retained successful final Ninja edges and both pairs
-// of complete outputs, but not the outer driver's exit status. Schema 2 records
-// that gap explicitly and requires four read-only, empty Ninja completion checks.
-// It must never relabel a dry run as a captured full-build exit or accept work
-// still pending in the build graph.
-function verifyRecoveredBuildCompletion(evidence) {
+// Schema 3 requires actual exits from two new independent build drivers. It
+// cannot reinterpret historical no-work checks as original build-driver exits.
+function verifyCapturedBuildCompletion(evidence) {
   const build = evidence.build;
-  require(build?.bothRunsExitCode === null, "original build-driver exits were not retained");
-  const recovery = build?.completionRecovery;
-  require(recovery?.method === "read-only-ninja-no-work", "runtime completion method drifted");
-  require(JSON.stringify(recovery?.originalDriverExitCodes) === "[null,null]", "original build-driver exit provenance drifted");
-  const expected = [1, 2].flatMap(run => ["arm64-v8a", "x86_64"].map(abi => [run, abi]));
-  require(Array.isArray(recovery?.checks) && recovery.checks.length === 4, "four independent ABI completion checks required");
-  for (const [index, check] of recovery.checks.entries()) {
-    const [run, abi] = expected[index];
-    require(check.run === run && check.abi === abi, "completion run/ABI coverage drifted");
-    require(check.head === evidence.source.downstreamHeadCommit && check.tree === "cb762d12f6959834517c79f01f4c538346990962" && check.cleanSource === true, "completion source identity drifted");
-    require(check.exitCode === 0 && check.stderr === "", "runtime completion check failed");
-    require(check.stdout === `ninja: Entering directory \`build/autojs6-api28/${abi}'\nninja: no work to do.\n`, "runtime build graph still has pending work");
-    require(check.compilationPerformed === false && check.bunCheckoutReadOnly === true, "runtime completion must be read-only without rebuilding");
-    require(check.logSha256 === sha256(Buffer.from(check.stdout)), "completion output digest drifted");
-    require(/^[0-9a-f]{64}$/.test(check.ninjaLogSha256) && Number.isSafeInteger(check.ninjaLogBytes) && check.ninjaLogBytes > 0, "completed Ninja log binding is missing");
-    require(Array.isArray(check.finalEdges) && ["bun-profile", "bun-profile.linker-map", "bun"].every(target => check.finalEdges.some(line => {
-      const fields = typeof line === "string" ? line.split("\t") : [];
-      return fields.length === 5 && /^\d+$/.test(fields[0]) && /^\d+$/.test(fields[1]) && Number(fields[1]) >= Number(fields[0]) && /^\d+$/.test(fields[2]) && fields[3] === target && /^[0-9a-f]{16}$/.test(fields[4]);
-    })), "successful final Ninja edges are missing");
-    const artifact = evidence.artifacts?.find(value => value.abi === abi);
-    require(artifact && check.runtimeSha256 === artifact.sha256 && check.runtimeBytes === artifact.bytes, "completion output/runtime binding drifted");
+  require(build.bothRunsExitCode === 0, "both original build-driver exits must be captured as zero");
+  require(!Object.hasOwn(build, "completionRecovery"), "recovery checks cannot replace captured build exits");
+  const completion = build.completion;
+  require(completion?.method === "captured-build-driver-exits", "runtime completion method drifted");
+  require(JSON.stringify(completion.originalDriverExitCodes) === "[0,0]", "both original driver exits required");
+  require(Array.isArray(completion.runs) && completion.runs.length === 2, "two independent clean driver records required");
+  const facts = (value, label) => require(Number.isSafeInteger(value?.bytes) && value.bytes > 0 && /^[0-9a-f]{64}$/.test(value.sha256), `${label}: missing byte/digest binding`);
+  facts(completion.driverSource, "build driver source");
+  const digests = new Set();
+  for (const [index, run] of completion.runs.entries()) {
+    require(run.run === index + 1 && run.exitCode === 0, "captured run order or driver exit drifted");
+    require(run.head === evidence.source.downstreamHeadCommit && run.headAfter === run.head, "driver source head drifted");
+    require(run.tree === "73476190d9341d338a96c8a9793db947ea415d15" && run.treeAfter === run.tree, "driver source tree drifted");
+    require(run.freshCheckout === true && run.cleanBefore === true && run.cleanAfter === true && run.recipesUnchanged === true, "driver source/recipe cleanliness missing");
+    require(run.entry === "run-locked-build.mjs" && run.execute === true && run.abi === "all", "full dual-ABI driver invocation required");
+    const start = Date.parse(run.buildStartedAt), end = Date.parse(run.buildFinishedAt);
+    require(Number.isFinite(start) && Number.isFinite(end) && end >= start, "driver build interval invalid");
+    facts(run.receipt, "original driver receipt"); facts(run.log, "complete build log");
+    require(!digests.has(run.receipt.sha256), "independent driver receipts required"); digests.add(run.receipt.sha256);
+    require(Array.isArray(run.repositoryInputs) && JSON.stringify(run.repositoryInputs) === JSON.stringify(build.repositoryInputs), "driver recipe input binding drifted");
+    require(Array.isArray(run.artifacts) && sameArray(run.artifacts.map(a => a.abi), ["arm64-v8a", "x86_64"]), "both driver ABI outputs required");
+    for (const output of run.artifacts) {
+      const artifact = evidence.artifacts?.find(a => a.abi === output.abi);
+      require(artifact && output.bytes === artifact.bytes && output.sha256 === artifact.sha256, "driver output/runtime binding drifted");
+      facts(output.ninjaLog, "successful Ninja log");
+      require(Array.isArray(output.finalEdges) && ["bun-profile", "bun-profile.linker-map", "bun"].every(target => output.finalEdges.some(line => {
+        const fields = typeof line === "string" ? line.split("\t") : [];
+        return fields.length === 5 && /^\d+$/.test(fields[0]) && /^\d+$/.test(fields[1]) && Number(fields[1]) >= Number(fields[0]) && /^\d+$/.test(fields[2]) && fields[3] === target && /^[0-9a-f]{16}$/.test(fields[4]);
+      })), "successful final Ninja edges are missing");
+    }
   }
 }
 

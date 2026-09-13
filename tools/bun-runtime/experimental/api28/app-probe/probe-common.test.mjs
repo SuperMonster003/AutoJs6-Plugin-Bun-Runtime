@@ -22,6 +22,25 @@ import { pendingSignalResult } from "./pending-signal-fixture.test-support.mjs";
 
 const probes = json(join(HERE, "probes.json"));
 const evidence = lockedEvidence();
+
+test("pending-mask repair preserves all 33 definitions and the fifteen existing fixture inputs", () => {
+  const archived = json(join(ROOT, "docs/compatibility/2026-09-13-m3-pending-sigsys-failure.json"));
+  const oldRevision = archived.probes.find(probe => probe.id === "revision").stdout;
+  assert.deepEqual(probes.map(probe => probe.id === "revision" ? { ...probe, stdout: oldRevision } : probe), archived.probes);
+  const names = ["ProbeInstrumentation.java", "fd-probes.mjs", "syscall-probes.mjs", "syscall-evidence.mjs",
+    "openat2-probes.mjs", "openat2-evidence.mjs", "lchmod-probes.mjs", "lchmod-evidence.mjs",
+    "hard-limit-probes.mjs", "hard-limit-evidence.mjs", "async-signal-probes.mjs", "async-signal-evidence.mjs",
+    "pending-signal-probes.mjs", "pending-signal-evidence.mjs"];
+  const paths = [...names.map(name => "tools/bun-runtime/experimental/api28/app-probe/" + name), SHARED_PROCESS];
+  const current = new Map(inputFacts().map(input => [input.path, input]));
+  assert.equal(paths.length, 15);
+  for (const path of paths) {
+    assert.deepEqual(current.get(path), archived.inputs.find(input => input.path === path), path + " must not drift");
+  }
+  // Keep the old inline FD semantic validator and all runner budgets intact too.
+  const common = "tools/bun-runtime/experimental/api28/app-probe/probe-common.mjs";
+  assert.deepEqual(current.get(common), archived.inputs.find(input => input.path === common));
+});
 // Only the expected revision changes when testing the repaired runtime.
 // Historical definition hashes still protect every other field/assertion.
 const previousRevision = rows => rows.map(p => p.id === "revision" ? {...p, stdout:"1.4.0+a260ef308"} : p);
@@ -141,7 +160,7 @@ test("async-signal semantic records must match stdout and the independent applic
   }
 });
 test("the scoped-open repair changes only the expected revision in all 24 definitions", () => {
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+a9c76a599");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+946f082ab");
   assert.equal(hash(JSON.stringify(previousRevision(withoutLchmod(probes)))), "0f0284a6ff603967d847c8bbc68632fd46f41c39a34fa9c3c87f7761204d92cf");
 });
 test("probe definitions reject traversal, duplication, arbitrary arguments, and unbounded work", () => {
@@ -336,7 +355,7 @@ test("outputs cannot overwrite a directory or target the repository/ancestors", 
 
 test("openat2 additions preserve the original 23 definitions and assets apart from the expected revision", () => {
   const original=withoutLchmod(probes).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
-  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+a9c76a599");
+  assert.equal(probes.find(p => p.id === "revision").stdout, "1.4.0+946f082ab");
   assert.equal(hash(JSON.stringify(previousRevision(original))),"7c3740ddfad40a1709f16fcc7ecb211df3e43632cc8f7a084edb3e6c847884f4");
   const oldAssets=withoutLchmod(materializeProbes(probes)).filter(p => !Object.hasOwn(OPENAT2_MODES,p.id));
   assert.equal(Buffer.byteLength(JSON.stringify(oldAssets)),123987);

@@ -161,7 +161,7 @@ test("pressure summary requires both page sizes and the same APKs, without infla
 test("rebased pressure evidence binds the ten-patch source and cannot borrow historical bytes", () => {
     const r = runFixture(); // Synthetic record, never written over historical evidence.
     const candidate = loadRebasedJscCandidate();
-    const baseline = JSON.parse(readFileSync(new URL("../../api28/runtime-evidence.json", import.meta.url), "utf8"));
+    const baseline = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json", import.meta.url), "utf8"));
     r.runtime = { ...baseline.identity, variant: candidate.variant };
     r.build.runtime = r.runtime;
     r.build.source = baseline.source;
@@ -172,6 +172,7 @@ test("rebased pressure evidence binds the ten-patch source and cannot borrow his
     r.payloads[0].sha256 = candidate.artifact.sha256;
     validatePressureRun(r, rawRounds(r));
     for (const mutate of [
+        x => { x.build.source = JSON.parse(readFileSync(new URL("../../api28/runtime-evidence.json", import.meta.url), "utf8")).source; },
         x => { x.build.source = runFixture().build.source; },
         x => { x.build.jscCandidate = runFixture().build.jscCandidate; },
         x => { x.payloads[0].sha256 = runFixture().payloads[0].sha256; },

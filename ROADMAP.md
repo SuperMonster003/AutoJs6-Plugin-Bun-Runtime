@@ -4,11 +4,13 @@
 
 更新日期: 2026-09-13
 
-最新 M3 pending-SIGSYS 回归发现未修复阻断: 保留原 31 项, 新增 native/TRAP 两模式.
+最新 M3 pending-SIGSYS 阻断已有第 11 补丁源码修复, 双 ABI 各两次独立构建一致且实际退出码均为 0; 完整 ELF 审计通过, 尚未设备验收.
+新 head `946f082ab` 完整重放和 GCC/Clang 主机回归通过; 见 [当前修复报告](docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
+历史回归保留原 31 项, 新增 native/TRAP 两模式:
 原生 ARM64 API 28/31 各两轮均为 31/33, 原 31 项合计 124/124, 新模式 0/8.
 独立 plain/ptrace 对照捕获八次 SI_TKILL 在 spawn 父线程提前交付, 对应源码临时 mask
 移除 SIGSYS 的路径. 这是受控 exit 1, 不是此前 pidfd SIGSYS 崩溃. [失败与诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md)
-已独立归档; 尚未修改 native, distributionReady=false, 下一步先修复父/子路径的 mask 生命周期.
+已独立归档; 新运行时成品尚未验收, distributionReady=false, 不把旧成绩转给新源码.
 此前 [M3-B 启动检查/缓存重试](docs/compatibility/2026-09-13-m3-probe-lifecycle.md) 已完成并保持原验收范围.
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
@@ -86,7 +88,7 @@
 |---|---|---|---|
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
-| M2 patched Bun 可复现构建 | 十补丁成品与源码取证完成, patched 分发待验收 | 两个原 clean checkout 的双 ABI 成品一致; 原驱动退出码未保留, 另存只读完成检查与最终 Ninja 边. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
+| M2 patched Bun 可复现构建 | 十一补丁独立双构建完成, patched 分发待验收 | 两个全新 clean checkout 的双 ABI 成品一致, 两个实际 driver exit 0; 四份 ELF、源码与最终 Ninja 边已核对. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
 | M3 Android 9-12L 实验支持 | 十补丁七环境原套件回归通过, 扩展矩阵待验 | 原 31 项 434/434、完整八项 Binder 112/112, 含三星 ARM64 API 32 和原生 16 KiB; 各批 APK 分别绑定, 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
@@ -147,7 +149,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ## M2: patched Bun 可复现构建
 
-最新十补丁: [2026-09-13 构建证据](docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json) 保留两个原 clean checkout 的相同输出、四项只读完成检查及原驱动退出码缺失, 没有重编译或覆盖九补丁证据. 十补丁源码及对应源码绑定已同步.
+最新十一补丁: [独立 schema-3 构建证据](docs/compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json) 记录两个全新 checkout 的双 ABI 一致输出、实际 driver exit 0、完整日志与四份 ELF 审计; 复用锁定上游 JSC/ICU, 不继承旧设备成绩.
+
+历史十补丁: [2026-09-13 构建证据](docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json) 保留两个原 clean checkout 的相同输出、四项只读完成检查及原驱动退出码缺失, 没有重编译或覆盖九补丁证据. 十补丁源码及对应源码绑定已同步.
 
 **目标:** 在动 Bun 源码之前, 先建立一条任何维护者都能审计, 重放和复现的 native 供应链.
 
@@ -224,7 +228,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (测试/设备) 在不改运行时字节、不放宽原 20 项定义/断言的前提下新增三个固定 syscall 夹具和独立证据校验器. 四台 API 28/31/33/35 原生 arm64 真机及 API 33 原生 x86_64 AVD (均 4096-byte 页) 各两轮 23/23, 共 230/230; 六个 syscall 的 raw TRAP→ENOSYS 对照共 60 次通过, 复制与异步等待另有 16 次先 EIO 证明调用路径、再 TRAP 证明回退的验证通过. API 28 的两次复制因 kernel 4.4 门控、两次 pidfd 因既有更高优先级策略无法观察 EIO, 单独记录且不计为高层分支触达. 原有 30 次强制回收为 301-307 ms, 测试包卸载且 UID 进程归零, 本轮 AVD 已关闭, 未主动操作原有 AVD; API 24 仍在线, 原有 API 36 大页 AVD 在最终只读检查时已离线, 原因未确定. 见 [syscall 报告与语义边界](docs/compatibility/2026-09-10-m3-syscall-fallbacks.md) 及 [完整 JSON](docs/compatibility/2026-09-10-m3-syscall-fallbacks.json). (2026-09-10, G1/G2, 原始历史不变, 本轮无 16 KiB/完整 Binder/发布)
 - [ ] (测试, 下一优先项) 完成 `pidfd_open`, `clone3`, `epoll_pwait2`, `copy_file_range`, `openat2` 和 `fchmodat2` 的高层语义矩阵, 结果必须是 fallback 成功或稳定受控错误, 不得出现非预期 SIGSYS, hang 或 FD 泄漏. 已有六项 raw TRAP 对照及复制/等待的有限行为证据; 不能把普通 spawn 视为 cgroup clone3, timer/fetch 视为 Android 主动禁用的 epoll_pwait2, 或 raw openat2 视为路径约束通过. openat2 目录约束已通过九补丁的 4 KiB 与原生 ARM64 16 KiB 复测, 但首次高层 EIO/TRAP 触达未完成. 内部 sys::lchmod 的固定 bare bun link 路径已在六个原生环境验证权限修改, 重复链接, no-follow, 被忽略的 EIO 和独立 SIGSYS 触达对照, 不能扩大为完整包管理器或公开 node:fs lchmod 支持. 其余错误/FD/线程边界仍待验证.
 - [x] (测试/诊断) 新增两个固定 pending-SIGSYS 异步探针, 原 31 定义/旧 fixture/预算不变; native ARM64 API 28/31 各两轮 31/33, 原 31 项 124/124, 新模式 0/8. 同一线程 tgkill 排入的信号在第一次 spawn 返回时不再 pending, mask 检查仍通过且 JS 尚未交付. 独立两轮 native/TRAP plain/ptrace 共 16 次复现, 八次追踪直接捕获 SI_TKILL 及精确 sender/receiver, 对应父线程 vfork 前临时解除 SIGSYS 阻塞的源码路径. [失败和动态诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md) 分档, 仅完成回归/诊断, 未修复或验收新兼容能力. (2026-09-13, G1/G2, failed gate)
-- [ ] (上游/构建/测试, 当前阻断) 修复 posix_spawn_bun 父线程临时 mask 提前交付 pending SIGSYS 的问题, 分开处理父线程和 vfork 子路径, 审查可选 clone3/cgroup 与子路径 syscall trap. 新源码须独立可复现构建并通过原 31 项与新增 pending 门禁; 不预热 pidfd、不提前清空 pending、不放宽原断言. 十补丁当前字节与失败记录保持原样.
+- [ ] (上游/构建/测试, 当前阻断) 完成 posix_spawn_bun pending SIGSYS 修复的独立双 ABI 构建和设备门禁. 第 11 补丁双 ABI 独立构建、actual exit 0 与四份 ELF 审计已通过. 它分开处理 Android 父线程追加阻塞与 vfork 子路径 mask, blocked caller 的 cgroup 走已有 child join 且不污染全局 clone3 状态. GCC/Clang 各 14 场景与两个旧源码失败对照通过, 完整重放/28 blob 不变. 新源码仍须通过原 33 项门禁; 不预热 pidfd、不提前清空 pending、不放宽原断言. 十补丁字节和失败记录保持历史范围, 见 [修复进度](docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
 - [ ] (测试) 覆盖 blocked `SIGSYS` mask, `process.on("SIGSYS")`, watch/reload, spawn/spawnSync, timeout, cancellation, 强制终止和插件进程重建. 历史 FD 夹具只在同步路径阻塞 SIGSYS, 异步在恢复 mask 后执行. 独立两模式保持 SIGSYS 阻塞直到三个异步子进程均退出, 检查 caller TID/mask、child mask/UID/parentage、FD 正负对照及回收. 九补丁的 Sony API 28 四次 exit 159 失败仍独立保留; 十补丁已在七个原生环境通过 28/28 新观测和 84 个 child 检查, 包含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. watch/reload、其他线程和现有八项套件之外的插件边界仍待覆盖.
 - [x] (测试/设备) 固定套件扩为 31 项而保留原 29 项定义/源码/预算, 双 ABI APK 绑定 28 个 canonical 输入. ARM64 API 31/33/35 与 x86_64 API 33 各两轮 31/31 (248/248), 含 16 次 blocked async 和 48 个短生命周期子进程观测. Sony API 28 两轮 29/31, 新两项共四次 exit 159 且无语义记录; 原 29 项 58/58. 成功/失败分别归档, 失败专用归档器不接受隐藏的其他回归, 不进入通过归档. 五个包/UID 均清理, 本轮 AVD 关闭, 预先在线 API 27 AVD 未操作. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-async.md)、[四环境通过 JSON](docs/compatibility/2026-09-13-m3-blocked-async-passing.json) 与 [API 28 失败 JSON](docs/compatibility/2026-09-13-m3-blocked-async-api28-failure.json). (2026-09-13 本地日期, G1/G2, 门禁失败, native/历史/Release 不变)
 - [x] (源码/测试/设备) 独立观察器确认 API 28 pidfd_open SIGSYS 后, 补丁 10 通过只读 mask 查询选择既有 waiter. 十补丁重放、28 个 blob、十个精确源码 host 用例、已有双 ABI 成品恢复审计通过. 原 31 项只改 revision, 五个本地原生 4 KiB 环境两轮探针 310/310、Binder 80/80. 旧失败和首次 ART 启动失败单独保留; 包/UID/owned AVD 全部清理. 见 [报告](docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md). (2026-09-13, G1/G2)

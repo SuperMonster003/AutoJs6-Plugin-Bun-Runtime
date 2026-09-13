@@ -1,4 +1,34 @@
-# 会话交接: M3 pending SIGSYS 新阻断已复现并完成动态诊断
+# 会话交接: M3 pending SIGSYS 修复已完成独立构建, 待新设备回归
+
+更新: 2026-09-13 (Asia/Shanghai). 从干净 `86b18b5` 继续.
+完整阅读 `AGENTS.md`、本文件及 `E:/.codex-tmp/pending-mask-20260913/SESSION_HANDOFF.local.md`.
+本机 `PROMOTION_NEXT.md` 是原先待办, 以本记录与追加状态为准.
+[当前报告](compatibility/2026-09-13-m3-pending-mask-fix.md) 与
+[新构建证据](compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json) 分别保存.
+
+- 新 11 补丁 head `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`, tree `73476190d9341d338a96c8a9793db947ea415d15`.
+  Android 父线程追加阻塞并保留 pending SIGSYS, 仅子路径安装 setup mask;
+  blocked caller 的 cgroup 使用已有 child join, 不设置 clone3 全局不可用状态.
+- 完整重放/28 原 blob 通过; GCC 13 与 Clang 21 各过 14 新源码场景和两个旧失败对照.
+  新编译告警排除只适配上游 `{ 0 }`, 不改行为断言. 历史 pending 失败/trace 归档保持原样.
+- **两次独立 native 构建已结束, 不要重复启动.** WSL `pending-mask-run-1` / `pending-mask-run-2`
+  各构建双 ABI, 两个实际 driver exit 均为 0, 每 ABI 两份成品一致. 完整日志、16 配方、
+  clean head/tree 与最终 Ninja edges 已核对; 新 schema-3 收集和四份 ELF 审计均实际 exit 0.
+  原十补丁 schema-2 的退出码缺失继续保持 null, 不与本次记录混用.
+- 新导出在 WSL `pending-mask-evidence/run-{1,2}`; current runtime-evidence 和对应源码绑定已晋升,
+  runtimeProduced=true / distributionReady=false. 原上游 WebKit/JSC/ICU 复用, 没有新库构建.
+- 15 个 fixture/validator/Java 源码、完整 probe-common 校验器和原 33 定义按旧归档保护;
+  仅 expected revision 改为 `1.4.0+946f082ab`. 当前尚未 Android/Binder/Samsung 运行,
+  未操作 AVD; 旧 434/434、112/112 和 JSC 均保持原范围.
+- 十语言 changelog 与生成产物已更新. 标准生产 Gradle 四项检查实际 exit 0 (8m13s, 96 tasks);
+  单元测试任务沿用已有 21 项, lint 0 errors/44 warnings, 三个 Debug APK 字节/16 KiB ZIP 对齐通过.
+  IDE build 调用一次, 工具 60 秒超时保留; 精确匹配的 Gradle command 随后成功
+  (2m3s, 6 tasks up-to-date), 原始工具返回值保持不变.
+- 完整 Node 222/222、Python 38/38、生成器/矩阵/官方 Bun/supervisor 校验通过.
+  矩阵为 71 份/164 行, 构建记录不增设备通过数. 源码/构建提交后以新 APK 先复测 Sony API 28/31,
+  再其余可用设备; 不继承历史通过数. 未 push、Release、委派 agent 或修复缓存.
+
+## 此前: M3 pending SIGSYS 新阻断已复现并完成动态诊断
 
 更新: 2026-09-13 (Asia/Shanghai). 从干净 `57679d1` 继续, 本轮完成两个固定 pending
 探针及独立观察器诊断. **兼容门禁失败, runtime 尚未修复.** 继续前读完整 `AGENTS.md`、
