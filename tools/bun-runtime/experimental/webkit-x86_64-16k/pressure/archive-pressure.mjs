@@ -31,7 +31,7 @@ export function validatePressureRun(record, rawRounds) {
     assert.deepEqual(record.build.inputs, buildInputs(), "Archive before changing compiled inputs; never substitute a later APK");
     assert.deepEqual(record.build.jscCandidate, candidate);
     // Select the actual source lineage; a new candidate cannot relabel historical bytes.
-    const baseline = JSON.parse(readFileSync(new URL(rebased ? "../../api28/runtime-evidence.json"
+    const baseline = JSON.parse(readFileSync(new URL(rebased ? "../../../../../docs/compatibility/2026-09-13-m2-blocked-pidfd-runtime-evidence.json"
         : "../../../../../docs/compatibility/2026-09-10-m2-scoped-open-runtime-evidence.json", import.meta.url), "utf8"));
     assert.equal(baseline.source.downstreamHeadCommit, candidate.bunCommit);
     assert.deepEqual(record.runtime, { ...baseline.identity, variant: candidate.variant });

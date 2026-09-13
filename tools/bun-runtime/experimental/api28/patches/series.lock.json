@@ -124,8 +124,8 @@
     "status": "clean-replay-verified",
     "requiredForBuild": true,
     "baseCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "headCommit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
-    "headTreeSha1": "cb762d12f6959834517c79f01f4c538346990962",
+    "headCommit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+    "headTreeSha1": "73476190d9341d338a96c8a9793db947ea415d15",
     "generation": {
       "strategy": "git am of immutable upstream commits followed by deterministic git format-patch",
       "gitAmOptions": [
@@ -137,7 +137,7 @@
         "--binary",
         "--no-signature"
       ],
-      "verifiedDate": "2026-09-10"
+      "verifiedDate": "2026-09-13"
     },
     "upstreamEquivalence": {
       "scope": "upstream-compatibility-prefix",
@@ -332,8 +332,27 @@
           "--unified=20"
         ],
         "licenseImpact": "No license change; project-owned changes to Bun's Android pidfd shim are provided under Bun's MIT license."
+      },
+      {
+        "order": 11,
+        "commit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+        "parent": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
+        "sourceCommit": null,
+        "origin": "autojs6-pending-spawn-mask",
+        "stablePatchId": "96d13633e0bc409659116384543f72bbdbb04364",
+        "path": "downstream/0011-fix-preserve-pending-SIGSYS-across-Android-spawn-setup.patch",
+        "bytes": 22530,
+        "sha256": "ea109e6022fba7c9cfd53ee00f078e30294e91b5289e0b7ebab3bfc049560384",
+        "purpose": "Preserve caller-blocked and pending SIGSYS throughout Android parent spawn setup; enable child-only seccomp handling and use existing child cgroup join while a parent clone3 probe would be unsafe, without caching the caller mask.",
+        "affectedPaths": [
+          "src/jsc/bindings/bun-spawn.cpp"
+        ],
+        "formatPatchAdditionalOptions": [
+          "--unified=10000"
+        ],
+        "licenseImpact": "No license change; project-owned changes to Bun's Android spawn mask lifecycle are provided under Bun's MIT license."
       }
     ],
-    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged."
+    "note": "The five immutable compatibility commits apply without conflict to exact Bun v1.4.0. Their deterministic stable patch IDs and the complete affected paths at the five-patch prefix match the pinned upstream PR head exactly. Patch six pins Brotli. Project-owned patch seven adds the startup CLOEXEC fallback; the final c-bindings.cpp intentionally differs from upstream and is bound by that patch, not claimed byte-equivalent to the PR. Project-owned patch eight adds a bounded allocation-free Linux spawn FD fallback; bun-spawn.cpp also intentionally differs after the unchanged upstream-equivalent prefix. Project-owned patch nine replaces the directory-route plain-openat fallback; c-bindings.cpp and src/sys/lib.rs intentionally differ while the complete upstream-equivalent prefix remains unchanged. Project-owned patch ten guards optional Android pidfd probing; patch eleven preserves pending SIGSYS across parent spawn setup with separate child mask handling. Both are outside the unchanged upstream-equivalent prefix."
   }
 }

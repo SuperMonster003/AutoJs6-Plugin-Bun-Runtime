@@ -22,8 +22,7 @@ test("the read-only build plan records both API 28 ABI commands", () => {
   assert.deepEqual(plan.commands[0].configure.arguments.slice(0, 2), ["--experimental-strip-types", "scripts/build.ts"]);
   assert.match(plan.commands[0].configure.arguments[2], /arm64-v8a\.configure\.json$/);
   assert.deepEqual(plan.commands[0].build.arguments, ["-C", "build/autojs6-api28/arm64-v8a"]);
-  assert.equal(plan.openBlockers.length, 1);
-  assert.equal(plan.openBlockers[0].blocksBuild, false);
+  assert.deepEqual(plan.openBlockers, []);
 });
 
 test("the build plan can select exactly one ABI", () => {

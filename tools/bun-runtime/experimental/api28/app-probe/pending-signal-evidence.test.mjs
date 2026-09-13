@@ -12,7 +12,8 @@ test("pending-signal additions preserve all 31 definitions and every old fixture
   const baseline = JSON.parse(readFileSync(new URL("../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.json", import.meta.url), "utf8"));
   const original = probes.filter(p => !Object.hasOwn(PENDING_SIGNAL_MODES, p.id));
   assert.equal(original.length, 31);
-  assert.deepEqual(original, baseline.probes);
+  assert.deepEqual(original, baseline.probes.map(p => p.id === "revision"
+    ? { ...p, stdout: "1.4.0+946f082ab" } : p));
   const protectedInputs = inputFacts().filter(p => /\/(?:fd|syscall|openat2|lchmod|hard-limit|async-signal)-(?:probes|evidence)\.mjs$/.test(p.path));
   assert.equal(protectedInputs.length, 11);
   for (const input of protectedInputs) assert.deepEqual(input, baseline.inputs.find(p => p.path === input.path));

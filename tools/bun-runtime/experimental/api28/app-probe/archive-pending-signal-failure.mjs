@@ -18,6 +18,7 @@ export function archivePendingSignalFailure(output, directories) {
       return { filename, ...fileFacts(raw), text: readFileSync(raw,"utf8") };
     });
     validatePendingFailureRecord(record, instrumentation.map(item => item.text));
+    assert.deepEqual(record.build.inputs, inputFacts(), "a historical failure cannot be archived as a current-source run");
     return { ...record, rawReport: fileFacts(path), instrumentation };
   });
   assert.equal(new Set(reports.map(r => environmentKey(r.runs[0].environment))).size, reports.length);

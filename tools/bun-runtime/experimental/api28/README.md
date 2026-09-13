@@ -3,7 +3,15 @@
 This directory is an isolated, non-release supply-chain experiment for a future
 AutoJs6 Bun runtime on Android 9 through 12L (API 28-32).
 
-> Status: ten-patch source `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,
+Current source: eleven patches at `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`,
+revision `1.4.0+946f082ab`. The [pending-mask repair](pending-mask/README.md)
+passes complete-source GCC/Clang host controls and deterministic patch replay.
+Two new independent dual-ABI builds completed with actual captured driver exits 0,
+identical outputs and four complete ELF audits; `runtimeProduced=true`.
+No previous device result accepts this source; new Android gates remain pending.
+See the [current report](../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
+
+> Historical ten-patch source `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`,
 > revision `1.4.0+a9c76a599`, has two identical output pairs recovered from the
 > original clean checkouts. The original driver exits were not retained;
 > schema-2 evidence explicitly records null and binds four read-only Ninja
@@ -191,7 +199,9 @@ Project-owned patch 7 adds the MIT-licensed [startup CLOEXEC fallback](startup-c
 Patch 8 adds a separate MIT-licensed, allocation-free [spawn FD fallback](spawn-fd/README.md).
 Patch 9 implements the selected bounded, read-only [directory-confinement fallback](scoped-open/README.md).
 Patch 10 adds the [mask-preserving Android pidfd fallback](blocked-pidfd/README.md).
-The final head is `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`; its startup,
+Patch 11 preserves the Android parent signal mask and pending SIGSYS while
+handling child setup and optional cgroup probes separately; see [host controls](pending-mask/README.md).
+The final source head is `946f082ab8ede2b7cbd6ba9fddb90463a94f0330`; its startup,
 spawn and scoped-open code intentionally differ from the upstream PR. The replay verifier checks every
 patch's actual affected paths and the exact final commit/tree while retaining
 the complete upstream equivalence check at prefix
@@ -271,11 +281,13 @@ every immutable input read-only, disables ccache, fixes the hostname and
 `/work/bun` path, and allows writes only to the clean patched checkout. Two
 independent checkouts completed both ABI builds. The outputs were identical
 across runs: ARM64 is 87,923,328 bytes with SHA-256
-`96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f`;
-x86_64 is 90,449,744 bytes with SHA-256
-`c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde`.
-The original outer exits are unknown; schema 2 binds recovered completion
-without pretending the four read-only dry-run exits are the original build exits.
+`5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7`;
+x86_64 is 90,449,752 bytes with SHA-256
+`9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f`.
+Both actual outer exits are 0. Schema 3 binds the original driver receipts,
+complete logs, clean heads/trees, unchanged recipes and final link/map/strip edges.
+The [eleven-patch build record](../../../../docs/compatibility/2026-09-13-m2-pending-mask-runtime-evidence.json)
+is separate from the historical ten-patch recovered completion record.
 The executables remain external evidence and are not copied into `jniLibs`.
 
 Build preparation uses `verifyBuildInputs`, which checks the source, patch,
@@ -291,6 +303,17 @@ evidence rather than rebinding old binaries to the new source. Only then
 update `runtime-evidence.json`, `distribution-source.lock.json`, the experimental
 revision and acceptance tests, and restore the completed runtime status.
 
+The new schema-3 collector, `record-built-runtime.mjs`, requires the retained
+actual exit-zero receipts from two fresh dual-ABI build drivers. It checks their
+live clean checkouts, unchanged build recipes, complete log digests, all four
+outputs and final Ninja edges before exporting evidence into a new external
+directory. It never starts a build or recovers an exit from a dry run. Run it only
+after both drivers finish, before changing the recorded build recipes; then use
+the full ELF verifier on both exported pairs before promoting runtime metadata.
+The original local receipts and logs remain intact. Their digests are bound in
+the portable evidence without publishing local SDK paths. The independent
+compatibility-matrix adapter indexes this build record with zero device passes.
+
 `verify-built-runtime.mjs` independently parses ELF64 bytes without relying on
 host `readelf`. It enforces PIE, the Android linker, non-executable stack, no
 writable/executable load segment, Android API 28/NDK r27c notes, the exact
@@ -305,7 +328,7 @@ and [seven-patch startup-fix record](../../../../docs/compatibility/2026-09-10-m
 are retained unchanged and cannot satisfy the current source gate.
 
 `distribution-source.lock.json` links those two experimental output hashes to
-the exact 64,069,192-byte Bun base-source archive, all ten downstream patches,
+the exact 64,069,192-byte Bun base-source archive, all eleven downstream patches,
 the pinned WebKit/JSC Git tag, commit, tree and license files, and every locked
 native, Cargo, and npm source archive needed by the build. Four matching
 JavaScriptCore/WebCore license texts are bundled beside Bun's existing upstream
@@ -343,6 +366,7 @@ api28/
   startup-cloexec/                  exact-patch Linux native fallback regressions
   spawn-fd/                        exact-patch vfork FD regressions and old failure controls
   blocked-pidfd/                    exact-patch mask/pending-signal host regressions
+  pending-mask/                     complete production spawn before/after host controls
   build-experiment.mjs              read-only plan, offline preflight, gated build
   build-host-image.mjs              locked host-image builder and evidence recorder
   run-locked-build.mjs              isolated digest-locked container build entry
@@ -354,6 +378,7 @@ api28/
   materialize-distribution-source.mjs exact Bun base-source materializer
   materialize-upstream-patches.ps1  online, immutable-source patch fetcher
   verify-experiment.mjs             offline static verifier
+  record-built-runtime.mjs          actual completed-driver/ELF evidence collector
   verify-built-runtime.mjs          two-run equality and pure-Node ELF auditor
   verify-distribution-source.mjs    source-closure and packaged-license verifier
   *.test.mjs                        verifier/materializer/build-gate regressions

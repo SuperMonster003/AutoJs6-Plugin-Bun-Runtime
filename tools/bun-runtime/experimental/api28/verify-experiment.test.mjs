@@ -9,6 +9,20 @@ import { verifyBuildInputs, verifyExperiment } from "./verify-experiment.mjs";
 
 const experimentRoot = dirname(fileURLToPath(import.meta.url));
 
+test("the pending-mask patch requires the reviewed origin, source path and complete source hunk", () => {
+  for (const change of [p => { p.origin = "autojs6-blocked-pidfd"; },
+    p => { p.affectedPaths = ["src/sys/linux_syscall.rs"]; },
+    p => { p.formatPatchAdditionalOptions = ["--unified=20"]; },
+    p => { p.sourceCommit = "0".repeat(40); }]) {
+    withExperimentCopy(copy => {
+      const path = resolve(copy, "patches/series.lock.json"), series = JSON.parse(readFileSync(path, "utf8"));
+      change(series.downstreamBackport.patches[10]);
+      writeFileSync(path, JSON.stringify(series, null, 2) + "\n");
+      assert.throws(() => verifyBuildInputs(copy), /origin|affectedPaths|complete spawn source context|sourceCommit/);
+    });
+  }
+});
+
 test("the checked-in API 28 experiment backport passes offline verification", () => {
   const result = verifyExperiment(experimentRoot);
   assert.equal(result.buildReady, true);
@@ -16,7 +30,7 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.equal(result.abiCount, 2);
   assert.equal(result.referencePatchCount, 5);
   assert.equal(result.materializedPatchCount + result.missingReferencePatchCount, 5);
-  assert.equal(result.downstreamPatchCount, 10);
+  assert.equal(result.downstreamPatchCount, 11);
   assert.equal(result.runtimeEvidenceVerified, true);
   assert.equal(result.lockedGithubArchiveCount, 19);
   assert.equal(result.lockedToolchainDownloadCount, 17);
@@ -34,8 +48,8 @@ test("the checked-in API 28 experiment backport passes offline verification", ()
   assert.deepEqual(
     result.reproducibleRuntimeArtifacts.map((artifact) => [artifact.abi, artifact.sha256]),
     [
-      ["arm64-v8a", "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f"],
-      ["x86_64", "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde"],
+      ["arm64-v8a", "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"],
+      ["x86_64", "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f"],
     ],
   );
   assert.equal(result.packagedLicenseCount, 5);
@@ -245,6 +259,9 @@ test("build-input verification never presents old or missing binaries as verifie
     lock.identity.status = "source-locked-awaiting-runtime-evidence";
     lock.identity.runtimeProduced = false;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
+    assert.throws(() => verifyBuildInputs(copy), /build-and-runtime-evidence: resolved/);
+    lock.knownBlockers.find(b => b.id === "build-and-runtime-evidence").resolved = false;
+    writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     for (const name of ["runtime-evidence.json", "distribution-source.lock.json"]) rmSync(resolve(copy, name));
     const inputs = verifyBuildInputs(copy);
     assert.equal(inputs.buildReady, true);
@@ -254,6 +271,7 @@ test("build-input verification never presents old or missing binaries as verifie
     assert.throws(() => verifyExperiment(copy), /identity.status/);
     lock.identity.status = "reproducible-runtime-static-audit-complete";
     lock.identity.runtimeProduced = true;
+    lock.knownBlockers.find(b => b.id === "build-and-runtime-evidence").resolved = true;
     writeFileSync(lockPath, `${JSON.stringify(lock, null, 2)}\n`);
     assert.throws(() => verifyExperiment(copy), /runtime-evidence.json/);
   });

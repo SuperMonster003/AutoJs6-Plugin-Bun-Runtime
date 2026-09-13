@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "identity": {
     "status": "reproducible-static-audit-complete",
     "variant": "bun-1.4.0-android-api28-patched-experimental",
@@ -8,7 +8,7 @@
   },
   "source": {
     "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "downstreamHeadCommit": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47"
+    "downstreamHeadCommit": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330"
   },
   "build": {
     "evidenceDate": "2026-09-13",
@@ -16,7 +16,7 @@
     "hostImageConfigDigest": "sha256:5bcfc00215b7f44236d009a7c3e7a53495fe8c8488908dd4e896e9da9a9c035b",
     "entry": "run-locked-build.mjs",
     "cleanBuildCount": 2,
-    "bothRunsExitCode": null,
+    "bothRunsExitCode": 0,
     "byteForByteIdentical": true,
     "containerPolicy": {
       "pull": "never",
@@ -50,7 +50,7 @@
       {
         "path": "source-inputs.lock.json",
         "bytes": 15880,
-        "sha256": "d73104ab4951304acde4edfb332d6bd2d2b43e2f4aa0182e8c9d63e3a7bc3fca"
+        "sha256": "f4798018fc482f525fe287d07fc2a6280470e5413d66b2ebfe38673918989371"
       },
       {
         "path": "toolchain-inputs.lock.json",
@@ -60,119 +60,248 @@
       {
         "path": "build-network-inputs.lock.json",
         "bytes": 5633,
-        "sha256": "c0c39d54e46041508b874dc2971d004326ca39b1bdbc92424f9dda9d639c8036"
+        "sha256": "489844228ef60dcfa012106e580e74bbab3becbbba5b35694c1b6e18f0f9d4be"
       },
       {
         "path": "cargo-inputs.lock.json",
         "bytes": 64745,
-        "sha256": "a468e76b0325cc8b313833d85f5e4382d32a43f9a4d10d7750fa79f1a7c1d705"
+        "sha256": "7cd51fb9b46b6a7a1bac492a1751c1c2ab648e538046e3a05b34b547c9706516"
       },
       {
         "path": "bun-inputs.lock.json",
         "bytes": 124300,
-        "sha256": "ae564cecc88fce54f4d681081de2ab7c0c3a1cee52f4ca9c26ee268968c5b2fd"
+        "sha256": "1a8c5b5b31f5647fdcd781e2a8e63b33ddbd171c25e709503e2c4f0eb0f33b41"
       },
       {
         "path": "patches/series.lock.json",
-        "bytes": 17705,
-        "sha256": "50ee987edaa6553f0de4abf5b3fd4f0fd3e187c2e2979e957f8a92a7dccba3df"
+        "bytes": 18999,
+        "sha256": "b8bdc88fa5676296243aa0433793ecf7fd0aaa754e3b1659e4878489cf6d410a"
       }
     ],
-    "notes": "Two independent clean checkouts started by run-locked-build.mjs produced identical ARM64 and x86_64 outputs before this recovery session. The original outer driver exits were not retained: the old captured logs end during compilation and the WSL/tool sessions are gone. No rebuild was started. Four read-only Ninja dry runs in the same digest-locked container report no work to do and exit 0; each existing Ninja log records successful final link and strip edges. Both clean source heads/trees, byte-for-byte pairs and complete ELF audits pass. completionRecovery preserves the missing original exit statuses separately from these completion checks. All previous build and device records remain historical; no previous device result is reassigned.",
-    "completionRecovery": {
-      "method": "read-only-ninja-no-work",
-      "capturedAt": "2026-09-12T18:54:30.019Z",
+    "notes": "Two new independent clean Bun checkouts, each both ABIs, completed with actual captured driver exits 0. Complete logs, recipes, clean source heads/trees and final Ninja edges are bound separately. The exact locked upstream Android WebKit/JSC/ICU bundle is reused; no new WebKit or ICU builds are claimed. No historical device acceptance is transferred.",
+    "completion": {
+      "method": "captured-build-driver-exits",
       "originalDriverExitCodes": [
-        null,
-        null
+        0,
+        0
       ],
-      "checks": [
+      "driverSource": {
+        "bytes": 4968,
+        "sha256": "5cd41eb30a436c1d273789473b72eb2a3f94cbd451dba53cb2e4eceec87e6557"
+      },
+      "runs": [
         {
           "run": 1,
-          "abi": "arm64-v8a",
-          "head": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
-          "tree": "cb762d12f6959834517c79f01f4c538346990962",
-          "cleanSource": true,
-          "runtimeBytes": 87923328,
-          "runtimeSha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+          "head": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+          "tree": "73476190d9341d338a96c8a9793db947ea415d15",
+          "headAfter": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+          "treeAfter": "73476190d9341d338a96c8a9793db947ea415d15",
+          "freshCheckout": true,
+          "cleanBefore": true,
+          "cleanAfter": true,
+          "recipesUnchanged": true,
+          "entry": "run-locked-build.mjs",
+          "execute": true,
+          "abi": "all",
           "exitCode": 0,
-          "stdout": "ninja: Entering directory `build/autojs6-api28/arm64-v8a'\nninja: no work to do.\n",
-          "stderr": "",
-          "compilationPerformed": false,
-          "bunCheckoutReadOnly": true,
-          "logSha256": "ac68ecf5638e40565448a004402ba65b6fec3104ee1192fefd90de89b82d8580",
-          "ninjaLogBytes": 224895,
-          "ninjaLogSha256": "585074f11e3a39c1ee791e6aaba68c33bda8e1121f099f3b3687f07f5b9ace0e",
-          "finalEdges": [
-            "1462650\t1475124\t1789234725674626835\tbun-profile\tdfa82816f977eef4",
-            "1462650\t1475124\t1789234725674626835\tbun-profile.linker-map\tdfa82816f977eef4",
-            "1475124\t1475704\t1789234739325507896\tbun\tef51bbd9db115d99"
-          ]
-        },
-        {
-          "run": 1,
-          "abi": "x86_64",
-          "head": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
-          "tree": "cb762d12f6959834517c79f01f4c538346990962",
-          "cleanSource": true,
-          "runtimeBytes": 90449744,
-          "runtimeSha256": "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde",
-          "exitCode": 0,
-          "stdout": "ninja: Entering directory `build/autojs6-api28/x86_64'\nninja: no work to do.\n",
-          "stderr": "",
-          "compilationPerformed": false,
-          "bunCheckoutReadOnly": true,
-          "logSha256": "eaeb9acf69b377d33d4e17b9418d47b0eab8ce8fe4d0086f4b1e7fc93d09c141",
-          "ninjaLogBytes": 231273,
-          "ninjaLogSha256": "f5641408e2cc9b5573a5eaf7f42b3a1d48da2d55c4662bf7478bb0cd786c5c4c",
-          "finalEdges": [
-            "971799\t976496\t1789235747515133520\tbun-profile\t1aee6811c2575c65",
-            "971799\t976496\t1789235747515133520\tbun-profile.linker-map\t1aee6811c2575c65",
-            "976496\t976714\t1789235752214324910\tbun\tef51bbd9db115d99"
+          "buildStartedAt": "2026-09-13T04:43:06Z",
+          "buildFinishedAt": "2026-09-13T06:48:22Z",
+          "receipt": {
+            "bytes": 5104,
+            "sha256": "45ba2cdce628171a46e45a3aff2a83ce07bead04f3fbc7541e8fd78624758189"
+          },
+          "log": {
+            "bytes": 95479,
+            "sha256": "54ea19b3828d4ddc5d65d32ffe21917ba9a58c3f4e31690fd674535cd94e8ae5"
+          },
+          "repositoryInputs": [
+            {
+              "path": "run-locked-build.mjs",
+              "bytes": 10514,
+              "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+            },
+            {
+              "path": "build-experiment.mjs",
+              "bytes": 18890,
+              "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+            },
+            {
+              "path": "config/arm64-v8a.configure.json",
+              "bytes": 262,
+              "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+            },
+            {
+              "path": "config/x86_64.configure.json",
+              "bytes": 254,
+              "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+            },
+            {
+              "path": "source-inputs.lock.json",
+              "bytes": 15880,
+              "sha256": "f4798018fc482f525fe287d07fc2a6280470e5413d66b2ebfe38673918989371"
+            },
+            {
+              "path": "toolchain-inputs.lock.json",
+              "bytes": 11636,
+              "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+            },
+            {
+              "path": "build-network-inputs.lock.json",
+              "bytes": 5633,
+              "sha256": "489844228ef60dcfa012106e580e74bbab3becbbba5b35694c1b6e18f0f9d4be"
+            },
+            {
+              "path": "cargo-inputs.lock.json",
+              "bytes": 64745,
+              "sha256": "7cd51fb9b46b6a7a1bac492a1751c1c2ab648e538046e3a05b34b547c9706516"
+            },
+            {
+              "path": "bun-inputs.lock.json",
+              "bytes": 124300,
+              "sha256": "1a8c5b5b31f5647fdcd781e2a8e63b33ddbd171c25e709503e2c4f0eb0f33b41"
+            },
+            {
+              "path": "patches/series.lock.json",
+              "bytes": 18999,
+              "sha256": "b8bdc88fa5676296243aa0433793ecf7fd0aaa754e3b1659e4878489cf6d410a"
+            }
+          ],
+          "artifacts": [
+            {
+              "abi": "arm64-v8a",
+              "bytes": 87923328,
+              "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+              "ninjaLog": {
+                "bytes": 227566,
+                "sha256": "814426a241408c7b2b48d064b0da0975d3c396301d82a99284955878a335fab6"
+              },
+              "finalEdges": [
+                "2012758\t2038305\t1789279982932292001\tbun-profile\tdfa82816f977eef4",
+                "2012758\t2038305\t1789279982932292001\tbun-profile.linker-map\tdfa82816f977eef4",
+                "2038306\t2039155\t1789280011537648472\tbun\tef51bbd9db115d99"
+              ]
+            },
+            {
+              "abi": "x86_64",
+              "bytes": 90449752,
+              "sha256": "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f",
+              "ninjaLog": {
+                "bytes": 231580,
+                "sha256": "cdb4cbde609b1fc5415de030d6febf83289c0ef0fd00a58b4af930327cefceed"
+              },
+              "finalEdges": [
+                "1877241\t1898891\t1789282071499861245\tbun-profile\t1aee6811c2575c65",
+                "1877241\t1898891\t1789282071499861245\tbun-profile.linker-map\t1aee6811c2575c65",
+                "1898905\t1900455\t1789282093164959031\tbun\tef51bbd9db115d99"
+              ]
+            }
           ]
         },
         {
           "run": 2,
-          "abi": "arm64-v8a",
-          "head": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
-          "tree": "cb762d12f6959834517c79f01f4c538346990962",
-          "cleanSource": true,
-          "runtimeBytes": 87923328,
-          "runtimeSha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+          "head": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+          "tree": "73476190d9341d338a96c8a9793db947ea415d15",
+          "headAfter": "946f082ab8ede2b7cbd6ba9fddb90463a94f0330",
+          "treeAfter": "73476190d9341d338a96c8a9793db947ea415d15",
+          "freshCheckout": true,
+          "cleanBefore": true,
+          "cleanAfter": true,
+          "recipesUnchanged": true,
+          "entry": "run-locked-build.mjs",
+          "execute": true,
+          "abi": "all",
           "exitCode": 0,
-          "stdout": "ninja: Entering directory `build/autojs6-api28/arm64-v8a'\nninja: no work to do.\n",
-          "stderr": "",
-          "compilationPerformed": false,
-          "bunCheckoutReadOnly": true,
-          "logSha256": "ac68ecf5638e40565448a004402ba65b6fec3104ee1192fefd90de89b82d8580",
-          "ninjaLogBytes": 226289,
-          "ninjaLogSha256": "0ca81282a62b17a1c890d7280a873a6a5b3a8270e590a34655d2d552703e3e18",
-          "finalEdges": [
-            "1674242\t1678711\t1789235348922959656\tbun-profile\tdfa82816f977eef4",
-            "1674242\t1678711\t1789235348922959656\tbun-profile.linker-map\tdfa82816f977eef4",
-            "1678712\t1678947\t1789235353397509252\tbun\tef51bbd9db115d99"
-          ]
-        },
-        {
-          "run": 2,
-          "abi": "x86_64",
-          "head": "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47",
-          "tree": "cb762d12f6959834517c79f01f4c538346990962",
-          "cleanSource": true,
-          "runtimeBytes": 90449744,
-          "runtimeSha256": "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde",
-          "exitCode": 0,
-          "stdout": "ninja: Entering directory `build/autojs6-api28/x86_64'\nninja: no work to do.\n",
-          "stderr": "",
-          "compilationPerformed": false,
-          "bunCheckoutReadOnly": true,
-          "logSha256": "eaeb9acf69b377d33d4e17b9418d47b0eab8ce8fe4d0086f4b1e7fc93d09c141",
-          "ninjaLogBytes": 229308,
-          "ninjaLogSha256": "3f9fbfd67b26f235ae75acfb061b156f6e4c4b620fefbad9f2a5e4e61edaff73",
-          "finalEdges": [
-            "491995\t495792\t1789235863093777383\tbun-profile\t1aee6811c2575c65",
-            "491995\t495792\t1789235863093777383\tbun-profile.linker-map\t1aee6811c2575c65",
-            "495793\t495959\t1789235866893679940\tbun\tef51bbd9db115d99"
+          "buildStartedAt": "2026-09-13T06:48:44Z",
+          "buildFinishedAt": "2026-09-13T07:41:02Z",
+          "receipt": {
+            "bytes": 5098,
+            "sha256": "7b28ab6d7c8debe1a46d071cd174cee928294178a20d0c68a8b1d1f11f6358aa"
+          },
+          "log": {
+            "bytes": 98583,
+            "sha256": "5358722b334c4735ecadb6623ec3cb18ed06534ff4b789740db3481494bcff3f"
+          },
+          "repositoryInputs": [
+            {
+              "path": "run-locked-build.mjs",
+              "bytes": 10514,
+              "sha256": "934fda5247d8fae163890cce97e1ef0d7b7c32c000b5417f31ed95ddc9b6551b"
+            },
+            {
+              "path": "build-experiment.mjs",
+              "bytes": 18890,
+              "sha256": "7825160fa1691f34f65de6fc807529edd003717b210b29c27ffd762af43584c2"
+            },
+            {
+              "path": "config/arm64-v8a.configure.json",
+              "bytes": 262,
+              "sha256": "1d0cadae575c3c09d28752c8b97b2322d70e816f990828a004c21d17ea57b3d9"
+            },
+            {
+              "path": "config/x86_64.configure.json",
+              "bytes": 254,
+              "sha256": "66fd0ad2dd370b5db233198d06c378e61135e880a3c3d5ca8993ab85b92c1d01"
+            },
+            {
+              "path": "source-inputs.lock.json",
+              "bytes": 15880,
+              "sha256": "f4798018fc482f525fe287d07fc2a6280470e5413d66b2ebfe38673918989371"
+            },
+            {
+              "path": "toolchain-inputs.lock.json",
+              "bytes": 11636,
+              "sha256": "543ebbb0bf6fea43e44c7872e50740c17ed527b9b0e5cbbfdd857c7dede6e193"
+            },
+            {
+              "path": "build-network-inputs.lock.json",
+              "bytes": 5633,
+              "sha256": "489844228ef60dcfa012106e580e74bbab3becbbba5b35694c1b6e18f0f9d4be"
+            },
+            {
+              "path": "cargo-inputs.lock.json",
+              "bytes": 64745,
+              "sha256": "7cd51fb9b46b6a7a1bac492a1751c1c2ab648e538046e3a05b34b547c9706516"
+            },
+            {
+              "path": "bun-inputs.lock.json",
+              "bytes": 124300,
+              "sha256": "1a8c5b5b31f5647fdcd781e2a8e63b33ddbd171c25e709503e2c4f0eb0f33b41"
+            },
+            {
+              "path": "patches/series.lock.json",
+              "bytes": 18999,
+              "sha256": "b8bdc88fa5676296243aa0433793ecf7fd0aaa754e3b1659e4878489cf6d410a"
+            }
+          ],
+          "artifacts": [
+            {
+              "abi": "arm64-v8a",
+              "bytes": 87923328,
+              "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+              "ninjaLog": {
+                "bytes": 227210,
+                "sha256": "25df72fc23365fc2ad6390686f474ca8ea13f53c44bf2508de270ebc4f1a165a"
+              },
+              "finalEdges": [
+                "1415738\t1420173\t1789284580242161279\tbun-profile\tdfa82816f977eef4",
+                "1415738\t1420173\t1789284580242161279\tbun-profile.linker-map\tdfa82816f977eef4",
+                "1420173\t1420414\t1789284584677704403\tbun\tef51bbd9db115d99"
+              ]
+            },
+            {
+              "abi": "x86_64",
+              "bytes": 90449752,
+              "sha256": "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f",
+              "ninjaLog": {
+                "bytes": 229307,
+                "sha256": "6aeb64a1267c9410755c4d701bb25bbcedd70e034384cd254849b0c9fdedd5c2"
+              },
+              "finalEdges": [
+                "609201\t613426\t1789285256781906035\tbun-profile\t1aee6811c2575c65",
+                "609201\t613426\t1789285256781906035\tbun-profile.linker-map\t1aee6811c2575c65",
+                "613427\t613636\t1789285261011825804\tbun\tef51bbd9db115d99"
+              ]
+            }
           ]
         }
       ]
@@ -183,12 +312,8 @@
       "abi": "arm64-v8a",
       "filename": "bun-arm64-v8a",
       "bytes": 87923328,
-      "sha256": "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
+      "sha256": "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
       "mode": "0755",
-      "repeatSha256": [
-        "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f",
-        "96c8460903ed8e80843a6fac96e2f9d4f0372e97bd76ae58cbde092a3e9a2f5f"
-      ],
       "elf": {
         "class": "ELF64",
         "data": "little-endian",
@@ -224,7 +349,7 @@
           "ndkVersion": "r27c",
           "ndkBuildNumber": "12479018"
         },
-        "buildId": "0e926d1aa8b937b43f53b65765b4054324556064",
+        "buildId": "2cfbc6f0c89e7b5cde5902851322e88969b7dc59",
         "versionDefinitions": [
           {
             "index": 1,
@@ -264,10 +389,10 @@
           "entryCount": 1068,
           "definedCount": 672,
           "undefinedCount": 395,
-          "tableSha256": "f03e541b15213bba32acd771a61de90593a36250a4798ec41252450fe75596b8",
-          "recordsSha256": "a824f93ed96ec0f41072c46d20211d952dbea636209ed2de27d5920bfa56e07e",
-          "definedRecordsSha256": "c8b5a7defb2d7cfd95cdc9bb5a3a95f9683ec8f92d2f53d5929a80ed0b9458ee",
-          "undefinedRecordsSha256": "d9d28231959eb4b22e097693d4c41a858a6dea87c8813ef0abef992a4ab7a56c"
+          "tableSha256": "fa53f941efe92e3cbadf0cdb15e9e88d7e74027e3bc7a4b8b33c6e10066d501f",
+          "recordsSha256": "8143f23af17ec44aa03d66d2c8c0b52fa22cbaba8a16748032452d69fa88be14",
+          "definedRecordsSha256": "04dad0bdda8f9d02dc841727904cef2d5b7bfaa2f31f290e6efee68c9416c6a5",
+          "undefinedRecordsSha256": "8559e14a87f6784d60d0114431dd2e7c5bf09cbdb01da5dad40f2fd061446c29"
         },
         "symbolTable": {
           "present": true,
@@ -276,18 +401,18 @@
           "sha256": "ff837457d82709abba0f66389b683feafd97e7a2c09e6e83eee9b3cd629dff75"
         },
         "debugSections": []
-      }
+      },
+      "repeatSha256": [
+        "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7",
+        "5ea6914e5fd2bf16cd2ee4e87036df2cabf47804983cf3ce9942da602c0cc0e7"
+      ]
     },
     {
       "abi": "x86_64",
       "filename": "bun-x86_64",
-      "bytes": 90449744,
-      "sha256": "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde",
+      "bytes": 90449752,
+      "sha256": "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f",
       "mode": "0755",
-      "repeatSha256": [
-        "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde",
-        "c37f8b09ed8d4551709627292ef7770832c2568f70dcb22fe75341780e05fcde"
-      ],
       "elf": {
         "class": "ELF64",
         "data": "little-endian",
@@ -323,7 +448,7 @@
           "ndkVersion": "r27c",
           "ndkBuildNumber": "12479018"
         },
-        "buildId": "fefa9ce262ae6a7134933253a9721af82d95daed",
+        "buildId": "bf10d0d92c9a76aa958ee4f9df0e1258906ee854",
         "versionDefinitions": [
           {
             "index": 1,
@@ -363,10 +488,10 @@
           "entryCount": 1067,
           "definedCount": 672,
           "undefinedCount": 394,
-          "tableSha256": "d8632c0ee309d54f39029e5403f36a69d32786277f1772953375faafd550f95b",
-          "recordsSha256": "9c8000ef5ea1dfba292ae3242d87fef60a092af9588dc2ac00c088a2603026ee",
-          "definedRecordsSha256": "b044dc2bdf7542fee0f6fec4fcf2f9a4e9bb67d49227119099300897abfc8013",
-          "undefinedRecordsSha256": "9bd97cc455f05c4cc7b2dc6272f662a1abae148daf8b5575da1d99f20dfa9e7f"
+          "tableSha256": "e5f4ef903613bae1c08f17398a3f402ce19e3f11a7539c8bc50cb94fdce4e1a7",
+          "recordsSha256": "b9cfb3686f615e1372f80800a6139ee86cbcd988bd040e29aea549b28da7e238",
+          "definedRecordsSha256": "20088307189578c65f47eb34bf6a1abf55a85af1f3b56d6177d5dcc4f770eb9b",
+          "undefinedRecordsSha256": "e8a0353d8093b02e718c04a5ba78d25c7f343985a15b2dae3b1bb9697aa5269a"
         },
         "symbolTable": {
           "present": true,
@@ -375,7 +500,11 @@
           "sha256": "e7643d5c71b91d95dad4acd0348f9424ecb2fbba1e22dd590f2fe8e1c9c1a26d"
         },
         "debugSections": []
-      }
+      },
+      "repeatSha256": [
+        "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f",
+        "9c6a97d37ffa15ce7e99f909e7fcc5099d24b689ad17db1e403fe6b2bfd39c2f"
+      ]
     }
   ],
   "boundaries": {

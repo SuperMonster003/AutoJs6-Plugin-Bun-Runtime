@@ -42,8 +42,8 @@ test("the checked-in runtime evidence satisfies the non-distribution schema", ()
   assert.equal(verifyRuntimeEvidenceManifest(evidence), evidence);
 });
 
-test("previous reproducible runtimes cannot be accepted for the blocked-pidfd source", () => {
-  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json", "2026-09-10-m2-spawn-runtime-evidence.json", "2026-09-10-m2-scoped-open-runtime-evidence.json"]) {
+test("previous reproducible runtimes cannot be accepted for the pending-mask source", () => {
+  for (const filename of ["2026-09-03-m2-runtime-evidence.json", "2026-09-10-m2-startup-runtime-evidence.json", "2026-09-10-m2-spawn-runtime-evidence.json", "2026-09-10-m2-scoped-open-runtime-evidence.json", "2026-09-13-m2-blocked-pidfd-runtime-evidence.json"]) {
     const previous = JSON.parse(readFileSync(resolve(repositoryRoot, "docs/compatibility", filename), "utf8"));
     assert.equal(previous.build.byteForByteIdentical, true);
     assert.throws(() => verifyRuntimeEvidenceManifest(previous), /unsupported runtime evidence schema|runtime evidence downstream commit drifted/);
@@ -51,17 +51,32 @@ test("previous reproducible runtimes cannot be accepted for the blocked-pidfd so
 });
 
 for (const [name, mutate] of [
-  ["invented original exit", e => e.build.bothRunsExitCode = 0],
-  ["missing completion", e => e.build.completionRecovery.checks.pop()],
-  ["duplicate run", e => e.build.completionRecovery.checks[2].run = 1],
-  ["pending build work", e => e.build.completionRecovery.checks[0].stdout += "[1/1] LINK bun\n"],
-  ["failed check", e => e.build.completionRecovery.checks[0].exitCode = 1],
-  ["unbound output", e => e.build.completionRecovery.checks[0].runtimeSha256 = "0".repeat(64)],
-  ["missing final edge", e => e.build.completionRecovery.checks[0].finalEdges = []],
-  ["dirty source", e => e.build.completionRecovery.checks[0].cleanSource = false],
-  ["writable checkout", e => e.build.completionRecovery.checks[0].bunCheckoutReadOnly = false],
-  ["old source relabel", e => e.source.downstreamHeadCommit = "7b9ac266888abda7ee6ec0b8ac11a74236420030"],
-]) test(`recovered native build evidence rejects ${name}`, () => {
+  ["missing actual exits", e => e.build.bothRunsExitCode = null],
+  ["partial driver exits", e => e.build.completion.originalDriverExitCodes = [0, null]],
+  ["dry-run substitution", e => e.build.completion.method = "read-only-ninja-no-work"],
+  ["recovery relabel", e => e.build.completionRecovery = {}],
+  ["missing driver", e => e.build.completion.runs.pop()],
+  ["duplicate run", e => e.build.completion.runs[1].run = 1],
+  ["failed driver", e => e.build.completion.runs[0].exitCode = 1],
+  ["unknown driver exit", e => e.build.completion.runs[0].exitCode = null],
+  ["changed source", e => e.build.completion.runs[0].headAfter = "0".repeat(40)],
+  ["changed source tree", e => e.build.completion.runs[0].treeAfter = "0".repeat(40)],
+  ["reused checkout", e => e.build.completion.runs[0].freshCheckout = false],
+  ["dirty source", e => e.build.completion.runs[0].cleanAfter = false],
+  ["changed recipe", e => e.build.completion.runs[0].recipesUnchanged = false],
+  ["planning without execution", e => e.build.completion.runs[0].execute = false],
+  ["partial ABI build", e => e.build.completion.runs[0].abi = "x86_64"],
+  ["invalid interval", e => e.build.completion.runs[0].buildFinishedAt = "2025-01-01"],
+  ["missing receipt", e => e.build.completion.runs[0].receipt = {}],
+  ["duplicate receipt", e => e.build.completion.runs[1].receipt = e.build.completion.runs[0].receipt],
+  ["missing complete log", e => e.build.completion.runs[0].log = {}],
+  ["missing recipe inputs", e => e.build.completion.runs[0].repositoryInputs = []],
+  ["missing ABI output", e => e.build.completion.runs[0].artifacts.pop()],
+  ["unbound output", e => e.build.completion.runs[0].artifacts[0].sha256 = "0".repeat(64)],
+  ["missing Ninja log", e => e.build.completion.runs[0].artifacts[0].ninjaLog = {}],
+  ["missing final edge", e => e.build.completion.runs[0].artifacts[0].finalEdges = []],
+  ["old source relabel", e => e.source.downstreamHeadCommit = "a9c76a599bacb75c72d3c00fc6f99c5cc9483b47"],
+]) test(`captured native build evidence rejects ${name}`, () => {
   const evidence = JSON.parse(readFileSync(resolve(toolDirectory, "runtime-evidence.json"), "utf8"));
   mutate(evidence);
   assert.throws(() => verifyRuntimeEvidenceManifest(evidence));

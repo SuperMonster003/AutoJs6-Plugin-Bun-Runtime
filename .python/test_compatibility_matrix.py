@@ -201,6 +201,21 @@ class MatrixTests(unittest.TestCase):
         with self.assertRaisesRegex(M.MatrixError, "index-only"):
             M.project_source(doc, {**entry, "adapter": "index"})
 
+    def test_captured_build_schema_keeps_driver_runs_out_of_device_counts(self):
+        # Projection fixture only: the native verifier checks exits, source and
+        # complete ELF bindings before a real schema-3 report is registered.
+        doc = {"schemaVersion": 3, "build": {"completion": {
+            "method": "captured-build-driver-exits", "originalDriverExitCodes": [0, 0],
+            "runs": [{"run": run, "exitCode": 0, "abi": "all"} for run in (1, 2)],
+        }}, "artifacts": [{"abi": abi} for abi in ("arm64-v8a", "x86_64")]}
+        entry = {"adapter": "index", "schema": 3, "kind": None, "category": "build", "collection": None}
+        self.assertEqual([], M.project_source(doc, entry))
+        for field, value, message in (("schema", 2, "schema changed"),
+                                      ("kind", "device-runs", "kind changed"),
+                                      ("category", "experimental", "index-only")):
+            with self.subTest(field=field), self.assertRaisesRegex(M.MatrixError, message):
+                M.project_source(doc, {**entry, field: value})
+
     def test_unregistered_and_missing_sources_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

@@ -1,7 +1,7 @@
 # Test-only experimental plugin Binder suite
 
 This opt-in Gradle module packages the existing production service, exact shared
-API AARs and the **same eight instrumentation methods** with the locked ten-patch
+API AARs and the **same eight instrumentation methods** with the locked experimental
 API 28 runtime. It does not implement a second service or a mock Binder contract.
 The default build remains the official API 33 plugin. No experimental executable
 is added to `app/src/main/jniLibs`, and this module cannot build a Release variant.
@@ -64,6 +64,12 @@ or the genuinely matching signing configuration. A unique test permission
 declaration does not grant the real service permission.
 
 ## Large-page x86 candidate
+
+The baseline source has advanced to eleven patches. The unchanged ten-patch JSC
+lock now resolves its original baseline evidence through the immutable archive;
+its provenance remains verifiable. The existing current-source check in Binder
+preparation rejects using it as the eleven-patch baseline. A further rebase and
+its own build/device evidence are still required.
 
 The ten-patch JSC rebase now has two independently built identical Bun binaries,
 with actual successful driver exits. Build and runner reject source mismatch;

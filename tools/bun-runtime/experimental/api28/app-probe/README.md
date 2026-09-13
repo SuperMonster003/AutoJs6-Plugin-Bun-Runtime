@@ -15,6 +15,15 @@ Its label is deliberately different from the production application name.
 
 ## Current result and limits
 
+The [eleven-patch pending-mask source repair](../../../../../docs/compatibility/2026-09-13-m3-pending-mask-fix.md)
+has passed its complete-production-function host regressions and two independent
+dual-ABI builds with actual exit-zero receipts and full ELF audits. Its Android
+result is not established yet. The
+current 33 definitions, fixture bytes and validators remain protected against
+drift; only the expected revision changes for the new runtime.
+
+### Historical ten-patch pending-signal failure
+
 The new fixed **33-probe** suite preserves all original 31 definitions and old
 fixture bytes, adding two pending-SIGSYS asynchronous spawn modes. On native
 ARM64 API 28 and 31 / 4 KiB, both modes fail twice: original 31 pass **124/124**,
@@ -547,7 +556,7 @@ node tools/bun-runtime/experimental/api28/app-probe/archive-probe.mjs `
 ```
 
 The archiver requires both raw instrumentation files and `probe-result.json`.
-It revalidates the complete current 31 observations per round, exact installed hashes,
+It revalidates the complete current 33 observations per round, exact installed hashes,
 the current build receipt, every force-stop/uninstall/UID cleanup record and
 the unchanged environment identity across rounds. Repeated images, different
 APK builds, stale source bindings, failures or a raw/JSON mismatch are rejected.

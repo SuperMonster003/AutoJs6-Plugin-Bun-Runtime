@@ -989,7 +989,7 @@ function verifyPatchSeries(patchRoot, lock, series) {
   );
 
   requireArray(downstream.patches, "downstreamBackport.patches");
-  requireEqual(downstream.patches.length, pr.commitCount + 5, "downstreamBackport.patches length");
+  requireEqual(downstream.patches.length, pr.commitCount + 6, "downstreamBackport.patches length");
   requireEqual(downstream.upstreamEquivalence.downstreamPrefixHeadCommit,
     downstream.patches[pr.commitCount - 1].commit, "upstream equivalence prefix head");
   requireEqual(downstream.upstreamEquivalence.scope, "upstream-compatibility-prefix", "upstream equivalence scope");
@@ -1003,7 +1003,13 @@ function verifyPatchSeries(patchRoot, lock, series) {
     requireEqual(patch.order, index + 1, `${label}: order`);
     require(SHA1.test(patch.commit), `${label}: commit must be a full lowercase SHA-1`);
     requireEqual(patch.parent, expectedParent, `${label}: parent`);
-    if (index === pr.commitCount + 4) {
+    if (index === pr.commitCount + 5) {
+      requireEqual(patch.origin, "autojs6-pending-spawn-mask", `${label}: origin`);
+      requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
+      require(SHA1.test(patch.stablePatchId), `${label}: invalid stablePatchId`);
+      requireSameArray(patch.affectedPaths, ["src/jsc/bindings/bun-spawn.cpp"], `${label}: affectedPaths`);
+      requireSameArray(patch.formatPatchAdditionalOptions, ["--unified=10000"], `${label}: complete spawn source context`);
+    } else if (index === pr.commitCount + 4) {
       requireEqual(patch.origin, "autojs6-blocked-pidfd", `${label}: origin`);
       requireEqual(patch.sourceCommit, null, `${label}: sourceCommit`);
       require(SHA1.test(patch.stablePatchId), `${label}: invalid stablePatchId`);
@@ -1275,7 +1281,7 @@ function verifyBlockers(blockers, identity) {
     ["v1.4.0-backport", true],
     ["toolchain-byte-lock", true],
     ["dependency-lock", true],
-    ["build-and-runtime-evidence", false],
+    ["build-and-runtime-evidence", identity.runtimeProduced],
   ]);
   const expectedBuildBlocking = new Map([
     ["v1.4.0-backport", true],
@@ -1301,7 +1307,7 @@ function verifyBlockers(blockers, identity) {
     }
     requireNonEmptyString(blocker.description, `${blocker.id}: description`);
   }
-  requireEqual(unresolved, 1, "unresolved blocker count");
+  requireEqual(unresolved, identity.runtimeProduced ? 0 : 1, "unresolved blocker count");
   requireEqual(unresolvedBuildBlocking, 0, "unresolved build-blocking count");
   requireEqual(identity.buildReady, true, "identity.buildReady with all build-input blockers resolved");
   requireEqual(identity.distributionReady, false, "identity.distributionReady with unresolved blockers");
