@@ -22,6 +22,8 @@ export function buildInputs() {
         "tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json",
         "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-common.mjs",
         "tools/bun-runtime/experimental/webkit-x86_64-16k/twelve-patch-candidate.lock.json",
+        "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-common.mjs",
+        "tools/bun-runtime/experimental/webkit-x86_64-16k/thirteen-patch-candidate.lock.json",
         "tools/bun-runtime/experimental/api28/runtime-evidence.json",
         ...walk("app/src/main/java"), ...walk("app/src/main/res"), ...walk("app/src/main/assets"),
         ...walk("app/src/androidTest/java"), ...walk("samples"),

@@ -242,6 +242,8 @@ _2026/09/12_
 - `修復` 修正執行環境啟動檢查的暫時失敗被永久快取的問題: 失敗完成後等待 30 秒, 在後續請求時重試, 並行請求共用同一次檢查; 各檢查輸出串流限制為 4 KiB. 保留本地化摘要, 加入 API, ABI, 階段, 執行環境身分, 結束碼和重試診斷, 明確標示訊號僅為推斷; 原生位元組及支援範圍不變
 - `修復` 修復實驗版 Android 在封鎖 SIGSYS 時首次非同步 spawn 的 pidfd 探測當機, 透過既有 waiter 備援路徑保留呼叫執行緒遮罩及 pending 訊號. 十修補執行階段在五個原生 4 KiB 環境通過原 31 項探針 (310/310) 和完整八項 Binder (80/80). 恢復建置完成證據時明確保留原退出碼缺失, 獨立封存首次 ART 啟動失敗. JSC rebase 及 Release 門檻仍未完成, 官方位元組不變
 - `修復` 修復實驗版原生 x86_64 16 KiB 的 JavaScriptCore 啟動中止: 以明確大頁/JIT/配置器設定重新編譯 pinned WebKit 並重新連結 Bun, 在 4 KiB 和 16 KiB AVD 各兩輪完整 Binder 通過 (32/32). 官方位元組及其 4 KiB 防護保持不變, Release 驗收另行進行
+- `優化` 獨立鎖定十三修補大頁 JSC 候選: 兩次全新 Bun 乾淨建置實際結束碼均為 0, 完整產物一致且 21 項建置輸入未漂移. 重用原獨立 JSC 程式庫及 ICU, 新 APK 與原 Binder/七模式壓力迴歸獨立綁定, 不轉移歷史成績或擴大發行範圍
+- `優化` 為固定 watch/reload 診斷加入有界 SIGABRT 唯讀快照, 保留原訊號傳遞及預算. 原生 ARM64 API 28/31 共 16 次 plain/traced 觀察完成 32 次重新載入, 擷取 24 次一般 SIGSYS, 套件和 UID 已清理; 未重現的原 API 28 中止原因仍待查明, 不增加相容通過數
 - `優化` 新增固定 native/TRAP watch/reload 回歸, 保留十二補丁原生位元組和原33項. 四個 ARM64 / 4 KiB 實機環境中原項264/264通過, 新模式14/16失敗, 32次重新載入暴露28次 FD繼承洩漏; Sony 5.15原生對照通過, 強制TRAP失敗. 保留三個原始碼綁定APK批次和早期驗證器修正, 核對全部套件及UID清理. native修復, 擴展相容性和Release門檻仍未完成
 - `優化` 完成十二補丁 Samsung SM-F936U / API 32 / 原生 ARM64 / 4 KiB 回歸: 兩輪原探針 66/66, 完整 Binder 16/16. 與 API 36 批次重用相同三個 APK, 40 個 pending 保持檢查點與十二個 child 觀測通過. 三個測試套件解除安裝, 三個 UID 處理程序清零, 專用 ADB 關閉且無 AVD 操作. 原固定測試的兩項 Samsung 裝置門檻已補齊, baseline 七環境累計 462/462 探針與 112/112 Binder; 廣泛 runtime, 壓力與 Release 門檻仍未完成
 - `優化` 完成十二補丁原位元組在 Samsung SM-A566B / API 36 / 原生 ARM64 / 硬體 16 KiB 的回歸: 兩輪原 33 項探針 66/66, 完整 Binder 16/16. 四個 pending 訊號模式保留 40 個檢查點及十二個 child 觀測, 最後各向原 caller 交付一次. 重用相同 APK, 無 native 重建; 解除安裝後三個 UID 處理程序清零, 關閉本輪專用 ADB 且無 AVD 操作. baseline 六環境累計 396/396 探針與 96/96 Binder; ARM64 API 32, 廣泛 runtime 與 Release 門檻仍未完成

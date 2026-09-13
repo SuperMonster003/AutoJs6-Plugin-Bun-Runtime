@@ -2371,6 +2371,50 @@
       }
     },
     {
+      "file": "2026-09-13-m3-watch-reload-trace-checkpoint.json",
+      "sha256": "1fee48a172f1a5bd2ea657428dffc16531d139fc4422b7b73295a08e09373877",
+      "schema": 1,
+      "kind": "archived-watch-trace-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3 watch 诊断工具/清理检查点",
+      "note": "宿主 SIGABRT 对照与 Python 3.8 初始工具失败单独保留, 非 Android 失败复现.",
+      "bytesUtf8Lf": 5792,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-trace.json",
+      "sha256": "7531a34c6db7bed8d6f7c06d71b460d194c32acbc68ec15f64c8a17b9252395c",
+      "schema": 1,
+      "kind": "archived-watch-reload-trace-observations",
+      "adapter": "trace",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3 watch 有界未复现观察",
+      "note": "两轮 plain/traced, 原中止原因未解决, 零兼容通过数.",
+      "bytesUtf8Lf": 129431,
+      "rows": 2,
+      "reportedScope": "Fixed unchanged watch fixtures, two rounds of native/TRAP plain/traced pairs per native ARM64 4 KiB environment. These bounded observations did not reproduce SIGABRT; they do not resolve or replace the original API 28 abort/clone EAGAIN failure, prove stability, or add baseline compatibility passes.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "plainObservations": 8,
+        "tracedObservations": 8,
+        "actualReloads": 32,
+        "images": 48,
+        "tracedOrdinarySigsysDeliveries": 24,
+        "observedAborts": 0,
+        "compatibilityPasses": 0
+      }
+    },
+    {
       "file": "2026-09-13-m5-ten-patch-jsc-binder.json",
       "sha256": "8b856da7b3ab5ef7630a331affa13f1d3be4f5ac3629a0fe480dcde6c064b20d",
       "schema": 1,
@@ -2443,6 +2487,23 @@
         "workersExited": 64,
         "workerTransferredBytes": 67108864
       }
+    },
+    {
+      "file": "2026-09-13-m5-thirteen-patch-jsc-builds.json",
+      "sha256": "c95ea90c63c6405b6aa9d64b31ca9754d874e2bd58022702d39f06b90817b87a",
+      "schema": 2,
+      "kind": "clean-rebased-large-page-jsc-candidate",
+      "adapter": "index",
+      "collection": "root",
+      "category": "build",
+      "label": "M5 十三补丁 JSC 双 clean Bun 构建",
+      "note": "两个实际 driver exit 0, 21 项构建输入未漂移, 两个完整成品一致. 精确复用原独立 JSC 库/config 与 ICU, 不计为设备或新 WebKit 构建验收.",
+      "bytesUtf8Lf": 36075,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
     },
     {
       "file": "2026-09-13-m5-twelve-patch-jsc-binder-memory-failure.json",
@@ -13623,6 +13684,118 @@
       "status": "passed",
       "sourceReportedPassed": true,
       "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-trace.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 watch 有界未复现观察",
+      "environment": {
+        "manufacturer": null,
+        "model": "G8441",
+        "api": 28,
+        "kernel": "4.4.148-perf+",
+        "fingerprint": "Sony/G8441/G8441:9/47.2.A.4.45/3677320370:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": null,
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m3-watch-reload-trace.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/runs/0/report",
+      "category": "diagnostic",
+      "scope": "M3 watch 有界未复现观察",
+      "environment": {
+        "manufacturer": null,
+        "model": "XQ-AT72",
+        "api": 31,
+        "kernel": "4.19.157-perf+",
+        "fingerprint": "Sony/XQ-AT72_CN/XQ-AT72:12/58.2.A.10.44A/058002A0100044A0891821322:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "variant": null,
+        "sha256": "c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160",
+        "bytes": 87923328,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "5b697a8b4a1e3b99899b616300783a8f6f007208f2be22760b92db1d49303afe",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "observations",
+          "passed": null,
+          "total": 4,
+          "reportedPassed": null,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "unrecorded",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": false
     },
     {
       "source": "2026-09-13-m5-ten-patch-jsc-binder.json",

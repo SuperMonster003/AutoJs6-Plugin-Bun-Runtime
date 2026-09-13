@@ -5,9 +5,37 @@ baseline API 28 runtime evidence. The initial candidate is explicitly
 diagnostic/incremental; any subsequent clean-build receipt is separate.
 `distributionReady=false`. No binaries or source archives belong in this directory.
 
-## Current twelve-patch workflow
+## Current thirteen-patch workflow
 
-The live `jsc16k` profile requires a separate `twelve-patch-candidate.lock.json`
+The live `jsc16k` profile now requires `thirteen-patch-candidate.lock.json` for
+Bun `e8b1296169a8e6f20c81e926dba6448afb25cd11` (`1.4.0+e8b129616`), including
+the reload FD fallback in patch 13. Two fresh independent clean Bun builds have
+actual driver exits 0/0 and identical complete 90,609,496-byte x86_64 payloads,
+SHA-256 `17c7941a32669e0cf2d6915bf94d8cee8421c3df605eddcf2b493687f20e98a8`.
+Both complete ELF audits pass. The [separate build archive](../../../../docs/compatibility/2026-09-13-m5-thirteen-patch-jsc-builds.json)
+binds clean source, original driver/log/receipt/final-edge facts and all 21
+unchanged build inputs, including their exact physical newline encodings.
+The original two independent JSC library/config sets and upstream ICU are reused;
+there are zero new WebKit/ICU builds. Historical nine/ten/twelve-patch candidates
+and baseline runtime evidence retain their own bytes and acceptance.
+
+Use the same fresh-checkout and offline preflight procedure below, followed by:
+
+```bash
+node tools/bun-runtime/experimental/webkit-x86_64-16k/record-thirteen-patch.mjs \
+  /absolute/new-bun-1 /absolute/new-bun-2 \
+  /absolute/original-jsc-1/build /absolute/original-jsc-2/build \
+  /absolute/evidence/driver-run-1.json /absolute/evidence/driver-run-2.json
+```
+
+The new lock cannot inherit an older candidate's Binder or pressure results.
+Build a separately bound APK pair and run the original eight Binder tests and
+seven pressure modes twice at each API 36 x86 page size. Device results and
+Release remain separate gates; the original pressure assets and budgets stay exact.
+
+## Historical twelve-patch workflow
+
+The historical `jsc16k` profile required a separate `twelve-patch-candidate.lock.json`
 for Bun `06e518f73b4fccc6c3ffb17412ea166bf886bed0` (`1.4.0+06e518f73`). This includes
 the caller/pending-signal repairs in patches 11 and 12. The nine-patch
 `candidate.lock.json` and ten-patch `rebased-candidate.lock.json` retain their
@@ -52,7 +80,7 @@ twelve-patch baseline, broader pressure/runtime and Release gates remain separat
 ## Historical ten-patch workflow
 
 The commands in this section require their matching historical project revision.
-The current build plan and live Binder profile use the twelve-patch source above.
+The current build plan and live Binder profile use the thirteen-patch source above.
 
 The historical isolated `jsc16k` Binder profile used a separate
 `rebased-candidate.lock.json` for Bun `a9c76a599bacb75c72d3c00fc6f99c5cc9483b47`
@@ -153,7 +181,7 @@ eventual exit status. The two WebKit output sets from this session match exactly
 
 The commands and results in this section describe the original nine-patch batch.
 Use the matching historical project revision to reproduce that batch; the current
-build plan pins twelve patches and its results belong in the separate current lock above.
+build plan pins thirteen patches and its results belong in the separate current lock above.
 
 Use a fresh replay-verified nine-patch Bun checkout at
 `7b9ac266888abda7ee6ec0b8ac11a74236420030`, with no `build/autojs6-api28` output.

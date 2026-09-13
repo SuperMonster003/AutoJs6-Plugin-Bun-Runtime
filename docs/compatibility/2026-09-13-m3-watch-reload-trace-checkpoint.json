@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "kind": "archived-watch-trace-checkpoint",
+  "distributionReady": false,
+  "compatibilityAcceptance": false,
+  "rootCauseResolved": false,
+  "observations": {
+    "filename": "2026-09-13-m3-watch-reload-trace.json",
+    "bytes": 129431,
+    "sha256": "7531a34c6db7bed8d6f7c06d71b460d194c32acbc68ec15f64c8a17b9252395c"
+  },
+  "drivers": [
+    {
+      "name": "build",
+      "exitCode": 0,
+      "startedAt": "2026-09-13T15:52:46.774194+00:00",
+      "finishedAt": "2026-09-13T15:52:59.380463+00:00",
+      "receipt": {
+        "bytes": 796,
+        "sha256": "5c275aa59b1fc156ec6caa3e4c044f13015ca8f15c36962dca2f0b02930c9def"
+      },
+      "log": {
+        "bytes": 279,
+        "sha256": "1bcd0b4b662e34e4394510808fb9a85aff2c0127c82c52c28ef67f2f227c0612"
+      }
+    },
+    {
+      "name": "api28",
+      "exitCode": 0,
+      "startedAt": "2026-09-13T15:53:24.438993+00:00",
+      "finishedAt": "2026-09-13T15:53:42.973195+00:00",
+      "receipt": {
+        "bytes": 650,
+        "sha256": "9b3b1a425ecaf56ef6a30bf897d925fb63a8fafb19dedba193e41300fb807a0c"
+      },
+      "log": {
+        "bytes": 9780,
+        "sha256": "26ed86f6a9c5410a16b4f5f913ec41aac24f2f46539bf7b92ef64f32ca9fd21c"
+      }
+    },
+    {
+      "name": "api31",
+      "exitCode": 0,
+      "startedAt": "2026-09-13T15:54:30.540937+00:00",
+      "finishedAt": "2026-09-13T15:54:48.702215+00:00",
+      "receipt": {
+        "bytes": 650,
+        "sha256": "8d4490252678f7860f508c6ffbfd55f4309e262a1489ec605c9aacc445347df8"
+      },
+      "log": {
+        "bytes": 7919,
+        "sha256": "0bdcf8ed5beab869a916b4dc0722b5f0aa15171331b0795f28f36f5776af9ada"
+      }
+    }
+  ],
+  "hostControl": {
+    "exitCode": 0,
+    "startedAt": "2026-09-13T15:52:40.426851+00:00",
+    "finishedAt": "2026-09-13T15:52:41.855789+00:00",
+    "raw": "test_abort_snapshot_preserves_the_fatal_signal_and_reaps_owned_target (__main__.TraceTest) ... ok\ntest_forwarding_does_not_suppress_fatal_or_handled_signal (__main__.TraceTest) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.270s\n\nOK\n",
+    "log": {
+      "bytes": 282,
+      "sha256": "79e4de90bd1415c1b44b94d88fff8abb78575a6e54916a78688ad10f64c09f0b"
+    },
+    "unittestMethods": 2,
+    "signalScenarios": 6,
+    "plainAndTraced": true,
+    "sourceInputs": [
+      {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/trace.c",
+        "bytes": 10964,
+        "sha256": "71bcebe1d635894290eadbda975706fb0e9adf127ac01cbc5d7a4fbe847c14d2"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/trace-target.c",
+        "bytes": 2942,
+        "sha256": "01960b12bb47f4aa6db704d8c50adcdb3864bee0437f38267c9e87197bb27783"
+      },
+      {
+        "path": "tools/bun-runtime/experimental/api28/signal-trace/test_trace.py",
+        "bytes": 6147,
+        "sha256": "2e086f920eab2ae2e4cbfacd618812023b418577a096e64043745dc45a23c5d5"
+      }
+    ],
+    "initialHarnessFailure": {
+      "exitCode": 1,
+      "raw": "test_abort_snapshot_preserves_the_fatal_signal_and_reaps_owned_target (__main__.TraceTest) ... ERROR\ntest_forwarding_does_not_suppress_fatal_or_handled_signal (__main__.TraceTest) ... \n======================================================================\nERROR: test_abort_snapshot_preserves_the_fatal_signal_and_reaps_owned_target (__main__.TraceTest)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tests/test_trace.py\", line 90, in test_abort_snapshot_preserves_the_fatal_signal_and_reaps_owned_target\n    done = json.loads(lines[-1].removeprefix('TRACE_DONE='))\nAttributeError: 'str' object has no attribute 'removeprefix'\n\n======================================================================\nERROR: test_forwarding_does_not_suppress_fatal_or_handled_signal (__main__.TraceTest) (mode='user-epoll')\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tests/test_trace.py\", line 43, in test_forwarding_does_not_suppress_fatal_or_handled_signal\n    context = json.loads(lines.pop(1).removeprefix('TRACE_USER_WAIT='))\nAttributeError: 'str' object has no attribute 'removeprefix'\n\n----------------------------------------------------------------------\nRan 2 tests in 0.332s\n\nFAILED (errors=2)\n",
+      "toolResult": {
+        "bytes": 1530,
+        "sha256": "7216a0ffcb1949e7ac2d38ba1043bd1830655f52c55c8a3c59d5dff904acc661"
+      },
+      "sourceSnapshotAtFailure": null,
+      "reason": "Python 3.8 lacks str.removeprefix; retain explicit prefix assertion before slicing. Initial source snapshot was not retained; no Android runtime failure inferred."
+    }
+  },
+  "cleanup": [
+    {
+      "api": 28,
+      "uid": 10774,
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 10774,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      }
+    },
+    {
+      "api": 31,
+      "uid": 15132,
+      "lifecycle": {
+        "rounds": [
+          {
+            "round": 1,
+            "uidProcessCount": 0
+          },
+          {
+            "round": 2,
+            "uidProcessCount": 0
+          }
+        ],
+        "installedUid": 15132,
+        "installedByThisRun": true,
+        "uninstalled": true,
+        "finalUidProcessCount": 0
+      }
+    }
+  ],
+  "limits": "Host fatal-stop controls are not an Android abort reproduction. No AVD, Samsung or private ADB operation. Original failed report, baseline 560/560 probes and 128/128 Binder remain unchanged."
+}

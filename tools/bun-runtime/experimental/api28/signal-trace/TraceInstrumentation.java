@@ -47,7 +47,7 @@ public final class TraceInstrumentation extends Instrumentation {
             JSONObject build = new JSONObject(asset("trace-build.json"));
             check(build.getString("kind").equals("test-only-signal-trace-build"),"diagnostic identity");
             String fixtureSet = build.getString("fixtureSet");
-            check(fixtureSet.equals("blocked-async") || fixtureSet.equals("pending-async"),"fixed fixture set");
+            check(fixtureSet.equals("blocked-async") || fixtureSet.equals("pending-async") || fixtureSet.equals("watch-reload"),"fixed fixture set");
             int uid = android.os.Process.myUid();
             String abi = arguments.getString("abi");
             check(Build.SUPPORTED_ABIS[0].equals(abi) && (abi.equals("arm64-v8a") ? Os.uname().machine.equals("aarch64") : Os.uname().machine.equals("x86_64")), "native ABI");
@@ -74,7 +74,7 @@ public final class TraceInstrumentation extends Instrumentation {
             for (String mode:new String[]{"native","trap"}) for(boolean traced:new boolean[]{false,true}) {
                 File work = new File(job,mode+(traced?"-traced":"-plain")); check(work.mkdir(),"new case workspace");
                 File entry = new File(work,"entry.mjs");
-                String source = asset((fixtureSet.equals("pending-async")?"pending-signal-":"async-signal-")+mode+".mjs"); check(source.getBytes(StandardCharsets.UTF_8).length<=12288,"fixed asset bound");
+                String source = asset((fixtureSet.equals("watch-reload")?"watch-reload-":fixtureSet.equals("pending-async")?"pending-signal-":"async-signal-")+mode+".mjs"); check(source.getBytes(StandardCharsets.UTF_8).length<=12288,"fixed asset bound");
                 try(OutputStream output=new FileOutputStream(entry)) { output.write(source.getBytes(StandardCharsets.UTF_8)); }
                 List<String> command = new ArrayList<>();
                 command.add(new File(nativeDir,"libbun_exec.so").getAbsolutePath());
