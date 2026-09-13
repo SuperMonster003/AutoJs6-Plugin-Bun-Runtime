@@ -1,3 +1,47 @@
+# 会话交接: 十二补丁 JSC 双页大小回归完成, 三星 baseline 新源码待接入
+
+2026-09-13 (Asia/Shanghai). 本轮从干净 `dbd0fde` 继续, 源码/构建提交为 `0210e82`.
+先完整阅读 `AGENTS.md`、本文件及 `E:/.codex-tmp/jsc-twelve-patch-20260913/SESSION_HANDOFF.local.md`.
+以下均已完成, 不要重跑 native/APK driver、collector、归档或一次性文档脚本.
+
+- 两个 `jsc-twelve-patch-run-{1,2}` 新 Bun 构建实际 exit 0/0, 完整成品均为 90609496 bytes,
+  SHA-256 `34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad`.
+  clean head/tree、21 输入、完整日志/最终边与两份 ELF 通过; 复用原两套独立 JSC 和 ICU,
+  无新 WebKit/ICU 或 baseline Bun 构建. 新锁和 build-only 归档与九/十补丁历史分开.
+  原始混合换行导致的两次 recorder 失败保留, 最终逐字节重建验证通过, 未改原 source/driver.
+- 同一新主/测试 APK 绑定干净 `0210e82` 的 83 输入. API 36 native x86 的 4 KiB/16 KiB
+  用户页各两轮原八项 Binder 通过 32/32, 原七模式压力通过 28/28. 固定 fixture/validator/
+  Java/budget、production service/AAR 均不变. 两台内核/MMU 页都是 4 KiB; 不代表 ARM64 硬件页.
+- 初次 16 KiB Binder 第一轮 7/8, 首次 prewarm DeadObjectException; 第二轮 8/8.
+  明确 owned UID10213/PID4931、5079 的 lowmemorykiller 和 Zygote SIGKILL 记录已归档.
+  整次失败不计接受. 同一 AVD、APK/源码/设置/预算完整重试两轮通过, 原失败完整保留.
+- 四次接受 runner 实际 exit 0; 每次主/测试包卸载后两个 UID 都为零进程, 初次失败也清零.
+  两个 owned AVD 5580/5582 已关闭, 最后一个在 18:17:49 本地时间确认离线. 中途出现的
+  其他任务 API37/5572 未操作. `device-completed.json`、原 driver 和 recovery driver 分开保留.
+- 三星准备在独立 detached `baseline-checkout` (`dbd0fde`) 完成, `samsung-ready-baseline-apks`
+  的 81 输入、签名与完整 payload 通过. 原 33 项 probe APK 验证 30 输入后直接复用.
+  两次签名准备问题保留; 临时签名配置已移除, 原 key 未复制/显示. 此批次不是 JSC 的 83 输入.
+  17:48:42-17:58:42 的 50781 窗口 40 次均 offline, 无三星安装/测试, 当前无等待窗口.
+  后续需 SM-F936U API32/native ARM64/4096 与 SM-A566B API36/native ARM64/16384,
+  各两轮原 33 项和八项 Binder. 从匹配的 baseline-checkout 运行, 不放宽 compiled-input 校验.
+- baseline 十二补丁保持五环境 330/330 probes 和 80/80 Binder. 新候选成绩另计; 原生文件、
+  官方 API33+、所有历史 JSON/锁与 distributionReady=false 不变. 广泛 syscall/API/FD/OEM、
+  watch/reload、cgroup/clone3、FD70000/UNSHARE、长时压力/性能与 Release 仍开放.
+- 最终 Node 234/234、Python 38/38、Markdown 10 语言/36 产物与 matrix 84 报告/185 行通过.
+  production 四项 Gradle 实际 exit 0 (39s, 96 tasks, 12 executed/84 up-to-date), 三个 Debug
+  APK runtime/16 KiB ZIP 门禁通过; JVM 21 项原结果由 Gradle 判定 up-to-date, lint 0 error/44 warnings.
+  IDE 工具 60 秒 timeout 原样保留, 精确匹配项目/command 的两个后台构建分别成功 (7s 与 1m55s).
+  80 个既有归档/索引和 21 个物理构建输入均未变, 生产 source/AAR、原 pressure 源码与全部锁未漂移.
+  当前没有 native/APK/device driver 待续; 三星 runner 仅准备, 尚未执行.
+
+[完整结果](compatibility/2026-09-13-m5-twelve-patch-jsc.md),
+[Binder](compatibility/2026-09-13-m5-twelve-patch-jsc-binder.json),
+[压力](compatibility/2026-09-13-m5-twelve-patch-jsc-pressure.json),
+[初次失败](compatibility/2026-09-13-m5-twelve-patch-jsc-binder-memory-failure.json),
+[构建/APK/设备清理补充](compatibility/2026-09-13-m5-twelve-patch-jsc-checkpoints.json).
+
+## 此前 native-only 阶段记录 (已完成后续设备门禁)
+
 # 会话交接: 十二补丁 JSC 双构建完成, 新 APK 回归待执行
 
 2026-09-13 (Asia/Shanghai), 从干净 master `dbd0fde` 继续. 先完整阅读本文件、

@@ -1894,6 +1894,46 @@
       }
     },
     {
+      "file": "2026-09-13-m5-twelve-patch-jsc-binder-memory-failure.json",
+      "sha256": "0f79b1d47e65dc3b999886fc01ad75d89b620433905035b90b9eae8cad8de15c",
+      "schema": 1,
+      "kind": "jsc16k-experimental-binder-memory-failure",
+      "adapter": "binder",
+      "collection": "report",
+      "category": "diagnostic",
+      "label": "M5 十二补丁 JSC 初次低内存服务终止",
+      "note": "系统 lowmemorykiller 明确杀死 owned 服务, 首轮预热 DeadObjectException; 第二轮成功仍不计入接受. 同一 APK 重试另存.",
+      "bytesUtf8Lf": 91522,
+      "rows": 1,
+      "reportedScope": "Initial twelve-patch JSC x86_64 API 36 / 16 KiB userspace Binder attempt. First round has one DeadObjectException at prewarmRuntime; second round passes eight tests. Entire attempt excluded from acceptance.",
+      "reportedOutcome": false,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m5-twelve-patch-jsc-binder.json",
+      "sha256": "9e87d5d4ba7b6cd2991448978b847a9cc1649488bfa8b3de8ffd2f68127f3504",
+      "schema": 1,
+      "kind": "jsc16k-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十二补丁 JSC 原八项 Binder",
+      "note": "新候选在 x86 API 36 两种用户页各两轮, 同一83输入APK; 与 baseline 和旧候选分开.",
+      "bytesUtf8Lf": 178943,
+      "rows": 2,
+      "reportedScope": "Two process-restarted rounds of the existing complete eight-test plugin Binder suite per native environment. Not the full Bun/syscall/API/FD or Release matrix.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "passedTests": 32,
+        "totalTests": 32,
+        "lifecycleObservations": 20
+      }
+    },
+    {
       "file": "2026-09-13-m5-twelve-patch-jsc-builds.json",
       "sha256": "43b7dd5d09ae26a2baf673a6f1948675d9f3f9529e08cc332fc2a330694496ad",
       "schema": 2,
@@ -1909,6 +1949,57 @@
       "reportedOutcome": null,
       "distributionReady": false,
       "summary": null
+    },
+    {
+      "file": "2026-09-13-m5-twelve-patch-jsc-checkpoints.json",
+      "sha256": "3aa1cde840c6d21dad504feca3602167f3e3fc3d24ad2ec158540ea236c29040",
+      "schema": 1,
+      "kind": "twelve-patch-jsc-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 十二补丁 JSC 来源和清理补充",
+      "note": "绑定构建原始换行/归档失败、83输入APK、两个UID清理和ownedAVD关闭. 三星81输入APK准备及offline窗口不增加设备计数.",
+      "bytesUtf8Lf": 23211,
+      "rows": 0,
+      "reportedScope": "Supplemental source/APK/cleanup and preparation records only; no added Binder, pressure, Samsung or native-build counts. Original build and device archives remain separate.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-13-m5-twelve-patch-jsc-pressure.json",
+      "sha256": "b123cd3036f3b05832582ade486004e0468470d0ba5476c49e50c0696a82cd07",
+      "schema": 1,
+      "kind": "jsc-pressure-acceptance",
+      "adapter": "pressure",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M5 十二补丁 JSC 有界压力",
+      "note": "原七模式及预算不变; x86 16 KiB 为用户页 ABI 模拟, 不代表 ARM64 硬件或长时压力/性能.",
+      "bytesUtf8Lf": 398428,
+      "rows": 2,
+      "reportedScope": "Fixed, offline, bounded seven-mode JSC pressure fixture through the real plugin Binder service, two restarted rounds per native x86_64 API 36 userspace page size. The 16 KiB x86 userspace ABI is emulated over 4 KiB kernel mappings, not ARM64 hardware 16 KiB evidence. Separate from the original eight-test Binder suite, performance, exhaustive JIT/Wasm coverage and Release acceptance.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "passedJUnitTests": 4,
+        "totalJUnitTests": 4,
+        "passedPressureModes": 28,
+        "totalPressureModes": 28,
+        "sampledTierObservations": 16,
+        "retainedTargetTierFrames": 48,
+        "explicitMainThreadFullGcCalls": 100,
+        "explicitMainThreadEdenGcCalls": 96,
+        "explicitWorkerFullGcCalls": 64,
+        "wasmModules": 128,
+        "wasmCalls": 8388608,
+        "wasmMemoryGrows": 252,
+        "workersExited": 64,
+        "workerTransferredBytes": 67108864
+      }
     },
     {
       "file": "2026-09-13-m9-localized-errors-binder.json",
@@ -11760,6 +11851,286 @@
         "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
       },
       "apkSha256": "2c161a904f0f3e999a7070238e54563354126b77c748f3343be700132d2755fb",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m5-twelve-patch-jsc-binder-memory-failure.json",
+      "pointer": "/report",
+      "environmentPointer": "/report/device",
+      "category": "diagnostic",
+      "scope": "M5 十二补丁 JSC 初次低内存服务终止",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+06e518f73",
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "db36cf246c715172cbce4df67fe36ecb93c8978963ccf10030a6624c03d4bb87",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": null,
+          "total": null,
+          "reportedPassed": null,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": false,
+      "status": "failed",
+      "sourceReportedPassed": false,
+      "acceptedForRecordedScope": false
+    },
+    {
+      "source": "2026-09-13-m5-twelve-patch-jsc-binder.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M5 十二补丁 JSC 原八项 Binder",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 36,
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+06e518f73",
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "db36cf246c715172cbce4df67fe36ecb93c8978963ccf10030a6624c03d4bb87",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m5-twelve-patch-jsc-binder.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M5 十二补丁 JSC 原八项 Binder",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+06e518f73",
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "db36cf246c715172cbce4df67fe36ecb93c8978963ccf10030a6624c03d4bb87",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 8,
+          "total": 8,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m5-twelve-patch-jsc-pressure.json",
+      "pointer": "/reports/0",
+      "environmentPointer": "/reports/0/device",
+      "category": "experimental",
+      "scope": "M5 十二补丁 JSC 有界压力",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone64_x86_64",
+        "api": 36,
+        "kernel": "6.12.38-android16-5-gbb9513914902-ab13996879",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": 4096,
+        "userPageSizeEmulated": false
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+06e518f73",
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "db36cf246c715172cbce4df67fe36ecb93c8978963ccf10030a6624c03d4bb87",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "modes",
+          "passed": 7,
+          "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-13-m5-twelve-patch-jsc-pressure.json",
+      "pointer": "/reports/1",
+      "environmentPointer": "/reports/1/device",
+      "category": "experimental",
+      "scope": "M5 十二补丁 JSC 有界压力",
+      "environment": {
+        "manufacturer": null,
+        "model": "sdk_gphone16k_x86_64",
+        "api": 36,
+        "kernel": "6.6.66-android15-8-gd0c43a640eab-ab13812146",
+        "fingerprint": "google/sdk_gphone16k_x86_64/emu64xa16k:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": "x86_64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "libndk_translation.so",
+        "pages": 16384,
+        "pageSizeSource": "getconf PAGE_SIZE",
+        "kernelMappingPages": 4096,
+        "userPageSizeEmulated": true
+      },
+      "runtime": {
+        "version": null,
+        "revision": "1.4.0+06e518f73",
+        "commit": "06e518f73b4fccc6c3ffb17412ea166bf886bed0",
+        "variant": "bun-1.4.0-android-api28-webkit64k-experimental",
+        "sha256": "34edd4b99d74c7472febfcc3f1a1c6068bd57cd5714aab150b5b86dafa75b1ad",
+        "bytes": 90609496,
+        "jscCandidateKind": "clean-rebased-large-page-jsc-candidate",
+        "webkitCommit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+      },
+      "apkSha256": "db36cf246c715172cbce4df67fe36ecb93c8978963ccf10030a6624c03d4bb87",
       "apkVariant": null,
       "rounds": [
         {

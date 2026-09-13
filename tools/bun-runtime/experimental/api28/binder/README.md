@@ -96,6 +96,8 @@ hardware 16 KiB. Compiled input receipts bind the additional test sources/assets
 
 ## Evidence
 
+- [2026-09-13 twelve-patch large-page JSC](../../../../../docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md): the separate `34edd4b9...a75b1ad` candidate passes 32/32 unchanged Binder tests and 28/28 original pressure modes on native x86_64 API 36 with 4 KiB/16 KiB userspace pages. The same APK pair binds 83 inputs to `0210e82`. The initial 16 KiB low-memory service death remains a failed archive; the complete identical-APK retry passes without source, setting or budget changes. Both package UIDs are independently checked after uninstall. The twelve-patch baseline remains 330/330 probes and 80/80 Binder in its five environments; new Samsung baseline evidence remains pending.
+
 - [2026-09-13 ten-patch large-page JSC](../../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md): the new `a237dc8c...7f8dcd5` candidate passes the unchanged eight-test suite twice on native x86_64 API 36 at both 4 KiB and 16 KiB userspace pages (32/32). The identical APK pair also passes the separate original pressure fixture (28/28 modes). Its 77 inputs match project commit `5738129`; signatures, installed bytes and execution UID cleanup pass. These candidate results are separate from baseline Binder totals and all nine-patch history.
 
 - [2026-09-13 ten-patch local matrix](../../../../../docs/compatibility/2026-09-13-m3-blocked-pidfd-fix.md): 80/80 in five native 4 KiB environments, using the unchanged eight methods. The initial API 28 ART/ADB-JDWP startup crash is archived separately and excluded; the identical APK retry passes two rounds. The later Samsung follow-up below completes both planned new-source device gates.

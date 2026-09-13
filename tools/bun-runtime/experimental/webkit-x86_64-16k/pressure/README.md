@@ -81,7 +81,16 @@ extra, duplicate, wrong-tier or partial observations fail closed. Preliminary
 runs can be retained separately with `diagnostics` in place of `acceptance`; their
 original outcomes are preserved and never counted in final acceptance.
 
-The [2026-09-13 ten-patch rebase](../../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md)
+The [2026-09-13 twelve-patch rebase](../../../../../docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md)
+passes the same seven-mode fixture twice per page-size environment, 28/28 modes,
+including actual LLInt/Baseline/DFG/FTL samples and 64 normal worker exits. The
+same APK pair binds 83 inputs to `0210e82` and separately passes the original
+Binder suite 32/32. Its initial 16 KiB Binder low-memory service death is preserved
+outside acceptance; the full identical-APK retry passes. All pressure sources,
+validators and budgets remain unchanged. Both package UIDs are checked after
+uninstall and only owned AVDs are stopped; baseline counts and Release stay separate.
+
+The historical [2026-09-13 ten-patch rebase](../../../../../docs/compatibility/2026-09-13-m5-ten-patch-jsc.md)
 passes this unchanged fixture with the new separately built `a237dc8c...7f8dcd5`
 candidate: 28/28 modes and a separate 32/32 original Binder regression. The same
 APK pair binds 77 inputs to project commit `5738129`; original assets, semantic
