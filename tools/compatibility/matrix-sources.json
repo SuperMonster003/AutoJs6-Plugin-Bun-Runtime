@@ -879,6 +879,39 @@
       "note": "ptrace 观察器执行前失败, 未成功捕获 syscall, 不能从后续诊断补填."
     },
     {
+      "file": "2026-09-13-m3-watch-reload-api28-abort-failure.json",
+      "sha256": "8de4beb496fc82430541bbc598193dfc0e8714dd789b51996b8bae5728b4f880",
+      "schema": 1,
+      "kind": "archived-watch-reload-abort-failure",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "diagnostic",
+      "label": "M3 十三补丁 watch/reload API 28 首次中止",
+      "note": "完整尝试保留为失败. 子进程 SIGABRT 前出现 clone EAGAIN; 无崩溃栈, 原因未确认, 不计入后续通过批次."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-binder.json",
+      "sha256": "34080aca036370468714f483df8d852d2761e50999247a031d121e6fb2fad46c",
+      "schema": 1,
+      "kind": "baseline-experimental-plugin-binder",
+      "adapter": "binder",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 watch/reload 修复后的原 Binder 套件",
+      "note": "固定八项生产服务 Binder 回归; 与应用探针、历史源码、大页候选及 Release 分别计数."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-checkpoint.json",
+      "sha256": "c6ccf8538b57385a0af5b14654ae12382eaa0beda02bd47534b4096801d94e5a",
+      "schema": 1,
+      "kind": "watch-reload-fix-checkpoint",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M3 十三补丁 watch/reload 源码与清理检查点",
+      "note": "源码/主机/编译输入/独立 UID 清理和本地验证补充, 不新增设备执行接受数."
+    },
+    {
       "file": "2026-09-13-m3-watch-reload-checkpoints.json",
       "sha256": "e18d82d69d9766884ce970263a04b9f221fd2896d644bf7660451b882bfd80ba",
       "schema": 1,
@@ -921,6 +954,17 @@
       "category": "experimental",
       "label": "M3 十二补丁 watch/reload 同设备原生对照",
       "note": "完整35项门禁失败. 原33项和原生成功对照不抵消watch FD泄漏; 三个APK批次分别绑定, 原生尚未修复."
+    },
+    {
+      "file": "2026-09-13-m3-watch-reload-probes.json",
+      "sha256": "1166af5129d0c72c9cd8f9ba0b928f1919186c0a9f6ad61a8cb8e6a225e95beb",
+      "schema": 1,
+      "kind": "archived-test-only-application-process-probes",
+      "adapter": "probes",
+      "collection": "reports",
+      "category": "experimental",
+      "label": "M3 十三补丁 watch/reload 修复后的固定应用探针",
+      "note": "保留原定义与预算的固定套件. 首次 API 28 中止另档; 有限通过不关闭稳定性、其余信号/FD/大页或 Release 门禁."
     },
     {
       "file": "2026-09-13-m5-ten-patch-jsc-binder.json",

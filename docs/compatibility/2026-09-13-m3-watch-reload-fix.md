@@ -68,8 +68,63 @@ collector 和完整 ELF verifier 的实际退出码均为 0. 原锁定上游 JSC
 | arm64-v8a | 87923328 | `c8f2513f3bea1a37d5c34c1f84722b0b4563363cc121f7a0f4eee8aa15427160` |
 | x86_64 | 90449752 | `cb3104fbd41fb55ac301a177756b41fa57065e2cf18fa836bafb2b13cf4043ac` |
 
-`runtimeProduced=true`, 新源码设备门禁待运行. 不变的 35 项和完整八项
-Binder 每环境两轮, 源码/APK/raw/清理绑定将单独归档.
+`runtimeProduced=true`. 新 APK 在六个原生 4 KiB 环境完成不变的 35 项探针和
+完整八项 Binder, 每套件每环境两轮. [探针归档](2026-09-13-m3-watch-reload-probes.json)
+为 420/420, [Binder 归档](2026-09-13-m3-watch-reload-binder.json)为 96/96.
+探针的 32 个输入和 Binder 的 83 个输入全部逐字节匹配项目提交 `bf5cb72`;
+同 ABI 设备复用完全相同的 APK, 生产服务、AAR、签名与权限检查均保留.
+
+| 设备 | API | 原生 ABI | 页字节数 | 35 项两轮 | Binder 两轮 | watch 原生 close_range 控制 |
+|---|---:|---|---:|---:|---:|---|
+| Sony G8441 | 28 | arm64-v8a | 4096 | 70/70 | 16/16 | ENOSYS |
+| Sony XQ-AT72 | 31 | arm64-v8a | 4096 | 70/70 | 16/16 | ENOSYS |
+| Sony XQ-DQ72 | 33 | arm64-v8a | 4096 | 70/70 | 16/16 | 成功 |
+| Xiaomi 22120RN86C | 33 | arm64-v8a | 4096 | 70/70 | 16/16 | ENOSYS |
+| Xiaomi 23046RP50C | 35 | arm64-v8a | 4096 | 70/70 | 16/16 | EINVAL |
+| Google sdk_gphone64_x86_64 | 33 | x86_64 | 4096 | 70/70 | 16/16 | 成功 |
+
+通过批次的 24 个 watch 模式产生 48 次实际重载和 72 个镜像观测.
+每次重载后的 FD 256/257 均已关闭, 没有把 startup 后增加 CLOEXEC 当作
+exec 前关闭; 同 PID、同 UID、原 stdio 和每镜像一次普通 SIGSYS 交付保持.
+原生 ENOSYS/EINVAL/成功对照分别记录, 强制 TRAP 全部返回 ENOSYS.
+24 个受控 watched child 均由原句柄回收.
+
+原套件的 24 个 blocked 模式与 72 个 child 观测、24 个 pending 模式与
+72 个 child 观测继续通过. 48 个 hard-limit 模式及 48 个 spawn API 检查、
+24 个 soft-limit 模式和 36 个强制生命周期检查通过, 回收耗时 301-307 ms.
+Binder 另有 60 条生命周期记录, 与应用探针的数字分开.
+
+每台设备的三个测试包均卸载; 接受批次的 18 个包/UID 绑定均独立捕获并
+核验零进程. 本次启动的唯一 API 33 AVD 已关闭. 未操作此前 API 37 AVD
+或它的私有 ADB, 不推断它们后来不在清单中的原因.
+
+## 首次 API 28 中止与未闭合的稳定性边界
+
+[首次尝试](2026-09-13-m3-watch-reload-api28-abort-failure.json)保留为 69/70:
+第一轮 watch TRAP 子进程 PID 9283 在 generation 0/1 两个正常镜像之后
+以 SIGABRT 结束, 缺少 generation 2. 同次第二轮为 35/35.
+已输出的两个镜像均没有哨兵泄漏, 没有超时、输出溢出或清理失败.
+
+只读 owned-PID logcat 在中止前记录 `pthread_create` 的 `clone` 返回 EAGAIN,
+但没有可用的对应崩溃栈. 尚未确认具体 abort 调用链或线程创建失败的原因,
+事后内存/线程快照不能证明当时的资源状态, 也不能归因于历史 ART/ADB-JDWP 崩溃.
+保存该诊断后仅做一次完全相同 APK 的复测, 两轮 70/70 通过;
+没有改 fixture、预算、设备配置或运行时. 首次尝试的 UID 也已清理且独立核验.
+整个失败尝试不进入上述接受数, 后续有限通过不关闭 watch 稳定性或资源压力门禁.
+
+## 仍需后续证据
+
+本轮在 APK 就绪后询问三星 API 32 / ARM64 / 4 KiB 与 API 36 / 原生硬件
+16 KiB 设备窗口. `localhost:49909` 接受 TCP, 但私有 ADB 连接失败,
+未取得设备身份或安装 APK; 50781 的一次 TCP 检查也未连接.
+本次私有 ADB 的确切 PID/端口已独立确认消失, 默认 ADB 与 RDB 未动.
+开放端口和未答复的可用性询问不构成设备接入证据.
+
+十三补丁的这两项三星门禁、独立大页 JSC 候选重对齐与新设备回归、
+API 28 watch 中止诊断、其余 syscall/API/FD/OEM、blocked/pending 跨 reload、
+Android IPC/FD 70000/UNSHARE、长时压力/性能和 Release 仍开放.
+[检查点](2026-09-13-m3-watch-reload-checkpoint.json)绑定主机/构建/输入/清理与
+本地验证, 不额外增加设备通过数.
 
 十二补丁 baseline 的 462/462 probes、112/112 Binder 与独立 JSC 候选
 成绩均只属于原批次. 不将它们转移到第 13 补丁; `distributionReady=false`.

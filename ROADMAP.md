@@ -6,7 +6,11 @@
 
 当前第 13 补丁已修复 Linux reload 前忽略 CLOEXEC 失败的路径, 保留既有 stdio/IPC/信号语义.
 完整源码 GCC/Clang 各 25 个模式和确定性重放通过, 两次全新双 ABI 构建实际 exit0且每ABI字节一致, 四份ELF审计通过.
-原 35 项和 17 份 fixture/validator/Java 输入已锁定, 新源码设备门禁待新 APK 打包后执行.
+原 35 项和 17 份 fixture/validator/Java 输入未变, 新 APK 的 32/83 输入匹配 `bf5cb72`.
+六个原生 4 KiB 环境各两轮探针 420/420、完整 Binder 96/96; 48 次实际重载无哨兵继承,
+72 个镜像的 PID/stdio/普通 SIGSYS 对照通过. 首次 API28 中止 69/70 独立保留,
+中止前 clone EAGAIN 的根因未定, 仅一次同 APK 重试通过. 三星新源码、大页 JSC
+重对齐及 watch 稳定性/压力仍待后续证据.
 见 [修复与验证](docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
 
 此前十二补丁 M3 watch/reload 阻断已完成复现与归档, 该历史 native 未修复. 原 33 项保留,
@@ -67,7 +71,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | watch/reload 的第13补丁源码和主机回归完成, 两次独立双ABI构建完成, 新源码设备门禁待运行; 历史失败14/16保留; 十二补丁原 33 项与八项 Binder 七环境已过 462/462, 112/112, 含三星 ARM64 API 32 与硬件 16 KiB; 原套件的两项三星门禁已补齐; 十二补丁 JSC 双构建与双页大小 Binder 32/32、压力 28/28 已独立完成. 历史十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已完成双构建和双页大小 Binder 32/32、压力模式 28/28; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | 十三补丁已有独立双 ABI 构建和六个原生 4 KiB 环境的固定探针 420/420、原 Binder 96/96. 首次 API 28 watch SIGABRT/clone EAGAIN 需进一步诊断; 新源码三星 API 32 / ARM64 4 KiB 与 API 36 / ARM64 硬件 16 KiB、独立 JSC 重对齐和新回归仍开放. 其余 syscall/API/FD/OEM、跨 reload 的 blocked/pending 信号与 IPC、Android FD 70000/UNSHARE、长时压力和 paired APK/source Release 仍开放. 历史十二/十/九补丁成绩按原批次保留 |
 
 ## 如何阅读这份路线图
 
@@ -255,9 +259,11 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ### M3-A: seccomp 与 syscall fallback
 
+- [x] (设备/测试) 第 13 补丁保持 35 项定义与全部既有 fixture/预算, 六个原生 4 KiB 环境各两轮通过 420/420 probes、96/96 原八项 Binder. 新 APK 输入匹配 `bf5cb72`; 24 watch 模式产生 48 次实际重载, 72 镜像均符合 FD/PID/stdio/普通信号断言. 原 hard/soft limit、blocked/pending 与强制生命周期仍通过, 回收 301-307 ms. 三包/三个 UID 每环境独立清理, 只关闭自有 AVD/私有 ADB. 初始 API28 69/70 中止另档, 只做一次同 APK 复测. [设备与边界](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G2, 有限套件, 非稳定性/三星/大页/Release 通过)
+- [ ] (诊断/测试) 用有界、独立诊断补齐 API 28 watch 中止调用链与 clone EAGAIN 的资源条件; 保留首次失败, 不以偶发复测成功代替稳定性证据或扩大现有预算.
 - [x] (源码/测试) 第 13 补丁修复 Linux reload 前忽略 `close_range(CLOEXEC)` 失败的问题, 复用未改动的 raw FD helper 标记分支, 不完整设置在 exec 前退出. 原 stdio、显式 IPC 和完整信号段不变. 精确源码 GCC 13/Clang 21 各 25 个模式通过, 包括真实 exec、高于 hard limit 的 FD、旧源码失败对照和有界错误; 共享 helper 原四组测试分别通过. 全套 35 项 Android 定义与 17 份输入防漂移门禁已补齐. [修复范围](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1; 新源码构建/设备另计)
 - [x] (测试) 新增两个有界 watch/reload 模式并完成四个 ARM64 / 4 KiB 真机环境的故障复现和同设备正向对照. 原 33 项 264/264; 新模式2/16, 14个失败模式产生28次 FD256 泄漏. 原生可用的 Sony5.15 模式两轮通过, 相同设备 TRAP 两轮失败. 原生字节、旧定义及预算不变, 所有包/UID已清理. 2026-09-13 G2 故障证据, [报告](docs/compatibility/2026-09-13-m3-watch-reload.md); 不代表门禁通过.
-- [ ] (上游/测试) 修复 `on_before_reload_process_posix` 忽略 `close_range(CLOEXEC)` 失败的路径, 在 exec 前完成 FD 标记并传播不完整清理错误, 保留 stdio/IPC 和已有信号语义. 固定35项和原33项不得放宽; 修复需独立构建及新源码设备证据. blocked/pending 跨reload、并发FD、FD70000、UNSHARE和大页另行验证.
+- [x] (上游/测试) 第 13 补丁修复 `on_before_reload_process_posix` 忽略 `close_range(CLOEXEC)` 失败的路径, 在 exec 前完成 FD 标记并传播不完整设置错误, 保留 stdio/IPC 和已有信号语义. 固定 35 项和原 33 项未放宽; 独立双 ABI 构建和六个原生 4 KiB 环境的固定套件回归已完成. [源码与新设备证据](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1/G2; 首次中止的稳定性诊断、blocked/pending 跨 reload、并发 FD、FD 70000、UNSHARE 和大页另行验证)
 
 - [x] (构建/测试/设备) 新增独立 test-only APK 工具 [app-probe](tools/bun-runtime/experimental/api28/app-probe/README.md), 不注册为 AutoJs6 插件、不使用正式签名或替换官方 payload. 输入两轮锁定 ELF, 输出双 ABI 单包, 核验真实 Manifest、APK 签名、16 KB ZIP 对齐及精确 payload. Sony G8441 API 28、Sony XQ-AT72 API 31、Redmi 22120RN86C API 33、Xiaomi 23046RP50C API 35 均在原生 arm64 / 4096-byte 页、普通应用 UID、untrusted_app、seccomp=2 下从只读 nativeLibraryDir 执行. (2026-09-08, G1/G2)
 - [x] (设备) 上述四台真机各运行两轮: version/revision、子进程应用域、JS/TS/Unicode/stdout+stderr、spawn/spawnSync、文件 I/O、loopback fetch、普通用户 SIGSYS 与终止后新执行这 10 项通过. 每轮 12 项中强制终止的 2 项失败, 总体结果明确为 failed; force-stop 与探针卸载后已确认无探针 UID 残留进程. 完整证据见 [M3 应用进程报告](docs/compatibility/2026-09-08-m3-application-probe.json). (2026-09-08, G2, 不是完整 Binder 通过)
