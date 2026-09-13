@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 60 份源报告, 148 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 68 份源报告, 160 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -97,6 +97,17 @@ v0.2.1 开发 Debug APK, 不属于已发布 Release APK 验收. 初始采集器�
 | 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
 | / | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M3-B 官方运行时新服务原八项 Binder
+
+来源: [2026-09-13-m3-probe-lifecycle-official-binder.json](2026-09-13-m3-probe-lifecycle-official-binder.json).
+
+ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug APK 与新服务回归.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
 
 ### M9 本地化服务原八项 Binder 回归
 
@@ -501,6 +512,18 @@ v0.2.1 开发 Debug APK, 不属于已发布 Release APK 验收. 初始采集器�
 | --- | --- | --- | --- | --- | --- | --- |
 | /reports/0 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 31/31 探针; 31/31 探针 | 通过 (限定范围) |
 
+### M3-B 十补丁新服务原八项 Binder
+
+来源: [2026-09-13-m3-probe-lifecycle-experimental-binder.json](2026-09-13-m3-probe-lifecycle-experimental-binder.json).
+
+三原生 4 KiB 环境两轮 48/48, 源码/APK 单独绑定. 不增加历史 112/112 或 31-probe 计数; 无三星/JSC/Release 扩围.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+| /records/2 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA c37f8b09ed8d | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
 ### M5 十补丁大页 JSC 原 Binder 回归
 
 来源: [2026-09-13-m5-ten-patch-jsc-binder.json](2026-09-13-m5-ten-patch-jsc-binder.json).
@@ -600,6 +623,64 @@ shell UID 2000, 不经过应用 zygote seccomp、Binder 或 APK nativeLibraryDir
 | --- | --- | --- | --- | --- | --- | --- |
 | /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 7b9ac266888a<br>SHA 22b7e0778c53 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
 | /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | commit 7b9ac266888a<br>SHA 22b7e0778c53 | 未记录/4 观测; 未记录/4 观测 | 诊断, 不计入接受结果 |
+
+### M3-B 十补丁启动检查受控回归
+
+来源: [2026-09-13-m3-probe-lifecycle-experimental.json](2026-09-13-m3-probe-lifecycle-experimental.json).
+
+三环境两轮三项 JUnit 18/18; 注入启动/版本失败与虚拟冷却时钟, 另有真实输出/超时控制. 不视为自然故障、SIGSYS 或 31-probe 套件.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | G8441<br>API 28 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 3/3 测试; 3/3 测试 | 诊断, 不计入接受结果; 观测通过 |
+| /records/1 | XQ-AT72<br>API 31 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA 96c8460903ed | 3/3 测试; 3/3 测试 | 诊断, 不计入接受结果; 观测通过 |
+| /records/2 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 1.4.0+a9c76a599<br>SHA c37f8b09ed8d | 3/3 测试; 3/3 测试 | 诊断, 不计入接受结果; 观测通过 |
+
+### M3-B 启动检查更新后的十语言回归
+
+来源: [2026-09-13-m3-probe-lifecycle-messages.json](2026-09-13-m3-probe-lifecycle-messages.json).
+
+两台 ARM64 4 KiB 设备共 8/8 语言 JUnit, 含 240 个错误/finished 观察, 与原八项 Binder 分开.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 2/2 测试; 2/2 测试 | 诊断, 不计入接受结果; 观测通过 |
+| /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 2/2 测试; 2/2 测试 | 诊断, 不计入接受结果; 观测通过 |
+
+### M3-B 官方启动检查受控回归
+
+来源: [2026-09-13-m3-probe-lifecycle-official.json](2026-09-13-m3-probe-lifecycle-official.json).
+
+两环境两轮三项 JUnit 12/12; 注入失败与虚拟时钟并验证真实安装字节的有界输出/超时. 不作为 native 兼容性扩围.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 3/3 测试; 3/3 测试 | 诊断, 不计入接受结果; 观测通过 |
+| /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 3/3 测试; 3/3 测试 | 诊断, 不计入接受结果; 观测通过 |
+
+### M3-B 大页 AVD 首次低内存失败
+
+来源: [2026-09-13-m3-probe-lifecycle-page-refusal-failure.json](2026-09-13-m3-probe-lifecycle-page-refusal-failure.json).
+
+资源通过后语言拒绝测试遇到 DeadObjectException; 精确 PID/UID 的 lowmemorykiller 记录绑定服务死亡, 原始失败不计验收.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M3-B 官方 x86 大页缓存拒绝
+
+来源: [2026-09-13-m3-probe-lifecycle-page-refusal.json](2026-09-13-m3-probe-lifecycle-page-refusal.json).
+
+相同 APK 重试两轮资源/拒绝 4/4. x86 16384-byte 用户页 ABI / 4096-byte 内核映射, Bun 未执行; 不累计 native 通过.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M3-B API 28 首次 ART 启动失败
+
+来源: [2026-09-13-m3-probe-lifecycle-startup-failure.json](2026-09-13-m3-probe-lifecycle-startup-failure.json).
+
+首轮 Binder 8/8 和 probe 3/3 后, 第二轮测试开始前 ART/ADB-JDWP SIGSEGV; 保留进程归属及清理, 整批不计验收.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
 ### M3 signal trace harness 启动失败
 

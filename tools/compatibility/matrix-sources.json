@@ -582,6 +582,94 @@
       "note": "只补充独立设备与清理快照, 不产生新测试轮次; 不把后补字段自动复制进此前报告."
     },
     {
+      "file": "2026-09-13-m3-probe-lifecycle-experimental-binder.json",
+      "sha256": "33f49563765447af9a18596b9b2274bf9b1fda8ece87d0bb0541d4b6fc8ae121",
+      "schema": 1,
+      "kind": "runtime-probe-experimental-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "experimental",
+      "label": "M3-B 十补丁新服务原八项 Binder",
+      "note": "三原生 4 KiB 环境两轮 48/48, 源码/APK 单独绑定. 不增加历史 112/112 或 31-probe 计数; 无三星/JSC/Release 扩围."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-experimental.json",
+      "sha256": "d134b52b16f65cf1ee5adeaeefc22dafff8ad901180089d49b1f9b830edd36a4",
+      "schema": 1,
+      "kind": "runtime-probe-experimental-probe",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3-B 十补丁启动检查受控回归",
+      "note": "三环境两轮三项 JUnit 18/18; 注入启动/版本失败与虚拟冷却时钟, 另有真实输出/超时控制. 不视为自然故障、SIGSYS 或 31-probe 套件."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-messages.json",
+      "sha256": "cf4a8c2dd9d613422b04fea56d15457871095d25317ba97c8cce5e73c7325024",
+      "schema": 1,
+      "kind": "runtime-probe-official-messages",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3-B 启动检查更新后的十语言回归",
+      "note": "两台 ARM64 4 KiB 设备共 8/8 语言 JUnit, 含 240 个错误/finished 观察, 与原八项 Binder 分开."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-official-binder.json",
+      "sha256": "23a737cf3974b5e47ac2067cc4d5fbb0159ac3797991063d1b4569efdb4681b8",
+      "schema": 1,
+      "kind": "runtime-probe-official-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "official",
+      "label": "M3-B 官方运行时新服务原八项 Binder",
+      "note": "ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug APK 与新服务回归."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-official.json",
+      "sha256": "497f7112e3be087e3f46603bd713895805b799db0d186b3ff83616786201f2c2",
+      "schema": 1,
+      "kind": "runtime-probe-official-probe",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "diagnostic",
+      "label": "M3-B 官方启动检查受控回归",
+      "note": "两环境两轮三项 JUnit 12/12; 注入失败与虚拟时钟并验证真实安装字节的有界输出/超时. 不作为 native 兼容性扩围."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-page-refusal-failure.json",
+      "sha256": "949e79bde2e8e24786cd0bd09fd6c8d68677318080c2a58fcf9198f79604eb34",
+      "schema": 1,
+      "kind": "runtime-probe-page-refusal-memory-failure",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3-B 大页 AVD 首次低内存失败",
+      "note": "资源通过后语言拒绝测试遇到 DeadObjectException; 精确 PID/UID 的 lowmemorykiller 记录绑定服务死亡, 原始失败不计验收."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-page-refusal.json",
+      "sha256": "5298944e86da5865c2dda5fb1aab73c3bcd57846bbb4d129e29af1b0e49c52d1",
+      "schema": 1,
+      "kind": "runtime-message-page-refusal",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3-B 官方 x86 大页缓存拒绝",
+      "note": "相同 APK 重试两轮资源/拒绝 4/4. x86 16384-byte 用户页 ABI / 4096-byte 内核映射, Bun 未执行; 不累计 native 通过."
+    },
+    {
+      "file": "2026-09-13-m3-probe-lifecycle-startup-failure.json",
+      "sha256": "2468acd92f892628532047efb0a581a431958d45c5a06abab637b681e9a2024e",
+      "schema": 1,
+      "kind": "runtime-probe-startup-failure",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M3-B API 28 首次 ART 启动失败",
+      "note": "首轮 Binder 8/8 和 probe 3/3 后, 第二轮测试开始前 ART/ADB-JDWP SIGSEGV; 保留进程归属及清理, 整批不计验收."
+    },
+    {
       "file": "2026-09-13-m3-signal-trace-harness-failure.json",
       "sha256": "249d6090637cb673e863e76d8d34df1432f3e00cc7368f73fb43c6e94b23bb2b",
       "schema": 1,

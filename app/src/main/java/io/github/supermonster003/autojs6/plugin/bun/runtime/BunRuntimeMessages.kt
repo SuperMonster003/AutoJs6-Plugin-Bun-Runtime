@@ -6,7 +6,7 @@ import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 // Cache facts, never translated text: a cached prewarm failure must follow locale changes.
 internal sealed interface BunRuntimeFailure {
     data class Unavailable(val diagnostic: String) : BunRuntimeFailure
-    data class PageSize(val actualBytes: Long, val maximumBytes: Long) : BunRuntimeFailure
+    data class PageSize(val actualBytes: Long, val maximumBytes: Long, val diagnostic: String? = null) : BunRuntimeFailure
 }
 
 internal fun runtimePageSizeFailure(abi: String, pageSizeBytes: Long): BunRuntimeFailure.PageSize? =
@@ -19,9 +19,9 @@ internal fun Context.runtimeFailureMessage(failure: BunRuntimeFailure?): String?
     is BunRuntimeFailure.Unavailable -> runtimeErrorMessage(
         BunRuntimeContract.ERROR_RUNTIME_UNAVAILABLE, diagnostic = failure.diagnostic,
     )
-    is BunRuntimeFailure.PageSize -> boundedTerminalMessage(getString(
+    is BunRuntimeFailure.PageSize -> appendRuntimeDiagnostic(getString(
         R.string.runtime_error_page_size, failure.actualBytes, failure.maximumBytes,
-    ))
+    ), failure.diagnostic)
 }
 
 internal fun Context.runtimeErrorMessage(code: String?, exitCode: Int = -1, diagnostic: String? = null): String? {
@@ -39,9 +39,12 @@ internal fun Context.runtimeErrorMessage(code: String?, exitCode: Int = -1, diag
         else -> getString(R.string.runtime_error_internal)
     }
     // Keep low-level exception/probe details for diagnosis, after the readable summary.
-    return boundedTerminalMessage(if (diagnostic.isNullOrBlank()) summary else
-        "$summary\n${getString(R.string.runtime_diagnostic_label)} $diagnostic")
+    return appendRuntimeDiagnostic(summary, diagnostic)
 }
+
+private fun Context.appendRuntimeDiagnostic(summary: String, diagnostic: String?): String =
+    boundedTerminalMessage(if (diagnostic.isNullOrBlank()) summary else
+        "$summary\n${getString(R.string.runtime_diagnostic_label)} $diagnostic")
 
 /** A UTF-8 byte bound that does not split a supplementary Unicode code point. */
 internal fun boundedTerminalMessage(message: String, maxBytes: Int = BunRuntimeContract.MAX_TERMINAL_MESSAGE_BYTES): String {

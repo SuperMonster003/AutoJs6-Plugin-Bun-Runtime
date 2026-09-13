@@ -1,5 +1,8 @@
 # Runtime message regression
 
+For readiness retry, concurrent inspection and bounded command output, see the
+separate [probe lifecycle regression](PROBES.md).
+
 This suite checks presentation separately from the unchanged eight-test Binder
 suite. It uses the real production service, API AARs, official Bun and supervisor
 in an isolated `.diagnostics` Debug package. It does not build native Bun, broaden
@@ -34,7 +37,7 @@ node tools/diagnostics/build-runtime-messages.mjs ABSOLUTE_NEW_APK_DIRECTORY
 node tools/diagnostics/run-runtime-messages.mjs --sdk SDK_DIRECTORY --jdk JDK_DIRECTORY --serial SERIAL --abi arm64-v8a --api 33 --pages 4096 --apks ABSOLUTE_NEW_APK_DIRECTORY --output ABSOLUTE_NEW_DEVICE_DIRECTORY
 ```
 
-The build helper snapshots 85 repository inputs before and after the fixed Gradle
+The build helper snapshots repository inputs before and after the fixed Gradle
 tasks, retains their actual exit/log, and saves the APK bytes with a receipt. The
 runner rechecks the snapshot, signatures, package names, 16 KiB ZIP alignment,
 contained payloads, installed APK hashes, actual API/ABI/pages and the raw JUnit
