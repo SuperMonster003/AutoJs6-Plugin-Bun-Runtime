@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "kind": "samsung-device-observation-supplement",
+  "projectBaseCommit": "df186ec54c2843c3eaa4847b7940accf520b8722",
+  "runtimeRevision": "1.4.0+a9c76a599",
+  "scope": "Original device identity, shell page-size and independent postflight captures supplement the separately validated probe/Binder archives; no new test execution or acceptance scope.",
+  "devices": [
+    {
+      "api": 32,
+      "model": "SM-F936U",
+      "pages": 4096,
+      "archives": [
+        {
+          "path": "docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32-probes.json",
+          "bytes": 279501,
+          "sha256": "1a6340ca302de88c0b5387566698c23e7faa15d2771ba250f7e3e1333959b344"
+        },
+        {
+          "path": "docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32-binder.json",
+          "bytes": 44168,
+          "sha256": "76252e382048a41f33817593cff8941a9acf5f95f68c60070bb8b413977ce2f8"
+        }
+      ],
+      "captures": [
+        {
+          "sourceName": "api32-page-facts.json",
+          "bytes": 368,
+          "sha256": "f428e9adfb107c48dc7c5c6c16bd1b77371b687c8f77f8597afd417c0c511cdb",
+          "text": "{\r\n  \"serial\": \"localhost:50781\",\r\n  \"model\": \"SM-F936U\",\r\n  \"api\": 32,\r\n  \"abi\": \"arm64-v8a\",\r\n  \"kernelMachine\": \"aarch64\",\r\n  \"getconfPageSize\": 4096,\r\n  \"nativeBridge\": \"0\",\r\n  \"observedShellPageSizes\": [\r\n    \"KernelPageSize:        4 kB\",\r\n    \"MMUPageSize:           4 kB\"\r\n  ],\r\n  \"capturedAt\": \"2026-09-13T08:56:25.7797365+08:00\",\r\n  \"avdOperated\": false\r\n}\r\n"
+        },
+        {
+          "sourceName": "api32-postflight.json",
+          "bytes": 744,
+          "sha256": "cce56b6cbae3d92330fce7198447b015b0784707ef189430959be61bd4e8ef4a",
+          "text": "{\r\n  \"serial\": \"localhost:50781\",\r\n  \"capturedAt\": \"2026-09-13T08:58:58.5600310+08:00\",\r\n  \"packages\": [\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe\",\r\n      \"absent\": true\r\n    },\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder\",\r\n      \"absent\": true\r\n    },\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test\",\r\n      \"absent\": true\r\n    }\r\n  ],\r\n  \"executionUids\": [\r\n    {\r\n      \"uid\": 10328,\r\n      \"processCount\": 0\r\n    },\r\n    {\r\n      \"uid\": 10329,\r\n      \"processCount\": 0\r\n    }\r\n  ],\r\n  \"testPackageUidSeparatelyCaptured\": false,\r\n  \"avdOperated\": false,\r\n  \"preExistingAvd\": \"emulator-5554\"\r\n}\r\n"
+        }
+      ]
+    },
+    {
+      "api": 36,
+      "model": "SM-A566B",
+      "pages": 16384,
+      "archives": [
+        {
+          "path": "docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36-probes.json",
+          "bytes": 279161,
+          "sha256": "80638e20e0645976c101d49cbd3f07aa49848e5b1bc2bbee8da6e8d23ea8f8f7"
+        },
+        {
+          "path": "docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36-binder.json",
+          "bytes": 44191,
+          "sha256": "519e65744a2ecbc9ddf0637c984c2c2cd316020a9e130f7966e3e3e5f7a78fbf"
+        }
+      ],
+      "captures": [
+        {
+          "sourceName": "api36-page-facts.json",
+          "bytes": 578,
+          "sha256": "f64f1876c5fda21b3f87ce34cff676d5623543141987fce49bff530006eacac8",
+          "text": "{\r\n  \"serial\": \"localhost:50781\",\r\n  \"capturedAt\": \"2026-09-13T09:01:25.4453113+08:00\",\r\n  \"ro.product.model\": \"SM-A566B\",\r\n  \"ro.build.version.sdk\": \"36\",\r\n  \"ro.build.version.release\": \"16\",\r\n  \"ro.product.cpu.abi\": \"arm64-v8a\",\r\n  \"ro.dalvik.vm.native.bridge\": \"0\",\r\n  \"ro.build.fingerprint\": \"samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys\",\r\n  \"kernelMachine\": \"aarch64\",\r\n  \"pages\": \"16384\",\r\n  \"observedShellPageSizes\": [\r\n    \"KernelPageSize:       16 kB\",\r\n    \"MMUPageSize:          16 kB\"\r\n  ],\r\n  \"packagesBefore\": \"\"\r\n}\r\n"
+        },
+        {
+          "sourceName": "api36-postflight.json",
+          "bytes": 850,
+          "sha256": "c8adeb495634529978fd9818478b5c4dd9966be10a547ec2227d502f461de5ce",
+          "text": "{\r\n  \"serial\": \"localhost:50781\",\r\n  \"capturedAt\": \"2026-09-13T09:04:40.2042868+08:00\",\r\n  \"packages\": [\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28probe\",\r\n      \"absent\": true\r\n    },\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder\",\r\n      \"absent\": true\r\n    },\r\n    {\r\n      \"package\": \"io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test\",\r\n      \"absent\": true\r\n    }\r\n  ],\r\n  \"executionAndTestUids\": [\r\n    {\r\n      \"uid\": 10320,\r\n      \"processCount\": 0\r\n    },\r\n    {\r\n      \"uid\": 10321,\r\n      \"processCount\": 0\r\n    },\r\n    {\r\n      \"uid\": 10322,\r\n      \"processCount\": 0\r\n    }\r\n  ],\r\n  \"testPackageUidSeparatelyCaptured\": true,\r\n  \"avdOperated\": false,\r\n  \"unrelatedOnlineAvds\": [\r\n    \"emulator-5554\",\r\n    \"emulator-5560\"\r\n  ]\r\n}\r\n"
+        },
+        {
+          "sourceName": "api36-installed-uids.json",
+          "bytes": 289,
+          "sha256": "f4b9c5f1e81d5987a8ad2f5f2d2b3261d5cff90aac4e11f7dea4f42cf38e56f3",
+          "text": "{\r\n  \"serial\": \"localhost:50781\",\r\n  \"capturedAt\": \"2026-09-13T09:03:49.1913085+08:00\",\r\n  \"packageUidOutput\": \"package:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test uid:10322\\npackage:io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder uid:10321\"\r\n}\r\n"
+        }
+      ]
+    }
+  ],
+  "avdOperations": [],
+  "limitations": [
+    "API 32 androidTest installation UID was not captured separately; only the two executing UIDs were independently checked.",
+    "The postflight captures retain structured observations; they are not verbatim adb command transcripts.",
+    "This supplement does not replace the strict probe/Binder archives or the native build evidence."
+  ]
+}
