@@ -144,6 +144,10 @@ Una ejecución está limitada a 60 seconds por defecto; al agotarse el tiempo, e
 
 La mayoría de teléfonos y tabletas usan `arm64-v8a`. Usa `x86_64` baseline para emuladores o dispositivos x86_64. Si no estás seguro, instala `universal`, que contiene ambos ABI y es algo más grande pero la opción más segura.
 
+#### Dónde puedo resolver problemas de instalación y ejecución?
+
+Consulta la [guía de solución de problemas (en chino)](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/troubleshooting.md) para un script mínimo, comprobaciones de activación, Android, ABI, tamaño de página, tiempo de espera, límites de salida e importaciones, y los datos necesarios para informar de un fallo.
+
 ******
 
 ### Compatibilidad
@@ -218,6 +222,8 @@ _2026/09/12_
 
 - `Corrección` Corrige el sondeo pidfd experimental de Android cuando el primer spawn asíncrono comienza con SIGSYS bloqueado, conservando la máscara del llamador y las señales pendientes mediante la alternativa waiter existente. El runtime de diez parches supera las 31 sondas sin cambios (310/310) y los ocho tests Binder completos (80/80) en cinco entornos nativos de 4 KiB. La evidencia de compilación recuperada declara los códigos de salida originales perdidos y archiva por separado el primer fallo de inicio ART. Rebase JSC y Release siguen pendientes para los nuevos binarios; los oficiales no cambian
 - `Corrección` Corregir el aborto de inicio experimental de JavaScriptCore en x86_64 nativo de 16 KiB reconstruyendo WebKit fijado con configuración explícita de páginas grandes, JIT y asignadores y reenlazando Bun: dos rondas Binder pasan en AVD de 4 KiB y 16 KiB (32/32). Los binarios oficiales y su límite de 4 KiB no cambian; la aceptación Release es independiente
+- `Mejora` Vincular un candidato JSC de páginas grandes con diez parches por separado, exigiendo dos compilaciones limpias de Bun idénticas, códigos de salida reales conservados e inputs JSC reutilizados exactos. Las herramientas Binder aisladas usan el nuevo bloqueo vinculado al código; se conservan los binarios históricos y oficiales, y la validación de dispositivos y Release sigue separada
+- `Mejora` Añadir una guía de diagnóstico en chino con un script mínimo, comprobaciones por síntoma, causa y acción, y pautas acotadas para informar de fallos; enlazarla desde los diez idiomas del README sin cambiar las capacidades del runtime
 - `Mejora` Completa la regresión Samsung del runtime de diez parches sin cambios: ARM64 nativo API 32 / 4 KiB y API 36 / 16 KiB superan cada uno dos rondas de 31 sondas (62/62) y dos rondas completas de ocho tests Binder (16/16), con APK idénticos en ambos dispositivos. Siete entornos nativos suman 434/434 sondas y 112/112 Binder. Vincula las pruebas de fuente, APK y limpieza sin recompilar código nativo ni operar AVD; el rebase JSC, la matriz ampliada y Release siguen pendientes
 - `Mejora` Añadir un observador SIGSYS independiente de prueba: cuatro fallos en ARM64 nativo con API 28 identifican directamente pidfd_open, con fallos equivalentes sin seguimiento y controles correctos en API 31. Vincular evidencia original, conservar el fallo inicial de la herramienta y verificar reenvío de señales, rechazo de alteraciones y limpieza; el diagnóstico no valida un nuevo runtime, Binder ni Release
 - `Mejora` Añadir dos pruebas fijas de spawn asíncrono con SIGSYS bloqueada sin cambiar las 29 definiciones originales ni los bytes nativos: cuatro entornos nativos de 4 KiB superan 248/248, pero Sony API 28 falla dos veces en ambos modos nuevos con salida 159 (58/62 en total). Conservar los cuatro fallos en un archivo estricto separado y mantener pendiente la validación de compatibilidad; limpiar paquetes, procesos UID y el AVD de esta sesión, sin nueva aceptación de Binder, 16 KiB ni Release

@@ -1,12 +1,12 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 接下来是 JSC 候选 rebase、扩展矩阵和 Release 门槛.
+本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 十补丁大页 JSC 的两次新 clean Bun 构建现已完成并取得相同成品与 actual exit 0, 独立候选等待本批次设备回归; 扩展矩阵与 Release 门槛仍开放.
 
 更新日期: 2026-09-13
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁原 25 项探针已有六环境证据; 相同 29 项套件在七个原生环境累计通过 406/406, 含六个 4 KiB 环境及 Samsung ARM64 16 KiB, 四种硬 FD 上限模式均已有大页证据; 现有完整 8 项插件 Binder 分批累计十二原生环境 192/192, 含三星 ARM64 16 KiB, 已补齐 API 28-32 x86 版本覆盖), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 大页 JSC 候选已通过 x86_64 双页大小 Binder 32/32, 并新增有界七模式压力 28/28; x86 的 16 KiB 用户空间页为模拟模式, 与 ARM64 硬件页、官方发行线及最终 Release 验收分开.
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁原 25 项探针已有六环境证据; 相同 29 项套件在七个原生环境累计通过 406/406, 含六个 4 KiB 环境及 Samsung ARM64 16 KiB, 四种硬 FD 上限模式均已有大页证据; 现有完整 8 项插件 Binder 分批累计十二原生环境 192/192, 含三星 ARM64 16 KiB, 已补齐 API 28-32 x86 版本覆盖), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 历史九补丁大页 JSC 候选已通过 x86_64 双页大小 Binder 32/32, 并新增有界七模式压力 28/28; x86 的 16 KiB 用户空间页为模拟模式, 与 ARM64 硬件页、官方发行线及最终 Release 验收分开.
 
 历史阻断: 九补丁的 31 项套件曾在四个 4 KiB 环境通过 248/248, Sony API 28 两轮只有 29/31, 四次 exit 159. 后续独立观察器已直接捕获 pidfd_open (434) 的 SIGSYS; 十补丁的修复和新本地成绩见上文. 原失败和当时的源码假设说明保留于 [历史报告](docs/compatibility/2026-09-13-m3-blocked-async.md), 不把旧 406/406 转成新模式的成功证据.
 
@@ -17,7 +17,7 @@
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
 | 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
 | 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. JSC 候选仍为九补丁, 需独立 rebase/build/regression; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
+| 当前缺口 | 十补丁原 31 项与八项 Binder 在七环境通过 434/434、112/112, 含三星 API 32/4 KiB 和 API 36/原生 ARM64 16 KiB. 新十补丁 JSC 已取得两次一致 clean Bun 构建, 本批次双页大小 Binder/压力回归待完成; 其余 syscall/API/FD/OEM、Android FD 70000/UNSHARE/watch/reload、长时压力和 paired APK/source Release 仍开放 |
 
 ## 如何阅读这份路线图
 
@@ -273,6 +273,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 条目清单:
 
+- [x] (构建/x86_64) 将大页 JSC 候选独立 rebase 到十补丁 `a9c76a599`: 两个新 Bun checkout 完成完整离线构建, 两个 actual driver exit 均为 0, source head/tree/clean 与最终 link/map/strip 日志已绑定. 两份完整 Bun 均为 90609488 bytes / `a237dc8c...7f8dcd5`, ELF 至少 16 KiB 对齐; 精确复用两套已独立构建的 JSC 库/config 和原上游 ICU, 新 WebKit/ICU 构建数为 0. [独立候选锁](tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json) 与原九补丁锁及十补丁 baseline 证据分开, 不继承旧设备成绩; 新防漂移门禁纳入 189 项 Node tests. (2026-09-13, G1, 新设备/Release 另计)
 - [x] (构建) 当前两个官方 ELF 的所有 `PT_LOAD` segment 至少 16 KB 对齐.
 - [x] (构建/发布) debug/release 三类 APK 均通过 `zipalign -c -P 16 4` 与包内摘要验证; 最终 v0.2.0 arm64-only/universal 的原生 arm64 安装后 `nativeLibraryDir` 摘要已通过真机验证, 见 [发布报告](docs/compatibility/2026-09-08-v0.2.0-release.json). (2026-09-08, G1/G2)
 - [ ] (设备/发布) 补齐最终签名 x86_64 APK 的安装后摘要与完整原生执行验收, 不用 debug CI 代替最终签名产物测试.
@@ -330,7 +331,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (发布) 用平实语言重写 README 模板, 插件中心说明与 changelog 的全部 10 语言文案源, 重新生成 36 个文档产物并通过 `--check` 与 Python 单元测试; 术语, 数字与兼容声明和代码事实保持一致. (2026-09-02, G1)
 - [x] (发布/测试) 扩充 `samples/` 示例库: 5 个带注释的示例覆盖引擎确认, `fetch` 网络请求, 私有工作目录文件读写, stdout/stderr 行为和 TypeScript 类型用法; 生成器门禁检查精确清单, 首行 `"bun";`, 注释, 相对导入和依赖安装命令, instrumentation 直接执行仓库中的原始示例资产并以设备本地 HTTP 端点验证 `fetch`, 10 语言 README 与 changelog 均已同步. Sony XQ-DQ72 API 33, Redmi 22120RN86C API 33 与 Xiaomi 23046RP50C API 35 arm64 真机均 5/5 通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G1/G2)
-- [ ] (发布) 新增 `docs/troubleshooting.md` 排错指南: 按 "症状 -> 原因 -> 处理" 组织常见问题 (`"bun";` 指令未被识别, 插件未激活, 运行超时, 输出被截断, Android 版本过低导致的 `SIGSYS`, npm 依赖导入失败), 与 10 语言 README 的常见问题口径一致.
+- [x] (文档) 新增 [排错指南](docs/troubleshooting.md): 用最小脚本与 "症状 -> 原因 -> 处理" 表覆盖引擎识别、激活/权限、ABI/API/页大小、超时、输出超限、源码上限、npm/相对导入、AutoJs6 globals/Java bridge 及生命周期问题. 十语言 README FAQ 均有明确语言的入口, 与正式 API 33+ 和实验/Release 边界一致; generator 与 11 项 Python tests 通过. (2026-09-13, G0/G1)
 - [ ] (发布) 把 `docs/compatibility/*.json` 设备报告汇总为人类可读的兼容矩阵 (设备, API, ABI, 页大小, 测试范围, 结论), 并在新增设备报告时同步更新; 优先用脚本从 JSON 生成, 避免手工维护漂移.
 - [x] (测试/文档) 为固定 25 项独立探针新增可重复归档工具, 对两轮原始 instrumentation 与 JSON、当前构建 receipt/源码、安装后 APK/runtime/helper 摘要及每轮/最终 UID 清理重新校验, 拒绝失败、混用 APK 与重复环境, 使用独占创建保留历史文件. 新增四组含负向变体的单元测试并接入 CI; 首次用于 API 29/32 的 100/100 报告. 这不是完整历史兼容矩阵生成器. (2026-09-12, G1/G2)
 - [ ] (插件/发布) 审计脚本运行失败时用户可见的错误与诊断文案, 确保关键失败场景 (未激活, 超时, 输出超限, 系统版本不支持) 在 10 种语言资源中都有可理解的提示, 并与 `strings.xml` 保持一致.

@@ -5,6 +5,7 @@ import { MODES, PRESSURE_CLASS, PRESSURE_TEST, REFERENCE, fixtureFacts, validate
 import { PACKAGE, buildInputs, validateInstrumentation } from "../../api28/binder/binder-common.mjs";
 import { KIND } from "./pressure-common.mjs";
 import { summarizePressureRuns, validatePressureRun } from "./archive-pressure.mjs";
+import { loadRebasedJscCandidate } from "../rebased-common.mjs";
 
 export function observation(mode, pages = 16384) {
     const targets = { "jit-off": "LLInt", baseline: "Baseline", dfg: "DFG", ftl: "FTL" };
@@ -155,4 +156,28 @@ test("pressure summary requires both page sizes and the same APKs, without infla
     assert.throws(() => summarizePressureRuns([records[0], records[0]]));
     records[1].testApk.sha256 = "e".repeat(64);
     assert.throws(() => summarizePressureRuns(records));
+});
+
+test("rebased pressure evidence binds the ten-patch source and cannot borrow historical bytes", () => {
+    const r = runFixture(); // Synthetic record, never written over historical evidence.
+    const candidate = loadRebasedJscCandidate();
+    const baseline = JSON.parse(readFileSync(new URL("../../api28/runtime-evidence.json", import.meta.url), "utf8"));
+    r.runtime = { ...baseline.identity, variant: candidate.variant };
+    r.build.runtime = r.runtime;
+    r.build.source = baseline.source;
+    r.build.jscCandidate = candidate;
+    r.build.runtimes = baseline.artifacts.map(a => a.abi === "x86_64" ? candidate.artifact : a)
+        .map(({ abi, bytes, sha256 }) => ({ abi, bytes, sha256 }));
+    r.payloads[0].bytes = candidate.artifact.bytes;
+    r.payloads[0].sha256 = candidate.artifact.sha256;
+    validatePressureRun(r, rawRounds(r));
+    for (const mutate of [
+        x => { x.build.source = runFixture().build.source; },
+        x => { x.build.jscCandidate = runFixture().build.jscCandidate; },
+        x => { x.payloads[0].sha256 = runFixture().payloads[0].sha256; },
+        x => { x.build.jscCandidate.builds[1].driver.exitCode = null; },
+    ]) {
+        const changed = structuredClone(r); mutate(changed);
+        assert.throws(() => validatePressureRun(changed, rawRounds(changed)));
+    }
 });

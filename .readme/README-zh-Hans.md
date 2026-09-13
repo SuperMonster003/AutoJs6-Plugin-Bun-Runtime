@@ -144,6 +144,10 @@ Bun 会调用 Linux 的 `close_range` 系统调用 (syscall 436), 而 Android 12
 
 绝大多数手机和平板使用 `arm64-v8a`. 模拟器或 x86_64 设备使用 baseline `x86_64`. 不确定时安装 `universal`, 它同时包含两种 ABI, 体积稍大但最稳妥.
 
+#### 安装或运行出现问题时如何排查?
+
+请查看[排错指南](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/troubleshooting.md), 从最小脚本开始, 按症状检查激活, Android/ABI/页大小, 超时, 输出超限与导入问题, 并按指南整理问题报告所需信息.
+
 ******
 
 ### 兼容性
@@ -218,6 +222,8 @@ _2026/09/12_
 
 - `修复` 修复实验版 Android 在屏蔽 SIGSYS 时首次异步 spawn 的 pidfd 探测崩溃, 通过既有 waiter 回退保留调用线程掩码及 pending 信号. 十补丁运行时在五个原生 4 KiB 环境通过原 31 项探针 (310/310) 和完整八项 Binder (80/80). 恢复构建完成证据时明确保留原退出码缺失, 单独归档首次 ART 启动失败. JSC rebase 及 Release 门禁仍开放, 官方字节不变
 - `修复` 修复实验版原生 x86_64 16 KiB 的 JavaScriptCore 启动中止: 以显式大页/JIT/分配器配置重编 pinned WebKit 并重新链接 Bun, 在 4 KiB 和 16 KiB AVD 各两轮完整 Binder 通过 (32/32). 官方字节及其 4 KiB 防护保持不变, Release 验收另行进行
+- `优化` 单独绑定十补丁大页 JSC 候选, 强制两份一致的 clean Bun 构建, 保留真实驱动退出码并精确复用原 JSC 输入. 隔离 Binder 工具改用绑定新源码的独立锁, 历史及官方字节保持不变; 设备与 Release 验收另行记录
+- `优化` 新增中文排错指南, 提供最小脚本, 症状/原因/处理对照及有界问题报告指引, 并从十语言 README 链接, 不改变运行时能力
 - `优化` 完成未改动十补丁运行时的三星回归: 原生 ARM64 API 32 / 4 KiB 与 API 36 / 16 KiB 使用完全相同的 APK, 各通过两轮原 31 项探针 (62/62) 和两轮完整八项 Binder (16/16). 七个原生环境累计探针 434/434, Binder 112/112. 精确绑定源码, APK 和清理证据, 未重编译 native 或操作 AVD; JSC rebase, 扩展运行时矩阵和 Release 门禁继续开放
 - `优化` 新增独立 test-only SIGSYS 观察器: 原生 ARM64 API 28 四次失败直接定位 pidfd_open, 未追踪对照同样失败, API 31 对照通过. 绑定原始证据, 保留初版工具失败, 验证信号转发, 防篡改和清理; 此诊断不等于新运行时, Binder 或 Release 验收
 - `优化` 新增两个固定 blocked-SIGSYS 异步 spawn 探针, 保持原 29 项定义和 native 字节不变: 四个原生 4 KiB 环境通过 248/248, 但 Sony API 28 的两个新模式各失败两次, exit 159 (整体 58/62). 四次失败独立严格归档, 兼容门禁保持未通过; 清理测试包, UID 进程和本轮 AVD, 不新增 Binder, 16 KiB 或 Release 验收结论

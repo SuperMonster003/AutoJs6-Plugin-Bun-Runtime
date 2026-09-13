@@ -81,6 +81,10 @@
     {
       "q": "Qué APK debo instalar?",
       "a": "La mayoría de teléfonos y tabletas usan `arm64-v8a`. Usa `x86_64` baseline para emuladores o dispositivos x86_64. Si no estás seguro, instala `universal`, que contiene ambos ABI y es algo más grande pero la opción más segura."
+    },
+    {
+      "q": "Dónde puedo resolver problemas de instalación y ejecución?",
+      "a": "Consulta la [guía de solución de problemas (en chino)]({{ troubleshooting_url }}) para un script mínimo, comprobaciones de activación, Android, ABI, tamaño de página, tiempo de espera, límites de salida e importaciones, y los datos necesarios para informar de un fallo."
     }
   ],
   "h3_plugin_interface": "Interfaz del plugin",

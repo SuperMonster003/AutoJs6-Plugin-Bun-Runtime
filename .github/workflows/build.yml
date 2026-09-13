@@ -70,6 +70,7 @@ jobs:
             tools/bun-runtime/experimental/api28/signal-trace/trace-evidence.test.mjs \
             tools/bun-runtime/experimental/api28/binder/binder-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/jsc-common.test.mjs \
+            tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/pressure-common.test.mjs \
             tools/bun-runtime/release/release-asset-common.test.mjs
 

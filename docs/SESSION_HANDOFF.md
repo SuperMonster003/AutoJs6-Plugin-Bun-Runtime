@@ -1,4 +1,23 @@
-# 会话交接: 十补丁构建恢复与七环境原套件回归完成
+# 会话交接: 十补丁大页 JSC 构建完成, 正在准备设备回归
+
+本轮从 `6212011` 的干净状态继续. 两个新 Bun checkout 已完成十补丁大页 JSC 构建,
+实际 driver exit 均为 0, 完整成品均为 90609488 bytes / SHA-256
+`a237dc8c13fbef6366a36769ea9a6d729fd24307b0df93bb051be8d997f8dcd5`.
+复用已核验的两套历史 JSC 库, 没有重编 WebKit/ICU; 新独立
+[候选锁](../tools/bun-runtime/experimental/webkit-x86_64-16k/rebased-candidate.lock.json) 已通过 ELF/源码/库/日志核验.
+189 项 Node tests、生产四项标准 Gradle 检查、IDE build 与文档生成/11 项 Python tests 已通过.
+opt-in JSC 主/测试 APK 已构建成功 (49 秒, 80 tasks), 尚未运行本批次设备测试.
+不重启已完成的 native 构建.
+先读本轮本机记录 `E:/.codex-tmp/jsc-ten-patch-20260913/SESSION_HANDOFF.local.md`,
+其中有两份 driver/log、进程、输入与 AVD 所有权. 本轮只启动 emulator-5580/5582;
+原有 5554/5560/5562 未干预. M9 排错指南及十语言入口已实现.
+
+用户新增要求: 如需三星, 明显说明型号/API/页大小并设置 10 分钟等待窗口,
+期间定期轮询 `localhost:50781`. 本轮所选 x86 JSC 小节暂未请求三星.
+
+下方为此前已完成的 baseline/Samsung 阶段, 不把它的构建或设备结果转移给新 JSC 候选.
+
+## 此前: 十补丁构建恢复与七环境原套件回归完成
 
 更新: 2026-09-13 (Asia/Shanghai). 当前实验 revision 为 `1.4.0+a9c76a599`.
 **已有 native 成品的构建完成证据已恢复; 五个本地与两台三星共七环境原套件回归通过.**
