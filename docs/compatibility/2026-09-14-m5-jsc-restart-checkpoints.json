@@ -1,0 +1,582 @@
+{
+  "schemaVersion": 1,
+  "kind": "jsc-restart-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "diagnosticReport": {
+    "path": "docs/compatibility/2026-09-14-m5-jsc-restart-diagnostics.json",
+    "bytes": 533060,
+    "sha256": "12f162e8dcb4773839096e2a3f8dbf242699bef974043a11fedca16a37f98bce"
+  },
+  "projectSourceCommit": "e07058d210f15aa6ac3f9350f7393b9dc6dcfb6e",
+  "compiledInputEncoding": "git-canonical-utf8-lf",
+  "compiledInputsMatched": 89,
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 17,
+    "tasks": 80,
+    "executed": 12,
+    "upToDate": 68,
+    "receipt": {
+      "bytes": 18767,
+      "sha256": "59d4e2ed53b0007a3ae8da7fe780e8e5340704d4d17221bf1c8618279dde4c26"
+    },
+    "log": {
+      "bytes": 7747,
+      "sha256": "832deb12f27e392ed2a3f6b65ac191a9ec6db43ded3bb3a723b1e2862f175260"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42956110,
+        "sha256": "1183bd7fd8edcaf632281e137c42c2800a7b68a4543247a9afd0ad3ed0030655"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2511911,
+        "sha256": "f83fb34588b698ff6a2c89b737afe06f4ef4a1178d83c7b29ec302d7c78f4bbf"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "preserved": {
+    "historicalReports": 114,
+    "historicalMatrixRows": 217,
+    "protectedRuntimeAndFixtureFilesCheckedBeforeDevice": 94,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchangedAtPrecheck": true
+  },
+  "sourceReview": {
+    "at": "2026-09-14T01:45:58Z",
+    "scope": "Pinned source and current diagnostic association; no dynamic inline graph, PC-map state or historical root-cause proof",
+    "repositories": [
+      {
+        "repository": "bun",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "statusPorcelain": ""
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "statusPorcelain": ""
+      }
+    ],
+    "sources": [
+      {
+        "repository": "bun",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "path": "src/jsc/modules/BunJSCModule.h",
+        "bytes": 40554,
+        "gitBlob": "4b89e7a19c749fcfbdf7038ef603557e204cb936",
+        "sha256": "0bcf149c473d136ce431dd648e57b40b3d3834c3c798e3828abda6263d177c5e"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/SamplingProfiler.cpp",
+        "bytes": 53816,
+        "gitBlob": "8a87e02f21fc358ce47c8e93f193541c5c120c11",
+        "sha256": "e6f118d269ad441bbe91f5f34caae523292fa9610f5b341039079bf4c63e93eb"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/VM.cpp",
+        "bytes": 88926,
+        "gitBlob": "1909aa926b0b18e40c978af30e4225e166c687c8",
+        "sha256": "158fab905053957f7a61d79639fd1495870da82607c35990565f03c6f039b47f"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/VM.h",
+        "bytes": 60734,
+        "gitBlob": "cf23d183cee9d2037c9055093c7808c2c95477ef",
+        "sha256": "0b7e9f39d0080cc9f95ca12444e8279fae2f9986dd1aaba09d4c1597584d8824"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/OptionsList.h",
+        "bytes": 60805,
+        "gitBlob": "f7b49fa805da841a68b6fb50a1d2c74aaf177a4c",
+        "sha256": "534e6ec4ddf79ca67e225a6b8dd13fac9e5cb4ca49b3933cc7503e5b12f80965"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/ScriptExecutable.h",
+        "bytes": 8526,
+        "gitBlob": "bd0421c6f367db1107cc221fc4c0e9623ad70938",
+        "sha256": "9bb705d8d2453f17117d967917b749b18beec3b980415dc8d1cb214ebb6f6111"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/dfg/DFGCapabilities.cpp",
+        "bytes": 4994,
+        "gitBlob": "7674201db30bd38a1e61a10cfb4a4017e5a99f89",
+        "sha256": "af7b608d206bd7f924ee10c3fb40e4290ba91bd5e00d1ca14806192a5dccb832"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp",
+        "bytes": 679610,
+        "gitBlob": "489c56adb37d464ed41b92b1ae7718688f65687a",
+        "sha256": "a36c16afd064e021459beb5c945277abdbe57e080e909195b5366c2ecc7d98b1"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLCapabilities.cpp",
+        "bytes": 20421,
+        "gitBlob": "8b4ccb9aece3aae284486c7022a8b22e4aff7d76",
+        "sha256": "ec6af605796d8cbc5950c66354e601c1e4490af3101d9a34a1c5ac511cbea44b"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLState.cpp",
+        "bytes": 6661,
+        "gitBlob": "bfef7f492474e1ce9943c4f1a47f6bb44eecfd05",
+        "sha256": "458bf343451c716d055024b0861f33d35f195e209ae00bc39c2a4821d5403888"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLCompile.cpp",
+        "bytes": 16817,
+        "gitBlob": "3eca75e33a317f439b5427cdd3041cb3b3e1a2b2",
+        "sha256": "6bf299aae4e68353b891ba5e1065953c6080d15a69b9e1c86e36571f5dc4ffc5"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLJITCode.cpp",
+        "bytes": 5459,
+        "gitBlob": "65a220ff040fd3afb08ccbd6844bb2397f964613",
+        "sha256": "d3b78a07cf65ef48f100e52e6cb707d43c340cd036699b030a958ef81ad84bad"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLJITCode.h",
+        "bytes": 3858,
+        "gitBlob": "ac1b7a411e87f11546b7f76006bd24498b58ae77",
+        "sha256": "cfc44f39d8a4a4520b1fc045de613f3d33487478197c016f3ee5690f69299d09"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/bytecode/CodeBlock.cpp",
+        "bytes": 156256,
+        "gitBlob": "d8915876a702ab690ee3eb2253a5d7c2f7a61ce0",
+        "sha256": "0ccd4100c64e712470fc386dd9859f239e4481d538c554b52f4e4de12c7f52c8"
+      }
+    ]
+  },
+  "observedTargetFrameDisappearance": {
+    "reportPointer": "/reports/0/rounds/1/restart/0/evidence",
+    "precedingCapture": {
+      "index": 3,
+      "before": {
+        "compiles": 3,
+        "retries": 2
+      },
+      "after": {
+        "compiles": 3,
+        "retries": 2
+      },
+      "calls": 9847,
+      "callbackMillis": 300.01231100000007,
+      "profileMillis": 304.71520499999997,
+      "stopReason": "deadline",
+      "traces": 119,
+      "distinctTraceTimestamps": 119,
+      "firstTimestamp": 78.862835866,
+      "lastTimestamp": 79.159012356,
+      "frames": 827,
+      "tierFrames": {
+        "LLInt": 236,
+        "Baseline": 118,
+        "DFG": 354,
+        "FTL": 0,
+        "other": 119
+      },
+      "targetFrames": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 118,
+        "FTL": 0
+      },
+      "controlFrames": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 0,
+        "FTL": 0
+      },
+      "phaseFrames": [
+        0,
+        0,
+        118,
+        0
+      ],
+      "phaseWitness": {
+        "timestamp": 78.862835866,
+        "frameIndex": 3,
+        "frame": {
+          "name": "jscRestartPhase3",
+          "category": "LLInt",
+          "location": "#A1yKbK:LLInt:bc#17"
+        }
+      },
+      "unknownTargetFrames": 0,
+      "targetTraces": 118,
+      "topTargetTraces": 118,
+      "distinctDfgTraceTimestamps": 118,
+      "histogram": [
+        {
+          "name": "jscPressureHotLoop",
+          "category": "DFG",
+          "frames": 118
+        },
+        {
+          "name": "invoke",
+          "category": "DFG",
+          "frames": 118
+        },
+        {
+          "name": "runWork",
+          "category": "DFG",
+          "frames": 118
+        },
+        {
+          "name": "jscRestartPhase3",
+          "category": "LLInt",
+          "frames": 118
+        },
+        {
+          "name": "profile",
+          "category": "Unknown Executable",
+          "frames": 118
+        },
+        {
+          "name": "restartDiagnostic",
+          "category": "Baseline",
+          "frames": 118
+        },
+        {
+          "name": "(module)",
+          "category": "LLInt",
+          "frames": 118
+        },
+        {
+          "name": "(unknown)",
+          "category": "Unknown Frame",
+          "frames": 1
+        }
+      ],
+      "overflowFrames": 0
+    },
+    "capture": {
+      "index": 4,
+      "before": {
+        "compiles": 3,
+        "retries": 2
+      },
+      "after": {
+        "compiles": 3,
+        "retries": 2
+      },
+      "calls": 9766,
+      "callbackMillis": 300.01740299999983,
+      "profileMillis": 305.96367599999985,
+      "stopReason": "deadline",
+      "traces": 126,
+      "distinctTraceTimestamps": 126,
+      "firstTimestamp": 79.165923696,
+      "lastTimestamp": 79.466193461,
+      "frames": 753,
+      "tierFrames": {
+        "LLInt": 251,
+        "Baseline": 126,
+        "DFG": 125,
+        "FTL": 125,
+        "other": 126
+      },
+      "targetFrames": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 0,
+        "FTL": 0
+      },
+      "controlFrames": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 0,
+        "FTL": 0
+      },
+      "phaseFrames": [
+        0,
+        0,
+        0,
+        125
+      ],
+      "phaseWitness": {
+        "timestamp": 79.165923696,
+        "frameIndex": 2,
+        "frame": {
+          "name": "jscRestartPhase4",
+          "category": "LLInt",
+          "location": "#A1yKbK:LLInt:bc#17"
+        }
+      },
+      "unknownTargetFrames": 0,
+      "targetTraces": 0,
+      "topTargetTraces": 0,
+      "distinctDfgTraceTimestamps": 0,
+      "histogram": [
+        {
+          "name": "invoke",
+          "category": "FTL",
+          "frames": 125
+        },
+        {
+          "name": "runWork",
+          "category": "DFG",
+          "frames": 125
+        },
+        {
+          "name": "jscRestartPhase4",
+          "category": "LLInt",
+          "frames": 125
+        },
+        {
+          "name": "profile",
+          "category": "Unknown Executable",
+          "frames": 126
+        },
+        {
+          "name": "restartDiagnostic",
+          "category": "Baseline",
+          "frames": 126
+        },
+        {
+          "name": "(module)",
+          "category": "LLInt",
+          "frames": 126
+        }
+      ],
+      "overflowFrames": 0
+    },
+    "targetGatePassedCumulatively": true,
+    "interpretation": "Target calls and current profiler phase continue while target frames disappear and invoke has FTL samples. Association only; actual inlining and PC-map state were not observed.",
+    "actualInlineGraphCaptured": false,
+    "runtimePcMapStateCaptured": false,
+    "historicalFailureRootCauseEstablished": false
+  },
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "avdName": "bun-jsc-pressure-4k-20260912",
+      "pages": 4096,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10226,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10227
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Both package UIDs independently rechecked against the retained numeric-UID raw final ps; full raw text is in diagnostic reports",
+      "finalProcessListing": {
+        "bytes": 16738,
+        "sha256": "939a33f91f9d6ac53e821e7934cf1f1da1667c4bcaa92d9e588bbe13dfb89a79"
+      },
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 124686,
+        "sha256": "5e0b8da0736d8799d4749566339368fc064de3b1be90476c22b0a4833943a927"
+      },
+      "ownedAvd": {
+        "launcherPid": 30052,
+        "startedAt": "2026-09-14T01:34:04Z",
+        "bootConfirmedAt": "2026-09-14T01:34:40Z",
+        "nameBeforeStop": "bun-jsc-pressure-4k-20260912",
+        "stopCommandAt": "2026-09-14T01:35:29Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T01:35:32Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1"
+      }
+    },
+    {
+      "serial": "emulator-5582",
+      "avdName": "bun-jsc-pressure-16k-20260912",
+      "pages": 16384,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10213,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10214
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Both package UIDs independently rechecked against the retained numeric-UID raw final ps; full raw text is in diagnostic reports",
+      "finalProcessListing": {
+        "bytes": 12781,
+        "sha256": "50cc6b2d956f3563713f9530a3bb4f21595e154be3546a9d377d06efa9000051"
+      },
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 102503,
+        "sha256": "fd768cdfed51111f1ae6035ecff4330287833495e4d7038055ef8cfb7824c1d7"
+      },
+      "ownedAvd": {
+        "launcherPid": 35200,
+        "startedAt": "2026-09-14T01:35:37Z",
+        "bootConfirmedAt": "2026-09-14T01:36:09Z",
+        "nameBeforeStop": "bun-jsc-pressure-16k-20260912",
+        "stopCommandAt": "2026-09-14T01:36:51Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T01:36:53Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1"
+      }
+    }
+  ],
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "outerDisplayExit": 0,
+      "files": 42,
+      "tests": 265,
+      "passed": 265,
+      "failed": 0,
+      "receipt": {
+        "bytes": 3701,
+        "sha256": "066d7aea5366bb161e9c246e4d431695271254ecd3ab930e1fe35d49ccee09e3"
+      },
+      "log": {
+        "bytes": 23701,
+        "sha256": "aea89272e46651c3407d9dab1e8f17b83fcacc19ab4416955ae8dabb299460b6"
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 12,
+      "tasks": 96,
+      "executed": 12,
+      "upToDate": 84,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "lintErrors": 0,
+      "lintWarnings": 44,
+      "receipt": {
+        "bytes": 390,
+        "sha256": "4a7daa21f62751d5f21210f7b6173302d661d89034611ae171ebf10607661970"
+      },
+      "log": {
+        "bytes": 8551,
+        "sha256": "ebea589657e0ede3ae705840fe7d63a5d2416f5c65ca6aaec5ea0f93667d51e7"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "problems": [
+        {
+          "message": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+          "kind": "WARNING",
+          "group": "Android Gradle Plugin",
+          "description": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times."
+        },
+        {
+          "message": "'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.",
+          "kind": "WARNING",
+          "group": "Kotlin Compiler",
+          "description": "w: file:///D:/idea-projects/AutoJs6-Plugin-Bun-Runtime/app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt:47:43 'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.\n",
+          "file": "app\\src\\main\\java\\io\\github\\supermonster003\\autojs6\\plugin\\bun\\runtime\\BunExecutionRequest.kt",
+          "line": 46,
+          "column": 42
+        }
+      ]
+    },
+    "officialRuntimeAndSupervisorVerified": true,
+    "toolResponses": {
+      "bytes": 4174,
+      "sha256": "1d1916716f36bf772a1d5d714ea9b2cc54d2e8b41df5c9e7d3e011aab47cebe3"
+    }
+  },
+  "preliminaryUnitFailure": {
+    "phase": "Initial restart validator unit tests, before any build/device run",
+    "driverExit": 1,
+    "passedTests": 5,
+    "totalTests": 6,
+    "failure": "Synthetic ps fixture used root instead of the numeric UID emitted by ps -o UID; existing countUidProcesses rejected the entry",
+    "repair": "Correct only the synthetic fixture to UID 0; production parser and cleanup rules unchanged",
+    "receipt": {
+      "bytes": 389,
+      "sha256": "262e2b29a02fce8f1aefd238bd5a557454d2860b69d84593d6590b6a71973e84"
+    }
+  },
+  "preliminaryCheckpointToolFailure": {
+    "phase": "Local checkpoint writer before writing any archive or registry entry",
+    "driverExit": 1,
+    "failure": "The local receipt helper incorrectly applied CRLF normalization to binary libs/bun-runtime-api.aar and rejected its otherwise unchanged hash",
+    "repair": "Match the existing canonical input contract: retain raw AAR bytes; normalize text inputs only",
+    "affectedDeviceOrBuildRuns": false,
+    "archiveOrRegistryWrittenBeforeFailure": false,
+    "receipt": {
+      "bytes": 459,
+      "sha256": "10882666bfeb596b5fc4f9a7b5a7658a3a9dcdd3c4f485d8d3585f5eded7f39f"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 4940,
+      "sha256": "55deeb3c47d94b7852a6c5a39963a71492ae3eb0805fca589da7614b93f694fc"
+    },
+    "device-drivers.json": {
+      "bytes": 4052,
+      "sha256": "b455a8a17f403d5068a74d26278297a4ccd49874eba79ba229128e00dfda28e5"
+    },
+    "device-completed.json": {
+      "bytes": 9572,
+      "sha256": "afc13412424bff20ae675f0532c20969ee37efd11a321808220be8ab23517bd6"
+    },
+    "source-review.json": {
+      "bytes": 761,
+      "sha256": "08656192b504901901f77234a36ba002ea13dbaf3b817a07df7ef759f504edfc"
+    },
+    "ftl-source-review.json": {
+      "bytes": 5190,
+      "sha256": "6d28bbab1886b046a0134a10f55d546e5071c74c50ab64a4d4dd80a9afa1ae58"
+    }
+  }
+}

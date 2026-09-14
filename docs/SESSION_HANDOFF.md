@@ -1,12 +1,43 @@
-# 当前阶段: 固定四段 profiler 重启诊断
+# 会话交接: 固定四段 profiler 诊断与 FTL 源码收敛完成
 
-2026-09-14, 从干净 master7081e91继续. 本机交接为
+2026-09-14, 从干净 master7081e91继续, 源码/构建提交e07058d. 本机交接为
 `E:/.codex-tmp/jsc-restart-diagnostic-20260914/SESSION_HANDOFF.local.md`.
-新增独立四段重启/清空与target-absent对照, 保留原pressure和sampling全部文件不变.
-固定Bun/WebKit两文件完整SHA/Git blob重新核验; start解除pause, timer线程不会因pause退出.
-本源码检查点相关26项Node已通过, 尚未构建新APK或执行新设备观测.
-下一步只复用十三补丁JSC, 各页大小两轮固定双模式, 记录真实exit1和原始UID清理.
-受控目标缺席不等于历史DFG样本不足复现, 不增加旧套件接受数; 无native重建.
+原构建/设备/磁盘与前一批sampling本机交接仍在下文, 完整历史及失败保留.
+
+- M5新增独立四段命名profile与target-absent对照, 通过真实服务执行; 原pressure/sampling
+  资产/Java/validator/预算、原八项Binder、35探针及production/native完全不变.
+  新的6组Node含反向控制已纳入CI. 收集完成与target/restart/control语义分别记录.
+- 只构建一批主/test APK, actual0/17s/80tasks(12执行), 89canonical输入逐项匹配e07058d.
+  原十三补丁JSC90609496bytes/SHA17c7941a...f20e98a8直接复用; Bun/WebKit/ICU重建均0.
+  不重复运行一次性build-apks.py或run-devices.py, 不补回已清理的native缓存.
+- API36原生x86用户4KiB/16KiB各两轮固定双模式, 8次进程诊断/32次profile完整收集,
+  八次阶段/时间序列均符合restart/clear预期; 四次正常模式累计target gate通过,
+  四次target-absent明确目标调用0且有控制函数帧, 真实exit1/失败终态/完整输出均保存.
+  没有APK/设备失败或重试; 受控缺席不等于自然低采样复现.
+- 新关键现象: 4KiB第二轮第三段目标DFG118/invokeDFG118; 第四段仍有9766次算术检查调用,
+  126trace, 目标全部层级/未知帧0, invokeFTL125, 当前phase4帧125. 两段compiles/retries均3/2,
+  时间区间有序不重叠, 直方图无溢出. profiler在目标帧缺失时仍采到当前工作.
+- 两个固定Git工作树干净, 14个完整Bun/WebKit源文件匹配pinned Git blob/SHA.
+  noFTL不禁止内联; FTL PC映射受独立VM开关控制, ensureSamplingProfiler/profile不直接设置;
+  恢复的内联帧使用机器tier. 本轮没有实测内联图/map开关/指针, 原失败也缺逐次数据,
+  所以不能确定内联/映射根因或将新现象等同历史2<3. 额外选项对照尚未执行.
+- 两包卸载, 四UID10226/10227和10213/10214均0, 原始数字UID ps与空包清单已保存并重验.
+  仅关闭owned AVD5580/5582; 五台手机、默认ADB、无关API37/5594未操作.
+  两台x86内核/MMU页4096, 用户16384仍为模拟ABI; 不作为ARM64硬件或页大小性能比较.
+- 完整Node42文件265/265, 官方runtime/supervisor和生产四项Gradleactual0/12s通过,
+  96tasks/12执行/84up-to-date, JVM21项复用既有成功结果. IDE直接isSuccess=true,
+  仅两个既有SDK XML/Bundle.get警告. 初始5/6构造测试的root/数字UID不符另档,
+  只修正模拟输入, 未放宽生产解析器. 最终文档/矩阵/Python和提交结果见本机追加记录.
+- [新动态报告](compatibility/2026-09-14-m5-jsc-restart.md)与
+  [FTL源码补充](diagnostics/2026-09-14-jsc-restart-ftl-source-review.md)单独绑定.
+  原114报告/217矩阵行保持原样, 新两份仅索引. Baseline560/128、原JSC32/28不增加,
+  官方API33+及distributionReady=false不变, 没有push/Release.
+
+下一步: 对调用者FTL/目标帧消失做单因素、有固定上限的独立观测, 先证明选项实际生效,
+优先取得内联决定或PC映射开启前后差异, 保留真实机器tier; 无FTL转换或未消失就记录未复现.
+不能用noInline/屏蔽FTL/减门槛让原压力通过. 历史2<3根因与稳定性仍开放, 原API28watch
+SIGABRT也未解释; broader syscall/FD/API/OEM、长时压力/性能和Release继续开放.
+当前无需新增设备、资料或手动操作. 用户已完成磁盘两项清理, 不重复请求或执行.
 
 ## 前一批采样诊断交接
 

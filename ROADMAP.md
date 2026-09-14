@@ -4,10 +4,18 @@
 
 更新日期: 2026-09-14
 
+最新独立[四段 profiler 诊断](docs/compatibility/2026-09-14-m5-jsc-restart.md)已完成:
+双页大小各两轮固定双模式, 8次进程诊断/32次profile, 阶段与时间区间全部符合重启/清空预期,
+四次目标缺席均完整保留实际exit1. 4KiB第二轮第四段目标仍调用9766次却没有目标帧,
+同时出现125个调用者FTL帧; [固定源码补充](docs/diagnostics/2026-09-14-jsc-restart-ftl-source-review.md)
+收敛到内联与PC映射的待验证条件, 尚未捕获实际内联/映射状态或确定历史2<3根因.
+原夹具/预算/native不变, 诊断不增加原套件成绩. 两包/四UID原始清理记录与两owned AVD收尾已保存.
+
 开发环境已完成一次有清单的磁盘维护: 退役四台历史专用 AVD, E 盘实际增加约11.55GiB;
 23个Bun独立构建目录的缓存/目标文件在WSL内部释放约133.04GiB, 完整成品/符号/日志保留.
-VHDX离线压缩尚未执行, 不能把内部释放量当作Windows实际增加量.
-[维护指南](docs/storage-maintenance.md)与[当前交接](docs/SESSION_HANDOFF.md)记录保留范围和手动步骤.
+用户已完成VHDX离线压缩和旧Gradle备份删除; 压缩receipt实际exit0, VHDX缩小139881086976 bytes,
+约130.27GiB. 这与WSL内部释放量分别记录, 没有待执行手动清理.
+[维护指南](docs/storage-maintenance.md)与[当前交接](docs/SESSION_HANDOFF.md)记录保留范围和完成证据.
 另完成[固定JSC采样源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md),
 未新增设备成绩或关闭DFG/watch根因门禁.
 
@@ -385,6 +393,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (诊断/源码) 逐字节绑定固定 Bun/WebKit 的 profiler 与测试辅助源码, 确认微秒间隔、pause/clear/start、内联帧展开和编译计数边界; 列出原失败缺少的逐次采样字段. [源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md)不代替动态根因、稳定性或新套件验收. (2026-09-14, G0)
 - [x] (诊断/工具) 新增独立有界 DFG 取证资产、真实 Binder instrumentation 和严格归档器, 保留逐次时间/调用/trace/层级/优化计数与原门槛结果; 构造反向测试拒绝把样本不足exit1改成成功. 原七模式资产/Java/validator及预算不变, 新工具纳入CI. [工具说明](tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/README.md). (2026-09-14, G1)
 - [x] (诊断/设备) 同一87输入APK和原十三补丁JSC字节在API36原生x86双页大小各收集两轮DFG诊断, 目标样本9/16/103/91, 均首次profile达到原门槛. 保存全函数与目标层级差异、四UID归零和两owned AVD关闭记录; 未复现历史2<3, 不推断根因或稳定性, 不增加原套件接受数. [动态报告](docs/compatibility/2026-09-14-m5-jsc-sampling.md). (2026-09-14, G2, 非原压力/Release验收)
+- [x] (诊断/工具/设备) 新增独立固定四段命名profile及target-absent对照, 同一89输入APK与原十三补丁JSC在双页大小各两轮收集8次进程诊断/32次profile. 全部阶段与时间区间符合重启/清空预期; 四次真实exit1连同失败终态、完整输出和原始双UID清理保留. [动态报告](docs/compatibility/2026-09-14-m5-jsc-restart.md)完成多capture与受控失败传输覆盖, 不等同自然低采样复现或原压力验收. (2026-09-14, G1/G2)
+- [x] (诊断/源码) 绑定14个固定Bun/WebKit源文件, 核对noFTL/内联属性分离、条件PC映射、FTL findPC和机器tier归属. 与4KiB第二轮第四段9766次目标调用/126trace/0目标帧/125调用者FTL帧关联, [源码补充](docs/diagnostics/2026-09-14-jsc-restart-ftl-source-review.md)明确缺少实际内联图与映射状态. 原2<3根因门禁仍开放, 下一步预先固定单因素诊断且先证明选项生效. (2026-09-14, G0/诊断)
 - [x] (构建/x86_64) 独立 rebase 到十二补丁 `06e518f73`, 两个全新 clean Bun 构建实际 exit 0/0, 21 输入和 source head/tree 均未漂移. 两份完整 90609496-byte 成品 `34edd4b9...a75b1ad` 一致且完整 ELF 审计通过. 精确复用两套独立 JSC 库/config 和原 ICU, 新 WebKit/ICU 构建 0/0. [构建归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json) 保留原始换行摘要/精确映射及此前 recorder 失败, 不重新编译或改写旧证据. (2026-09-13, G1)
 - [x] (设备/x86_64) 十二补丁候选在 API 36 的 4 KiB/16 KiB 用户页各两轮原八项 Binder 通过 32/32. 同一 APK 的 83 输入匹配 `0210e82`, 安装字节/签名/完整 payload、二十条生命周期和两个 UID 清理通过. 初次 16 KiB lowmemorykiller 导致预热 DeadObjectException 的整批失败独立归档; 同 APK 完整两轮重试通过, 无配置/源码/预算 workaround. [Binder 与失败范围](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md). (2026-09-13, G2, 非 Release)
 - [x] (测试/x86_64) 同一十二补丁 APK 双页大小各两轮原七模式压力通过 28/28, 原 fixture/validator/预算不变. LLInt/Baseline/DFG/FTL 实际采样、GC/Wasm 和 64 个 worker 正常退出均通过; AT_PAGESZ/sysconf/getconf 一致, 两台内核/MMU 页均为 4 KiB. [压力归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-pressure.json) 与 [清理补充](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-checkpoints.json) 分开. 仅关闭本轮两个 AVD, 不计入 baseline 330/330 或 80/80, 不扩张为 ARM64 硬件页/压力、全 JIT/Wasm、长时性能或 Release. (2026-09-13, G1/G2)
@@ -455,6 +465,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (插件/发布/测试) 完成 [运行错误与诊断审计](docs/compatibility/2026-09-13-m9-localized-errors.md): 17 个错误/帮助资源覆盖十语言, 10 个稳定错误码使用本地化摘要, 预热缓存保留事实并在返回时翻译, 16 KiB 诊断截断保留完整 Unicode 字符. 未激活/未启用与 Android 13 要求的帮助直接从同一组 `strings.xml` 生成到 README/插件说明, 明确绑定前宿主与系统安装门槛的归属. 两台 native ARM64 API 33/35 / 4 KiB 的原八项 Binder 两轮共 32/32; 独立语言回归含 240 个真实错误/finished 观察. x86 API 36 / 16 KiB 用户页 ABI 两轮确认十语言缓存拒绝, 不计作 Bun 执行成功. 三环境新增 JUnit 共 12/12, 包/六个 UID 与本轮 AVD 均清理. 原 native、AAR、历史报告和 Release 边界保持不变. (2026-09-13, G0/G1/G2)
 
 - [x] (开发环境/文档) 完成有来源及摘要清单的旧 AVD 和 native 编译中间产物清理, 保留源码、各轮完整成品/符号/日志、JSC/ICU、工具链及原 APK/设备证据. [磁盘维护指南](docs/storage-maintenance.md)区分 WSL 内部空间、稀疏文件逻辑大小和宿主实际空间, 说明重建与离线压缩边界; 原历史报告保持不变. (2026-09-14, G0/G1)
+- [x] (测试/文档) 独立重启诊断runner保存最终数字UID的完整ps与包清单, 归档器重新解析主/test两个UID; 实际四个UID均为0进程. [工具说明](tools/bun-runtime/experimental/webkit-x86_64-16k/restart/README.md)区分收集完成、门槛结果与受控缺席, 正/反向校验纳入CI; 两份新报告仅索引, 原114份报告和217矩阵行不变. (2026-09-14, G1/G2, 不改写旧清理证据范围)
 
 **M9 验收条件:** 新用户只读 README 与示例即可完成首次运行; 常见失败在排错指南中有对应条目; 兼容矩阵与设备报告不脱节.
 
