@@ -20,6 +20,7 @@
         "Align the online platform-versions plugin with the repository-pinned 1.8.0; leave the native-alignment plugin unchanged"
       ],
       "improvement": [
+        "Add a separate bounded full-trace and inliner diagnostic with fixed PC-map controls. Preserve the original hot workload and gate, verify finalized extra-profiler options, retain the first complete stack per class with explicit byte-limit omissions, and independently check caller identity and compiler decisions without adding compatibility acceptance",
         "Add a bounded PC-mapping comparison for JSC sampling: reuse the exact four-phase workload, read back finalized options, retain compiler inline decisions and actual execution tiers, and preserve exit 1. Reverse pair order in the second round; keep original fixtures, limits, native bytes and support claims unchanged",
         "Add fixed four-phase JSC profiler restart and data-clear diagnostics, plus an explicitly controlled target-absent exit-1 case. Retain phase witnesses, timestamps and raw UID cleanup evidence without changing the original pressure or sampling fixtures or claiming historical failure reproduction",
         "Add an independent bounded DFG sampling diagnostic with per-capture timing, calls, frame distributions and optimization counters. Preserve low-sample exit outcomes and exact source/APK/UID evidence without changing the original pressure fixture, budgets, runtime payloads or compatibility counts",
