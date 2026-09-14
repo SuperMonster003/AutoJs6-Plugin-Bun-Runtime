@@ -20,6 +20,7 @@
         "Align the online platform-versions plugin with the repository-pinned 1.8.0; leave the native-alignment plugin unchanged"
       ],
       "improvement": [
+        "Add four fixed offline TLS/IPv6 modes through the production Binder service: TLS 1.2/1.3, certificate and hostname rejection, verified HTTPS, and IPv6 TCP/UDP/HTTP. Bind public test certificates, exact sources, APKs and both package UIDs; preserve original suite counts and release boundaries",
         "Add four fixed offline API modes through the production Binder service: files and directory watching, instance-local DNS, binary TCP half-close, and HTTP redirect/stream/abort. Bind exact source, APKs and both package UIDs; preserve failures and keep original suite counts and release boundaries unchanged",
         "Add a separate diagnostic that preserves the original seven-mode pressure order, DFG early stop and assertions. Record bounded per-profile data before rethrowing failures, verify exact source and both package UIDs, and keep historical results and compatibility counts unchanged",
         "Add a separate bounded full-trace and inliner diagnostic with fixed PC-map controls. Preserve the original hot workload and gate, verify finalized extra-profiler options, retain the first complete stack per class with explicit byte-limit omissions, and independently check caller identity and compiler decisions without adding compatibility acceptance",

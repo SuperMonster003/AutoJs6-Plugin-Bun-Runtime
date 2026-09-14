@@ -39,7 +39,10 @@ export function buildInputs() {
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/flow/java"),
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/flow/assets"),
         ...walk("tools/bun-runtime/experimental/api28/runtime-api/java"),
-        ...walk("tools/bun-runtime/experimental/api28/runtime-api/assets")];
+        ...walk("tools/bun-runtime/experimental/api28/runtime-api/assets"),
+        "tools/bun-runtime/experimental/api28/runtime-network/certificates.json",
+        ...walk("tools/bun-runtime/experimental/api28/runtime-network/java"),
+        ...walk("tools/bun-runtime/experimental/api28/runtime-network/assets")];
     return paths.sort().map(path => {
         let data = readFileSync(resolve(root, path));
         if (!path.endsWith(".aar")) data = Buffer.from(data.toString("utf8").replace(/\r\n/g, "\n"));
