@@ -10,7 +10,7 @@ pluginManagement {
         google()
     }
     plugins {
-        id("io.github.supermonster003.autojs6-platform-versions") version "1.7.4"
+        id("io.github.supermonster003.autojs6-platform-versions") version "1.8.0"
         id("io.github.supermonster003.autojs6-native-alignment") version "1.8.0"
         id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
     }
