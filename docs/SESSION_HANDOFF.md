@@ -1,3 +1,47 @@
+# 会话交接: 磁盘清理与固定 JSC 采样源码审阅
+
+2026-09-14, 从干净 master `50ddf2c` 继续. 用户授权继续 Roadmap 并清理不必要的
+AVD/WSL 临时文件. 先完整阅读 `AGENTS.md`、本文件和
+`E:/.codex-tmp/disk-cleanup-20260914/SESSION_HANDOFF.local.md`.
+此前完整构建/设备交接仍在 `E:/.codex-tmp/jsc-thirteen-patch-20260913/`.
+
+- 本轮没有 Bun/WebKit/ICU 重建或新设备回归, 不增加兼容接受数. 固定35探针、原七模式压力、
+  Java/validator/预算、native锁/成品、生产service/AAR/API33和distributionReady=false不变.
+  原112报告/registry与217矩阵行保持原样, baseline仍560/560 probes和128/128 Binder.
+- 四台历史专用AVD已退役: bun-binder-api28-x64、bun-binder-api30-x64、
+  bun-m3-api29-x64-20260912、bun-m3-api32-x64-20260912. 先备份配置并核对SDK镜像,
+  再删除各自目录与.ini. 原文件逻辑51.25GiB, E盘实际增加约11.55GiB.
+  当前bun-hard-limit-api33及两台JSC压力AVD、其他通用AVD与全部SDK镜像保留.
+- 23个已完成的WSL独立Bun检出删除23个cache及114个obj/pch/rust-target目录,
+  原占用142852907008 bytes (133.04GiB). 清理前后逐项核验350个顶层构建文件摘要;
+  每轮bun/bun-profile/map/Ninja/config/receipt、Git源码、历史native-evidence导出、
+  两套独立JSC库/config与原ICU、锁定工具链/输入/image、全部测试APK/raw均保留原路径.
+  这些构建目录已不再具备原增量状态: 不重跑Ninja冒充历史no-work, 不为补缓存重复构建.
+- WSL TRIM实际exit0, 内部已用约119.98GiB. 输出835.4GiB是discard范围,
+  不是本次新释放量. VHDX仍272895049728 bytes, E盘未因TRIM继续增加.
+  当前非管理员且WSL有IDE ijent连接; 未停止WSL或尝试提权. 已准备并检查语法的
+  `compact-ubuntu-offline.ps1`需要用户保存/关闭WSL工作、停止Ubuntu-24.04后在管理员终端运行.
+  脚本核对注册路径/停止状态并保存实际前后大小; 尚未执行, 不声称压缩已完成.
+- 自动审批拒绝删除旧Gradle修复备份, 只返回blocked by policy. 该3982310648-byte
+  caches-9.5.0-before-repair仍保留, 未通过其他工具重试. 原修复日志和当前缓存均不变.
+  两次AVD前置工具拒绝均未删除文件: 无关API37活动进程、JSON时间类型比较已精确修正.
+  首次root fstrim缺PATH执行失败, 后用已核对的/usr/sbin/fstrim完成, 两份结果分开保留.
+- 本轮未启动/停止任何AVD/ADB/WSL/Docker. 期间其他任务启动API37/5592,
+  精确识别后未干预. 五台ARM64设备在线, 当前不需要追加设备资料或继续租用三星.
+- M5完成固定Bun/WebKit三个源文件的Git blob/完整SHA审阅, 确认profile微秒参数、
+  pause/clear/start、内联帧展开和编译计数边界. 原失败缺少逐次trace/调用/时间/优化状态,
+  下一步独立诊断需补这些字段. 没有动态复现或根因结论; watch SIGABRT和DFG稳定性仍开放.
+- M9新增磁盘维护指南, 十语言当前changelog从源生成. Markdown/matrix检查、Python38/38、
+  官方Bun/监督器完整性和APK/release Node17/17通过. 生产四任务actual0, 50s/96tasks,
+  JVM21项UP-TO-DATE, lint0error/44既有warning; IDE直接isSuccess=true, 两个既有warning.
+  最终审计533个原跟踪文件, 仅37项授权文档/生成产物有改动, 其余496项原样.
+  提交与最终空间快照见本机交接; 不重跑清理脚本或此前一次性构建/设备驱动.
+
+[磁盘维护范围与恢复规则](storage-maintenance.md),
+[固定JSC采样源码审阅](diagnostics/2026-09-14-jsc-sampling-source-review.md).
+
+## 此前十三补丁 JSC 与 watch 诊断检查点
+
 # 会话交接: 十三补丁 JSC 回归与 watch 有界诊断完成
 
 2026-09-13 至 14, 从干净 master `7040456` 继续, 源码/构建提交为 `ba5418e`.
