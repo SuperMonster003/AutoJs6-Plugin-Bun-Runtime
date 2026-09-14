@@ -20,6 +20,7 @@
         "Alinear el plugin en línea platform-versions con la versión 1.8.0 fijada por el repositorio, sin cambiar native-alignment"
       ],
       "improvement": [
+        "Añadir un diagnóstico separado que conserva el orden original de siete modos de carga, la parada anticipada DFG y las aserciones. Registrar datos limitados por perfil antes de relanzar los errores y verificar las fuentes exactas y los UID de ambos paquetes, sin cambiar resultados históricos ni recuentos de compatibilidad",
         "Agregar un diagnóstico independiente y acotado de pilas completas y llamadores integrados con controles fijos del mapa PC. Conservar la carga intensiva y el umbral originales, verificar las opciones finales del profiler, guardar la primera pila completa por clase y las omisiones por límites de bytes, y comprobar por separado los llamadores y las decisiones del compilador sin ampliar la aceptación de compatibilidad",
         "Añadir una comparación acotada del mapeo de PC para el muestreo JSC: reutilizar la carga exacta de cuatro fases, verificar opciones finales y conservar decisiones de inlining, niveles reales de ejecución y salida 1. Invertir el orden en la segunda ronda sin cambiar pruebas originales, límites, binarios ni soporte",
         "Añadir diagnósticos JSC de cuatro fases para reinicio y borrado de datos, con un control explícito sin ejecución de la función objetivo y salida 1. Conservar testigos, marcas de tiempo y pruebas UID originales sin cambiar las pruebas anteriores ni afirmar que se reprodujo el fallo histórico",
