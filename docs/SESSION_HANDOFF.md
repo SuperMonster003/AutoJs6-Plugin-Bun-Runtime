@@ -1,3 +1,49 @@
+# 当前阶段: M4 固定离线 API 边界完成
+
+2026-09-14, 从干净 master e71861d 继续, 源码/唯一测试 APK 批次提交为
+956df1b01c869356c193bbf9596e84638dda1c65. 当前本机交接:
+`E:/.codex-tmp/runtime-api-boundaries-20260914/SESSION_HANDOFF.local.md`.
+先完整阅读该记录及下文历史. 本批 build-apks.py、run-devices.py、continue-devices.py
+均已结束, 不得重复启动一次性 driver. 原生缓存没有恢复, 无 Bun/WebKit/ICU 新构建.
+
+- 新独立 RuntimeApiInstrumentedTest 只在 opt-in 实验测试 APK 中, 复用真实生产 Binder
+  服务/supervisor/共享 AAR/权限. 四个独立源码模式依次检查 files/watch、localhost 与
+  实例级本地 UDP DNS、二进制 TCP 半关闭、HTTP redirect/stream/abort.
+- 固定每份源12288bytes、工作8000ms、Binder12000ms、总输出16384bytes、成功行8192bytes.
+  只用127.0.0.1动态端口, 无外网/依赖安装/全局Resolver设置. 失败保留受限stdout/stderr
+  和实际终止字段, 严格校验源码、四模式顺序、语义摘要、事件/关闭及双UID清理.
+- 单一99输入三APK逐项匹配956df1b. 构建actual0,14s/80tasks48executed32upToDate.
+  ARM64 main41128239bytes SHA1d4a7cc441ea9213e73a8d50fafd0696b9407714ec85c3674a94e6f452eb83d8;
+  x86 main42950081bytes SHAc1a328b369f4ddec452edccaf9677a0674e7d0a88c6d7ce67959c74acb9e241c;
+  test2395845bytes SHA4c5d0d95614948da0a664fee8152b7f75739d9ee17c9050ac6e13c0649ce67b6.
+  复用十三补丁baseline e8b129616双ABI, 不是17c7941a大页JSC candidate.
+- Sony G8441 API28、XQ-AT72 API31、Redmi22120RN86C API33、Xiaomi23046RP50C API35
+  和owned原生x86 API33, 均应用/内核4096, 各两轮4/4, 合计40/40.
+  每份JS实际auxv/smaps与Java Os.sysconf一致;20TCP连接/30DNS查询/30HTTP请求通过.
+- 初选Sony QV770340J7在get-state前已不在清单, 无安装/UID/round. 首driver停止,
+  api-arm33原始失败完整保留; 明确修改设备选择后continue-devices使用在线Redmi完成同一
+  API/ABI位置, 再执行原API35/x86计划. 没有重跑API28/31、运行期失败重试或改动预算.
+- 40 workspace清理;五环境主/test UID分别10775/10776、15133/15134、10535/10536、
+  11037/11038、10174/10175, 均从完整数字UID清单证明零进程, 两包每台卸载.
+  仅owned bun-hard-limit-api33-20260912 /5584于06:30:31Z关闭. 无关API24/37后从清单
+  消失但本批未操作, 不推断原因. 不操作手机/共享ADB;localhost37478offline未使用.
+- Node46文件293/293;IDE成功且既有SDK XML/Bundle.get警告. 官方runtime/supervisor
+  和生产Debug完整性/16KiBZIP通过. 生产四Gradleactual0,11s/96tasks49executed47upToDate;
+  JVM任务UP-TO-DATE,已有21项结果不称本批重跑;Lint0errors/44warnings.
+  最终五个生成器/Python检查和提交结果见本机追加记录.
+- [完整报告](compatibility/2026-09-14-m4-runtime-api.md)与三份结果/checkpoint/preflight JSON
+  独立绑定. 原122报告/注册项、217矩阵行、137保护文件及settings1.8.0不变, 新三份仅索引.
+  Baseline560/128、原JSC32/28、官方API33+与distributionReady=false不变, 无push/Release.
+
+M4四个有限API模式现有固定4KiB证据, 总体分层矩阵未完成. 下一轮可继续选择独立、离线、
+可重放的TLS/IPv6或其余API边界, 先固定范围和预算再执行;不能将本批扩写为完整网络/
+watch/CLI/16KiB/稳定或Release支持. 若继续M5, 必须保留原2<3门槛和已归档失败,
+现有诊断未确立历史根因, 不追加旧批追逐通过/失败或未经规划恢复大体积原生缓存.
+API28watchSIGABRT/cloneEAGAIN、broader syscall/FD/API/OEM、长期压力/性能和Release仍开放.
+当前无需用户新增设备、资料、关键决定或手动操作; 两项已完成磁盘清理不重复执行.
+
+## 前一批原压力控制流固定诊断
+
 # 当前阶段: 原压力控制流固定诊断完成
 
 2026-09-14, 从干净 master fd5203c 继续. 新工具和唯一 APK 源码提交为
