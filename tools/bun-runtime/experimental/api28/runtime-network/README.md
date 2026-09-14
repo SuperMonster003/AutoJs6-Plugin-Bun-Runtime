@@ -61,3 +61,12 @@ These finite supplementary observations keep `compatibilityAcceptance=false` and
 `distributionReady=false`. They add no counts to older suites. mTLS, OCSP, PSK,
 session resumption, HTTP/2, TLS over IPv6, public IPv6 routing, native 16 KiB,
 broader APIs, performance/soak and signed Release acceptance remain separate.
+
+The first fixed Android batch exposes an HTTPS ALPN failure in all ten rounds.
+The two TLS modes finish first; the HTTPS assertion fails and IPv6 is unreached.
+Keep that full failed batch immutable. `archive-network-failure.mjs` takes a new
+output path, the full APK source commit and the five original run directories.
+It independently checks the two successful prefix records, exact HTTPS assertion,
+failed JUnit result and all APK/UID bindings. It cannot produce suite acceptance.
+The original four fixtures, order, budgets and success validator remain strict;
+do not remove the ALPN assertion or count the unreached IPv6 mode as passed.

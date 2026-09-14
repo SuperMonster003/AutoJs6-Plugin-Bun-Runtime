@@ -15,9 +15,11 @@ import { MODES, NETWORK_CLASS, NETWORK_TEST, fixtureFacts, verifyCertificates, v
 import { PACKAGE, buildInputs } from "../binder/binder-common.mjs";
 import { NETWORK_KIND } from "./network-common.mjs";
 import { validateNetworkRun, summarizeNetworkRuns } from "./archive-network.mjs";
+import { validateNetworkFailureInstrumentation, validateNetworkFailureRun } from "./archive-network-failure.mjs";
 import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 
 const expected = { abi: "x86_64", api: 33, pages: 4096 }, observations = new Map();
+let boundReport;
 const source = mode => readFileSync(new URL(`assets/runtime-network-${mode}.mjs`, import.meta.url), "utf8");
 // Real host TLS/HTTPS and IPv6 sockets; only Android identity and /proc inputs
 // are substituted. These tests are harness checks, never Android/Bun evidence.
@@ -111,6 +113,7 @@ test("archive binds raw observations to source, native payload, installed APKs a
             passedTests: [NETWORK_TEST], runtimeNetwork: validateNetworkInstrumentation(raw, expected, 10042),
             memory: { before: "MemAvailable: 123 kB", after: "MemAvailable: 124 kB" } })) };
     validateNetworkRun(r, [raw, raw]);
+    boundReport = r;
     for (const alter of [x => x.build.inputs.pop(), x => x.build.jscCandidate = {}, x => x.payloads[0].sha256 = "0".repeat(64),
         x => x.installedTestApkSha256 = apk.sha256, x => x.signatures[1].certificateSha256 = "d".repeat(64),
         x => x.finalProcessListing += "10043 321 surviving-test-process\n", x => x.packageUids[PACKAGE + ".test"] = 10042,
@@ -126,4 +129,47 @@ test("archive binds raw observations to source, native payload, installed APKs a
         x => x[2].apk.sha256 = "e".repeat(64), x => x[4].testApk.sha256 = "f".repeat(64)]) {
         const bad = structuredClone(reports); alter(bad); assert.throws(() => summarizeNetworkRuns(bad));
     }
+});
+
+test("actual HTTPS fixture rejects absent server ALPN despite a valid certificate", { timeout: 15000 }, async () => {
+    await assert.rejects(execute("https", { https: { ...https,
+        createServer: (options, listener) => https.createServer({ ...options, ALPNProtocols: [] }, listener) } }),
+        error => error.code === "ERR_ASSERTION" && error.actual === false && error.expected === "http/1.1");
+});
+function failedInstrumentation() {
+    const raw = instrumentation(MODES.slice(0, 2).map(record));
+    const failure = { mode: "https", sourceSha256: fixtureFacts("https").sha256, stdout: "",
+        stderr: '75 | assert.equal(peer.alpn, "http/1.1");\nAssertionError: Expected values to be strictly equal:\n+ false\n- \'http/1.1\'\n actual: false,\n expected: "http/1.1",\n at runtime-network-https.mjs.js:75:60\nBun v1.4.0 (Android x64)\n',
+        terminal: { succeeded: false, exitCode: 1, errorCode: "NON_ZERO_EXIT" }, compatibilityAcceptance: false };
+    const boundary = raw.lastIndexOf("INSTRUMENTATION_STATUS: class=");
+    return raw.slice(0, boundary) + `INSTRUMENTATION_STATUS: stream=RUNTIME_NETWORK_FAILURE=${JSON.stringify(failure)}\nINSTRUMENTATION_STATUS_CODE: 0\n`
+        + raw.slice(boundary).replace("INSTRUMENTATION_STATUS_CODE: 0", "INSTRUMENTATION_STATUS: stack=java.lang.AssertionError: Runtime network mode failed: https\nINSTRUMENTATION_STATUS_CODE: -2")
+            .replace("OK (1 test)", "FAILURES!!!\nTests run: 1,  Failures: 1");
+}
+test("failure classifier requires the exact TLS prefix, HTTPS assertion and failed JUnit", () => {
+    const raw = failedInstrumentation(), classified = validateNetworkFailureInstrumentation(raw, expected, 10042);
+    assert.equal(classified.passedPrefix.length, 2); assert.equal(classified.failure.mode, "https");
+    assert.deepEqual(classified.unreachedModes, ["ipv6"]); assert.equal(classified.fixedScopePassed, false);
+    assert.throws(() => validateNetworkInstrumentation(raw, expected, 10042));
+    for (const bad of [raw.replace("RUNTIME_NETWORK=", "RUNTIME_NETWORK_FAILURE="),
+        raw.replace('\\n+ false', '\\n+ true'), raw.replace('\\"http/1.1\\"', '\\"h2\\"'),
+        raw.replace('"exitCode":1', '"exitCode":73'), raw.replace('"mode":"https"', '"mode":"ipv6"'),
+        raw.replace("INSTRUMENTATION_STATUS_CODE: -2", "INSTRUMENTATION_STATUS_CODE: 0"),
+        raw + "INSTRUMENTATION_CODE: -1\n", raw.replace("FAILURES!!!", "OK (1 test)")]) {
+        assert.notEqual(bad, raw); assert.throws(() => validateNetworkFailureInstrumentation(bad, expected, 10042));
+    }
+});
+test("failed runs retain exact raw source/APK/UID binding and cannot become successful archives", () => {
+    const raw = failedInstrumentation(), r = structuredClone(boundReport);
+    r.passed = false;
+    r.rounds.forEach(v => { v.stdout = raw; v.error = "RUNTIME_NETWORK_FAILURE=retained"; delete v.passedTests; delete v.runtimeNetwork; });
+    assert.equal(validateNetworkFailureRun(r, [raw, raw]).length, 2);
+    assert.throws(() => validateNetworkRun(r, [raw, raw]));
+    for (const alter of [x => x.passed = true, x => x.error = "preflight failure", x => x.installedApkSha256 = "0".repeat(64),
+        x => x.build.inputs.pop(), x => x.finalProcessListing += "10043 456 survivor\n",
+        x => x.rounds[1].passedTests = [NETWORK_TEST], x => x.rounds[0].status = 1,
+        x => x.rounds[1].memory = {}, x => delete x.rounds[0].error]) {
+        const bad = structuredClone(r); alter(bad); assert.throws(() => validateNetworkFailureRun(bad, [raw, raw]));
+    }
+    assert.throws(() => validateNetworkFailureRun(r, [raw, raw + "drift"]));
 });

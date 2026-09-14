@@ -11,10 +11,10 @@ import { supervisorArtifacts } from "../../../supervisor/supervisor-common.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../../../..");
 const baseline = () => JSON.parse(readFileSync(new URL("../runtime-evidence.json", import.meta.url), "utf8"));
-export function validateNetworkRun(r, raw) {
-    assert.equal(r.schemaVersion, 1); assert.equal(r.kind, NETWORK_KIND); assert.equal(r.passed, true);
+export function validateNetworkBinding(r) {
+    assert.equal(r.schemaVersion, 1); assert.equal(r.kind, NETWORK_KIND);
     assert.equal(r.compatibilityAcceptance, false); assert.equal(r.distributionReady, false);
-    for (const key of ["error", "cleanupError", "commandFailure"]) assert(!Object.hasOwn(r, key));
+    for (const key of ["cleanupError", "commandFailure"]) assert(!Object.hasOwn(r, key));
     assert.equal(r.package, PACKAGE); assert.equal(r.expected.pages, 4096); validateDevice(r.device, r.expected);
     assert.deepEqual(Object.keys(r.packageUids).sort(), [PACKAGE, PACKAGE + ".test"].sort());
     for (const uid of Object.values(r.packageUids)) assert(Number.isSafeInteger(uid) && uid >= 10000 && uid % 100000 >= 10000);
@@ -45,6 +45,10 @@ export function validateNetworkRun(r, raw) {
         assert.equal(s.signerCount, 1); assert(s.verifiedSchemes.includes("v2")); assert(/^[a-f0-9]{64}$/.test(s.certificateSha256));
     }
     assert.equal(r.signatures[0].certificateSha256, r.signatures[1].certificateSha256);
+    return r;
+}
+export function validateNetworkRun(r, raw) {
+    assert.equal(r.passed, true); assert(!Object.hasOwn(r, "error")); validateNetworkBinding(r);
     assert.equal(r.rounds.length, 2); assert.equal(raw.length, 2);
     for (const [i, round] of r.rounds.entries()) {
         assert.equal(round.round, i + 1); assert.equal(round.status, 0); assert.equal(round.stderr, "");
