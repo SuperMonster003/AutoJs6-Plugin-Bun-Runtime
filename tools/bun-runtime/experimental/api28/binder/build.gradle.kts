@@ -85,6 +85,9 @@ android {
             java.directories.apply { clear(); add(implementationRoot.resolve("androidTest/java").absolutePath) }
             kotlin.directories.add(implementationRoot.resolve("androidTest/java").absolutePath)
             assets.directories.apply { clear(); add(rootProject.file("samples").absolutePath) }
+            java.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/java").absolutePath)
+            kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/java").absolutePath)
+            assets.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/assets").absolutePath)
             if (jscCandidate != null) {
                 java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
                 kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
