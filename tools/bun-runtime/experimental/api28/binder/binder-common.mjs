@@ -28,7 +28,9 @@ export function buildInputs() {
         ...walk("app/src/main/java"), ...walk("app/src/main/res"), ...walk("app/src/main/assets"),
         ...walk("app/src/androidTest/java"), ...walk("samples"),
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java"),
-        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets")];
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/java"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/assets")];
     return paths.sort().map(path => {
         let data = readFileSync(resolve(root, path));
         if (!path.endsWith(".aar")) data = Buffer.from(data.toString("utf8").replace(/\r\n/g, "\n"));

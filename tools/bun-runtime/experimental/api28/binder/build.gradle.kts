@@ -89,6 +89,9 @@ android {
                 java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
                 kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
                 assets.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets").absolutePath)
+                java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/java").absolutePath)
+                kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/java").absolutePath)
+                assets.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/assets").absolutePath)
             }
         }
     }
