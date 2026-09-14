@@ -14,6 +14,7 @@ import { SAMPLING_KIND, SAMPLING_CLASS, SAMPLING_TEST, validateSamplingInstrumen
 import { RESTART_KIND, RESTART_CLASS, RESTART_TEST, validateRestartInstrumentation } from "../../webkit-x86_64-16k/restart/restart-common.mjs";
 import { PCMAP_KIND, PCMAP_CLASS, PCMAP_TEST, validatePcMapInstrumentation } from "../../webkit-x86_64-16k/pcmap/pcmap-common.mjs";
 import { TRACE_KIND, TRACE_CLASS, TRACE_TEST, validateTraceInstrumentation } from "../../webkit-x86_64-16k/trace/trace-common.mjs";
+import { FLOW_KIND, FLOW_CLASS, FLOW_TEST, validateFlowInstrumentation } from "../../webkit-x86_64-16k/flow/flow-common.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2), options = {};
@@ -28,7 +29,8 @@ const sampling = options["--suite"] === "jsc-sampling";
 const restart = options["--suite"] === "jsc-restart";
 const pcmap = options["--suite"] === "jsc-pcmap";
 const trace = options["--suite"] === "jsc-trace";
-const diagnostic = sampling || restart || pcmap || trace;
+const flow = options["--suite"] === "jsc-flow";
+const diagnostic = sampling || restart || pcmap || trace || flow;
 assert(!options["--suite"] || ((pressure || diagnostic) && jsc), "JSC suites require the explicit jsc16k profile");
 const pkg = PACKAGE + (jsc ? ".jsc16k" : ""), testPkg = pkg + ".test";
 assert.deepEqual(Object.keys(options).sort(), ["--abi", "--api", "--output", "--pages", "--sdk", "--serial", ...(jsc ? ["--profile"] : []), ...(pressure || diagnostic ? ["--suite"] : [])].sort());
@@ -62,7 +64,7 @@ assert.deepEqual(build.source, evidence.source);
 assert.deepEqual(build.jscCandidate, jsc);
 const output = resolve(options["--output"]);
 mkdirSync(output); // Refuse to overwrite a previous report, including a failure.
-const report = { schemaVersion: 1, kind: trace ? TRACE_KIND : pcmap ? PCMAP_KIND : restart ? RESTART_KIND : sampling ? SAMPLING_KIND : pressure ? KIND : "experimental-plugin-binder", capturedAt: new Date().toISOString(),
+const report = { schemaVersion: 1, kind: flow ? FLOW_KIND : trace ? TRACE_KIND : pcmap ? PCMAP_KIND : restart ? RESTART_KIND : sampling ? SAMPLING_KIND : pressure ? KIND : "experimental-plugin-binder", capturedAt: new Date().toISOString(),
     serial, expected, package: pkg, runtime: evidence.identity, apk: facts(apk), testApk: facts(testApk),
     build, payloads, rounds: [], cleanup: [], passed: false, distributionReady: false };
 if (diagnostic) report.compatibilityAcceptance = false;
@@ -167,7 +169,7 @@ try {
         const memoryBefore = diagnostic ? await checked("shell", "cat", "/proc/meminfo") : undefined;
         const result = await command(adb, ["-s", serial, "shell", "am", "instrument", "-w", "-r",
             ...((pcmap || trace) ? ["-e", "diagnosticRound", String(round)] : []),
-            "-e", "class", trace ? TRACE_CLASS : pcmap ? PCMAP_CLASS : restart ? RESTART_CLASS : sampling ? SAMPLING_CLASS : pressure ? PRESSURE_CLASS : TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
+            "-e", "class", flow ? FLOW_CLASS : trace ? TRACE_CLASS : pcmap ? PCMAP_CLASS : restart ? RESTART_CLASS : sampling ? SAMPLING_CLASS : pressure ? PRESSURE_CLASS : TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
             "-e", "requiredPageSizeBytes", String(expected.pages), `${testPkg}/androidx.test.runner.AndroidJUnitRunner`], 300000);
         const record = { round, ...result };
         report.rounds.push(record);
@@ -175,7 +177,10 @@ try {
         try {
             if (diagnostic) record.memory = { before: memoryBefore, after: await checked("shell", "cat", "/proc/meminfo") };
             assert.equal(result.status, 0);
-            if (trace) {
+            if (flow) {
+                record.flow = validateFlowInstrumentation(result.stdout, expected.pages);
+                record.passedTests = [FLOW_TEST];
+            } else if (trace) {
                 record.trace = validateTraceInstrumentation(result.stdout, expected.pages, round);
                 record.passedTests = [TRACE_TEST];
             } else if (pcmap) {
@@ -195,7 +200,8 @@ try {
         await checked("shell", "am", "force-stop", pkg);
         record.remainingUidProcesses = countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), uid);
         assert.equal(record.remainingUidProcesses, 0);
-        console.log(trace ? `${serial} round ${round}: ${record.trace?.length ?? 0}/2 trace/inliner controls collected (no compatibility acceptance)`
+        console.log(flow ? `${serial} round ${round}: ${record.flow?.length ?? 0}/7 pressure-flow modes collected (no compatibility acceptance)`
+            : trace ? `${serial} round ${round}: ${record.trace?.length ?? 0}/2 trace/inliner controls collected (no compatibility acceptance)`
             : pcmap ? `${serial} round ${round}: ${record.pcmap?.length ?? 0}/2 PC-map controls collected (no compatibility acceptance)`
             : restart ? `${serial} round ${round}: ${record.restart?.length ?? 0}/2 restart diagnostics collected (no compatibility acceptance)`
             : sampling ? `${serial} round ${round}: ${record.sampling?.length ?? 0}/1 DFG diagnostic collected (no compatibility acceptance)`
@@ -228,7 +234,7 @@ finally {
     if (diagnostic && report.packageUids) {
         try {
             const processes = await checked("shell", "ps", "-A", "-o", "UID,PID,NAME");
-            if (restart || pcmap || trace) report.finalProcessListing = processes;
+            if (restart || pcmap || trace || flow) report.finalProcessListing = processes;
             report.finalPackageUidProcesses = Object.fromEntries(Object.entries(report.packageUids)
                 .map(([name, uid]) => [name, countUidProcesses(processes, uid)]));
             assert(Object.values(report.finalPackageUidProcesses).every(count => count === 0));

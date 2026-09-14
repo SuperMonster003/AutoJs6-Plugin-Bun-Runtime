@@ -35,7 +35,9 @@ export function buildInputs() {
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/restart/assets"),
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/pcmap/java"),
         ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/trace/java"),
-        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/trace/assets")];
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/trace/assets"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/flow/java"),
+        ...walk("tools/bun-runtime/experimental/webkit-x86_64-16k/flow/assets")];
     return paths.sort().map(path => {
         let data = readFileSync(resolve(root, path));
         if (!path.endsWith(".aar")) data = Buffer.from(data.toString("utf8").replace(/\r\n/g, "\n"));
