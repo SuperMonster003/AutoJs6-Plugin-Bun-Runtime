@@ -88,6 +88,9 @@ android {
             java.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/java").absolutePath)
             kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/java").absolutePath)
             assets.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-api/assets").absolutePath)
+            java.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-network/java").absolutePath)
+            kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-network/java").absolutePath)
+            assets.directories.add(rootProject.file("tools/bun-runtime/experimental/api28/runtime-network/assets").absolutePath)
             if (jscCandidate != null) {
                 java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)
                 kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/java").absolutePath)

@@ -18,6 +18,8 @@ import { FLOW_KIND, FLOW_CLASS, FLOW_TEST, validateFlowInstrumentation } from ".
 
 import { API_KIND, API_CLASS, API_TEST, validateApiInstrumentation } from "../runtime-api/api-common.mjs";
 
+import { NETWORK_KIND, NETWORK_CLASS, NETWORK_TEST, validateNetworkInstrumentation } from "../runtime-network/network-common.mjs";
+
 const here = dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2), options = {};
 for (let i = 0; i < args.length; i += 2) {
@@ -33,10 +35,12 @@ const pcmap = options["--suite"] === "jsc-pcmap";
 const trace = options["--suite"] === "jsc-trace";
 const flow = options["--suite"] === "jsc-flow";
 const apiSuite = options["--suite"] === "runtime-api";
+const networkSuite = options["--suite"] === "runtime-network";
+const offline = apiSuite || networkSuite;
 const diagnostic = sampling || restart || pcmap || trace || flow;
-assert(!options["--suite"] || (((pressure || diagnostic) && jsc) || (apiSuite && !jsc)), "Select a JSC suite with jsc16k, or runtime-api with the baseline profile");
+assert(!options["--suite"] || (((pressure || diagnostic) && jsc) || (offline && !jsc)), "Select a JSC suite with jsc16k, or an offline suite with the baseline profile");
 const pkg = PACKAGE + (jsc ? ".jsc16k" : ""), testPkg = pkg + ".test";
-assert.deepEqual(Object.keys(options).sort(), ["--abi", "--api", "--output", "--pages", "--sdk", "--serial", ...(jsc ? ["--profile"] : []), ...(pressure || diagnostic || apiSuite ? ["--suite"] : [])].sort());
+assert.deepEqual(Object.keys(options).sort(), ["--abi", "--api", "--output", "--pages", "--sdk", "--serial", ...(jsc ? ["--profile"] : []), ...(pressure || diagnostic || offline ? ["--suite"] : [])].sort());
 const expected = { abi: options["--abi"], api: Number(options["--api"]), pages: Number(options["--pages"]) };
 assert(["arm64-v8a", "x86_64"].includes(expected.abi));
 assert(Number.isInteger(expected.api) && expected.api >= 28 && expected.api <= 100);
@@ -44,7 +48,7 @@ assert([4096, 16384].includes(expected.pages));
 assert(expected.abi !== "x86_64" || expected.pages === 4096 || jsc, "Original experimental x86_64 JSC remains limited to 4 KiB");
 assert(!jsc || expected.abi === "x86_64");
 assert(!(pressure || diagnostic) || expected.api === 36, "JSC fixtures are scoped to API 36 native x86_64");
-assert(!apiSuite || expected.pages === 4096, "Runtime API fixture scope is native 4 KiB");
+assert(!offline || expected.pages === 4096, "Runtime API fixture scope is native 4 KiB");
 const serial = options["--serial"];
 assert(/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(serial));
 const exe = process.platform === "win32" ? ".exe" : "";
@@ -68,10 +72,10 @@ assert.deepEqual(build.source, evidence.source);
 assert.deepEqual(build.jscCandidate, jsc);
 const output = resolve(options["--output"]);
 mkdirSync(output); // Refuse to overwrite a previous report, including a failure.
-const report = { schemaVersion: 1, kind: apiSuite ? API_KIND : flow ? FLOW_KIND : trace ? TRACE_KIND : pcmap ? PCMAP_KIND : restart ? RESTART_KIND : sampling ? SAMPLING_KIND : pressure ? KIND : "experimental-plugin-binder", capturedAt: new Date().toISOString(),
+const report = { schemaVersion: 1, kind: networkSuite ? NETWORK_KIND : apiSuite ? API_KIND : flow ? FLOW_KIND : trace ? TRACE_KIND : pcmap ? PCMAP_KIND : restart ? RESTART_KIND : sampling ? SAMPLING_KIND : pressure ? KIND : "experimental-plugin-binder", capturedAt: new Date().toISOString(),
     serial, expected, package: pkg, runtime: evidence.identity, apk: facts(apk), testApk: facts(testApk),
     build, payloads, rounds: [], cleanup: [], passed: false, distributionReady: false };
-if (diagnostic || apiSuite) report.compatibilityAcceptance = false;
+if (diagnostic || offline) report.compatibilityAcceptance = false;
 
 async function command(command, args, timeout = 60000) {
     return await new Promise((done, fail) => {
@@ -156,7 +160,7 @@ try {
         if (pkg === report.package) report.uid = parseBinderUid(await checked("shell", "pm", "list", "packages", "-U", pkg), pkg);
     }
     const uid = report.uid;
-    if (diagnostic || apiSuite) report.packageUids = { [pkg]: uid,
+    if (diagnostic || offline) report.packageUids = { [pkg]: uid,
         [testPkg]: parseBinderUid(await checked("shell", "pm", "list", "packages", "-U", testPkg), testPkg) };
     // Verify the installed APK itself, not merely the local input archive.
     const installedPath = (await checked("shell", "pm", "path", pkg)).replace(/^package:/, "");
@@ -170,19 +174,22 @@ try {
     for (let round = 1; round <= 2; round++) {
         await checked("shell", "am", "force-stop", pkg);
         assert.equal(countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), uid), 0);
-        const memoryBefore = (diagnostic || apiSuite) ? await checked("shell", "cat", "/proc/meminfo") : undefined;
+        const memoryBefore = (diagnostic || offline) ? await checked("shell", "cat", "/proc/meminfo") : undefined;
         const result = await command(adb, ["-s", serial, "shell", "am", "instrument", "-w", "-r",
             ...((pcmap || trace) ? ["-e", "diagnosticRound", String(round)] : []),
-            ...(apiSuite ? ["-e", "requiredAbi", expected.abi] : []),
-            "-e", "class", apiSuite ? API_CLASS : flow ? FLOW_CLASS : trace ? TRACE_CLASS : pcmap ? PCMAP_CLASS : restart ? RESTART_CLASS : sampling ? SAMPLING_CLASS : pressure ? PRESSURE_CLASS : TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
+            ...(offline ? ["-e", "requiredAbi", expected.abi] : []),
+            "-e", "class", networkSuite ? NETWORK_CLASS : apiSuite ? API_CLASS : flow ? FLOW_CLASS : trace ? TRACE_CLASS : pcmap ? PCMAP_CLASS : restart ? RESTART_CLASS : sampling ? SAMPLING_CLASS : pressure ? PRESSURE_CLASS : TEST_CLASS, "-e", "requiredApiLevel", String(expected.api),
             "-e", "requiredPageSizeBytes", String(expected.pages), `${testPkg}/androidx.test.runner.AndroidJUnitRunner`], 300000);
         const record = { round, ...result };
         report.rounds.push(record);
         writeFileSync(join(output, `round-${round}.txt`), result.stdout + result.stderr, { flag: "wx" });
         try {
-            if (diagnostic || apiSuite) record.memory = { before: memoryBefore, after: await checked("shell", "cat", "/proc/meminfo") };
+            if (diagnostic || offline) record.memory = { before: memoryBefore, after: await checked("shell", "cat", "/proc/meminfo") };
             assert.equal(result.status, 0);
-            if (apiSuite) {
+            if (networkSuite) {
+                record.runtimeNetwork = validateNetworkInstrumentation(result.stdout, expected, uid);
+                record.passedTests = [NETWORK_TEST];
+            } else if (apiSuite) {
                 record.runtimeApi = validateApiInstrumentation(result.stdout, expected, uid);
                 record.passedTests = [API_TEST];
             } else if (flow) {
@@ -208,7 +215,8 @@ try {
         await checked("shell", "am", "force-stop", pkg);
         record.remainingUidProcesses = countUidProcesses(await checked("shell", "ps", "-A", "-o", "UID,PID,NAME"), uid);
         assert.equal(record.remainingUidProcesses, 0);
-        console.log(apiSuite ? `${serial} round ${round}: ${record.runtimeApi?.length ?? 0}/4 fixed runtime API modes`
+        console.log(networkSuite ? `${serial} round ${round}: ${record.runtimeNetwork?.length ?? 0}/4 fixed TLS/IPv6 modes`
+            : apiSuite ? `${serial} round ${round}: ${record.runtimeApi?.length ?? 0}/4 fixed runtime API modes`
             : flow ? `${serial} round ${round}: ${record.flow?.length ?? 0}/7 pressure-flow modes collected (no compatibility acceptance)`
             : trace ? `${serial} round ${round}: ${record.trace?.length ?? 0}/2 trace/inliner controls collected (no compatibility acceptance)`
             : pcmap ? `${serial} round ${round}: ${record.pcmap?.length ?? 0}/2 PC-map controls collected (no compatibility acceptance)`
@@ -240,10 +248,10 @@ finally {
             assert.equal(report.finalUidProcesses, 0);
         } catch (error) { report.cleanupError = error.message; report.passed = false; }
     }
-    if ((diagnostic || apiSuite) && report.packageUids) {
+    if ((diagnostic || offline) && report.packageUids) {
         try {
             const processes = await checked("shell", "ps", "-A", "-o", "UID,PID,NAME");
-            if (restart || pcmap || trace || flow || apiSuite) report.finalProcessListing = processes;
+            if (restart || pcmap || trace || flow || offline) report.finalProcessListing = processes;
             report.finalPackageUidProcesses = Object.fromEntries(Object.entries(report.packageUids)
                 .map(([name, uid]) => [name, countUidProcesses(processes, uid)]));
             assert(Object.values(report.finalPackageUidProcesses).every(count => count === 0));
