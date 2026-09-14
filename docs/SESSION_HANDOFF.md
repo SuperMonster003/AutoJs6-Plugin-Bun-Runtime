@@ -1,5 +1,16 @@
 # 会话交接: 磁盘清理与固定 JSC 采样源码审阅
 
+2026-09-14 后续更新: 用户执行旧手动脚本后 DiskPart 报 VHDX 文件被占用,
+actual exit -2147024809, 大小/宿主空间增量均0. 原 `compact-20260914-082056.*`
+及旧脚本 `compact-ubuntu-offline.initial.ps1` 保留, 不算压缩完成.
+08:26后只读确认Ubuntu Stopped、无WSL VM进程、VHDX可独占读取; 未捕获原占用者.
+本机脚本现有 `-CheckOnly`, 在DiskPart前轮询VM退出并连续三次确认文件独占打开,
+释放探测句柄后才压缩. 实际只读preflight通过, 没有新DiskPart/提权/停止或WSL内命令.
+用户后续保存并关闭WSL客户端, 在管理员PowerShell使用 `wsl --shutdown` 后再运行原路径
+脚本; `--terminate` 只停止发行版, 旧脚本的停止状态检查不足以确认VHDX释放.
+Gradle旧备份仍在原精确路径, 已明确告知用户, 没有重试上轮被拒绝的删除操作.
+本次恢复细节见同一本机交接的追加记录; 下文“尚未执行”是前一清理阶段的历史状态.
+
 2026-09-14, 从干净 master `50ddf2c` 继续. 用户授权继续 Roadmap 并清理不必要的
 AVD/WSL 临时文件. 先完整阅读 `AGENTS.md`、本文件和
 `E:/.codex-tmp/disk-cleanup-20260914/SESSION_HANDOFF.local.md`.
