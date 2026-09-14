@@ -367,6 +367,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ## M4: Android 9+ 稳定化
 
+- [x] (测试/工具) 新增独立四模式离线 API Binder 套件: 文件/目录监听, 实例级本地 DNS, 二进制 TCP 半关闭和 HTTP redirect/stream/abort. 保留真实服务与共享 AAR, 固定 12 KiB 源/8 s 工作/12 s Binder/16 KiB 输出, 主机执行实际夹具并验证失败与 source/APK/双 UID 拒绝控制. [工具范围](tools/bun-runtime/experimental/api28/runtime-api/README.md). (2026-09-14, G0/G1)
+- [x] (测试/设备) 十三补丁 baseline 复用, 单一 99 输入三 APK 批次在 ARM64 API 28/31/33/35 与 x86_64 API 33 的原生 4 KiB 环境各两轮, 四模式 40/40. 含 20 次 TCP 连接、30 次本地 DNS 查询及 30 次 HTTP 请求; 40 workspace、十个包 UID 及唯一 owned AVD 已清理. Sony API 33 安装前离线独立保留, 同 APK 改用 Redmi, 无运行期失败重试. [固定报告](docs/compatibility/2026-09-14-m4-runtime-api.md). 不增加原 560/128 或 JSC 32/28, TLS/IPv6/其余矩阵/Release 保持开放. (2026-09-14, G2/有限补充)
+
 **目标:** 把 M3 的 "实验性" 变成可以写进 README 的正式支持 -- 前提是测试矩阵, 信号处理, 性能和发布验证全部闭环.
 
 - [ ] (测试) 完成 API 28-35, `arm64-v8a`/`x86_64`, 4 KB/16 KB 页, AOSP 与主要 OEM 的分层矩阵, 并把运行报告以机器可读格式归档.

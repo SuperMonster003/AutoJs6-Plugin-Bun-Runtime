@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 122 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 125 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -1035,6 +1035,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
+### M4 Sony API33 安装前离线记录
+
+来源: [2026-09-14-m4-runtime-api-preflight-failure.json](2026-09-14-m4-runtime-api-preflight-failure.json).
+
+get-state前设备消失, 无安装或运行. 失败单独保留, 同一APK改用在线Redmi完成固定API33位置.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
 ### M5 固定PC映射关闭/开启诊断
 
 来源: [2026-09-14-m5-jsc-pcmap-diagnostics.json](2026-09-14-m5-jsc-pcmap-diagnostics.json).
@@ -1246,6 +1254,22 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-13-m5-twelve-patch-jsc-checkpoints.json](2026-09-13-m5-twelve-patch-jsc-checkpoints.json).
 
 绑定构建原始换行/归档失败、83输入APK、两个UID清理和ownedAVD关闭. 三星81输入APK准备及offline窗口不增加设备计数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M4 固定 API 来源和清理补充
+
+来源: [2026-09-14-m4-runtime-api-checkpoints.json](2026-09-14-m4-runtime-api-checkpoints.json).
+
+99输入与三APK精确绑定, 双UID和owned AVD清理, 293项Node及生产检查; 不扩展官方支持和旧套件计数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M4 固定离线文件和网络 API
+
+来源: [2026-09-14-m4-runtime-api.json](2026-09-14-m4-runtime-api.json).
+
+真实 Binder 四模式在五个原生 4 KiB 环境各两轮, 40/40. 独立补充, 不增加原探针/Binder计数或广泛API与Release接受.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 

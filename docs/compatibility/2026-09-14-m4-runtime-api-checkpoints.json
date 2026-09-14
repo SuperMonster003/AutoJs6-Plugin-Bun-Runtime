@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 1,
+  "kind": "runtime-api-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "projectSourceCommit": "956df1b01c869356c193bbf9596e84638dda1c65",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "apiReport": {
+    "path": "docs/compatibility/2026-09-14-m4-runtime-api.json",
+    "bytes": 536045,
+    "sha256": "fda4c5839a2a8951c30589d1c43ddfa45a91019e515419227a3fb67d9f8855b3"
+  },
+  "preflightFailure": {
+    "path": "docs/compatibility/2026-09-14-m4-runtime-api-preflight-failure.json",
+    "bytes": 38404,
+    "sha256": "e4321ae8aa99821a88cd1a22c8e048bb747aacb5d77438d933f2f023ee074ca9"
+  },
+  "compiledInputEncoding": "Git LF text; binary AAR bytes unchanged",
+  "compiledInputsMatched": 99,
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 14,
+    "tasks": 80,
+    "executed": 48,
+    "upToDate": 32,
+    "receipt": {
+      "bytes": 21000,
+      "sha256": "4386f79b3a4f53719f107af37a7b1a756ac094cac6e31ed275b035230476276b"
+    },
+    "log": {
+      "bytes": 8171,
+      "sha256": "1e57f52da008a50cbe40dc6459c0c103581dcff1f94964646152adf7196b84d0"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-arm64-v8a-debug.apk",
+        "bytes": 41128239,
+        "sha256": "1d4a7cc441ea9213e73a8d50fafd0696b9407714ec85c3674a94e6f452eb83d8"
+      },
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42950081,
+        "sha256": "c1a328b369f4ddec452edccaf9677a0674e7d0a88c6d7ce67959c74acb9e241c"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2395845,
+        "sha256": "4c5d0d95614948da0a664fee8152b7f75739d9ee17c9050ac6e13c0649ce67b6"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "nativeProfile": "Thirteen-patch baseline, not the separate large-page JSC candidate",
+  "preserved": {
+    "historicalReports": 122,
+    "historicalMatrixRows": 217,
+    "protectedRuntimeAndFixtureFiles": 137,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchanged": true,
+    "preExistingSettingsPlugin180Unchanged": true
+  },
+  "fixtureLimits": {
+    "sourceBytesPerMode": 12288,
+    "scriptMillis": 8000,
+    "binderTimeoutMillis": 12000,
+    "outputBytes": 16384,
+    "successRecordBytes": 8192
+  },
+  "summary": {
+    "environments": 5,
+    "rounds": 10,
+    "fixedModesPassed": 40,
+    "modesPerRound": 4,
+    "files": 10,
+    "dns": 10,
+    "tcp": 10,
+    "httpFetch": 10,
+    "tcpConnections": 20,
+    "dnsServerQueries": 30,
+    "httpRequests": 30,
+    "removedWorkspaces": 40,
+    "originalProbePassesAdded": 0,
+    "originalBinderPassesAdded": 0,
+    "productionReleaseAcceptance": false
+  },
+  "devices": [
+    {
+      "serial": "BH900ASK9E",
+      "model": "G8441",
+      "api": 28,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 0,
+      "driverLog": {
+        "bytes": 96,
+        "sha256": "eb2505dadb85703400929354ebe6a3eaee88f185f00cfdf2ae926a2ed9d86e87"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10775,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10776
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 22838,
+        "sha256": "c950de41c9580a84b843fcff6c0b86bf89ec07b30af20bf6d4a4bdcb8104017d"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 15,
+              "pid": 3539,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 20,
+              "pid": 3562,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 31,
+              "pid": 3580,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 43,
+              "pid": 3591,
+              "uid": 10775,
+              "workspaceRemoved": true
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 28,
+              "pid": 3794,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 23,
+              "pid": 3812,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 29,
+              "pid": 3830,
+              "uid": 10775,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 48,
+              "pid": 3840,
+              "uid": 10775,
+              "workspaceRemoved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "QV710AF65F",
+      "model": "XQ-AT72",
+      "api": 31,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 0,
+      "driverLog": {
+        "bytes": 96,
+        "sha256": "932101bfa47ce3261450f21beae87f0645fc7c0671054683c2d1c319e0d12085"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 15133,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 15134
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 27431,
+        "sha256": "2f6a4739db61cc712e8325404c25c535020c52acc6dc5508c373298271f46dcc"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 29,
+              "pid": 18278,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 14,
+              "pid": 18290,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 23,
+              "pid": 18301,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 50,
+              "pid": 18309,
+              "uid": 15133,
+              "workspaceRemoved": true
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 12,
+              "pid": 18451,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 14,
+              "pid": 18465,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 22,
+              "pid": 18477,
+              "uid": 15133,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 65,
+              "pid": 18485,
+              "uid": 15133,
+              "workspaceRemoved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "bek749scrwv4wo8h",
+      "model": "22120RN86C",
+      "api": 33,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 0,
+      "driverLog": {
+        "bytes": 108,
+        "sha256": "3f76a79cea667677e241c355c0888f365b25a0a6bc5a5de74bde619cb2c1964b"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10535,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10536
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 19322,
+        "sha256": "9489f79766551e3945ebf53c0ca88ab337e6cb3e9bfed2db566d4ab258cba5bf"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 22,
+              "pid": 9867,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 54,
+              "pid": 9882,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 44,
+              "pid": 9915,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 79,
+              "pid": 9922,
+              "uid": 10535,
+              "workspaceRemoved": true
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 28,
+              "pid": 10359,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 29,
+              "pid": 10386,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 45,
+              "pid": 10423,
+              "uid": 10535,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 61,
+              "pid": 10438,
+              "uid": 10535,
+              "workspaceRemoved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "968e9f18",
+      "model": "23046RP50C",
+      "api": 35,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 0,
+      "driverLog": {
+        "bytes": 92,
+        "sha256": "7e972ea4368a637f24b9d03e5128793a07df87e1899c4010fab4ea8a06790db8"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 11037,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 11038
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 29777,
+        "sha256": "5483b407b317ce0343784409cb4e35922a9601ec34d40e7a4a452331f630bc32"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 14,
+              "pid": 14638,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 16,
+              "pid": 14649,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 21,
+              "pid": 14659,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 21,
+              "pid": 14672,
+              "uid": 11037,
+              "workspaceRemoved": true
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 13,
+              "pid": 14829,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 14,
+              "pid": 14840,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 24,
+              "pid": 14850,
+              "uid": 11037,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 19,
+              "pid": 14858,
+              "uid": 11037,
+              "workspaceRemoved": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "emulator-5584",
+      "model": "sdk_gphone64_x86_64",
+      "api": 33,
+      "abi": "x86_64",
+      "pages": 4096,
+      "driverExit": 0,
+      "driverLog": {
+        "bytes": 102,
+        "sha256": "2594e564ae71adbe79655ff7506aab567f15b9fed359d2388f9de84e544e2b6c"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10174,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10175
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 11842,
+        "sha256": "e8204c8b3b29ab1c798a248ffc18539b3730a39b2769c1f89ddd323ef6f5ea85"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 47,
+              "pid": 3834,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 28,
+              "pid": 3854,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 49,
+              "pid": 3983,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 69,
+              "pid": 4034,
+              "uid": 10174,
+              "workspaceRemoved": true
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "modes": [
+            {
+              "mode": "files",
+              "elapsedMillis": 15,
+              "pid": 4431,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "dns",
+              "elapsedMillis": 20,
+              "pid": 4448,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tcp",
+              "elapsedMillis": 62,
+              "pid": 4500,
+              "uid": 10174,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "http-fetch",
+              "elapsedMillis": 101,
+              "pid": 4539,
+              "uid": 10174,
+              "workspaceRemoved": true
+            }
+          ]
+        }
+      ],
+      "ownedAvd": {
+        "name": "bun-hard-limit-api33-20260912",
+        "serial": "emulator-5584",
+        "pages": 4096,
+        "launcherPid": 48860,
+        "arguments": [
+          "-avd",
+          "bun-hard-limit-api33-20260912",
+          "-port",
+          "5584",
+          "-no-window",
+          "-no-snapshot",
+          "-no-boot-anim",
+          "-no-audio",
+          "-gpu",
+          "swiftshader_indirect"
+        ],
+        "startedAt": "2026-09-14T06:29:35Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        offline transport_id:25",
+        "initialEmulatorProcesses": "",
+        "stopped": true,
+        "bootConfirmedAt": "2026-09-14T06:30:06Z",
+        "kernelMappingPages": {
+          "KernelPageSize": [
+            4096
+          ],
+          "MMUPageSize": [
+            4096
+          ]
+        },
+        "nameBeforeStop": "bun-hard-limit-api33-20260912",
+        "stopCommandAt": "2026-09-14T06:30:30Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopConfirmedAt": "2026-09-14T06:30:31Z",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        offline transport_id:25"
+      },
+      "shellSmaps": {
+        "bytes": 102322,
+        "sha256": "f77703f9d0f736a3b1914edb8a6184f2c1c5f3beef73f3c1fcb6227e5e1aa74d"
+      }
+    }
+  ],
+  "interpretation": {
+    "fixedOfflineScopeOnly": true,
+    "originalProbePassesAdded": 0,
+    "originalBinderPassesAdded": 0,
+    "runtimeFailuresObserved": 0,
+    "preflightFailures": 1,
+    "testsExecutedOnMissingSony": 0,
+    "runtimeRetryAttempts": 0,
+    "native16KiBCoverage": false,
+    "tlsCoverage": false,
+    "ipv6Coverage": false,
+    "publicNetworkCoverage": false,
+    "performanceAcceptance": false,
+    "productionReleaseAcceptance": false
+  },
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "files": 46,
+      "tests": 293,
+      "passed": 293,
+      "failed": 0,
+      "receipt": {
+        "bytes": 4051,
+        "sha256": "a0c3737b444dceadb26d34297bd1c10e3aab0038114a7ee9000218cfbe01d6a4"
+      },
+      "log": {
+        "bytes": 26322,
+        "sha256": "e42110ea9fc654c70e0da01c70f2e80e088fb930ce6197363e27560aefe41ad1"
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 11,
+      "tasks": 96,
+      "executed": 49,
+      "upToDate": 47,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "jvmResults": [
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+          "tests": "4",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.319Z",
+          "hostname": "HELLODOG009",
+          "time": "0.087"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+          "tests": "1",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.409Z",
+          "hostname": "HELLODOG009",
+          "time": "0.001"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+          "tests": "2",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.413Z",
+          "hostname": "HELLODOG009",
+          "time": "0.017"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+          "tests": "11",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.438Z",
+          "hostname": "HELLODOG009",
+          "time": "0.588"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+          "tests": "3",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:31.036Z",
+          "hostname": "HELLODOG009",
+          "time": "0.008"
+        }
+      ],
+      "lintErrors": 0,
+      "lintWarnings": 44,
+      "receipt": {
+        "bytes": 390,
+        "sha256": "2b48a47e390e40025827afaa3386dd9fc87739b368e99d33c8dfc7fdd90bab1f"
+      },
+      "log": {
+        "bytes": 8877,
+        "sha256": "e5489b590e0d63a5c0459ec40c558c58878406b2f4482c754349f78bd0d2e13c"
+      }
+    },
+    "toolObservations": {
+      "recording": "Observed tool results retained from this session; no extra build or repeated verification inferred",
+      "ide": {
+        "tool": "mcp__idea__build_project",
+        "isSuccess": true,
+        "timedOut": false,
+        "warnings": [
+          "SDK processing understands SDK XML versions up to 3 but encountered version 4",
+          "BunExecutionRequest.kt:47:43 Bundle.get is deprecated"
+        ]
+      },
+      "officialRuntime": {
+        "command": "node tools/bun-runtime/verify-runtime.mjs",
+        "exitCode": 0,
+        "arm64Sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "x86Sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
+        "supportBoundary": "API 33 / Android 13 aligned across lock, version.properties and README sources"
+      },
+      "supervisor": {
+        "command": "node tools/bun-runtime/supervisor/verify-supervisor.mjs",
+        "exitCode": 0,
+        "arm64Sha256": "25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537",
+        "x86Sha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5"
+      }
+    },
+    "toolObservationsFile": {
+      "bytes": 1065,
+      "sha256": "9ab50f9caaccba2cfd0f5d2e0c1a4d3da4e481568ab7850795af3db99eb66016"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 1801,
+      "sha256": "f56390e76f4b5212399e81eb80911bb278e62b89f4d698e2274c294daf7e6d80"
+    },
+    "device-drivers.json": {
+      "bytes": 9799,
+      "sha256": "c204621bad453ebb6f161a259badd458e5ce566a8104ef312344af6679e62512"
+    },
+    "device-completed.json": {
+      "bytes": 12598,
+      "sha256": "283028b2ee305bc44513a35e36d898f27b8330d170c0511ec4200e656ecff9e9"
+    },
+    "protected-files.json": {
+      "bytes": 11091,
+      "sha256": "c2ce90044c26b669ef8c5f2553f2bf062e4b15d67a71772a5c88432145678ea3"
+    },
+    "scope-amendment.json": {
+      "bytes": 815,
+      "sha256": "bcabca133e131b1d77259205de5eae9424dfa3a56c2bb73d822fb35eb63d239e"
+    }
+  }
+}
