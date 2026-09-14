@@ -17,9 +17,10 @@
         "Corriger l'arrêt de JavaScriptCore expérimental au démarrage sur x86_64 natif 16 KiB en recompilant le WebKit épinglé avec des réglages explicites de grandes pages, JIT et allocateurs puis en rééditant les liens de Bun: deux passages Binder réussissent sur les AVD 4 KiB et 16 KiB (32/32). Les binaires officiels et leur garde 4 KiB restent inchangés; la validation Release est distincte"
       ],
       "dependency": [
-        "Aligner le plugin en ligne platform-versions sur la version 1.7.4 fixée par le dépôt, sans modifier native-alignment"
+        "Aligner le plugin en ligne platform-versions sur la version 1.8.0 fixée par le dépôt, sans modifier native-alignment"
       ],
       "improvement": [
+        "Ajouter une comparaison bornée du mappage PC pour les échantillons JSC: réutiliser exactement les quatre phases, vérifier les options finales et conserver les décisions d'inlining, les niveaux réels d'exécution et la sortie 1. Inverser l'ordre au second tour sans modifier les tests initiaux, limites, binaires ou garanties de prise en charge",
         "Ajouter un diagnostic JSC fixe en quatre phases pour le redémarrage et la remise à zéro des données, avec un contrôle explicite sans exécution de la fonction cible et une sortie 1. Conserver témoins, horodatages et preuves UID brutes sans modifier les tests initiaux ni prétendre reproduire la panne historique",
         "Ajouter un diagnostic DFG indépendant et borné avec durées par capture, appels, répartition des frames et compteurs d'optimisation. Conserver les sorties pour échantillons insuffisants et les preuves exactes des sources, APK et UID sans modifier le test de pression initial, ses limites, le runtime ou les comptes de compatibilité",
         "Ajouter un guide pour libérer l’espace des caches de compilation et des émulateurs retirés, tout en conservant la provenance du runtime, les artefacts de test et les journaux d’échec",
