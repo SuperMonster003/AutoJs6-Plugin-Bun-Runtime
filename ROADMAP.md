@@ -4,6 +4,13 @@
 
 更新日期: 2026-09-14
 
+开发环境已完成一次有清单的磁盘维护: 退役四台历史专用 AVD, E 盘实际增加约11.55GiB;
+23个Bun独立构建目录的缓存/目标文件在WSL内部释放约133.04GiB, 完整成品/符号/日志保留.
+VHDX离线压缩尚未执行, 不能把内部释放量当作Windows实际增加量.
+[维护指南](docs/storage-maintenance.md)与[当前交接](docs/SESSION_HANDOFF.md)记录保留范围和手动步骤.
+另完成[固定JSC采样源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md),
+未新增设备成绩或关闭DFG/watch根因门禁.
+
 十三补丁大页 JSC 已另行完成两次全新 clean Bun 构建, actual exit 0/0,
 21 项输入未漂移, 两份完整成品 `17c7941a...20e98a8` 一致且 ELF 审计通过.
 原 JSC 库/config 和 ICU 精确复用, 新 WebKit/ICU 构建为零. 同一85输入新APK
@@ -375,6 +382,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (设备/x86_64) 十三补丁新候选在API36 x86 4KiB/16KiB用户页各两轮原八项Binder通过32/32, 无失败/重试. 同一APK的85输入匹配`ba5418e`, 签名/安装payload、20生命周期及两个UID清理均通过. [独立Binder归档](docs/compatibility/2026-09-14-m5-thirteen-patch-jsc-binder.json). (2026-09-14, G2, 非Release)
 - [x] (测试/x86_64) 同一十三补丁APK在双页大小各两轮原七模式压力通过28/28, 初次16KiB第二轮DFG采样不足失败独立保留, 同APK完整两轮复测通过; fixture/validator/预算不变. 实际LLInt/Baseline/DFG/FTL、GC/Wasm、64个worker正常退出通过; 用户页ABI16KiB仍模拟于4KiB内核映射. 仅关闭本轮两AVD, [压力与清理报告](docs/compatibility/2026-09-14-m5-thirteen-patch-jsc.md)不计入baseline560/128或长时/全JIT/性能/Release. (2026-09-14, G1/G2)
 - [ ] (诊断/测试) 查明固定 DFG 采样不足的条件与稳定性. 保留十三补丁 16KiB 第二轮 2<3 样本失败及同 APK 完整复测, 用独立有界观测检查目标采样和优化状态, 不放宽原三样本/四次采样及执行预算.
+- [x] (诊断/源码) 逐字节绑定固定 Bun/WebKit 的 profiler 与测试辅助源码, 确认微秒间隔、pause/clear/start、内联帧展开和编译计数边界; 列出原失败缺少的逐次采样字段. [源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md)不代替动态根因、稳定性或新套件验收. (2026-09-14, G0)
 - [x] (构建/x86_64) 独立 rebase 到十二补丁 `06e518f73`, 两个全新 clean Bun 构建实际 exit 0/0, 21 输入和 source head/tree 均未漂移. 两份完整 90609496-byte 成品 `34edd4b9...a75b1ad` 一致且完整 ELF 审计通过. 精确复用两套独立 JSC 库/config 和原 ICU, 新 WebKit/ICU 构建 0/0. [构建归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json) 保留原始换行摘要/精确映射及此前 recorder 失败, 不重新编译或改写旧证据. (2026-09-13, G1)
 - [x] (设备/x86_64) 十二补丁候选在 API 36 的 4 KiB/16 KiB 用户页各两轮原八项 Binder 通过 32/32. 同一 APK 的 83 输入匹配 `0210e82`, 安装字节/签名/完整 payload、二十条生命周期和两个 UID 清理通过. 初次 16 KiB lowmemorykiller 导致预热 DeadObjectException 的整批失败独立归档; 同 APK 完整两轮重试通过, 无配置/源码/预算 workaround. [Binder 与失败范围](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md). (2026-09-13, G2, 非 Release)
 - [x] (测试/x86_64) 同一十二补丁 APK 双页大小各两轮原七模式压力通过 28/28, 原 fixture/validator/预算不变. LLInt/Baseline/DFG/FTL 实际采样、GC/Wasm 和 64 个 worker 正常退出均通过; AT_PAGESZ/sysconf/getconf 一致, 两台内核/MMU 页均为 4 KiB. [压力归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-pressure.json) 与 [清理补充](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-checkpoints.json) 分开. 仅关闭本轮两个 AVD, 不计入 baseline 330/330 或 80/80, 不扩张为 ARM64 硬件页/压力、全 JIT/Wasm、长时性能或 Release. (2026-09-13, G1/G2)
@@ -443,6 +451,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (发布/测试) 新增 [自动生成的兼容证据矩阵](docs/compatibility/MATRIX.md) 与 [机器索引](docs/compatibility/matrix.generated.json): 完整登记 57 份历史 JSON, 生成 144 条设备/尝试记录, 按设备/API/执行 ABI/页大小/运行时摘要与各轮套件呈现结果. 官方、实验、shell、失败和初步诊断分别保留范围, 构建/补充记录不增加设备通过数; 不跨报告、APK、运行时或计数单位累加. 源文件 UTF-8/LF SHA-256、结构适配、轮次/摘要一致性和只读 `--check` 接入 Markdown CI, [维护说明](tools/compatibility/README.md) 与十语言 README/changelog 已同步. Python 专项负向/历史回归与标准构建验证通过; 历史报告及 native 字节未变, 没有新增设备验收. (2026-09-13, G0/G1)
 - [x] (测试/文档) 为固定 25 项独立探针新增可重复归档工具, 对两轮原始 instrumentation 与 JSON、当前构建 receipt/源码、安装后 APK/runtime/helper 摘要及每轮/最终 UID 清理重新校验, 拒绝失败、混用 APK 与重复环境, 使用独占创建保留历史文件. 新增四组含负向变体的单元测试并接入 CI; 首次用于 API 29/32 的 100/100 报告. 这不是完整历史兼容矩阵生成器. (2026-09-12, G1/G2)
 - [x] (插件/发布/测试) 完成 [运行错误与诊断审计](docs/compatibility/2026-09-13-m9-localized-errors.md): 17 个错误/帮助资源覆盖十语言, 10 个稳定错误码使用本地化摘要, 预热缓存保留事实并在返回时翻译, 16 KiB 诊断截断保留完整 Unicode 字符. 未激活/未启用与 Android 13 要求的帮助直接从同一组 `strings.xml` 生成到 README/插件说明, 明确绑定前宿主与系统安装门槛的归属. 两台 native ARM64 API 33/35 / 4 KiB 的原八项 Binder 两轮共 32/32; 独立语言回归含 240 个真实错误/finished 观察. x86 API 36 / 16 KiB 用户页 ABI 两轮确认十语言缓存拒绝, 不计作 Bun 执行成功. 三环境新增 JUnit 共 12/12, 包/六个 UID 与本轮 AVD 均清理. 原 native、AAR、历史报告和 Release 边界保持不变. (2026-09-13, G0/G1/G2)
+
+- [x] (开发环境/文档) 完成有来源及摘要清单的旧 AVD 和 native 编译中间产物清理, 保留源码、各轮完整成品/符号/日志、JSC/ICU、工具链及原 APK/设备证据. [磁盘维护指南](docs/storage-maintenance.md)区分 WSL 内部空间、稀疏文件逻辑大小和宿主实际空间, 说明重建与离线压缩边界; 原历史报告保持不变. (2026-09-14, G0/G1)
 
 **M9 验收条件:** 新用户只读 README 与示例即可完成首次运行; 常见失败在排错指南中有对应条目; 兼容矩阵与设备报告不脱节.
 
