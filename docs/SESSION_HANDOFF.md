@@ -1,4 +1,49 @@
-# 当前阶段: 固定完整 trace/inliner 诊断完成
+# 当前阶段: 原压力控制流固定诊断完成
+
+2026-09-14, 从干净 master fd5203c 继续. 新工具和唯一 APK 源码提交为
+f73510a31a30abfbc77cfe03e6791257a833cdfb. 当前本机交接:
+`E:/.codex-tmp/jsc-pressure-flow-20260914/SESSION_HANDOFF.local.md`.
+先完整阅读该记录及下文历史. 本批 build-apks.py / run-devices.py 已实际结束,
+不得重复启动一次性 driver, 原生缓存没有恢复.
+
+- 独立七模式 collection 保留原顺序; 六模式使用原资产/验证器, DFG 新 JS 只加七段
+  可剥离观察, 去掉后恢复整个原压力源码. 原热函数、匿名回调、128预热、达到3个样本
+  即停止、四次profile上限和全部断言不变. DFG 只请求原模式变量, 不加JSC选项.
+  观察位于profile前后, 记录整个profile时间; 不声称纯回调时间、相同机器代码或无扰动.
+- 原错误catch后重抛同一对象, finally输出事实. 新collection允许完整DFG断言exit1
+  后继续剩余模式, 这与原JUnit失败停止不同, 不增加原套件成绩. Node直接运行实际新JS,
+  构造profile验证2<3错误保留等六组控制; 本批Android未发生exit1, 不称真机失败重现.
+- 原16KiB源/64KiB总输出/20s工作/25sBinder/300ms100000call/1000us和所有旧门槛不变.
+  首个完整分类栈单份4096bytes/总24576bytes, 显式省略规则复用且独立验证.
+- 单一94输入APK对匹配f73510a. Buildactual0,28s/80tasks12executed68upToDate.
+  main42963239bytes SHA447decc9d17c6e445cf2960a0f5433d5a97a31e149eb016bd309b0f021e33ce8;
+  test2580707bytes SHAe6adfbfd21c6c50b2ded0e88592c7089716349f94e953c398f5da98f082d0f7a.
+  十三补丁JSC90609496bytes/17c7941a...f20e98a8复用, Bun/WebKit/ICU新构建均0.
+- API36原生x86用户4096/16384各两轮,28模式进程正常退出, 无采集失败/重试.
+  四个DFG均首profile后原断言成功: 样本18,10,82,93; 调用4426,5530,6256,7530
+  (另含原128预热), 编译2,1,2,2. 四profile共392trace/2052帧, 8份首栈无省略.
+  DFG目标203帧, DFG目标/调用者同栈分类202trace, 无目标或调用者FTL, 无整段目标归零.
+  四份首DFG栈保留目标EoFuS3与invokeDawGsb; 三份other首栈无二者, 一份为Baseline.
+  首栈不能代替该类全部栈. 此前32profile诊断的机器层级/内联结论不能转移到本批.
+- 两包每台卸载, 完整数字UID清单分别证明10226/10227,10213/10214全0.
+  仅本轮owned5580/5582于05:41:06Z/05:43:09Z关闭. 测试前已有API24/37未操作,
+  结束仍在线; 共享ADB和手机未启停. localhost37478本批清单offline, 未依赖它.
+  x86用户16384仍模拟于内核/MMU4096映射上, 不是ARM64硬件16KiB.
+- Node45文件283/283, IDE成功且既有SDK XML警告, 官方runtime/supervisor及Debug完整性通过.
+  生产四Gradleactual0,19s/96tasks49executed47upToDate; JVM任务UP-TO-DATE, 原21项结果保留.
+  Lint0errors/44warnings. 最终五个文档/Python检查与证据提交结果见本机追加记录.
+- [报告](compatibility/2026-09-14-m5-jsc-pressure-flow.md)及两份JSON严格绑定源/APK/raw/UID.
+  原120报告/注册hash、217行、131保护文件与用户已有settings1.8.0不变, 新两份仅索引.
+  Baseline560/128、原JSC32/28、官方API33+与distributionReady=false不变, 无push/Release.
+
+本批把观察范围恢复到原早停控制流, 但四次均成功, 未重现原2<3. 不能由新样本差异解释
+页大小因果、追认历史根因或稳定性. 下一轮如继续M5, 应先固定要区分的条件与有限预算,
+复用已保留APK和此独立观察框架; 不追加本批追逐失败/通过, 不降低门槛或抑制FTL,
+不未经规划恢复大体积原生缓存. 也可继续不依赖该根因的Roadmap边界审计.
+API28watchSIGABRT/cloneEAGAIN、broader syscall/FD/API/OEM、长期压力/性能和Release仍开放.
+当前无需用户新增设备、资料、关键决定或手动操作; 已完成的两项磁盘清理不重复执行.
+
+## 前一批完整 trace/inliner 诊断
 
 2026-09-14, 从干净 master 5c9d8b8 继续, 工具与 APK 源码提交为
 432e0e6e02bb1fae8309b76f707d9a701dbd146c. 当前本机交接:

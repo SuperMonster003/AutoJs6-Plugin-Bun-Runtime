@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 120 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 122 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -1043,6 +1043,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
+### M5 原压力控制流固定诊断
+
+来源: [2026-09-14-m5-jsc-pressure-flow-diagnostics.json](2026-09-14-m5-jsc-pressure-flow-diagnostics.json).
+
+保留原七模式顺序, DFG 提前停止与原断言. 有界逐轮数据及完整首栈独立归档, 诊断采集不增加原套件兼容性通过数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
 ### M5 固定四段 profiler 与目标缺席对照
 
 来源: [2026-09-14-m5-jsc-restart-diagnostics.json](2026-09-14-m5-jsc-restart-diagnostics.json).
@@ -1246,6 +1254,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-14-m5-jsc-pcmap-checkpoints.json](2026-09-14-m5-jsc-pcmap-checkpoints.json).
 
 90输入APK、18个固定源码文件、原始双UID清理与两owned AVD绑定. 保留用户平台插件1.8.0改动, 无native重建, 未确立原低采样根因.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M5 原压力控制流来源和清理补充
+
+来源: [2026-09-14-m5-jsc-pressure-flow-checkpoints.json](2026-09-14-m5-jsc-pressure-flow-checkpoints.json).
+
+94 输入 APK, 原工作负载可剥离证明, 实际构建退出码和双 UID 清理. 原生未重建, 不确立历史低采样根因.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
