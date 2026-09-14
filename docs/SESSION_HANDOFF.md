@@ -1,12 +1,37 @@
-# 当前会话: 独立 DFG 采样诊断
+# 会话交接: 独立 DFG 采样诊断完成
 
-2026-09-14, 从干净 master e01a939 继续. 用户已确认两项手动清理全部成功;
-实际压缩 receipt exit0, VHDX 272895049728 -> 133013962752 bytes, 缩小139881086976 bytes.
-Gradle旧备份精确目录已不存在. 原失败日志和下方历史状态保留, 不再要求这两项手动操作.
-新本机交接: `E:/.codex-tmp/jsc-sampling-diagnostic-20260914/SESSION_HANDOFF.local.md`.
-新增独立 DFG 诊断工具, 原热函数/四次采样/三样本门槛和原七模式夹具不变.
-本源码检查点尚未进行新 APK/设备诊断; 待使用现有十三补丁大页 JSC 成品, 不重复 native 构建.
-后续动态结果必须单独归档, 不增加原 baseline560/128 或 JSC32/28 接受数.
+2026-09-14, 从干净 master e01a939 继续, 诊断源码提交为8af825b.
+先完整阅读AGENTS、本文件和 `E:/.codex-tmp/jsc-sampling-diagnostic-20260914/SESSION_HANDOFF.local.md`.
+原构建/设备及清理交接仍在下文指向的本机目录, 所有旧失败保留.
+
+- 用户确认两项手动清理成功. 最终压缩receipt actual0, VHDX从272895049728降至133013962752 bytes,
+  缩小139881086976 bytes (约130.27 GiB). 旧Gradle备份精确目录不存在. 无待执行手动清理.
+- M5新增独立DFG采样资产、真实Binder instrumentation、严格归档器及正/反向测试, 纳入CI.
+  原七模式资产/Java/validator/预算、原八项Binder、35探针、生产service/AAR/native及全部锁不变.
+  诊断输出先于exit0/1, 低样本exit1可完整记录; 本次设备未触达低样本分支, 该能力是构造测试证据.
+- 只构建一批新JSC主/test APK, actual0/27s, 87输入逐项匹配8af825b. 原十三补丁JSC
+  90609496 bytes / SHA17c7941a...f20e98a8直接复用. 没有Bun/WebKit/ICU重建或补回已清理的native缓存.
+- API36原生x86两用户页大小各两轮, 4项诊断完整收集, 目标DFG样本9/16/103/91,
+  全部首次profile达到原三样本门槛. 无失败/重试; 样本不足根因和稳定性仍未确定.
+  callback约300ms, trace57/77/108/140; 16KiB中调用者invoke可有FTL帧, 目标仍无FTL.
+  编译/重优化计数不是当前执行层证明. 镜像/内核不同, 不将调用数差异解释为页大小性能因果.
+- 两个环境的主/test包均卸载, UID10226/10227和10213/10214均为0进程.
+  这是runner实际ps检查后的结构化计数, 未另外保留完整原始ps快照. 仅关闭本轮AVD5580/5582;
+  五台手机、默认ADB和无关API37/5594未操作. x86用户16KiB仍模拟于4KiB内核映射.
+- 新[诊断报告](compatibility/2026-09-14-m5-jsc-sampling.md)、诊断JSON和收尾JSON另档.
+  保留原112历史报告与217矩阵行, 新增两条仅索引记录; baseline560/128、原JSC32/28不增加.
+  官方API33+及distributionReady=false不变, 无push/Release.
+- 全部41个Node文件259/259通过, 原测试子进程actual0; 随后Python向GBK控制台打印Unicode
+  日志尾部失败exit1单独保留. 已只读核对原receipt和日志, 不重跑/隐藏该显示失败.
+  官方runtime/supervisor通过. 生产四任务actual0/25s/96tasks, 48执行/48up-to-date,
+  JVM21项使用已有结果. IDE直接isSuccess=true且problems为空, 没有超时.
+  文档/矩阵/Python最终检查与提交结果见本机交接追加记录.
+
+下一步: 保持原DFG稳定性门槛开放, 仅做事先固定且有上限的独立观测, 不持续重试到通过.
+若复现, 先对比trace、目标分布和优化状态再设计单因素对照. 新诊断可能扰动执行,
+不能转移为原七模式通过. 原API28 watch SIGABRT也未复现; broader syscall/FD/API/OEM,
+长时压力/性能和签名Release继续开放. 本轮不需要用户追加设备或手动操作.
+本机所有构建/设备驱动已完成, 不重复运行一次性脚本; 新任务先检查现有进程和最新记录.
 
 ## 前一清理阶段与恢复历史
 

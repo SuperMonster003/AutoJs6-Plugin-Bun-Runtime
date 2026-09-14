@@ -1,0 +1,199 @@
+{
+  "schemaVersion": 1,
+  "kind": "jsc-sampling-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "diagnosticReport": {
+    "path": "docs/compatibility/2026-09-14-m5-jsc-sampling-diagnostics.json",
+    "bytes": 229088,
+    "sha256": "7fc8da12f1998f435591a9ad9ae6627c38dc3e7d4483da1be070cf8d4688e1cb"
+  },
+  "projectSourceCommit": "8af825b85a0f67da97dde7c294422e90cab86683",
+  "compiledInputEncoding": "git-canonical-utf8-lf",
+  "compiledInputsMatched": 87,
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 27,
+    "tasks": 80,
+    "executed": 12,
+    "upToDate": 68,
+    "receipt": {
+      "bytes": 18317,
+      "sha256": "e0e3c61ad74079cf6941cf1974810450ab5d7b1dee1b597a4e83bf4fd471f47a"
+    },
+    "log": {
+      "bytes": 7747,
+      "sha256": "b367a2e88106df0ca36ae5cd741b7750b37e8a67cd34d000a46a3790efbcb260"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42955988,
+        "sha256": "dee88d927b154d4fe176420d50153cc3f9a4c81891873f6ef8723c699019569a"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2502975,
+        "sha256": "08465432d5be940e83ff1651ca7ae99048be043609d98799cdd4417a3798909f"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "preserved": {
+    "historicalReports": 112,
+    "protectedRuntimeAndFixtureFiles": 88,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchanged": true
+  },
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "avdName": "bun-jsc-pressure-4k-20260912",
+      "pages": 4096,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10226,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10227
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Runner executed and checked ps after uninstall; full raw ps output was not retained",
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 123125,
+        "sha256": "2daaa0df813112589c9ce655a44d2b4e83c07a2436de6a58bfe46e0dc7f81359"
+      },
+      "ownedAvd": {
+        "launcherPid": 44512,
+        "startedAt": "2026-09-14T00:55:43Z",
+        "bootConfirmedAt": "2026-09-14T00:56:14Z",
+        "nameBeforeStop": "bun-jsc-pressure-4k-20260912",
+        "stopCommandAt": "2026-09-14T00:56:49Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T00:56:50Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1"
+      }
+    },
+    {
+      "serial": "emulator-5582",
+      "avdName": "bun-jsc-pressure-16k-20260912",
+      "pages": 16384,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10213,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10214
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Runner executed and checked ps after uninstall; full raw ps output was not retained",
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 101769,
+        "sha256": "e39c10df6af5657a8e197b485fdd0cca73820746cf0f2e95ee4465bb6ddb0e27"
+      },
+      "ownedAvd": {
+        "launcherPid": 8440,
+        "startedAt": "2026-09-14T00:56:55Z",
+        "bootConfirmedAt": "2026-09-14T00:57:20Z",
+        "nameBeforeStop": "bun-jsc-pressure-16k-20260912",
+        "stopCommandAt": "2026-09-14T00:57:48Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T00:57:50Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:4\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1"
+      }
+    }
+  ],
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "tests": 259,
+      "passed": 259,
+      "failed": 0,
+      "receipt": {
+        "bytes": 3591,
+        "sha256": "3c6d6c52f2667f0064423131fb066f284425bb08936337159b390bdfd3488fc9"
+      },
+      "log": {
+        "bytes": 23093,
+        "sha256": "7e321ba17321e7bd03fd89daa6c0c6f1317d38785009eeb56f8a9d1de8a9a6a5"
+      },
+      "postprocessingDisplayFailure": {
+        "outerShellExit": 1,
+        "stage": "GBK console printing after successful test receipt; no rerun",
+        "receipt": {
+          "bytes": 384,
+          "sha256": "f38ad9709fa3555bfeb0400a9df097b7154644c77558a9a7dac9ed57b40184d1"
+        }
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 25,
+      "tasks": 96,
+      "executed": 48,
+      "upToDate": 48,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "receipt": {
+        "bytes": 390,
+        "sha256": "41426c8577adee3448b207a98a471ec41090a81a392470e05a1789f9444bd24d"
+      },
+      "log": {
+        "bytes": 8886,
+        "sha256": "3e7340f2f3922cc46b472e80c7147e5efb3ece1af445429ef8a9457091f8c28f"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "problems": []
+    },
+    "officialRuntimeAndSupervisorVerified": true,
+    "toolResponses": {
+      "bytes": 2644,
+      "sha256": "6b233cf4902b4b62e9b47072fae60ce896f049702c479d0cfffcdc4106819a12"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 4939,
+      "sha256": "18962cbe43417006ec28de011b03b46d7049c68d2964e2d4c49068faca841ad4"
+    },
+    "device-drivers.json": {
+      "bytes": 2272,
+      "sha256": "4fe952f9fb1b34b006366c17a9f8a17e814397c7f9d15451d28aa3bd31dc78a9"
+    },
+    "device-completed.json": {
+      "bytes": 7631,
+      "sha256": "18ea33ae59bb127c86aa264ac70fb256c3ccd7f58c1c09a5c4dd3cd4fd00c8d2"
+    }
+  }
+}

@@ -20,6 +20,8 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Session and Git safety
 
+- The independent bounded DFG sampling diagnostic is recorded in `docs/compatibility/2026-09-14-m5-jsc-sampling.md`. One new APK pair binds 87 inputs to `8af825b` and reuses the unchanged thirteen-patch large-page JSC bytes. Four collected diagnostics across native x86 API 36 4 KiB/16 KiB userspace pages have 9/16/103/91 target DFG samples, all in the first capture. Both package UIDs and the two owned AVDs are cleaned up. This does not reproduce or explain the original 2<3 failure, validate the device low-sample branch or prove stability. Other functions may have FTL frames while the noFTL target has none. Keep the original pressure asset/Java/validator/budgets and all historical reports unchanged; no native rebuild or added baseline/Binder/pressure acceptance, and distributionReady stays false.
+
 - For the latest native-build recovery and device-regression checkpoint, read `docs/SESSION_HANDOFF.md` before resuming. The confirmed nine-patch `pidfd_open` SIGSYS diagnosis and ten-patch build/device evidence are archived separately; never transfer historical acceptance to another source or start duplicate builds without checking existing processes.
 
 - At the start of work, run `git status --short`, check the current branch and latest commit, and look for more specific `AGENTS.md` files.
