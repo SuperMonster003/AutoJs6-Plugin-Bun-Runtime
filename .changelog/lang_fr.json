@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.2": {
       "released_date": "2026/09/12",
+      "feature": [
+        "Ajoute l'extracteur d'archive d'espace de travail côté plugin pour les projets multi-fichiers (M6) : un instantané ZIP borné est validé puis déployé atomiquement dans l'espace de travail privé de l'exécution, avec normalisation des chemins, rejet des chemins de traversée, absolus ou à barre oblique inverse, détection des doublons insensible à la casse et à la forme Unicode, contrôle des conflits fichier/répertoire, limites d'entrées et d'octets, validation du point d'entrée et nettoyage à l'annulation ; seuls des fichiers réguliers et des répertoires sont créés. Le contrat v1 publié n'exécute toujours qu'une seule source ; les clés de requête d'archive sont proposées dans docs/design/m6-workspace-archive.md"
+      ],
       "fix": [
         "Corriger la fuite de descripteurs au rechargement watch expérimental lorsque close_range échoue: marquer les FD réels CLOEXEC avant exec avec le repli borné existant et arrêter si la préparation reste incomplète. Conserver stdio, IPC explicite et le traitement des signaux. Les contrôles GCC/Clang sur les sources complètes couvrent exec réel, FD élevés, limites strictes réduites et erreurs injectées; consigner séparément les nouveaux builds natifs et les suites Android inchangées. Préserver les échecs historiques, les binaires officiels et les limites de distribution",
         "Corriger la vérification des anciens candidats JSC expérimentaux après une mise à jour des sources Bun: lier l'archive de compilation complète et immuable tout en conservant les contrôles stricts des entrées actuelles pour les nouvelles compilations",

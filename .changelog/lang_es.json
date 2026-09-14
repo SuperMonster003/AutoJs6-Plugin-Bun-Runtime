@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.2": {
       "released_date": "2026/09/12",
+      "feature": [
+        "Añade el expansor de archivos de espacio de trabajo del lado del plugin para proyectos multiarchivo (M6): una instantánea ZIP acotada se valida y expande atómicamente en el espacio de trabajo privado de cada ejecución, con normalización de rutas, rechazo de rutas de escape, absolutas y con barra invertida, detección de duplicados sin distinguir mayúsculas ni forma Unicode, comprobación de conflictos archivo/directorio, límites de entradas y bytes, validación del punto de entrada y limpieza al cancelar; solo se crean archivos regulares y directorios. El contrato v1 publicado sigue ejecutando una única fuente; las claves de solicitud del archivo se proponen en docs/design/m6-workspace-archive.md"
+      ],
       "fix": [
         "Corregir la fuga de descriptores durante la recarga experimental con watch cuando falla close_range: marcar los FD reales con CLOEXEC antes de exec mediante la alternativa acotada existente y detenerse si la preparación queda incompleta. Mantener stdio, IPC explícito y el ciclo de señales. Los controles GCC/Clang con fuentes completas cubren exec real, FD altos, límites duros reducidos y errores inyectados; registrar por separado las nuevas compilaciones nativas y las suites Android sin cambios. Preservar los fallos históricos, los binarios oficiales y los límites de distribución",
         "Corregir la verificación de candidatos JSC experimentales históricos tras actualizar las fuentes de Bun: vincular el archivo completo e inmutable de compilación y mantener las comprobaciones estrictas de entradas actuales para las nuevas compilaciones",
