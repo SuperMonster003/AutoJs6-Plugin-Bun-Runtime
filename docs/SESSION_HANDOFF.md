@@ -1,3 +1,16 @@
+# 当前阶段: 固定 PC 映射关闭/开启对照
+
+2026-09-14, 从干净master dcb68bd继续. 当前提交较原9255e8a仅增加用户已提交的
+settings.gradle.kts平台插件1.8.0, 保留该改动并同步当前说明, 不改历史APK证据.
+本机交接: `E:/.codex-tmp/jsc-pcmap-diagnostic-20260914/SESSION_HANDOFF.local.md`.
+新增测试Java/归档器复用原restart JS及语义validator, target模式固定四段;
+PC映射false/true两组共同启用实际选项dump和内联决定日志, 第二轮反转顺序.
+原64KiB总输出/四段预算/native/旧夹具不变; 五组正反向校验通过.
+尚未构建新APK或运行设备, 下一步绑定新源码输入后执行双页大小各两轮固定对照.
+旧116报告和217矩阵行保持不变, 当前没有额外设备/手动操作需求.
+
+## 前一批固定四段诊断
+
 # 会话交接: 固定四段 profiler 诊断与 FTL 源码收敛完成
 
 2026-09-14, 从干净 master7081e91继续, 源码/构建提交e07058d. 本机交接为
