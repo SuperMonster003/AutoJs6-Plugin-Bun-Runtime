@@ -92,6 +92,9 @@ android {
                 java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/java").absolutePath)
                 kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/java").absolutePath)
                 assets.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/assets").absolutePath)
+                java.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/restart/java").absolutePath)
+                kotlin.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/restart/java").absolutePath)
+                assets.directories.add(rootProject.file("tools/bun-runtime/experimental/webkit-x86_64-16k/restart/assets").absolutePath)
             }
         }
     }

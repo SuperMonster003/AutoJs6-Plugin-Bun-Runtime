@@ -1,3 +1,15 @@
+# 当前阶段: 固定四段 profiler 重启诊断
+
+2026-09-14, 从干净 master7081e91继续. 本机交接为
+`E:/.codex-tmp/jsc-restart-diagnostic-20260914/SESSION_HANDOFF.local.md`.
+新增独立四段重启/清空与target-absent对照, 保留原pressure和sampling全部文件不变.
+固定Bun/WebKit两文件完整SHA/Git blob重新核验; start解除pause, timer线程不会因pause退出.
+本源码检查点相关26项Node已通过, 尚未构建新APK或执行新设备观测.
+下一步只复用十三补丁JSC, 各页大小两轮固定双模式, 记录真实exit1和原始UID清理.
+受控目标缺席不等于历史DFG样本不足复现, 不增加旧套件接受数; 无native重建.
+
+## 前一批采样诊断交接
+
 # 会话交接: 独立 DFG 采样诊断完成
 
 2026-09-14, 从干净 master e01a939 继续, 诊断源码提交为8af825b.
