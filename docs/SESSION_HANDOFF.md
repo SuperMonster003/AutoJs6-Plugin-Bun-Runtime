@@ -1,13 +1,47 @@
-# 当前阶段: 固定 PC 映射关闭/开启对照
+# 当前阶段: 固定PC映射关闭/开启对照完成
 
-2026-09-14, 从干净master dcb68bd继续. 当前提交较原9255e8a仅增加用户已提交的
-settings.gradle.kts平台插件1.8.0, 保留该改动并同步当前说明, 不改历史APK证据.
-本机交接: `E:/.codex-tmp/jsc-pcmap-diagnostic-20260914/SESSION_HANDOFF.local.md`.
-新增测试Java/归档器复用原restart JS及语义validator, target模式固定四段;
-PC映射false/true两组共同启用实际选项dump和内联决定日志, 第二轮反转顺序.
-原64KiB总输出/四段预算/native/旧夹具不变; 五组正反向校验通过.
-尚未构建新APK或运行设备, 下一步绑定新源码输入后执行双页大小各两轮固定对照.
-旧116报告和217矩阵行保持不变, 当前没有额外设备/手动操作需求.
+2026-09-14, 从干净master dcb68bd继续, 工具/构建源码提交4cd6ba4.
+接手时较原9255e8a仅多出用户已提交的settings.gradle.kts平台插件1.8.0更新;
+保留该设置, 同步AGENTS与当前十语言changelog, 不改历史APK证据.
+先读本文件与本机交接
+`E:/.codex-tmp/jsc-pcmap-diagnostic-20260914/SESSION_HANDOFF.local.md`.
+原restart/sampling/磁盘和native记录仍在下文, 不重跑已完成的一次性driver.
+
+- 新测试Java/归档器复用原restart JS及语义validator, target模式固定四段,
+  两组共同启用JSC最终选项dump/内联决定日志, 仅PC映射false/true不同.
+  第一轮off/on、第二轮on/off, 每arm独立Bun进程; 原64KiB总输出/四段预算不变.
+  原120个fixture/validator/native/锁/生产Java与AAR在设备前和归档时均逐字节不变.
+- 一批新主/test APK的90输入逐项匹配4cd6ba4, actual0/43s/80tasks(76执行).
+  原十三补丁JSC90609496bytes/SHA17c7941a...f20e98a8直接复用,
+  Bun/WebKit/ICU重建均0, 没有补回已清理native缓存.
+  APK快照在本机jsc-apks, 不用后续生产构建产物替代.
+- API36原生x86双用户页大小各两轮, 收集8进程/32profile/8份最终选项,
+  四次JUnit/两driver无失败、跳过或重试. 开启组4KiB有155目标FTL帧,
+  两次真实exit1/NON_ZERO_EXIT完整保留, 原DFG门槛不放宽.
+  关闭组4KiB两段有8/4调用者FTL帧, 仍有13/39目标DFG帧, 未复现整段归零.
+- 18个固定Bun/WebKit完整源文件与Git blob匹配. 实际选项与内联决定已经捕获,
+  但后者是编译过程信息, 没有阶段时间戳或完成保证. 16KiB第二轮开启组有目标FTL
+  内联决定却没有FTL采样, 不能称为对应机器代码已执行.
+  原JS只保留直方图和三个DFG样本见证, 无原始FTL栈/具体PC/map指针,
+  故本批支持映射/机器tier解释, 不确定历史2<3根因或稳定性.
+- 两包逐台卸载, 四UID10226/10227与10213/10214均0, 原始数字UID ps/空包清单重验.
+  仅按精确名称关闭owned5580/5582; 开始时无关API37/5596进程已存在, 未对其发控制命令,
+  五台手机与默认ADB也未操作. 两台x86内核/MMU页4096, 用户16384仍是模拟ABI.
+- 全量43文件Node270/270, 生产四项Gradleactual0/56s/96tasks(92执行),
+  JVM21项本次实际执行. 官方runtime/supervisor/Debug APK与16KiB ZIP检查通过,
+  lint0errors/44既有warnings, IDE直接isSuccess=true且仅两个既有警告.
+  初次新中文changelog标点被原生成器拒绝的exit1单独保留, 仅修新标点,
+  未更改验证规则或影响设备. 最终文档/矩阵/Python及提交结果见本机追加记录.
+- [完整报告](compatibility/2026-09-14-m5-jsc-pcmap.md)和
+  [源码补充](diagnostics/2026-09-14-jsc-pcmap-source-review.md)绑定两份新JSON,
+  只登记索引, 原116报告与217矩阵行不变. Baseline560/128、原JSC32/28不增加,
+  官方API33+及distributionReady=false不变, 无push/Release.
+
+下一步若继续M5, 应单独预定逐trace目标/调用者FTL与CodeOrigin见证及固定预算,
+区分编译决定、实际执行与名称恢复, 保留这次未复现整段归零的完整批次.
+不追加本批运行、不用noInline/屏蔽FTL/降低门槛使原压力通过.
+历史2<3根因、API28watch SIGABRT、broader syscall/FD/API/OEM、长时压力/性能和Release仍开放.
+当前无需新增设备、资料或手动操作, 用户已完成的磁盘两项清理不重复执行.
 
 ## 前一批固定四段诊断
 

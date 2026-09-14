@@ -2683,6 +2683,74 @@
       }
     },
     {
+      "file": "2026-09-14-m5-jsc-pcmap-checkpoints.json",
+      "sha256": "aa1a1f3a3da5640da7dc6f137c543075cc9dddf8f8d47f1ec21971a2dd56c421",
+      "schema": 1,
+      "kind": "jsc-pcmap-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 PC映射选项来源与固定对照补充",
+      "note": "90输入APK、18个固定源码文件、原始双UID清理与两owned AVD绑定. 保留用户平台插件1.8.0改动, 无native重建, 未确立原低采样根因.",
+      "bytesUtf8Lf": 24045,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-14-m5-jsc-pcmap-diagnostics.json",
+      "sha256": "f589259a1cb4594a329579382e1fc925a2cd625953bee69e9afd0e846e6f7d81",
+      "schema": 1,
+      "kind": "jsc-pcmap-diagnostics",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M5 固定PC映射关闭/开启诊断",
+      "note": "双页大小各两轮, 8进程/32profile与8份实际选项回显. 开启组155目标FTL帧及两次真实exit1保留; 未复现整段目标归零, 不增加原套件接受数.",
+      "bytesUtf8Lf": 576169,
+      "rows": 0,
+      "reportedScope": "Fixed PC-map off/on control with shared finalized-option and compiler-inline logging. Exact previous four-phase JavaScript workload and semantic validator reused, target mode only; pair order reversed in round 2. Actual machine tiers and exit 1 retained. Compiler decisions alone are not executed FTL, and current observation options perturb code generation/timing. No historical failure root-cause, stability, original-suite, native rebuild or Release acceptance. x86 16 KiB userspace is emulated over 4 KiB kernel mappings.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "collectedDiagnostics": 8,
+        "profiles": 32,
+        "finalizedOptionReports": 8,
+        "modes": [
+          {
+            "mode": "map-off",
+            "diagnostics": 4,
+            "profiles": 16,
+            "targetFtlFrames": 0,
+            "targetDfgFrames": 683,
+            "invokeFtlProfiles": 2,
+            "zeroTargetProfilesWithCallsAndInvokeFtl": 0,
+            "targetIntoInvokeFtlDecisionProcesses": 2,
+            "targetGateMatched": 4,
+            "retainedExitOneDiagnostics": 0
+          },
+          {
+            "mode": "map-on",
+            "diagnostics": 4,
+            "profiles": 16,
+            "targetFtlFrames": 155,
+            "targetDfgFrames": 700,
+            "invokeFtlProfiles": 3,
+            "zeroTargetProfilesWithCallsAndInvokeFtl": 0,
+            "targetIntoInvokeFtlDecisionProcesses": 3,
+            "targetGateMatched": 2,
+            "retainedExitOneDiagnostics": 2
+          }
+        ],
+        "compatibilityPassesAdded": 0,
+        "historicalFailureRootCauseEstablished": false
+      }
+    },
+    {
       "file": "2026-09-14-m5-jsc-restart-checkpoints.json",
       "sha256": "e623d8eea7f8d49eabfdeb6f9398c43c2a7a1e8764ad651229ddb4061689ffef",
       "schema": 1,
