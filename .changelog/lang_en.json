@@ -20,6 +20,7 @@
         "Align the online platform-versions plugin with the repository-pinned 1.7.4; leave the native-alignment plugin unchanged"
       ],
       "improvement": [
+        "Add fixed four-phase JSC profiler restart and data-clear diagnostics, plus an explicitly controlled target-absent exit-1 case. Retain phase witnesses, timestamps and raw UID cleanup evidence without changing the original pressure or sampling fixtures or claiming historical failure reproduction",
         "Add an independent bounded DFG sampling diagnostic with per-capture timing, calls, frame distributions and optimization counters. Preserve low-sample exit outcomes and exact source/APK/UID evidence without changing the original pressure fixture, budgets, runtime payloads or compatibility counts",
         "Add a contributor guide for reclaiming build-cache and retired-emulator disk space while retaining runtime provenance, test artifacts and failure records",
         "Lock the thirteen-patch large-page JSC candidate separately: two fresh clean Bun builds retain actual exit 0, identical complete outputs and 21 unchanged build inputs. Reuse the original independent JSC libraries and ICU; bind new APKs and the original Binder/seven-mode pressure regressions separately without transferring historical acceptance or expanding release scope",

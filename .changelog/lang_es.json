@@ -20,6 +20,7 @@
         "Alinear el plugin en línea platform-versions con la versión 1.7.4 fijada por el repositorio, sin cambiar native-alignment"
       ],
       "improvement": [
+        "Añadir diagnósticos JSC de cuatro fases para reinicio y borrado de datos, con un control explícito sin ejecución de la función objetivo y salida 1. Conservar testigos, marcas de tiempo y pruebas UID originales sin cambiar las pruebas anteriores ni afirmar que se reprodujo el fallo histórico",
         "Añadir un diagnóstico DFG independiente y acotado con tiempos por captura, llamadas, distribución de marcos y contadores de optimización. Conservar las salidas por muestras insuficientes y las pruebas exactas de código, APK y UID sin cambiar la prueba de presión original, los límites, el runtime ni los recuentos de compatibilidad",
         "Añadir una guía para liberar espacio de cachés de compilación y emuladores retirados, conservando la procedencia del runtime, los artefactos de prueba y los registros de fallos",
         "Bloqueo independiente del candidato JSC de páginas grandes con trece parches: dos compilaciones limpias nuevas de Bun conservan la salida real 0, binarios completos idénticos y 21 entradas sin cambios. Se reutilizan las bibliotecas JSC independientes e ICU; los nuevos APK y las regresiones Binder/siete modos de carga se vinculan por separado, sin transferir validaciones históricas ni ampliar el alcance de publicación",
