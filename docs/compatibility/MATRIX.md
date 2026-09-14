@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 118 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 120 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -1059,6 +1059,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
+### M5 固定完整trace与内联调用者诊断
+
+来源: [2026-09-14-m5-jsc-trace-diagnostics.json](2026-09-14-m5-jsc-trace-diagnostics.json).
+
+两种用户页各两轮, 原门槛与真实exit1保留. 首份完整栈有固定字节限额, 核对同栈机器帧及编译hash, 无原始PC/map指针或兼容性接受数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
 ### M5 十三补丁 JSC DFG 采样不足失败
 
 来源: [2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json](2026-09-14-m5-thirteen-patch-jsc-pressure-sampling-failure.json).
@@ -1254,6 +1262,14 @@ API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语
 来源: [2026-09-14-m5-jsc-sampling-checkpoints.json](2026-09-14-m5-jsc-sampling-checkpoints.json).
 
 87输入绑定, 原生字节复用, 四UID归零及两owned AVD关闭, 标准验证与历史文件保护; 不新增设备接受数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M5 完整trace/inliner来源和清理补充
+
+来源: [2026-09-14-m5-jsc-trace-checkpoints.json](2026-09-14-m5-jsc-trace-checkpoints.json).
+
+92输入APK、20份固定源码、原始双UID清理与两owned AVD绑定. 保留原夹具、运行时、门槛和历史证据, 不确立原低采样根因.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 

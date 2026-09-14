@@ -1,24 +1,54 @@
-# 当前阶段: 固定完整trace/inliner诊断实现已复核, 等待本批APK与设备证据
+# 当前阶段: 固定完整 trace/inliner 诊断完成
 
-2026-09-14, 从干净master 5c9d8b8继续. 当前本机交接为
+2026-09-14, 从干净 master 5c9d8b8 继续, 工具与 APK 源码提交为
+432e0e6e02bb1fae8309b76f707d9a701dbd146c. 当前本机交接:
 `E:/.codex-tmp/jsc-trace-diagnostic-20260914/SESSION_HANDOFF.local.md`.
-先读该记录与下文历史. 原PC-map/restart/sampling/native和磁盘一次性driver均已完成,
-不得重跑. 复用十三补丁JSC原成品, 没有Bun/WebKit/ICU新构建或缓存恢复.
+先完整阅读该记录及下文历史. 本批和原 PC-map/restart/sampling/native/磁盘的
+一次性构建与设备 driver 均已结束, 不得重复启动. 原生构建缓存没有恢复.
 
-新trace目录的单源JS只加三段标记观测代码, 去除后与原restart逐字节相同.
-固定四段热循环/回调/算术/采样/门槛及16KiB源、64KiB输出、20s工作、25s超时不变.
-两组共同增加collectExtraSamplingProfilerData=true, 原dump/inline日志选项不变,
-仅PC map false/true不同, 第一轮off/on、第二轮on/off. 每类只考虑首份完整栈,
-单份4096bytes、总24576bytes, 显式保留缺席/过大/预算省略. 主机独立核对
-原始帧的inliner与同栈外层机器帧及编译hash; 不称为原始PC/map指针取证.
+- 新 JS 只增加三段标记观测代码, 去掉后逐字节恢复原 restart 资产.
+  原热循环、回调、参考算术、门槛及 16 KiB 源、64 KiB 总输出、四段 300ms/100000call、
+  20s 工作、25s 超时不变. 新观察在每次 profile 后处理, 不声称无扰动.
+- 两组共同启用 extra sampling data 和原 dump/inline logging, 只有 PC map 开关不同,
+  第一轮 off/on、第二轮 on/off. 每类只考虑首条完整 trace, 单份 4096 bytes、
+  总计 24576 bytes, 超限明确省略且不改选后续栈. 8 份四项最终选项均被核验.
+- 20 份固定 Bun/WebKit 完整文件匹配 Git 对象. 主机独立重解析完整帧的
+  inliner 与同栈外层机器帧; 关联名称、hash、tier 和 bytecode, 不是原始 PC/map 指针.
+  原 125 份受保护文件与 pre-existing settings 1.8.0 不变.
+- 一批新主/test APK 的 92 项输入匹配 432e0e6. 实际构建 exit 0, 19s / 80 tasks,
+  12 executed / 68 up-to-date. 本机 jsc-apks 保存独立快照与精确 hash.
+  十三补丁 JSC 90609496 bytes / 17c7941a...f20e98a8 复用, Bun/WebKit/ICU 新构建均 0.
+- API36 原生 x86 两种用户页各两轮: 8 进程、32 profile、2530 trace、65 份完整栈,
+  无超限省略、采集失败或重试. 开启组 90 个目标 FTL 帧, 四份完整 FTL 栈明确链接
+  jscPressureHotLoop#EoFuS3 -> invoke#DawGsb, 同时匹配编译器名称/hash.
+  主机重验四份原始栈, 不能称另有 90 份独立导出的见证. 三次真实 exit1 保留.
+- 关闭组 84 个调用者 FTL 帧均对应无目标的 trace, 保存三份首条完整栈.
+  4KiB 第一轮第四段 5030 次目标调用、64 trace、目标所有层级/未知帧 0、
+  invoke FTL 64; compiles/retries 前后为 3/2, 首份调用者位置为 <nil>.
+  另有混合阶段的缺席首栈位置为 bc#127, 不能称所有缺席都没有 bytecode 信息.
+  16KiB 第一轮开启组有 FTL 内联决定却无 FTL 采样, 不从编译日志推出已执行.
+- 两包逐台卸载, 数字 UID 完整 ps 独立确认 10226/10227 与 10213/10214 均 0.
+  仅本轮 owned AVD 5580/5582 在 04:53:00Z / 04:54:10Z 关闭.
+  开始接手时的无关 API37/24 AVD 后来已不在进程清单, 未操作且不推断消失原因.
+  手机与默认 ADB server 未启停; localhost37478 在测试期间自行恢复并显示 SM_F776B,
+  未为本批使用它. x86 用户 16384 仍模拟在内核/MMU 4096 映射上.
+- 全量 44 文件 Node 277/277, 无失败/跳过. 生产四项 Gradle actual0 / 45s / 96 tasks,
+  49 executed / 47 up-to-date; JVM 任务 UP-TO-DATE, 保留已有 21 项通过结果,
+  不声称本轮重新执行. 官方 runtime/supervisor、Debug APK 和 16 KiB ZIP 检查通过,
+  lint0 errors/44 既有 warnings, IDE isSuccess=true 且两个既有警告.
+  最终生成器/矩阵/Python 和证据提交结果见本机追加记录.
+- [完整报告](compatibility/2026-09-14-m5-jsc-trace.md)、
+  [固定源码补充](diagnostics/2026-09-14-jsc-trace-source-review.md)与两份独立 JSON 已归档.
+  原 118 份报告和 217 矩阵行不变, 新两份仅索引. Baseline560/128、原JSC32/28
+  不增加; 官方 API33+ 与 distributionReady=false 不变, 无 push/Release.
 
-20份固定Bun/WebKit源文件与Git对象一致, 原125份受保护输入不变.
-新7组Node正反测试已通过; 本批APK、设备和最终验证尚待本机记录补全.
-计划同一新APK在API36 x86用户4096/16384各两轮, 不为特定FTL/缺席结果重试.
-无关AVD_API_37/5598与AVD_API_24/5594在开始时已存在, 不得操作;
-仅核验并启动本轮owned bun-jsc-pressure-4k/16k-20260912的5580/5582.
-历史118报告/217矩阵行、baseline560/128、原JSC32/28及所有失败保持不变.
-distributionReady=false, 当前不需要用户设备或手动操作.
+本批建立了所保存目标语义帧与 FTL 机器调用者的直接关系, 并复现一次整段目标缺席.
+原压力 2<3 的历史根因和稳定性没有确立. 继续 M5 时应单独固定原低采样条件的
+观察范围, 优先保留原门槛失败时的逐轮调用/trace/目标/调用者信息; 不追加本批挑选结果,
+不以 noInline、屏蔽 FTL、扩大预算或调低门槛让旧测试通过. 若需要新增原生字段,
+先确认现有成品与磁盘保留范围, 不能未经规划恢复大体积缓存或启动重复构建.
+API28 watch SIGABRT/clone EAGAIN、broader syscall/FD/API/OEM、长期压力/性能和
+Release 仍开放. 当前无需用户新增设备、资料、关键决定或手动操作; 两项磁盘清理不重复执行.
 
 ## 前一批PC映射固定对照
 

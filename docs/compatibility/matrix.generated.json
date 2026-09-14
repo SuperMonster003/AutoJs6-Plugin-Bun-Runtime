@@ -2838,6 +2838,101 @@
       }
     },
     {
+      "file": "2026-09-14-m5-jsc-trace-checkpoints.json",
+      "sha256": "19fa94e6a881bbd84f4b5764488d91af534c3633a0d35c0364b1ba5e1057590d",
+      "schema": 1,
+      "kind": "jsc-trace-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 完整trace/inliner来源和清理补充",
+      "note": "92输入APK、20份固定源码、原始双UID清理与两owned AVD绑定. 保留原夹具、运行时、门槛和历史证据, 不确立原低采样根因.",
+      "bytesUtf8Lf": 39890,
+      "rows": 0,
+      "reportedScope": null,
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
+      "file": "2026-09-14-m5-jsc-trace-diagnostics.json",
+      "sha256": "8cd857a28ec08afc4f2a788dcd8b858f7643f3c66a398200e97c458b00308374",
+      "schema": 1,
+      "kind": "jsc-trace-diagnostics",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M5 固定完整trace与内联调用者诊断",
+      "note": "两种用户页各两轮, 原门槛与真实exit1保留. 首份完整栈有固定字节限额, 核对同栈机器帧及编译hash, 无原始PC/map指针或兼容性接受数.",
+      "bytesUtf8Lf": 1471942,
+      "rows": 0,
+      "reportedScope": "Fixed PC-map off/on control with shared extra-profiler-data, finalized-option and compiler-inline logging; complete first traces and JSC-exported inliner metadata have explicit byte caps and omission states. Previous four-phase JavaScript with only marked post-profile trace observation blocks; unchanged original semantic validator, hot functions and budgets, target mode only; pair order reversed in round 2. Actual machine tiers and exit 1 retained. Compiler decisions alone are not executed FTL, and current observation options perturb code generation/timing. No historical failure root-cause, stability, original-suite, native rebuild or Release acceptance. x86 16 KiB userspace is emulated over 4 KiB kernel mappings.",
+      "reportedOutcome": null,
+      "distributionReady": false,
+      "summary": {
+        "environments": 2,
+        "rounds": 4,
+        "collectedDiagnostics": 8,
+        "profiles": 32,
+        "finalizedOptionReports": 8,
+        "modes": [
+          {
+            "mode": "map-off",
+            "diagnostics": 4,
+            "profiles": 16,
+            "classes": {
+              "target-ftl-linked": 0,
+              "target-ftl-unlinked": 0,
+              "invoke-ftl-other-target": 0,
+              "invoke-ftl-target-absent": 84,
+              "dfg-pair": 1033,
+              "other": 40
+            },
+            "totals": {
+              "targetFtlFrames": 0,
+              "linkedTargetFtlFrames": 0,
+              "linkedToInvokeFtlFrames": 0,
+              "invokeFtlFrames": 84
+            },
+            "storedTraceWitnesses": 32,
+            "omittedTraceWitnesses": 0,
+            "independentlyValidatedTargetFtlMachineLinks": 0,
+            "compilerDecisionMatchedLinks": 0,
+            "targetGateMatched": 4,
+            "retainedExitOneDiagnostics": 0
+          },
+          {
+            "mode": "map-on",
+            "diagnostics": 4,
+            "profiles": 16,
+            "classes": {
+              "target-ftl-linked": 90,
+              "target-ftl-unlinked": 0,
+              "invoke-ftl-other-target": 0,
+              "invoke-ftl-target-absent": 0,
+              "dfg-pair": 1246,
+              "other": 37
+            },
+            "totals": {
+              "targetFtlFrames": 90,
+              "linkedTargetFtlFrames": 90,
+              "linkedToInvokeFtlFrames": 90,
+              "invokeFtlFrames": 90
+            },
+            "storedTraceWitnesses": 33,
+            "omittedTraceWitnesses": 0,
+            "independentlyValidatedTargetFtlMachineLinks": 4,
+            "compilerDecisionMatchedLinks": 4,
+            "targetGateMatched": 1,
+            "retainedExitOneDiagnostics": 3
+          }
+        ],
+        "compatibilityPassesAdded": 0,
+        "rawMachinePcOrMapPointerCaptured": false,
+        "historicalFailureRootCauseEstablished": false
+      }
+    },
+    {
       "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
       "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759",
       "schema": 1,
