@@ -1,3 +1,20 @@
+# 当前阶段: 2026-09-14 路线调整, M6 插件侧工作区归档展开器完成
+
+2026-09-14, 从干净 master b1eb77e 继续. 本轮没有设备批次, 没有 native 构建, 没有新增兼容归档.
+
+- `ROADMAP.md` 顶部的逐批次状态日志已原样迁移到 `roadmap-status-journal-2026-09-14.md`;
+  ROADMAP 新增 "2026-09-14 路线调整" 一节: 新优先级 (P0 M6 插件侧 -> P1 M6 端到端 -> P2 覆盖升级与 v0.2.2 发布 -> P3 M7 最小能力桥),
+  诊断预算规则与停放清单. 实验线 (M3/M4/M5) 冻结在十三补丁 baseline `1.4.0+e8b129616`, distributionReady=false 不变.
+- HTTPS ALPN 重新分类为上游 Bun 1.4.0 `node:https` 限制 (官方 Bun 同样受影响), 不再作为 native 重建理由;
+  原失败报告与断言保留, 排错指南新增规避方式.
+- 新增 `app/src/main/.../BunWorkspaceArchive.kt` 与 `app/src/test/.../BunWorkspaceArchiveTest.kt`: 有界 ZIP 快照的校验与原子展开,
+  规则见 `design/m6-workspace-archive.md`. 展开器尚未接入 `runScript`: 共享契约 `bun-runtime-api` 还没有归档请求键与能力位,
+  宿主仓库 `D:/idea-projects/AutoJs6/plugin-api/bun-runtime-api` 待同一批更新, 本仓库 `libs/api-artifacts.lock.json` 随之同步.
+- 下一步按顺序: (1) 宿主仓库落锁契约常量并重新发布 AAR; (2) 插件 `runScript` 按能力协商接入展开器;
+  (3) 宿主 `BunPluginScriptEngine` 打包脚本目录; (4) API 33/35 原生 arm64 各一台真机往返. 不为停放项启动任何设备批次.
+
+## 前一批 TLS/IPv6 诊断
+
 # 当前阶段: M4 TLS/IPv6 首批诊断完成, HTTPS ALPN 门禁失败
 
 2026-09-14, 从干净 master 22b35dd 继续. APK源码提交389c19b157c6e173b0287d679821a6e63f385c74,

@@ -1,132 +1,56 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 历史十补丁 `1.4.0+a9c76a599` 的已有构建恢复取证及七环境原套件回归已完成: 双 ABI 各两份成品一致, 原驱动退出码缺失保留为 null. 五个本地 4 KiB 环境之后, Samsung SM-F936U API 32 / 原生 ARM64 / 4 KiB 和 SM-A566B API 36 / 原生 ARM64 / 16 KiB 也各过两轮 31 项与八项 Binder, 累计 434/434 探针、112/112 Binder. 两台三星同一 APK 批次、无失败/重试且已清理. [API 32 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api32.md) 和 [原生 16 KiB 证据](docs/compatibility/2026-09-13-m3-blocked-pidfd-native-arm64-api36.md) 分别保留; 九补丁及原始 ART 失败历史不改写. 十补丁大页 JSC 已完成两次一致 clean Bun 构建 (actual exit 0), 新候选在 API 36 x86 4 KiB/16 KiB 用户空间页的原 Binder 32/32、原压力模式 28/28 均通过, 见 [独立报告](docs/compatibility/2026-09-13-m5-ten-patch-jsc.md). M9 排错指南也已完成; 扩展矩阵与 Release 门槛仍开放.
-
 更新日期: 2026-09-14
 
-最新 [TLS/IPv6 固定矩阵](docs/compatibility/2026-09-14-m4-runtime-network.md) 已完成首批诊断:
-五环境各两轮, 20个TLS前缀模式通过, HTTPS ALPN十次失败, IPv6十次未进入.
-锁定源码显示HTTPS私有TLS配置未转发ALPN; 四模式整体未通过, 修复与新字节验证待完成.
-同一105输入APK批次、完整失败、十个UID与唯一owned AVD清理均已归档, 无重试或原生重建.
-
-此前[原压力控制流固定观察](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md)已完成:
-一对94输入APK保留原七模式顺序, DFG早停/原断言和全部预算; 双页各两轮28模式正常退出.
-四次DFG均在首profile后停止, 样本18/10/82/93, 共392trace与8份完整首栈, 无重试.
-原2<3未复现, 历史根因/稳定性仍开放. 原120报告/217行不变, 两份新JSON仅索引.
-
-此前[完整 trace/inliner 固定诊断](docs/compatibility/2026-09-14-m5-jsc-trace.md)已完成:
-新工具、20 份源码绑定与同一 92 输入 APK 的双页大小两轮采集, 共 8 进程/32 profile,
-65 份完整栈. 四份 FTL 见证明示目标语义帧属于同栈 invoke 机器帧, 与编译 hash 匹配.
-关闭组一段 5030 次调用/64 trace 无目标帧, 开启组 90 个目标 FTL 与三次真实 exit1 保留.
-该进展确立保存样本的机器帧身份, 原 2<3 历史根因和稳定性仍开放; 原 118 报告/217 行不变.
-
-此前[固定PC映射关闭/开启对照](docs/compatibility/2026-09-14-m5-jsc-pcmap.md)已完成:
-同一90输入APK复用原JS/native, 双页大小各两轮固定反转顺序, 收集8进程/32profile及
-8份JSC最终选项. 开启组155个目标FTL帧及两次真实exit1按原DFG门槛保留;
-关闭组12个调用者FTL帧与目标DFG混合, 未复现整段目标归零.
-18文件源码与实际内联决定支持映射/机器tier解释, 缺少逐trace PC/map指针,
-原2<3根因与稳定性仍开放. 原116报告/217矩阵行不变, 新两份仅索引.
-
-此前独立[四段 profiler 诊断](docs/compatibility/2026-09-14-m5-jsc-restart.md)已完成:
-双页大小各两轮固定双模式, 8次进程诊断/32次profile, 阶段与时间区间全部符合重启/清空预期,
-四次目标缺席均完整保留实际exit1. 4KiB第二轮第四段目标仍调用9766次却没有目标帧,
-同时出现125个调用者FTL帧; [固定源码补充](docs/diagnostics/2026-09-14-jsc-restart-ftl-source-review.md)
-收敛到内联与PC映射的待验证条件, 尚未捕获实际内联/映射状态或确定历史2<3根因.
-原夹具/预算/native不变, 诊断不增加原套件成绩. 两包/四UID原始清理记录与两owned AVD收尾已保存.
-
-开发环境已完成一次有清单的磁盘维护: 退役四台历史专用 AVD, E 盘实际增加约11.55GiB;
-23个Bun独立构建目录的缓存/目标文件在WSL内部释放约133.04GiB, 完整成品/符号/日志保留.
-用户已完成VHDX离线压缩和旧Gradle备份删除; 压缩receipt实际exit0, VHDX缩小139881086976 bytes,
-约130.27GiB. 这与WSL内部释放量分别记录, 没有待执行手动清理.
-[维护指南](docs/storage-maintenance.md)与[当前交接](docs/SESSION_HANDOFF.md)记录保留范围和完成证据.
-另完成[固定JSC采样源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md),
-未新增设备成绩或关闭DFG/watch根因门禁.
-
-十三补丁大页 JSC 已另行完成两次全新 clean Bun 构建, actual exit 0/0,
-21 项输入未漂移, 两份完整成品 `17c7941a...20e98a8` 一致且 ELF 审计通过.
-原 JSC 库/config 和 ICU 精确复用, 新 WebKit/ICU 构建为零. 同一85输入新APK
-已在x86 API36双页大小各两轮通过原Binder32/32、原压力28/28; 初次16KiB压力采样不足失败另档, 同APK完整复测通过;
-两包UID与两个自有AVD已清理. [完整报告](docs/compatibility/2026-09-14-m5-thirteen-patch-jsc.md). API28/API31 原生 ARM64 的固定 watch plain/traced
-诊断也已完成: 16 次观察、32 次重载、24 次直接普通 SIGSYS, 包和 UID 清理通过.
-未复现原 SIGABRT, 因而原始 EAGAIN 原因与稳定性仍开放, baseline 560/128 不增加.
-[JSC 构建](docs/compatibility/2026-09-13-m5-thirteen-patch-jsc-builds.json),
-[watch 诊断范围](docs/compatibility/2026-09-13-m3-watch-reload-trace.md).
-
-十三补丁的两项三星固定套件门禁已补齐: SM-F936U 实际 API 32 / 原生 ARM64 / 4 KiB,
-SM-A566B API 36 / 原生 ARM64 / 硬件 16 KiB, 均 bridge=0. 相同三个 APK 各过
-两轮 35 项与原八项 Binder, 新增 140/140 和 32/32, 无失败/重试或构建.
-八个原生环境现累计 560/560 probes、128/128 Binder; 新增 16 次实际 watch 重载
-和 24 个镜像观测均通过. 两台设备的三包/三个 UID 与自有私有 ADB 已清理.
-[三星完整报告](docs/compatibility/2026-09-13-m3-watch-reload-samsung.md).
-
-当前第 13 补丁已修复 Linux reload 前忽略 CLOEXEC 失败的路径, 保留既有 stdio/IPC/信号语义.
-完整源码 GCC/Clang 各 25 个模式和确定性重放通过, 两次全新双 ABI 构建实际 exit0且每ABI字节一致, 四份ELF审计通过.
-原 35 项和 17 份 fixture/validator/Java 输入未变, 新 APK 的 32/83 输入匹配 `bf5cb72`.
-六个原生 4 KiB 环境各两轮探针 420/420、完整 Binder 96/96; 48 次实际重载无哨兵继承,
-72 个镜像的 PID/stdio/普通 SIGSYS 对照通过. 首次 API28 中止 69/70 独立保留,
-中止前 clone EAGAIN 的根因未定, 仅一次同 APK 重试通过. 随后的三星门禁见上文;
-随后大页 JSC 构建/双页大小回归及 watch 独立观察见上文; 原API28中止根因与更广稳定性仍开放.
-见 [修复与验证](docs/compatibility/2026-09-13-m3-watch-reload-fix.md).
-
-此前十二补丁 M3 watch/reload 阻断已完成复现与归档, 该历史 native 未修复. 原 33 项保留,
-新增 native/TRAP 两模式形成 35 项套件. 四个 ARM64 / 4 KiB 真机环境各两轮,
-原 33 项通过 264/264, 新模式 2/16 通过、14/16 失败, 全体 266/280.
-32 次实际重载中有 28 次 FD256 泄漏; Sony API33 / kernel5.15 的原生控制通过,
-同设备强制 TRAP 失败. 每次 SIGSYS/stdio 对照正常, 显式 CLOEXEC FD257 均关闭.
-三个 APK 批次和先期校验器修正独立绑定, 四包/四 UID 已清理, 无 native build 或 AVD 操作.
-优先补齐重载前 CLOEXEC 的后备处理及错误传播, 再做新源码构建和固定夹具回归.
-见 [失败与源码定位](docs/compatibility/2026-09-13-m3-watch-reload.md). 既有 baseline
-462/462 probes、112/112 Binder 及独立 JSC 结果不改写, distributionReady=false.
-
-最新十二补丁三星 API 32 门禁也已完成: SM-F936U / native ARM64 / 4 KiB,
-两轮原 33 项 66/66, 完整八项 Binder 16/16, 无测试失败或重试. 与上一台三星 API 36
-使用完全相同的三个 APK, 四十个 pending 保持检查点与十二个 child 观测通过.
-两台三星设备门禁补齐, baseline 七个原生环境累计 462/462 probes, 112/112 Binder.
-三包/三个 UID 及本轮私有 ADB 清理完成, 无 AVD 操作.
-见 [API 32 完整报告](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api32.md).
-
-最新三星十二补丁 baseline 回归已完成: SM-A566B / API 36 / native ARM64 / 硬件 16 KiB
-两轮原 33 项通过 66/66, 完整八项 Binder 通过 16/16. 四个 pending 模式的 40 个保持
-检查点和十二个 child 观测通过; 原 APK/native 直接复用, 无测试失败或重试.
-三个包/三个 UID 与本轮私有 ADB server 已清理, 无 AVD 操作.
-该批次当时累计六个原生环境 396/396 probes 和 96/96 Binder; 后续 API 32 及当前累计见上文.
-见 [硬件 16 KiB 报告](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md).
-
-最新十二补丁 JSC rebase 已完成两份新 Bun 一致构建, 实际 driver exit 0/0. 同一新 APK 的
-83 输入绑定 `0210e82`, 在 x86 API 36 的 4 KiB/16 KiB 用户页各过两轮原八项 Binder 和
-七模式压力, 分别 32/32 与 28/28. 初次 16 KiB lowmemorykiller 服务终止独立保留, 完整
-同 APK 重试通过; 两个 UID 和本轮两个 AVD 清理完成. [完整结果](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md).
-16 KiB x86 仍是 4 KiB 内核上的用户页 ABI 模拟. 十二补丁 baseline 三星 API 32 与 API 36 硬件页证据见上文, 各批次独立归档.
-
-最新第 12 补丁 `06e518f73` 保留 Android epoll 等待期间的完整 caller mask/pending 信号,
-并在调用点维持 Android 已有的 epoll_pwait2 禁用. GCC/Clang 各 45 个有界主机执行、完整重放和
-28 source blobs 已通过. 两份全新双 ABI 构建均实际 exit 0, 每 ABI 两份成品一致且四份 ELF 审计通过.
-新 33 项在五个原生 4 KiB 环境两轮通过 330/330, 完整八项 Binder 通过 80/80. API 28 两次 ART 启动失败独立保留, 第三次同 APK 两轮通过. 加上随后两台三星独立批次, 当前累计为 462/462 probes 和 112/112 Binder, 已补齐原套件的三星 API 32/原生硬件 16 KiB 门禁.
-见 [wait 修复报告](docs/compatibility/2026-09-13-m3-pending-wait-fix.md) 与 [新构建证据](docs/compatibility/2026-09-13-m2-pending-wait-runtime-evidence.json). runtimeProduced=true, distributionReady=false.
-
-此前 M3 pending-SIGSYS 阻断已有第 11 补丁源码修复, 双 ABI 各两次独立构建一致且实际退出码均为 0; 完整 ELF 审计通过, 但 Sony API 28/31 各两轮仍为 31/33. 即时 spawn 已保留 pending, 后续 epoll wait 临时传入空 mask 导致早交付; 八次只读寄存器/掩码观测已确认, 见 [新阻断](docs/compatibility/2026-09-13-m3-pending-wait.md).
-历史 head `946f082ab` 完整重放和 GCC/Clang 主机回归通过; 见 [此前修复报告](docs/compatibility/2026-09-13-m3-pending-mask-fix.md).
-历史回归保留原 31 项, 新增 native/TRAP 两模式:
-原生 ARM64 API 28/31 各两轮均为 31/33, 原 31 项合计 124/124, 新模式 0/8.
-独立 plain/ptrace 对照捕获八次 SI_TKILL 在 spawn 父线程提前交付, 对应源码临时 mask
-移除 SIGSYS 的路径. 这是受控 exit 1, 不是此前 pidfd SIGSYS 崩溃. [失败与诊断](docs/compatibility/2026-09-13-m3-pending-sigsys.md)
-已独立归档; 该历史批次当时尚未验收新成品. 当前十二补丁结果独立见上文, distributionReady=false, 不转移旧成绩.
-此前 [M3-B 启动检查/缓存重试](docs/compatibility/2026-09-13-m3-probe-lifecycle.md) 已完成并保持原验收范围.
+本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 2026-09-14 之前堆积在本文件顶部的逐批次状态日志已原样迁移到 [状态日志归档 (2026-09-01 至 2026-09-14)](docs/roadmap-status-journal-2026-09-14.md); 其中每条设备/构建/诊断结论及证据链接保持不变, 本文件只保留里程碑条目, 当前方向和验收规则.
 
 这份路线图回答三个问题: 插件现在能做什么, 接下来要做什么, 以及每一项凭什么算 "做完了". 它同时写给想了解进展的用户和参与开发验证的维护者.
 
-一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (已完成) 出发, 依次走向 "Android 13 正式基线" (v0.2.0 已发布, 开发版已修复强制终止), "Android 9 至 12L 实验支持" (九补丁原 25 项探针已有六环境证据; 相同 29 项套件在七个原生环境累计通过 406/406, 含六个 4 KiB 环境及 Samsung ARM64 16 KiB, 四种硬 FD 上限模式均已有大页证据; 现有完整 8 项插件 Binder 分批累计十二原生环境 192/192, 含三星 ARM64 16 KiB, 已补齐 API 28-32 x86 版本覆盖), 以及更远的 "多文件项目执行" 与 "受控的 AutoJs6 能力桥" (未开始). 历史九补丁大页 JSC 候选已通过 x86_64 双页大小 Binder 32/32, 并新增有界七模式压力 28/28; x86 的 16 KiB 用户空间页为模拟模式, 与 ARM64 硬件页、官方发行线及最终 Release 验收分开.
+一句话概括方向: 插件从 "单个脚本文件的独立 Bun 引擎" (M0, 已完成) 出发, 已交付 "Android 13+ 正式基线" (M1, v0.2.0 已发布, 开发版已修复强制终止), 已把 "Android 9 至 12L 实验支持" (M3) 推进到十三补丁 baseline `1.4.0+e8b129616` 并冻结; 从 2026-09-14 起, 主线转向 "多文件项目执行" (M6) 与 "受控的 AutoJs6 能力桥" (M7). 实验线的开放根因只按下文的诊断预算处理, 不再阻塞产品线.
 
-历史阻断: 九补丁的 31 项套件曾在四个 4 KiB 环境通过 248/248, Sony API 28 两轮只有 29/31, 四次 exit 159. 后续独立观察器已直接捕获 pidfd_open (434) 的 SIGSYS; 十补丁的修复和新本地成绩见上文. 原失败和当时的源码假设说明保留于 [历史报告](docs/compatibility/2026-09-13-m3-blocked-async.md), 不把旧 406/406 转成新模式的成功证据.
+## 2026-09-14 路线调整: 从诊断循环回到产品交付
+
+**为什么调整.** 2026-09-08 至 09-14 的 60 余次提交里, 约六成是 `test`/`docs` 类型: 每一批固定夹具在多台设备各跑两轮, 再把结果归档到 `docs/compatibility`, 然后由归档里的 "仍开放" 项触发下一批夹具. 这个循环产出了大量证据, 但产品代码 (`app/src/main`, 约 1100 行) 自 2026-09-13 起没有新增用户可感知的能力, M6/M7 一直是 "未开始". 最新一例是 [HTTPS ALPN 阻断](docs/compatibility/2026-09-14-m4-runtime-network.md): 夹具断言了 Node.js 语义 (`https.createServer` 默认协商 `http/1.1`), 但这是上游 Bun 1.4.0 `node:https` 自身的缺口, 官方 Bun 在 Android 13+ 上同样如此 (见 oven-sh/bun [#41391](https://github.com/oven-sh/bun/pull/41391) 与 [#41672](https://github.com/oven-sh/bun/pull/41672)), 与 Android 9-12L 的 seccomp 兼容无关; 把它当作需要重新构建 native 的阻断, 就是这个循环的典型形态.
+
+**新的优先级.** 从上到下依次执行; 上一项没有可交付物之前, 不为下一项安排设备批次:
+
+| 优先级 | 里程碑 | 本轮可交付物 | 状态 |
+|---|---|---|---|
+| P0 | M6 多文件项目执行 (插件侧) | 有界工作区归档展开器 + 单元测试 + 契约 v2 提案, 见 M6 条目与 [设计稿](docs/design/m6-workspace-archive.md) | 已完成 (2026-09-14, G1) |
+| P1 | M6 端到端 | 共享 API 增加归档请求键与能力位, 宿主打包脚本目录, 插件接入 `runScript`, API 33/35 真机往返 | 待做 |
+| P2 | M1-B 收尾与发布 | v0.1.0 -> 当前版本覆盖升级验证, 然后发布 v0.2.2 (监督器, 本地化错误, M6) | 待做 |
+| P3 | M7 最小能力桥 | 只读的宿主版本/环境查询能力, 窄接口 + 能力协商 | 待做 |
+| 冻结 | M3/M4/M5 实验线 | 停在十三补丁 baseline `1.4.0+e8b129616`; 只在 (a) 用户报告的真实失败, (b) 上游 Bun 修复落地需要重建, 或 (c) 发布门禁本身要求时才新增设备批次 | 已冻结 |
+
+**诊断预算规则 (对所有里程碑生效):**
+
+1. 每个开放根因最多再获得一轮有界诊断 (一个夹具 + 一批设备); 用完仍无结论就进入下方停放清单, 记录最后一份证据链接, 之后不得再为它新增夹具, 归档或 native 重建.
+2. 设备批次必须绑定一个产品代码改动 (`feat`/`fix`) 或一个发布门禁; 只为观察而跑的批次不再安排.
+3. `test`/`docs` 类型提交只作为 `feat`/`fix` 的伴随, 不单独成串.
+4. 夹具只断言本项目承诺的行为 (`bun run --no-install <source>` 与 README 声明的边界); 断言上游 Bun 未实现的 Node.js 语义, 其失败记为 "上游限制", 不是阻断.
+5. 什么算进展: `app/src/main` 或共享契约的功能/修复, 一次发布, 或用户直接阅读的文档 (README, 排错指南). 新夹具, 新归档和新 JSON 不算.
+
+**停放清单 (保留证据, 不再主动推进):**
+
+| 项 | 最后证据 | 停放理由 |
+|---|---|---|
+| API 28 watch 中止 (SIGABRT) 与 clone EAGAIN 根因 | [固定 watch 对照](docs/compatibility/2026-09-13-m3-watch-reload-trace.md) | 一次性中止, 16 次固定观察未复现 |
+| JSC 固定压力 DFG 采样 2<3 根因与稳定性 | [原压力控制流观察](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md) 及此前四份 JSC 诊断 | 五轮独立诊断 (采样/重启/PC 映射/trace/控制流) 均未复现 |
+| HTTPS 服务端 ALPN 默认协商 | [TLS/IPv6 报告](docs/compatibility/2026-09-14-m4-runtime-network.md) | 上游 Bun 1.4.0 `node:https` 缺口, 随 M8 升级评估一并处理; [排错指南](docs/troubleshooting.md) 已记录规避方式 |
+| IPv6 固定模式 | 同上 (未进入执行) | 依赖上一项的夹具顺序; 若需要, 改为独立夹具并绑定产品改动 |
+| FD 70000 / UNSHARE, 更多 OEM, 长时压力, 性能对比 | M3/M4 条目 | 属于 M4 转正门禁, 在实验线解冻前不安排 |
+| 最终签名 x86_64 / 原生 ARM64 16 KiB Release 验收 | M5 条目 | 随下一次正式 Release 一并执行, 不单独跑 Debug 批次 |
+
+停放不等于删除: 相关 `[ ]` 条目原样保留并标注 "停放", 失败记录与 `distributionReady=false` 不变.
 
 ## 当前状态速览
 
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | v0.2.0 发布后的升级与生命周期验证 (M1), patched Bun 的同 Release 对应源码实际发布 (M2), Android 9-12L syscall/FD 与现有套件之外的扩展 Binder/API 矩阵 (M3), 16 KB 页与发布完整性 (M5), 文档与开发者体验 (M9) |
-| 尚未开始 | Android 9+ 稳定化 (M4), 多文件项目执行 (M6), AutoJs6 能力桥 (M7) |
-| 当前缺口 | 十三补丁独立双 ABI 构建与八个原生环境的固定探针 560/560、原 Binder 128/128 已完成, 包含三星 ARM64 API 32 / 4 KiB 与 API 36 / 硬件 16 KiB. 十三补丁大页 JSC 构建重对齐、原 Binder 32/32 和压力 28/28 已独立完成; 首次 API 28 watch SIGABRT/clone EAGAIN 根因与稳定性、DFG 采样不足的条件仍开放. 其余 syscall/API/FD/OEM、跨 reload 的 blocked/pending 信号与 IPC、Android FD 70000/UNSHARE、长时压力和 paired APK/source Release 仍开放. 历史版本与独立 JSC 成绩按原批次保留 |
+| 正在推进 | M6 多文件项目执行 (插件侧有界归档展开器已完成, 共享契约 v2 与宿主接入进行中); M1-B 覆盖升级验证与 v0.2.2 发布准备; M9 文档持续 |
+| 尚未开始 | M7 AutoJs6 能力桥 (M6 端到端之后开始) |
+| 当前缺口 | M6 的归档请求键尚未进入共享 `bun-runtime-api` 契约, 宿主尚不打包脚本目录, 因此多文件项目在正式版仍不可用. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
 
 ## 如何阅读这份路线图
 
@@ -189,10 +113,10 @@ SM-A566B API 36 / 原生 ARM64 / 硬件 16 KiB, 均 bridge=0. 相同三个 APK �
 | M0 单源码独立引擎 | 已完成 (v0.1.0) | 用官方 Bun 1.4.0 运行单个 JS/TS 文件, 流式回传输出, 双 64 位 ABI | 插件/API/宿主/构建 |
 | M1 Android 13 正式基线 | v0.2.0 已发布, 升级验证待补 | 官方 Bun 保持不变, 补齐升级与严格生命周期验证 | 插件/测试/设备/发布 |
 | M2 patched Bun 可复现构建 | 十二补丁双 ABI 独立构建完成, 旧证据独立归档 | 两个全新 clean checkout 的双 ABI 成品一致, 两个实际 driver exit 0; 四份 ELF、源码与最终 Ninja 边已核对. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
-| M3 Android 9-12L 实验支持 | 十二补丁七环境原 33 项与 Binder 通过, 两项三星门禁补齐 | 新源码 462/462 探针, 112/112 Binder; 十补丁七环境 434/434、112/112 保持历史范围, 不宣称 Android 9 稳定支持 | 上游/测试/设备 |
-| M4 Android 9+ 稳定化 | 等待 M3 | syscall, FD, 进程生命周期和 OEM 矩阵闭环后, 实验支持才能转正 | 测试/设备/发布 |
-| M5 16 KB 页与发布完整性 | 官方 ARM64 开发版已完成原生真机执行, 其余进行中 | Samsung API 36 / 16 KiB 原生 arm64 两轮 8/8 Binder; x86_64, 最终 Release APK 和实验完整验收仍分开跟踪 | 构建/测试/设备/发布 |
-| M6 多文件项目执行 | 未开始 | 受控项目快照, 相对导入与 source map | API/插件/宿主 |
+| M3 Android 9-12L 实验支持 | 冻结于十三补丁 baseline | 八个原生环境固定套件 560/560, Binder 128/128; 不宣称 Android 9 稳定支持, 停放项见路线调整 | 上游/测试/设备 |
+| M4 Android 9+ 稳定化 | 冻结 (等待实验线解冻) | 转正门禁只随用户报告的失败, 上游修复或发布门禁重新排期 | 测试/设备/发布 |
+| M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; Release 验收随下次发布 | JSC 大页候选与 DFG 采样根因停放; 最终签名 APK 验收并入 P2 发布 | 构建/测试/设备/发布 |
+| M6 多文件项目执行 | 进行中 (P0 插件侧已完成) | 有界归档展开器与单元测试已完成; 契约 v2 与宿主打包待接入 | API/插件/宿主 |
 | M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
 | M9 文档与开发者体验 | 进行中 | 通俗文档, 可运行示例, 排错指南与人类可读兼容矩阵 | 插件/发布 |
@@ -318,7 +242,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (设备/测试) 第 13 补丁保持 35 项定义与全部既有 fixture/预算, 六个原生 4 KiB 环境各两轮通过 420/420 probes、96/96 原八项 Binder. 新 APK 输入匹配 `bf5cb72`; 24 watch 模式产生 48 次实际重载, 72 镜像均符合 FD/PID/stdio/普通信号断言. 原 hard/soft limit、blocked/pending 与强制生命周期仍通过, 回收 301-307 ms. 三包/三个 UID 每环境独立清理, 只关闭自有 AVD/私有 ADB. 初始 API28 69/70 中止另档, 只做一次同 APK 复测. [设备与边界](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G2, 有限套件, 非稳定性/三星/大页/Release 通过)
 - [x] (诊断/工具) 独立观察器增加有界只读 SIGABRT 寄存器/地址候选/映射/资源快照, 保留原信号交付和预算; Linux 六种 plain/traced 信号对照通过. 原生 ARM64 API28/31 两轮固定 watch 对照完成16次观察、32次重载和24次直接普通SIGSYS, 包与UID清理通过. [独立诊断记录](docs/compatibility/2026-09-13-m3-watch-reload-trace.md)不增加baseline验收, 不解释未复现的原中止. (2026-09-13, G1/诊断)
-- [ ] (诊断/测试) 用有界、独立诊断补齐 API 28 watch 中止调用链与 clone EAGAIN 的资源条件; 保留首次失败, 不以偶发复测成功代替稳定性证据或扩大现有预算. 新观察器已就绪, 固定 plain/traced 观察未复现中止, 尚无 Android fatal-stop 栈或失败时资源快照.
+- [ ] (停放, 诊断/测试) 用有界、独立诊断补齐 API 28 watch 中止调用链与 clone EAGAIN 的资源条件; 保留首次失败, 不以偶发复测成功代替稳定性证据或扩大现有预算. 新观察器已就绪, 固定 plain/traced 观察未复现中止, 尚无 Android fatal-stop 栈或失败时资源快照.
 - [x] (源码/测试) 第 13 补丁修复 Linux reload 前忽略 `close_range(CLOEXEC)` 失败的问题, 复用未改动的 raw FD helper 标记分支, 不完整设置在 exec 前退出. 原 stdio、显式 IPC 和完整信号段不变. 精确源码 GCC 13/Clang 21 各 25 个模式通过, 包括真实 exec、高于 hard limit 的 FD、旧源码失败对照和有界错误; 共享 helper 原四组测试分别通过. 全套 35 项 Android 定义与 17 份输入防漂移门禁已补齐. [修复范围](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1; 新源码构建/设备另计)
 - [x] (测试) 新增两个有界 watch/reload 模式并完成四个 ARM64 / 4 KiB 真机环境的故障复现和同设备正向对照. 原 33 项 264/264; 新模式2/16, 14个失败模式产生28次 FD256 泄漏. 原生可用的 Sony5.15 模式两轮通过, 相同设备 TRAP 两轮失败. 原生字节、旧定义及预算不变, 所有包/UID已清理. 2026-09-13 G2 故障证据, [报告](docs/compatibility/2026-09-13-m3-watch-reload.md); 不代表门禁通过.
 - [x] (上游/测试) 第 13 补丁修复 `on_before_reload_process_posix` 忽略 `close_range(CLOEXEC)` 失败的路径, 在 exec 前完成 FD 标记并传播不完整设置错误, 保留 stdio/IPC 和已有信号语义. 固定 35 项和原 33 项未放宽; 独立双 ABI 构建和六个原生 4 KiB 环境的固定套件回归已完成. [源码与新设备证据](docs/compatibility/2026-09-13-m3-watch-reload-fix.md). (2026-09-13, G1/G2; 首次中止的稳定性诊断、blocked/pending 跨 reload、并发 FD、FD 70000、UNSHARE 和大页另行验证)
@@ -374,7 +298,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (测试/工具) 新增独立四模式 TLS/IPv6 Binder 夹具和公开测试证书绑定, 固定 TLS1.2/1.3、CA/主机名拒绝、HTTPS、IPv6 TCP/UDP/HTTP, 原源码/预算/生产服务保持边界; 真实主机通信及防伪校验纳入 306 项 Node tests. [工具说明](tools/bun-runtime/experimental/api28/runtime-network/README.md). (2026-09-14, G0/G1)
 - [x] (测试/诊断) 同一 105 输入三 APK 在 ARM64 API28/31/33/35、x86 API33 原生4KiB各两轮: 20个TLS前缀模式通过, HTTPS ALPN十次false断言失败, IPv6十次未到达. 原始完整失败、源码配置转发遗漏和双UID/唯一owned AVD清理分别绑定. [失败报告与源码定位](docs/compatibility/2026-09-14-m4-runtime-network.md). 原四模式门禁未通过, 无重试/原生重建/旧计数增加. (2026-09-14, G1/G2诊断)
-- [ ] (原生/测试) 修复并独立验证锁定 Bun 的 HTTPS ALPN 配置转发遗漏. 保留当前完整失败及原 ALPN/身份/IPv6 断言, 先固定修改和构建范围, 新源/新字节不得借用既有验收; IPv6 与 HTTPS 后续检查仍待实际执行.
+- [ ] (停放, 上游/文档) HTTPS 服务端 ALPN 默认协商是上游 Bun 1.4.0 `node:https` 的缺口 (`_http_server.ts` 构造私有 TLS 配置时不转发 ALPNProtocols), 官方 Bun 在 Android 13+ 上同样受影响, 不是 Android 9-12L 兼容阻断; 上游 [#41391](https://github.com/oven-sh/bun/pull/41391) / [#41672](https://github.com/oven-sh/bun/pull/41672) 已处理相关行为. 处理方式: [排错指南](docs/troubleshooting.md) 记录规避 (`Bun.serve({ tls })` 或 `node:tls` 显式 `ALPNProtocols`), 随 M8 升级评估; 原失败报告与 ALPN/身份/IPv6 断言保留, 不为此重建 native. (2026-09-14 重新分类)
 
 - [x] (测试/工具) 新增独立四模式离线 API Binder 套件: 文件/目录监听, 实例级本地 DNS, 二进制 TCP 半关闭和 HTTP redirect/stream/abort. 保留真实服务与共享 AAR, 固定 12 KiB 源/8 s 工作/12 s Binder/16 KiB 输出, 主机执行实际夹具并验证失败与 source/APK/双 UID 拒绝控制. [工具范围](tools/bun-runtime/experimental/api28/runtime-api/README.md). (2026-09-14, G0/G1)
 - [x] (测试/设备) 十三补丁 baseline 复用, 单一 99 输入三 APK 批次在 ARM64 API 28/31/33/35 与 x86_64 API 33 的原生 4 KiB 环境各两轮, 四模式 40/40. 含 20 次 TCP 连接、30 次本地 DNS 查询及 30 次 HTTP 请求; 40 workspace、十个包 UID 及唯一 owned AVD 已清理. Sony API 33 安装前离线独立保留, 同 APK 改用 Redmi, 无运行期失败重试. [固定报告](docs/compatibility/2026-09-14-m4-runtime-api.md). 不增加原 560/128 或 JSC 32/28, TLS/IPv6/其余矩阵/Release 保持开放. (2026-09-14, G2/有限补充)
@@ -422,7 +346,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建/x86_64) 十三补丁 `e8b129616` 两份独立 clean Bun 构建 actual exit 0/0, 21 输入和 clean head/tree 未漂移. 两份完整 90609496-byte 成品 `17c7941a...20e98a8` 一致且 ELF 审计通过; 复用原两套独立 JSC 库/config 与 ICU, 新 WebKit/ICU 构建为零. [独立构建归档](docs/compatibility/2026-09-13-m5-thirteen-patch-jsc-builds.json), 不转移历史设备成绩. (2026-09-13, G1)
 - [x] (设备/x86_64) 十三补丁新候选在API36 x86 4KiB/16KiB用户页各两轮原八项Binder通过32/32, 无失败/重试. 同一APK的85输入匹配`ba5418e`, 签名/安装payload、20生命周期及两个UID清理均通过. [独立Binder归档](docs/compatibility/2026-09-14-m5-thirteen-patch-jsc-binder.json). (2026-09-14, G2, 非Release)
 - [x] (测试/x86_64) 同一十三补丁APK在双页大小各两轮原七模式压力通过28/28, 初次16KiB第二轮DFG采样不足失败独立保留, 同APK完整两轮复测通过; fixture/validator/预算不变. 实际LLInt/Baseline/DFG/FTL、GC/Wasm、64个worker正常退出通过; 用户页ABI16KiB仍模拟于4KiB内核映射. 仅关闭本轮两AVD, [压力与清理报告](docs/compatibility/2026-09-14-m5-thirteen-patch-jsc.md)不计入baseline560/128或长时/全JIT/性能/Release. (2026-09-14, G1/G2)
-- [ ] (诊断/测试) 查明固定 DFG 采样不足的条件与稳定性. 保留十三补丁 16KiB 第二轮 2<3 样本失败及同 APK 完整复测, 用独立有界观测检查目标采样和优化状态, 不放宽原三样本/四次采样及执行预算.
+- [ ] (停放, 诊断/测试) 查明固定 DFG 采样不足的条件与稳定性. 保留十三补丁 16KiB 第二轮 2<3 样本失败及同 APK 完整复测, 用独立有界观测检查目标采样和优化状态, 不放宽原三样本/四次采样及执行预算.
 - [x] (诊断/源码) 逐字节绑定固定 Bun/WebKit 的 profiler 与测试辅助源码, 确认微秒间隔、pause/clear/start、内联帧展开和编译计数边界; 列出原失败缺少的逐次采样字段. [源码审阅](docs/diagnostics/2026-09-14-jsc-sampling-source-review.md)不代替动态根因、稳定性或新套件验收. (2026-09-14, G0)
 - [x] (诊断/工具) 新增独立有界 DFG 取证资产、真实 Binder instrumentation 和严格归档器, 保留逐次时间/调用/trace/层级/优化计数与原门槛结果; 构造反向测试拒绝把样本不足exit1改成成功. 原七模式资产/Java/validator及预算不变, 新工具纳入CI. [工具说明](tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/README.md). (2026-09-14, G1)
 - [x] (诊断/设备) 同一87输入APK和原十三补丁JSC字节在API36原生x86双页大小各收集两轮DFG诊断, 目标样本9/16/103/91, 均首次profile达到原门槛. 保存全函数与目标层级差异、四UID归零和两owned AVD关闭记录; 未复现历史2<3, 不推断根因或稳定性, 不增加原套件接受数. [动态报告](docs/compatibility/2026-09-14-m5-jsc-sampling.md). (2026-09-14, G2, 非原压力/Release验收)
@@ -458,11 +382,15 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 **目标:** 从 "一次一个文件" 升级为 "一次一个项目": 脚本可以拆成多个文件并使用相对导入, 但项目内容仍以受控快照方式传入, 不开放任意宿主文件系统访问.
 
-- [ ] (API) 定义有界, 版本化的 project snapshot archive contract, 包含路径规范化, 条目数/总大小, symlink, 重复路径, 权限和 traversal 拒绝规则.
-- [ ] (插件) 在每次运行独有的私有 workspace 中原子展开项目, 支持相对 ESM import, JS/TS/JSON/asset 和 Unicode path.
-- [ ] (API/插件/宿主) 定义 entry point, source map, arguments, 受控 environment 和 working directory 语义, 不接受任意 shell command.
-- [ ] (插件) 为 process death, 取消, 超时和解压中断增加清理恢复, 永远只删除本次 job 的精确目录.
-- [ ] (测试) 覆盖 nested import, 循环依赖, 非法 archive, 大小边界, 同名大小写路径, 损坏输入和进程重启.
+**设计:** [工作区归档契约设计稿](docs/design/m6-workspace-archive.md). 沿用 Node.js Runtime / Python Runtime 插件已有的 "workspace archive" 约定: 宿主把脚本所在目录打成有界 ZIP 快照, 经同一个 `runScript` 的 `ParcelFileDescriptor` 传入, 请求 Bundle 用新增键声明归档版本与入口文件; AIDL 事务顺序不变, 旧宿主继续走单源码 v1.
+
+- [x] (插件) 新增 `BunWorkspaceArchive`: 在每次运行独有的私有 workspace 内先展开到 staging 目录, 全部校验通过后才重命名为 `project`; 任一失败或取消都删除 staging, 只创建普通文件与目录, 不遵循 ZIP 的权限/符号链接属性. 规则: 相对 `/` 路径, 拒绝绝对/`..`/`.`/空段/反斜杠/冒号/控制字符, 深度 <= 32, 段 <= 255 字节, 路径 <= 1024 字节; 大小写与 Unicode NFC 不敏感的重复检测; 文件与目录冲突检测; 硬上限 16384 条目, 64 MiB 总量, 单文件 16 MiB (与单源码上限一致), 宿主可再收紧; 入口必须是归档内的 `.js/.mjs/.cjs/.jsx/.ts/.mts/.cts/.tsx` 文件. 错误码固定且不回显路径. (2026-09-14, G1)
+- [x] (测试) JVM 单元测试覆盖嵌套导入布局与 Unicode 路径, 显式空目录, 穿越/绝对/反斜杠/盘符/空段/点段/控制字符/深度/长度, 大小写与 NFC/NFD 重复, 文件-目录冲突, 条目数/总量/单文件上限与钳制, 入口缺失/目录/扩展名/穿越, 空输入/非 ZIP/截断 ZIP, 取消后 staging 清理, 以及已有 project 状态时拒绝覆盖. (2026-09-14, G1)
+- [ ] (API) 在共享 `bun-runtime-api` 契约中落锁归档请求键 (`workspaceArchiveVersion`, `workspaceEntryPoint`, `workspaceMaxEntries`, `workspaceMaxBytes`) 与能力位 `SUPPORTS_WORKSPACE_ARCHIVE`; 常量以设计稿为准, 宿主与插件同一批更新, 不在插件侧复制常量.
+- [ ] (插件) `runScript` 按能力协商接入: 请求携带归档版本时调用展开器, 以 `project` 为工作目录执行入口文件, 错误映射到 `INVALID_REQUEST`/`SOURCE_TOO_LARGE`/`CANCELLED`; 未携带时保持单源码路径逐字节不变.
+- [ ] (宿主) AutoJs6 `BunPluginScriptEngine` 在插件宣告能力时把脚本所在目录打成有界 ZIP 快照 (入口为脚本相对路径), 否则回退到单源码; 不接受任意 shell command, 不传输宿主其他目录.
+- [ ] (API/插件/宿主) 定义 source map, arguments, 受控 environment 与 working directory 语义; 相对导入以 `project` 为根.
+- [ ] (测试/设备) instrumentation 覆盖相对 ESM import, 循环依赖, JSON/asset 导入, 取消/超时中的展开与进程重启后的清理; API 33 与 35 原生 arm64 各一台真机往返.
 
 **M6 验收条件:** 新旧 contract 通过 capability negotiation 共存; 旧宿主继续使用单源码 v1, 项目运行不会扩大到任意宿主文件系统访问.
 
@@ -567,3 +495,4 @@ py -B -m unittest discover -s .python -p "test_*.py"
 - 兼容范围变化必须同步 `version.properties`, runtime lock, `AGENTS.md`, README 10 语言源, changelog 10 语言源, 生成产物, CI 和第三方声明.
 - 修改官方或 patched runtime 时, 必须同步更新 variant, 共享 API 常量, 二进制哈希, 来源/补丁/工具链记录和许可证.
 - Roadmap 条目可细化或重排, 但不得删除尚未解决的安全阻断, 测试缺口或失败设备记录来制造 "已完成" 状态.
+- 诊断预算: 见 "2026-09-14 路线调整". 停放清单中的条目不得再触发新夹具, 新归档或 native 重建; 解除停放需要用户报告的真实失败, 上游修复或发布门禁, 并在本文件记录理由.
