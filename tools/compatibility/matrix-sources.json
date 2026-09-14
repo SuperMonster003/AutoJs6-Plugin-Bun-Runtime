@@ -1187,6 +1187,28 @@
       "note": "API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功."
     },
     {
+      "file": "2026-09-14-m5-jsc-pcmap-checkpoints.json",
+      "sha256": "aa1a1f3a3da5640da7dc6f137c543075cc9dddf8f8d47f1ec21971a2dd56c421",
+      "schema": 1,
+      "kind": "jsc-pcmap-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 PC映射选项来源与固定对照补充",
+      "note": "90输入APK、18个固定源码文件、原始双UID清理与两owned AVD绑定. 保留用户平台插件1.8.0改动, 无native重建, 未确立原低采样根因."
+    },
+    {
+      "file": "2026-09-14-m5-jsc-pcmap-diagnostics.json",
+      "sha256": "f589259a1cb4594a329579382e1fc925a2cd625953bee69e9afd0e846e6f7d81",
+      "schema": 1,
+      "kind": "jsc-pcmap-diagnostics",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M5 固定PC映射关闭/开启诊断",
+      "note": "双页大小各两轮, 8进程/32profile与8份实际选项回显. 开启组155目标FTL帧及两次真实exit1保留; 未复现整段目标归零, 不增加原套件接受数."
+    },
+    {
       "file": "2026-09-14-m5-jsc-restart-checkpoints.json",
       "sha256": "e623d8eea7f8d49eabfdeb6f9398c43c2a7a1e8764ad651229ddb4061689ffef",
       "schema": 1,
