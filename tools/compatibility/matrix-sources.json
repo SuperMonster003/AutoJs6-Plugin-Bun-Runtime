@@ -1187,6 +1187,28 @@
       "note": "API 36 x86 16384-byte 用户页 ABI / 4096-byte 内核映射, 两轮验证十语言资源及缓存拒绝提示; Bun 在执行前被拒绝, 不计作 native 运行成功."
     },
     {
+      "file": "2026-09-14-m5-jsc-sampling-checkpoints.json",
+      "sha256": "ea758875ec211e4da4fe6974002f2ab6042524a731cd9d804dce0f5ecdc5ce31",
+      "schema": 1,
+      "kind": "jsc-sampling-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 DFG 诊断来源与收尾检查",
+      "note": "87输入绑定, 原生字节复用, 四UID归零及两owned AVD关闭, 标准验证与历史文件保护; 不新增设备接受数."
+    },
+    {
+      "file": "2026-09-14-m5-jsc-sampling-diagnostics.json",
+      "sha256": "7fc8da12f1998f435591a9ad9ae6627c38dc3e7d4483da1be070cf8d4688e1cb",
+      "schema": 1,
+      "kind": "jsc-sampling-diagnostics",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M5 独立 DFG 逐次采样诊断",
+      "note": "同一87输入APK在x86 API36双页大小各两轮. 完整观测4项, 原门槛均满足, 未复现历史2<3失败; 不增加原压力或Binder接受数, 不推断根因/稳定性."
+    },
+    {
       "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
       "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759",
       "schema": 1,
