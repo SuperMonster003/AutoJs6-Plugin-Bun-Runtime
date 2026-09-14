@@ -1253,6 +1253,28 @@
       "note": "同一87输入APK在x86 API36双页大小各两轮. 完整观测4项, 原门槛均满足, 未复现历史2<3失败; 不增加原压力或Binder接受数, 不推断根因/稳定性."
     },
     {
+      "file": "2026-09-14-m5-jsc-trace-checkpoints.json",
+      "sha256": "19fa94e6a881bbd84f4b5764488d91af534c3633a0d35c0364b1ba5e1057590d",
+      "schema": 1,
+      "kind": "jsc-trace-checkpoints",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M5 完整trace/inliner来源和清理补充",
+      "note": "92输入APK、20份固定源码、原始双UID清理与两owned AVD绑定. 保留原夹具、运行时、门槛和历史证据, 不确立原低采样根因."
+    },
+    {
+      "file": "2026-09-14-m5-jsc-trace-diagnostics.json",
+      "sha256": "8cd857a28ec08afc4f2a788dcd8b858f7643f3c66a398200e97c458b00308374",
+      "schema": 1,
+      "kind": "jsc-trace-diagnostics",
+      "adapter": "index",
+      "collection": "root",
+      "category": "diagnostic",
+      "label": "M5 固定完整trace与内联调用者诊断",
+      "note": "两种用户页各两轮, 原门槛与真实exit1保留. 首份完整栈有固定字节限额, 核对同栈机器帧及编译hash, 无原始PC/map指针或兼容性接受数."
+    },
+    {
       "file": "2026-09-14-m5-thirteen-patch-jsc-binder.json",
       "sha256": "a54f43c9797b9d9099fbda00650222a32cb7e715a52af1c7c448f0777d815759",
       "schema": 1,

@@ -1,0 +1,1343 @@
+{
+  "schemaVersion": 1,
+  "kind": "jsc-trace-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "diagnosticReport": {
+    "path": "docs/compatibility/2026-09-14-m5-jsc-trace-diagnostics.json",
+    "bytes": 1471942,
+    "sha256": "8cd857a28ec08afc4f2a788dcd8b858f7643f3c66a398200e97c458b00308374"
+  },
+  "projectSourceCommit": "432e0e6e02bb1fae8309b76f707d9a701dbd146c",
+  "compiledInputEncoding": "Git LF text; binary AAR bytes unchanged",
+  "compiledInputsMatched": 92,
+  "preExistingUserChange": {
+    "baseCommit": "5c9d8b84a2e2ca03f8374b710f0e1262849ac057",
+    "path": "settings.gradle.kts",
+    "platformVersionsPlugin": "1.8.0",
+    "preservedUnchanged": true,
+    "historicalApksNotRelabeled": true
+  },
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 19,
+    "tasks": 80,
+    "executed": 12,
+    "upToDate": 68,
+    "receipt": {
+      "bytes": 19439,
+      "sha256": "c06e483668c46a49eb404278bcd1f1523a6d5fad3165abb6ba6785e1363c5eb8"
+    },
+    "log": {
+      "bytes": 7747,
+      "sha256": "0dbafbd19345fc7aebd9378f7f608f75930e59eb04c9ad8cd8d1f8745a4ad294"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42963134,
+        "sha256": "aafefeb79b5f58aa64a5a89bf96f837b600e1d77ac2fb74791baf9df99ad0e5e"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2568989,
+        "sha256": "a131df855aef87313b83bf0ce7d85111c921b7b080f424317e3bb969550aac45"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "preserved": {
+    "historicalReports": 118,
+    "historicalMatrixRows": 217,
+    "protectedRuntimeAndFixtureFiles": 125,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchangedAtPrecheckAndArchive": true
+  },
+  "sourceReview": {
+    "scope": "Pinned finalized options, full trace/inliner export and bytecode location grammar; 18 previous files reverified plus two BytecodeIndex files",
+    "cleanHeads": {
+      "bun": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+      "webkit": "0f966e81b78c84bb23213e391bc679c4ef83e56b"
+    },
+    "sources": [
+      {
+        "repository": "bun",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "path": "src/jsc/modules/BunJSCModule.h",
+        "bytes": 40554,
+        "sha256": "0bcf149c473d136ce431dd648e57b40b3d3834c3c798e3828abda6263d177c5e",
+        "gitBlob": "4b89e7a19c749fcfbdf7038ef603557e204cb936"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/SamplingProfiler.cpp",
+        "bytes": 53816,
+        "sha256": "e6f118d269ad441bbe91f5f34caae523292fa9610f5b341039079bf4c63e93eb",
+        "gitBlob": "8a87e02f21fc358ce47c8e93f193541c5c120c11"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/VM.cpp",
+        "bytes": 88926,
+        "sha256": "158fab905053957f7a61d79639fd1495870da82607c35990565f03c6f039b47f",
+        "gitBlob": "1909aa926b0b18e40c978af30e4225e166c687c8"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/VM.h",
+        "bytes": 60734,
+        "sha256": "0b7e9f39d0080cc9f95ca12444e8279fae2f9986dd1aaba09d4c1597584d8824",
+        "gitBlob": "cf23d183cee9d2037c9055093c7808c2c95477ef"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/OptionsList.h",
+        "bytes": 60805,
+        "sha256": "534e6ec4ddf79ca67e225a6b8dd13fac9e5cb4ca49b3933cc7503e5b12f80965",
+        "gitBlob": "f7b49fa805da841a68b6fb50a1d2c74aaf177a4c"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/ScriptExecutable.h",
+        "bytes": 8526,
+        "sha256": "9bb705d8d2453f17117d967917b749b18beec3b980415dc8d1cb214ebb6f6111",
+        "gitBlob": "bd0421c6f367db1107cc221fc4c0e9623ad70938"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/dfg/DFGCapabilities.cpp",
+        "bytes": 4994,
+        "sha256": "af7b608d206bd7f924ee10c3fb40e4290ba91bd5e00d1ca14806192a5dccb832",
+        "gitBlob": "7674201db30bd38a1e61a10cfb4a4017e5a99f89"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp",
+        "bytes": 679610,
+        "sha256": "a36c16afd064e021459beb5c945277abdbe57e080e909195b5366c2ecc7d98b1",
+        "gitBlob": "489c56adb37d464ed41b92b1ae7718688f65687a"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLCapabilities.cpp",
+        "bytes": 20421,
+        "sha256": "ec6af605796d8cbc5950c66354e601c1e4490af3101d9a34a1c5ac511cbea44b",
+        "gitBlob": "8b4ccb9aece3aae284486c7022a8b22e4aff7d76"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLState.cpp",
+        "bytes": 6661,
+        "sha256": "458bf343451c716d055024b0861f33d35f195e209ae00bc39c2a4821d5403888",
+        "gitBlob": "bfef7f492474e1ce9943c4f1a47f6bb44eecfd05"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLCompile.cpp",
+        "bytes": 16817,
+        "sha256": "6bf299aae4e68353b891ba5e1065953c6080d15a69b9e1c86e36571f5dc4ffc5",
+        "gitBlob": "3eca75e33a317f439b5427cdd3041cb3b3e1a2b2"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLJITCode.cpp",
+        "bytes": 5459,
+        "sha256": "d3b78a07cf65ef48f100e52e6cb707d43c340cd036699b030a958ef81ad84bad",
+        "gitBlob": "65a220ff040fd3afb08ccbd6844bb2397f964613"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/ftl/FTLJITCode.h",
+        "bytes": 3858,
+        "sha256": "cfc44f39d8a4a4520b1fc045de613f3d33487478197c016f3ee5690f69299d09",
+        "gitBlob": "ac1b7a411e87f11546b7f76006bd24498b58ae77"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/bytecode/CodeBlock.cpp",
+        "bytes": 156256,
+        "sha256": "0ccd4100c64e712470fc386dd9859f239e4481d538c554b52f4e4de12c7f52c8",
+        "gitBlob": "d8915876a702ab690ee3eb2253a5d7c2f7a61ce0"
+      },
+      {
+        "repository": "bun",
+        "commit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+        "path": "src/jsc/bindings/ZigGlobalObject.cpp",
+        "bytes": 214078,
+        "sha256": "83542e40ea5f75a8aa450630766961c52fe14e8b1606eddeb5858f6cc4a7bd3d",
+        "gitBlob": "6e91891c17bd2360194a800be10582bdbb808d23"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/runtime/Options.cpp",
+        "bytes": 52678,
+        "sha256": "846b91d459e5b88e914daf016813e958675a982d6bb55c3e0f9a07c0fb8ca3f8",
+        "gitBlob": "ecdb15eeb9c2fec12bb5a18d26ec9b3fc062fa98"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/jit/JITCode.cpp",
+        "bytes": 9727,
+        "sha256": "a03a3a97fcb68e98e5ae4e909269d2f4bd4e78a8de96f9f5c2b3613294e2557b",
+        "gitBlob": "b944fba5f6ac87f2318fe6034ade7c414336b4a5"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/WTF/wtf/SixCharacterHash.cpp",
+        "bytes": 2621,
+        "sha256": "b1fb57096c24f06e5f500eda0bc955585f4accbc093ae2decdd6ee2da6b27022",
+        "gitBlob": "0032203d972e84fd7744cecf7324a8b32fab0548"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/bytecode/BytecodeIndex.h",
+        "bytes": 4014,
+        "sha256": "bb059fbbc085612b8a0aa416d4990ab0c6a2fdc20550825eb40979e5a74df247",
+        "gitBlob": "9262356791f69d45c5bec48de0f7023f82edcc9f"
+      },
+      {
+        "repository": "webkit",
+        "commit": "0f966e81b78c84bb23213e391bc679c4ef83e56b",
+        "path": "Source/JavaScriptCore/bytecode/BytecodeIndex.cpp",
+        "bytes": 1685,
+        "sha256": "8d0f9c21574ae8d3740d0e992079f76a927a1ba0ee03ec7ef35ceab66f0a5142",
+        "gitBlob": "158f8f2eb825a7184c2e6975b03a313c45757b90"
+      }
+    ]
+  },
+  "observations": [
+    {
+      "pointer": "/reports/0/rounds/0/trace/0",
+      "pages": 4096,
+      "round": 1,
+      "mode": "map-off",
+      "targetDfgFramesByPhase": [
+        90,
+        124,
+        116,
+        0
+      ],
+      "targetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        6860,
+        7025,
+        6830,
+        5030
+      ],
+      "targetTracesByPhase": [
+        90,
+        124,
+        116,
+        0
+      ],
+      "allTracesByPhase": [
+        93,
+        126,
+        118,
+        64
+      ],
+      "callbackMillisByPhase": [
+        300.399165,
+        300.02293199999997,
+        309.582169,
+        300.01711899999987
+      ],
+      "invokeFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        64
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 90,
+          "other": 3
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 121,
+          "other": 5
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 116,
+          "other": 2
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 64,
+          "dfg-pair": 0,
+          "other": 0
+        }
+      ],
+      "storedBytes": 14708,
+      "stdoutBytes": 24744,
+      "stderrBytes": 619,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": true,
+      "exitCode": 0,
+      "machineLinks": []
+    },
+    {
+      "pointer": "/reports/0/rounds/0/trace/1",
+      "pages": 4096,
+      "round": 1,
+      "mode": "map-on",
+      "targetDfgFramesByPhase": [
+        102,
+        118,
+        117,
+        118
+      ],
+      "targetFtlFramesByPhase": [
+        8,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        9414,
+        9600,
+        10259,
+        12108
+      ],
+      "targetTracesByPhase": [
+        110,
+        119,
+        117,
+        118
+      ],
+      "allTracesByPhase": [
+        119,
+        121,
+        118,
+        118
+      ],
+      "callbackMillisByPhase": [
+        300.668962,
+        300.01962299999997,
+        300.01254500000005,
+        300.11852799999986
+      ],
+      "invokeFtlFramesByPhase": [
+        8,
+        0,
+        0,
+        0
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        8,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 8,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 101,
+          "other": 10
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 118,
+          "other": 3
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 117,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 118,
+          "other": 0
+        }
+      ],
+      "storedBytes": 17547,
+      "stdoutBytes": 27850,
+      "stderrBytes": 759,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": false,
+      "exitCode": 1,
+      "machineLinks": [
+        {
+          "capture": 1,
+          "traceIndex": 108,
+          "timestamp": 49.864037007,
+          "frameIndex": 0,
+          "machineFrameIndex": 1,
+          "target": {
+            "name": "jscPressureHotLoop",
+            "codeBlockHash": "EoFuS3",
+            "tier": "FTL",
+            "bytecodeIndex": 57,
+            "checkpoint": 0
+          },
+          "machine": {
+            "name": "invoke",
+            "codeBlockHash": "DawGsb",
+            "tier": "FTL",
+            "bytecodeIndex": 92,
+            "checkpoint": 0
+          },
+          "compilerDecisionMatched": true
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/0/rounds/1/trace/0",
+      "pages": 4096,
+      "round": 2,
+      "mode": "map-on",
+      "targetDfgFramesByPhase": [
+        61,
+        29,
+        25,
+        13
+      ],
+      "targetFtlFramesByPhase": [
+        37,
+        0,
+        0,
+        12
+      ],
+      "targetCallsByPhase": [
+        10014,
+        13351,
+        13792,
+        13747
+      ],
+      "targetTracesByPhase": [
+        99,
+        29,
+        25,
+        25
+      ],
+      "allTracesByPhase": [
+        100,
+        29,
+        26,
+        25
+      ],
+      "callbackMillisByPhase": [
+        300.06712,
+        300.005032,
+        300.006705,
+        300.0063539999999
+      ],
+      "invokeFtlFramesByPhase": [
+        37,
+        0,
+        0,
+        12
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        37,
+        0,
+        0,
+        12
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 37,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 61,
+          "other": 2
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 28,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 25,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 12,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 13,
+          "other": 0
+        }
+      ],
+      "storedBytes": 20275,
+      "stdoutBytes": 30389,
+      "stderrBytes": 561,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": false,
+      "exitCode": 1,
+      "machineLinks": [
+        {
+          "capture": 1,
+          "traceIndex": 62,
+          "timestamp": 52.862875524,
+          "frameIndex": 0,
+          "machineFrameIndex": 1,
+          "target": {
+            "name": "jscPressureHotLoop",
+            "codeBlockHash": "EoFuS3",
+            "tier": "FTL",
+            "bytecodeIndex": 57,
+            "checkpoint": 0
+          },
+          "machine": {
+            "name": "invoke",
+            "codeBlockHash": "DawGsb",
+            "tier": "FTL",
+            "bytecodeIndex": 92,
+            "checkpoint": 0
+          },
+          "compilerDecisionMatched": true
+        },
+        {
+          "capture": 4,
+          "traceIndex": 13,
+          "timestamp": 53.695602969,
+          "frameIndex": 0,
+          "machineFrameIndex": 1,
+          "target": {
+            "name": "jscPressureHotLoop",
+            "codeBlockHash": "EoFuS3",
+            "tier": "FTL",
+            "bytecodeIndex": 69,
+            "checkpoint": 0
+          },
+          "machine": {
+            "name": "invoke",
+            "codeBlockHash": "DawGsb",
+            "tier": "FTL",
+            "bytecodeIndex": 92,
+            "checkpoint": 0
+          },
+          "compilerDecisionMatched": true
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/0/rounds/1/trace/1",
+      "pages": 4096,
+      "round": 2,
+      "mode": "map-off",
+      "targetDfgFramesByPhase": [
+        14,
+        22,
+        32,
+        11
+      ],
+      "targetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        14030,
+        13331,
+        12558,
+        13406
+      ],
+      "targetTracesByPhase": [
+        15,
+        22,
+        32,
+        11
+      ],
+      "allTracesByPhase": [
+        28,
+        23,
+        32,
+        19
+      ],
+      "callbackMillisByPhase": [
+        300.11249000000004,
+        300.01015199999995,
+        300.18373099999997,
+        300.022839
+      ],
+      "invokeFtlFramesByPhase": [
+        13,
+        0,
+        0,
+        7
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 13,
+          "dfg-pair": 14,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 22,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 32,
+          "other": 0
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 7,
+          "dfg-pair": 11,
+          "other": 1
+        }
+      ],
+      "storedBytes": 18906,
+      "stdoutBytes": 28846,
+      "stderrBytes": 562,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": true,
+      "exitCode": 0,
+      "machineLinks": []
+    },
+    {
+      "pointer": "/reports/1/rounds/0/trace/0",
+      "pages": 16384,
+      "round": 1,
+      "mode": "map-off",
+      "targetDfgFramesByPhase": [
+        63,
+        73,
+        94,
+        72
+      ],
+      "targetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        6117,
+        5738,
+        7475,
+        8259
+      ],
+      "targetTracesByPhase": [
+        64,
+        75,
+        94,
+        72
+      ],
+      "allTracesByPhase": [
+        69,
+        76,
+        95,
+        75
+      ],
+      "callbackMillisByPhase": [
+        303.378427,
+        300.01010599999995,
+        300.399002,
+        300.3192690000001
+      ],
+      "invokeFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 63,
+          "other": 6
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 70,
+          "other": 6
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 94,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 72,
+          "other": 3
+        }
+      ],
+      "storedBytes": 17813,
+      "stdoutBytes": 28240,
+      "stderrBytes": 562,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": true,
+      "exitCode": 0,
+      "machineLinks": []
+    },
+    {
+      "pointer": "/reports/1/rounds/0/trace/1",
+      "pages": 16384,
+      "round": 1,
+      "mode": "map-on",
+      "targetDfgFramesByPhase": [
+        67,
+        89,
+        86,
+        104
+      ],
+      "targetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        7499,
+        6204,
+        5424,
+        6328
+      ],
+      "targetTracesByPhase": [
+        67,
+        89,
+        86,
+        104
+      ],
+      "allTracesByPhase": [
+        72,
+        89,
+        88,
+        106
+      ],
+      "callbackMillisByPhase": [
+        300.031157,
+        308.42126400000006,
+        300.1610529999999,
+        303.15132100000005
+      ],
+      "invokeFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 66,
+          "other": 6
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 85,
+          "other": 4
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 86,
+          "other": 2
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 104,
+          "other": 2
+        }
+      ],
+      "storedBytes": 16759,
+      "stdoutBytes": 26998,
+      "stderrBytes": 618,
+      "targetIntoInvokeFtlDecisions": 2,
+      "targetGatePassed": true,
+      "exitCode": 0,
+      "machineLinks": []
+    },
+    {
+      "pointer": "/reports/1/rounds/1/trace/0",
+      "pages": 16384,
+      "round": 2,
+      "mode": "map-on",
+      "targetDfgFramesByPhase": [
+        83,
+        93,
+        66,
+        83
+      ],
+      "targetFtlFramesByPhase": [
+        33,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        9810,
+        8129,
+        6413,
+        7238
+      ],
+      "targetTracesByPhase": [
+        116,
+        94,
+        66,
+        83
+      ],
+      "allTracesByPhase": [
+        118,
+        94,
+        67,
+        83
+      ],
+      "callbackMillisByPhase": [
+        300.05355099999997,
+        300.20930500000003,
+        300.01150499999994,
+        300.33931700000016
+      ],
+      "invokeFtlFramesByPhase": [
+        33,
+        0,
+        0,
+        0
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        33,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 33,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 82,
+          "other": 3
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 93,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 66,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 83,
+          "other": 0
+        }
+      ],
+      "storedBytes": 17866,
+      "stdoutBytes": 27955,
+      "stderrBytes": 471,
+      "targetIntoInvokeFtlDecisions": 1,
+      "targetGatePassed": false,
+      "exitCode": 1,
+      "machineLinks": [
+        {
+          "capture": 1,
+          "traceIndex": 85,
+          "timestamp": 54.082848302,
+          "frameIndex": 0,
+          "machineFrameIndex": 1,
+          "target": {
+            "name": "jscPressureHotLoop",
+            "codeBlockHash": "EoFuS3",
+            "tier": "FTL",
+            "bytecodeIndex": 57,
+            "checkpoint": 0
+          },
+          "machine": {
+            "name": "invoke",
+            "codeBlockHash": "DawGsb",
+            "tier": "FTL",
+            "bytecodeIndex": 92,
+            "checkpoint": 0
+          },
+          "compilerDecisionMatched": true
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/1/rounds/1/trace/1",
+      "pages": 16384,
+      "round": 2,
+      "mode": "map-off",
+      "targetDfgFramesByPhase": [
+        51,
+        93,
+        81,
+        107
+      ],
+      "targetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "targetCallsByPhase": [
+        5631,
+        6942,
+        4157,
+        7735
+      ],
+      "targetTracesByPhase": [
+        51,
+        94,
+        81,
+        107
+      ],
+      "allTracesByPhase": [
+        52,
+        97,
+        82,
+        108
+      ],
+      "callbackMillisByPhase": [
+        300.075132,
+        300.01849100000004,
+        300.053625,
+        300.23710800000003
+      ],
+      "invokeFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "linkedTargetFtlFramesByPhase": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "classesByPhase": [
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 50,
+          "other": 2
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 90,
+          "other": 7
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 81,
+          "other": 1
+        },
+        {
+          "target-ftl-linked": 0,
+          "target-ftl-unlinked": 0,
+          "invoke-ftl-other-target": 0,
+          "invoke-ftl-target-absent": 0,
+          "dfg-pair": 107,
+          "other": 1
+        }
+      ],
+      "storedBytes": 16796,
+      "stdoutBytes": 26920,
+      "stderrBytes": 485,
+      "targetIntoInvokeFtlDecisions": 1,
+      "targetGatePassed": true,
+      "exitCode": 0,
+      "machineLinks": []
+    }
+  ],
+  "zeroTargetProfiles": [
+    {
+      "pointer": "/reports/0/rounds/0/trace/0",
+      "capture": 4,
+      "calls": 5030,
+      "traces": 64,
+      "invokeFtlFrames": 64
+    }
+  ],
+  "interpretation": {
+    "finalizedOptionsObserved": true,
+    "inlineCompilerDecisionsObserved": true,
+    "sameTraceMachineLinksObserved": true,
+    "completeZeroTargetProfileReproduced": true,
+    "compiledInlineGraphOrPerSamplePcCaptured": false,
+    "runtimePcMapPointerCaptured": false,
+    "historicalFailureRootCauseEstablished": false,
+    "stabilityEstablished": false,
+    "scope": "Full retained JSC traces bind semantic inliner metadata to the outer machine frame and separately to compiler name/hash decisions. Extra-data and post-profile observation can perturb code generation and timing. One first trace per class is retained with explicit byte-cap omissions; aggregate linkage counts are fixture observations, not separately exported raw witnesses for every trace. No raw PC/map pointer, complete compiled graph, old 2<3 cause or original pressure acceptance is inferred."
+  },
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "avdName": "bun-jsc-pressure-4k-20260912",
+      "pages": 4096,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10226,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10227
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Both package UIDs independently checked against the complete numeric-UID final ps in the diagnostic report",
+      "finalProcessListing": {
+        "bytes": 16950,
+        "sha256": "35a4a1e88be7b98893e45a142d72c5904291539093970046b968ccf74f43be2d"
+      },
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 125468,
+        "sha256": "750111a1c8e0f75be8c5e8f2e3a2539c9eb9831d9dea5cfe36dae7d4139154d3"
+      },
+      "ownedAvd": {
+        "launcherPid": 46460,
+        "startedAt": "2026-09-14T04:51:57Z",
+        "bootConfirmedAt": "2026-09-14T04:52:26Z",
+        "nameBeforeStop": "bun-jsc-pressure-4k-20260912",
+        "stopCommandAt": "2026-09-14T04:52:58Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T04:53:00Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        device product:b8sxeea model:SM_F776B device:b8s transport_id:17",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        device product:b8sxeea model:SM_F776B device:b8s transport_id:17",
+        "initialEmulatorProcessReceipt": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "initialEmulatorProcessScope": "Complete command-line inventory retained only in the bound local ownership receipt; never used to control unrelated AVDs"
+      }
+    },
+    {
+      "serial": "emulator-5582",
+      "avdName": "bun-jsc-pressure-16k-20260912",
+      "pages": 16384,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10213,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10214
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "uidEvidenceScope": "Both package UIDs independently checked against the complete numeric-UID final ps in the diagnostic report",
+      "finalProcessListing": {
+        "bytes": 13255,
+        "sha256": "cd40937c2e65fe4a15c5c4611c03ceef8fa1a23a1c7594b08616a9470289676a"
+      },
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 103237,
+        "sha256": "5bc4af4fbd8626da2fb4d2c497d4f1360c6e80339c9a3f1cb1a6174485358b10"
+      },
+      "ownedAvd": {
+        "launcherPid": 55408,
+        "startedAt": "2026-09-14T04:53:05Z",
+        "bootConfirmedAt": "2026-09-14T04:53:36Z",
+        "nameBeforeStop": "bun-jsc-pressure-16k-20260912",
+        "stopCommandAt": "2026-09-14T04:54:08Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T04:54:10Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        device product:b8sxeea model:SM_F776B device:b8s transport_id:17",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nlocalhost:37478        device product:b8sxeea model:SM_F776B device:b8s transport_id:17",
+        "initialEmulatorProcessReceipt": {
+          "bytes": 97,
+          "sha256": "e51f984be34888cd603dbf2f85afbbb6a581d21077e9cc9dd100c3a263c7bfb6"
+        },
+        "initialEmulatorProcessScope": "Complete command-line inventory retained only in the bound local ownership receipt; never used to control unrelated AVDs"
+      }
+    }
+  ],
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "outerDisplayExit": 0,
+      "files": 44,
+      "tests": 277,
+      "passed": 277,
+      "failed": 0,
+      "receipt": {
+        "bytes": 3881,
+        "sha256": "0914da3042cf5be9657a8b21071daaa980947523417fe6046feb8c4af8df7ead"
+      },
+      "log": {
+        "bytes": 24876,
+        "sha256": "2aa9e7766149cff3e04157be118bdd8052381bf015f2cfc3bbf65b9b2ca06137"
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 45,
+      "tasks": 96,
+      "executed": 49,
+      "upToDate": 47,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "jvmResults": [
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+          "tests": "4",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.319Z",
+          "hostname": "HELLODOG009",
+          "time": "0.087"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+          "tests": "1",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.409Z",
+          "hostname": "HELLODOG009",
+          "time": "0.001"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+          "tests": "2",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.413Z",
+          "hostname": "HELLODOG009",
+          "time": "0.017"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+          "tests": "11",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.438Z",
+          "hostname": "HELLODOG009",
+          "time": "0.588"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+          "tests": "3",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:31.036Z",
+          "hostname": "HELLODOG009",
+          "time": "0.008"
+        }
+      ],
+      "lintErrors": 0,
+      "lintWarnings": 44,
+      "receipt": {
+        "bytes": 390,
+        "sha256": "68d1a3b813dbf4b00fc60c087ef3a7a6db1ea194049d29df4b34475c0dd65e00"
+      },
+      "log": {
+        "bytes": 8875,
+        "sha256": "7a581b1b14eb6d1f736fa991e8e69107bc14cd4cff20cd3d09e0fa8a39b44dcc"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "problems": [
+        {
+          "message": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+          "kind": "WARNING",
+          "group": "Android Gradle Plugin",
+          "description": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times."
+        },
+        {
+          "message": "'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.",
+          "kind": "WARNING",
+          "group": "Kotlin Compiler",
+          "description": "w: file:///D:/idea-projects/AutoJs6-Plugin-Bun-Runtime/app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt:47:43 'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.\n",
+          "file": "app\\src\\main\\java\\io\\github\\supermonster003\\autojs6\\plugin\\bun\\runtime\\BunExecutionRequest.kt",
+          "line": 46,
+          "column": 42
+        }
+      ]
+    },
+    "officialRuntimeAndSupervisorVerified": true,
+    "toolResponses": {
+      "bytes": 3466,
+      "sha256": "bd0d9f59ea64fbdea1619d37166d373c7709df7169c673aff0ef77af20183101"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 4249,
+      "sha256": "84cf3236ba39129bd572d75e0e69f7ea0cb12bca103e34c5dae7b027ac433ba8"
+    },
+    "device-drivers.json": {
+      "bytes": 5109,
+      "sha256": "e863f2b1fda5ff6e1ea35976cd85881a61ae3328216ae7d608eca777f3bfd18e"
+    },
+    "device-completed.json": {
+      "bytes": 10034,
+      "sha256": "7f78113885f692bd9ed558df3584af25914204b46ff94fea18387c5c68e1a56d"
+    },
+    "trace-source-review.json": {
+      "bytes": 6861,
+      "sha256": "cafb9fe44f68eea16970cdf940ac5f93f232c91ca408df373c23975e35226913"
+    },
+    "protected-files.json": {
+      "bytes": 9967,
+      "sha256": "20221952070bd47f75e674986bcec4434118818182b2bf5edd763779bd9607dc"
+    },
+    "trace-observations.json": {
+      "bytes": 214428,
+      "sha256": "beec257cb6789d0b1fb08c266028dd665be1e2dcf3656346e814d966ea25a9e5"
+    }
+  }
+}

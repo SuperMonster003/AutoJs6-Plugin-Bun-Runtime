@@ -4,7 +4,13 @@
 
 更新日期: 2026-09-14
 
-最新[固定PC映射关闭/开启对照](docs/compatibility/2026-09-14-m5-jsc-pcmap.md)已完成:
+最新[完整 trace/inliner 固定诊断](docs/compatibility/2026-09-14-m5-jsc-trace.md)已完成:
+新工具、20 份源码绑定与同一 92 输入 APK 的双页大小两轮采集, 共 8 进程/32 profile,
+65 份完整栈. 四份 FTL 见证明示目标语义帧属于同栈 invoke 机器帧, 与编译 hash 匹配.
+关闭组一段 5030 次调用/64 trace 无目标帧, 开启组 90 个目标 FTL 与三次真实 exit1 保留.
+该进展确立保存样本的机器帧身份, 原 2<3 历史根因和稳定性仍开放; 原 118 报告/217 行不变.
+
+此前[固定PC映射关闭/开启对照](docs/compatibility/2026-09-14-m5-jsc-pcmap.md)已完成:
 同一90输入APK复用原JS/native, 双页大小各两轮固定反转顺序, 收集8进程/32profile及
 8份JSC最终选项. 开启组155个目标FTL帧及两次真实exit1按原DFG门槛保留;
 关闭组12个调用者FTL帧与目标DFG混合, 未复现整段目标归零.
@@ -404,6 +410,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (诊断/源码) 绑定14个固定Bun/WebKit源文件, 核对noFTL/内联属性分离、条件PC映射、FTL findPC和机器tier归属. 与4KiB第二轮第四段9766次目标调用/126trace/0目标帧/125调用者FTL帧关联, [源码补充](docs/diagnostics/2026-09-14-jsc-restart-ftl-source-review.md)明确缺少实际内联图与映射状态. 原2<3根因门禁仍开放, 下一步预先固定单因素诊断且先证明选项生效. (2026-09-14, G0/诊断)
 - [x] (诊断/工具/源码) 新独立PC映射off/on工具复用原四段JS及语义validator, 共同启用最终选项/编译器内联日志, 仅改变映射值并反转第二轮顺序. 五组正反向测试和CI完成; 18个固定源码文件绑定选项finalize、日志身份与机器tier路径. [源码补充](docs/diagnostics/2026-09-14-jsc-pcmap-source-review.md)区分选项实际生效、内联决定与已执行FTL, 不将选项回显称为map指针观测. (2026-09-14, G0/G1)
 - [x] (诊断/设备) 同一90输入APK及原十三补丁JSC在双页大小各两轮收集8进程/32profile, 8份实际选项全部匹配. 开启组155目标FTL及两次真实exit1保留, 关闭组两段12调用者FTL与目标DFG混合; 16KiB有内联决定但未采到FTL执行. [完整报告](docs/compatibility/2026-09-14-m5-jsc-pcmap.md)保留未复现整段目标归零和历史2<3根因未定, 两包/四UID及两owned AVD已清理, 不增加原套件接受数. (2026-09-14, G2/诊断, 非原压力/Release验收)
+- [x] (诊断/工具/源码) 新增独立完整 trace/inliner 观察, 原 JS 仅加三段可剥离代码, 热函数/回调/门槛与预算不变. 首条分类见证有单份/总字节上限及显式省略, 主机重验原始帧的外层机器关联并匹配编译 hash; 7 组反向测试纳入 CI, 20 份固定源码绑定 extra-data/CodeOrigin/位置编码. [源码补充](docs/diagnostics/2026-09-14-jsc-trace-source-review.md)区分导出的机器帧身份和原始 PC/map 指针. (2026-09-14, G0/G1)
+- [x] (诊断/设备) 同一 92 输入 APK 与原十三补丁 JSC 在 API36 x86 双用户页各两轮收集 8 进程/32 profile/2530 trace, 保存 65 份完整栈, 无省略或重试. 四份 FTL 见证明示目标进入同栈 invoke 机器帧; 90 条夹具汇总与三次真实 exit1 保留. 关闭组一段 5030 次目标调用/64 trace 全无目标, 首栈调用者位置 nil, 其他混合段有 bc#127. [报告](docs/compatibility/2026-09-14-m5-jsc-trace.md)保留原 2<3 根因未定与观测扰动边界, 两包/四 UID 及两 owned AVD 已清理; 不增加原压力或 Release 通过. (2026-09-14, G2/诊断)
 - [x] (构建/x86_64) 独立 rebase 到十二补丁 `06e518f73`, 两个全新 clean Bun 构建实际 exit 0/0, 21 输入和 source head/tree 均未漂移. 两份完整 90609496-byte 成品 `34edd4b9...a75b1ad` 一致且完整 ELF 审计通过. 精确复用两套独立 JSC 库/config 和原 ICU, 新 WebKit/ICU 构建 0/0. [构建归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-builds.json) 保留原始换行摘要/精确映射及此前 recorder 失败, 不重新编译或改写旧证据. (2026-09-13, G1)
 - [x] (设备/x86_64) 十二补丁候选在 API 36 的 4 KiB/16 KiB 用户页各两轮原八项 Binder 通过 32/32. 同一 APK 的 83 输入匹配 `0210e82`, 安装字节/签名/完整 payload、二十条生命周期和两个 UID 清理通过. 初次 16 KiB lowmemorykiller 导致预热 DeadObjectException 的整批失败独立归档; 同 APK 完整两轮重试通过, 无配置/源码/预算 workaround. [Binder 与失败范围](docs/compatibility/2026-09-13-m5-twelve-patch-jsc.md). (2026-09-13, G2, 非 Release)
 - [x] (测试/x86_64) 同一十二补丁 APK 双页大小各两轮原七模式压力通过 28/28, 原 fixture/validator/预算不变. LLInt/Baseline/DFG/FTL 实际采样、GC/Wasm 和 64 个 worker 正常退出均通过; AT_PAGESZ/sysconf/getconf 一致, 两台内核/MMU 页均为 4 KiB. [压力归档](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-pressure.json) 与 [清理补充](docs/compatibility/2026-09-13-m5-twelve-patch-jsc-checkpoints.json) 分开. 仅关闭本轮两个 AVD, 不计入 baseline 330/330 或 80/80, 不扩张为 ARM64 硬件页/压力、全 JIT/Wasm、长时性能或 Release. (2026-09-13, G1/G2)
