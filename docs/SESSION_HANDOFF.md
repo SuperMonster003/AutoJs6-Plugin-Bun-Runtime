@@ -1,4 +1,28 @@
-# 当前阶段: 固定PC映射关闭/开启对照完成
+# 当前阶段: 固定完整trace/inliner诊断实现已复核, 等待本批APK与设备证据
+
+2026-09-14, 从干净master 5c9d8b8继续. 当前本机交接为
+`E:/.codex-tmp/jsc-trace-diagnostic-20260914/SESSION_HANDOFF.local.md`.
+先读该记录与下文历史. 原PC-map/restart/sampling/native和磁盘一次性driver均已完成,
+不得重跑. 复用十三补丁JSC原成品, 没有Bun/WebKit/ICU新构建或缓存恢复.
+
+新trace目录的单源JS只加三段标记观测代码, 去除后与原restart逐字节相同.
+固定四段热循环/回调/算术/采样/门槛及16KiB源、64KiB输出、20s工作、25s超时不变.
+两组共同增加collectExtraSamplingProfilerData=true, 原dump/inline日志选项不变,
+仅PC map false/true不同, 第一轮off/on、第二轮on/off. 每类只考虑首份完整栈,
+单份4096bytes、总24576bytes, 显式保留缺席/过大/预算省略. 主机独立核对
+原始帧的inliner与同栈外层机器帧及编译hash; 不称为原始PC/map指针取证.
+
+20份固定Bun/WebKit源文件与Git对象一致, 原125份受保护输入不变.
+新7组Node正反测试已通过; 本批APK、设备和最终验证尚待本机记录补全.
+计划同一新APK在API36 x86用户4096/16384各两轮, 不为特定FTL/缺席结果重试.
+无关AVD_API_37/5598与AVD_API_24/5594在开始时已存在, 不得操作;
+仅核验并启动本轮owned bun-jsc-pressure-4k/16k-20260912的5580/5582.
+历史118报告/217矩阵行、baseline560/128、原JSC32/28及所有失败保持不变.
+distributionReady=false, 当前不需要用户设备或手动操作.
+
+## 前一批PC映射固定对照
+
+# 固定PC映射关闭/开启对照完成
 
 2026-09-14, 从干净master dcb68bd继续, 工具/构建源码提交4cd6ba4.
 接手时较原9255e8a仅多出用户已提交的settings.gradle.kts平台插件1.8.0更新;

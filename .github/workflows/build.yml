@@ -86,6 +86,7 @@ jobs:
             tools/bun-runtime/experimental/webkit-x86_64-16k/sampling/sampling-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/restart/restart-common.test.mjs \
             tools/bun-runtime/experimental/webkit-x86_64-16k/pcmap/pcmap-common.test.mjs \
+            tools/bun-runtime/experimental/webkit-x86_64-16k/trace/trace-common.test.mjs \
             tools/bun-runtime/release/release-asset-common.test.mjs
 
       - name: Re-materialize immutable Bun experiment inputs
