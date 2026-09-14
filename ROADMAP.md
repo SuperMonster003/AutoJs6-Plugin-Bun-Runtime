@@ -4,7 +4,12 @@
 
 更新日期: 2026-09-14
 
-最新[原压力控制流固定观察](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md)已完成:
+最新 [TLS/IPv6 固定矩阵](docs/compatibility/2026-09-14-m4-runtime-network.md) 已完成首批诊断:
+五环境各两轮, 20个TLS前缀模式通过, HTTPS ALPN十次失败, IPv6十次未进入.
+锁定源码显示HTTPS私有TLS配置未转发ALPN; 四模式整体未通过, 修复与新字节验证待完成.
+同一105输入APK批次、完整失败、十个UID与唯一owned AVD清理均已归档, 无重试或原生重建.
+
+此前[原压力控制流固定观察](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md)已完成:
 一对94输入APK保留原七模式顺序, DFG早停/原断言和全部预算; 双页各两轮28模式正常退出.
 四次DFG均在首profile后停止, 样本18/10/82/93, 共392trace与8份完整首栈, 无重试.
 原2<3未复现, 历史根因/稳定性仍开放. 原120报告/217行不变, 两份新JSON仅索引.
@@ -366,6 +371,10 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 **M3 升阶门:** API 28-32 每个版本至少有 G2 证据; 所有已知 syscall trap 路径无进程级 `SIGSYS`; API 33-35 无回归. 满足前只可发布 experimental/beta, 不得将 Android 9 写为稳定支持.
 
 ## M4: Android 9+ 稳定化
+
+- [x] (测试/工具) 新增独立四模式 TLS/IPv6 Binder 夹具和公开测试证书绑定, 固定 TLS1.2/1.3、CA/主机名拒绝、HTTPS、IPv6 TCP/UDP/HTTP, 原源码/预算/生产服务保持边界; 真实主机通信及防伪校验纳入 306 项 Node tests. [工具说明](tools/bun-runtime/experimental/api28/runtime-network/README.md). (2026-09-14, G0/G1)
+- [x] (测试/诊断) 同一 105 输入三 APK 在 ARM64 API28/31/33/35、x86 API33 原生4KiB各两轮: 20个TLS前缀模式通过, HTTPS ALPN十次false断言失败, IPv6十次未到达. 原始完整失败、源码配置转发遗漏和双UID/唯一owned AVD清理分别绑定. [失败报告与源码定位](docs/compatibility/2026-09-14-m4-runtime-network.md). 原四模式门禁未通过, 无重试/原生重建/旧计数增加. (2026-09-14, G1/G2诊断)
+- [ ] (原生/测试) 修复并独立验证锁定 Bun 的 HTTPS ALPN 配置转发遗漏. 保留当前完整失败及原 ALPN/身份/IPv6 断言, 先固定修改和构建范围, 新源/新字节不得借用既有验收; IPv6 与 HTTPS 后续检查仍待实际执行.
 
 - [x] (测试/工具) 新增独立四模式离线 API Binder 套件: 文件/目录监听, 实例级本地 DNS, 二进制 TCP 半关闭和 HTTP redirect/stream/abort. 保留真实服务与共享 AAR, 固定 12 KiB 源/8 s 工作/12 s Binder/16 KiB 输出, 主机执行实际夹具并验证失败与 source/APK/双 UID 拒绝控制. [工具范围](tools/bun-runtime/experimental/api28/runtime-api/README.md). (2026-09-14, G0/G1)
 - [x] (测试/设备) 十三补丁 baseline 复用, 单一 99 输入三 APK 批次在 ARM64 API 28/31/33/35 与 x86_64 API 33 的原生 4 KiB 环境各两轮, 四模式 40/40. 含 20 次 TCP 连接、30 次本地 DNS 查询及 30 次 HTTP 请求; 40 workspace、十个包 UID 及唯一 owned AVD 已清理. Sony API 33 安装前离线独立保留, 同 APK 改用 Redmi, 无运行期失败重试. [固定报告](docs/compatibility/2026-09-14-m4-runtime-api.md). 不增加原 560/128 或 JSC 32/28, TLS/IPv6/其余矩阵/Release 保持开放. (2026-09-14, G2/有限补充)

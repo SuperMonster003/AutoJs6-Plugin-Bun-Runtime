@@ -1,3 +1,46 @@
+# 当前阶段: M4 TLS/IPv6 首批诊断完成, HTTPS ALPN 门禁失败
+
+2026-09-14, 从干净 master 22b35dd 继续. APK源码提交389c19b157c6e173b0287d679821a6e63f385c74,
+失败归档工具提交b2f09d0bd14211f97b288dfda0fa406c096669ec. 最新本机交接:
+`E:/.codex-tmp/runtime-tls-ipv6-20260914/SESSION_HANDOFF.local.md`.
+先完整阅读该记录及下文历史. build-apks.py、run-devices.py和归档driver均已结束,
+不得重启一次性driver或覆盖独占输出. 本批没有Bun/WebKit/ICU新构建、缓存恢复或APK重试.
+
+- 新runtime-network独立四模式依次tls-transport、tls-rejection、https、ipv6,
+  复用生产Binder/supervisor/AAR/权限. 固定12288bytes源码、8000ms工作、12000ms Binder、
+  16384bytes输出和8192bytes成功行. 公开测试证书/叶密钥仅回环显式信任, 不修改系统信任.
+- 单一105输入三APK均逐项绑定389c19b, 构建actual0,12s/80tasks12executed68upToDate.
+  ARM41140290bytes SHA06c9f30fd0e239e0eada8c111ce75795a2dbaa4be79806a0c763b5bca11799fc;
+  x8642962132bytes SHA2bfe2a6e99b4832b7397a33c19afe23983932f1affaea4cc6bbf91891263cb47;
+  test2518257bytes SHA1e1c351366ae2a370f8b5474ddd33390382bb2e7fc604825e4d17b9e260b1a21.
+  沿用十三补丁baseline e8b129616, 不是大页JSC candidate. 原四JS与Kotlin顺序/预算不变.
+- ARM64 SonyAPI28/31、RedmiAPI33、XiaomiAPI35与owned x86API33, 全部应用/内核4096,
+  各两轮: tls-transport和tls-rejection通过20个模式, 含20协议会话、20拒绝及10有效恢复.
+  HTTPS十次在源75:60断言peer.alpn false != http/1.1, exit1/NON_ZERO_EXIT.
+  原JUnit在HTTPS停止, IPv6未进入十次, 不计失败后未执行项为通过. 四模式整体未通过.
+  Runner整体解析显示0/4, 独立失败归档器从原始流重新严格解析两个通过前缀, 不改原记录.
+- 3份干净e8b129616源码Git blob和行片段已绑定: https.ts把ALPN存公开server属性,
+  _http_server.ts构造private TLS对象没有ALPNProtocols/ALPNCallback, listen传它给Bun.serve.
+  直接node:tls另有ALPN转发. 这是与设备现象一致的源码遗漏; 未做新原生修复/因果确认.
+  本机真实HTTPS保留正确证书而移除ALPN协商的对照会失败; 不能据此放宽原HTTPS断言.
+- 20成功workspace有删除断言, 失败HTTPS没有独立workspace见证. 五环境两包均卸载,
+  十UID完整数字进程表为零; 精确UID见checkpoint. 唯一owned5584于07:15:11Z关闭.
+  emulator5594/5598来自其他任务, 本批未操作; localhost37478offline未使用.
+- Node47文件306/306, 其中本套件13项. IDE成功, 最后仅既有SDK XML警告.
+  官方runtime/supervisor、生产Debug APK完整性与16KiB ZIP通过. 生产四Gradleactual0,
+  11s/96tasks49executed47upToDate; JVM UP-TO-DATE,已有21结果不称重跑, lint0/44.
+- [完整报告](compatibility/2026-09-14-m4-runtime-network.md)与failure/checkpoint JSON分别绑定.
+  原125报告/注册项、217矩阵行、146保护文件和settings1.8.0不变; 新2份仅索引为127来源.
+  原API40/40、baseline560/128、原JSC32/28和official API33+、distributionReady=false不变.
+  最终生成器/Python、提交与干净状态收据见最新本机交接追加. 无push/Release.
+
+下一步优先固定HTTPS ALPN最小修复与相应上游测试, 先查现有构建进程和磁盘预算,
+再规划独立新构建/证据; 不重复本批追逐通过, 不删除断言/关闭证书校验, 不把IPv6算已运行.
+这不是已确认修复, HTTPS响应/关闭与IPv6后续门禁还需真实新证据. 其余M4/M5历史未闭门禁
+继续保留. 当前无需用户提供更多设备、资料、关键决定或手动操作, 已完成清理不重复执行.
+
+## 前一批固定离线文件和网络 API
+
 # 当前阶段: M4 固定离线 API 边界完成
 
 2026-09-14, 从干净 master e71861d 继续, 源码/唯一测试 APK 批次提交为

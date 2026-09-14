@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 125 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 127 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -1043,6 +1043,14 @@ get-state前设备消失, 无安装或运行. 失败单独保留, 同一APK改�
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
+### M4 固定 TLS/HTTPS 首批失败
+
+来源: [2026-09-14-m4-runtime-network-failure.json](2026-09-14-m4-runtime-network-failure.json).
+
+固定批次的TLS前缀通过、HTTPS ALPN失败和IPv6未到达分别保留. 整体门禁未通过, 不改写原始失败或增加历史套件计数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
 ### M5 固定PC映射关闭/开启诊断
 
 来源: [2026-09-14-m5-jsc-pcmap-diagnostics.json](2026-09-14-m5-jsc-pcmap-diagnostics.json).
@@ -1270,6 +1278,14 @@ get-state前设备消失, 无安装或运行. 失败单独保留, 同一APK改�
 来源: [2026-09-14-m4-runtime-api.json](2026-09-14-m4-runtime-api.json).
 
 真实 Binder 四模式在五个原生 4 KiB 环境各两轮, 40/40. 独立补充, 不增加原探针/Binder计数或广泛API与Release接受.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M4 TLS/HTTPS 来源和清理补充
+
+来源: [2026-09-14-m4-runtime-network-checkpoints.json](2026-09-14-m4-runtime-network-checkpoints.json).
+
+固定源码显示HTTPS私有TLS配置未转发ALPN; 精确源码与APK绑定、双UID及自有AVD清理和项目检查独立保留. 无原生修复接受或旧计数增加.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 

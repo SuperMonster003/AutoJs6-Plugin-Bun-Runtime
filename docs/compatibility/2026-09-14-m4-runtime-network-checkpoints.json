@@ -1,0 +1,776 @@
+{
+  "schemaVersion": 1,
+  "kind": "runtime-network-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "projectSourceCommit": "389c19b157c6e173b0287d679821a6e63f385c74",
+  "validatorSourceCommit": "b2f09d0bd14211f97b288dfda0fa406c096669ec",
+  "fixedScopePassed": false,
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "failureReport": {
+    "path": "docs/compatibility/2026-09-14-m4-runtime-network-failure.json",
+    "bytes": 548438,
+    "sha256": "d3b6afd08ea31ae2864dc99370fb9699cdc6542d5510c6b54ec374459cea0cb9"
+  },
+  "compiledInputEncoding": "Git LF text; binary AAR bytes unchanged",
+  "compiledInputsMatched": 105,
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 12,
+    "tasks": 80,
+    "executed": 12,
+    "upToDate": 68,
+    "receipt": {
+      "bytes": 22358,
+      "sha256": "da91004b60463be6d4870312994a249efbbbe4a48bfcad33e4492afe3bb1ffda"
+    },
+    "log": {
+      "bytes": 7838,
+      "sha256": "a7197d967062020dc0bbc158c2b1c11998bfc95f469629a70a277fae0184e2cd"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-arm64-v8a-debug.apk",
+        "bytes": 41140290,
+        "sha256": "06c9f30fd0e239e0eada8c111ce75795a2dbaa4be79806a0c763b5bca11799fc"
+      },
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42962132,
+        "sha256": "2bfe2a6e99b4832b7397a33c19afe23983932f1affaea4cc6bbf91891263cb47"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2518257,
+        "sha256": "1e1c351366ae2a370f8b5474ddd33390382bb2e7fc604825e4d17b9e260b1a21"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "nativeProfile": "Thirteen-patch baseline, not the large-page JSC candidate",
+  "preserved": {
+    "historicalReports": 125,
+    "historicalMatrixRows": 217,
+    "protectedRuntimeAndFixtureFiles": 146,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchanged": true,
+    "preExistingSettingsPlugin180Unchanged": true,
+    "allFourNetworkFixturesAndKotlinUnchangedSinceApkCommit": true
+  },
+  "fixtureLimits": {
+    "sourceBytesPerMode": 12288,
+    "scriptMillis": 8000,
+    "binderTimeoutMillis": 12000,
+    "outputBytes": 16384,
+    "successRecordBytes": 8192
+  },
+  "summary": {
+    "environments": 5,
+    "fixedRounds": 10,
+    "plannedModes": 40,
+    "passedPrefixModes": 20,
+    "failedHttpsModes": 10,
+    "unreachedIpv6Modes": 10,
+    "tlsProtocolSessions": 20,
+    "certificateRejections": 20,
+    "validRecoveryConnections": 10,
+    "removedSuccessfulWorkspaces": 20,
+    "fixedScopePassed": false,
+    "originalApiModesAdded": 0,
+    "originalProbePassesAdded": 0,
+    "originalBinderPassesAdded": 0,
+    "productionReleaseAcceptance": false
+  },
+  "devices": [
+    {
+      "serial": "BH900ASK9E",
+      "model": "G8441",
+      "api": 28,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 1,
+      "driverLog": {
+        "bytes": 2420,
+        "sha256": "3f61849c5eb3becf947cd28432776879dd2e116add824a89609acaf8049b67ac"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10777,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10778
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 22884,
+        "sha256": "f17f1ac92461d87ad7d0cfc67a46d5a4ce42226ae7c882719d81de84e2021986"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 57,
+              "uid": 10777,
+              "pid": 5651,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 50,
+              "uid": 10777,
+              "pid": 5659,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        },
+        {
+          "round": 2,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 50,
+              "uid": 10777,
+              "pid": 5792,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 50,
+              "uid": 10777,
+              "pid": 5800,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "QV710AF65F",
+      "model": "XQ-AT72",
+      "api": 31,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 1,
+      "driverLog": {
+        "bytes": 2420,
+        "sha256": "de3e5d8b815ba9261af98c0bf3738ec64087d36b32548e55230630fa5a8c6607"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 15135,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 15136
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 27411,
+        "sha256": "3ec0c9ca6fab87067231813ef8b1fb13e2c03245722bd9ddee2b643d6520d572"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 26,
+              "uid": 15135,
+              "pid": 25858,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 26,
+              "uid": 15135,
+              "pid": 25867,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        },
+        {
+          "round": 2,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 27,
+              "uid": 15135,
+              "pid": 26019,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 27,
+              "uid": 15135,
+              "pid": 26028,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "bek749scrwv4wo8h",
+      "model": "22120RN86C",
+      "api": 33,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 1,
+      "driverLog": {
+        "bytes": 2431,
+        "sha256": "5beaf58c7d4789261b340fd2835aecb370fde3e9a79765f84020bff8a52467bb"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10537,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10538
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 19450,
+        "sha256": "9fdab4df488337b0016488fd0d6825ded959e097ee1e3fd4540536feb8393abc"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 77,
+              "uid": 10537,
+              "pid": 17127,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 120,
+              "uid": 10537,
+              "pid": 17142,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        },
+        {
+          "round": 2,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 87,
+              "uid": 10537,
+              "pid": 17552,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 76,
+              "uid": 10537,
+              "pid": 17643,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "968e9f18",
+      "model": "23046RP50C",
+      "api": 35,
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "driverExit": 1,
+      "driverLog": {
+        "bytes": 2416,
+        "sha256": "aaf1bd6efc5161d12eb4a5722f557859aa49ce57082743638ae5921919dca404"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 11039,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 11040
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 29742,
+        "sha256": "62ee83c79a2f33e92fcd023dc7f30d285de6477b11883578f8561b7c61213862"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 27,
+              "uid": 11039,
+              "pid": 16853,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 31,
+              "uid": 11039,
+              "pid": 16862,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        },
+        {
+          "round": 2,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 30,
+              "uid": 11039,
+              "pid": 16988,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 30,
+              "uid": 11039,
+              "pid": 17011,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        }
+      ]
+    },
+    {
+      "serial": "emulator-5584",
+      "model": "sdk_gphone64_x86_64",
+      "api": 33,
+      "abi": "x86_64",
+      "pages": 4096,
+      "driverExit": 1,
+      "driverLog": {
+        "bytes": 2419,
+        "sha256": "a0c44004a14206f2e10c5da781e40e6cb6d5d8cf472808d36347dbaf72ba452b"
+      },
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 10174,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 10175
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.test": 0
+      },
+      "packagesAbsent": true,
+      "rawNumericUidProcessListing": {
+        "bytes": 11138,
+        "sha256": "9f1b0e667e8396dd77fcd69a0620b5d2015bfbfe524b411993665de9e85e7434"
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 178,
+              "uid": 10174,
+              "pid": 3813,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 111,
+              "uid": 10174,
+              "pid": 3824,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        },
+        {
+          "round": 2,
+          "passedPrefix": [
+            {
+              "mode": "tls-transport",
+              "elapsedMillis": 95,
+              "uid": 10174,
+              "pid": 4111,
+              "workspaceRemoved": true
+            },
+            {
+              "mode": "tls-rejection",
+              "elapsedMillis": 128,
+              "uid": 10174,
+              "pid": 4127,
+              "workspaceRemoved": true
+            }
+          ],
+          "failedMode": "https",
+          "exitCode": 1,
+          "unreachedModes": [
+            "ipv6"
+          ]
+        }
+      ],
+      "ownedAvd": {
+        "name": "bun-hard-limit-api33-20260912",
+        "serial": "emulator-5584",
+        "pages": 4096,
+        "launcherPid": 27360,
+        "arguments": [
+          "-avd",
+          "bun-hard-limit-api33-20260912",
+          "-port",
+          "5584",
+          "-no-window",
+          "-no-snapshot",
+          "-no-boot-anim",
+          "-no-audio",
+          "-gpu",
+          "swiftshader_indirect"
+        ],
+        "startedAt": "2026-09-14T07:13:34Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:31\nlocalhost:37478        offline transport_id:25",
+        "initialEmulatorProcesses": "[{\"ProcessId\":41076,\"CommandLine\":\"\\\"E:\\\\.android\\\\sdk\\\\emulator\\\\emulator.exe\\\" -avd AVD_API_37 -read-only -no-snapshot-save -no-window -no-boot-anim -no-audio -gpu swiftshader_indirect -port 5598\"},{\"ProcessId\":32688,\"CommandLine\":\"E:\\\\.android\\\\sdk\\\\emulator\\\\qemu\\\\windows-x86_64\\\\qemu-system-x86_64-headless.exe -avd AVD_API_37 -read-only -no-snapshot-save -no-window -no-boot-anim -no-audio -gpu swiftshader_indirect -port 5598\"}]\n",
+        "stopped": true,
+        "bootConfirmedAt": "2026-09-14T07:14:21Z",
+        "kernelMappingPages": {
+          "KernelPageSize": [
+            4096
+          ],
+          "MMUPageSize": [
+            4096
+          ]
+        },
+        "nameBeforeStop": "bun-hard-limit-api33-20260912",
+        "stopCommandAt": "2026-09-14T07:15:08Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopConfirmedAt": "2026-09-14T07:15:11Z",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5594          device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:33\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:31\nlocalhost:37478        offline transport_id:25"
+      },
+      "shellSmaps": {
+        "bytes": 102991,
+        "sha256": "c6416c42519dffb43920f53b5e67ccdea124d0b97c8a612cc651d8cc71eb74f2"
+      }
+    }
+  ],
+  "sourceReview": {
+    "schemaVersion": 1,
+    "kind": "runtime-network-alpn-source-review",
+    "capturedAt": "2026-09-14T07:20:46Z",
+    "sourceCommit": "e8b1296169a8e6f20c81e926dba6448afb25cd11",
+    "sourceTree": "7d715cd177328d44b12b6346bcf0e07e835b3578",
+    "cleanTree": true,
+    "sources": [
+      {
+        "path": "src/js/node/https.ts",
+        "gitBlob": "9d0ba688ee63a9b47a5c9a63c63be11c609caed9",
+        "bytes": 17943,
+        "sha256": "d4ebc971fd555b0249daae9aa4d5825f027b29c26c81507da7f84493375373f0",
+        "snippets": [
+          {
+            "firstLine": 499,
+            "lastLine": 526,
+            "text": "// Like Node's https.Server constructor: default ALPNProtocols to ['http/1.1']\n// when neither ALPNProtocols nor ALPNCallback was given, and store the\n// normalized protocol list / callback on the server instance the way\n// tls.Server does (test-https-argument-of-creating.js).\n// https://github.com/nodejs/node/blob/v26.3.0/lib/https.js#L82-L97\nfunction createServer(options, requestListener) {\n  if (typeof options === \"function\") {\n    requestListener = options;\n    options = {};\n  } else if (options == null) {\n    options = {};\n  } else {\n    validateObject(options, \"options\");\n    options = { ...options };\n  }\n  if (!options.ALPNProtocols && !options.ALPNCallback) {\n    // http/1.0 is not defined as a Protocol ID in the IANA registry, so\n    // ALPN requests are always answered with http/1.1.\n    options.ALPNProtocols = [\"http/1.1\"];\n  }\n  const server = http.createServer(options, requestListener);\n  const optionsALPNProtocols = options.ALPNProtocols;\n  if (optionsALPNProtocols) {\n    tls.convertALPNProtocols(optionsALPNProtocols, server);\n  }\n  server.ALPNCallback = options.ALPNCallback;\n  return server;\n}\n"
+          }
+        ]
+      },
+      {
+        "path": "src/js/node/_http_server.ts",
+        "gitBlob": "3d32533df07ae9cdb8c212ef4a4f821b7e30cc21",
+        "bytes": 145799,
+        "sha256": "bf89192cac106bb59f32acb529b140aacfc757bb8d042847f16e1392da1308f0",
+        "snippets": [
+          {
+            "firstLine": 250,
+            "lastLine": 260,
+            "text": "// these two flags an `https.Server({ ca })` would reject every client that\n// doesn't present a cert. Mirror tls.Server (net.ts): default `requestCert`\n// to false and, when not requesting, force `rejectUnauthorized` to false so\n// the CA is loaded into the trust store without requiring a client cert.\nfunction normalizeServerTls(tls) {\n  const requestCert = !!tls.requestCert;\n  tls.requestCert = requestCert;\n  tls.rejectUnauthorized = requestCert ? tls.rejectUnauthorized !== false : false;\n  return tls;\n}\n\n"
+          },
+          {
+            "firstLine": 350,
+            "lastLine": 380,
+            "text": "\n    if (this[isTlsSymbol]) {\n      // Translate minVersion/maxVersion/secureProtocol into the integer\n      // protocol range the native layer applies (secureProtocol wins, like\n      // Node's SecureContext::Init); 0 keeps the native defaults.\n      validateSecureProtocol(options.secureProtocol);\n      let minVersion, maxVersion;\n      const range = secureProtocolToVersionRange(options.secureProtocol);\n      if (range) {\n        minVersion = range[0];\n        maxVersion = range[1];\n      } else {\n        minVersion = tlsStringToProtocolVersion(options.minVersion);\n        maxVersion = tlsStringToProtocolVersion(options.maxVersion);\n      }\n      this[tlsSymbol] = normalizeServerTls({\n        serverName,\n        key,\n        cert,\n        ca,\n        passphrase,\n        secureOptions,\n        minVersion,\n        maxVersion,\n        ciphers: typeof options.ciphers === \"string\" && options.ciphers ? options.ciphers : undefined,\n        requestCert: options.requestCert,\n        rejectUnauthorized: options.rejectUnauthorized,\n      });\n    } else {\n      this[tlsSymbol] = null;\n    }\n"
+          },
+          {
+            "firstLine": 542,
+            "lastLine": 565,
+            "text": "\nServer.prototype.listen = function () {\n  const server = this;\n  let port, host, onListen;\n  let socketPath;\n  let tls = this[tlsSymbol];\n\n  // This logic must align with:\n  // - https://github.com/nodejs/node/blob/2eff28fb7a93d3f672f80b582f664a7c701569fb/lib/net.js#L274-L307\n  const argc = arguments.length;\n  if (argc > 0) {\n    const arg0 = arguments[0];\n    if (($isObject(arg0) || $isCallable(arg0)) && arg0 !== null) {\n      // (options[...][, cb])\n      port = arg0.port;\n      host = arg0.host;\n      socketPath = arg0.path;\n\n      const otherTLS = arg0.tls;\n      if (otherTLS && $isObject(otherTLS)) {\n        tls = normalizeServerTls({ ...otherTLS });\n      }\n    } else if (typeof arg0 === \"string\" && !(Number(arg0) >= 0)) {\n      // (path[...][, cb])\n"
+          },
+          {
+            "firstLine": 631,
+            "lastLine": 647,
+            "text": "  {\n    const ResponseClass = this[optionsSymbol].ServerResponse || ServerResponse;\n    const RequestClass = this[optionsSymbol].IncomingMessage || IncomingMessage;\n    const canUseInternalAssignSocket = ResponseClass?.prototype.assignSocket === ServerResponse.prototype.assignSocket;\n    let server = this;\n\n    if (tls) {\n      this.serverName = tls.serverName || host || \"localhost\";\n    }\n    this[serverSymbol] = Bun.serve<any>({\n      idleTimeout: 0, // nodejs dont have a idleTimeout by default\n      tls,\n      port,\n      hostname: host,\n      unix: socketPath,\n      reusePort,\n      // Bindings to be used for WS Server\n"
+          }
+        ]
+      },
+      {
+        "path": "src/js/node/tls.ts",
+        "gitBlob": "5b99788ee43c821d80b34704bbf75b898628d23f",
+        "bytes": 74001,
+        "sha256": "d22af22210fbfc9a9a6f230b44486dcf4e643531b7b4e63671cf5e0de8fd71a2",
+        "snippets": [
+          {
+            "firstLine": 1497,
+            "lastLine": 1509,
+            "text": "    }\n    const wrapped = new TLSSocket(socket, {\n      secureContext,\n      isServer: true,\n      requestCert: this._requestCert,\n      rejectUnauthorized: this._rejectUnauthorized,\n      SNICallback: this._SNICallback,\n      ALPNProtocols: this.ALPNProtocols,\n      ALPNCallback: this._ALPNCallback,\n    });\n    wrapped.server = this;\n    wrapped._requestCert = this._requestCert;\n    wrapped._rejectUnauthorized = this._rejectUnauthorized;\n"
+          }
+        ]
+      }
+    ],
+    "finding": "https.createServer converts ALPNProtocols onto the public server object, but the _http_server constructor builds its private TLS configuration without ALPNProtocols or ALPNCallback. Positional listen uses that private configuration and passes it to Bun.serve. node:tls separately forwards its ALPN properties.",
+    "interpretation": "The omitted forwarding is a source-level defect consistent with ten actual HTTPS peer.alpn=false failures and successful direct node:tls ALPN controls. No patched-native causal confirmation is claimed.",
+    "fixedNativeRebuilds": 0,
+    "compatibilityAcceptance": false,
+    "distributionReady": false
+  },
+  "sourceReviewLocalReceipt": {
+    "bytes": 7027,
+    "sha256": "a561c13f2f0a1df2b4161d19dae9a0805b7a00bff82db459a367588647c7ac89"
+  },
+  "interpretation": {
+    "fixedGateFailed": true,
+    "originalApiModesAdded": 0,
+    "originalProbePassesAdded": 0,
+    "originalBinderPassesAdded": 0,
+    "runtimeFailureObservations": 10,
+    "preflightFailures": 0,
+    "runtimeRetryAttempts": 0,
+    "native16KiBCoverage": false,
+    "httpsAcceptance": false,
+    "ipv6Executed": false,
+    "causalPatchedNativeConfirmation": false,
+    "publicNetworkCoverage": false,
+    "performanceAcceptance": false,
+    "productionReleaseAcceptance": false
+  },
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "files": 47,
+      "tests": 306,
+      "passed": 306,
+      "failed": 0,
+      "receipt": {
+        "bytes": 4141,
+        "sha256": "894185819a6fbd2d16ca5829d59dc06be69590a51608d58287813b084d9462a6"
+      },
+      "log": {
+        "bytes": 27467,
+        "sha256": "9043f5163ba569140d2bc16c793c78dfdc33a495add5efd5f1d2f4b97614014c"
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 11,
+      "tasks": 96,
+      "executed": 49,
+      "upToDate": 47,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "jvmResults": [
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+          "tests": "4",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.319Z",
+          "hostname": "HELLODOG009",
+          "time": "0.087"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+          "tests": "1",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.409Z",
+          "hostname": "HELLODOG009",
+          "time": "0.001"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+          "tests": "2",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.413Z",
+          "hostname": "HELLODOG009",
+          "time": "0.017"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+          "tests": "11",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.438Z",
+          "hostname": "HELLODOG009",
+          "time": "0.588"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+          "tests": "3",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:31.036Z",
+          "hostname": "HELLODOG009",
+          "time": "0.008"
+        }
+      ],
+      "lintErrors": 0,
+      "lintWarnings": 44,
+      "receipt": {
+        "bytes": 390,
+        "sha256": "acb9592dcf2fca291264c85aa5bebfec16cd3db61dca80a76da6e72c896b88f5"
+      },
+      "log": {
+        "bytes": 8877,
+        "sha256": "244b17bb2a9245127227d119389bb93749459c8af4198015a9fa0f890bb51cc8"
+      }
+    },
+    "toolObservations": {
+      "ide": {
+        "isSuccess": true,
+        "problems": [
+          {
+            "message": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+            "kind": "WARNING",
+            "group": "Android Gradle Plugin",
+            "description": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times."
+          },
+          {
+            "message": "'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.",
+            "kind": "WARNING",
+            "group": "Kotlin Compiler",
+            "description": "w: file:///D:/idea-projects/AutoJs6-Plugin-Bun-Runtime/app/src/main/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunExecutionRequest.kt:47:43 'fun get(p0: String!): Any?' is deprecated. Deprecated in Java.\n",
+            "file": "app\\src\\main\\java\\io\\github\\supermonster003\\autojs6\\plugin\\bun\\runtime\\BunExecutionRequest.kt",
+            "line": 46,
+            "column": 42
+          }
+        ]
+      },
+      "officialRuntime": {
+        "chunk_id": "74c556",
+        "wall_time_seconds": 0.5332029,
+        "exit_code": 0,
+        "original_token_count": 119,
+        "output": "arm64-v8a: 44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250 (87914400 bytes, Android API 28, /system/bin/linker64, NEEDED libc.so, libm.so, libdl.so, ELF alignment OK)\nx86_64: 2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df (90420592 bytes, Android API 28, /system/bin/linker64, NEEDED libc.so, libm.so, libdl.so, ELF alignment OK)\nAndroid compatibility: API 33 / Android 13 aligned across runtime lock, version.properties, and README sources\n"
+      },
+      "supervisor": {
+        "chunk_id": "6e818e",
+        "wall_time_seconds": 0.2085745,
+        "exit_code": 0,
+        "original_token_count": 62,
+        "output": "arm64-v8a: supervisor 25b0b3788fcb4872060ff92cc3faa100aa517d2dcfb0ed499854f9f858e80537 (7440 bytes, ELF/16 KiB alignment OK)\nx86_64: supervisor 4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5 (7304 bytes, ELF/16 KiB alignment OK)\n"
+      }
+    },
+    "finalIdeBuild": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"isSuccess\":true,\"problems\":[{\"message\":\"SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.\",\"kind\":\"WARNING\",\"group\":\"Android Gradle Plugin\",\"description\":\"SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.\"}]}"
+        }
+      ],
+      "structuredContent": {
+        "isSuccess": true,
+        "problems": [
+          {
+            "message": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+            "kind": "WARNING",
+            "group": "Android Gradle Plugin",
+            "description": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times."
+          }
+        ]
+      },
+      "isError": false
+    },
+    "toolObservationsFile": {
+      "bytes": 2300,
+      "sha256": "d681b63ad7d1a21dc79f0c896c8ec096e00a81139169aa9706e4f0497f2b0d6d"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 2644,
+      "sha256": "ffa0af71ccd71f1e83519da49bd3cc31c32780846758f2138f85a9c5a7eb8b77"
+    },
+    "device-drivers.json": {
+      "bytes": 24162,
+      "sha256": "9d74925016c19b3d122d2c19236dd7d14f7caab3b72db4055b943f91164ff1e3"
+    },
+    "device-completed.json": {
+      "bytes": 27330,
+      "sha256": "a7af765f390330068cad395175bff5e5998688a4ef98c16d77fe3574b64efd14"
+    },
+    "protected-files.json": {
+      "bytes": 11817,
+      "sha256": "1e539565feef1b6d87f66c7f99d6833d9cbc9696f49a26289033eb821c64ad39"
+    },
+    "run-devices.py": {
+      "bytes": 5353,
+      "sha256": "d2e5c180be2fcc666c82861f2e999a390f018459056eae7062dcdf1a463f93ad"
+    },
+    "capture-source-analysis.py": {
+      "bytes": 3521,
+      "sha256": "d7aab87d53364ac533d3e4dd4ae0249e8a65625ce8541121df5afff0415e389b"
+    },
+    "failure-classifier-tests.json": {
+      "bytes": 235,
+      "sha256": "a3c3499b0a1c88bb48d3e14a8155d9430e78e0ea1d52d5475555a26196f730e7"
+    },
+    "failure-classifier-tests.log": {
+      "bytes": 1249,
+      "sha256": "ddac7a6fc090b3dbdf0f0e06163289a3155e59221c4d9976f155890c31474dd3"
+    }
+  }
+}
