@@ -7,6 +7,9 @@
   "$data": {
     "v0.2.2": {
       "released_date": "2026/09/12",
+      "feature": [
+        "Add the plugin-side workspace archive expander for multi-file projects (M6): a bounded ZIP snapshot is validated and expanded atomically into the private per-run workspace, with path normalization, rejection of traversal, absolute and backslash paths, case- and Unicode-form-insensitive duplicate detection, file/directory conflict checks, entry and byte limits, entry point validation and cancellation cleanup; only regular files and directories are created. The published contract v1 still executes a single source; the archive request keys are proposed in docs/design/m6-workspace-archive.md"
+      ],
       "fix": [
         "Fix experimental watch reload leaking descriptors when close_range fails: mark actual descriptors CLOEXEC before exec with the existing bounded raw-syscall fallback, and stop on incomplete setup. Preserve stdio, explicit IPC and the existing signal lifecycle. Complete-source GCC/Clang controls cover real exec, high descriptors, lowered hard limits and injected failures; new native builds and unchanged Android suites are recorded separately. Historical failures, official payloads and distribution boundaries remain unchanged",
         "Fix historical experimental JSC candidate verification after Bun source updates: bind the complete immutable build archive while keeping strict current-input checks for new builds",
