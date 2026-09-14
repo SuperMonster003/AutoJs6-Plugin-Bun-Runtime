@@ -1,0 +1,745 @@
+{
+  "schemaVersion": 1,
+  "kind": "jsc-pressure-flow-checkpoints",
+  "evidenceDate": "2026-09-14",
+  "compatibilityAcceptance": false,
+  "distributionReady": false,
+  "diagnosticReport": {
+    "path": "docs/compatibility/2026-09-14-m5-jsc-pressure-flow-diagnostics.json",
+    "bytes": 602773,
+    "sha256": "bb62775da3f4db53ac20dc5b8f92992171aa8ace5c0e7d95644d6a2bad466c08"
+  },
+  "projectSourceCommit": "f73510a31a30abfbc77cfe03e6791257a833cdfb",
+  "compiledInputEncoding": "Git LF text; binary AAR bytes unchanged",
+  "compiledInputsMatched": 94,
+  "preExistingUserChange": {
+    "baseCommit": "fd5203c730f4a3d51f10faa0dac9f666c9f1cea0",
+    "path": "settings.gradle.kts",
+    "platformVersionsPlugin": "1.8.0",
+    "preservedUnchanged": true,
+    "historicalApksNotRelabeled": true
+  },
+  "apkBuild": {
+    "driverExit": 0,
+    "seconds": 28,
+    "tasks": 80,
+    "executed": 12,
+    "upToDate": 68,
+    "receipt": {
+      "bytes": 19889,
+      "sha256": "d883f9befb559af0b37bfb412c7c9ee2ca00e4144461fb187e84b1a8743d2a09"
+    },
+    "log": {
+      "bytes": 7747,
+      "sha256": "c303e896a84a90e24aa0c49b37fc75fdba19c628372b42de39f0800d24bb2c2c"
+    },
+    "apks": [
+      {
+        "name": "experimental-binder-x86_64-debug.apk",
+        "bytes": 42963239,
+        "sha256": "447decc9d17c6e445cf2960a0f5433d5a97a31e149eb016bd309b0f021e33ce8"
+      },
+      {
+        "name": "experimental-binder-debug-androidTest.apk",
+        "bytes": 2580707,
+        "sha256": "e6adfbfd21c6c50b2ded0e88592c7089716349f94e953c398f5da98f082d0f7a"
+      }
+    ]
+  },
+  "nativeRebuilds": {
+    "bun": 0,
+    "webkit": 0,
+    "icu": 0
+  },
+  "preserved": {
+    "historicalReports": 120,
+    "historicalMatrixRows": 217,
+    "protectedRuntimeAndFixtureFiles": 131,
+    "allOldReportHashesUnchanged": true,
+    "allProtectedFileHashesUnchangedAtPrecheckAndArchive": true
+  },
+  "fixtureControl": {
+    "originalFixture": {
+      "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/pressure/assets/jsc-pressure.mjs",
+      "bytes": 10049,
+      "sha256": "35ad7c4f0ca1bf75ba1b925481c6e0b5b71c92ab5b47fb24ec782f030983921d"
+    },
+    "observedFixture": {
+      "path": "tools/bun-runtime/experimental/webkit-x86_64-16k/flow/assets/jsc-pressure-flow.mjs",
+      "bytes": 15254,
+      "sha256": "314e7565e5f0729824ce61b8a0c473333dd65b061685b8e65df80e45b11abca0"
+    },
+    "removableObservationBlocks": 7,
+    "removalRecoversEntireOriginalSource": true,
+    "sixModesUseUnchangedOriginalAssetAndValidator": true,
+    "originalDfgEarlyStopAndAssertionsPreserved": true,
+    "observerRunsOutsideOriginalCallback": true,
+    "profileDurationIncludesEntireProfileCall": true,
+    "addedJscOptions": [],
+    "sourceBytesCap": 16384,
+    "combinedOutputBytesCap": 65536,
+    "workMillisCap": 20000,
+    "binderMillisCap": 25000,
+    "profileCap": 4,
+    "callbackMillisCap": 300,
+    "callbackCallsCap": 100000,
+    "samplingIntervalMicros": 1000
+  },
+  "observations": [
+    {
+      "pointer": "/reports/0/rounds/0/flow/2",
+      "pages": 4096,
+      "round": 1,
+      "environment": {
+        "AUTOJS6_JSC_PRESSURE_MODE": "dfg"
+      },
+      "gate": "passed",
+      "terminal": {
+        "succeeded": true,
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "elapsedMillis": 322,
+      "profiles": 1,
+      "calls": 4554,
+      "compiles": 2,
+      "samples": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 18,
+        "FTL": 0
+      },
+      "failure": null,
+      "captures": [
+        {
+          "index": 1,
+          "calls": 4426,
+          "fullProfileMillis": 308.64669999999995,
+          "traces": 99,
+          "frames": 470,
+          "targetFrames": {
+            "LLInt": 0,
+            "Baseline": 0,
+            "DFG": 18,
+            "FTL": 0,
+            "other": 0
+          },
+          "callerFrames": {
+            "LLInt": 0,
+            "Baseline": 1,
+            "DFG": 17,
+            "FTL": 0,
+            "other": 0
+          },
+          "targetTraces": 18,
+          "classes": {
+            "target-ftl-linked": 0,
+            "target-ftl-unlinked": 0,
+            "invoke-ftl-other-target": 0,
+            "invoke-ftl-target-absent": 0,
+            "dfg-pair": 17,
+            "other": 82
+          },
+          "samplesAfter": {
+            "LLInt": 0,
+            "Baseline": 0,
+            "DFG": 18,
+            "FTL": 0
+          }
+        }
+      ],
+      "firstTraceWitnesses": [
+        {
+          "capture": 1,
+          "kind": "other",
+          "traceIndex": 0,
+          "timestamp": 77.5351682,
+          "targetAndCallerFrames": []
+        },
+        {
+          "capture": 1,
+          "kind": "dfg-pair",
+          "traceIndex": 10,
+          "timestamp": 77.5631868,
+          "targetAndCallerFrames": [
+            {
+              "sourceID": 2,
+              "name": "jscPressureHotLoop",
+              "location": "#EoFuS3:DFG:<nil>",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-e118d48b-0b37-4f1c-ba7f-8b674becebbb-77299461300/jsc-pressure-flow.mjs.js",
+              "line": 4294967295,
+              "column": 4294967295,
+              "category": "DFG",
+              "flags": 0
+            },
+            {
+              "sourceID": 2,
+              "name": "invoke",
+              "location": "#DawGsb:DFG:bc#89",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-e118d48b-0b37-4f1c-ba7f-8b674becebbb-77299461300/jsc-pressure-flow.mjs.js",
+              "line": 122,
+              "column": 18,
+              "category": "DFG",
+              "flags": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/0/rounds/1/flow/2",
+      "pages": 4096,
+      "round": 2,
+      "environment": {
+        "AUTOJS6_JSC_PRESSURE_MODE": "dfg"
+      },
+      "gate": "passed",
+      "terminal": {
+        "succeeded": true,
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "elapsedMillis": 323,
+      "profiles": 1,
+      "calls": 5658,
+      "compiles": 1,
+      "samples": {
+        "LLInt": 0,
+        "Baseline": 0,
+        "DFG": 10,
+        "FTL": 0
+      },
+      "failure": null,
+      "captures": [
+        {
+          "index": 1,
+          "calls": 5530,
+          "fullProfileMillis": 309.09590000000003,
+          "traces": 111,
+          "frames": 497,
+          "targetFrames": {
+            "LLInt": 0,
+            "Baseline": 0,
+            "DFG": 10,
+            "FTL": 0,
+            "other": 0
+          },
+          "callerFrames": {
+            "LLInt": 0,
+            "Baseline": 0,
+            "DFG": 11,
+            "FTL": 0,
+            "other": 0
+          },
+          "targetTraces": 10,
+          "classes": {
+            "target-ftl-linked": 0,
+            "target-ftl-unlinked": 0,
+            "invoke-ftl-other-target": 0,
+            "invoke-ftl-target-absent": 0,
+            "dfg-pair": 10,
+            "other": 101
+          },
+          "samplesAfter": {
+            "LLInt": 0,
+            "Baseline": 0,
+            "DFG": 10,
+            "FTL": 0
+          }
+        }
+      ],
+      "firstTraceWitnesses": [
+        {
+          "capture": 1,
+          "kind": "other",
+          "traceIndex": 0,
+          "timestamp": 84.7166397,
+          "targetAndCallerFrames": []
+        },
+        {
+          "capture": 1,
+          "kind": "dfg-pair",
+          "traceIndex": 16,
+          "timestamp": 84.7566554,
+          "targetAndCallerFrames": [
+            {
+              "sourceID": 3,
+              "name": "jscPressureHotLoop",
+              "location": "#EoFuS3:DFG:<nil>",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-e2156718-b57a-42c7-88f4-48e836ca0940-84618349700/jsc-pressure-flow.mjs.js",
+              "line": 4294967295,
+              "column": 4294967295,
+              "category": "DFG",
+              "flags": 0
+            },
+            {
+              "sourceID": 3,
+              "name": "invoke",
+              "location": "#DawGsb:DFG:bc#89",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-e2156718-b57a-42c7-88f4-48e836ca0940-84618349700/jsc-pressure-flow.mjs.js",
+              "line": 122,
+              "column": 18,
+              "category": "DFG",
+              "flags": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/1/rounds/0/flow/2",
+      "pages": 16384,
+      "round": 1,
+      "environment": {
+        "AUTOJS6_JSC_PRESSURE_MODE": "dfg"
+      },
+      "gate": "passed",
+      "terminal": {
+        "succeeded": true,
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "elapsedMillis": 326,
+      "profiles": 1,
+      "calls": 6384,
+      "compiles": 2,
+      "samples": {
+        "LLInt": 0,
+        "Baseline": 2,
+        "DFG": 82,
+        "FTL": 0
+      },
+      "failure": null,
+      "captures": [
+        {
+          "index": 1,
+          "calls": 6256,
+          "fullProfileMillis": 307.329284,
+          "traces": 85,
+          "frames": 509,
+          "targetFrames": {
+            "LLInt": 0,
+            "Baseline": 2,
+            "DFG": 82,
+            "FTL": 0,
+            "other": 0
+          },
+          "callerFrames": {
+            "LLInt": 0,
+            "Baseline": 2,
+            "DFG": 82,
+            "FTL": 0,
+            "other": 0
+          },
+          "targetTraces": 84,
+          "classes": {
+            "target-ftl-linked": 0,
+            "target-ftl-unlinked": 0,
+            "invoke-ftl-other-target": 0,
+            "invoke-ftl-target-absent": 0,
+            "dfg-pair": 82,
+            "other": 3
+          },
+          "samplesAfter": {
+            "LLInt": 0,
+            "Baseline": 2,
+            "DFG": 82,
+            "FTL": 0
+          }
+        }
+      ],
+      "firstTraceWitnesses": [
+        {
+          "capture": 1,
+          "kind": "other",
+          "traceIndex": 0,
+          "timestamp": 99.610051338,
+          "targetAndCallerFrames": [
+            {
+              "sourceID": 2,
+              "name": "jscPressureHotLoop",
+              "location": "#EoFuS3:Baseline:bc#17",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-be6cbc69-40ea-49b9-afd6-a5cfe3de3373-99249841929/jsc-pressure-flow.mjs.js",
+              "line": 33,
+              "column": 19,
+              "category": "Baseline",
+              "flags": 0
+            },
+            {
+              "sourceID": 2,
+              "name": "invoke",
+              "location": "#DawGsb:Baseline:bc#89",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-be6cbc69-40ea-49b9-afd6-a5cfe3de3373-99249841929/jsc-pressure-flow.mjs.js",
+              "line": 122,
+              "column": 18,
+              "category": "Baseline",
+              "flags": 0
+            }
+          ]
+        },
+        {
+          "capture": 1,
+          "kind": "dfg-pair",
+          "traceIndex": 2,
+          "timestamp": 99.614253544,
+          "targetAndCallerFrames": [
+            {
+              "sourceID": 2,
+              "name": "jscPressureHotLoop",
+              "location": "#EoFuS3:DFG:<nil>",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-be6cbc69-40ea-49b9-afd6-a5cfe3de3373-99249841929/jsc-pressure-flow.mjs.js",
+              "line": 4294967295,
+              "column": 4294967295,
+              "category": "DFG",
+              "flags": 0
+            },
+            {
+              "sourceID": 2,
+              "name": "invoke",
+              "location": "#DawGsb:DFG:bc#89",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-be6cbc69-40ea-49b9-afd6-a5cfe3de3373-99249841929/jsc-pressure-flow.mjs.js",
+              "line": 122,
+              "column": 18,
+              "category": "DFG",
+              "flags": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "pointer": "/reports/1/rounds/1/flow/2",
+      "pages": 16384,
+      "round": 2,
+      "environment": {
+        "AUTOJS6_JSC_PRESSURE_MODE": "dfg"
+      },
+      "gate": "passed",
+      "terminal": {
+        "succeeded": true,
+        "exitCode": 0,
+        "errorCode": null
+      },
+      "elapsedMillis": 317,
+      "profiles": 1,
+      "calls": 7658,
+      "compiles": 2,
+      "samples": {
+        "LLInt": 0,
+        "Baseline": 1,
+        "DFG": 93,
+        "FTL": 0
+      },
+      "failure": null,
+      "captures": [
+        {
+          "index": 1,
+          "calls": 7530,
+          "fullProfileMillis": 307.29974899999996,
+          "traces": 97,
+          "frames": 576,
+          "targetFrames": {
+            "LLInt": 0,
+            "Baseline": 1,
+            "DFG": 93,
+            "FTL": 0,
+            "other": 0
+          },
+          "callerFrames": {
+            "LLInt": 0,
+            "Baseline": 1,
+            "DFG": 93,
+            "FTL": 0,
+            "other": 0
+          },
+          "targetTraces": 94,
+          "classes": {
+            "target-ftl-linked": 0,
+            "target-ftl-unlinked": 0,
+            "invoke-ftl-other-target": 0,
+            "invoke-ftl-target-absent": 0,
+            "dfg-pair": 93,
+            "other": 4
+          },
+          "samplesAfter": {
+            "LLInt": 0,
+            "Baseline": 1,
+            "DFG": 93,
+            "FTL": 0
+          }
+        }
+      ],
+      "firstTraceWitnesses": [
+        {
+          "capture": 1,
+          "kind": "other",
+          "traceIndex": 0,
+          "timestamp": 108.773226405,
+          "targetAndCallerFrames": []
+        },
+        {
+          "capture": 1,
+          "kind": "dfg-pair",
+          "traceIndex": 2,
+          "timestamp": 108.786830383,
+          "targetAndCallerFrames": [
+            {
+              "sourceID": 2,
+              "name": "jscPressureHotLoop",
+              "location": "#EoFuS3:DFG:<nil>",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-ce48dc09-1dc8-4b30-bf5d-368c421f457e-108643907660/jsc-pressure-flow.mjs.js",
+              "line": 4294967295,
+              "column": 4294967295,
+              "category": "DFG",
+              "flags": 0
+            },
+            {
+              "sourceID": 2,
+              "name": "invoke",
+              "location": "#DawGsb:DFG:bc#89",
+              "sourceURL": "/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k/cache/bun-executions/jsc-flow-ce48dc09-1dc8-4b30-bf5d-368c421f457e-108643907660/jsc-pressure-flow.mjs.js",
+              "line": 122,
+              "column": 18,
+              "category": "DFG",
+              "flags": 0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "environments": 2,
+    "rounds": 4,
+    "collectedModes": 28,
+    "dfgDiagnostics": 4,
+    "dfgProfiles": 4,
+    "unchangedModeCompletions": 24,
+    "dfgOriginalAssertionsReturned": 4,
+    "retainedExitOneDiagnostics": 0,
+    "missingDfgSampleDiagnostics": 0,
+    "zeroTargetCaptures": 0,
+    "storedTraceWitnesses": 8,
+    "omittedTraceWitnesses": 0,
+    "compatibilityPassesAdded": 0,
+    "historicalFailureRootCauseEstablished": false
+  },
+  "interpretation": {
+    "historicalFailureRootCauseEstablished": false,
+    "stabilityEstablished": false,
+    "compatibilityPassesAdded": 0,
+    "scope": "Current original-control-flow observations preserve early stop and native assertions. The extra source code and observations can affect compilation and timing. A recorded DFG assertion may be collected before continuing remaining modes, unlike original JUnit failure stopping. Exact old per-profile data cannot be recovered. No raw machine PC, option-dump, compiled graph, original-suite or Release acceptance inferred."
+  },
+  "devices": [
+    {
+      "serial": "emulator-5580",
+      "avdName": "bun-jsc-pressure-4k-20260912",
+      "pages": 4096,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10226,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10227
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "finalProcessListing": {
+        "bytes": 16501,
+        "sha256": "96b82e9206e13c529e66555adf3bfdaae7160df985e99e7e519f0c0c1d491b81"
+      },
+      "uidEvidenceScope": "Both package UIDs checked independently against complete numeric-UID final ps in the diagnostic report",
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 123859,
+        "sha256": "db767dfc2e734131abe7cc5fb6a4ad5b47bf58df412795c01b66a051db7c1e45"
+      },
+      "ownedAvd": {
+        "launcherPid": 50568,
+        "startedAt": "2026-09-14T05:39:33Z",
+        "bootConfirmedAt": "2026-09-14T05:40:21Z",
+        "nameBeforeStop": "bun-jsc-pressure-4k-20260912",
+        "stopCommandAt": "2026-09-14T05:41:04Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T05:41:06Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5594          device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:27\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:26\nlocalhost:37478        offline transport_id:25",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5594          device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:27\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:26\nlocalhost:37478        offline transport_id:25"
+      }
+    },
+    {
+      "serial": "emulator-5582",
+      "avdName": "bun-jsc-pressure-16k-20260912",
+      "pages": 16384,
+      "driverExit": 0,
+      "packageUids": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 10213,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 10214
+      },
+      "finalPackageUidProcesses": {
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k": 0,
+        "io.github.supermonster003.autojs6.plugin.bun.runtime.api28binder.jsc16k.test": 0
+      },
+      "packagesAbsent": true,
+      "finalProcessListing": {
+        "bytes": 12985,
+        "sha256": "7bdb663279c6b465da470afa4b7b61902dbe84102fb4ef253720efadc46a92f8"
+      },
+      "uidEvidenceScope": "Both package UIDs checked independently against complete numeric-UID final ps in the diagnostic report",
+      "shellPageMappings": {
+        "KernelPageSize": [
+          4096
+        ],
+        "MMUPageSize": [
+          4096
+        ]
+      },
+      "shellSmaps": {
+        "bytes": 103237,
+        "sha256": "7bd7c1a1689a3a594456fb0209afa550ffe1219b9075d3102c1b8ca601478ea3"
+      },
+      "ownedAvd": {
+        "launcherPid": 29860,
+        "startedAt": "2026-09-14T05:41:11Z",
+        "bootConfirmedAt": "2026-09-14T05:41:59Z",
+        "nameBeforeStop": "bun-jsc-pressure-16k-20260912",
+        "stopCommandAt": "2026-09-14T05:43:07Z",
+        "stopOutput": "OK: killing emulator, bye bye\n\nOK",
+        "stopped": true,
+        "stopConfirmedAt": "2026-09-14T05:43:09Z",
+        "initialInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5594          device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:27\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:26\nlocalhost:37478        offline transport_id:25",
+        "finalInventory": "List of devices attached\n968e9f18               device product:liuqin model:23046RP50C device:liuqin transport_id:3\nBH900ASK9E             device product:G8441 model:G8441 device:G8441 transport_id:2\nQV710AF65F             device product:XQ-AT72_CN model:XQ_AT72 device:XQ-AT72 transport_id:5\nQV770340J7             device product:XQ-DQ72_CN model:XQ_DQ72 device:XQ-DQ72 transport_id:21\nbek749scrwv4wo8h       device product:earth model:22120RN86C device:earth transport_id:1\nemulator-5594          device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:27\nemulator-5598          device product:sdk_gphone16k_x86_64 model:sdk_gphone16k_x86_64 device:emu64xa16k transport_id:26\nlocalhost:37478        offline transport_id:25"
+      }
+    }
+  ],
+  "verification": {
+    "node": {
+      "driverExit": 0,
+      "files": 45,
+      "tests": 283,
+      "passed": 283,
+      "failed": 0,
+      "receipt": {
+        "bytes": 3969,
+        "sha256": "1aa1084d8e4967bf7c46b25e4c05516a1363770a0464a87faca132c0bcd5fd80"
+      },
+      "log": {
+        "bytes": 25614,
+        "sha256": "089177943049c544d01d3ad3ba8bc1b304e8db019024a07a826fb88d067edf9d"
+      }
+    },
+    "productionGradle": {
+      "driverExit": 0,
+      "seconds": 19,
+      "tasks": 96,
+      "executed": 49,
+      "upToDate": 47,
+      "jvmTests": 21,
+      "jvmTaskOutcome": "UP-TO-DATE",
+      "jvmResults": [
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunExecutionRequestParserTest",
+          "tests": "4",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.319Z",
+          "hostname": "HELLODOG009",
+          "time": "0.087"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeBuildIdentityTest",
+          "tests": "1",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.409Z",
+          "hostname": "HELLODOG009",
+          "time": "0.001"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeMessagesTest",
+          "tests": "2",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.413Z",
+          "hostname": "HELLODOG009",
+          "time": "0.017"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.BunRuntimeProbeTest",
+          "tests": "11",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:30.438Z",
+          "hostname": "HELLODOG009",
+          "time": "0.588"
+        },
+        {
+          "name": "io.github.supermonster003.autojs6.plugin.bun.runtime.SupervisedProcessTest",
+          "tests": "3",
+          "skipped": "0",
+          "failures": "0",
+          "errors": "0",
+          "timestamp": "2026-09-14T03:52:31.036Z",
+          "hostname": "HELLODOG009",
+          "time": "0.008"
+        }
+      ],
+      "lintErrors": 0,
+      "lintWarnings": 44,
+      "receipt": {
+        "bytes": 390,
+        "sha256": "fd1d1150615d24f78cb78da0963ca8ecbf147c52f523fdc32344af0c8c5dcc39"
+      },
+      "log": {
+        "bytes": 8875,
+        "sha256": "1141263ab8a42cbbdb3d149ec5225c2258d2ccb92376644250b1704bb57465a6"
+      }
+    },
+    "ide": {
+      "isSuccess": true,
+      "problems": [
+        {
+          "message": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times.",
+          "kind": "WARNING",
+          "group": "Android Gradle Plugin",
+          "description": "SDK processing. This version only understands SDK XML versions up to 3 but an SDK XML file of version 4 was encountered. This can happen if you use versions of Android Studio and the command-line tools that were released at different times."
+        }
+      ]
+    },
+    "officialRuntimeAndSupervisorVerified": true,
+    "toolResponses": {
+      "bytes": 2853,
+      "sha256": "32044b0b7329ed1d8b5f61a0fa6319c3aa369e4165814ffa86abddb23ffc4498"
+    }
+  },
+  "localReceipts": {
+    "avd-ownership.json": {
+      "bytes": 6962,
+      "sha256": "6dfefcfb10424fd061b6a612aea397575f9ba41bd6329bb8aba0979e24207c55"
+    },
+    "device-drivers.json": {
+      "bytes": 5844,
+      "sha256": "5f6549d647f06e73138e68a822e14467172bd1ee9bec645f6190917a723d20bb"
+    },
+    "device-completed.json": {
+      "bytes": 13530,
+      "sha256": "44eae427e005260ba39b7795ee25e7a3eed71e86224f1f0d0d694f6e4fef9366"
+    },
+    "protected-files.json": {
+      "bytes": 10596,
+      "sha256": "7e6e726154e5834db7ab5f28b6e965df64ff3ef3d2d67e92e881bcf751a8fcd5"
+    }
+  }
+}

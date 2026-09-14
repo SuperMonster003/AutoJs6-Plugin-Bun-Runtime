@@ -4,7 +4,12 @@
 
 更新日期: 2026-09-14
 
-最新[完整 trace/inliner 固定诊断](docs/compatibility/2026-09-14-m5-jsc-trace.md)已完成:
+最新[原压力控制流固定观察](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md)已完成:
+一对94输入APK保留原七模式顺序, DFG早停/原断言和全部预算; 双页各两轮28模式正常退出.
+四次DFG均在首profile后停止, 样本18/10/82/93, 共392trace与8份完整首栈, 无重试.
+原2<3未复现, 历史根因/稳定性仍开放. 原120报告/217行不变, 两份新JSON仅索引.
+
+此前[完整 trace/inliner 固定诊断](docs/compatibility/2026-09-14-m5-jsc-trace.md)已完成:
 新工具、20 份源码绑定与同一 92 输入 APK 的双页大小两轮采集, 共 8 进程/32 profile,
 65 份完整栈. 四份 FTL 见证明示目标语义帧属于同栈 invoke 机器帧, 与编译 hash 匹配.
 关闭组一段 5030 次调用/64 trace 无目标帧, 开启组 90 个目标 FTL 与三次真实 exit1 保留.
@@ -375,6 +380,9 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 ## M5: 16 KB page size 与发布完整性
 
+- [x] (诊断/工具) 新增原七模式顺序下的独立DFG控制流观察, 七段标记代码剥离后恢复整个原压力JS. 保留原匿名回调/128预热/三样本早停/四profile与全部原断言, 错误记录后原样重抛, 每类完整首栈有字节限额. 六项实际JS主机控制与严格源/APK/raw/双UID验证纳入CI. [工具及范围](tools/bun-runtime/experimental/webkit-x86_64-16k/flow/README.md). (2026-09-14, G0/G1)
+- [x] (诊断/设备) 同一94输入APK复用十三补丁JSC, API36原生x86双用户页各两轮完成28模式, 无失败/重试. 四DFG均首profile停止, 样本18/10/82/93, 392trace/8完整首栈无省略. 两包/四UID和两owned AVD已清理, 原2<3根因未定且不增加原压力或Release通过. [固定报告](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md). (2026-09-14, G2/诊断)
+
 - [x] (设备/ARM64) 十三补丁 baseline 在 SM-A566B / API 36 / bridge=0 的实际 16384-byte 内核/MMU 页上, 同一 APK 的固定 35 项与完整八项 Binder 各两轮通过 70/70 和 16/16. 八次实际 watch 重载无哨兵继承, 十二个镜像的 PID/stdio/普通 SIGSYS 与原 FD/信号/生命周期均通过, 三包/三个 UID 已清理. [同一 M3/M5 三星批次](docs/compatibility/2026-09-13-m3-watch-reload-samsung.md), 不重复计数, 不作为 x86 大页 JSC、ARM64 压力或 Release 验收. (2026-09-13, G2)
 
 - [x] (设备/ARM64) 十二补丁 baseline 在 SM-A566B / API 36 的实际 16384-byte 内核/MMU 页上, 原 33 项与八项 Binder 各两轮通过 66/66 和 16/16, bridge=0. 沿用既有 APK/native, pending 保持/一次投递和原 FD/生命周期断言通过, 三包/三个 UID 已清理. [同一 M3/M5 设备批次](docs/compatibility/2026-09-13-m3-pending-wait-native-arm64-api36.md), 不重复计数, 不代表 ARM64 压力或 Release 验收. (2026-09-13, G2)
@@ -477,6 +485,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (发布) 用平实语言重写 README 模板, 插件中心说明与 changelog 的全部 10 语言文案源, 重新生成 36 个文档产物并通过 `--check` 与 Python 单元测试; 术语, 数字与兼容声明和代码事实保持一致. (2026-09-02, G1)
 - [x] (发布/测试) 扩充 `samples/` 示例库: 5 个带注释的示例覆盖引擎确认, `fetch` 网络请求, 私有工作目录文件读写, stdout/stderr 行为和 TypeScript 类型用法; 生成器门禁检查精确清单, 首行 `"bun";`, 注释, 相对导入和依赖安装命令, instrumentation 直接执行仓库中的原始示例资产并以设备本地 HTTP 端点验证 `fetch`, 10 语言 README 与 changelog 均已同步. Sony XQ-DQ72 API 33, Redmi 22120RN86C API 33 与 Xiaomi 23046RP50C API 35 arm64 真机均 5/5 通过, 证据见 `docs/compatibility/2026-09-02-m9-samples.json`. (2026-09-02, G1/G2)
 - [x] (文档) 新增 [排错指南](docs/troubleshooting.md): 用最小脚本与 "症状 -> 原因 -> 处理" 表覆盖引擎识别、激活/权限、ABI/API/页大小、超时、输出超限、源码上限、npm/相对导入、AutoJs6 globals/Java bridge 及生命周期问题. 十语言 README FAQ 均有明确语言的入口, 与正式 API 33+ 和实验/Release 边界一致; generator 与 11 项 Python tests 通过. (2026-09-13, G0/G1)
+- [x] (诊断/文档) 原压力控制流的两份新JSON仅加入索引, 保留原120报告hash/注册项和217矩阵行. 94输入APK、131保护文件、实际退出码与双UID原始清理绑定, 十语言更新记录同步. [新报告](docs/compatibility/2026-09-14-m5-jsc-pressure-flow.md)明确本批未重现历史低采样失败, 兼容性计数保持不变. (2026-09-14, G0/G1/G2)
 - [x] (发布/测试) 新增 [自动生成的兼容证据矩阵](docs/compatibility/MATRIX.md) 与 [机器索引](docs/compatibility/matrix.generated.json): 完整登记 57 份历史 JSON, 生成 144 条设备/尝试记录, 按设备/API/执行 ABI/页大小/运行时摘要与各轮套件呈现结果. 官方、实验、shell、失败和初步诊断分别保留范围, 构建/补充记录不增加设备通过数; 不跨报告、APK、运行时或计数单位累加. 源文件 UTF-8/LF SHA-256、结构适配、轮次/摘要一致性和只读 `--check` 接入 Markdown CI, [维护说明](tools/compatibility/README.md) 与十语言 README/changelog 已同步. Python 专项负向/历史回归与标准构建验证通过; 历史报告及 native 字节未变, 没有新增设备验收. (2026-09-13, G0/G1)
 - [x] (测试/文档) 为固定 25 项独立探针新增可重复归档工具, 对两轮原始 instrumentation 与 JSON、当前构建 receipt/源码、安装后 APK/runtime/helper 摘要及每轮/最终 UID 清理重新校验, 拒绝失败、混用 APK 与重复环境, 使用独占创建保留历史文件. 新增四组含负向变体的单元测试并接入 CI; 首次用于 API 29/32 的 100/100 报告. 这不是完整历史兼容矩阵生成器. (2026-09-12, G1/G2)
 - [x] (插件/发布/测试) 完成 [运行错误与诊断审计](docs/compatibility/2026-09-13-m9-localized-errors.md): 17 个错误/帮助资源覆盖十语言, 10 个稳定错误码使用本地化摘要, 预热缓存保留事实并在返回时翻译, 16 KiB 诊断截断保留完整 Unicode 字符. 未激活/未启用与 Android 13 要求的帮助直接从同一组 `strings.xml` 生成到 README/插件说明, 明确绑定前宿主与系统安装门槛的归属. 两台 native ARM64 API 33/35 / 4 KiB 的原八项 Binder 两轮共 32/32; 独立语言回归含 240 个真实错误/finished 观察. x86 API 36 / 16 KiB 用户页 ABI 两轮确认十语言缓存拒绝, 不计作 Bun 执行成功. 三环境新增 JUnit 共 12/12, 包/六个 UID 与本轮 AVD 均清理. 原 native、AAR、历史报告和 Release 边界保持不变. (2026-09-13, G0/G1/G2)
