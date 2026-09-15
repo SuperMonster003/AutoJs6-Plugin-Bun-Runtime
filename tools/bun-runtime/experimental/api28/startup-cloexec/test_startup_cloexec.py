@@ -58,12 +58,14 @@ class StartupCloexecTest(unittest.TestCase):
         compiler = os.environ.get("CXX", "c++")
         for mode, flags in [("real", []), ("fake", ["-DFAKE_SYSCALLS"]),
                             ("startup", ["-DFAKE_SYSCALLS", "-DSTARTUP_INTEGRATION"])]:
-            subprocess.run([
+            result = subprocess.run([
                 compiler, "-std=c++17", "-O2", "-Wall", "-Wextra", "-Werror", *flags,
                 "-I", str(cls.directory),
                 str(ROOT / "startup-cloexec/startup-cloexec.test.cpp"),
                 "-o", str(cls.directory / mode),
-            ], check=True, capture_output=True, text=True, timeout=60)
+            ], capture_output=True, text=True, timeout=60)
+            if result.returncode != 0:
+                raise RuntimeError(f"{mode} harness failed to compile ({result.returncode}):\n{result.stderr}")
 
     def run_case(self, binary, mode, output=None):
         result = subprocess.run([str(self.directory / binary), mode], capture_output=True, text=True, timeout=10)
