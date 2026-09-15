@@ -18,7 +18,11 @@
   ba5c8c3 与 d4c790a 的旧资产目录已删除.
 - 文档: 发布报告 `docs/compatibility/2026-09-15-v0.2.2-release.json` 与同名 md 已登记进兼容矩阵 (adapter `release`); changelog 开启 v0.2.3 开发快照,
   `version.properties` 0.2.3 / build 8; ROADMAP P2 与 M1-B/M5 条目已更新.
-- 下一步: 等宿主 AutoJs6 发版后做宿主到插件的真实项目往返 (P1 收尾), 然后 M7 最小能力桥; 原生 ARM64 16 KiB 上的签名 APK 验收随下一次 Release.
+- 宿主往返: 宿主仓库 master `7c31269cc` 树干净, `:app:assembleAppDebug --offline` 的 x86_64 debug APK (官方证书签名, SHA-256 `493804…`) 与已发布 v0.2.2 x86_64 插件装入 AVD `bun-hard-limit-api33-20260912`,
+  用 `am start … RunIntentActivity` 跑 `/sdcard/AutoJs6/bun-roundtrip/{project,pkg,bare}`, 宿主 logcat `GlobalConsole` 证明归档路径生效 (裸文件对照按单源码失败);
+  记录 `docs/compatibility/2026-09-15-m6-host-round-trip.json/.md` (index adapter, supplement), 原始 logcat/夹具/清理输出在本地 `.git/host-roundtrip-20260915/`. AVD 已卸载宿主与插件并关闭, 宿主仓库未改动.
+  Git Bash 下 adb 的 `/sdcard/...` 参数会被 MSYS 转成 `C:/Program Files/Git/sdcard/...`: 需 `MSYS_NO_PATHCONV=1`, 本地路径改写成 `C:/...`, 并给 `adb shell` 加 `-n`.
+- 下一步: 宿主 AutoJs6 发版 (用户决定; 宿主 master 已含打包代码并通过本地往返) 后收口 P1, 再开始 M7 最小能力桥; 原生 ARM64 16 KiB 上的签名 APK 验收随下一次 Release.
 
 ---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)

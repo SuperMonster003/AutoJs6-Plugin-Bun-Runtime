@@ -10,6 +10,7 @@
 
 * `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
 * `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.2 et la validation des APK finaux signés dans quatre environnements : mise à niveau par-dessus la v0.2.0 publiée sur Sony API 33 arm64 et Xiaomi API 35 universal, installation propre sur Redmi API 33 arm64 et sur un AVD x86_64 API 33, chacun avec 9/9 groupes avant et après force-stop ; sans réécrire le tag publié ni étendre la compatibilité Android ou 16 KB
+* `Amélioration` Vérifier l'aller-retour réel d'un projet entre l'hôte et le plugin avec un AutoJs6 compilé localement depuis son master (7c31269cc) et le plugin v0.2.2 x86_64 publié sur un AVD API 33 : un projet project.json avec imports relatifs et JSON, un projet TypeScript package.json et un fichier isolé de contrôle qui échoue toujours de manière fermée ; la publication de l'hôte lui-même reste à faire
 
 # v0.2.2
 

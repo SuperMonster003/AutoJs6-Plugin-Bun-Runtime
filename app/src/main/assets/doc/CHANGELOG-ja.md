@@ -10,6 +10,7 @@
 
 * `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
 * `改善` 公開済み v0.2.2 の APK/ソース資産検証と 4 環境での署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.0 からの上書き更新, Redmi API 33 arm64 と x86_64 API 33 AVD は新規インストールで, いずれも force-stop 前後に 9/9 グループ通過. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない
+* `改善` ホスト master (7c31269cc) からローカルビルドした AutoJs6 と公開済み v0.2.2 x86_64 プラグインで, API 33 AVD 上のホストからプラグインへの実プロジェクト往復を検証: 相対 import と JSON import を含む project.json プロジェクト, package.json の TypeScript プロジェクト, および単一ファイルとして引き続き失敗する素のファイル対照. ホスト自体の公開は未実施
 
 # v0.2.2
 

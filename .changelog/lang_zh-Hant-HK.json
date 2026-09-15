@@ -11,7 +11,8 @@
         "尚未發佈的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更高版本"
       ],
       "improvement": [
-        "歸檔已發佈 v0.2.2 的 APK/對應原始碼資產驗證及四個環境的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發佈 v0.2.0 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, 各在 force-stop 前後通過 9/9 組; 不改寫已發佈標籤, 不擴大 Android 或 16 KB 相容聲明"
+        "歸檔已發佈 v0.2.2 的 APK/對應原始碼資產驗證及四個環境的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發佈 v0.2.0 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, 各在 force-stop 前後通過 9/9 組; 不改寫已發佈標籤, 不擴大 Android 或 16 KB 相容聲明",
+        "用從宿主 master (7c31269cc) 本地建置的 AutoJs6 與已發佈的 v0.2.2 x86_64 外掛程式在 API 33 AVD 上驗證宿主到外掛程式的真實專案往返: 含相對匯入與 JSON 匯入的 project.json 專案, package.json 的 TypeScript 專案, 以及仍按單檔案失敗的裸檔案對照; 宿主自身的發佈仍待進行"
       ]
     },
     "v0.2.2": {

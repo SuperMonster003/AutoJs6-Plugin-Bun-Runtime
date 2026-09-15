@@ -1,0 +1,284 @@
+{
+  "schemaVersion": 1,
+  "kind": "m6-host-round-trip",
+  "capturedAt": "2026-09-15T13:55:27Z",
+  "milestone": "M6",
+  "scope": "Real host-to-plugin project round trip: an AutoJs6 host built locally from its master packs project.json / package.json project directories into workspace archives, and the published v0.2.2 x86_64 plugin expands and runs them on an API 33 x86_64 AVD. A byte-identical bare file without a project marker is the single-source control. Supplementary integration evidence, not a device acceptance group and not a host release.",
+  "result": "passed: 2/2 project.json rounds, 1/1 package.json TypeScript round, 1/1 single-source control failed closed as intended; no workspace or package residue after cleanup",
+  "host": {
+    "project": "AutoJs6 (D:/idea-projects/AutoJs6, clean tree)",
+    "commit": "7c31269cc0b901a9d8116d11d36b11f304385ffb",
+    "treeClean": true,
+    "workspaceArchiveEngineCommit": "635f69e8b154b659a5a3846b9cfac6fa037269f5",
+    "versionName": "6.8.0",
+    "versionCode": 5280,
+    "build": "./gradlew :app:assembleAppDebug --offline (app flavor, debug build type, x86_64 ABI split)",
+    "apk": {
+      "name": "autojs6-v6.8.0-x86_64.apk",
+      "bytes": 50468275,
+      "sha256": "493804914eb329d0cf9dea4472dcfa007896cc90c6db0664a9b446c727fffc54",
+      "installedBaseApkSha256": "493804914eb329d0cf9dea4472dcfa007896cc90c6db0664a9b446c727fffc54"
+    },
+    "signerCertificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213",
+    "pluginTrust": "OFFICIAL (PluginTrustManager.OFFICIAL_SHA_256 matches the plugin signer); PluginEnableStore default enabled",
+    "allFilesAccess": "appops set org.autojs.autojs6 MANAGE_EXTERNAL_STORAGE allow",
+    "uid": 10174,
+    "released": false
+  },
+  "plugin": {
+    "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+    "versionName": "0.2.2",
+    "versionCode": 7,
+    "uid": 10175,
+    "apk": {
+      "name": "autojs6-plugin-bun-runtime-v0.2.2-x86_64-7ae3bba9.apk",
+      "bytes": 36952790,
+      "sha256": "34d5fafc7fa779805f3c2185a7412061cbd0820bc593610c101a13edddf3711d",
+      "installedBaseApkSha256": "34d5fafc7fa779805f3c2185a7412061cbd0820bc593610c101a13edddf3711d",
+      "releaseUrl": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.2/autojs6-plugin-bun-runtime-v0.2.2-x86_64-7ae3bba9.apk"
+    },
+    "runtime": {
+      "version": "1.4.0",
+      "revision": "1.4.0+34cbb9a40",
+      "abi": "x86_64",
+      "sha256": "2884ee9a0f0828661977b17b08324e640f024585e48357cc3fc24ee700d192df",
+      "bytes": 90420592,
+      "supervisorSha256": "4d44ab8a643f8e72e2964adf5a0d7fad0ced0e8aac86657e19eaf790763b4cd5",
+      "supervisorBytes": 7304
+    }
+  },
+  "device": {
+    "avd": "bun-hard-limit-api33-20260912",
+    "manufacturer": "Google",
+    "model": "sdk_gphone64_x86_64",
+    "api": 33,
+    "abi": "x86_64",
+    "nativeExecution": true,
+    "pages": 4096,
+    "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+    "machine": "x86_64",
+    "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+    "isEmulator": true
+  },
+  "launch": {
+    "command": "adb shell am start -W -a android.intent.action.VIEW -d file://<entry> -t application/x-javascript -n org.autojs.autojs6/org.autojs.autojs.external.open.RunIntentActivity",
+    "observation": "host process logcat, tag GlobalConsole (script console mirror) plus BunRuntimePluginClient/ActivityManager bind lines",
+    "firstBindStartedRuntimeProcess": "Start proc 5193:io.github.supermonster003.autojs6.plugin.bun.runtime:bun_runtime/u0a175 for service {io.github.supermonster003.autojs6.plugin.bun.runtime/io.git",
+    "laterRunsStartedNewRuntimeProcess": []
+  },
+  "fixtures": [
+    {
+      "name": "project",
+      "devicePath": "/sdcard/AutoJs6/bun-roundtrip/project",
+      "projectMarker": "project.json",
+      "files": [
+        {
+          "path": "data/config.json",
+          "bytes": 22,
+          "sha256": "f5cae2b1cd0d80e5838fdd5de0557c84eeed5d3ed12d3505ddba7ee400c3ba83"
+        },
+        {
+          "path": "lib/util.js",
+          "bytes": 57,
+          "sha256": "590d1bf81370bf5c48249def5b40e7581f8aa7d3b2b3271c84cff7aa093660f3"
+        },
+        {
+          "path": "main.js",
+          "bytes": 504,
+          "sha256": "6b119841356de83758ff826a1056e079401ec3ffe7d2f70382b9afcc5a6daba2"
+        },
+        {
+          "path": "project.json",
+          "bytes": 142,
+          "sha256": "286187846fea27846453a790b2ea2eabe60dfddd787d725ea1983fadad8f6b1b"
+        }
+      ]
+    },
+    {
+      "name": "pkg",
+      "devicePath": "/sdcard/AutoJs6/bun-roundtrip/pkg",
+      "projectMarker": "package.json",
+      "files": [
+        {
+          "path": "main.ts",
+          "bytes": 342,
+          "sha256": "c98ff30fd0168c300c332db6503314377beafa6d6c565b4f5a98813713bab88f"
+        },
+        {
+          "path": "package.json",
+          "bytes": 67,
+          "sha256": "823c40745883ab66f3cbbdb24a4a3197c77f9d09bdc05e5d711b3de0993d2d84"
+        },
+        {
+          "path": "src/math.ts",
+          "bytes": 94,
+          "sha256": "7f64b673ace13a4fcbd7149d53689e6c30ca8610d39120be8ee3a8f5a6b85602"
+        }
+      ]
+    },
+    {
+      "name": "bare",
+      "devicePath": "/sdcard/AutoJs6/bun-roundtrip/bare",
+      "projectMarker": null,
+      "files": [
+        {
+          "path": "main.js",
+          "bytes": 504,
+          "sha256": "6b119841356de83758ff826a1056e079401ec3ffe7d2f70382b9afcc5a6daba2"
+        }
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "name": "project",
+      "round": 1,
+      "entry": "/sdcard/AutoJs6/bun-roundtrip/project/main.js",
+      "expectedMode": "workspace-archive",
+      "startedAt": "2026-09-15T21:55:29+08:00",
+      "finishedSeconds": 0.227,
+      "passed": true,
+      "assertions": {
+        "importMetaDirUnderPluginWorkspaceProject": true,
+        "cwdEqualsProject": true,
+        "relativeImportResolved": true,
+        "jsonImportResolved": true,
+        "archivedEntries": [
+          "data",
+          "data/config.json",
+          "lib",
+          "lib/util.js",
+          "main.js",
+          "project.json"
+        ],
+        "bunVersionAndArch": "1.4.0 platform=android arch=x64",
+        "noHostError": true
+      },
+      "console": [
+        "21:55:29.044/V: Running [$sdcard/AutoJs6/bun-roundtrip/project/main.js].",
+        "21:55:29.247/I: ROUNDTRIP dir=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-0-79afc674-87f8-4dec-8912-6c8cf951d4eb-639194275000/project",
+        "21:55:29.249/I: ROUNDTRIP cwd=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-0-79afc674-87f8-4dec-8912-6c8cf951d4eb-639194275000/project",
+        "21:55:29.251/I: ROUNDTRIP greet=hello, workspace",
+        "21:55:29.253/I: ROUNDTRIP files=data,data/config.json,lib,lib/util.js,main.js,project.json",
+        "21:55:29.256/I: ROUNDTRIP bun=1.4.0 platform=android arch=x64",
+        "21:55:29.312/V: [$sdcard/AutoJs6/bun-roundtrip/project/main.js] finished in 0.227 seconds."
+      ]
+    },
+    {
+      "name": "bare",
+      "round": 1,
+      "entry": "/sdcard/AutoJs6/bun-roundtrip/bare/main.js",
+      "expectedMode": "single-source (control: same bytes, no project marker)",
+      "startedAt": "2026-09-15T21:56:40+08:00",
+      "finishedSeconds": 0.167,
+      "passed": true,
+      "assertions": {
+        "moduleNotFoundFromSingleSourceSnapshot": true,
+        "hostSurfacedNonZeroExit": true,
+        "noRoundtripOutput": true
+      },
+      "console": [
+        "21:56:40.113/V: Running [$sdcard/AutoJs6/bun-roundtrip/bare/main.js].",
+        "21:56:40.203/E: error: Cannot find module './lib/util.js' from '/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-1-59178ced-de57-4ba3-927b-efc35958ca76-710165723600/main.js'",
+        "Bun v1.4.0 (Android x64)",
+        "21:56:40.280/E: NON_ZERO_EXIT: Bun exited with code 1. Check the script error output.",
+        "org.autojs.autojs.engine.BunRuntimeExecutionException: NON_ZERO_EXIT: Bun exited with code 1. Check the script error output.",
+        "21:56:40.285/V: [$sdcard/AutoJs6/bun-roundtrip/bare/main.js] finished in 0.167 seconds."
+      ]
+    },
+    {
+      "name": "pkg",
+      "round": 1,
+      "entry": "/sdcard/AutoJs6/bun-roundtrip/pkg/main.ts",
+      "expectedMode": "workspace-archive",
+      "startedAt": "2026-09-15T21:57:39+08:00",
+      "finishedSeconds": 0.132,
+      "passed": true,
+      "assertions": {
+        "packageJsonMarkerDetected": true,
+        "typeScriptEntryRanFromProject": true,
+        "importMetaDirUnderPluginWorkspaceProject": true,
+        "noHostError": true,
+        "hostConsoleLabel": "Running [main.js]."
+      },
+      "console": [
+        "21:57:39.631/V: Running [main.js].",
+        "21:57:39.682/I: PKGTRIP name=bun-pkgtrip total=10",
+        "PKGTRIP dir=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-2-c1478c59-88cd-4aa3-8117-d0192728a5b7-769655574700/project cwd=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-2-c1478c59-88cd-4aa3-8117-d0192728a5b7-769655574700/project",
+        "PKGTRIP entry=project/main.ts",
+        "21:57:39.770/V: [main.js] finished in 0.132 seconds."
+      ]
+    },
+    {
+      "name": "project",
+      "round": 2,
+      "entry": "/sdcard/AutoJs6/bun-roundtrip/project/main.js",
+      "expectedMode": "workspace-archive",
+      "startedAt": "2026-09-15T21:58:10+08:00",
+      "finishedSeconds": 0.573,
+      "passed": true,
+      "assertions": {
+        "importMetaDirUnderPluginWorkspaceProject": true,
+        "cwdEqualsProject": true,
+        "relativeImportResolved": true,
+        "jsonImportResolved": true,
+        "archivedEntries": [
+          "data",
+          "data/config.json",
+          "lib",
+          "lib/util.js",
+          "main.js",
+          "project.json"
+        ],
+        "bunVersionAndArch": "1.4.0 platform=android arch=x64",
+        "noHostError": true
+      },
+      "console": [
+        "21:58:10.631/V: Running [$sdcard/AutoJs6/bun-roundtrip/project/main.js].",
+        "21:58:11.151/I: ROUNDTRIP dir=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-3-d43d43c6-27f5-4eb9-acb9-10845586414d-800896798900/project",
+        "ROUNDTRIP cwd=/data/data/io.github.supermonster003.autojs6.plugin.bun.runtime/cache/bun-executions/bun-engine-3-d43d43c6-27f5-4eb9-acb9-10845586414d-800896798900/project",
+        "ROUNDTRIP greet=hello, workspace",
+        "ROUNDTRIP files=data,data/config.json,lib,lib/util.js,main.js,project.json",
+        "ROUNDTRIP bun=1.4.0 platform=android arch=x64",
+        "21:58:11.307/V: [$sdcard/AutoJs6/bun-roundtrip/project/main.js] finished in 0.573 seconds."
+      ]
+    }
+  ],
+  "workspaceCleanup": {
+    "inspection": "adb root on the google_apis AVD after the four runs",
+    "pluginBunExecutionsDirectoryEmpty": true,
+    "hostBunSourceSnapshotsDirectoryEmpty": true,
+    "hostBunProjectTempFilesFound": 0
+  },
+  "cleanup": {
+    "forceStopped": [
+      "org.autojs.autojs6",
+      "io.github.supermonster003.autojs6.plugin.bun.runtime"
+    ],
+    "runtimeProcessesAfterForceStop": 0,
+    "fixtureRemovedFromSdcard": true,
+    "uninstalled": [
+      "io.github.supermonster003.autojs6.plugin.bun.runtime",
+      "org.autojs.autojs6"
+    ],
+    "remainingPackages": 0,
+    "remainingUidProcesses": 0,
+    "remainingDataDirectories": 0,
+    "avdShutDown": true,
+    "startedAt": "2026-09-15T14:00:21Z",
+    "finishedAt": "2026-09-15T14:00:24Z"
+  },
+  "observations": [
+    "The host console labels a TypeScript entry launched by intent as [main.js] (the TypeScriptStringSource compilation name) while the plugin received and ran main.ts: import.meta.path ends with project/main.ts. Cosmetic host label, not a routing defect.",
+    "The first run bound the plugin and started the :bun_runtime process; the three later runs reused the bound service without a new process start.",
+    "Bun reports process.arch x64 for the x86_64 payload on this AVD; the packaged ELF is the locked official x86_64 runtime."
+  ],
+  "limits": [
+    "The host is a local debug build of AutoJs6 master 7c31269cc signed with the official certificate, not a released AutoJs6; released hosts still send single files, so users cannot run multi-file projects until the host ships.",
+    "x86_64 API 33 AVD only. The attached ARM64 devices carry the user's production AutoJs6 and were not replaced; an ARM64 host round trip needs a device or a host release the user chooses.",
+    "Four runs in one host process; not a soak, concurrency or cancellation test of the host packing path.",
+    "The bare-file failure is the intended single-source behavior and is recorded as a control, not as a defect."
+  ],
+  "passed": true,
+  "distributionReady": false
+}
