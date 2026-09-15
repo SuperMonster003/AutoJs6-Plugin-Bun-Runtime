@@ -231,6 +231,13 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.4
+
+_2026/09/16_
+
+- `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
+- `Improvement` Archive the published v0.2.3 APK/source asset verification and the signed final-APK acceptance in five environments on the final release bytes: in-place upgrades from the published v0.2.2 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64, an x86_64 API 33 AVD and a Samsung SM-A566B API 36 native arm64 16 KiB device, each passing 10/10 groups before and after force-stop (the tenth group is the host info snapshot); the released tag is not rewritten and Android/16 KB compatibility is not expanded
+
 #### v0.2.3
 
 _2026/09/16_
@@ -290,32 +297,6 @@ _2026/09/15_
 - `Improvement` Build verification of 16 KB page alignment for 64-bit native libraries, including manifest contract checks and JSON reports
 - `Dependency` Align the online platform-versions plugin with the repository-pinned 1.8.0; leave the native-alignment plugin unchanged
 - `Dependency` Raise compileSdk to 37 so the plugin can consume the shared bun-runtime-api AAR from AutoJs6 host build 5280, whose AAR metadata requires compile SDK 37; minSdk 33 and targetSdk 36 are unchanged
-
-#### v0.2.1
-
-_2026/09/10_
-
-- `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
-- `Fix` Preserve experimental static-directory serving without openat2 using a locked MIT descriptor-relative fallback: pin path components, resolve root-contained links, reject outside-root and magic links, and bound traversal, errors and FD ownership; ordinary Bun.file/node:fs access, official runtime bytes and the Android 13 minimum are unchanged
-- `Fix` Fix the experimental Linux spawn FD fallback with a locked MIT patch: enumerate actual descriptors using fixed-stack raw syscalls, handle descriptors above lowered soft/hard limits and the old 65536 ceiling, and fail before exec on incomplete isolation; add vfork/exec, error, symbol and old-implementation regression controls without changing the official Bun payload or Android 13 minimum
-- `Fix` Fix the experimental Bun startup CLOEXEC fallback with a locked MIT patch: enumerate open descriptors without an fd-number ceiling, preserve fds 0-3, and exit on incomplete marking; add native error/boundary tests and separate build-input verification from runtime acceptance, without changing the official runtime or Android 13 minimum
-- `Fix` Fix timeout, cancellation and output-limit cleanup in the official plugin with a locked read-only supervisor: escalate ignored SIGTERM to SIGKILL, wait for the direct Bun child to exit, and preserve output for draining; Bun 1.4.0 and the Android 13 minimum are unchanged
-- `Fix` Fix the isolated patched Bun probe's termination by compiling the shared SupervisedProcess wrapper and packaging the locked supervisor; bind source/toolchain/helper bytes in schema-2 receipts and keep output readers open until termination
-- `Improvement` Validate the directory fallback with two byte-identical clean builds per ABI and unchanged 24-probe assertions twice in five native 4 KiB environments (240/240): all 60 previously failing escape assertions now reject the sentinel while normal serving works. Native GCC/Clang and GCC ASan/UBSan tests pass; test packages and the owned AVD are cleaned up. Preserve old failures; new native ARM64 16 KiB, full Binder and Release gates remain open
-- `Improvement` Previous failure baseline (a260ef308): Add a 24th probe for openat2 directory confinement without changing the experimental runtime: five native 4 KiB environments score 23/24 twice. The original 230 observations pass, but 10 new failures record 60 synthetic sentinel reads outside the configured root through relative, absolute and magic symlinks. Archive the failed gate without relaxing assertions; no crash, hang or leftover test-UID process is observed, and the owned AVD is closed. A native fix is still pending
-- `Improvement` Correct the fchmodat2 source audit: uppercase SYS_FCHMODAT2 is used by internal sys::lchmod, while both public Android node:fs lchmod exports are absent in all 10 rounds. No internal package-bin fallback or dependency installation was executed; preserve the historical report and keep distribution blocked
-- `Improvement` Extend the unchanged experimental runtime to a 23-probe syscall suite: five native 4 KiB environments pass twice (230/230), including 60 raw TRAP-to-ENOSYS observations and 16 EIO-controlled copy/wait fallbacks; explicitly exclude four API 28 kernel/policy-gated cases from semantic reachability, preserve all original assertions and historical evidence, and clean up test packages and the owned AVD. Full syscall/Binder and new native 16 KiB gates remain open
-- `Improvement` Validate the spawn fix in six native environments: the unchanged 20-probe suite passes twice on arm64 API 28/31/33/35 and x86_64 API 33 (4 KiB), plus Samsung arm64 API 36 (16 KiB), totaling 240/240; both ABIs reproduce in two clean builds, all 36 forcible lifecycle cases pass, and test packages and the owned AVD are cleaned up. Preserve old failures; full experimental Binder and Release gates remain open
-- `Improvement` Validate native ARM64 16 KiB execution on Samsung Remote Test Lab SM-A566B (API 36): the v0.2.1 development arm64-only APK with official Bun and the locked supervisor passes all 8 Binder tests twice, including process restart, installed hashes and 10 forced lifecycle cases; archive exact source/APK/log bindings, uninstall test packages and retain the separate Release and x86_64 gates
-- `Improvement` Previous failure baseline (c240d6c68): Record the unchanged experimental runtime on the same native ARM64 16 KiB device at 19/20 twice: native close_range, startup marking and lifecycle checks pass, while the known forced-TRAP lowered-RLIMIT_NOFILE spawn leak remains; preserve both failures without claiming full experimental Binder or runtime acceptance
-- `Improvement` Previous failure baseline (c240d6c68): Expand the experimental suite to 20 probes with lowered RLIMIT_NOFILE controls: four native arm64 devices (API 28/31/33/35) score 18/20 twice and an API 33 native x86_64 AVD scores 19/20 twice, all on 4 KiB pages. The original 180 observations still pass; 18 new failures expose fd 256 inherited by both spawn APIs after the soft limit falls to 128. Archive failures and restored limits/cleanup without changing runtime bytes or claiming the defect is fixed
-- `Improvement` Document ARM64 16 KiB test options for x64 Windows: VMware and WSL alone cannot provide a native ARM64 Android guest; distinguish full-system software emulation and propose Samsung remote 16 KiB devices with RDB/ADB, subject to actual availability and permissions, without claiming new device acceptance
-- `Improvement` Previous 18-probe baseline: Add five FD/SIGSYS probes and validate the startup fix: four native arm64 devices (API 28/31/33/35) and an API 33 native x86_64 AVD pass 18/18 twice, totaling 180/180; both ABIs reproduce identically in two clean builds. Preserve the previous 17/18 failure reports, keep official runtime bytes and the Android 13 minimum unchanged, and leave full experimental Binder and native 16 KB validation open
-- `Improvement` Bind the supervisor source, fixed NDK build instructions and per-ABI helper hashes in corresponding-source manifest schema 2, with exact archive-member checks and legacy v0.2.0 assets left unchanged
-- `Improvement` Add an isolated test-only APK builder and explicit-device runner for the reproducible patched Bun runtime, with exact source/APK/runtime checks, temporary test signing and bounded machine-readable reports
-- `Improvement` Pass all 13 application-process probes twice on native arm64 devices with API 28, 31, 33 and 35: 24 SIGTERM-ignoring timeout, output-limit and readiness-triggered cancellation cases confirm child/parent exit and workspace cleanup; preserve the original 10/12 failure report without claiming full experimental Binder or broader Android support
-- `Improvement` Archive the published v0.2.0 APK/source asset verification and signed-device acceptance evidence, without rewriting the released tag or expanding Android/16 KB compatibility
-- `Dependency` Upgrade the online autojs6-platform-versions build plugin from 1.7.3 to 1.7.4 and synchronize the repository's version requirement
 
 ##### For more release history
 

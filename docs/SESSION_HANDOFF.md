@@ -1,4 +1,4 @@
-# 当前阶段: v0.2.2 已公开发布, M6 端到端完成, M7 第一项能力 (宿主信息快照) 已接入并通过真机验证, 宿主暂不发版 (2026-09-16)
+# 当前阶段: v0.2.3 已公开发布 (含 M7 宿主信息快照), M6 端到端完成, 宿主侧 M7 (引擎 + 插件中心开关) 已在宿主仓库本地提交, 宿主暂不发版 (2026-09-16)
 
 2026-09-15, 从 master 966cd1a 发布 v0.2.2 (P2 发布门禁). 本轮一个发布门禁设备批次 (三台 ARM64 真机 + 一台 x86_64 API 33 AVD), 没有 native 构建, 宿主仓库未触碰.
 
@@ -36,7 +36,16 @@
 - M7 真机验证 (2026-09-16 00:44-00:54 +08:00): instrumentation (`-e requiredApiLevel <api> -e requiredPageSizeBytes <page>` 必填) 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (`localhost:37478`, API 36, 16 KiB) 各 OK (17 tests); 前两次尝试分别因误装 `.diagnostics` 后缀的旧 debug APK (需 `:app:assembleDebug`, `assembleDebugAndroidTest` 不重建应用 APK) 与 `process.cwd()` 符号链接差异 (改 realpath 比较) 重跑.
   宿主往返: 宿主 `:app:assembleAppDebug` arm64 debug APK (`6afee80a…`) `install -r` 覆盖 Redmi 用户宿主, 本地 `:app:assembleRelease` 插件 (`50eb3fa0…`), 夹具 `/sdcard/AutoJs6/bun-hostinfo/{project,bare}`; project/bare 读到核实后的快照, 撤销 (`am force-stop` 后 `run-as org.autojs.autojs6 sh < 本地脚本` 写 `shared_prefs/bun_host_capability_grants.xml`; 经 `adb shell` 传引号或 here-document 都不可行) 后 absent, 删除偏好文件后恢复.
   Samsung 第一个 Remote Test Lab 会话在宿主装入后断开; 用户重新上线后第二个会话 (01:37-01:40) 全新安装宿主+插件跑完同样四轮并卸载, 但实验室把三次启动重复投递 (`rtl.hb` 心跳后出现第二条 START), 其中一次并发启动被宿主 `BunBoundedBinderCallLane` 以 `BUSY` 拒绝 (宿主行为, 只作观察). Redmi 已卸载插件并用 `%TEMP%/redmi-autojs6-base.apk` 还原宿主 (`340536cb…` 核对). 记录 `docs/compatibility/2026-09-16-m7-host-info-snapshot.json/.md` (index adapter, supplement); 原始输出在本地 `.git/host-hostinfo-20260916/`.
-- 下一步: 宿主仓库提交 M7 改动 (契约 + 引擎 + changelog 十语言, README 由 `py generate_markdown.py` 生成; 插件中心的 `host_info` 开关 UI 作为后续); 宿主发版由用户决定, 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述; M7 第二项能力 (若为动态调用) 先做接口评审 (Binder broker + 子进程通道, cancellation/backpressure/并发).
+- 宿主仓库提交 (2026-09-16, 无 remote, 未推送): `265adf810` (契约常量 + `BunHostCapabilityGrants` + `attachHostInfo` + changelog 十语言与生成 README), `5d4a23507` (插件中心插件级设置页的 "Bun 能力桥 / 宿主信息快照" 开关:
+  `PluginSettingsFragment` 只对导出 `org.autojs.plugin.bun.RUNTIME` 服务的官方插件保留该分类, `ThemeColorSwitchPreference` `plugin_bun_host_info_grant` 设 `app:persistent="false"`, 读写 `BunHostCapabilityGrants`, 十一份 strings).
+  用户决定: `host_info` 与未来各项能力的开关都放在插件自身的设置页; 宿主发版时间未定. 另一会话 (`autojs6-plugin-bun-runtime-06`) 只读评审了该提交, 无阻塞意见.
+- v0.2.3 发布 (2026-09-16 02:18 +08:00, 用户指示可随时发布): 注释标签 `v0.2.3` 在 `d265c2a`, Release id 389367462, 13 个资产 GitHub digest 与本地一致, 匿名下载核对通过, `Published release integrity` (run 35006637084) 通过.
+  五环境签名验收十组 (第 9 组为 M7 快照: 不带键无快照, 带键 16 字段核实, 冒充包名/未知版本/保留环境名均拒绝) 两轮全过: Sony (arm64) 与 Xiaomi (universal) 从已发布 v0.2.2 覆盖升级后保留, Redmi (arm64), AVD (x86_64) 与 Samsung SM-A566B (arm64, 16 KiB) 全新安装后卸载.
+  记录 `docs/compatibility/2026-09-16-v0.2.3-release.json/.md` (adapter `release`). 过程: 90851a7 字节上的首轮五机在第 9 组失败, 原因是探针把自身 instrumentation 包名当宿主包名 (探针在插件进程 UID 内运行, `getPackagesForUid` 只含插件包, 插件按设计拒绝), 改探针提供 target 包名并断言自身包名被拒;
+  随后发现发布说明生成器仍是 v0.2.2 措辞 (16 KiB 验收 "未重复", 无快照段落), 提交 d265c2a 后移标签 (当时无 Release), 重建 APK, 五环境在最终字节重跑. 90851a7 的验收与资产目录作为作废证据留在本地 (`*-90851a7-superseded*`).
+  工具: `.git/release-v023-20260916.mjs`, `.git/release-v023-acceptance-20260916.mjs` (EXPECTED_GROUPS=10), `.git/release-probe-20260916/`, `.git/release-instrumentation-20260916.gradle`, `%TEMP%/release-build-20260916.sh`; v0.2.2 APK 备份 `E:/.wsl/release-assets/app-releases-v0.2.2-backup-20260916/` (assemble 要求 `app/releases` 恰好三个 APK).
+  changelog 开启 v0.2.4 开发快照, `version.properties` 0.2.4 / build 9; ROADMAP P2/P3 与 M1/M5/M7 条目已更新.
+- 下一步: 宿主发版由用户决定 (暂无计划); 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述, 并在真实发布的宿主上各重跑一次 M6/M7 往返; M7 第二项能力 (若为动态调用) 先做接口评审 (Binder broker + 子进程通道, cancellation/backpressure/并发).
 
 ---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)

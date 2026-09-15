@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 132 份源报告, 225 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 133 份源报告, 230 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -145,6 +145,20 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | /signedFinalApkDeviceAcceptance/2 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
 | /signedFinalApkDeviceAcceptance/3 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
 | /signedFinalApkDeviceAcceptance/4 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
+
+### v0.2.3 已签名最终 APK 五设备验收
+
+来源: [2026-09-16-v0.2.3-release.json](2026-09-16-v0.2.3-release.json).
+
+发布字节 (d265c2a): Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.2 原地覆盖升级, Redmi API 33 arm64, x86_64 API 33 AVD 与 Samsung SM-A566B API 36 原生 arm64 16 KiB 全新安装, 五个环境同批并行. 每轮 10 组 (新增 M7 宿主信息快照组), force-stop 前后各一轮; 该源只记录通过组数, 不转移到 Debug 批次的选项与耗时.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /signedFinalApkDeviceAcceptance/0 | XQ-DQ72<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 10/未记录 验收组; 10/未记录 验收组 | 通过 (限定范围) |
+| /signedFinalApkDeviceAcceptance/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 10/未记录 验收组; 10/未记录 验收组 | 通过 (限定范围) |
+| /signedFinalApkDeviceAcceptance/2 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 10/未记录 验收组; 10/未记录 验收组 | 通过 (限定范围) |
+| /signedFinalApkDeviceAcceptance/3 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 未记录 | 10/未记录 验收组; 10/未记录 验收组 | 通过 (限定范围) |
+| /signedFinalApkDeviceAcceptance/4 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 未记录 | 10/未记录 验收组; 10/未记录 验收组 | 通过 (限定范围) |
 
 ## 实验运行时的设备记录
 

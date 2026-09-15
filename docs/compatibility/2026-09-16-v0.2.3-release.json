@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "evidenceDate": "2026-09-16",
+  "milestones": [
+    "M1",
+    "M5",
+    "M6",
+    "M7"
+  ],
+  "scope": "Published official v0.2.3 assets, signed final-APK in-place upgrade from the published v0.2.2 and fresh-install acceptance in five environments (including native arm64 16 KiB pages), all on the final release bytes; the tenth probe group covers the M7 host info snapshot; does not close patched-runtime distribution gates.",
+  "verifiedAt": "2026-09-15T18:25:07.000Z",
+  "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/tag/v0.2.3",
+  "id": 389367462,
+  "tag": "v0.2.3",
+  "publishedAt": "2026-09-15T18:18:17Z",
+  "draft": false,
+  "prerelease": false,
+  "assetCount": 13,
+  "totalBytes": 2396949663,
+  "allGitHubSha256DigestsMatch": true,
+  "anonymousNoticeManifestChecksumsDownloadsVerified": true,
+  "assets": [
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-SHA256SUMS.txt",
+      "bytes": 1799,
+      "digest": "sha256:c92503e0fe2ec3584def60988754f543db3c8783396810598b5a9a38ff40651d",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-SHA256SUMS.txt"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-arm64-v8a-d8d39b75.apk",
+      "bytes": 35583468,
+      "digest": "sha256:7760135cca338ee12aabe606bf3dc214789ce9fc82ec850f5fdbb54772177619",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-arm64-v8a-d8d39b75.apk"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-LICENSES-AND-RELINKING.md",
+      "bytes": 2168,
+      "digest": "sha256:f8123a1d79c51f06363cbbd15fe2908e7078876e947b1be7d179c986428a9ead",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-LICENSES-AND-RELINKING.md"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676.tar.gz",
+      "bytes": 64069192,
+      "digest": "sha256:d44cad3fc8a3ab2e59308af42b022d2401b3425b98ffde535bfc02387dac4771",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-bun-34cbb9a40b4bd1bd767d134a7065e66c2432a676.tar.gz"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-cargo-archives.tar",
+      "bytes": 29140992,
+      "digest": "sha256:dbf776bfcab6d2d06f41a10972964b255e852fc851d5cb6bd519d3fba1a55bd7",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-cargo-archives.tar"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-manifest.json",
+      "bytes": 132505,
+      "digest": "sha256:b9920ca87df8ca23f3d4e6ffc1235b9aaaf8f851e4bc0cb1771379bfd8fca962",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-manifest.json"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-native-archives.tar",
+      "bytes": 109157376,
+      "digest": "sha256:c3dc3bd9c646899c4c3399e0c45c2e5d33a01141f687f3681caaf3126140e866",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-native-archives.tar"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-npm-archives.tar",
+      "bytes": 31631360,
+      "digest": "sha256:55d3b6730d9eb3ac4b1ad38df1864132345576d480d0765b41afbf152404feb7",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-npm-archives.tar"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-project-d265c2a6fb9dddfbe9f2cb2b3541ad169d0b53f6.tar.gz",
+      "bytes": 78621438,
+      "digest": "sha256:69aa9e96512987003f4329d753c6a09ba7c1157fea6dd91df5ac2644ef9d1fed",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-project-d265c2a6fb9dddfbe9f2cb2b3541ad169d0b53f6.tar.gz"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b.tar.gz.part001-of-002",
+      "bytes": 1900000000,
+      "digest": "sha256:ea5d132847cac7431c41e522389bdcbc9a784a8b571850019a3d49fb05d50d24",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b.tar.gz.part001-of-002"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b.tar.gz.part002-of-002",
+      "bytes": 39469975,
+      "digest": "sha256:6aee8e645085dfefcbe3f67b009ccf57642a67255d3d95409878bc7c3f9c6da6",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-corresponding-source-webkit-0f966e81b78c84bb23213e391bc679c4ef83e56b.tar.gz.part002-of-002"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-universal-4683e417.apk",
+      "bytes": 72163384,
+      "digest": "sha256:0fbaa6e18df93ee94da68b448ae8f803093b9f2e70f7a0c6651c6b131d6a1baf",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-universal-4683e417.apk"
+    },
+    {
+      "name": "autojs6-plugin-bun-runtime-v0.2.3-x86_64-d37e158c.apk",
+      "bytes": 36976006,
+      "digest": "sha256:d05bc50b74c8118e6dbb1f730f35770207807c2bc2515b3334a3fee9803d132d",
+      "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/download/v0.2.3/autojs6-plugin-bun-runtime-v0.2.3-x86_64-d37e158c.apk"
+    }
+  ],
+  "projectCommit": "d265c2a6fb9dddfbe9f2cb2b3541ad169d0b53f6",
+  "signerCertificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213",
+  "validation": "Automated technical verification, not a legal opinion or approval.",
+  "workflows": [
+    {
+      "name": "Published release integrity",
+      "runId": 35006637084,
+      "conclusion": "success"
+    },
+    {
+      "name": "Build integrity (including native x86_64 API 33 and 35 instrumentation)",
+      "runId": 35005273268,
+      "conclusion": "success"
+    },
+    {
+      "name": "Runtime artifact integrity",
+      "runId": 35005273138,
+      "conclusion": "success"
+    },
+    {
+      "name": "Markdown",
+      "runId": 35005273495,
+      "conclusion": "success"
+    }
+  ],
+  "signedFinalApkDeviceAcceptance": [
+    {
+      "manufacturer": "Sony",
+      "model": "XQ-DQ72",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+      "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+      "isEmulator": false,
+      "apkKind": "arm64-v8a",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.3-arm64-v8a-d8d39b75.apk",
+      "apkSha256": "7760135cca338ee12aabe606bf3dc214789ce9fc82ec850f5fdbb54772177619",
+      "installMode": "upgrade",
+      "previousVersion": "0.2.2",
+      "previousVersionCode": 7,
+      "previousApkSha256": "3a7805a4f9703563b2779688a1a765d620210f301ab0406a70bd365f40a0f05c",
+      "installedVersion": "0.2.3",
+      "installedVersionCode": 8,
+      "firstInstallTimePreserved": true,
+      "signingCertificateUnchanged": true,
+      "initialGroupsPassed": 10,
+      "restartGroupsPassed": 10,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": false,
+      "probeSha256": "c3b608e716529c6b6d429fc72b0da1081cce0405e696c5e744337892770baac8",
+      "startedAt": "2026-09-15T18:06:21.269Z",
+      "finishedAt": "2026-09-15T18:06:39.807Z"
+    },
+    {
+      "manufacturer": "Xiaomi",
+      "model": "23046RP50C",
+      "apiLevel": 35,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+      "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+      "isEmulator": false,
+      "apkKind": "universal",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.3-universal-4683e417.apk",
+      "apkSha256": "0fbaa6e18df93ee94da68b448ae8f803093b9f2e70f7a0c6651c6b131d6a1baf",
+      "installMode": "upgrade",
+      "previousVersion": "0.2.2",
+      "previousVersionCode": 7,
+      "previousApkSha256": "96a572c8009f8297a68cb20fe144077674f991e1cef6784f2e239125f06de79c",
+      "installedVersion": "0.2.3",
+      "installedVersionCode": 8,
+      "firstInstallTimePreserved": true,
+      "signingCertificateUnchanged": true,
+      "initialGroupsPassed": 10,
+      "restartGroupsPassed": 10,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": false,
+      "probeSha256": "c3b608e716529c6b6d429fc72b0da1081cce0405e696c5e744337892770baac8",
+      "startedAt": "2026-09-15T18:06:21.287Z",
+      "finishedAt": "2026-09-15T18:06:43.442Z"
+    },
+    {
+      "manufacturer": "Xiaomi",
+      "model": "22120RN86C",
+      "apiLevel": 33,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 4096,
+      "kernel": "4.19.191-perf-g2f9faa927855",
+      "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+      "isEmulator": false,
+      "apkKind": "arm64-v8a",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.3-arm64-v8a-d8d39b75.apk",
+      "apkSha256": "7760135cca338ee12aabe606bf3dc214789ce9fc82ec850f5fdbb54772177619",
+      "installMode": "fresh",
+      "previousVersion": null,
+      "previousVersionCode": null,
+      "previousApkSha256": null,
+      "installedVersion": "0.2.3",
+      "installedVersionCode": 8,
+      "firstInstallTimePreserved": null,
+      "signingCertificateUnchanged": null,
+      "initialGroupsPassed": 10,
+      "restartGroupsPassed": 10,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": true,
+      "probeSha256": "c3b608e716529c6b6d429fc72b0da1081cce0405e696c5e744337892770baac8",
+      "startedAt": "2026-09-15T18:06:21.308Z",
+      "finishedAt": "2026-09-15T18:06:46.047Z"
+    },
+    {
+      "manufacturer": "Google",
+      "model": "sdk_gphone64_x86_64",
+      "apiLevel": 33,
+      "abi": "x86_64",
+      "pageSizeBytes": 4096,
+      "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+      "isEmulator": true,
+      "apkKind": "x86_64",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.3-x86_64-d37e158c.apk",
+      "apkSha256": "d05bc50b74c8118e6dbb1f730f35770207807c2bc2515b3334a3fee9803d132d",
+      "installMode": "fresh",
+      "previousVersion": null,
+      "previousVersionCode": null,
+      "previousApkSha256": null,
+      "installedVersion": "0.2.3",
+      "installedVersionCode": 8,
+      "firstInstallTimePreserved": null,
+      "signingCertificateUnchanged": null,
+      "initialGroupsPassed": 10,
+      "restartGroupsPassed": 10,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": true,
+      "probeSha256": "2182cd1f8501a5a20ea41f4dd5ce27bf222aa38a9ed93b41a4d0f62bf88ded46",
+      "startedAt": "2026-09-15T18:06:21.317Z",
+      "finishedAt": "2026-09-15T18:06:39.449Z"
+    },
+    {
+      "manufacturer": "samsung",
+      "model": "SM-A566B",
+      "apiLevel": 36,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 16384,
+      "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+      "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+      "isEmulator": false,
+      "apkKind": "arm64-v8a",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.3-arm64-v8a-d8d39b75.apk",
+      "apkSha256": "7760135cca338ee12aabe606bf3dc214789ce9fc82ec850f5fdbb54772177619",
+      "installMode": "fresh",
+      "previousVersion": null,
+      "previousVersionCode": null,
+      "previousApkSha256": null,
+      "installedVersion": "0.2.3",
+      "installedVersionCode": 8,
+      "firstInstallTimePreserved": null,
+      "signingCertificateUnchanged": null,
+      "initialGroupsPassed": 10,
+      "restartGroupsPassed": 10,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": true,
+      "probeSha256": "2182cd1f8501a5a20ea41f4dd5ce27bf222aa38a9ed93b41a4d0f62bf88ded46",
+      "startedAt": "2026-09-15T18:06:21.339Z",
+      "finishedAt": "2026-09-15T18:07:13.543Z"
+    }
+  ],
+  "acceptanceScope": [
+    "environment, installed final APK, extracted runtime and supervisor integrity",
+    "signature permission, Wake discovery and activation",
+    "action/category discovery, explicit Binder, PluginInfo capabilities and repeated prewarm",
+    "JavaScript, TypeScript, Unicode and bounded streaming callbacks",
+    "all five checked-in samples including local HTTP fetch and file I/O",
+    "workspace archive project round trip, hostile archive and missing entry rejection",
+    "supervised timeout and output-limit reaping, localized summary and invalid request rejection",
+    "cancellation after readiness, supervised reaping and recovery",
+    "host info snapshot delivered only when offered, attributed to the caller UID, spoofed packages and hostile requests fail closed",
+    "unbind and reconnect"
+  ],
+  "processNotes": [
+    "The first acceptance round ran on the 90851a7 bytes: all five environments passed groups 1-8 and failed the new host info group because the probe offered its own instrumentation package name; the probe runs inside the plugin's process UID, so the plugin correctly rejected that package (INVALID_REQUEST). The probe was corrected to offer the plugin package and to assert that its own package is rejected as a spoof; no plugin code changed.",
+    "The release notes builder still described v0.2.2 (16 KiB acceptance 'not repeated', no host info paragraph), so d265c2a updated it; because AGP embeds the commit in META-INF/version-control-info.textproto, the APKs were rebuilt, the annotated tag was moved (no Release existed yet) and all five environments were re-run on the final bytes. The 90851a7 round is kept locally as superseded evidence and is not counted here.",
+    "The two upgrade devices were reset to the published v0.2.2 APKs (hash-checked) before each upgrade round; Redmi, the AVD and the Samsung were fresh installs with the plugin and probe uninstalled afterwards. AutoJs6 on the three own devices was not touched; the Samsung carried no AutoJs6."
+  ],
+  "limits": [
+    "The user-facing upgrade path exercised is v0.2.2 to v0.2.3 on two devices reset to the published v0.2.2 APKs; v0.2.0 to v0.2.3 was not exercised (v0.2.0 to v0.2.2 was exercised for the previous Release).",
+    "The native arm64 16 KiB acceptance (Samsung SM-A566B, API 36, Remote Test Lab) is a fresh install of the arm64-v8a bytes; it is not an upgrade path and the universal APK was not repeated on 16 KiB hardware.",
+    "Native x86_64 large-page execution remains blocked; the x86_64 signed acceptance ran on a 4 KiB API 33 AVD.",
+    "The black-box probe holds the plugin signature permission and drives the production Binder directly; it is not an AutoJs6 host round trip. The workspace archive group packs its own ZIP, and the host info group offers the plugin's own package because the probe runs inside the plugin's process UID; the cross-UID path (a separate host package checked against its own calling UID) is covered only by the M7 host round trips with a locally built AutoJs6 (docs/compatibility/2026-09-16-m7-host-info-snapshot.md). No released AutoJs6 sends project archives or offers the snapshot yet.",
+    "The probe is compiled twice from the same source: devices carrying AutoJs6 (which owns org.autojs.permission.PLUGIN) use a private permission name, the AVD and the Samsung probes use the AutoJs6 permission name.",
+    "Official-source publication does not count as publication of patched APK/source assets."
+  ],
+  "supplements": []
+}
