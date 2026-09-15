@@ -3237,6 +3237,23 @@
       }
     },
     {
+      "file": "2026-09-15-m6-host-round-trip-arm64.json",
+      "sha256": "70815b9f459976a9044359a1ef89c00efdc29388e46d60880b044f69b3de1ca3",
+      "schema": 1,
+      "kind": "m6-host-round-trip",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M6 宿主到插件真实项目往返 (本地宿主构建, ARM64 真机 API 33 / API 36 16 KiB)",
+      "note": "同一 AutoJs6 master 7c31269cc 本地 debug 构建与已发布 v0.2.2 arm64-v8a 插件在 Samsung SM-A566B (API 36, 16 KiB) 与 Redmi 22120RN86C (API 33): project.json 项目两轮与 package.json TypeScript 项目通过, 裸文件对照按单源码失败; Redmi 宿主已还原. 宿主未发布, 不计为设备验收组.",
+      "bytesUtf8Lf": 24752,
+      "rows": 0,
+      "reportedScope": "Real host-to-plugin project round trip repeated on two native ARM64 devices: the same locally built AutoJs6 host (master 7c31269cc, official certificate) packs project.json / package.json project directories into workspace archives and the published v0.2.2 arm64-v8a plugin expands and runs them on Samsung SM-A566B (API 36, 16 KiB pages) and Redmi 22120RN86C (API 33, 4 KiB pages). A byte-identical bare file without a project marker is the single-source control. Supplementary integration evidence, not a device acceptance group and not a host release.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
       "file": "2026-09-15-m6-host-round-trip.json",
       "sha256": "74b39560f52b3e40b7ce8cdbf157d7457504c57ba3b23286d4b664bec2a6312f",
       "schema": 1,
@@ -3278,17 +3295,17 @@
     },
     {
       "file": "2026-09-15-v0.2.2-release.json",
-      "sha256": "e031f26d56a31cf2c713e188470255d76aebaec3006691c66aad40872000292e",
+      "sha256": "8559a65361894790f6386d18708e1f6b0d9c34130177495fa13157033b289ef9",
       "schema": 1,
       "kind": null,
       "adapter": "release",
       "collection": "signedFinalApkDeviceAcceptance",
       "category": "official",
       "label": "v0.2.2 已签名最终 APK 的设备验收",
-      "note": "四个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时.",
-      "bytesUtf8Lf": 13426,
-      "rows": 4,
-      "reportedScope": "Published official v0.2.2 assets, signed final-APK in-place upgrade from the published v0.2.0 and fresh-install acceptance; does not close patched-runtime distribution or native arm64 16 KiB signed-APK gates.",
+      "note": "五个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 发布后同日补充 Samsung SM-A566B API 36 原生 arm64 16 KiB 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时.",
+      "bytesUtf8Lf": 15545,
+      "rows": 5,
+      "reportedScope": "Published official v0.2.2 assets, signed final-APK in-place upgrade from the published v0.2.0 and fresh-install acceptance, supplemented on 2026-09-15 with a native arm64 16 KiB fresh-install acceptance of the same arm64-v8a bytes; does not close patched-runtime distribution gates.",
       "reportedOutcome": null,
       "distributionReady": null,
       "summary": null
@@ -15787,6 +15804,62 @@
       },
       "apkSha256": null,
       "apkVariant": "x86_64",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-v0.2.2-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/4",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/4",
+      "category": "official",
+      "scope": "v0.2.2 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "samsung",
+        "model": "SM-A566B",
+        "api": 36,
+        "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+        "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 16384,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "arm64-v8a",
       "rounds": [
         {
           "unit": "groups",

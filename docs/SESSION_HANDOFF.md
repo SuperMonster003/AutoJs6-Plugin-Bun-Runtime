@@ -1,4 +1,4 @@
-# 当前阶段: v0.2.2 已公开发布, M6 端到端等待宿主发版 (2026-09-15)
+# 当前阶段: v0.2.2 已公开发布, M6 端到端技术验证完成 (含 ARM64 真机与 16 KiB 验收), 宿主暂不发版, M7 提前开始 (2026-09-15)
 
 2026-09-15, 从 master 966cd1a 发布 v0.2.2 (P2 发布门禁). 本轮一个发布门禁设备批次 (三台 ARM64 真机 + 一台 x86_64 API 33 AVD), 没有 native 构建, 宿主仓库未触碰.
 
@@ -22,7 +22,14 @@
   用 `am start … RunIntentActivity` 跑 `/sdcard/AutoJs6/bun-roundtrip/{project,pkg,bare}`, 宿主 logcat `GlobalConsole` 证明归档路径生效 (裸文件对照按单源码失败);
   记录 `docs/compatibility/2026-09-15-m6-host-round-trip.json/.md` (index adapter, supplement), 原始 logcat/夹具/清理输出在本地 `.git/host-roundtrip-20260915/`. AVD 已卸载宿主与插件并关闭, 宿主仓库未改动.
   Git Bash 下 adb 的 `/sdcard/...` 参数会被 MSYS 转成 `C:/Program Files/Git/sdcard/...`: 需 `MSYS_NO_PATHCONV=1`, 本地路径改写成 `C:/...`, 并给 `adb shell` 加 `-n`.
-- 下一步: 宿主 AutoJs6 发版 (用户决定; 宿主 master 已含打包代码并通过本地往返) 后收口 P1, 再开始 M7 最小能力桥; 原生 ARM64 16 KiB 上的签名 APK 验收随下一次 Release.
+- 16 KiB 签名验收 (发布后同日补充): 用户接入的 Samsung Remote Test Lab SM-A566B (`localhost:37478`, API 36, Android 16, 原生 arm64-v8a, PAGE_SIZE=16384) 上用同一驱动
+  `.git/release-v022-acceptance-20260915.mjs` (已修补: 序列号含冒号时文件名转义) 对已发布的 arm64-v8a 资产文件全新安装, 两轮 9/9, 记录 `.git/release-acceptance-v022-20260915-samsung16k/`;
+  发布报告 JSON/MD 追加第五个环境 (`supplements` 字段说明发布后补充), 矩阵登记摘要已刷新, ROADMAP M5 16 KiB 条目关闭. 远程 adb 偶发 `adb shell` 空输出, 断开重连后正常.
+- ARM64 宿主往返: 同一宿主 arm64-v8a debug APK (`autojs6-v6.8.0-arm64-v8a.apk`, SHA-256 `19983404…`) 与已发布 v0.2.2 arm64-v8a 插件在 Samsung SM-A566B (全新安装, 结束后宿主与插件卸载)
+  与 Redmi 22120RN86C (`install -r` 覆盖用户 5280 构建, 结束后用 `%TEMP%/redmi-autojs6-base.apk` 备份 `install -r` 还原, SHA-256 `340536cb…` 核对) 各跑四次, 结果与 x86_64 AVD 一致;
+  记录 `docs/compatibility/2026-09-15-m6-host-round-trip-arm64.json/.md` (index adapter, supplement), 原始 logcat/检查/清理输出在本地 `.git/host-roundtrip-arm64-20260915/`.
+  用户指示: 除 Sony XQ-DQ72 (`QV770340J7`) 外的物理设备允许覆盖/重装宿主; 宿主 master 已含 `7acfd5d8e` (控制台 `.ts` 标签修复), 本轮宿主构建早于该提交, 未覆盖.
+- 下一步: 宿主暂不发版 (用户决定 2026-09-15), M7 最小能力桥提前开始 (接口设计评审稿先行, 契约改动进宿主仓库 `plugin-api/bun-runtime-api`); 宿主发版后只需更新 README FAQ 与排错指南的 '尚未发布' 表述.
 
 ---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)
