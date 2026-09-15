@@ -313,4 +313,16 @@ class BunWorkspaceArchiveTest {
         fail("Expected the archive to be rejected")
         throw AssertionError("unreachable")
     }
+    @Test
+    fun platformPathValidatorRejectionsReportInvalidEntryPath() {
+        // Android 14+ (targetSdk 34+) throws ZipException("Invalid zip entry path: <name>") from getNextEntry.
+        assertEquals(
+            BunWorkspaceArchive.ERROR_INVALID_ENTRY_PATH,
+            BunWorkspaceArchive.classifyEntryFailure("Invalid zip entry path: ../escape.js"),
+        )
+        assertEquals(BunWorkspaceArchive.ERROR_INVALID_ENTRY_PATH, BunWorkspaceArchive.classifyEntryFailure("invalid ZIP entry path: /abs.js"))
+        listOf(null, "", "invalid block type", "invalid entry size (expected 3 but got 5 bytes)").forEach { message ->
+            assertEquals("'$message' stays corrupt", BunWorkspaceArchive.ERROR_CORRUPT_ARCHIVE, BunWorkspaceArchive.classifyEntryFailure(message))
+        }
+    }
 }

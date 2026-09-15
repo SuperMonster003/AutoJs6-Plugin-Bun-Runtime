@@ -255,7 +255,7 @@ internal object BunWorkspaceArchive {
                 val entry = try {
                     zip.nextEntry
                 } catch (error: ZipException) {
-                    throw corrupt()
+                    throw entryFailure(error.message)
                 } catch (error: EOFException) {
                     throw corrupt()
                 } ?: break
@@ -335,6 +335,24 @@ internal object BunWorkspaceArchive {
     }
 
     private fun corrupt() = BunWorkspaceArchiveException(ERROR_CORRUPT_ARCHIVE, "Archive is truncated or malformed")
+
+    /**
+     * Android 14+ validates entry names inside `ZipInputStream.getNextEntry` for apps targeting API 34+
+     * (`dalvik.system.ZipPathValidator`) and throws before this expander sees the name. That rejection
+     * is the same rule as [normalizeRelativePath], so it reports [ERROR_INVALID_ENTRY_PATH]; every other
+     * header failure stays [ERROR_CORRUPT_ARCHIVE]. Messages never echo the entry name.
+     */
+    internal fun classifyEntryFailure(message: String?): String =
+        if (message.orEmpty().startsWith(PLATFORM_PATH_REJECTION_PREFIX, ignoreCase = true)) ERROR_INVALID_ENTRY_PATH
+        else ERROR_CORRUPT_ARCHIVE
+
+    private fun entryFailure(message: String?): BunWorkspaceArchiveException = when (classifyEntryFailure(message)) {
+        ERROR_INVALID_ENTRY_PATH ->
+            BunWorkspaceArchiveException(ERROR_INVALID_ENTRY_PATH, "Archive entry path was rejected by the platform path validator")
+        else -> corrupt()
+    }
+
+    private const val PLATFORM_PATH_REJECTION_PREFIX = "Invalid zip entry path"
 
     private fun cancelled() = BunWorkspaceArchiveException(ERROR_CANCELLED, "Workspace expansion was cancelled")
 }
