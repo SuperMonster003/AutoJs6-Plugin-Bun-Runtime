@@ -109,7 +109,7 @@ console.log(info?.host.versionName ?? "no host info");
 - [x] 宿主仓库 `BunRuntimeContractTest` 4/4 (含新增快照键测试), release AAR 重发并锁入本仓库. (2026-09-16)
 - [x] JVM 单元测试 `BunHostInfoRequestTest` (版本, 包名规则, advisory 上限与控制字符, 语言标签, 保留环境变量前缀) 与 `BunHostInfoSnapshotTest` (固定布局, 缺省字段, JSON 转义, 文件上限). (2026-09-16)
 - [x] instrumentation `hostInfoSnapshotIsDeliveredOnlyWhenOffered` (未提供时无变量与终态键; 单源码与归档两条路径读到核实后的宿主/插件/运行事实, 文件在 workspace 内 `project` 外; 冒用包名, 未知版本, 保留变量三种请求关闭; 之后单源码恢复) 与 `hostGlobalsAreAbsentAndFailLoudly` (`toast` 等全局以 `ReferenceError` 明确失败) 在真机通过. (2026-09-16: Redmi 22120RN86C API 33 与 Samsung SM-A566B API 36 / 16 KiB 各 OK (17 tests); 路径包含关系改为 realpath 比较后通过, 见 `docs/compatibility/2026-09-16-m7-host-info-snapshot.md`)
-- [x] 宿主端到端: 本地宿主构建 (含 `attachHostInfo`) 经 `RunIntentActivity` 运行读取快照的脚本, 记入 `docs/compatibility`. (2026-09-16: Redmi API 33 上单源码与 project.json 项目各读到核实后的快照, 经宿主偏好文件撤销授权后脚本得到 absent, 恢复后再次得到; Samsung 因 Remote Test Lab 会话断开未跑宿主往返)
+- [x] 宿主端到端: 本地宿主构建 (含 `attachHostInfo`) 经 `RunIntentActivity` 运行读取快照的脚本, 记入 `docs/compatibility`. (2026-09-16: Redmi API 33 与 Samsung API 36 / 16 KiB 上单源码与 project.json 项目各读到核实后的快照, 经宿主偏好文件撤销授权后脚本得到 absent, 恢复后再次得到; Samsung 实验室会话重复投递了三次启动, 暴露宿主侧并发启动 BUSY 一次, 只作观察)
 - [ ] 宿主插件中心的能力开关 UI 与宿主发版 (宿主仓库, 用户决定).
 
 ## 8. 明确不做 (v1)

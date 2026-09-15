@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "kind": "m7-host-info-snapshot",
-  "capturedAt": "2026-09-15T16:58:00Z",
+  "capturedAt": "2026-09-15T17:45:00Z",
   "milestone": "M7",
-  "scope": "First M7 host capability (read-only host info snapshot, HOST_INFO_VERSION 1) verified end to end: the plugin instrumentation suite with the two new tests on two native ARM64 devices (Redmi 22120RN86C API 33 / 4 KiB, Samsung SM-A566B API 36 / 16 KiB), then a real host-to-plugin round trip on the Redmi with a locally built AutoJs6 host (master d9b4033bd plus the uncommitted attachHostInfo change) and the locally built 0.2.3 release plugin: single-source and project.json launches read the verified snapshot, the host grant was revoked and restored through the host preference file. Supplementary integration evidence, not a device acceptance group and not a host or plugin release.",
-  "result": "passed: instrumentation OK (17 tests) on both devices; host round trip 4/4 on the Redmi (2 archive rounds, 1 single-source round, 1 revoked round with no snapshot); the Samsung host round trip could not run because the Remote Test Lab session dropped after the host install; Redmi restored to the user's original host APK, no plugin, fixture or preference residue",
+  "scope": "First M7 host capability (read-only host info snapshot, HOST_INFO_VERSION 1) verified end to end: the plugin instrumentation suite with the two new tests on two native ARM64 devices (Redmi 22120RN86C API 33 / 4 KiB, Samsung SM-A566B API 36 / 16 KiB), then a real host-to-plugin round trip on both devices with a locally built AutoJs6 host (master d9b4033bd plus the attachHostInfo change, committed locally as 265adf810) and the locally built 0.2.3 release plugin: single-source and project.json launches read the verified snapshot, the host grant was revoked and restored through the host preference file. Supplementary integration evidence, not a device acceptance group and not a host or plugin release.",
+  "result": "passed: instrumentation OK (17 tests) on both devices; host round trip 4/4 on the Redmi and 4/4 on the Samsung (2 archive rounds, 1 single-source round, 1 revoked round with no snapshot each); the Samsung session delivered three launches twice, which exposed a host-side BUSY rejection of a concurrent script start once; Redmi restored to the user's original host APK, Samsung host and plugin uninstalled, no fixture or preference residue",
   "relatedRecord": "2026-09-15-m6-host-round-trip-arm64.json (same devices and launch path for the M6 archive round trip)",
   "contract": {
     "artifact": "libs/bun-runtime-api.aar",
@@ -449,14 +449,218 @@
           "rooted": false
         },
         "host": {
-          "install": "fresh install of the local debug build succeeded (33 s over the remote tunnel)",
-          "installedBaseApkSha256": null,
-          "after": "the Remote Test Lab session dropped (device 'localhost:37478' not found) before the plugin install; no launch ran and no cleanup could be issued from this side. The lab resets its devices when a session ends."
+          "install": "fresh install of the local debug build (no AutoJs6 present after the lab reset); MANAGE_EXTERNAL_STORAGE granted through appops",
+          "installedBaseApkSha256": "6afee80a00c6b62754c77f7eafe0392147f67c55fb73b86ebdef938d55b145c0",
+          "after": "uninstalled together with the plugin; no autojs6/bun.runtime package or process and no fixture left"
         },
-        "plugin": null,
-        "runs": [],
-        "cleanup": null,
-        "aborted": true
+        "plugin": {
+          "installedBaseApkSha256": "50eb3fa0ff9b7d5e774bc5dac51e3b780b3524705e291d91352d918ce95938cc",
+          "versionName": "0.2.3",
+          "after": "uninstalled"
+        },
+        "runs": [
+          {
+            "name": "project",
+            "round": 1,
+            "entry": "/sdcard/AutoJs6/bun-hostinfo/project/main.js",
+            "expectedMode": "workspace-archive + host info snapshot",
+            "launchedAt": "2026-09-15T17:38:21Z",
+            "finishedSeconds": 0.179,
+            "passed": true,
+            "assertions": {
+              "reservedEnvironmentVariables": [
+                "AUTOJS6_HOST_INFO_FILE"
+              ],
+              "hostInfoVersion": 1,
+              "host": {
+                "packageName": "org.autojs.autojs6",
+                "versionName": "6.8.0",
+                "versionCode": 5280,
+                "versionDate": "Sept 16, 2026",
+                "languageTag": "en"
+              },
+              "plugin": {
+                "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+                "versionName": "0.2.3",
+                "versionCode": 8,
+                "runtimeVersion": "1.4.0",
+                "runtimeRevision": "1.4.0+34cbb9a40",
+                "runtimeAbi": "arm64-v8a"
+              },
+              "noHostError": true,
+              "executionSourceName": "main.js",
+              "executionWorkspaceArchive": true,
+              "fileUnderCwd": false,
+              "fileUnderProject": false,
+              "fileLeaf": "/autojs6/host-info.json",
+              "fileBytes": 487,
+              "hostVersionResolvedByPlugin": true
+            },
+            "console": [
+              "02:38:25.989/V: Running [$sdcard/AutoJs6/bun-hostinfo/project/main.js].",
+              "02:38:26.147/I: HOSTINFO reserved=AUTOJS6_HOST_INFO_FILE",
+              "02:38:26.174/I: HOSTINFO version=1",
+              "HOSTINFO host={\"packageName\":\"org.autojs.autojs6\",\"versionName\":\"6.8.0\",\"versionCode\":5280,\"versionDate\":\"Sept 16, 2026\",\"languageTag\":\"en\"}",
+              "HOSTINFO plugin={\"packageName\":\"io.github.supermonster003.autojs6.plugin.bun.runtime\",\"versionName\":\"0.2.3\",\"versionCode\":8,\"runtimeVersion\":\"1.4.0\",\"runtimeRevision\":\"1.4.0+34cbb9a40\",\"runtimeAbi\":\"arm64-v8a\"}",
+              "HOSTINFO execution={\"executionId\":\"bun-engine-0-663faf55-54cc-4e1b-ac98-8527faa676ab\",\"sourceName\":\"main.js\",\"workspaceArchive\":true}",
+              "HOSTINFO underCwd=false underProject=false leaf=true bytes=487",
+              "02:38:26.209/V: [$sdcard/AutoJs6/bun-hostinfo/project/main.js] finished in 0.179 seconds."
+            ]
+          },
+          {
+            "name": "bare",
+            "round": 1,
+            "entry": "/sdcard/AutoJs6/bun-hostinfo/bare/main.js",
+            "expectedMode": "single-source + host info snapshot",
+            "launchedAt": "2026-09-15T17:38:35Z",
+            "finishedSeconds": 0.139,
+            "passed": true,
+            "assertions": {
+              "reservedEnvironmentVariables": [
+                "AUTOJS6_HOST_INFO_FILE"
+              ],
+              "hostInfoVersion": 1,
+              "host": {
+                "packageName": "org.autojs.autojs6",
+                "versionName": "6.8.0",
+                "versionCode": 5280,
+                "versionDate": "Sept 16, 2026",
+                "languageTag": "en"
+              },
+              "plugin": {
+                "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+                "versionName": "0.2.3",
+                "versionCode": 8,
+                "runtimeVersion": "1.4.0",
+                "runtimeRevision": "1.4.0+34cbb9a40",
+                "runtimeAbi": "arm64-v8a"
+              },
+              "noHostError": true,
+              "executionSourceName": "main.js",
+              "executionWorkspaceArchive": false,
+              "fileUnderCwd": true,
+              "fileUnderProject": false,
+              "fileLeaf": "/autojs6/host-info.json",
+              "fileBytes": 488,
+              "executionsObserved": 2
+            },
+            "console": [
+              "02:38:37.044/I: HOSTINFO reserved=AUTOJS6_HOST_INFO_FILE",
+              "02:38:37.066/I: HOSTINFO version=1",
+              "HOSTINFO host={\"packageName\":\"org.autojs.autojs6\",\"versionName\":\"6.8.0\",\"versionCode\":5280,\"versionDate\":\"Sept 16, 2026\",\"languageTag\":\"en\"}",
+              "HOSTINFO plugin={\"packageName\":\"io.github.supermonster003.autojs6.plugin.bun.runtime\",\"versionName\":\"0.2.3\",\"versionCode\":8,\"runtimeVersion\":\"1.4.0\",\"runtimeRevision\":\"1.4.0+34cbb9a40\",\"runtimeAbi\":\"arm64-v8a\"}",
+              "HOSTINFO execution={\"executionId\":\"bun-engine-1-882562aa-205b-455d-9d92-5eaf5bc02577\",\"sourceName\":\"main.js\",\"workspaceArchive\":false}",
+              "HOSTINFO underCwd=true underProject=false leaf=true bytes=488",
+              "02:38:37.106/V: [$sdcard/AutoJs6/bun-hostinfo/bare/main.js] finished in 0.139 seconds.",
+              "02:38:37.582/V: Running [$sdcard/AutoJs6/bun-hostinfo/bare/main.js].",
+              "02:38:37.665/I: HOSTINFO reserved=AUTOJS6_HOST_INFO_FILE",
+              "02:38:37.694/I: HOSTINFO version=1",
+              "HOSTINFO host={\"packageName\":\"org.autojs.autojs6\",\"versionName\":\"6.8.0\",\"versionCode\":5280,\"versionDate\":\"Sept 16, 2026\",\"languageTag\":\"en\"}",
+              "HOSTINFO plugin={\"packageName\":\"io.github.supermonster003.autojs6.plugin.bun.runtime\",\"versionName\":\"0.2.3\",\"versionCode\":8,\"runtimeVersion\":\"1.4.0\",\"runtimeRevision\":\"1.4.0+34cbb9a40\",\"runtimeAbi\":\"arm64-v8a\"}",
+              "HOSTINFO execution={\"executionId\":\"bun-engine-2-5b510399-3479-4701-af50-6df350368aaa\",\"sourceName\":\"main.js\",\"workspaceArchive\":false}",
+              "HOSTINFO underCwd=true underProject=false leaf=true bytes=488",
+              "02:38:37.726/V: [$sdcard/AutoJs6/bun-hostinfo/bare/main.js] finished in 0.143 seconds."
+            ],
+            "note": "The launch was delivered twice by the Remote Test Lab session (a second RunIntentActivity START follows an rtl.hb heartbeat activity); both executions (bun-engine-1 and bun-engine-2) printed the same verified snapshot, 0.139 s and 0.143 s."
+          },
+          {
+            "name": "bare-revoked",
+            "round": 1,
+            "entry": "/sdcard/AutoJs6/bun-hostinfo/bare/main.js",
+            "expectedMode": "single-source, host grant revoked (no snapshot keys)",
+            "launchedAt": "2026-09-15T17:38:47Z",
+            "finishedSeconds": 0.141,
+            "passed": true,
+            "assertions": {
+              "grantFile": "shared_prefs/bun_host_capability_grants.xml with host_info=false written through run-as while the host was force-stopped",
+              "reservedEnvironmentVariables": [],
+              "snapshotAbsent": true,
+              "scriptExitedZero": true,
+              "noHostError": false,
+              "hostSideErrorBeforeTheRun": "Bun Binder call select failed: BUSY"
+            },
+            "console": [
+              "02:38:49.954/E: Bun Binder call select failed: BUSY",
+              "org.autojs.autojs.core.plugin.bun.BunBinderCallException: Bun Binder call select failed: BUSY",
+              "at org.autojs.autojs.core.plugin.bun.BunBoundedBinderCallLane.call(BunBoundedBinderCallLane.kt:57)",
+              "at org.autojs.autojs.core.plugin.bun.BunRuntimeBinderCallLane.call(BunBoundedBinderCallLane.kt:241)",
+              "at org.autojs.autojs.engine.BunPluginScriptEngine.runRpc(BunPluginScriptEngine.kt:294)",
+              "at org.autojs.autojs.engine.BunPluginScriptEngine.runRpc$default(BunPluginScriptEngine.kt:287)",
+              "at org.autojs.autojs.engine.BunPluginScriptEngine.init(BunPluginScriptEngine.kt:53)",
+              "at org.autojs.autojs.execution.RunnableScriptExecution.prepare(RunnableScriptExecution.java:80)",
+              "at org.autojs.autojs.execution.RunnableScriptExecution.execute(RunnableScriptExecution.java:53)",
+              "at org.autojs.autojs.execution.RunnableScriptExecution.execute(RunnableScriptExecution.java:48)",
+              "at org.autojs.autojs.execution.RunnableScriptExecution.run(RunnableScriptExecution.java:30)",
+              "at java.lang.Thread.run(Thread.java:1119)",
+              "",
+              "02:38:50.438/V: Running [$sdcard/AutoJs6/bun-hostinfo/bare/main.js].",
+              "02:38:50.525/I: HOSTINFO reserved=none",
+              "02:38:50.533/I: HOSTINFO absent (host did not offer the snapshot)",
+              "02:38:50.583/V: [$sdcard/AutoJs6/bun-hostinfo/bare/main.js] finished in 0.141 seconds."
+            ],
+            "note": "Delivered twice again: the two starts raced on the freshly started host process and the host's bounded Binder call lane rejected the second engine init with BunBinderCallException 'Bun Binder call select failed: BUSY' (host-side limit on concurrent Bun script starts, unrelated to the plugin or to M7); the surviving execution reported the snapshot as absent with AUTOJS6_* empty, as intended."
+          },
+          {
+            "name": "project",
+            "round": 2,
+            "entry": "/sdcard/AutoJs6/bun-hostinfo/project/main.js",
+            "expectedMode": "workspace-archive + host info snapshot (grant restored)",
+            "launchedAt": "2026-09-15T17:39:00Z",
+            "finishedSeconds": 0.155,
+            "passed": true,
+            "assertions": {
+              "reservedEnvironmentVariables": [
+                "AUTOJS6_HOST_INFO_FILE"
+              ],
+              "hostInfoVersion": 1,
+              "host": {
+                "packageName": "org.autojs.autojs6",
+                "versionName": "6.8.0",
+                "versionCode": 5280,
+                "versionDate": "Sept 16, 2026",
+                "languageTag": "en"
+              },
+              "plugin": {
+                "packageName": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+                "versionName": "0.2.3",
+                "versionCode": 8,
+                "runtimeVersion": "1.4.0",
+                "runtimeRevision": "1.4.0+34cbb9a40",
+                "runtimeAbi": "arm64-v8a"
+              },
+              "noHostError": true,
+              "grantFile": "removed while the host was force-stopped (default grant = true)",
+              "executionSourceName": "main.js",
+              "executionWorkspaceArchive": true,
+              "fileUnderCwd": false,
+              "fileUnderProject": false,
+              "fileLeaf": "/autojs6/host-info.json",
+              "fileBytes": 487
+            },
+            "console": [
+              "02:38:25.989/V: Running [$sdcard/AutoJs6/bun-hostinfo/project/main.js].",
+              "02:38:26.147/I: HOSTINFO reserved=AUTOJS6_HOST_INFO_FILE",
+              "02:38:26.174/I: HOSTINFO version=1",
+              "HOSTINFO host={\"packageName\":\"org.autojs.autojs6\",\"versionName\":\"6.8.0\",\"versionCode\":5280,\"versionDate\":\"Sept 16, 2026\",\"languageTag\":\"en\"}",
+              "HOSTINFO plugin={\"packageName\":\"io.github.supermonster003.autojs6.plugin.bun.runtime\",\"versionName\":\"0.2.3\",\"versionCode\":8,\"runtimeVersion\":\"1.4.0\",\"runtimeRevision\":\"1.4.0+34cbb9a40\",\"runtimeAbi\":\"arm64-v8a\"}",
+              "HOSTINFO execution={\"executionId\":\"bun-engine-0-663faf55-54cc-4e1b-ac98-8527faa676ab\",\"sourceName\":\"main.js\",\"workspaceArchive\":true}",
+              "HOSTINFO underCwd=false underProject=false leaf=true bytes=487",
+              "02:38:26.209/V: [$sdcard/AutoJs6/bun-hostinfo/project/main.js] finished in 0.179 seconds."
+            ],
+            "note": "Two START records again but one execution; identical to round 1 apart from the executionId."
+          }
+        ],
+        "cleanup": {
+          "pluginUninstalled": true,
+          "hostUninstalled": true,
+          "fixtureRemovedFromSdcard": true,
+          "runtimeProcessesAfterForceStop": 0,
+          "remainingPackages": 0,
+          "remainingProcesses": 0,
+          "startedAt": "2026-09-15T17:39:11Z",
+          "finishedAt": "2026-09-15T17:39:16Z"
+        },
+        "sessionNote": "Second Remote Test Lab session of the day (the first dropped after the host install at 16:49Z and never ran a launch); this session completed all four launches and the cleanup."
       }
     ]
   },
@@ -465,16 +669,17 @@
     "AUTOJS6_HOST_INFO_FILE is the only AUTOJS6_ variable the script sees; the file sits at <workspace>/autojs6/host-info.json, inside cwd for the single-source path and outside the project directory for the archive path (realpath comparison).",
     "Revoking the host grant (host_info=false in bun_host_capability_grants) removes the request keys: the plugin sets no variable and the script reports the snapshot as absent without any error; deleting the preference restores the default and the next launch receives the snapshot again.",
     "Instrumentation on API 33 / 4 KiB and API 36 / 16 KiB behaves identically, including the three hostile requests that fail closed with INVALID_REQUEST before Bun starts.",
-    "Run times on the Redmi are 0.14-0.17 s per launch, the same range as the M6 archive round trip."
+    "Run times are 0.14-0.18 s per launch on both devices, the same range as the M6 archive round trip; API 36 / 16 KiB (Samsung) and API 33 / 4 KiB (Redmi) produce byte-identical snapshot fields apart from the executionId.",
+    "The Samsung Remote Test Lab session delivered three of the four launches twice (a second RunIntentActivity START after an rtl.hb heartbeat activity; the M6 session on the same device a day earlier had no duplicates). The duplicates ran as a second identical execution, except once on the freshly started host process where the host's bounded Binder call lane rejected the second engine init with 'Bun Binder call select failed: BUSY'. That is host-side behaviour for concurrent Bun script starts and is recorded here as an observation, not as a plugin or M7 defect."
   ],
   "limits": [
-    "The host is a local debug build of AutoJs6 master d9b4033bd with the uncommitted M7 engine change, signed with the official certificate; no released AutoJs6 sends the snapshot yet, and the plugin capability ships only with the next plugin release.",
-    "Only the Redmi (API 33, 4 KiB) completed the host round trip; the Samsung (API 36, 16 KiB) covers the plugin side through instrumentation only, because the Remote Test Lab session dropped after the host install.",
+    "The host is a local debug build of AutoJs6 master d9b4033bd with the M7 engine change (committed locally as 265adf810 after the runs), signed with the official certificate; no released AutoJs6 sends the snapshot yet, and the plugin capability ships only with the next plugin release.",
     "The grant toggle was exercised through the host preference file (run-as on a debuggable host build); the plugin-center switch UI does not exist yet.",
     "The revocation round was reached on the third attempt; the two earlier attempts left the grant on and are recorded as no-ops in run.txt.",
     "Four launches in one host process per grant state; not a soak, concurrency or cancellation test of the host attachment path.",
     "Neither device is rooted: the plugin's bun-executions directory could not be listed after the runs; workspace removal is covered by the instrumentation and the same-device Binder acceptance evidence.",
-    "No new error code, AIDL transaction or protocol version; the certificate digests are read from the local APKs with apksigner where available (null means the tool could not be run for that APK)."
+    "No new error code, AIDL transaction or protocol version; the certificate digests are read from the local APKs with apksigner where available (null means the tool could not be run for that APK).",
+    "The Samsung host round trip ran in a second Remote Test Lab session after the first session dropped; its duplicate launches come from the lab environment and were not reproduced on the Redmi."
   ],
   "passed": true,
   "distributionReady": false

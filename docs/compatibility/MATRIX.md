@@ -1379,10 +1379,10 @@ AutoJs6 master 7c31269cc 的本地 debug 构建 (官方证书签名) 与已发�
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 
-### M7 宿主信息快照真机验证 (instrumentation 双机 + Redmi 宿主往返, 含授权撤销)
+### M7 宿主信息快照真机验证 (instrumentation 双机 + Redmi/Samsung 宿主往返, 含授权撤销)
 
 来源: [2026-09-16-m7-host-info-snapshot.json](2026-09-16-m7-host-info-snapshot.json).
 
-本仓库 M7 工作树的 debug/androidTest APK 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB) 各 OK (17 tests); 本地 AutoJs6 master d9b4033bd + attachHostInfo 宿主与本地 0.2.3 release 插件在 Redmi 完成 4/4 往返 (单源码/归档读到核实后的快照, 撤销后 absent, 恢复后再得). Samsung 宿主往返因实验室会话断开未运行. 宿主与插件均未发布, 不计为设备验收组.
+本仓库 M7 工作树的 debug/androidTest APK 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB) 各 OK (17 tests); 本地 AutoJs6 master d9b4033bd + attachHostInfo 宿主与本地 0.2.3 release 插件在两台设备各完成 4/4 往返 (单源码/归档读到核实后的快照, 撤销后 absent, 恢复后再得). Samsung 实验室会话重复投递了三次启动, 暴露宿主侧并发启动 BUSY 一次, 只作观察. 宿主与插件均未发布, 不计为设备验收组.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
