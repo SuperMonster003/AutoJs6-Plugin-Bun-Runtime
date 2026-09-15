@@ -193,9 +193,10 @@ function buildReleaseNotes(manifest) {
     `Bun Runtime ${manifest.identity.version}${manifest.identity.prerelease ? " (API 28 patched experimental)" : ""}.`,
     "",
     ...(manifest.identity.profile === "official" ? [
-      "Requires Android 13 (API 33) or later and AutoJs6 build 5278 or later. Bundles the unmodified official Bun 1.4.0 runtime for arm64-v8a and baseline x86_64; Android API 28-32 remains unsupported.",
-      "Run one JavaScript or TypeScript source snapshot with the standalone `\"bun\";` directive. Execution uses `bun run --no-install`; relative project imports, AutoJs6 globals, and a Java bridge are not available. stdout/stderr use bounded Binder callback chunks.",
-      "All APKs pass 16 KB ZIP alignment and both ELF payloads meet at least 16 KB PT_LOAD alignment. General 16 KB execution support is unverified: the official native x86_64 runtime is rejected on pages larger than 4 KiB, and native arm64 has not been tested on 16 KB pages. The arm64 payload passed on a 16 KB x86_64 AVD through libndk_translation only.",
+      "Requires Android 13 (API 33) or later and AutoJs6 build 5278 or later. Bundles the unmodified official Bun 1.4.0 runtime for arm64-v8a and baseline x86_64 plus a small read-only supervisor helper per ABI; Android API 28-32 remains unsupported.",
+      "Run one JavaScript or TypeScript source snapshot with the standalone `\"bun\";` directive. Execution uses `bun run --no-install`; AutoJs6 globals and a Java bridge are not available. stdout/stderr use bounded Binder callback chunks. Timeouts, cancellation and output limits terminate the Bun child through the supervisor, and runtime error summaries are localized in ten languages.",
+      "Multi-file projects: the shared contract now accepts a bounded ZIP workspace archive (`workspaceArchiveVersion`, `workspaceEntryPoint`, capability `SUPPORTS_WORKSPACE_ARCHIVE`) and the plugin expands it into the private per-run workspace so relative imports resolve. The AutoJs6 side that packs a `project.json`/`package.json` directory is not part of a released AutoJs6 yet, so released hosts still send single files.",
+      "All APKs pass 16 KB ZIP alignment and every ELF payload meets at least 16 KB PT_LOAD alignment. Native arm64 16 KB execution passed the Binder suite on a Samsung SM-A566B (Android 16) with a development build of this plugin; signed-APK acceptance on 16 KB hardware was not repeated for this Release. The official native x86_64 runtime is still rejected on pages larger than 4 KiB.",
       "",
     ] : []),
     "The three signed APKs and their complete corresponding-source asset set are published separately in this same Release.",

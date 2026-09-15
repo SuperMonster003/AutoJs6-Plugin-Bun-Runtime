@@ -6,7 +6,7 @@
   "changelog_label_dependency": "依存関係",
   "$data": {
     "v0.2.2": {
-      "released_date": "2026/09/12",
+      "released_date": "2026/09/15",
       "feature": [
         "ワークスペースアーカイブによる複数ファイルプロジェクトの実行を追加 (M6): 共有契約に workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries, workspaceMaxBytes の要求キーと SUPPORTS_WORKSPACE_ARCHIVE 能力を追加し, runScript は上限付き ZIP スナップショットを実行ごとの私有ワークスペースへアトミックに展開してから, プロジェクトディレクトリを作業ディレクトリとしてエントリファイルを実行. 規則: 相対パスのみ, トラバーサル/絶対/バックスラッシュ/コロン/制御文字パスの拒否, 大文字小文字と Unicode 正規化形式を区別しない重複検出, ファイル/ディレクトリ競合検査, 最大 16384 エントリ, 展開後 64 MiB かつ 1 ファイル 16 MiB, エントリポイント検証とキャンセル時のクリーンアップ; 通常ファイルとディレクトリのみを作成し, キーを持たないホストは従来どおり単一ソース経路のまま. プロジェクトディレクトリを梱包するホストが必要; AutoJs6 エンジン側の変更は併せて準備済みで未公開"
       ],

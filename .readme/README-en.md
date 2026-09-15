@@ -233,7 +233,7 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 #### v0.2.2
 
-_2026/09/12_
+_2026/09/15_
 
 - `Feature` Add multi-file project execution through workspace archives (M6): the shared contract gains the workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries and workspaceMaxBytes request keys plus the SUPPORTS_WORKSPACE_ARCHIVE capability, and runScript expands a bounded ZIP snapshot atomically into the private per-run workspace before running the entry file with the project as its working directory. Rules: relative paths only, rejection of traversal, absolute, backslash, colon and control-character paths, case- and Unicode-form-insensitive duplicate detection, file/directory conflict checks, at most 16384 entries, 64 MiB uncompressed and 16 MiB per file, entry point validation and cancellation cleanup; only regular files and directories are created, and hosts without the key keep the unchanged single-source path. Requires a host that packs the project directory; the AutoJs6 engine change is prepared alongside and not yet released
 - `Fix` Fix experimental watch reload leaking descriptors when close_range fails: mark actual descriptors CLOEXEC before exec with the existing bounded raw-syscall fallback, and stop on incomplete setup. Preserve stdio, explicit IPC and the existing signal lifecycle. Complete-source GCC/Clang controls cover real exec, high descriptors, lowered hard limits and injected failures; new native builds and unchanged Android suites are recorded separately. Historical failures, official payloads and distribution boundaries remain unchanged
