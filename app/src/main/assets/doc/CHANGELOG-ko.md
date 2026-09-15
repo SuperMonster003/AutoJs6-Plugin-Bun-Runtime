@@ -9,10 +9,12 @@
 ###### 2026/09/15
 
 * `힌트` 아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
+* `기능` M7 첫 번째 호스트 기능: 읽기 전용 호스트 정보 스냅샷. 호스트가 runScript 요청에 `hostInfoVersion = 1`과 `hostInfo` (패키지 이름, 선택적 versionDate와 languageTag)를 담아 보내면 플러그인은 그 패키지가 Binder 호출자 UID에 속하는지 확인하고, PackageManager로 호스트 버전을 직접 확인한 뒤, 호스트/플러그인/이번 실행의 사실을 16 KiB 이하의 JSON으로 실행 디렉터리의 `autojs6/host-info.json` (`project` 밖, 실행 디렉터리와 함께 삭제)에 쓰고 환경 변수 `AUTOJS6_HOST_INFO_FILE`로 스크립트에 알립니다; 종료 Bundle에 `hostInfoDelivered`가 추가됩니다. 기능 비트 `SUPPORTS_HOST_INFO`; 환경 변수 접두사 `AUTOJS6_`는 플러그인이 예약하며 호스트 요청에 포함되면 INVALID_REQUEST로 거부하고, 위장한 패키지 이름이나 알 수 없는 버전도 Bun 시작 전에 거부합니다. 공유 계약 AAR은 14073 bytes로 갱신; 스냅샷을 제공하지 않는 호스트의 동작은 그대로입니다
 * `개선` 게시된 v0.2.2 APK/소스 자산 검증과 네 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.0 에서 덮어쓰기 업그레이드, Redmi API 33 arm64 와 x86_64 API 33 AVD 는 새로 설치하여 각각 force-stop 전후 9/9 그룹 통과. 게시된 태그를 다시 쓰거나 Android/16 KB 호환 범위를 확대하지 않음
 * `개선` 호스트 master (7c31269cc) 에서 로컬 빌드한 AutoJs6 와 게시된 v0.2.2 x86_64 플러그인으로 API 33 AVD 에서 호스트-플러그인 실제 프로젝트 왕복 검증: 상대 import 와 JSON import 가 있는 project.json 프로젝트, package.json 의 TypeScript 프로젝트, 그리고 여전히 단일 파일로 실패하는 단독 파일 대조군. 호스트 자체 게시는 아직 진행되지 않음
 * `개선` v0.2.2 릴리스 증거에 네이티브 arm64 16 KiB 하드웨어에서의 서명된 최종 APK 수락 검증을 보충: 게시된 arm64-v8a APK 를 Samsung SM-A566B (API 36, Remote Test Lab) 에 새로 설치하여 force-stop 전후 각 9/9 그룹 통과, 설치된 바이트를 릴리스 자산에 바인딩, 이후 제거. 기록은 이제 5개 환경을 포함
 * `개선` 동일한 로컬 빌드 AutoJs6 호스트 (master 7c31269cc) 와 게시된 v0.2.2 arm64-v8a 플러그인으로 네이티브 ARM64 실기기 2대에서 호스트-플러그인 실제 프로젝트 왕복을 반복: Samsung SM-A566B (API 36, 16 KiB 페이지) 와 Redmi 22120RN86C (API 33) 에서 각각 project.json 프로젝트 2회, package.json 의 TypeScript 프로젝트 1회, 단독 파일 대조군을 실행하여 모두 예상대로 완료. 호스트 게시 여부는 여전히 사용자의 결정
+* `개선` 두 개의 새 테스트 (스냅샷은 제공될 때만 전달되고 검증됨, 호스트 globals는 ReferenceError로 명확히 실패)를 포함한 instrumentation 스위트를 Redmi 22120RN86C (API 33)와 Samsung SM-A566B (API 36, 16 KiB 페이지)에서 실행해 각각 OK (17 tests); 로컬 빌드 AutoJs6 호스트 (master d9b4033bd + attachHostInfo)와 로컬 0.2.3 release 플러그인으로 Redmi에서 호스트-플러그인 스냅샷 왕복을 완료: 단일 파일과 project.json 프로젝트 모두 검증된 호스트/플러그인/실행 사실을 읽고, 호스트 권한을 철회하면 스크립트가 absent를 받으며, 복원하면 다시 스냅샷을 받음. 호스트는 사용자의 원래 APK로 복원됨; 기록은 docs/compatibility/2026-09-16-m7-host-info-snapshot
 
 # v0.2.2
 

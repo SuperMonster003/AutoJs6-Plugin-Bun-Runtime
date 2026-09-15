@@ -1,6 +1,6 @@
 # M6 设计稿: 工作区归档 (workspace archive) 契约与接入
 
-状态: 已落锁并接入, 2026-09-15 (提案于 2026-09-14). 共享契约常量, 插件 `runScript` 接入与宿主 `BunPluginScriptEngine` 打包均已实现并通过编译/单元测试; 真机往返与宿主发布待做. 下文第 3-5 节即为实际实现的约定.
+状态: 已落锁并接入, 2026-09-15 (提案于 2026-09-14). 共享契约常量, 插件 `runScript` 接入与宿主 `BunPluginScriptEngine` 打包均已实现并通过编译/单元测试; 真机往返已完成 (2026-09-15, x86_64 AVD 与 ARM64 API 33 / API 36 真机), 宿主发布由用户决定. 下文第 3-5 节即为实际实现的约定.
 
 ## 1. 目标与边界
 
@@ -87,7 +87,7 @@ finally: 删除本次 workspace (含 project 与 staging)         # 现状不变
 - [x] JVM 单元测试 `BunWorkspaceArchiveTest`: 嵌套导入布局与 Unicode 路径, 显式目录, 各类非法路径, 重复与冲突, 上限与钳制, 入口校验, 空/非 ZIP/截断输入, 取消清理, 已有状态拒绝覆盖.
 - [x] 契约常量落锁后的 `BunRuntimeContractTest` (宿主仓库, 3/3) 与插件 `BunWorkspaceRequestTest` (`parseWorkspace` 纯函数) 单元测试. (2026-09-15)
 - [x] instrumentation: 相对 ESM import, JSON 导入, `import.meta.dir` 指向 `project`, 穿越/缺失入口/非 ZIP 拒绝, 展开后清理, 后续单源码恢复; 三台 ARM64 真机 (API 33/33/35) 各两轮通过, 见 `docs/compatibility/2026-09-15-m6-workspace-archive.md`. (2026-09-15)
-- [ ] API 33 与 API 35 原生 arm64 真机各完成一次多文件项目往返, 记入 `docs/compatibility`.
+- [x] API 33 与 API 35 原生 arm64 真机各完成一次多文件项目往返, 记入 `docs/compatibility`. (2026-09-15: 本地宿主构建的往返在 API 33 (Redmi) 与 API 36 / 16 KiB (Samsung) 真机完成, 见 `2026-09-15-m6-host-round-trip-arm64.md`; API 35 (Xiaomi) 只做了插件侧 Binder 往返)
 
 ## 8. 明确不做
 

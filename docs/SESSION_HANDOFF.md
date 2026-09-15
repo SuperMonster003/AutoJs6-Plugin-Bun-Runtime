@@ -1,4 +1,4 @@
-# 当前阶段: v0.2.2 已公开发布, M6 端到端技术验证完成 (含 ARM64 真机与 16 KiB 验收), 宿主暂不发版, M7 提前开始 (2026-09-15)
+# 当前阶段: v0.2.2 已公开发布, M6 端到端完成, M7 第一项能力 (宿主信息快照) 已接入并通过真机验证, 宿主暂不发版 (2026-09-16)
 
 2026-09-15, 从 master 966cd1a 发布 v0.2.2 (P2 发布门禁). 本轮一个发布门禁设备批次 (三台 ARM64 真机 + 一台 x86_64 API 33 AVD), 没有 native 构建, 宿主仓库未触碰.
 
@@ -29,7 +29,14 @@
   与 Redmi 22120RN86C (`install -r` 覆盖用户 5280 构建, 结束后用 `%TEMP%/redmi-autojs6-base.apk` 备份 `install -r` 还原, SHA-256 `340536cb…` 核对) 各跑四次, 结果与 x86_64 AVD 一致;
   记录 `docs/compatibility/2026-09-15-m6-host-round-trip-arm64.json/.md` (index adapter, supplement), 原始 logcat/检查/清理输出在本地 `.git/host-roundtrip-arm64-20260915/`.
   用户指示: 除 Sony XQ-DQ72 (`QV770340J7`) 外的物理设备允许覆盖/重装宿主; 宿主 master 已含 `7acfd5d8e` (控制台 `.ts` 标签修复), 本轮宿主构建早于该提交, 未覆盖.
-- 下一步: 宿主暂不发版 (用户决定 2026-09-15), M7 最小能力桥提前开始 (接口设计评审稿先行, 契约改动进宿主仓库 `plugin-api/bun-runtime-api`); 宿主发版后只需更新 README FAQ 与排错指南的 '尚未发布' 表述.
+- M7 第一项能力 (2026-09-16): 设计稿 `docs/design/m7-host-capability-bridge.md` (通用框架 + 只读宿主信息快照 v1). 宿主仓库 (master `d9b4033bd`, 未提交): `BunRuntimeContract` 新增 `HOST_INFO_*` / `KEY_HOST_INFO*` / `RESERVED_ENVIRONMENT_PREFIX`, `BunPluginCapabilityKeys.SUPPORTS_HOST_INFO`, `BunRuntimeContractTest` 4/4,
+  新 `BunHostCapabilityGrants` (SharedPreferences `bun_host_capability_grants`, 键 `host_info`, 默认开启), `BunPluginScriptEngine.attachHostInfo` (能力位 + 授权时附加 `hostInfoVersion`/`hostInfo{packageName, versionDate, languageTag}`); AAR 重发 14073 bytes (`69674a0b…`) 并锁入本仓库.
+  插件: `BunExecutionRequest.parseHostInfo`/`validateEnvironmentName` (保留 `AUTOJS6_`), `BunHostInfoSnapshot` (固定单行 JSON, RFC 8259 转义, <= 16 KiB), `BunRuntimeService.materializeHostInfo` (Binder UID -> 包名核对, `PackageManager` 解析版本, 写 `<workspace>/autojs6/host-info.json`, 环境变量 `AUTOJS6_HOST_INFO_FILE`, 终态 `hostInfoDelivered`),
+  manifest `<queries>` 声明 `org.autojs.autojs6`, 能力位 `SUPPORTS_HOST_INFO`; 单测 45/45 (新增 8), lint 无新问题.
+- M7 真机验证 (2026-09-16 00:44-00:54 +08:00): instrumentation (`-e requiredApiLevel <api> -e requiredPageSizeBytes <page>` 必填) 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (`localhost:37478`, API 36, 16 KiB) 各 OK (17 tests); 前两次尝试分别因误装 `.diagnostics` 后缀的旧 debug APK (需 `:app:assembleDebug`, `assembleDebugAndroidTest` 不重建应用 APK) 与 `process.cwd()` 符号链接差异 (改 realpath 比较) 重跑.
+  宿主往返: 宿主 `:app:assembleAppDebug` arm64 debug APK (`6afee80a…`) `install -r` 覆盖 Redmi 用户宿主, 本地 `:app:assembleRelease` 插件 (`50eb3fa0…`), 夹具 `/sdcard/AutoJs6/bun-hostinfo/{project,bare}`; project/bare 读到核实后的快照, 撤销 (`am force-stop` 后 `run-as org.autojs.autojs6 sh < 本地脚本` 写 `shared_prefs/bun_host_capability_grants.xml`; 经 `adb shell` 传引号或 here-document 都不可行) 后 absent, 删除偏好文件后恢复.
+  Samsung 宿主装入后 Remote Test Lab 会话断开, 未跑宿主往返. Redmi 已卸载插件并用 `%TEMP%/redmi-autojs6-base.apk` 还原宿主 (`340536cb…` 核对). 记录 `docs/compatibility/2026-09-16-m7-host-info-snapshot.json/.md` (index adapter, supplement); 原始输出在本地 `.git/host-hostinfo-20260916/`.
+- 下一步: 宿主仓库提交 M7 改动 (契约 + 引擎 + changelog 十语言, README 由 `py generate_markdown.py` 生成; 插件中心的 `host_info` 开关 UI 作为后续); 宿主发版由用户决定, 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述; M7 第二项能力 (若为动态调用) 先做接口评审 (Binder broker + 子进程通道, cancellation/backpressure/并发).
 
 ---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)

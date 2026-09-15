@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 為什麼在 Bun 腳本裡用不了 `click()`, `toast()` 這些 AutoJs6 函式?
 
-Bun 執行在獨立行程中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函式不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意暫不提供, 相關計畫見路線圖.
+Bun 執行在獨立行程中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函式不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意不提供自動化介面; 第一項唯讀能力 (宿主資訊快照, 由環境變數 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 檔案, 含宿主與插件版本等資訊) 已在插件側實作, 待 AutoJs6 宿主發布對應版本後可用, 相關計畫見路線圖.
 
 #### 可以使用 npm 套件嗎?
 
@@ -236,10 +236,12 @@ default timeout: 60 seconds
 _2026/09/15_
 
 - `提示` 尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本
+- `新增` M7 第一項宿主能力: 唯讀的宿主資訊快照. 宿主在 runScript 請求裡攜帶 `hostInfoVersion = 1` 與 `hostInfo` (套件名稱, 可選的 versionDate 與 languageTag) 時, 插件核對套件名稱屬於 Binder 呼叫方 UID, 自行透過 PackageManager 解析宿主版本, 把宿主/插件/本次執行的事實寫成不超過 16 KiB 的 JSON 放到執行目錄的 `autojs6/host-info.json` (`project` 之外, 隨執行目錄刪除), 並透過環境變數 `AUTOJS6_HOST_INFO_FILE` 告知腳本; 終態新增 `hostInfoDelivered`. 能力位 `SUPPORTS_HOST_INFO`; 環境變數前綴 `AUTOJS6_` 歸插件保留, 宿主請求攜帶即以 INVALID_REQUEST 拒絕, 冒用套件名稱或未知版本同樣在啟動 Bun 之前拒絕. 共用契約 AAR 升級為 14073 bytes, 未提供快照的宿主行為完全不變
 - `優化` 封存已發布 v0.2.2 的 APK/對應原始碼資產驗證及四個環境的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發布 v0.2.0 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, 各在 force-stop 前後通過 9/9 組; 不改寫已發布標籤, 不擴大 Android 或 16 KB 相容性聲明
 - `優化` 用從宿主 master (7c31269cc) 本地建置的 AutoJs6 與已發布的 v0.2.2 x86_64 外掛程式在 API 33 AVD 上驗證宿主到外掛程式的真實專案往返: 含相對匯入與 JSON 匯入的 project.json 專案, package.json 的 TypeScript 專案, 以及仍按單檔案失敗的裸檔案對照; 宿主自身的發布仍待進行
 - `優化` 為 v0.2.2 發布證據補充原生 arm64 16 KiB 硬體上的簽章最終 APK 驗收: 已發布的 arm64-v8a APK 在 Samsung SM-A566B (API 36, Remote Test Lab) 全新安裝, force-stop 前後各通過 9/9 組, 安裝後位元組綁定到發布資產, 驗收後已解除安裝; 記錄現涵蓋五個環境
 - `優化` 用同一本地建置的 AutoJs6 宿主 (master 7c31269cc) 與已發布的 v0.2.2 arm64-v8a 外掛程式在兩台原生 ARM64 實機上重複宿主到外掛程式的真實專案往返: Samsung SM-A566B (API 36, 16 KiB 頁) 與 Redmi 22120RN86C (API 33) 各執行 project.json 專案兩輪, package.json 的 TypeScript 專案一輪以及裸檔案對照, 結果均符合預期; 宿主是否發布仍由使用者決定
+- `優化` 在 Redmi 22120RN86C (API 33) 與 Samsung SM-A566B (API 36, 16 KiB 頁) 上執行含兩項新用例 (快照僅在提供時交付並核實, 宿主全域以 ReferenceError 明確失敗) 的 instrumentation 套件, 各 OK (17 tests); 並用本機建置的 AutoJs6 宿主 (master d9b4033bd + attachHostInfo) 與本機 0.2.3 release 插件在 Redmi 完成宿主到插件的快照往返: 單一原始碼與 project.json 專案都讀到核實後的宿主/插件/執行事實, 撤銷宿主授權後腳本得到 absent, 恢復後再次得到快照, 宿主已還原為使用者原 APK; 記錄見 docs/compatibility/2026-09-16-m7-host-info-snapshot
 
 #### v0.2.2
 

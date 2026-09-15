@@ -19,7 +19,7 @@
 | P0 | M6 多文件项目执行 (插件侧) | 有界工作区归档展开器 + 单元测试 + 契约 v2 提案, 见 M6 条目与 [设计稿](docs/design/m6-workspace-archive.md) | 已完成 (2026-09-14, G1) |
 | P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 插件侧完成并通过三台 ARM64 真机往返 (2026-09-15, G1, [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md)); 宿主到插件的真实项目往返已用本地构建的宿主 (master `7c31269cc`, 官方证书签名) 与已发布 v0.2.2 x86_64 插件在 API 33 AVD 完成 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md)), 并在 Samsung SM-A566B (API 36, 16 KiB) 与 Redmi 22120RN86C (API 33) 两台原生 ARM64 真机用 arm64-v8a 插件重复通过 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip-arm64.md)); 宿主暂不发版 (用户决定, 2026-09-15), P1 技术部分完成 |
 | P2 | M1-B 收尾与发布 | 从已发布 v0.2.0 覆盖升级与全新安装验证 (v0.1.0 从未公开发布, 不存在该升级路径), 然后发布 v0.2.2 (监督器, 本地化错误, M6) | 已完成 (2026-09-15, G1/G2/G3, [发布报告](docs/compatibility/2026-09-15-v0.2.2-release.md)) |
-| P3 | M7 最小能力桥 | 只读的宿主版本/环境查询能力, 窄接口 + 能力协商 | 待做 |
+| P3 | M7 最小能力桥 | 只读的宿主信息快照, 窄接口 + 能力协商 + 可撤销授权 | 插件侧已接入并在双机验证 (2026-09-16); 宿主开关 UI 与发版待做 |
 | 冻结 | M3/M4/M5 实验线 | 停在十三补丁 baseline `1.4.0+e8b129616`; 只在 (a) 用户报告的真实失败, (b) 上游 Bun 修复落地需要重建, 或 (c) 发布门禁本身要求时才新增设备批次 | 已冻结 |
 
 **诊断预算规则 (对所有里程碑生效):**
@@ -48,8 +48,8 @@
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 本地宿主构建的真实项目往返已在 x86_64 AVD 与两台 ARM64 真机通过, 宿主暂不发版); M7 最小能力桥 (用户同意提前开始); M9 文档持续 |
-| 尚未开始 | M7 AutoJs6 能力桥 (M6 端到端之后开始) |
+| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 本地宿主构建的真实项目往返已在 x86_64 AVD 与两台 ARM64 真机通过, 宿主暂不发版); M7 最小能力桥 (第一项能力 "宿主信息快照" 已接入并通过双机 instrumentation 与 Redmi 宿主往返, 宿主开关 UI 与发版待做); M9 文档持续 |
+| 尚未开始 | M7 后续能力 (动态调用型能力需另行接口评审, 见 `docs/design/m7-host-capability-bridge.md` 第 2 节) |
 | 当前缺口 | M6 插件侧已随 v0.2.2 发布, 宿主打包代码已提交到宿主仓库并用本地宿主构建通过真实项目往返 (x86_64 AVD, ARM64 API 33 真机, ARM64 API 36 / 16 KiB 真机), 但宿主暂不发版 (用户决定, 2026-09-15), 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
 
 ## 如何阅读这份路线图
@@ -117,7 +117,7 @@
 | M4 Android 9+ 稳定化 | 冻结 (等待实验线解冻) | 转正门禁只随用户报告的失败, 上游修复或发布门禁重新排期 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; v0.2.2 最终签名 APK 验收完成: x86_64 (4 KiB AVD) 与原生 ARM64 16 KiB (Samsung SM-A566B API 36, 发布后同日补充) | JSC 大页候选与 DFG 采样根因停放 | 构建/测试/设备/发布 |
 | M6 多文件项目执行 | 插件侧已发布, 宿主往返已验证 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; 三台 ARM64 真机 (API 33/33/35) 九项 Binder 54/54; 本地宿主构建 + v0.2.2 插件在 x86_64 AVD 及 ARM64 API 33 / API 36 (16 KiB) 真机完成真实项目往返; 宿主暂不发版 (用户决定) | API/插件/宿主 |
-| M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
+| M7 AutoJs6 能力桥 | 第一项能力已接入 (2026-09-16) | 通用框架 (协商/授权/版本/可信来源/大小/归属/命名空间) 落锁; 只读宿主信息快照: 契约 AAR 重发, 插件 `runScript` 接入, 宿主 `attachHostInfo` + 可撤销授权; 双机 instrumentation 与 Redmi 宿主往返 (含撤销/恢复) 通过; 宿主开关 UI 与发版待做 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
 | M9 文档与开发者体验 | 进行中 | 通俗文档, 可运行示例, 排错指南与人类可读兼容矩阵 | 插件/发布 |
 
@@ -402,11 +402,11 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 **目标:** 让 Bun 脚本能够调用 AutoJs6 宿主的部分能力 -- 每项能力都要窄接口, 显式授权, 可版本协商, 可单独撤销; 绝不把宿主对象图整体暴露给脚本.
 
-- [ ] (API/宿主) 为每项宿主能力设计窄接口, 权限模型, 版本和能力协商, 不把 Java object graph, Rhino globals 或 Android automation internals 直接暴露给 Bun.
-- [ ] (API) 定义 Bun 到宿主调用的 cancellation, backpressure, 并发, 大小限制, 错误码和资源所有权.
-- [ ] (插件/宿主) 先实现一个低风险, 只读, 可独立撤销的最小能力 (候选方向: 宿主版本与运行环境信息查询; 具体选型在接口设计评审后落锁), 端到端验证后再增加其他自动化接口.
-- [ ] (测试) 覆盖插件/宿主版本错配, 权限拒绝, 宿主进程死亡, Binder backpressure, 超时和重连.
-- [ ] (发布) 未实现的 Rhino/Node globals 始终明确报错, 不静默改变引擎或回退到其他运行时.
+- [x] (API/宿主) 为每项宿主能力设计窄接口, 权限模型, 版本和能力协商, 不把 Java object graph, Rhino globals 或 Android automation internals 直接暴露给 Bun. (2026-09-16: 通用框架见 `docs/design/m7-host-capability-bridge.md` 第 2 节; 契约常量 `HOST_INFO_*` 与能力位 `SUPPORTS_HOST_INFO` 已落锁并重发 AAR 14073 bytes, 协议版本/事务/错误码不变)
+- [ ] (API) 定义 Bun 到宿主调用的 cancellation, backpressure, 并发, 大小限制, 错误码和资源所有权. (v1 静态快照只定义了大小限制, 错误码映射与资源归属; cancellation/backpressure/并发留到第一项动态调用能力的接口评审)
+- [x] (插件/宿主) 先实现一个低风险, 只读, 可独立撤销的最小能力 (候选方向: 宿主版本与运行环境信息查询; 具体选型在接口设计评审后落锁), 端到端验证后再增加其他自动化接口. (2026-09-16: 选型落锁为宿主信息快照 `AUTOJS6_HOST_INFO_FILE`; 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine.attachHostInfo` 与 `BunHostCapabilityGrants`; Redmi 宿主往返含撤销/恢复通过, 见 `docs/compatibility/2026-09-16-m7-host-info-snapshot.md`)
+- [ ] (测试) 覆盖插件/宿主版本错配, 权限拒绝, 宿主进程死亡, Binder backpressure, 超时和重连. (2026-09-16: 版本错配 (未知 `hostInfoVersion`), 冒用包名, 保留变量与撤销授权已由 JVM/instrumentation/宿主往返覆盖; 宿主进程死亡, backpressure, 超时与重连属于动态调用, 随后续能力再做)
+- [x] (发布) 未实现的 Rhino/Node globals 始终明确报错, 不静默改变引擎或回退到其他运行时. (2026-09-16: instrumentation `hostGlobalsAreAbsentAndFailLoudly` 双机通过; README 与排错指南说明)
 
 **M7 验收条件:** 每项能力都可单独协商, 授权, 测试和撤销; Bun 子进程隔离不被宣传为安全沙箱.
 

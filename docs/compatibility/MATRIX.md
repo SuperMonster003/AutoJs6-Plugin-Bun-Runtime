@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 131 份源报告, 225 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 132 份源报告, 225 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -1376,5 +1376,13 @@ get-state前设备消失, 无安装或运行. 失败单独保留, 同一APK改�
 来源: [2026-09-15-m6-host-round-trip.json](2026-09-15-m6-host-round-trip.json).
 
 AutoJs6 master 7c31269cc 的本地 debug 构建 (官方证书签名) 与已发布 v0.2.2 x86_64 插件: project.json 项目两轮与 package.json TypeScript 项目通过, 裸文件对照按单源码失败. 宿主未发布, 不计为设备验收组.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M7 宿主信息快照真机验证 (instrumentation 双机 + Redmi 宿主往返, 含授权撤销)
+
+来源: [2026-09-16-m7-host-info-snapshot.json](2026-09-16-m7-host-info-snapshot.json).
+
+本仓库 M7 工作树的 debug/androidTest APK 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB) 各 OK (17 tests); 本地 AutoJs6 master d9b4033bd + attachHostInfo 宿主与本地 0.2.3 release 插件在 Redmi 完成 4/4 往返 (单源码/归档读到核实后的快照, 撤销后 absent, 恢复后再得). Samsung 宿主往返因实验室会话断开未运行. 宿主与插件均未发布, 不计为设备验收组.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.

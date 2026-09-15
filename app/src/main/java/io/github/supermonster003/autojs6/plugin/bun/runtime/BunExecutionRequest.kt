@@ -9,6 +9,13 @@ internal data class BunWorkspaceRequest(
     val limits: BunWorkspaceLimits,
 )
 
+/** Present only when the host offered the read-only host info snapshot (M7, first capability). */
+internal data class BunHostInfoRequest(
+    val packageName: String,
+    val versionDate: String?,
+    val languageTag: String?,
+)
+
 internal data class BunExecutionRequest(
     val executionId: String,
     val sourceName: String,
@@ -17,11 +24,14 @@ internal data class BunExecutionRequest(
     val timeoutMillis: Long,
     val outputByteLimit: Long,
     val workspace: BunWorkspaceRequest? = null,
+    val hostInfo: BunHostInfoRequest? = null,
 )
 
 internal object BunExecutionRequestParser {
     private val executionIdPattern = Regex("[A-Za-z0-9._-]{1,128}")
     private val environmentNamePattern = Regex("[A-Za-z_][A-Za-z0-9_]*")
+    private val packageNamePattern = Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+")
+    private val languageTagPattern = Regex("[A-Za-z0-9]{1,8}(-[A-Za-z0-9]{1,8})*")
 
     fun isValidExecutionId(value: String): Boolean = executionIdPattern.matches(value)
 
@@ -50,7 +60,7 @@ internal object BunExecutionRequestParser {
         val environmentBundle = request.getBundle(BunRuntimeContract.KEY_ENVIRONMENT)
         val environment = LinkedHashMap<String, String>()
         environmentBundle?.keySet()?.forEach { name ->
-            require(environmentNamePattern.matches(name)) { "Invalid environment variable name" }
+            validateEnvironmentName(name)
             val value = environmentBundle.get(name)
             require(value is String) { "Environment values must be strings" }
             require('\u0000' !in value) { "Environment values cannot contain NUL" }
@@ -84,6 +94,19 @@ internal object BunExecutionRequestParser {
             null
         }
 
+        // The host info marker is opt-in as well: absent means no snapshot and no reserved environment variable.
+        val hostInfo = if (request.containsKey(BunRuntimeContract.KEY_HOST_INFO_VERSION)) {
+            val bundle = request.getBundle(BunRuntimeContract.KEY_HOST_INFO)
+            parseHostInfo(
+                version = request.getInt(BunRuntimeContract.KEY_HOST_INFO_VERSION, -1),
+                packageName = bundle?.getString(BunRuntimeContract.HOST_INFO_KEY_PACKAGE_NAME),
+                versionDate = bundle?.getString(BunRuntimeContract.HOST_INFO_KEY_VERSION_DATE),
+                languageTag = bundle?.getString(BunRuntimeContract.HOST_INFO_KEY_LANGUAGE_TAG),
+            )
+        } else {
+            null
+        }
+
         return BunExecutionRequest(
             executionId = executionId,
             sourceName = sourceName,
@@ -92,7 +115,42 @@ internal object BunExecutionRequestParser {
             timeoutMillis = timeoutMillis,
             outputByteLimit = outputByteLimit,
             workspace = workspace,
+            hostInfo = hostInfo,
         )
+    }
+
+    /** Environment names follow the POSIX identifier form; the `AUTOJS6_` namespace belongs to the plugin. */
+    fun validateEnvironmentName(name: String) {
+        require(environmentNamePattern.matches(name)) { "Invalid environment variable name" }
+        require(!name.startsWith(BunRuntimeContract.RESERVED_ENVIRONMENT_PREFIX)) { "Reserved environment variable name" }
+    }
+
+    /**
+     * Validates the host info snapshot fields. Kept free of android.os types so JVM tests cover it. Only the
+     * package name is mandatory; the service later checks it against the Binder caller and resolves the host
+     * version itself. Blank advisory values count as absent.
+     */
+    fun parseHostInfo(version: Int, packageName: String?, versionDate: String?, languageTag: String?): BunHostInfoRequest {
+        require(version == BunRuntimeContract.HOST_INFO_VERSION) { "Unsupported host info version" }
+        require(!packageName.isNullOrBlank()) { "Host info package name is missing" }
+        require(packageName.toByteArray(Charsets.UTF_8).size <= BunRuntimeContract.MAX_HOST_INFO_VALUE_BYTES) {
+            "Host info package name is too long"
+        }
+        require(packageNamePattern.matches(packageName)) { "Invalid host info package name" }
+        val tag = advisoryHostInfoValue(languageTag, "Host info language tag")
+        require(tag == null || languageTagPattern.matches(tag)) { "Invalid host info language tag" }
+        return BunHostInfoRequest(
+            packageName = packageName,
+            versionDate = advisoryHostInfoValue(versionDate, "Host info version date"),
+            languageTag = tag,
+        )
+    }
+
+    private fun advisoryHostInfoValue(value: String?, label: String): String? {
+        val trimmed = value?.trim()?.takeIf(String::isNotEmpty) ?: return null
+        require(trimmed.toByteArray(Charsets.UTF_8).size <= BunRuntimeContract.MAX_HOST_INFO_VALUE_BYTES) { "$label is too long" }
+        require(trimmed.none(Char::isISOControl)) { "$label contains control characters" }
+        return trimmed
     }
 
     /**

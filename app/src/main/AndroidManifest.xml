@@ -3,6 +3,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="org.autojs.permission.PLUGIN" />
 
+    <!-- M7 host info snapshot: the runtime resolves the calling host's version from PackageManager instead of trusting the request. -->
+    <queries>
+        <package android:name="org.autojs.autojs6" />
+    </queries>
+
     <application
         android:allowBackup="false"
         android:extractNativeLibs="true"

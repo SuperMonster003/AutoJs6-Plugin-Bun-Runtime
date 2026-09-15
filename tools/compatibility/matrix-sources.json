@@ -1438,6 +1438,17 @@
       "category": "official",
       "label": "v0.2.2 已签名最终 APK 的设备验收",
       "note": "五个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 发布后同日补充 Samsung SM-A566B API 36 原生 arm64 16 KiB 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时."
+    },
+    {
+      "file": "2026-09-16-m7-host-info-snapshot.json",
+      "sha256": "6ff8d98dc77596aaabf51b9ad53b6cf19c676618ac87ab8ceee48f5194ba5c62",
+      "schema": 1,
+      "kind": "m7-host-info-snapshot",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M7 宿主信息快照真机验证 (instrumentation 双机 + Redmi 宿主往返, 含授权撤销)",
+      "note": "本仓库 M7 工作树的 debug/androidTest APK 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB) 各 OK (17 tests); 本地 AutoJs6 master d9b4033bd + attachHostInfo 宿主与本地 0.2.3 release 插件在 Redmi 完成 4/4 往返 (单源码/归档读到核实后的快照, 撤销后 absent, 恢复后再得). Samsung 宿主往返因实验室会话断开未运行. 宿主与插件均未发布, 不计为设备验收组."
     }
   ]
 }
