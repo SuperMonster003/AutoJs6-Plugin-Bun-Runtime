@@ -42,6 +42,8 @@ jobs:
           node --test tools/diagnostics/runtime-message-common.test.mjs
           node --test tools/diagnostics/probe-lifecycle-common.test.mjs
           python3 -B tools/bun-runtime/supervisor/test_supervisor.py
+          # Hosted runners cap the descriptor hard limit below the FD 70000 fixtures; raise both limits for this shell.
+          sudo prlimit --pid "$$" --nofile=1048576:1048576 || echo "::warning::could not raise the descriptor hard limit; FD-limit fixtures may fail"
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/startup-cloexec/test_startup_cloexec.py)
           (ulimit -n 1048576; python3 -B tools/bun-runtime/experimental/api28/spawn-fd/test_spawn_fd.py)
           python3 -B tools/bun-runtime/experimental/api28/scoped-open/test_scoped_open.py
