@@ -1,3 +1,26 @@
+# 当前阶段: v0.2.2 已公开发布, M6 端到端等待宿主发版 (2026-09-15)
+
+2026-09-15, 从 master 966cd1a 发布 v0.2.2 (P2 发布门禁). 本轮一个发布门禁设备批次 (三台 ARM64 真机 + 一台 x86_64 API 33 AVD), 没有 native 构建, 宿主仓库未触碰.
+
+- 发布顺序: 先修 CI (ba5c8c3 用 `sudo prlimit` 提升 hosted runner 的描述符硬上限, e747643 让 startup CLOEXEC 装具编译失败时打印编译器诊断,
+  966cd1a 用 `#ifndef` 兼容 glibc 2.34+ 在 `<unistd.h>` 定义的 `CLOSE_RANGE_CLOEXEC` 宏), 三个工作流全绿后把注释标签 `v0.2.2` 从 ba5c8c3 移到 966cd1a
+  (当时尚无 Release, 只是移动未发布的标签). AGP 会把提交号写进 `META-INF/version-control-info.textproto`, 所以每移一次提交都要重建 APK 并重做验收;
+  d4c790a 字节上的第一轮验收 (`.git/release-acceptance-v022-20260915/`) 作废, 不计入证据.
+- 验收方式: `.git/release-probe-20260915/` 的纯 Java `Instrumentation` 通过 `.git/release-instrumentation-20260915.gradle` 初始化脚本编译为 release 变体
+  androidTest APK (release 签名, 可对生产签名包做 instrument), 黑盒驱动生产 Binder 9 组 (安装后摘要, 权限/Wake, 发现/能力位/预热, JS/TS/Unicode/流式,
+  五个示例, M6 归档往返与敌意归档拒绝, 监督器超时/输出上限回收与本地化摘要, 取消后恢复, 解绑重连). 装有 AutoJs6 的设备用私有权限名探针,
+  AVD 用 `org.autojs.permission.PLUGIN` 探针; 构建脚本 `%TEMP%/release-build-20260915.sh` 三次 Gradle (release APK/单测/lint, 两种探针).
+  驱动 `.git/release-v022-acceptance-20260915.mjs`, 最终记录在 `.git/release-acceptance-v022-20260915-final/`.
+- 设备复位: Xiaomi 与 Sony 事先用 `E:/.wsl/release-assets/app-releases-v0.2.0-backup-20260915/` 的已发布 v0.2.0 APK 复位 (哈希核对), 覆盖升级到 v0.2.2 后保留;
+  Redmi 与 AVD `bun-hard-limit-api33-20260912` (端口 5602, 用后关闭) 全新安装后已卸载插件与探针. 三台真机上的 AutoJs6 未被触碰.
+- 资产: `node .git/release-v022-20260915.mjs assemble|verify|preflight|publish`, 目录 `E:/.wsl/release-assets/autojs6-plugin-bun-runtime-v0.2.2-966cd1a`,
+  13 个资产, GitHub digest 全部一致, 匿名下载 notice/manifest/SHA256SUMS 核对通过; 发布后 CI `Published release integrity` (run 34960659908) 通过.
+  ba5c8c3 与 d4c790a 的旧资产目录已删除.
+- 文档: 发布报告 `docs/compatibility/2026-09-15-v0.2.2-release.json` 与同名 md 已登记进兼容矩阵 (adapter `release`); changelog 开启 v0.2.3 开发快照,
+  `version.properties` 0.2.3 / build 8; ROADMAP P2 与 M1-B/M5 条目已更新.
+- 下一步: 等宿主 AutoJs6 发版后做宿主到插件的真实项目往返 (P1 收尾), 然后 M7 最小能力桥; 原生 ARM64 16 KiB 上的签名 APK 验收随下一次 Release.
+
+---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)
 
 2026-09-15, 从 master c900ac1 继续. 本轮一个设备批次 (三台 ARM64 真机, 见下), 没有 native 构建.

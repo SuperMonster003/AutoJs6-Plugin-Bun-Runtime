@@ -5,6 +5,15 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.2.3": {
+      "released_date": "2026/09/15",
+      "hint": [
+        "未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降"
+      ],
+      "improvement": [
+        "公開済み v0.2.2 の APK/ソース資産検証と 4 環境での署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.0 からの上書き更新, Redmi API 33 arm64 と x86_64 API 33 AVD は新規インストールで, いずれも force-stop 前後に 9/9 グループ通過. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない"
+      ]
+    },
     "v0.2.2": {
       "released_date": "2026/09/15",
       "feature": [

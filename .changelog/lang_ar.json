@@ -5,6 +5,15 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.3": {
+      "released_date": "2026/09/15",
+      "hint": [
+        "لقطة تطوير لم تنشر بعد; لا يزال المكون الإضافي الرسمي يتطلب Android 13 (API 33) أو أحدث"
+      ],
+      "improvement": [
+        "أرشفة أدلة التحقق من ملفات APK والمصادر المنشورة مع v0.2.2 واختبارات قبول ملفات APK النهائية الموقعة في أربع بيئات: ترقية فوق v0.2.0 المنشورة على Sony API 33 arm64 و Xiaomi API 35 universal, وتثبيت جديد على Redmi API 33 arm64 وعلى AVD x86_64 API 33, كل منها 9/9 مجموعات قبل force-stop وبعده; دون تغيير الوسم المنشور أو توسيع توافق Android وصفحات 16 KB"
+      ]
+    },
     "v0.2.2": {
       "released_date": "2026/09/15",
       "feature": [

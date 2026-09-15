@@ -3258,6 +3258,23 @@
         "totalTests": 54,
         "failedTests": 0
       }
+    },
+    {
+      "file": "2026-09-15-v0.2.2-release.json",
+      "sha256": "e031f26d56a31cf2c713e188470255d76aebaec3006691c66aad40872000292e",
+      "schema": 1,
+      "kind": null,
+      "adapter": "release",
+      "collection": "signedFinalApkDeviceAcceptance",
+      "category": "official",
+      "label": "v0.2.2 已签名最终 APK 的设备验收",
+      "note": "四个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时.",
+      "bytesUtf8Lf": 13426,
+      "rows": 4,
+      "reportedScope": "Published official v0.2.2 assets, signed final-APK in-place upgrade from the published v0.2.0 and fresh-install acceptance; does not close patched-runtime distribution or native arm64 16 KiB signed-APK gates.",
+      "reportedOutcome": null,
+      "distributionReady": null,
+      "summary": null
     }
   ],
   "rows": [
@@ -15548,6 +15565,230 @@
       "recordedOutcome": true,
       "status": "passed",
       "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-v0.2.2-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/0",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/0",
+      "category": "official",
+      "scope": "v0.2.2 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "arm64-v8a",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-v0.2.2-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/1",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/1",
+      "category": "official",
+      "scope": "v0.2.2 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "universal",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-v0.2.2-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/2",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/2",
+      "category": "official",
+      "scope": "v0.2.2 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "arm64-v8a",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-v0.2.2-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/3",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/3",
+      "category": "official",
+      "scope": "v0.2.2 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "x86_64",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 9,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
       "acceptedForRecordedScope": true
     }
   ]
