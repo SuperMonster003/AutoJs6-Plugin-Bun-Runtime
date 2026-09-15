@@ -5,6 +5,15 @@
   "changelog_label_improvement": "Mejora",
   "changelog_label_dependency": "Dependencia",
   "$data": {
+    "v0.2.4": {
+      "released_date": "2026/09/16",
+      "hint": [
+        "Versión de desarrollo aún no publicada; el plugin oficial sigue requiriendo Android 13 (API 33) o posterior"
+      ],
+      "improvement": [
+        "Archivar la verificación de APK y fuentes publicados con v0.2.3 y la aceptación de los APK finales firmados en cinco entornos sobre los bytes finales publicados: actualización sobre la v0.2.2 publicada en Sony API 33 arm64 y Xiaomi API 35 universal, instalación limpia en Redmi API 33 arm64, un AVD x86_64 API 33 y un Samsung SM-A566B API 36 arm64 nativo con páginas de 16 KiB, cada uno con 10/10 grupos antes y después de force-stop (el décimo grupo es la instantánea de información del host); la etiqueta publicada no se reescribe y la compatibilidad Android/16 KB no se amplía"
+      ]
+    },
     "v0.2.3": {
       "released_date": "2026/09/16",
       "feature": [
