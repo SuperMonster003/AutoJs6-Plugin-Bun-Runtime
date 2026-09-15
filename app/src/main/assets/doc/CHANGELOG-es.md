@@ -6,7 +6,7 @@
 
 # v0.2.2
 
-###### 2026/09/12
+###### 2026/09/15
 
 * `Función` Añade la ejecución de proyectos multiarchivo mediante archivos de espacio de trabajo (M6): el contrato compartido incorpora las claves de solicitud workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries y workspaceMaxBytes más la capacidad SUPPORTS_WORKSPACE_ARCHIVE, y runScript expande atómicamente una instantánea ZIP acotada en el espacio de trabajo privado de cada ejecución antes de ejecutar el archivo de entrada con el proyecto como directorio de trabajo. Reglas: solo rutas relativas, rechazo de rutas de escape, absolutas, con barra invertida, dos puntos o caracteres de control, detección de duplicados sin distinguir mayúsculas ni forma Unicode, comprobación de conflictos archivo/directorio, como máximo 16384 entradas, 64 MiB descomprimidos y 16 MiB por archivo, validación del punto de entrada y limpieza al cancelar; solo se crean archivos regulares y directorios, y los hosts sin la clave conservan la ruta de fuente única sin cambios. Requiere un host que empaquete el directorio del proyecto; el cambio del motor de AutoJs6 está preparado en paralelo y aún no publicado
 * `Corrección` Corregir la fuga de descriptores durante la recarga experimental con watch cuando falla close_range: marcar los FD reales con CLOEXEC antes de exec mediante la alternativa acotada existente y detenerse si la preparación queda incompleta. Mantener stdio, IPC explícito y el ciclo de señales. Los controles GCC/Clang con fuentes completas cubren exec real, FD altos, límites duros reducidos y errores inyectados; registrar por separado las nuevas compilaciones nativas y las suites Android sin cambios. Preservar los fallos históricos, los binarios oficiales y los límites de distribución

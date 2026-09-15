@@ -6,7 +6,7 @@
 
 # v0.2.2
 
-###### 2026/09/12
+###### 2026/09/15
 
 * `新增` 新增通过工作区归档执行多文件项目 (M6): 共享契约增加 workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries 与 workspaceMaxBytes 请求键及 SUPPORTS_WORKSPACE_ARCHIVE 能力位, runScript 把有界 ZIP 快照原子展开到本次运行的私有工作区后, 以项目目录为工作目录运行入口文件. 规则: 只接受相对路径, 拒绝穿越/绝对/反斜杠/冒号/控制字符路径, 大小写与 Unicode 形式不敏感的重复检测, 文件/目录冲突检查, 最多 16384 条目, 解压后 64 MiB 且单文件 16 MiB, 入口文件校验与取消清理; 只创建普通文件和目录, 不带该键的宿主继续走不变的单源码路径. 需要宿主打包项目目录; AutoJs6 引擎侧改动已同步准备, 尚未发布
 * `修复` 修复实验 watch 重载在 close_range 失败时泄漏描述符的问题: 在 exec 前使用既有有界 raw syscall fallback 为实际 FD 标记 CLOEXEC, 设置不完整时停止执行. 保留 stdio, 显式 IPC 和原信号生命周期. GCC/Clang 完整源码对照覆盖真实 exec, 高位 FD, 降低后的硬限制和注入失败; 新 native 构建与不变的 Android 套件分别记录. 历史失败, 官方产物及发布边界保持不变
