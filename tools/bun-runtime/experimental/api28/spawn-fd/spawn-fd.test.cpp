@@ -42,7 +42,9 @@ static long fakeSyscall(long number, ...);
 
 #define OS(name) OS_##name
 #define OS_LINUX 1
+#ifndef CLOSE_RANGE_CLOEXEC
 #define CLOSE_RANGE_CLOEXEC (1U << 2)
+#endif
 #include "spawn-range.inc"
 
 static int prepareChild()

@@ -91,7 +91,11 @@ static int fake_closedir(DIR* directory)
 #include "bun-startup-cloexec.h"
 
 #ifdef STARTUP_INTEGRATION
-static constexpr unsigned CLOSE_RANGE_CLOEXEC = 4;
+// glibc 2.34+ exposes CLOSE_RANGE_CLOEXEC from <unistd.h> under _GNU_SOURCE; older headers need the Linux value.
+#ifndef CLOSE_RANGE_CLOEXEC
+#define CLOSE_RANGE_CLOEXEC (1U << 2)
+#endif
+static_assert(CLOSE_RANGE_CLOEXEC == 4U, "harness expects the Linux CLOSE_RANGE_CLOEXEC value");
 static ssize_t bun_close_range(unsigned first, unsigned last, unsigned flags)
 {
     assert(first == 4 && last == ~0U && flags == CLOSE_RANGE_CLOEXEC);
