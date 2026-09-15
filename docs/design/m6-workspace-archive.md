@@ -86,7 +86,7 @@ finally: 删除本次 workspace (含 project 与 staging)         # 现状不变
 
 - [x] JVM 单元测试 `BunWorkspaceArchiveTest`: 嵌套导入布局与 Unicode 路径, 显式目录, 各类非法路径, 重复与冲突, 上限与钳制, 入口校验, 空/非 ZIP/截断输入, 取消清理, 已有状态拒绝覆盖.
 - [x] 契约常量落锁后的 `BunRuntimeContractTest` (宿主仓库, 3/3) 与插件 `BunWorkspaceRequestTest` (`parseWorkspace` 纯函数) 单元测试. (2026-09-15)
-- [ ] instrumentation (已编写, 随 `assembleDebugAndroidTest` 编译通过, 未在设备执行): 相对 ESM import, JSON 导入, `import.meta.dir` 指向 `project`, 穿越/缺失入口/非 ZIP 拒绝, 展开后清理, 后续单源码恢复.
+- [x] instrumentation: 相对 ESM import, JSON 导入, `import.meta.dir` 指向 `project`, 穿越/缺失入口/非 ZIP 拒绝, 展开后清理, 后续单源码恢复; 三台 ARM64 真机 (API 33/33/35) 各两轮通过, 见 `docs/compatibility/2026-09-15-m6-workspace-archive.md`. (2026-09-15)
 - [ ] API 33 与 API 35 原生 arm64 真机各完成一次多文件项目往返, 记入 `docs/compatibility`.
 
 ## 8. 明确不做

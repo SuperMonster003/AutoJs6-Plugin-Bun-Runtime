@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 127 份源报告, 217 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 128 份源报告, 220 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -119,6 +119,18 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | --- | --- | --- | --- | --- | --- | --- |
 | /records/0 | XQ-DQ72<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
 | /records/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 8/8 测试; 8/8 测试 | 通过 (限定范围) |
+
+### M6 工作区归档九项 Binder 真机往返
+
+来源: [2026-09-15-m6-workspace-archive-binder.json](2026-09-15-m6-workspace-archive-binder.json).
+
+生产 service 配官方 Bun, 三台 ARM64 4 KiB 真机各两轮; 新增多文件项目往返用例. 仅隔离 Debug APK, 不含宿主打包, 不扩大 native 或 Release 支持.
+
+| 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
+| --- | --- | --- | --- | --- | --- | --- |
+| /records/0 | XQ-DQ72<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 9/9 测试; 9/9 测试 | 通过 (限定范围) |
+| /records/1 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 9/9 测试; 9/9 测试 | 通过 (限定范围) |
+| /records/2 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 1.4.0+34cbb9a40<br>SHA 44a83a9b716a | 9/9 测试; 9/9 测试 | 通过 (限定范围) |
 
 ## 实验运行时的设备记录
 
