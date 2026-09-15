@@ -3,9 +3,9 @@
   "artifacts": [
     {
       "file": "bun-runtime-api.aar",
-      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5278",
-      "bytes": 13547,
-      "sha256": "6fac4aa0332c09f399ff6e554bc088507c86b779ea08ec118e687e3836ee48a4"
+      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5280 (adds workspace archive keys and capability)",
+      "bytes": 13810,
+      "sha256": "390eab734c23413f5c24d388ab30ff56b2e129bf830ab7ef7f7cf8ffcb8fc3b3"
     },
     {
       "file": "common-plugin-api.aar",

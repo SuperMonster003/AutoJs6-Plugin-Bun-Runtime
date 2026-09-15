@@ -3,6 +3,12 @@ package io.github.supermonster003.autojs6.plugin.bun.runtime
 import android.os.Bundle
 import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 
+/** Present only when the host sent a workspace archive instead of a single source. */
+internal data class BunWorkspaceRequest(
+    val entryPoint: String,
+    val limits: BunWorkspaceLimits,
+)
+
 internal data class BunExecutionRequest(
     val executionId: String,
     val sourceName: String,
@@ -10,6 +16,7 @@ internal data class BunExecutionRequest(
     val environment: Map<String, String>,
     val timeoutMillis: Long,
     val outputByteLimit: Long,
+    val workspace: BunWorkspaceRequest? = null,
 )
 
 internal object BunExecutionRequestParser {
@@ -65,6 +72,18 @@ internal object BunExecutionRequestParser {
         )
         require(outputByteLimit in 1..BunRuntimeContract.MAX_OUTPUT_BYTES) { "Invalid output byte limit" }
 
+        // The archive marker is opt-in: a host that never learned the key keeps the single-source path.
+        val workspace = if (request.containsKey(BunRuntimeContract.KEY_WORKSPACE_ARCHIVE_VERSION)) {
+            parseWorkspace(
+                version = request.getInt(BunRuntimeContract.KEY_WORKSPACE_ARCHIVE_VERSION, -1),
+                entryPoint = request.getString(BunRuntimeContract.KEY_WORKSPACE_ENTRY_POINT),
+                maxEntries = request.getInt(BunRuntimeContract.KEY_WORKSPACE_MAX_ENTRIES, 0),
+                maxBytes = request.getLong(BunRuntimeContract.KEY_WORKSPACE_MAX_BYTES, 0L),
+            )
+        } else {
+            null
+        }
+
         return BunExecutionRequest(
             executionId = executionId,
             sourceName = sourceName,
@@ -72,6 +91,23 @@ internal object BunExecutionRequestParser {
             environment = environment,
             timeoutMillis = timeoutMillis,
             outputByteLimit = outputByteLimit,
+            workspace = workspace,
+        )
+    }
+
+    /**
+     * Validates the workspace archive fields. Kept free of android.os types so JVM tests cover it.
+     * Non-positive limits mean "plugin default"; larger values are clamped to the hard caps.
+     */
+    fun parseWorkspace(version: Int, entryPoint: String?, maxEntries: Int, maxBytes: Long): BunWorkspaceRequest {
+        require(version == BunRuntimeContract.WORKSPACE_ARCHIVE_VERSION) { "Unsupported workspace archive version" }
+        require(!entryPoint.isNullOrBlank()) { "Workspace entry point is missing" }
+        require(entryPoint.toByteArray(Charsets.UTF_8).size <= BunRuntimeContract.MAX_SOURCE_NAME_BYTES) {
+            "Workspace entry point is too long"
+        }
+        return BunWorkspaceRequest(
+            entryPoint = BunWorkspaceArchive.normalizeEntryPoint(entryPoint),
+            limits = BunWorkspaceLimits.clamped(maxEntries = maxEntries, maxTotalBytes = maxBytes),
         )
     }
 

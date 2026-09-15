@@ -37,6 +37,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 @RunWith(AndroidJUnit4::class)
 class BunRuntimeInstrumentedTest {
@@ -129,6 +131,7 @@ class BunRuntimeInstrumentedTest {
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_TYPESCRIPT))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_CANCELLATION))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT))
+            assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_WORKSPACE_ARCHIVE))
 
             val probes = List(PREWARM_REPETITIONS) { runtime.prewarmRuntime() }
             val installedRuntimeAbi = requireNotNull(
@@ -475,6 +478,108 @@ class BunRuntimeInstrumentedTest {
     }
 
     @Test
+    fun workspaceArchiveProjectRoundTrip() {
+        withBoundRuntime { runtime ->
+            val project = writeArchive(
+                "src/main.bun.ts" to """
+                    import { realpath } from "node:fs/promises";
+                    import { greet } from "./lib/greet.ts";
+                    import config from "../data/配置.json";
+
+                    const projectRoot = await realpath(process.cwd());
+                    const entryDirectory = await realpath(import.meta.dir);
+                    if (!entryDirectory.startsWith(projectRoot)) {
+                        throw new Error("entry directory is outside the project root");
+                    }
+                    console.log("$WORKSPACE_OUTPUT_PREFIX" + projectRoot);
+                    console.log(greet(config.name) + ";items=" + config.items.length);
+                """.trimIndent(),
+                "src/lib/greet.ts" to "export const greet = (name: string) => `hello ${'$'}{name}`;",
+                "data/配置.json" to """{"name":"项目","items":[1,2,3]}""",
+                "assets/empty/" to null,
+            )
+            try {
+                val captured = runArchive(runtime, project, "src/main.bun.ts")
+                assertTrue(
+                    buildString {
+                        append(captured.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty())
+                        if (captured.stderr.isNotBlank()) append("; stderr: ${captured.stderr}")
+                        if (captured.stdout.isNotBlank()) append("; stdout: ${captured.stdout}")
+                    },
+                    captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED),
+                )
+                assertTrue(captured.stdout.contains("hello 项目;items=3"))
+                assertEquals(3, captured.result.getInt(BunRuntimeContract.KEY_WORKSPACE_FILE_COUNT))
+                assertTrue(captured.result.getLong(BunRuntimeContract.KEY_WORKSPACE_BYTES) > 0L)
+                val projectRoot = File(
+                    captured.stdout.lineSequence()
+                        .single { line -> line.startsWith(WORKSPACE_OUTPUT_PREFIX) }
+                        .removePrefix(WORKSPACE_OUTPUT_PREFIX),
+                ).canonicalFile
+                assertEquals(BunWorkspaceArchive.PROJECT_DIRECTORY_NAME, projectRoot.name)
+                assertEquals(File(context.cacheDir, "bun-executions").canonicalFile, projectRoot.parentFile?.parentFile)
+                assertTrue("Expanded project survived the run", !projectRoot.exists() && projectRoot.parentFile?.exists() != true)
+            } finally {
+                project.delete()
+            }
+
+            val hostile = writeArchive("main.js" to "console.log('unreachable');", "../escape.js" to "1")
+            try {
+                val rejected = runArchive(runtime, hostile, "main.js", expectStarted = false)
+                assertEquals(BunRuntimeContract.ERROR_INVALID_REQUEST, rejected.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+                assertTrue(
+                    rejected.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()
+                        .contains(BunWorkspaceArchive.ERROR_INVALID_ENTRY_PATH),
+                )
+            } finally {
+                hostile.delete()
+            }
+
+            val missingEntry = writeArchive("lib/a.js" to "export default 1;")
+            try {
+                val rejected = runArchive(runtime, missingEntry, "main.js", expectStarted = false)
+                assertEquals(BunRuntimeContract.ERROR_INVALID_REQUEST, rejected.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+                assertTrue(
+                    rejected.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()
+                        .contains(BunWorkspaceArchive.ERROR_ENTRY_POINT_MISSING),
+                )
+            } finally {
+                missingEntry.delete()
+            }
+
+            val plainSource = File.createTempFile("bun-test-not-an-archive-", ".js", context.cacheDir)
+            try {
+                plainSource.writeText("console.log('single source sent with archive keys');", Charsets.UTF_8)
+                val rejected = runArchive(runtime, plainSource, "main.js", expectStarted = false)
+                assertEquals(BunRuntimeContract.ERROR_INVALID_REQUEST, rejected.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+                assertTrue(
+                    rejected.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()
+                        .contains(BunWorkspaceArchive.ERROR_EMPTY_ARCHIVE),
+                )
+            } finally {
+                plainSource.delete()
+            }
+
+            assertTrue(
+                runSource(runtime, "after-archive.js", "console.log('recovered');")
+                    .result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED),
+            )
+        }
+    }
+
+    private fun writeArchive(vararg entries: Pair<String, String?>): File {
+        val archive = File.createTempFile("bun-test-project-", ".zip", context.cacheDir)
+        ZipOutputStream(archive.outputStream().buffered(), Charsets.UTF_8).use { output ->
+            entries.forEach { (name, text) ->
+                output.putNextEntry(ZipEntry(name))
+                text?.let { output.write(it.toByteArray(Charsets.UTF_8)) }
+                output.closeEntry()
+            }
+        }
+        return archive
+    }
+
+    @Test
     fun manifestPublishesWakeInfoAndRuntimeContracts() {
         val runtimeIntent = Intent(BunPluginActions.RUNTIME)
             .addCategory(BunPluginActions.CATEGORY)
@@ -520,6 +625,64 @@ class BunRuntimeInstrumentedTest {
     ): CapturedRun {
         val sourceFile = File.createTempFile("bun-test-", sourceName.substringAfterLast('.', ".js"), context.cacheDir)
         sourceFile.writeText(sourceText, Charsets.UTF_8)
+        return try {
+            dispatch(
+                runtime = runtime,
+                payload = sourceFile,
+                request = Bundle().apply {
+                    putInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, BunRuntimeContract.PROTOCOL_VERSION)
+                    putString(BunRuntimeContract.KEY_EXECUTION_ID, executionId)
+                    putString(BunRuntimeContract.KEY_SOURCE_NAME, sourceName)
+                    putLong(BunRuntimeContract.KEY_TIMEOUT_MILLIS, timeoutMillis)
+                    putLong(BunRuntimeContract.KEY_OUTPUT_BYTE_LIMIT, outputByteLimit)
+                    if (environment.isNotEmpty()) {
+                        putBundle(BunRuntimeContract.KEY_ENVIRONMENT, Bundle().apply {
+                            environment.forEach(::putString)
+                        })
+                    }
+                },
+                startedSignal = startedSignal,
+                stdoutReadySignal = stdoutReadySignal,
+                expectStarted = expectStarted,
+            )
+        } finally {
+            sourceFile.delete()
+        }
+    }
+
+    /** Sends a ZIP workspace archive through the same Binder call as a single source. */
+    private fun runArchive(
+        runtime: IBunRuntimePlugin,
+        archive: File,
+        entryPoint: String,
+        executionId: String = "instrumentation-archive-${UUID.randomUUID()}",
+        timeoutMillis: Long = 30_000L,
+        expectStarted: Boolean = true,
+    ): CapturedRun = dispatch(
+        runtime = runtime,
+        payload = archive,
+        request = Bundle().apply {
+            putInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, BunRuntimeContract.PROTOCOL_VERSION)
+            putString(BunRuntimeContract.KEY_EXECUTION_ID, executionId)
+            putString(BunRuntimeContract.KEY_SOURCE_NAME, entryPoint.substringAfterLast('/'))
+            putLong(BunRuntimeContract.KEY_TIMEOUT_MILLIS, timeoutMillis)
+            putLong(BunRuntimeContract.KEY_OUTPUT_BYTE_LIMIT, 1024L * 1024L)
+            putInt(BunRuntimeContract.KEY_WORKSPACE_ARCHIVE_VERSION, BunRuntimeContract.WORKSPACE_ARCHIVE_VERSION)
+            putString(BunRuntimeContract.KEY_WORKSPACE_ENTRY_POINT, entryPoint)
+            putInt(BunRuntimeContract.KEY_WORKSPACE_MAX_ENTRIES, BunRuntimeContract.MAX_WORKSPACE_ENTRIES)
+            putLong(BunRuntimeContract.KEY_WORKSPACE_MAX_BYTES, BunRuntimeContract.MAX_WORKSPACE_BYTES)
+        },
+        expectStarted = expectStarted,
+    )
+
+    private fun dispatch(
+        runtime: IBunRuntimePlugin,
+        payload: File,
+        request: Bundle,
+        startedSignal: CountDownLatch? = null,
+        stdoutReadySignal: CountDownLatch? = null,
+        expectStarted: Boolean = true,
+    ): CapturedRun {
         val finished = CountDownLatch(1)
         val events = mutableListOf<String>()
         val stdout = StringBuilder()
@@ -546,39 +709,24 @@ class BunRuntimeInstrumentedTest {
                 }
             }
         }
-        return try {
-            ParcelFileDescriptor.open(sourceFile, ParcelFileDescriptor.MODE_READ_ONLY).use { descriptor ->
-                runtime.runScript(Bundle().apply {
-                    putInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, BunRuntimeContract.PROTOCOL_VERSION)
-                    putString(BunRuntimeContract.KEY_EXECUTION_ID, executionId)
-                    putString(BunRuntimeContract.KEY_SOURCE_NAME, sourceName)
-                    putLong(BunRuntimeContract.KEY_TIMEOUT_MILLIS, timeoutMillis)
-                    putLong(BunRuntimeContract.KEY_OUTPUT_BYTE_LIMIT, outputByteLimit)
-                    if (environment.isNotEmpty()) {
-                        putBundle(BunRuntimeContract.KEY_ENVIRONMENT, Bundle().apply {
-                            environment.forEach(::putString)
-                        })
-                    }
-                }, descriptor, callback)
-            }.also {
-                assertEquals(
-                    BunRuntimeContract.PROTOCOL_VERSION,
-                    it.getInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, -1),
-                )
-                assertTrue("Finished callback was not delivered", finished.await(10, TimeUnit.SECONDS))
-                synchronized(events) {
-                    assertEquals(expectStarted, BunRuntimeContract.EVENT_STARTED in events)
-                    assertEquals("Exactly one finished event is required", 1, events.count { it == BunRuntimeContract.EVENT_FINISHED })
-                }
-            }.let { result ->
-                CapturedRun(
-                    result = result,
-                    stdout = synchronized(stdout) { stdout.toString() },
-                    stderr = synchronized(stderr) { stderr.toString() },
-                )
+        return ParcelFileDescriptor.open(payload, ParcelFileDescriptor.MODE_READ_ONLY).use { descriptor ->
+            runtime.runScript(request, descriptor, callback)
+        }.also {
+            assertEquals(
+                BunRuntimeContract.PROTOCOL_VERSION,
+                it.getInt(BunRuntimeContract.KEY_PROTOCOL_VERSION, -1),
+            )
+            assertTrue("Finished callback was not delivered", finished.await(10, TimeUnit.SECONDS))
+            synchronized(events) {
+                assertEquals(expectStarted, BunRuntimeContract.EVENT_STARTED in events)
+                assertEquals("Exactly one finished event is required", 1, events.count { it == BunRuntimeContract.EVENT_FINISHED })
             }
-        } finally {
-            sourceFile.delete()
+        }.let { result ->
+            CapturedRun(
+                result = result,
+                stdout = synchronized(stdout) { stdout.toString() },
+                stderr = synchronized(stderr) { stderr.toString() },
+            )
         }
     }
 

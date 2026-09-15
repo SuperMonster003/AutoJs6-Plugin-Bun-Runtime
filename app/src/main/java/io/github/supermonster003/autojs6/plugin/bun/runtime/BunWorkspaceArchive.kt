@@ -249,46 +249,50 @@ internal object BunWorkspaceArchive {
         var totalBytes = 0L
         var entryIndex = 0
         val zip = ZipInputStream(input, Charsets.UTF_8)
-        while (true) {
-            if (isCancelled()) throw cancelled()
-            val entry = try {
-                zip.nextEntry
-            } catch (error: ZipException) {
-                throw corrupt()
-            } catch (error: EOFException) {
-                throw corrupt()
-            } ?: break
-            entryIndex++
-            if (entryIndex > limits.maxEntries) {
-                throw BunWorkspaceArchiveException(ERROR_TOO_MANY_ENTRIES, "Archive has more than ${limits.maxEntries} entries")
-            }
-            val isDirectory = entry.name.endsWith("/")
-            val path = normalizeRelativePath(entry.name, entryIndex)
-            val file = File(staging, path)
-            if (!file.canonicalPath.startsWith(stagingRoot)) {
-                throw BunWorkspaceArchiveException(ERROR_INVALID_ENTRY_PATH, "Entry $entryIndex: path escapes the workspace")
-            }
-            if (isDirectory) {
-                registry.registerDirectory(path, entryIndex)
-                if (readBounded(zip, null, buffer, limits, totalBytes, isCancelled) > 0L) {
-                    throw BunWorkspaceArchiveException(ERROR_INVALID_ENTRY_PATH, "Entry $entryIndex: directory entry carries data")
+        try {
+            while (true) {
+                if (isCancelled()) throw cancelled()
+                val entry = try {
+                    zip.nextEntry
+                } catch (error: ZipException) {
+                    throw corrupt()
+                } catch (error: EOFException) {
+                    throw corrupt()
+                } ?: break
+                entryIndex++
+                if (entryIndex > limits.maxEntries) {
+                    throw BunWorkspaceArchiveException(ERROR_TOO_MANY_ENTRIES, "Archive has more than ${limits.maxEntries} entries")
                 }
-                ensureDirectory(file)
-                explicitDirectories++
-            } else {
-                registry.registerFile(path, entryIndex)
-                ensureDirectory(requireNotNull(file.parentFile))
-                totalBytes += FileOutputStream(file).use { output ->
-                    readBounded(zip, output, buffer, limits, totalBytes, isCancelled)
+                val isDirectory = entry.name.endsWith("/")
+                val path = normalizeRelativePath(entry.name, entryIndex)
+                val file = File(staging, path)
+                if (!file.canonicalPath.startsWith(stagingRoot)) {
+                    throw BunWorkspaceArchiveException(ERROR_INVALID_ENTRY_PATH, "Entry $entryIndex: path escapes the workspace")
+                }
+                if (isDirectory) {
+                    registry.registerDirectory(path, entryIndex)
+                    if (readBounded(zip, null, buffer, limits, totalBytes, isCancelled) > 0L) {
+                        throw BunWorkspaceArchiveException(ERROR_INVALID_ENTRY_PATH, "Entry $entryIndex: directory entry carries data")
+                    }
+                    ensureDirectory(file)
+                    explicitDirectories++
+                } else {
+                    registry.registerFile(path, entryIndex)
+                    ensureDirectory(requireNotNull(file.parentFile))
+                    totalBytes += FileOutputStream(file).use { output ->
+                        readBounded(zip, output, buffer, limits, totalBytes, isCancelled)
+                    }
+                }
+                try {
+                    zip.closeEntry()
+                } catch (error: ZipException) {
+                    throw corrupt()
+                } catch (error: EOFException) {
+                    throw corrupt()
                 }
             }
-            try {
-                zip.closeEntry()
-            } catch (error: ZipException) {
-                throw corrupt()
-            } catch (error: EOFException) {
-                throw corrupt()
-            }
+        } finally {
+            runCatching { zip.close() }
         }
         if (entryIndex == 0) throw BunWorkspaceArchiveException(ERROR_EMPTY_ARCHIVE, "Archive contains no entries")
         return Extraction(registry.files, explicitDirectories, totalBytes)

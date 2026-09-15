@@ -65,7 +65,7 @@
     },
     {
       "q": "Can a script `import` other files from the project?",
-      "a": "Not currently. The plugin contract transfers one source snapshot without the project directory, so relative imports cannot be resolved. Multi-file project support is on the roadmap, and ESM syntax inside the single file works normally."
+      "a": "Not with the currently released AutoJs6. Since plugin 0.2.2 the runtime accepts a project snapshot (a bounded ZIP workspace archive) and expands it into the private per-run workspace, so relative imports inside the project resolve. The host must pack the project directory and declare the capability; that host change is prepared but not released yet. Until then only single-file snapshots are transferred, and ESM syntax inside the single file works normally."
     },
     {
       "q": "Why is Android 13 the minimum?",
