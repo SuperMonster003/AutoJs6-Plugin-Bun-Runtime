@@ -9,6 +9,7 @@
 ###### 2026/09/15
 
 * `新增` 新增透過工作區封存執行多檔案專案 (M6): 共享契約增加 workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries 與 workspaceMaxBytes 請求鍵及 SUPPORTS_WORKSPACE_ARCHIVE 能力位, runScript 把有界 ZIP 快照原子展開到本次執行的私有工作區後, 以專案目錄為工作目錄執行進入點檔案. 規則: 只接受相對路徑, 拒絕穿越/絕對/反斜線/冒號/控制字元路徑, 大小寫與 Unicode 形式不敏感的重複偵測, 檔案/目錄衝突檢查, 最多 16384 項目, 解壓後 64 MiB 且單檔案 16 MiB, 進入點檔案檢驗與取消清理; 只建立一般檔案和目錄, 不帶該鍵的宿主繼續走不變的單一原始碼路徑. 需要宿主打包專案目錄; AutoJs6 引擎側改動已同步準備, 尚未發佈
+* `修復` Release 校驗器改為以相對的壓縮檔名稱讀取專案原始碼壓縮檔成員, 使監督器原始碼精確核對在 Windows 的 GNU tar 下同樣可用; CI 與已發布資產不變
 * `修復` 修復實驗 watch 重新載入在 close_range 失敗時洩漏描述符的問題: 在 exec 前使用既有有界 raw syscall fallback 為實際 FD 標記 CLOEXEC, 設定不完整時停止執行. 保留 stdio, 明確 IPC 和原訊號生命週期. GCC/Clang 完整原始碼對照涵蓋真實 exec, 高位 FD, 降低後的硬限制和注入失敗; 新 native 建置與不變的 Android 測試套件分別記錄. 歷史失敗, 官方產物及發佈界限維持不變
 * `修復` 修正 Bun 原始碼更新後歷史實驗 JSC 候選的驗證: 綁定完整且不可變的建置封存, 新建置仍嚴格核對目前輸入
 * `修復` 修復實驗 Android epoll 等待提前交付呼叫者已封鎖的 pending 訊號: 保留 caller mask, 並在呼叫點維持既有 epoll_pwait2 停用. GCC/Clang 回歸直接編譯修復前後的完整等待函式; 全新 native 建置與原定義裝置套件獨立取證, 保留十一補丁失敗檔案及官方支援範圍. 原定義套件在五個原生 4 KiB 環境各兩輪通過: 應用程式探針 330/330, Binder 80/80. 兩次 API 28 ART 啟動失敗獨立封存, 第三次相同 APK 兩輪通過; 新原始碼原固定測試的 Samsung ARM64 裝置門檻已補齊; JSC rebase 已另行記錄
