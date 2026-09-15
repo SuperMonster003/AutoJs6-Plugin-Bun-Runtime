@@ -65,7 +65,7 @@
     },
     {
       "q": "Puede un script hacer `import` de otros archivos del proyecto?",
-      "a": "Por ahora no. El contrato del plugin transfiere una única instantánea de código sin el directorio del proyecto, así que las importaciones relativas no pueden resolverse. El soporte de proyectos multiarchivo está en la hoja de ruta, y la sintaxis ESM dentro del archivo único funciona con normalidad."
+      "a": "Con la AutoJs6 publicada actualmente, todavía no. Desde el plugin 0.2.2 el runtime acepta una instantánea de proyecto (un archivo ZIP de espacio de trabajo acotado) y la expande en el espacio de trabajo privado de cada ejecución, por lo que las importaciones relativas dentro del proyecto se resuelven. El host debe empaquetar el directorio del proyecto y declarar esa capacidad; ese cambio del host está preparado pero aún no publicado. Hasta entonces solo se transfieren instantáneas de un único archivo, y la sintaxis ESM dentro de ese archivo funciona con normalidad."
     },
     {
       "q": "Por qué el mínimo es Android 13?",

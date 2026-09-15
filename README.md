@@ -126,7 +126,7 @@ Bun 运行在独立进程中, 是与 Rhino 完全不同的 JavaScript 引擎, �
 
 #### 可以 `import` 项目里的其他文件吗?
 
-当前不可以. 插件契约只传输一个源码快照, 不传输项目目录, 相对路径导入因此无法解析. 多文件项目支持已列入路线图, 单文件内部的 ESM 语法可正常使用.
+当前发布的 AutoJs6 还不能. 插件 0.2.2 起可以接收项目快照 (有界 ZIP 工作区归档) 并在本次运行的私有工作区展开, 项目内的相对路径导入可以解析. 前提是宿主打包项目目录并声明该能力; 宿主侧改动已准备但尚未发布. 在此之前仍只传输单文件快照, 单文件内部的 ESM 语法可正常使用.
 
 #### 为什么至少需要 Android 13?
 
@@ -235,7 +235,7 @@ default timeout: 60 seconds
 
 _2026/09/12_
 
-- `新增` 新增多文件项目的插件侧工作区归档展开器 (M6): 有界 ZIP 快照经路径规范化, 拒绝穿越/绝对/反斜杠路径, 大小写与 Unicode 形式不敏感的重复检测, 文件/目录冲突检查, 条目数与字节上限, 入口文件校验和取消清理后, 原子展开到本次运行的私有工作区, 只创建普通文件和目录. 已发布的契约 v1 仍只执行单个源码; 归档请求键的提案见 docs/design/m6-workspace-archive.md
+- `新增` 新增通过工作区归档执行多文件项目 (M6): 共享契约增加 workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries 与 workspaceMaxBytes 请求键及 SUPPORTS_WORKSPACE_ARCHIVE 能力位, runScript 把有界 ZIP 快照原子展开到本次运行的私有工作区后, 以项目目录为工作目录运行入口文件. 规则: 只接受相对路径, 拒绝穿越/绝对/反斜杠/冒号/控制字符路径, 大小写与 Unicode 形式不敏感的重复检测, 文件/目录冲突检查, 最多 16384 条目, 解压后 64 MiB 且单文件 16 MiB, 入口文件校验与取消清理; 只创建普通文件和目录, 不带该键的宿主继续走不变的单源码路径. 需要宿主打包项目目录; AutoJs6 引擎侧改动已同步准备, 尚未发布
 - `修复` 修复实验 watch 重载在 close_range 失败时泄漏描述符的问题: 在 exec 前使用既有有界 raw syscall fallback 为实际 FD 标记 CLOEXEC, 设置不完整时停止执行. 保留 stdio, 显式 IPC 和原信号生命周期. GCC/Clang 完整源码对照覆盖真实 exec, 高位 FD, 降低后的硬限制和注入失败; 新 native 构建与不变的 Android 套件分别记录. 历史失败, 官方产物及发布边界保持不变
 - `修复` 修复 Bun 源码更新后历史实验 JSC 候选的校验: 绑定完整且不可变的构建归档, 新构建仍严格核对当前输入
 - `修复` 修复实验 Android epoll 等待提前交付调用者已屏蔽的 pending 信号: 保留 caller mask, 并在调用点维持已有 epoll_pwait2 禁用. GCC/Clang 回归直接编译修复前后的完整等待函数; 全新 native 构建与原定义设备套件独立取证, 保留十一补丁失败档案及官方支持边界. 原定义套件在五个原生 4 KiB 环境各两轮通过: 应用探针 330/330, Binder 80/80. 两次 API 28 ART 启动失败单独归档, 第三次相同 APK 两轮通过; 新源码原固定套件的三星 ARM64 设备门禁已补齐; JSC rebase 已另行记录
@@ -277,6 +277,7 @@ _2026/09/12_
 - `优化` 在 Samsung 原生 ARM64 / API 36 / 16 KiB 使用相同 APK 和未改动的 24 项套件验证九补丁实验 Bun: 两轮 48/48, 全部 48 项路径断言通过, 12 次越界请求均拒绝测试哨兵; 测试包卸载后 UID 进程为零, 未启动或关闭 AVD. 完整实验 Binder, Release 和 x86_64 16 KiB 门禁仍未完成
 - `优化` 构建阶段校验 64 位原生库的 16 KB 页大小对齐, 检查 manifest 契约并输出 JSON 报告
 - `依赖` 将在线 platform-versions 插件与仓库要求的 1.8.0 对齐, 保持 native-alignment 插件不变
+- `依赖` 将 compileSdk 提升到 37, 以便使用 AutoJs6 宿主 build 5280 的共享 bun-runtime-api AAR (其 AAR 元数据要求编译 SDK 37); minSdk 33 与 targetSdk 36 不变
 
 #### v0.2.1
 

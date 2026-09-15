@@ -106,15 +106,27 @@ class BunRuntimeService : Service() {
                 }
 
                 workspace = createWorkspace(request.executionId)
-                val sourceFile = File(workspace, BunExecutionRequestParser.safeFileName(request.sourceName))
-                source.use { descriptor ->
-                    validateSourceDescriptor(descriptor)
-                    copySource(descriptor, sourceFile)
-                }
+                val prepared = source.use { descriptor -> prepareExecution(request, descriptor, workspace, handle) }
                 if (handle.cancelled.get()) {
                     return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
-                return execute(request, sourceFile, workspace, callback, handle, startedAt)
+                return execute(request, prepared, workspace, callback, handle, startedAt)
+            } catch (error: BunWorkspaceArchiveException) {
+                // Archive rules map onto the published error codes; the fixed archive code stays in the diagnostic.
+                val code = when (error.code) {
+                    BunWorkspaceArchive.ERROR_ARCHIVE_TOO_LARGE,
+                    BunWorkspaceArchive.ERROR_ENTRY_TOO_LARGE -> BunRuntimeContract.ERROR_SOURCE_TOO_LARGE
+                    BunWorkspaceArchive.ERROR_CANCELLED -> BunRuntimeContract.ERROR_CANCELLED
+                    else -> BunRuntimeContract.ERROR_INVALID_REQUEST
+                }
+                return failureWithCallback(
+                    callback,
+                    request?.executionId.orEmpty(),
+                    code,
+                    "${error.code}: ${error.message}",
+                    startedAt,
+                    cancelled = code == BunRuntimeContract.ERROR_CANCELLED,
+                )
             } catch (error: SourceTooLargeException) {
                 return failureWithCallback(
                     callback,
@@ -162,7 +174,7 @@ class BunRuntimeService : Service() {
 
     private fun execute(
         request: BunExecutionRequest,
-        sourceFile: File,
+        prepared: PreparedExecution,
         workspace: File,
         callback: IBunRuntimeCallback,
         handle: ExecutionHandle,
@@ -172,10 +184,10 @@ class BunRuntimeService : Service() {
             add(runtimeBinary.file.path)
             add("run")
             add("--no-install")
-            add(sourceFile.path)
+            add(prepared.entryFile.path)
             addAll(request.arguments)
         }
-        val processBuilder = ProcessBuilder(command).directory(workspace)
+        val processBuilder = ProcessBuilder(command).directory(prepared.workingDirectory)
         processBuilder.environment().apply {
             putAll(request.environment)
             put("TMPDIR", File(workspace, "tmp").apply { mkdirs() }.path)
@@ -265,6 +277,10 @@ class BunRuntimeService : Service() {
             putLong(BunRuntimeContract.KEY_DURATION_MILLIS, SystemClock.elapsedRealtime() - startedAt)
             putBoolean(BunRuntimeContract.KEY_CANCELLED, cancelled)
             putBoolean(BunRuntimeContract.KEY_TIMED_OUT, timedOut)
+            prepared.expanded?.let { expanded ->
+                putInt(BunRuntimeContract.KEY_WORKSPACE_FILE_COUNT, expanded.fileCount)
+                putLong(BunRuntimeContract.KEY_WORKSPACE_BYTES, expanded.totalBytes)
+            }
         }
         emitSequenced(
             callback,
@@ -317,11 +333,35 @@ class BunRuntimeService : Service() {
         }
     }
 
-    private fun validateSourceDescriptor(descriptor: ParcelFileDescriptor) {
+    private fun validateSourceDescriptor(descriptor: ParcelFileDescriptor, maxBytes: Long) {
         val stat = Os.fstat(descriptor.fileDescriptor)
         require(OsConstants.S_ISREG(stat.st_mode)) { "Source descriptor must reference a regular file" }
         require(stat.st_size >= 0L) { "Source descriptor has an invalid size" }
-        if (stat.st_size > BunRuntimeContract.MAX_SOURCE_BYTES) throw SourceTooLargeException()
+        if (stat.st_size > maxBytes) throw SourceTooLargeException()
+    }
+
+    /** Materializes either the single source or the expanded project; the caller owns [workspace]. */
+    private fun prepareExecution(
+        request: BunExecutionRequest,
+        descriptor: ParcelFileDescriptor,
+        workspace: File,
+        handle: ExecutionHandle,
+    ): PreparedExecution {
+        val workspaceRequest = request.workspace
+        if (workspaceRequest == null) {
+            validateSourceDescriptor(descriptor, BunRuntimeContract.MAX_SOURCE_BYTES)
+            val sourceFile = File(workspace, BunExecutionRequestParser.safeFileName(request.sourceName))
+            copySource(descriptor, sourceFile)
+            return PreparedExecution(sourceFile, workspace, null)
+        }
+        validateSourceDescriptor(descriptor, BunRuntimeContract.MAX_WORKSPACE_BYTES)
+        val expanded = BunWorkspaceArchive.expand(
+            ParcelFileDescriptor.AutoCloseInputStream(descriptor),
+            workspace,
+            workspaceRequest.entryPoint,
+            workspaceRequest.limits,
+        ) { handle.cancelled.get() }
+        return PreparedExecution(expanded.entryFile, expanded.root, expanded)
     }
 
     private fun createWorkspace(executionId: String): File {
@@ -449,6 +489,12 @@ class BunRuntimeService : Service() {
             )
         }
     }
+
+    private class PreparedExecution(
+        val entryFile: File,
+        val workingDirectory: File,
+        val expanded: BunExpandedWorkspace?,
+    )
 
     private class ExecutionHandle {
         val cancelled = AtomicBoolean(false)

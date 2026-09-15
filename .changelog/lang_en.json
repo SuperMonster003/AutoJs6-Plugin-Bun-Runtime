@@ -8,7 +8,7 @@
     "v0.2.2": {
       "released_date": "2026/09/12",
       "feature": [
-        "Add the plugin-side workspace archive expander for multi-file projects (M6): a bounded ZIP snapshot is validated and expanded atomically into the private per-run workspace, with path normalization, rejection of traversal, absolute and backslash paths, case- and Unicode-form-insensitive duplicate detection, file/directory conflict checks, entry and byte limits, entry point validation and cancellation cleanup; only regular files and directories are created. The published contract v1 still executes a single source; the archive request keys are proposed in docs/design/m6-workspace-archive.md"
+        "Add multi-file project execution through workspace archives (M6): the shared contract gains the workspaceArchiveVersion, workspaceEntryPoint, workspaceMaxEntries and workspaceMaxBytes request keys plus the SUPPORTS_WORKSPACE_ARCHIVE capability, and runScript expands a bounded ZIP snapshot atomically into the private per-run workspace before running the entry file with the project as its working directory. Rules: relative paths only, rejection of traversal, absolute, backslash, colon and control-character paths, case- and Unicode-form-insensitive duplicate detection, file/directory conflict checks, at most 16384 entries, 64 MiB uncompressed and 16 MiB per file, entry point validation and cancellation cleanup; only regular files and directories are created, and hosts without the key keep the unchanged single-source path. Requires a host that packs the project directory; the AutoJs6 engine change is prepared alongside and not yet released"
       ],
       "fix": [
         "Fix experimental watch reload leaking descriptors when close_range fails: mark actual descriptors CLOEXEC before exec with the existing bounded raw-syscall fallback, and stop on incomplete setup. Preserve stdio, explicit IPC and the existing signal lifecycle. Complete-source GCC/Clang controls cover real exec, high descriptors, lowered hard limits and injected failures; new native builds and unchanged Android suites are recorded separately. Historical failures, official payloads and distribution boundaries remain unchanged",
@@ -20,7 +20,8 @@
         "Fix the experimental native x86_64 16 KiB JavaScriptCore startup abort by rebuilding pinned WebKit with explicit large-page, JIT and allocator settings and relinking Bun; all eight Binder tests pass twice on both 4 KiB and 16 KiB AVDs (32/32). Official payloads and their 4 KiB guard remain unchanged; Release acceptance is separate"
       ],
       "dependency": [
-        "Align the online platform-versions plugin with the repository-pinned 1.8.0; leave the native-alignment plugin unchanged"
+        "Align the online platform-versions plugin with the repository-pinned 1.8.0; leave the native-alignment plugin unchanged",
+        "Raise compileSdk to 37 so the plugin can consume the shared bun-runtime-api AAR from AutoJs6 host build 5280, whose AAR metadata requires compile SDK 37; minSdk 33 and targetSdk 36 are unchanged"
       ],
       "improvement": [
         "Add four fixed offline TLS/IPv6 modes through the production Binder service: TLS 1.2/1.3, certificate and hostname rejection, verified HTTPS, and IPv6 TCP/UDP/HTTP. Bind public test certificates, exact sources, APKs and both package UIDs; preserve original suite counts and release boundaries",
