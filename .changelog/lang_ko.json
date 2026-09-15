@@ -5,6 +5,15 @@
   "changelog_label_improvement": "개선",
   "changelog_label_dependency": "의존성",
   "$data": {
+    "v0.2.3": {
+      "released_date": "2026/09/15",
+      "hint": [
+        "아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함"
+      ],
+      "improvement": [
+        "게시된 v0.2.2 APK/소스 자산 검증과 네 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.0 에서 덮어쓰기 업그레이드, Redmi API 33 arm64 와 x86_64 API 33 AVD 는 새로 설치하여 각각 force-stop 전후 9/9 그룹 통과. 게시된 태그를 다시 쓰거나 Android/16 KB 호환 범위를 확대하지 않음"
+      ]
+    },
     "v0.2.2": {
       "released_date": "2026/09/15",
       "feature": [

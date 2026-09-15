@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.3
+
+###### 2026/09/15
+
+* `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
+* `Improvement` Archive the published v0.2.2 APK/source asset verification and the signed final-APK acceptance in four environments: in-place upgrades from the published v0.2.0 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64 and an x86_64 API 33 AVD, each passing 9/9 groups before and after force-stop; the released tag is not rewritten and Android/16 KB compatibility is not expanded
+
 # v0.2.2
 
 ###### 2026/09/15

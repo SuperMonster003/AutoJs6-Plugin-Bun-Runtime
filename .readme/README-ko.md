@@ -231,6 +231,13 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.2.3
+
+_2026/09/15_
+
+- `힌트` 아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
+- `개선` 게시된 v0.2.2 APK/소스 자산 검증과 네 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.0 에서 덮어쓰기 업그레이드, Redmi API 33 arm64 와 x86_64 API 33 AVD 는 새로 설치하여 각각 force-stop 전후 9/9 그룹 통과. 게시된 태그를 다시 쓰거나 Android/16 KB 호환 범위를 확대하지 않음
+
 #### v0.2.2
 
 _2026/09/15_
@@ -305,27 +312,6 @@ _2026/09/10_
 - `개선` API 28, 31, 33, 35의 네이티브 arm64 기기에서 앱 프로세스 테스트 13개를 두 차례 모두 통과; SIGTERM을 무시하는 시간 초과, 출력 한도 및 준비 후 취소 24건에서 자식과 감독 프로세스의 종료 및 작업 디렉터리 정리 확인. 기존 10/12 실패 보고서를 보존하며 전체 실험용 Binder 통과나 Android 지원 범위 확대를 주장하지 않음
 - `개선` 게시된 v0.2.0 APK/소스 자산 검증과 서명된 패키지의 기기 검증 근거 보관. 게시된 태그를 다시 쓰거나 Android/16 KB 호환 범위를 확대하지 않음
 - `의존성` 온라인 빌드 플러그인 autojs6-platform-versions를 1.7.3에서 1.7.4로 업데이트하고 저장소의 버전 요구 사항 동기화
-
-#### v0.2.0
-
-_2026/09/08_
-
-- `힌트` 이번 버전은 최소 시스템 요구 사항을 Android 14에서 Android 13 (API 33)으로 낮췄습니다. Android 9부터 12L (API 28부터 32)은 patch된 Bun runtime이 이식성 검증을 통과할 때까지 계속 지원되지 않습니다
-- `수정` Release 자산 검증 강화: WebKit 아카이브의 크기와 SHA-256을 잠긴 값과 직접 대조하고 apksigner 출력 형식 차이 지원
-- `수정` 설치된 runtime ABI를 ABI table iteration 순서가 아닌 locked payload SHA-256으로 식별하고, prewarming에서 최소 JavaScript smoke test를 실행해 사용할 수 없는 runtime을 user script 시작 전에 거부
-- `수정` Android가 4 KiB보다 큰 page를 사용할 때 pinned JavaScriptCore의 4 KiB page-size ceiling으로 원인이 확인된 호환 불가 공식 x86_64 runtime을 process 시작 전에 거부하고, 결정적인 Bun abort를 제한된 진단으로 대체
-- `개선` 최소 시스템 요구 사항 인하: 고정된 공식 Bun 1.4.0 Android payload를 그대로 사용하면서 지원 하한을 Android 14 (API 34)에서 Android 13 (API 33)으로 완화하여 더 많은 기기를 지원
-- `개선` 구버전에서 동작하지 않는 근본 원인 규명: Android 13부터 시스템 seccomp가 Bun이 호출하는 raw `close_range` syscall을 허용하며, API 31 실제 기기 실패는 API 28부터 32까지는 Bun 자체 수정이 필요하고 manifest 변경만으로는 해결할 수 없음을 증명
-- `개선` 향후 Android 9+ 지원을 위한 기반 마련: 정확히 재현 가능한 Bun 소스 patch 방식 (patch 6개)을 수립하고 빌드 입력을 고정 (NDK와 컨테이너 고정, Android release 활성 의존성 22개); 이 작업은 별도의 실험 라인을 만들며 현재 패키지의 공식 runtime을 변경하지 않음
-- `개선` 패키지 품질 검사 강화: 모든 Debug 및 Release APK에서 16 KB ZIP alignment, 정확한 ABI 내용, 고정 Bun payload의 크기와 SHA-256을 검증하고 Android 13 테스트 기기에서 설치된 payload 바이트를 대조
-- `개선` 공급망 강화: Bun source archive 19개와 toolchain 다운로드 17개의 정확한 바이트를 고정하고, Cargo 181개와 Bun registry integrity 항목 172개를 목록화하며, 덮어쓰기를 거부하는 materializer와 `buildReady` 게이트로 보호되는 듀얼 ABI 빌드 preflight를 추가
-- `개선` 복사해 바로 실행할 수 있는 예제 모음 확장: 네트워크 fetch, 비공개 작업 공간 파일 입출력, stdout/stderr 스트리밍, 더 실용적인 TypeScript 타입 예제를 주석과 함께 추가하고, 첫 줄 `"bun";` 지시문과 단일 소스 및 설치 금지 경계를 문서 게이트로 검증
-- `개선` PAGE_SIZE=16384를 강제한 Android 16 (API 36) AVD에서 16 KB execution 검증: `arm64-v8a` single-ABI APK는 `libndk_translation`을 통해 Binder instrumentation 5개를 모두 통과했지만, native `x86_64` payload는 최소 script에서도 exit code 134로 중단되므로 일반적인 16 KB 지원은 주장하지 않음
-- `개선` Android 9+ 실험 빌드 공급망의 Cargo 부분 완결: crates.io archive 181개 (총 26,354,160 bytes)를 잠그고 실제로 내려받아 파일별 checksum이 있는 directory source를 생성했으며, 고정 Cargo가 빈 `CARGO_HOME`에서 전체 Bun workspace를 `--locked --offline`으로 읽는 것을 검증; 이 결과는 Cargo 입력만 다루며 나머지 빌드 입력을 단독으로 완결하지 않음
-- `개선` 동일 공급망의 Bun registry 부분 완결: lock reference 172개를 Linux x64용 고유 npm archive 125개 (총 31,498,870 bytes)로 해석하고, 잠긴 tarball만으로 최소 cache를 재구성했으며, network가 차단되고 cache가 읽기 전용인 고정 Ubuntu container에서 세 번의 frozen install을 모두 통과; 신뢰되는 postinstall 의존성은 `esbuild@0.21.5` 하나뿐
-- `개선` patched runtime을 배포하지 않은 채 재현 가능한 build gate 완결: host `.deb` archive 155개 (422,223,096 bytes)를 반복 생성 가능한 OCI image로 잠그고, Cargo closure를 고유 archive 206개로 확장했으며, 두 64-bit ABI를 network 차단 clean 환경에서 각각 두 번 build해 byte-for-byte 동일한 결과를 확인하고 pure Node ELF audit도 잠금; API 28과 31의 직접 shell probe는 통과했지만 APK와 application process gate는 아직 열려 있음
-- `개선` 검증 가능한 대응 source Release assets 구현: source를 APK와 분리하되 같은 Release에 두고, 정확한 Bun/WebKit/JSC, native 19개, Cargo 206개, npm 125개 source archive와 patch, build/relink 지침, 공개 license notice를 패키징; 대용량 asset은 1.9 GB로 분할하고 machine-readable manifest와 SHA256SUMS로 APK/runtime/source bytes를 결합하며, GitHub SHA-256이 모두 일치한 뒤에만 draft를 공개; 이는 자동화 기술 검증 기록이며 법적 승인을 주장하지 않음
-- `의존성` Release R8이 공유 Parcelable contract class를 유지하도록 Kotlin Parcelize runtime 추가
 
 ##### 더 많은 릴리스 기록
 

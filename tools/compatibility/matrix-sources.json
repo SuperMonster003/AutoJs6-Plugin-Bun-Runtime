@@ -1405,6 +1405,17 @@
       "category": "official",
       "label": "M6 工作区归档九项 Binder 真机往返",
       "note": "生产 service 配官方 Bun, 三台 ARM64 4 KiB 真机各两轮; 新增多文件项目往返用例. 仅隔离 Debug APK, 不含宿主打包, 不扩大 native 或 Release 支持."
+    },
+    {
+      "file": "2026-09-15-v0.2.2-release.json",
+      "sha256": "e031f26d56a31cf2c713e188470255d76aebaec3006691c66aad40872000292e",
+      "schema": 1,
+      "kind": null,
+      "adapter": "release",
+      "collection": "signedFinalApkDeviceAcceptance",
+      "category": "official",
+      "label": "v0.2.2 已签名最终 APK 的设备验收",
+      "note": "四个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时."
     }
   ]
 }

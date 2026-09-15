@@ -231,6 +231,13 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 
 ******
 
+#### v0.2.3
+
+_2026/09/15_
+
+- `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
+- `改善` 公開済み v0.2.2 の APK/ソース資産検証と 4 環境での署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.0 からの上書き更新, Redmi API 33 arm64 と x86_64 API 33 AVD は新規インストールで, いずれも force-stop 前後に 9/9 グループ通過. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない
+
 #### v0.2.2
 
 _2026/09/15_
@@ -305,27 +312,6 @@ _2026/09/10_
 - `改善` API 28, 31, 33, 35 のネイティブ arm64 端末でアプリプロセスの全 13 項目が 2 回とも成功; SIGTERM を無視するタイムアウト, 出力上限, 準備完了後のキャンセル計 24 回で子プロセスと監督プロセスの終了および作業領域の削除を確認. 元の 10/12 失敗レポートは保持し, 実験版 Binder 全体の成功や Android 対応範囲の拡大は主張しない
 - `改善` 公開済み v0.2.0 の APK/ソース資産検証と署名済み端末受け入れ結果を記録. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない
 - `依存関係` オンラインのビルドプラグイン autojs6-platform-versions を 1.7.3 から 1.7.4 に更新し, リポジトリのバージョン要件も同期
-
-#### v0.2.0
-
-_2026/09/08_
-
-- `ヒント` 本バージョンは最低システム要件を Android 14 から Android 13 (API 33) に引き下げました. Android 9 から 12L (API 28 から 32) は引き続き未対応で, patch 版 Bun runtime が移植性検証を通過するまでお待ちください
-- `修正` Release アセット検証を強化: WebKit アーカイブのサイズと SHA-256 をロック値と直接照合し, apksigner の出力形式の違いに対応
-- `修正` インストール済み runtime の ABI を ABI table の iteration 順ではなく locked payload の SHA-256 から識別し, prewarming で最小 JavaScript smoke test を実行して使用不能な runtime を user script 開始前に拒否
-- `修正` Android が 4 KiB を超える page を使用する場合, pinned JavaScriptCore の 4 KiB page-size ceiling に原因を特定した既知の非互換な公式 x86_64 runtime を process 起動前に拒否し, 決定的な Bun abort を有界診断に置換
-- `改善` 最低システム要件の引き下げ: 固定された公式 Bun 1.4.0 Android payload をそのまま使用し, サポート下限を Android 14 (API 34) から Android 13 (API 33) に緩和してより多くのデバイスをカバー
-- `改善` 旧バージョンで動作しない根本原因を特定: Android 13 以降はシステムの seccomp が Bun の呼び出す raw `close_range` syscall を許可する一方, API 31 実機での失敗により API 28 から 32 は Bun 本体の修正が必要で, manifest の変更だけでは解決できないことが判明
-- `改善` 将来の Android 9+ 対応への基盤づくり: 正確に再現可能な Bun ソース patch 方式 (6 個の patch) を確立し, ビルド入力を固定 (NDK とコンテナーを固定, 22 個の Android release アクティブ依存関係); これは独立した experimental line を確立するもので, 現行パッケージの official runtime は変更しません
-- `改善` パッケージ品質チェックの強化: すべての Debug および Release APK で 16 KB ZIP alignment, 正確な ABI 内容, 固定 Bun payload のサイズと SHA-256 を検証し, Android 13 テスト端末でインストール済み payload のバイトを照合
-- `改善` サプライチェーンの強化: 19 個の Bun source archive と 17 個の toolchain ダウンロードの正確なバイトを固定し, 181 個の Cargo と 172 個の Bun registry integrity エントリーを棚卸しし, 上書きを拒否する materializer と `buildReady` ゲートで保護されたデュアル ABI ビルド preflight を追加
-- `改善` コピーして実行できるサンプル集を拡充: ネットワーク fetch, プライベートワークスペースのファイル入出力, stdout/stderr ストリーミング, より実用的な TypeScript 型のコメント付きサンプルを追加し, 先頭行の `"bun";` ディレクティブと単一ソースおよびインストール禁止の境界を文書ゲートで検証
-- `改善` PAGE_SIZE=16384 を強制した Android 16 (API 36) AVD で 16 KB execution を検証: `arm64-v8a` single-ABI APK は `libndk_translation` 経由で Binder instrumentation 全 5 件に成功しましたが, native `x86_64` payload は最小 script でも exit code 134 で abort するため, 一般的な 16 KB 対応は表明しません
-- `改善` Android 9+ experimental build の Cargo supply chain を閉じる: crates.io archive 全 181 件 (26,354,160 bytes) を lock して実体化し, file checksum 付き directory source を生成; 固定 Cargo が空の `CARGO_HOME` で Bun workspace 全体を `--locked --offline` で読み込めることを確認しました. この結果は Cargo input のみを対象とし, 他の build input を単独で閉じるものではありません
-- `改善` 同 supply chain の Bun registry 部分を閉じる: 172 件の lock reference を Linux x64 用の一意な npm archive 125 件 (31,498,870 bytes) に解決し, 固定 tarball だけから最小 cache を再構築; network 無効かつ cache 読み取り専用の固定 Ubuntu container で 3 回の frozen install をすべて通過しました. 信頼される postinstall を持つ依存は `esbuild@0.21.5` だけです
-- `改善` patched runtime を配布せずに再現可能 build gate を完了: host の `.deb` archive 155 件 (422,223,096 bytes) を再現可能な OCI image として固定し, Cargo closure を一意な archive 206 件へ拡張; 2 つの 64-bit ABI を network 無効の clean 環境で各 2 回 build して byte-for-byte 一致を確認し, pure Node ELF audit も固定しました. API 28/31 の直接 shell probe は成功しましたが, APK と application process の gate は未完了です
-- `改善` 検証可能な対応 source の Release assets を実装: source を APK から分離して同じ Release に置き, 正確な Bun/WebKit/JSC, native 19 件, Cargo 206 件, npm 125 件の source archive, patch, build/relink 手順, 公開 license notice を梱包; 大容量 asset は 1.9 GB で分割し, machine-readable manifest と SHA256SUMS で APK/runtime/source の bytes を結合し, GitHub SHA-256 がすべて一致した後だけ draft を公開します; これは自動技術検証の記録であり, 法的承認の主張ではありません
-- `依存関係` Release 版 R8 が共有 Parcelable contract class を保持するよう Kotlin Parcelize runtime を追加
 
 ##### その他のリリース履歴
 
