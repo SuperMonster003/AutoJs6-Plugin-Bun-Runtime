@@ -4,22 +4,22 @@ import { readFileSync } from "node:fs";
 import { PACKAGE, TEST_CLASS, TESTS, parseBinderUid, validateDevice, validateInstrumentation } from "./binder-common.mjs";
 
 const valid = () => TESTS.map((name, i) => [1, 0].map(code =>
-    `INSTRUMENTATION_STATUS: class=${TEST_CLASS}\nINSTRUMENTATION_STATUS: current=${i + 1}\nINSTRUMENTATION_STATUS: numtests=8\nINSTRUMENTATION_STATUS: test=${name}\nINSTRUMENTATION_STATUS_CODE: ${code}\n`).join("")).join("") +
+    `INSTRUMENTATION_STATUS: class=${TEST_CLASS}\nINSTRUMENTATION_STATUS: current=${i + 1}\nINSTRUMENTATION_STATUS: numtests=${TESTS.length}\nINSTRUMENTATION_STATUS: test=${name}\nINSTRUMENTATION_STATUS_CODE: ${code}\n`).join("")).join("") +
     ["CANCELLED", "CANCELLED", "CANCELLED", "OUTPUT_LIMIT", "TIMEOUT"].map(error =>
         `INSTRUMENTATION_STATUS: stream=\nBUN_LIFECYCLE error=${error} childPid=12345 reaped=true exitCode=137 durationMillis=350 workspaceRemoved=true\nINSTRUMENTATION_STATUS_CODE: 0\n`).join("") +
-    "INSTRUMENTATION_RESULT: stream=\nOK (8 tests)\nINSTRUMENTATION_CODE: -1\n";
+    `INSTRUMENTATION_RESULT: stream=\nOK (${TESTS.length} tests)\nINSTRUMENTATION_CODE: -1\n`;
 
-test("exact eight-test inventory remains shared with the actual plugin suite", () => {
+test("exact test inventory remains shared with the actual plugin suite", () => {
     const source = readFileSync(new URL("../../../../../app/src/androidTest/java/io/github/supermonster003/autojs6/plugin/bun/runtime/BunRuntimeInstrumentedTest.kt", import.meta.url), "utf8");
     assert.deepEqual([...source.matchAll(/@Test\s+fun (\w+)/g)].map(m => m[1]).sort(), TESTS.slice().sort());
 });
 test("all test outcomes and lifecycle diagnostics are required", () => {
-    assert.equal(validateInstrumentation(valid()).length, 8);
+    assert.equal(validateInstrumentation(valid()).length, TESTS.length);
     for (const changed of [
         valid().replace("INSTRUMENTATION_STATUS_CODE: 0", "INSTRUMENTATION_STATUS_CODE: -3"),
         valid().replace("reaped=true", "reaped=false"), valid().replace("workspaceRemoved=true", "workspaceRemoved=false"),
         valid().replace("durationMillis=350", "durationMillis=9000"),
-        valid().replace("OK (8 tests)", "OK (7 tests)"), valid().replace("INSTRUMENTATION_CODE: -1", "INSTRUMENTATION_CODE: 0"),
+        valid().replace(`OK (${TESTS.length} tests)`, `OK (${TESTS.length - 1} tests)`), valid().replace("INSTRUMENTATION_CODE: -1", "INSTRUMENTATION_CODE: 0"),
         valid().replace(TESTS[0], "unknownTest"), valid() + "\nINSTRUMENTATION_FAILED: crash",
     ]) assert.throws(() => validateInstrumentation(changed));
 });

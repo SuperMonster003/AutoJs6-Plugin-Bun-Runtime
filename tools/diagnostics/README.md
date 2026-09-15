@@ -52,8 +52,13 @@ The tools do not launch or stop AVDs; callers own that lifecycle.
 
 ## Archive
 
+The `binder` scope archives the historical eight-test suite; `workspace` archives the
+same runner output as kind `workspace-archive-binder` once the suite carries the M6
+`workspaceArchiveProjectRoundTrip` method (nine tests). Both bind the same raw rounds.
+
 ```powershell
 node tools/diagnostics/archive-runtime-messages.mjs binder NEW_BINDER.json ARM_DEVICE_DIRECTORY...
+node tools/diagnostics/archive-runtime-messages.mjs workspace NEW_WORKSPACE_BINDER.json ARM_DEVICE_DIRECTORY...
 node tools/diagnostics/archive-runtime-messages.mjs messages NEW_MESSAGES.json ARM_DEVICE_DIRECTORY...
 node tools/diagnostics/archive-runtime-messages.mjs page-refusal NEW_REFUSAL.json X86_DEVICE_DIRECTORY...
 ```

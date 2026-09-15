@@ -61,6 +61,7 @@ export const TESTS = Object.freeze([
     "sigtermIgnoringCancellationAfterReadinessReapsTheChild",
     "sigtermIgnoringOutputLimitReapsTheChild",
     "timeoutCancellationAndInvalidRequestAreBounded",
+    "workspaceArchiveProjectRoundTrip",
     "manifestPublishesWakeInfoAndRuntimeContracts",
 ]);
 export const facts = path => {
@@ -109,7 +110,7 @@ export function validateInstrumentation(text) {
     assert.deepEqual(passed.slice().sort(), TESTS.slice().sort(), "Every Binder test must pass exactly once");
     assert.deepEqual(started.slice().sort(), TESTS.slice().sort(), "Every Binder test must start exactly once");
     assert.deepEqual(lifecycle.sort(), ["CANCELLED", "CANCELLED", "CANCELLED", "OUTPUT_LIMIT", "TIMEOUT"]);
-    assert.match(text, /OK \(8 tests\)/);
+    assert.match(text, new RegExp(`OK \\(${TESTS.length} tests\\)`));
     assert.match(text, /^INSTRUMENTATION_CODE: -1\s*$/m);
     assert.doesNotMatch(text, /INSTRUMENTATION_FAILED|FAILURES!!!|Process crashed/);
     return passed;

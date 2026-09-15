@@ -6,7 +6,7 @@ import { TESTS, validateInstrumentation, validateDevice } from "../bun-runtime/e
 
 // Usage: node archive-runtime-messages.mjs binder|messages|page-refusal OUTPUT.json REPORT_DIRECTORY...
 const [scope, output, ...directories] = process.argv.slice(2);
-assert(["binder", "messages", "page-refusal"].includes(scope) && output && directories.length);
+assert(["binder", "workspace", "messages", "page-refusal"].includes(scope) && output && directories.length);
 const inputs = inputFacts(), records = [], devices = new Set();
 for (const directory of directories) {
     const reportFile = join(resolve(directory), "report.json");
@@ -41,7 +41,7 @@ for (const directory of directories) {
             const validation = suite.suite === "binder" ? validateInstrumentation(suite.stdout) : validateMessages(suite.stdout, suite.suite);
             assert.deepEqual(suite.validation, validation);
         }
-        const selected = round.suites.filter(s => scope === "binder" ? s.suite === "binder" : s.suite !== "binder");
+        const selected = round.suites.filter(s => ["binder", "workspace"].includes(scope) ? s.suite === "binder" : s.suite !== "binder");
         rounds.push({ round: round.round, status: 0,
             passedTests: selected.flatMap(s => s.suite === "binder" ? s.validation : [s.validation.test]),
             raw: selected.map(s => ({ suite: s.suite, stdout: s.stdout, stderr: s.stderr, validation: s.validation })) });
@@ -49,9 +49,10 @@ for (const directory of directories) {
     const { rounds: unused, ...metadata } = report;
     records.push({ ...metadata, sourceReport: facts(reportFile), rounds });
 }
-const tests = scope === "binder" ? TESTS : [METHODS.resources, scope === "messages" ? METHODS.errors : METHODS.pages];
-const archive = { schemaVersion: 1, kind: "runtime-message-" + scope, capturedAt: new Date().toISOString(),
-    scope: scope === "binder" ? "Unchanged eight-test Binder suite with the newly localized production service and official Bun; isolated Debug APKs."
+const tests = ["binder", "workspace"].includes(scope) ? TESTS : [METHODS.resources, scope === "messages" ? METHODS.errors : METHODS.pages];
+const archive = { schemaVersion: 1, kind: scope === "workspace" ? "workspace-archive-binder" : "runtime-message-" + scope, capturedAt: new Date().toISOString(),
+    scope: scope === "workspace" ? "Nine-test Binder suite of the production service with the M6 workspace archive round-trip (relative ESM import, JSON import, project working directory, cleanup, traversal / missing entry / non-ZIP rejections and single-source recovery) on official Bun; isolated Debug APKs. Not host-side project packing."
+        : scope === "binder" ? "Unchanged eight-test Binder suite with the newly localized production service and official Bun; isolated Debug APKs."
         : scope === "messages" ? "Ten-language resources and six real terminal errors with matching finished events; separate presentation suite."
             : "Ten-language cached page-size refusal before Bun execution; official x86_64 remains incompatible with 16 KiB process pages.",
     runtime: { version: "1.4.0", revision: "1.4.0+34cbb9a40", commit: "34cbb9a40b4bd1bd767d134a7065e66c2432a676", variant: "bun-1.4.0-android" },
