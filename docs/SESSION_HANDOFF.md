@@ -35,7 +35,7 @@
   manifest `<queries>` 声明 `org.autojs.autojs6`, 能力位 `SUPPORTS_HOST_INFO`; 单测 45/45 (新增 8), lint 无新问题.
 - M7 真机验证 (2026-09-16 00:44-00:54 +08:00): instrumentation (`-e requiredApiLevel <api> -e requiredPageSizeBytes <page>` 必填) 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (`localhost:37478`, API 36, 16 KiB) 各 OK (17 tests); 前两次尝试分别因误装 `.diagnostics` 后缀的旧 debug APK (需 `:app:assembleDebug`, `assembleDebugAndroidTest` 不重建应用 APK) 与 `process.cwd()` 符号链接差异 (改 realpath 比较) 重跑.
   宿主往返: 宿主 `:app:assembleAppDebug` arm64 debug APK (`6afee80a…`) `install -r` 覆盖 Redmi 用户宿主, 本地 `:app:assembleRelease` 插件 (`50eb3fa0…`), 夹具 `/sdcard/AutoJs6/bun-hostinfo/{project,bare}`; project/bare 读到核实后的快照, 撤销 (`am force-stop` 后 `run-as org.autojs.autojs6 sh < 本地脚本` 写 `shared_prefs/bun_host_capability_grants.xml`; 经 `adb shell` 传引号或 here-document 都不可行) 后 absent, 删除偏好文件后恢复.
-  Samsung 宿主装入后 Remote Test Lab 会话断开, 未跑宿主往返. Redmi 已卸载插件并用 `%TEMP%/redmi-autojs6-base.apk` 还原宿主 (`340536cb…` 核对). 记录 `docs/compatibility/2026-09-16-m7-host-info-snapshot.json/.md` (index adapter, supplement); 原始输出在本地 `.git/host-hostinfo-20260916/`.
+  Samsung 第一个 Remote Test Lab 会话在宿主装入后断开; 用户重新上线后第二个会话 (01:37-01:40) 全新安装宿主+插件跑完同样四轮并卸载, 但实验室把三次启动重复投递 (`rtl.hb` 心跳后出现第二条 START), 其中一次并发启动被宿主 `BunBoundedBinderCallLane` 以 `BUSY` 拒绝 (宿主行为, 只作观察). Redmi 已卸载插件并用 `%TEMP%/redmi-autojs6-base.apk` 还原宿主 (`340536cb…` 核对). 记录 `docs/compatibility/2026-09-16-m7-host-info-snapshot.json/.md` (index adapter, supplement); 原始输出在本地 `.git/host-hostinfo-20260916/`.
 - 下一步: 宿主仓库提交 M7 改动 (契约 + 引擎 + changelog 十语言, README 由 `py generate_markdown.py` 生成; 插件中心的 `host_info` 开关 UI 作为后续); 宿主发版由用户决定, 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述; M7 第二项能力 (若为动态调用) 先做接口评审 (Binder broker + 子进程通道, cancellation/backpressure/并发).
 
 ---

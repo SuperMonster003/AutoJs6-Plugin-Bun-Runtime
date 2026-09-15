@@ -241,7 +241,7 @@ _2026/09/15_
 - `優化` 用從宿主 master (7c31269cc) 本地建置的 AutoJs6 與已發布的 v0.2.2 x86_64 外掛程式在 API 33 AVD 上驗證宿主到外掛程式的真實專案往返: 含相對匯入與 JSON 匯入的 project.json 專案, package.json 的 TypeScript 專案, 以及仍按單檔案失敗的裸檔案對照; 宿主自身的發布仍待進行
 - `優化` 為 v0.2.2 發布證據補充原生 arm64 16 KiB 硬體上的簽章最終 APK 驗收: 已發布的 arm64-v8a APK 在 Samsung SM-A566B (API 36, Remote Test Lab) 全新安裝, force-stop 前後各通過 9/9 組, 安裝後位元組綁定到發布資產, 驗收後已解除安裝; 記錄現涵蓋五個環境
 - `優化` 用同一本地建置的 AutoJs6 宿主 (master 7c31269cc) 與已發布的 v0.2.2 arm64-v8a 外掛程式在兩台原生 ARM64 實機上重複宿主到外掛程式的真實專案往返: Samsung SM-A566B (API 36, 16 KiB 頁) 與 Redmi 22120RN86C (API 33) 各執行 project.json 專案兩輪, package.json 的 TypeScript 專案一輪以及裸檔案對照, 結果均符合預期; 宿主是否發布仍由使用者決定
-- `優化` 在 Redmi 22120RN86C (API 33) 與 Samsung SM-A566B (API 36, 16 KiB 頁) 上執行含兩項新用例 (快照僅在提供時交付並核實, 宿主全域以 ReferenceError 明確失敗) 的 instrumentation 套件, 各 OK (17 tests); 並用本機建置的 AutoJs6 宿主 (master d9b4033bd + attachHostInfo) 與本機 0.2.3 release 插件在 Redmi 完成宿主到插件的快照往返: 單一原始碼與 project.json 專案都讀到核實後的宿主/插件/執行事實, 撤銷宿主授權後腳本得到 absent, 恢復後再次得到快照, 宿主已還原為使用者原 APK; 記錄見 docs/compatibility/2026-09-16-m7-host-info-snapshot
+- `優化` 在 Redmi 22120RN86C (API 33) 與 Samsung SM-A566B (API 36, 16 KiB 頁) 上執行含兩項新用例 (快照僅在提供時交付並核實, 宿主全域以 ReferenceError 明確失敗) 的 instrumentation 套件, 各 OK (17 tests); 並用本機建置的 AutoJs6 宿主 (master d9b4033bd + attachHostInfo) 與本機 0.2.3 release 插件在 Redmi 與 Samsung 各完成宿主到插件的快照往返: 單一原始碼與 project.json 專案都讀到核實後的宿主/插件/執行事實, 撤銷宿主授權後腳本得到 absent, 恢復後再次得到快照, 宿主已還原為使用者原 APK; 記錄見 docs/compatibility/2026-09-16-m7-host-info-snapshot
 
 #### v0.2.2
 
