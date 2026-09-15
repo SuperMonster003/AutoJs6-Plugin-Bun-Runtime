@@ -233,9 +233,8 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 #### v0.2.3
 
-_2026/09/15_
+_2026/09/16_
 
-- `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
 - `Feature` First M7 host capability: a read-only host info snapshot. When the host sends `hostInfoVersion = 1` and `hostInfo` (package name, optional versionDate and languageTag) in the runScript request, the plugin checks that the package belongs to the Binder caller UID, resolves the host version itself through PackageManager, writes the host/plugin/execution facts as a JSON document of at most 16 KiB to `autojs6/host-info.json` inside the run directory (outside `project`, deleted with the run) and points the script at it through the `AUTOJS6_HOST_INFO_FILE` environment variable; the terminal Bundle gains `hostInfoDelivered`. Capability `SUPPORTS_HOST_INFO`; the `AUTOJS6_` environment prefix is reserved for the plugin (a host request carrying it is rejected with INVALID_REQUEST), and a spoofed package or unknown version is rejected before Bun starts. The shared contract AAR grows to 14073 bytes; hosts that do not offer the snapshot behave exactly as before
 - `Improvement` Archive the published v0.2.2 APK/source asset verification and the signed final-APK acceptance in four environments: in-place upgrades from the published v0.2.0 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64 and an x86_64 API 33 AVD, each passing 9/9 groups before and after force-stop; the released tag is not rewritten and Android/16 KB compatibility is not expanded
 - `Improvement` Verify the real host-to-plugin project round trip with an AutoJs6 host built locally from its master (7c31269cc) against the published v0.2.2 x86_64 plugin on an API 33 AVD: a project.json project with relative and JSON imports, a package.json TypeScript project, and a bare-file control that still fails closed; the host release itself is still pending

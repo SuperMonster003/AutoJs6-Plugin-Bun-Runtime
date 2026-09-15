@@ -233,9 +233,8 @@ default timeout: 60 seconds
 
 #### v0.2.3
 
-_2026/09/15_
+_2026/09/16_
 
-- `提示` 尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本
 - `新增` M7 第一项宿主能力: 只读的宿主信息快照. 宿主在 runScript 请求里携带 `hostInfoVersion = 1` 与 `hostInfo` (包名, 可选的 versionDate 与 languageTag) 时, 插件核对包名属于 Binder 调用方 UID, 自行通过 PackageManager 解析宿主版本, 把宿主/插件/本次运行的事实写成不超过 16 KiB 的 JSON 放到运行目录的 `autojs6/host-info.json` (`project` 之外, 随运行目录删除), 并通过环境变量 `AUTOJS6_HOST_INFO_FILE` 告知脚本; 终态新增 `hostInfoDelivered`. 能力位 `SUPPORTS_HOST_INFO`; 环境变量前缀 `AUTOJS6_` 归插件保留, 宿主请求携带即以 INVALID_REQUEST 拒绝, 冒用包名或未知版本同样在启动 Bun 之前拒绝. 共享契约 AAR 升级为 14073 bytes, 未提供快照的宿主行为完全不变
 - `优化` 归档已发布 v0.2.2 的 APK/对应源码资产验证与四个环境的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 各在 force-stop 前后通过 9/9 组; 不改写已发布标签, 不扩大 Android 或 16 KB 兼容声明
 - `优化` 用从宿主 master (7c31269cc) 本地构建的 AutoJs6 与已发布的 v0.2.2 x86_64 插件在 API 33 AVD 上验证宿主到插件的真实项目往返: 含相对导入与 JSON 导入的 project.json 项目, package.json 的 TypeScript 项目, 以及仍按单文件失败的裸文件对照; 宿主自身的发布仍待进行

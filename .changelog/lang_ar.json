@@ -6,10 +6,7 @@
   "changelog_label_dependency": "تبعية",
   "$data": {
     "v0.2.3": {
-      "released_date": "2026/09/15",
-      "hint": [
-        "لقطة تطوير لم تنشر بعد; لا يزال المكون الإضافي الرسمي يتطلب Android 13 (API 33) أو أحدث"
-      ],
+      "released_date": "2026/09/16",
       "feature": [
         "أول قدرة مضيف في M7: لقطة معلومات المضيف للقراءة فقط. عندما يرسل المضيف `hostInfoVersion = 1` و `hostInfo` (اسم الحزمة, و versionDate و languageTag اختياريين) في طلب runScript, يتحقق plugin من أن الحزمة تخص UID المستدعي عبر Binder, ويحل إصدار المضيف بنفسه عبر PackageManager, ويكتب حقائق المضيف و plugin والتشغيل الحالي في JSON لا يتجاوز 16 KiB داخل `autojs6/host-info.json` في مجلد التشغيل (خارج `project`, يحذف مع التشغيل), ويخبر script بالمسار عبر متغير البيئة `AUTOJS6_HOST_INFO_FILE`; ويضاف `hostInfoDelivered` إلى Bundle النهائي. القدرة `SUPPORTS_HOST_INFO`; البادئة `AUTOJS6_` محجوزة لـ plugin (يرفض طلب المضيف الذي يحملها بـ INVALID_REQUEST), وترفض الحزمة المنتحلة أو الإصدار المجهول قبل تشغيل Bun. AAR العقد المشترك يصبح 14073 bytes; المضيفون الذين لا يقدمون اللقطة يعملون تماما كما في السابق"
       ],

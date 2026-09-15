@@ -6,10 +6,7 @@
   "changelog_label_dependency": "依存関係",
   "$data": {
     "v0.2.3": {
-      "released_date": "2026/09/15",
-      "hint": [
-        "未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降"
-      ],
+      "released_date": "2026/09/16",
       "feature": [
         "M7 最初のホスト機能: 読み取り専用のホスト情報スナップショット. ホストが runScript リクエストに `hostInfoVersion = 1` と `hostInfo` (パッケージ名, 任意の versionDate と languageTag) を載せると, プラグインはそのパッケージが Binder 呼び出し元 UID のものか確認し, PackageManager でホストのバージョンを自ら解決し, ホスト/プラグイン/今回の実行の事実を 16 KiB 以下の JSON として実行ディレクトリの `autojs6/host-info.json` (`project` の外, 実行ディレクトリと共に削除) に書き, 環境変数 `AUTOJS6_HOST_INFO_FILE` でスクリプトに知らせます; 終了 Bundle に `hostInfoDelivered` が加わります. 能力ビット `SUPPORTS_HOST_INFO`; 環境変数の接頭辞 `AUTOJS6_` はプラグイン予約で, ホストのリクエストが含むと INVALID_REQUEST で拒否し, 偽装したパッケージ名や未知のバージョンも Bun 起動前に拒否します. 共有契約 AAR は 14073 bytes に更新; スナップショットを提供しないホストの挙動は従来と同じです"
       ],
