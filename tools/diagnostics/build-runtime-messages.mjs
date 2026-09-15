@@ -11,7 +11,7 @@ const output = resolve(outputArg);
 mkdirSync(output); // Refuse to replace a previous build, including its failure log.
 const before = inputFacts(), startedAt = new Date().toISOString();
 const tasks = [":app:testDebugUnitTest", ":app:verifyDebugApkRuntimeIntegrity", ":app:assembleDebugAndroidTest", ":app:lintDebug",
-    "-PinstrumentationApplicationIdSuffix=.diagnostics", "--console=plain"];
+    "-PinstrumentationApplicationIdSuffix=.diagnostics", "--offline", "--console=plain"];
 const log = createWriteStream(join(output, "gradle.log"), { flags: "wx" });
 const windows = process.platform === "win32";
 const command = windows ? "cmd.exe" : "sh";
