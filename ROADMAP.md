@@ -17,7 +17,7 @@
 | 优先级 | 里程碑 | 本轮可交付物 | 状态 |
 |---|---|---|---|
 | P0 | M6 多文件项目执行 (插件侧) | 有界工作区归档展开器 + 单元测试 + 契约 v2 提案, 见 M6 条目与 [设计稿](docs/design/m6-workspace-archive.md) | 已完成 (2026-09-14, G1) |
-| P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 插件侧完成并通过三台 ARM64 真机往返 (2026-09-15, G1, [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md)); 宿主发布与宿主到插件的真实项目往返待做 |
+| P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 插件侧完成并通过三台 ARM64 真机往返 (2026-09-15, G1, [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md)); 宿主到插件的真实项目往返已用本地构建的宿主 (master `7c31269cc`, 官方证书签名) 与已发布 v0.2.2 x86_64 插件在 API 33 AVD 完成 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md)); 宿主发布待做 |
 | P2 | M1-B 收尾与发布 | 从已发布 v0.2.0 覆盖升级与全新安装验证 (v0.1.0 从未公开发布, 不存在该升级路径), 然后发布 v0.2.2 (监督器, 本地化错误, M6) | 已完成 (2026-09-15, G1/G2/G3, [发布报告](docs/compatibility/2026-09-15-v0.2.2-release.md)) |
 | P3 | M7 最小能力桥 | 只读的宿主版本/环境查询能力, 窄接口 + 能力协商 | 待做 |
 | 冻结 | M3/M4/M5 实验线 | 停在十三补丁 baseline `1.4.0+e8b129616`; 只在 (a) 用户报告的真实失败, (b) 上游 Bun 修复落地需要重建, 或 (c) 发布门禁本身要求时才新增设备批次 | 已冻结 |
@@ -48,9 +48,9 @@
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 待宿主发布与宿主到插件的真实项目往返); M7 最小能力桥待开始; M9 文档持续 |
+| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 本地宿主构建的真实项目往返已通过, 待宿主发布); M7 最小能力桥待开始; M9 文档持续 |
 | 尚未开始 | M7 AutoJs6 能力桥 (M6 端到端之后开始) |
-| 当前缺口 | M6 插件侧已随 v0.2.2 发布, 宿主打包代码已提交到宿主仓库但未随 AutoJs6 发布, 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
+| 当前缺口 | M6 插件侧已随 v0.2.2 发布, 宿主打包代码已提交到宿主仓库并用本地宿主构建通过真实项目往返, 但未随 AutoJs6 发布, 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
 
 ## 如何阅读这份路线图
 
@@ -116,7 +116,7 @@
 | M3 Android 9-12L 实验支持 | 冻结于十三补丁 baseline | 八个原生环境固定套件 560/560, Binder 128/128; 不宣称 Android 9 稳定支持, 停放项见路线调整 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 冻结 (等待实验线解冻) | 转正门禁只随用户报告的失败, 上游修复或发布门禁重新排期 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; v0.2.2 最终签名 x86_64 (4 KiB AVD) 验收完成, 原生 ARM64 16 KiB 上的签名 APK 验收待下次发布 | JSC 大页候选与 DFG 采样根因停放 | 构建/测试/设备/发布 |
-| M6 多文件项目执行 | 插件侧完成 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; 三台 ARM64 真机 (API 33/33/35) 九项 Binder 54/54; 宿主发布待做 | API/插件/宿主 |
+| M6 多文件项目执行 | 插件侧已发布, 宿主往返已验证 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; 三台 ARM64 真机 (API 33/33/35) 九项 Binder 54/54; 本地宿主构建 + v0.2.2 插件在 x86_64 AVD 完成真实项目往返; 宿主发布待做 | API/插件/宿主 |
 | M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
 | M9 文档与开发者体验 | 进行中 | 通俗文档, 可运行示例, 排错指南与人类可读兼容矩阵 | 插件/发布 |
@@ -392,6 +392,8 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (宿主) AutoJs6 `BunPluginScriptEngine` 在插件宣告能力且脚本位于声明了 `project.json` 或 `package.json` 的目录 (向上最多 16 级) 时, 由新增 `BunPluginWorkspaceArchive` 把该目录打成有界 ZIP (只收普通文件与目录, 符号链接/特殊文件直接报错, `O_NOFOLLOW` + inode 复核, 上限与契约一致), 入口文件用已解密的当前源码字节替换, 并以脚本相对路径作为入口; 其余源码与旧插件保持单源码路径. `compileAppDebugKotlin` 通过; 宿主仓库提交与 changelog 待另一任务的工作区收口后进行. (2026-09-15, G0/G1)
 - [ ] (API/插件/宿主) 定义 source map, arguments, 受控 environment 与 working directory 语义; 相对导入以 `project` 为根.
 - [x] (测试/设备) instrumentation `workspaceArchiveProjectRoundTrip` (相对 ESM import, JSON 导入, `import.meta.dir` 位于 `project`, 展开后清理, 穿越/缺失入口/非 ZIP 三种拒绝, 后续单源码恢复) 随九项 Binder 套件在 Sony XQ-DQ72 API 33, Redmi 22120RN86C API 33 与 Xiaomi 23046RP50C API 35 (均原生 arm64-v8a, 4 KiB) 各两轮通过, 合计 54/54; 首次尝试暴露 Android 14+ ZIP 路径校验器把 `../` 条目先行拒绝的差异, 展开器已把该拒绝映射为 `INVALID_ENTRY_PATH` 并加 JVM 单测. 见 [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md). (2026-09-15, G1)
+
+- [x] (宿主/设备) 用宿主 master `7c31269cc` 的本地 debug 构建 (官方证书签名, 含 `BunPluginWorkspaceArchive`) 与已发布 v0.2.2 x86_64 插件在 API 33 x86_64 AVD 完成宿主到插件的真实项目往返: 经 `RunIntentActivity` 运行 `project.json` 项目两轮 (相对 ESM import, JSON import, `import.meta.dir` 与 cwd 位于插件私有 `project`, 归档 6 个条目), `package.json` 的 TypeScript 项目一轮, 裸文件对照按单源码路径报 `Cannot find module` 并以 `NON_ZERO_EXIT` 返回宿主; 运行后插件 `bun-executions` 与宿主快照目录均为空, 卸载后无残留. 宿主控制台把 intent 启动的 `.ts` 入口标为 `[main.js]`, 属宿主显示细节. 宿主未发布. 见 [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md). (2026-09-15, G2)
 
 **M6 验收条件:** 新旧 contract 通过 capability negotiation 共存; 旧宿主继续使用单源码 v1, 项目运行不会扩大到任意宿主文件系统访问.
 

@@ -1396,6 +1396,17 @@
       "note": "原七模式及预算不变; x86 16KiB为用户页模拟, 非ARM64硬件或长时压力/性能."
     },
     {
+      "file": "2026-09-15-m6-host-round-trip.json",
+      "sha256": "74b39560f52b3e40b7ce8cdbf157d7457504c57ba3b23286d4b664bec2a6312f",
+      "schema": 1,
+      "kind": "m6-host-round-trip",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M6 宿主到插件真实项目往返 (本地宿主构建, x86_64 AVD)",
+      "note": "AutoJs6 master 7c31269cc 的本地 debug 构建 (官方证书签名) 与已发布 v0.2.2 x86_64 插件: project.json 项目两轮与 package.json TypeScript 项目通过, 裸文件对照按单源码失败. 宿主未发布, 不计为设备验收组."
+    },
+    {
       "file": "2026-09-15-m6-workspace-archive-binder.json",
       "sha256": "201b1b03e8c2a390747c382b52427538e33e573759262eda4319a8c67485a684",
       "schema": 1,
