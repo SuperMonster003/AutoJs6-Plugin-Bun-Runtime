@@ -3309,6 +3309,23 @@
       "reportedOutcome": null,
       "distributionReady": null,
       "summary": null
+    },
+    {
+      "file": "2026-09-16-m7-host-info-snapshot.json",
+      "sha256": "6ff8d98dc77596aaabf51b9ad53b6cf19c676618ac87ab8ceee48f5194ba5c62",
+      "schema": 1,
+      "kind": "m7-host-info-snapshot",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M7 宿主信息快照真机验证 (instrumentation 双机 + Redmi 宿主往返, 含授权撤销)",
+      "note": "本仓库 M7 工作树的 debug/androidTest APK 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB) 各 OK (17 tests); 本地 AutoJs6 master d9b4033bd + attachHostInfo 宿主与本地 0.2.3 release 插件在 Redmi 完成 4/4 往返 (单源码/归档读到核实后的快照, 撤销后 absent, 恢复后再得). Samsung 宿主往返因实验室会话断开未运行. 宿主与插件均未发布, 不计为设备验收组.",
+      "bytesUtf8Lf": 26516,
+      "rows": 0,
+      "reportedScope": "First M7 host capability (read-only host info snapshot, HOST_INFO_VERSION 1) verified end to end: the plugin instrumentation suite with the two new tests on two native ARM64 devices (Redmi 22120RN86C API 33 / 4 KiB, Samsung SM-A566B API 36 / 16 KiB), then a real host-to-plugin round trip on the Redmi with a locally built AutoJs6 host (master d9b4033bd plus the uncommitted attachHostInfo change) and the locally built 0.2.3 release plugin: single-source and project.json launches read the verified snapshot, the host grant was revoked and restored through the host preference file. Supplementary integration evidence, not a device acceptance group and not a host or plugin release.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": null
     }
   ],
   "rows": [

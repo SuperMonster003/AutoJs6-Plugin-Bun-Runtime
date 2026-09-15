@@ -3,6 +3,8 @@ package io.github.supermonster003.autojs6.plugin.bun.runtime
 import android.app.Application
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Binder
 import android.os.Bundle
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
@@ -69,6 +71,7 @@ class BunRuntimeService : Service() {
             callback: IBunRuntimeCallback?,
         ): Bundle {
             enforcePluginCaller()
+            val callingUid = Binder.getCallingUid()
             val startedAt = SystemClock.elapsedRealtime()
             var request: BunExecutionRequest? = null
             var handle: ExecutionHandle? = null
@@ -110,7 +113,10 @@ class BunRuntimeService : Service() {
                 if (handle.cancelled.get()) {
                     return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
-                return execute(request, prepared, workspace, callback, handle, startedAt)
+                val hostInfoFile = request.hostInfo?.let { hostInfo ->
+                    materializeHostInfo(hostInfo, callingUid, probe.abi.orEmpty(), request, prepared, workspace)
+                }
+                return execute(request, prepared, workspace, callback, handle, startedAt, hostInfoFile)
             } catch (error: BunWorkspaceArchiveException) {
                 // Archive rules map onto the published error codes; the fixed archive code stays in the diagnostic.
                 val code = when (error.code) {
@@ -179,6 +185,7 @@ class BunRuntimeService : Service() {
         callback: IBunRuntimeCallback,
         handle: ExecutionHandle,
         startedAt: Long,
+        hostInfoFile: File?,
     ): Bundle {
         val command = buildList {
             add(runtimeBinary.file.path)
@@ -190,6 +197,7 @@ class BunRuntimeService : Service() {
         val processBuilder = ProcessBuilder(command).directory(prepared.workingDirectory)
         processBuilder.environment().apply {
             putAll(request.environment)
+            hostInfoFile?.let { put(BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE, it.path) }
             put("TMPDIR", File(workspace, "tmp").apply { mkdirs() }.path)
             put("BUN_INSTALL_CACHE_DIR", File(workspace, "bun-install-cache").apply { mkdirs() }.path)
             put("BUN_DISABLE_UPDATE_CHECK", "1")
@@ -281,6 +289,7 @@ class BunRuntimeService : Service() {
                 putInt(BunRuntimeContract.KEY_WORKSPACE_FILE_COUNT, expanded.fileCount)
                 putLong(BunRuntimeContract.KEY_WORKSPACE_BYTES, expanded.totalBytes)
             }
+            if (request.hostInfo != null) putBoolean(BunRuntimeContract.KEY_HOST_INFO_DELIVERED, hostInfoFile != null)
         }
         emitSequenced(
             callback,
@@ -362,6 +371,56 @@ class BunRuntimeService : Service() {
             workspaceRequest.limits,
         ) { handle.cancelled.get() }
         return PreparedExecution(expanded.entryFile, expanded.root, expanded)
+    }
+
+    /**
+     * First capability of the M7 bridge: verifies the offered host package against the Binder caller, resolves the
+     * host version from PackageManager (never from the request) and writes the bounded snapshot into a private
+     * directory of this run, outside `project`, so scripts cannot import it as project code. Failures map to
+     * INVALID_REQUEST through the existing IllegalArgumentException path.
+     */
+    private fun materializeHostInfo(
+        hostInfo: BunHostInfoRequest,
+        callingUid: Int,
+        runtimeAbi: String,
+        request: BunExecutionRequest,
+        prepared: PreparedExecution,
+        workspace: File,
+    ): File {
+        val packageManager = applicationContext.packageManager
+        val callerPackages = packageManager.getPackagesForUid(callingUid).orEmpty()
+        require(hostInfo.packageName in callerPackages) { "Host info package does not match the caller" }
+        val hostPackage = try {
+            packageManager.getPackageInfo(hostInfo.packageName, 0)
+        } catch (error: PackageManager.NameNotFoundException) {
+            throw IllegalArgumentException("Host info package is not visible", error)
+        }
+        val pluginPackage = packageManager.getPackageInfo(packageName, 0)
+        val json = BunHostInfoSnapshot.render(
+            host = BunHostFacts(
+                packageName = hostInfo.packageName,
+                versionName = hostPackage.versionName.orEmpty(),
+                versionCode = hostPackage.longVersionCode,
+                versionDate = hostInfo.versionDate,
+                languageTag = hostInfo.languageTag,
+            ),
+            plugin = BunPluginFacts(
+                packageName = packageName,
+                versionName = pluginPackage.versionName.orEmpty(),
+                versionCode = pluginPackage.longVersionCode,
+                runtimeVersion = BuildConfig.BUN_RUNTIME_VERSION,
+                runtimeRevision = BuildConfig.BUN_RUNTIME_REVISION,
+                runtimeAbi = runtimeAbi,
+            ),
+            execution = BunExecutionFacts(
+                executionId = request.executionId,
+                sourceName = request.sourceName,
+                workspaceArchive = prepared.expanded != null,
+            ),
+        )
+        val directory = File(workspace, BunHostInfoSnapshot.DIRECTORY_NAME)
+        require(directory.mkdir()) { "Unable to create the host info directory" }
+        return File(directory, BunHostInfoSnapshot.FILE_NAME).apply { writeText(json + "\n", Charsets.UTF_8) }
     }
 
     private fun createWorkspace(executionId: String): File {

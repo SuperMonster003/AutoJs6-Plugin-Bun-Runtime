@@ -57,7 +57,7 @@
   "faq": [
     {
       "q": "Why are AutoJs6 functions such as `click()` and `toast()` unavailable in Bun scripts?",
-      "a": "Bun runs in a separate process and is a completely different JavaScript engine from Rhino, so the AutoJs6 globals do not appear inside Bun scripts. Letting Bun scripts call automation capabilities requires a host bridge that exposes each capability explicitly; the current version deliberately provides no such bridge yet. See the roadmap for plans."
+      "a": "Bun runs in a separate process and is a completely different JavaScript engine from Rhino, so the AutoJs6 globals do not appear inside Bun scripts. Letting Bun scripts call automation capabilities requires a host bridge that exposes each capability explicitly; the current version deliberately provides no automation interface. The first read-only capability (a host info snapshot: a JSON file pointed to by the `AUTOJS6_HOST_INFO_FILE` environment variable with the host and plugin versions) is implemented on the plugin side and becomes usable once AutoJs6 ships the matching host release. See the roadmap for plans."
     },
     {
       "q": "Can I use npm packages?",

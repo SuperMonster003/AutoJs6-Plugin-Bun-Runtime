@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?
 
-Bun は独立プロセスで動く, Rhino とはまったく別の JavaScript エンジンであるため, AutoJs6 の globals は Bun スクリプト内に現れません. Automation 機能を Bun から呼ぶには各機能を明示的に公開する host bridge が必要で, 現在のバージョンは意図的にまだ提供していません. 計画は roadmap を参照してください.
+Bun は独立プロセスで動く, Rhino とはまったく別の JavaScript エンジンであるため, AutoJs6 の globals は Bun スクリプト内に現れません. Automation 機能を Bun から呼ぶには各機能を明示的に公開する host bridge が必要で, 現在のバージョンは意図的に automation 用のインターフェースを提供していません. 最初の読み取り専用機能 (ホスト情報スナップショット: 環境変数 `AUTOJS6_HOST_INFO_FILE` が指す, ホストとプラグインのバージョンなどを含む JSON ファイル) はプラグイン側で実装済みで, 対応する AutoJs6 ホストがリリースされると使えるようになります. 計画は roadmap を参照してください.
 
 #### npm パッケージは使えますか?
 
@@ -236,10 +236,12 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 _2026/09/15_
 
 - `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
+- `機能` M7 最初のホスト機能: 読み取り専用のホスト情報スナップショット. ホストが runScript リクエストに `hostInfoVersion = 1` と `hostInfo` (パッケージ名, 任意の versionDate と languageTag) を載せると, プラグインはそのパッケージが Binder 呼び出し元 UID のものか確認し, PackageManager でホストのバージョンを自ら解決し, ホスト/プラグイン/今回の実行の事実を 16 KiB 以下の JSON として実行ディレクトリの `autojs6/host-info.json` (`project` の外, 実行ディレクトリと共に削除) に書き, 環境変数 `AUTOJS6_HOST_INFO_FILE` でスクリプトに知らせます; 終了 Bundle に `hostInfoDelivered` が加わります. 能力ビット `SUPPORTS_HOST_INFO`; 環境変数の接頭辞 `AUTOJS6_` はプラグイン予約で, ホストのリクエストが含むと INVALID_REQUEST で拒否し, 偽装したパッケージ名や未知のバージョンも Bun 起動前に拒否します. 共有契約 AAR は 14073 bytes に更新; スナップショットを提供しないホストの挙動は従来と同じです
 - `改善` 公開済み v0.2.2 の APK/ソース資産検証と 4 環境での署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.0 からの上書き更新, Redmi API 33 arm64 と x86_64 API 33 AVD は新規インストールで, いずれも force-stop 前後に 9/9 グループ通過. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない
 - `改善` ホスト master (7c31269cc) からローカルビルドした AutoJs6 と公開済み v0.2.2 x86_64 プラグインで, API 33 AVD 上のホストからプラグインへの実プロジェクト往復を検証: 相対 import と JSON import を含む project.json プロジェクト, package.json の TypeScript プロジェクト, および単一ファイルとして引き続き失敗する素のファイル対照. ホスト自体の公開は未実施
 - `改善` v0.2.2 のリリース証跡に, ネイティブ arm64 16 KiB ハードウェア上での署名済み最終 APK 受け入れを補足: 公開済み arm64-v8a APK を Samsung SM-A566B (API 36, Remote Test Lab) に新規インストールし, force-stop 前後で各 9/9 グループに合格, インストール後のバイトをリリース資産に紐付け, その後アンインストール. 記録は 5 環境をカバー
 - `改善` 同じローカルビルドの AutoJs6 ホスト (master 7c31269cc) と公開済み v0.2.2 arm64-v8a プラグインで, ネイティブ ARM64 実機 2 台でホストからプラグインへの実プロジェクト往復を再実施: Samsung SM-A566B (API 36, 16 KiB ページ) と Redmi 22120RN86C (API 33) でそれぞれ project.json プロジェクトを 2 回, package.json の TypeScript プロジェクトを 1 回, 素のファイル対照を実行し, すべて期待どおりの結果. ホストの公開はユーザーの判断のまま
+- `改善` 新しい 2 つのテスト (スナップショットは提供時のみ配布し検証する, ホストの globals は ReferenceError で明確に失敗する) を含む instrumentation スイートを Redmi 22120RN86C (API 33) と Samsung SM-A566B (API 36, 16 KiB ページ) で実行し各 OK (17 tests); さらにローカルビルドの AutoJs6 ホスト (master d9b4033bd + attachHostInfo) とローカルの 0.2.3 release プラグインで Redmi 上のホストからプラグインへのスナップショット往復を完了: 単一ファイルと project.json プロジェクトの両方が検証済みのホスト/プラグイン/実行の事実を読み取り, ホストの許可を取り消すとスクリプトは absent を受け取り, 復元すると再びスナップショットを受け取る. ホストはユーザーの元の APK に復元済み; 記録は docs/compatibility/2026-09-16-m7-host-info-snapshot
 
 #### v0.2.2
 

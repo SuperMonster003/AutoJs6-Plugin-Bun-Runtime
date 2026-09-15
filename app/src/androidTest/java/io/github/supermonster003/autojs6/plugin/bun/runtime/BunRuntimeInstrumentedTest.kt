@@ -21,6 +21,7 @@ import org.autojs.plugin.bun.runtime.api.IBunRuntimeCallback
 import org.autojs.plugin.bun.runtime.api.IBunRuntimePlugin
 import org.autojs.plugin.common.api.PluginCapabilityKeys
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -132,6 +133,7 @@ class BunRuntimeInstrumentedTest {
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_CANCELLATION))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_WORKSPACE_ARCHIVE))
+            assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_INFO))
 
             val probes = List(PREWARM_REPETITIONS) { runtime.prewarmRuntime() }
             val installedRuntimeAbi = requireNotNull(
@@ -611,6 +613,93 @@ class BunRuntimeInstrumentedTest {
         assertEquals(".WakeActivity", appInfo.metaData.getString("org.autojs.plugin.WAKE_ACTIVITY"))
     }
 
+    /** M7 first capability: the host info snapshot exists only when offered, is verified and lands outside `project`. */
+    @Test
+    fun hostInfoSnapshotIsDeliveredOnlyWhenOffered() {
+        withBoundRuntime { runtime ->
+            val script = """
+                const path = process.env.${BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE};
+                if (!path) { console.log("no-host-info"); process.exit(0); }
+                const { realpath } = await import("node:fs/promises");
+                const info = await Bun.file(path).json();
+                const cwd = await realpath(process.cwd());
+                const real = await realpath(path);
+                console.log("host=" + info.host.packageName + ":" + info.host.versionName + ":" + info.host.versionCode + ":" + info.host.versionDate + ":" + info.host.languageTag);
+                console.log("plugin=" + info.plugin.packageName + ":" + info.plugin.versionCode + ":" + info.plugin.runtimeVersion + ":" + info.plugin.runtimeRevision + ":" + info.plugin.runtimeAbi);
+                console.log("execution=" + info.execution.executionId + ":" + info.execution.sourceName + ":" + info.execution.workspaceArchive);
+                console.log("version=" + info.hostInfoVersion + " underCwd=" + real.startsWith(cwd + "/") + " underProject=" + real.startsWith(cwd + "/project/") + " file=" + real.endsWith("/autojs6/host-info.json"));
+            """.trimIndent()
+            val absent = runSource(runtime, "host-info-absent.js", script)
+            assertTrue(absent.stderr, absent.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(absent.stdout.contains("no-host-info"))
+            assertFalse(absent.result.containsKey(BunRuntimeContract.KEY_HOST_INFO_DELIVERED))
+
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            val offer: Bundle.() -> Unit = {
+                putInt(BunRuntimeContract.KEY_HOST_INFO_VERSION, BunRuntimeContract.HOST_INFO_VERSION)
+                putBundle(BunRuntimeContract.KEY_HOST_INFO, Bundle().apply {
+                    putString(BunRuntimeContract.HOST_INFO_KEY_PACKAGE_NAME, context.packageName)
+                    putString(BunRuntimeContract.HOST_INFO_KEY_VERSION_DATE, " Sep 16, 2026 ")
+                    putString(BunRuntimeContract.HOST_INFO_KEY_LANGUAGE_TAG, "zh-Hans-CN")
+                })
+            }
+            val single = runSource(runtime, "host-info.js", script, executionId = "instrumentation-host-info", requestCustomizer = offer)
+            assertTrue(single.stderr, single.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(single.result.getBoolean(BunRuntimeContract.KEY_HOST_INFO_DELIVERED))
+            assertTrue(single.stdout, single.stdout.contains("host=${context.packageName}:${packageInfo.versionName}:${packageInfo.longVersionCode}:Sep 16, 2026:zh-Hans-CN"))
+            assertTrue(single.stdout, single.stdout.contains("plugin=${context.packageName}:${packageInfo.longVersionCode}:${BuildConfig.BUN_RUNTIME_VERSION}:${BuildConfig.BUN_RUNTIME_REVISION}:"))
+            assertTrue(single.stdout, single.stdout.contains("execution=instrumentation-host-info:host-info.js:false"))
+            assertTrue(single.stdout, single.stdout.contains("version=1 underCwd=true underProject=false file=true"))
+
+            val project = writeArchive("src/main.js" to script)
+            val archived = runArchive(runtime, project, "src/main.js", requestCustomizer = offer)
+            assertTrue(archived.stderr, archived.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(archived.result.getBoolean(BunRuntimeContract.KEY_HOST_INFO_DELIVERED))
+            assertTrue(archived.stdout, archived.stdout.contains(":main.js:true"))
+            assertTrue(archived.stdout, archived.stdout.contains("version=1 underCwd=false underProject=false file=true"))
+
+            // A package the caller does not own, an unknown snapshot version and a reserved variable all fail closed.
+            listOf<Bundle.() -> Unit>(
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_INFO_VERSION, BunRuntimeContract.HOST_INFO_VERSION)
+                    putBundle(BunRuntimeContract.KEY_HOST_INFO, Bundle().apply { putString(BunRuntimeContract.HOST_INFO_KEY_PACKAGE_NAME, "org.autojs.autojs6") })
+                },
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_INFO_VERSION, BunRuntimeContract.HOST_INFO_VERSION + 1)
+                    putBundle(BunRuntimeContract.KEY_HOST_INFO, Bundle().apply { putString(BunRuntimeContract.HOST_INFO_KEY_PACKAGE_NAME, context.packageName) })
+                },
+                {
+                    putBundle(BunRuntimeContract.KEY_ENVIRONMENT, Bundle().apply { putString(BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE, "/dev/null") })
+                },
+            ).forEach { hostile ->
+                val rejected = runSource(runtime, "host-info-rejected.js", script, expectStarted = false, requestCustomizer = hostile)
+                assertFalse(rejected.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+                assertEquals(BunRuntimeContract.ERROR_INVALID_REQUEST, rejected.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+            }
+
+            // The single-source path is unaffected afterwards.
+            val after = runSource(runtime, "host-info-after.js", script)
+            assertTrue(after.stderr, after.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(after.stdout.contains("no-host-info"))
+        }
+    }
+
+    /** M7 release rule: AutoJs6 globals stay absent and fail loudly instead of being shimmed or rerouted. */
+    @Test
+    fun hostGlobalsAreAbsentAndFailLoudly() {
+        withBoundRuntime { runtime ->
+            val captured = runSource(
+                runtime,
+                "no-host-globals.js",
+                "console.log([typeof toast, typeof click, typeof java, typeof importClass, typeof auto].join(\",\"));\ntoast(\"hi\");\n",
+            )
+            assertFalse(captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertEquals(BunRuntimeContract.ERROR_NON_ZERO_EXIT, captured.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+            assertTrue(captured.stdout, captured.stdout.contains("undefined,undefined,undefined,undefined,undefined"))
+            assertTrue(captured.stderr, captured.stderr.contains("ReferenceError") && captured.stderr.contains("toast"))
+        }
+    }
+
     private fun runSource(
         runtime: IBunRuntimePlugin,
         sourceName: String,
@@ -622,6 +711,7 @@ class BunRuntimeInstrumentedTest {
         startedSignal: CountDownLatch? = null,
         stdoutReadySignal: CountDownLatch? = null,
         expectStarted: Boolean = true,
+        requestCustomizer: (Bundle.() -> Unit)? = null,
     ): CapturedRun {
         val sourceFile = File.createTempFile("bun-test-", sourceName.substringAfterLast('.', ".js"), context.cacheDir)
         sourceFile.writeText(sourceText, Charsets.UTF_8)
@@ -640,6 +730,7 @@ class BunRuntimeInstrumentedTest {
                             environment.forEach(::putString)
                         })
                     }
+                    requestCustomizer?.invoke(this)
                 },
                 startedSignal = startedSignal,
                 stdoutReadySignal = stdoutReadySignal,
@@ -658,6 +749,7 @@ class BunRuntimeInstrumentedTest {
         executionId: String = "instrumentation-archive-${UUID.randomUUID()}",
         timeoutMillis: Long = 30_000L,
         expectStarted: Boolean = true,
+        requestCustomizer: (Bundle.() -> Unit)? = null,
     ): CapturedRun = dispatch(
         runtime = runtime,
         payload = archive,
@@ -671,6 +763,7 @@ class BunRuntimeInstrumentedTest {
             putString(BunRuntimeContract.KEY_WORKSPACE_ENTRY_POINT, entryPoint)
             putInt(BunRuntimeContract.KEY_WORKSPACE_MAX_ENTRIES, BunRuntimeContract.MAX_WORKSPACE_ENTRIES)
             putLong(BunRuntimeContract.KEY_WORKSPACE_MAX_BYTES, BunRuntimeContract.MAX_WORKSPACE_BYTES)
+            requestCustomizer?.invoke(this)
         },
         expectStarted = expectStarted,
     )
