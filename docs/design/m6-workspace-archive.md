@@ -1,6 +1,6 @@
 # M6 设计稿: 工作区归档 (workspace archive) 契约与接入
 
-状态: 提案, 2026-09-14. 插件侧展开器 `BunWorkspaceArchive` 已实现并有 JVM 单元测试; 共享契约常量与宿主改动尚未落锁, 正式版仍只执行单个源码.
+状态: 已落锁并接入, 2026-09-15 (提案于 2026-09-14). 共享契约常量, 插件 `runScript` 接入与宿主 `BunPluginScriptEngine` 打包均已实现并通过编译/单元测试; 真机往返与宿主发布待做. 下文第 3-5 节即为实际实现的约定.
 
 ## 1. 目标与边界
 
@@ -85,8 +85,8 @@ finally: 删除本次 workspace (含 project 与 staging)         # 现状不变
 ## 7. 验收
 
 - [x] JVM 单元测试 `BunWorkspaceArchiveTest`: 嵌套导入布局与 Unicode 路径, 显式目录, 各类非法路径, 重复与冲突, 上限与钳制, 入口校验, 空/非 ZIP/截断输入, 取消清理, 已有状态拒绝覆盖.
-- [ ] 契约常量落锁后的 `BunRuntimeContractTest` (宿主仓库) 与插件 `BunExecutionRequestParser` 单元测试.
-- [ ] instrumentation: 相对 ESM import, 循环依赖, JSON 与 asset 导入, `import.meta.dir` 指向 `project`, 取消与超时中的展开, 服务进程重启后的清理.
+- [x] 契约常量落锁后的 `BunRuntimeContractTest` (宿主仓库, 3/3) 与插件 `BunWorkspaceRequestTest` (`parseWorkspace` 纯函数) 单元测试. (2026-09-15)
+- [ ] instrumentation (已编写, 随 `assembleDebugAndroidTest` 编译通过, 未在设备执行): 相对 ESM import, JSON 导入, `import.meta.dir` 指向 `project`, 穿越/缺失入口/非 ZIP 拒绝, 展开后清理, 后续单源码恢复.
 - [ ] API 33 与 API 35 原生 arm64 真机各完成一次多文件项目往返, 记入 `docs/compatibility`.
 
 ## 8. 明确不做

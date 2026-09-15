@@ -31,7 +31,7 @@ console.log("Bun is running", Bun.version);
 | 输出只出现一部分, 随后报输出超限 | stdout 与 stderr 合计超过输出预算 | 默认合并上限为 8 MiB. 减少循环打印、巨大对象或二进制内容, 输出计数和摘要. 输出超限会以错误结束运行, 并非成功后静默截断 |
 | 提交源码时被拒绝 | 单次源码快照超过上限, 或请求参数无效 | 源码上限为 16 MiB, 以 UTF-8 字节数计算. 缩小脚本, 检查宿主所给参数和错误文字; 这与 stdout/stderr 的 8 MiB 上限不同 |
 | npm 包找不到 | 插件以 `bun run --no-install <source>` 执行, 不会安装依赖或传输 node_modules | 对可打包的纯 JS 依赖, 先在电脑上生成一个适用于 Bun 的单文件产物. 在设备上运行前检查它是否仍含外部包导入. native addon 不能靠这种打包方式变成可用 |
-| `import './utils.js'` 找不到文件 | 正式版插件只接收当前文件快照, 不接收项目目录 | 在电脑上把需要的模块合并为单文件, 检查产物不再依赖相对工程导入. 单文件内 ESM 语法本身可用. 多文件项目执行 (Roadmap M6) 已完成插件侧展开器, 等共享契约与宿主接入后才会在正式版可用 |
+| `import './utils.js'` 找不到文件 | 当前发布的 AutoJs6 只把当前文件快照交给插件, 不传项目目录 | 在电脑上把需要的模块合并为单文件, 检查产物不再依赖相对工程导入. 单文件内 ESM 语法本身可用. 多文件项目执行 (Roadmap M6) 的契约, 插件接入与宿主打包代码已完成; 等 AutoJs6 宿主发布该能力后, 放在含 `project.json` 或 `package.json` 目录下的脚本即可使用相对导入 |
 | `https.createServer` 的客户端拿到 `alpnProtocol === false`, 或依赖 ALPN 的 HTTPS 客户端连不上 Bun 起的 HTTPS 服务 | 上游 Bun 1.4.0 的 `node:https` 服务端不默认协商 `http/1.1`; 官方与实验运行时相同, 与 Android 版本无关 | 需要 ALPN 时改用 `Bun.serve({ tls: { ... } })`, 或用 `node:tls` 的 `createServer({ ALPNProtocols: ['http/1.1'], ... })` 自行处理 HTTP. 作为客户端访问外部 HTTPS 站点 (`fetch`) 不受影响. 该项在 Roadmap 停放清单中登记为上游限制, 不是插件缺陷 |
 | `click()`、`toast()`、Rhino 对象或 Java 类不可用 | Bun 是独立引擎, 当前没有 AutoJs6 globals 或 Java bridge | 将这类自动化/Java 操作保留在宿主支持的引擎侧. Bun 脚本仅使用实际提供的 Bun/JavaScript 能力; 能力桥仍是 Roadmap 的后续工作 |
 | 取消后仍看到进程, 或后续脚本无法启动 | 生命周期清理异常, 或脚本创建了脱离监督范围的后代 | 记录取消时间、终态和最小复现. 当前 supervisor 负责其直接 Bun 子进程, 不管理任意 detached 后代. 不要按猜测 PID 批量杀进程 |

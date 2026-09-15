@@ -17,7 +17,7 @@
 | 优先级 | 里程碑 | 本轮可交付物 | 状态 |
 |---|---|---|---|
 | P0 | M6 多文件项目执行 (插件侧) | 有界工作区归档展开器 + 单元测试 + 契约 v2 提案, 见 M6 条目与 [设计稿](docs/design/m6-workspace-archive.md) | 已完成 (2026-09-14, G1) |
-| P1 | M6 端到端 | 共享 API 增加归档请求键与能力位, 宿主打包脚本目录, 插件接入 `runScript`, API 33/35 真机往返 | 待做 |
+| P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 代码完成 (2026-09-15, G0/G1); API 33/35 真机往返与宿主发布待做 |
 | P2 | M1-B 收尾与发布 | v0.1.0 -> 当前版本覆盖升级验证, 然后发布 v0.2.2 (监督器, 本地化错误, M6) | 待做 |
 | P3 | M7 最小能力桥 | 只读的宿主版本/环境查询能力, 窄接口 + 能力协商 | 待做 |
 | 冻结 | M3/M4/M5 实验线 | 停在十三补丁 baseline `1.4.0+e8b129616`; 只在 (a) 用户报告的真实失败, (b) 上游 Bun 修复落地需要重建, 或 (c) 发布门禁本身要求时才新增设备批次 | 已冻结 |
@@ -48,9 +48,9 @@
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | M6 多文件项目执行 (插件侧有界归档展开器已完成, 共享契约 v2 与宿主接入进行中); M1-B 覆盖升级验证与 v0.2.2 发布准备; M9 文档持续 |
+| 正在推进 | M6 多文件项目执行 (契约, 插件接入与宿主打包代码已完成, 待真机往返与宿主发布); M1-B 覆盖升级验证与 v0.2.2 发布准备; M9 文档持续 |
 | 尚未开始 | M7 AutoJs6 能力桥 (M6 端到端之后开始) |
-| 当前缺口 | M6 的归档请求键尚未进入共享 `bun-runtime-api` 契约, 宿主尚不打包脚本目录, 因此多文件项目在正式版仍不可用. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
+| 当前缺口 | M6 代码已在插件与宿主两侧完成, 但尚未在设备上做多文件项目往返, 宿主改动也未随 AutoJs6 发布, 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
 
 ## 如何阅读这份路线图
 
@@ -116,7 +116,7 @@
 | M3 Android 9-12L 实验支持 | 冻结于十三补丁 baseline | 八个原生环境固定套件 560/560, Binder 128/128; 不宣称 Android 9 稳定支持, 停放项见路线调整 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 冻结 (等待实验线解冻) | 转正门禁只随用户报告的失败, 上游修复或发布门禁重新排期 | 测试/设备/发布 |
 | M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; Release 验收随下次发布 | JSC 大页候选与 DFG 采样根因停放; 最终签名 APK 验收并入 P2 发布 | 构建/测试/设备/发布 |
-| M6 多文件项目执行 | 进行中 (P0 插件侧已完成) | 有界归档展开器与单元测试已完成; 契约 v2 与宿主打包待接入 | API/插件/宿主 |
+| M6 多文件项目执行 | 代码完成, 待设备 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; API 33/35 真机往返与宿主发布待做 | API/插件/宿主 |
 | M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
 | M9 文档与开发者体验 | 进行中 | 通俗文档, 可运行示例, 排错指南与人类可读兼容矩阵 | 插件/发布 |
@@ -386,11 +386,11 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 
 - [x] (插件) 新增 `BunWorkspaceArchive`: 在每次运行独有的私有 workspace 内先展开到 staging 目录, 全部校验通过后才重命名为 `project`; 任一失败或取消都删除 staging, 只创建普通文件与目录, 不遵循 ZIP 的权限/符号链接属性. 规则: 相对 `/` 路径, 拒绝绝对/`..`/`.`/空段/反斜杠/冒号/控制字符, 深度 <= 32, 段 <= 255 字节, 路径 <= 1024 字节; 大小写与 Unicode NFC 不敏感的重复检测; 文件与目录冲突检测; 硬上限 16384 条目, 64 MiB 总量, 单文件 16 MiB (与单源码上限一致), 宿主可再收紧; 入口必须是归档内的 `.js/.mjs/.cjs/.jsx/.ts/.mts/.cts/.tsx` 文件. 错误码固定且不回显路径. (2026-09-14, G1)
 - [x] (测试) JVM 单元测试覆盖嵌套导入布局与 Unicode 路径, 显式空目录, 穿越/绝对/反斜杠/盘符/空段/点段/控制字符/深度/长度, 大小写与 NFC/NFD 重复, 文件-目录冲突, 条目数/总量/单文件上限与钳制, 入口缺失/目录/扩展名/穿越, 空输入/非 ZIP/截断 ZIP, 取消后 staging 清理, 以及已有 project 状态时拒绝覆盖. (2026-09-14, G1)
-- [ ] (API) 在共享 `bun-runtime-api` 契约中落锁归档请求键 (`workspaceArchiveVersion`, `workspaceEntryPoint`, `workspaceMaxEntries`, `workspaceMaxBytes`) 与能力位 `SUPPORTS_WORKSPACE_ARCHIVE`; 常量以设计稿为准, 宿主与插件同一批更新, 不在插件侧复制常量.
-- [ ] (插件) `runScript` 按能力协商接入: 请求携带归档版本时调用展开器, 以 `project` 为工作目录执行入口文件, 错误映射到 `INVALID_REQUEST`/`SOURCE_TOO_LARGE`/`CANCELLED`; 未携带时保持单源码路径逐字节不变.
-- [ ] (宿主) AutoJs6 `BunPluginScriptEngine` 在插件宣告能力时把脚本所在目录打成有界 ZIP 快照 (入口为脚本相对路径), 否则回退到单源码; 不接受任意 shell command, 不传输宿主其他目录.
+- [x] (API) 共享 `bun-runtime-api` 契约新增 `WORKSPACE_ARCHIVE_VERSION`/`MAX_WORKSPACE_ENTRIES`/`MAX_WORKSPACE_BYTES`, 请求键 `workspaceArchiveVersion`/`workspaceEntryPoint`/`workspaceMaxEntries`/`workspaceMaxBytes`, 终态键 `workspaceFileCount`/`workspaceBytes` 与能力位 `SUPPORTS_WORKSPACE_ARCHIVE`; `PROTOCOL_VERSION`, `EXECUTION_MODEL` 与 AIDL 事务不变. 宿主仓库 `BunRuntimeContractTest` 3/3, 新 release AAR (13810 bytes) 已锁入 `libs/api-artifacts.lock.json` 并通过 `verify-api-artifacts`. 常量只存在于共享 AAR, 插件侧无复制. 该 AAR 的元数据要求编译 SDK 37 (宿主 mainline 已在 fc4b7445e 升到 compileSdk 37), 插件 `COMPILE_SDK_VERSION` 同步升到 37, minSdk 33 / targetSdk 36 不变. (2026-09-15, G1)
+- [x] (插件) `runScript` 按请求键接入: 携带 `workspaceArchiveVersion` 时用 `MAX_WORKSPACE_BYTES` 校验描述符, 调用展开器 (取消标记逐块检查), 以 `project` 为工作目录运行入口文件, 终态附带文件数/字节数; 归档超限映射 `SOURCE_TOO_LARGE`, 取消映射 `CANCELLED`, 其余规则失败映射 `INVALID_REQUEST` 并在诊断中保留固定归档错误码. 不带该键的请求逐字节保持单源码路径. `PluginInfo` 宣告 `SUPPORTS_WORKSPACE_ARCHIVE=true`. JVM 单元测试 (含 `parseWorkspace` 纯函数) 与 lint 通过. (2026-09-15, G1)
+- [x] (宿主) AutoJs6 `BunPluginScriptEngine` 在插件宣告能力且脚本位于声明了 `project.json` 或 `package.json` 的目录 (向上最多 16 级) 时, 由新增 `BunPluginWorkspaceArchive` 把该目录打成有界 ZIP (只收普通文件与目录, 符号链接/特殊文件直接报错, `O_NOFOLLOW` + inode 复核, 上限与契约一致), 入口文件用已解密的当前源码字节替换, 并以脚本相对路径作为入口; 其余源码与旧插件保持单源码路径. `compileAppDebugKotlin` 通过; 宿主仓库提交与 changelog 待另一任务的工作区收口后进行. (2026-09-15, G0/G1)
 - [ ] (API/插件/宿主) 定义 source map, arguments, 受控 environment 与 working directory 语义; 相对导入以 `project` 为根.
-- [ ] (测试/设备) instrumentation 覆盖相对 ESM import, 循环依赖, JSON/asset 导入, 取消/超时中的展开与进程重启后的清理; API 33 与 35 原生 arm64 各一台真机往返.
+- [ ] (测试/设备) instrumentation `workspaceArchiveProjectRoundTrip` 已编写 (相对 ESM import, JSON 导入, `import.meta.dir` 位于 `project`, 展开后清理, 穿越/缺失入口/非 ZIP 三种拒绝, 后续单源码恢复) 并随 `assembleDebugAndroidTest` 编译通过, 尚未在设备执行; 待 API 33 与 35 原生 arm64 各一台真机往返后勾选.
 
 **M6 验收条件:** 新旧 contract 通过 capability negotiation 共存; 旧宿主继续使用单源码 v1, 项目运行不会扩大到任意宿主文件系统访问.
 
