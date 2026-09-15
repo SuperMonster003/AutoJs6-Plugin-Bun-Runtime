@@ -6,10 +6,7 @@
   "changelog_label_dependency": "Dependencia",
   "$data": {
     "v0.2.3": {
-      "released_date": "2026/09/15",
-      "hint": [
-        "Versión de desarrollo aún no publicada; el plugin oficial sigue requiriendo Android 13 (API 33) o posterior"
-      ],
+      "released_date": "2026/09/16",
       "feature": [
         "Primera capacidad del host de M7: una instantánea de solo lectura con información del host. Cuando el host envía `hostInfoVersion = 1` y `hostInfo` (nombre del paquete, versionDate y languageTag opcionales) en la solicitud runScript, el plugin comprueba que el paquete pertenece al UID del llamador de Binder, resuelve por sí mismo la versión del host mediante PackageManager, escribe los datos del host, del plugin y de la ejecución como un JSON de como máximo 16 KiB en `autojs6/host-info.json` dentro del directorio de la ejecución (fuera de `project`, se elimina con la ejecución) y se lo indica al script mediante la variable de entorno `AUTOJS6_HOST_INFO_FILE`; el Bundle terminal añade `hostInfoDelivered`. Capacidad `SUPPORTS_HOST_INFO`; el prefijo de entorno `AUTOJS6_` queda reservado para el plugin (una solicitud del host que lo use se rechaza con INVALID_REQUEST) y un paquete suplantado o una versión desconocida se rechazan antes de arrancar Bun. El AAR del contrato compartido pasa a 14073 bytes; los hosts que no ofrecen la instantánea se comportan exactamente igual que antes"
       ],

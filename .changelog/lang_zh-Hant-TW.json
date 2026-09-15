@@ -6,10 +6,7 @@
   "changelog_label_dependency": "相依性",
   "$data": {
     "v0.2.3": {
-      "released_date": "2026/09/15",
-      "hint": [
-        "尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本"
-      ],
+      "released_date": "2026/09/16",
       "feature": [
         "M7 第一項宿主能力: 唯讀的宿主資訊快照. 宿主在 runScript 請求裡攜帶 `hostInfoVersion = 1` 與 `hostInfo` (套件名稱, 可選的 versionDate 與 languageTag) 時, 插件核對套件名稱屬於 Binder 呼叫方 UID, 自行透過 PackageManager 解析宿主版本, 把宿主/插件/本次執行的事實寫成不超過 16 KiB 的 JSON 放到執行目錄的 `autojs6/host-info.json` (`project` 之外, 隨執行目錄刪除), 並透過環境變數 `AUTOJS6_HOST_INFO_FILE` 告知腳本; 終態新增 `hostInfoDelivered`. 能力位 `SUPPORTS_HOST_INFO`; 環境變數前綴 `AUTOJS6_` 歸插件保留, 宿主請求攜帶即以 INVALID_REQUEST 拒絕, 冒用套件名稱或未知版本同樣在啟動 Bun 之前拒絕. 共用契約 AAR 升級為 14073 bytes, 未提供快照的宿主行為完全不變"
       ],

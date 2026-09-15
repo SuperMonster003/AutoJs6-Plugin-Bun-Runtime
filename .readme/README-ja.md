@@ -233,9 +233,8 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 
 #### v0.2.3
 
-_2026/09/15_
+_2026/09/16_
 
-- `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
 - `機能` M7 最初のホスト機能: 読み取り専用のホスト情報スナップショット. ホストが runScript リクエストに `hostInfoVersion = 1` と `hostInfo` (パッケージ名, 任意の versionDate と languageTag) を載せると, プラグインはそのパッケージが Binder 呼び出し元 UID のものか確認し, PackageManager でホストのバージョンを自ら解決し, ホスト/プラグイン/今回の実行の事実を 16 KiB 以下の JSON として実行ディレクトリの `autojs6/host-info.json` (`project` の外, 実行ディレクトリと共に削除) に書き, 環境変数 `AUTOJS6_HOST_INFO_FILE` でスクリプトに知らせます; 終了 Bundle に `hostInfoDelivered` が加わります. 能力ビット `SUPPORTS_HOST_INFO`; 環境変数の接頭辞 `AUTOJS6_` はプラグイン予約で, ホストのリクエストが含むと INVALID_REQUEST で拒否し, 偽装したパッケージ名や未知のバージョンも Bun 起動前に拒否します. 共有契約 AAR は 14073 bytes に更新; スナップショットを提供しないホストの挙動は従来と同じです
 - `改善` 公開済み v0.2.2 の APK/ソース資産検証と 4 環境での署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.0 からの上書き更新, Redmi API 33 arm64 と x86_64 API 33 AVD は新規インストールで, いずれも force-stop 前後に 9/9 グループ通過. 公開タグを書き換えず, Android/16 KB 互換性の範囲も拡大しない
 - `改善` ホスト master (7c31269cc) からローカルビルドした AutoJs6 と公開済み v0.2.2 x86_64 プラグインで, API 33 AVD 上のホストからプラグインへの実プロジェクト往復を検証: 相対 import と JSON import を含む project.json プロジェクト, package.json の TypeScript プロジェクト, および単一ファイルとして引き続き失敗する素のファイル対照. ホスト自体の公開は未実施

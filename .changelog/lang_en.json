@@ -6,10 +6,7 @@
   "changelog_label_dependency": "Dependency",
   "$data": {
     "v0.2.3": {
-      "released_date": "2026/09/15",
-      "hint": [
-        "Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later"
-      ],
+      "released_date": "2026/09/16",
       "feature": [
         "First M7 host capability: a read-only host info snapshot. When the host sends `hostInfoVersion = 1` and `hostInfo` (package name, optional versionDate and languageTag) in the runScript request, the plugin checks that the package belongs to the Binder caller UID, resolves the host version itself through PackageManager, writes the host/plugin/execution facts as a JSON document of at most 16 KiB to `autojs6/host-info.json` inside the run directory (outside `project`, deleted with the run) and points the script at it through the `AUTOJS6_HOST_INFO_FILE` environment variable; the terminal Bundle gains `hostInfoDelivered`. Capability `SUPPORTS_HOST_INFO`; the `AUTOJS6_` environment prefix is reserved for the plugin (a host request carrying it is rejected with INVALID_REQUEST), and a spoofed package or unknown version is rejected before Bun starts. The shared contract AAR grows to 14073 bytes; hosts that do not offer the snapshot behave exactly as before"
       ],
