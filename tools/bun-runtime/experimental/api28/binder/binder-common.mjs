@@ -62,6 +62,8 @@ export const TESTS = Object.freeze([
     "sigtermIgnoringOutputLimitReapsTheChild",
     "timeoutCancellationAndInvalidRequestAreBounded",
     "workspaceArchiveProjectRoundTrip",
+    "hostInfoSnapshotIsDeliveredOnlyWhenOffered",
+    "hostGlobalsAreAbsentAndFailLoudly",
     "manifestPublishesWakeInfoAndRuntimeContracts",
 ]);
 export const facts = path => {

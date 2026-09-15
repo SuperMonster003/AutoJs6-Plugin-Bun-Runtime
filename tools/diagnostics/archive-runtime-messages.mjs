@@ -51,7 +51,7 @@ for (const directory of directories) {
 }
 const tests = ["binder", "workspace"].includes(scope) ? TESTS : [METHODS.resources, scope === "messages" ? METHODS.errors : METHODS.pages];
 const archive = { schemaVersion: 1, kind: scope === "workspace" ? "workspace-archive-binder" : "runtime-message-" + scope, capturedAt: new Date().toISOString(),
-    scope: scope === "workspace" ? "Nine-test Binder suite of the production service with the M6 workspace archive round-trip (relative ESM import, JSON import, project working directory, cleanup, traversal / missing entry / non-ZIP rejections and single-source recovery) on official Bun; isolated Debug APKs. Not host-side project packing."
+    scope: scope === "workspace" ? `${TESTS.length}-test Binder suite of the production service with the M6 workspace archive round-trip (relative ESM import, JSON import, project working directory, cleanup, traversal / missing entry / non-ZIP rejections and single-source recovery) on official Bun; isolated Debug APKs. Not host-side project packing.`
         : scope === "binder" ? "Unchanged eight-test Binder suite with the newly localized production service and official Bun; isolated Debug APKs."
         : scope === "messages" ? "Ten-language resources and six real terminal errors with matching finished events; separate presentation suite."
             : "Ten-language cached page-size refusal before Bun execution; official x86_64 remains incompatible with 16 KiB process pages.",
