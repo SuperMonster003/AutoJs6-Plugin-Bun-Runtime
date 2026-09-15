@@ -274,9 +274,10 @@ export const SUPERVISOR_SOURCE_PATHS = [
 export function verifySupervisorSourceArchive(archive, prefix) {
   requireCondition(/^autojs6-plugin-bun-runtime-[0-9a-f]{40}\/$/.test(prefix), "invalid project source prefix");
   for (const path of SUPERVISOR_SOURCE_PATHS) {
-    // Read only exact members to stdout; never extract into the filesystem.
-    const archived = execFileSync("tar", ["-xOf", archive, `${prefix}${path}`], {
-      maxBuffer: 1024 * 1024, timeout: 30_000, windowsHide: true,
+    // Read only exact members to stdout; never extract into the filesystem. The relative archive name
+    // keeps GNU tar on Windows from parsing an absolute drive-letter path as a remote host.
+    const archived = execFileSync("tar", ["-xOf", basename(archive), `${prefix}${path}`], {
+      cwd: dirname(archive), maxBuffer: 1024 * 1024, timeout: 30_000, windowsHide: true,
     });
     const expected = Buffer.from(readFileSync(resolve(repositoryRoot, path), "utf8").replace(/\r\n/g, "\n"));
     requireCondition(archived.equals(expected),
