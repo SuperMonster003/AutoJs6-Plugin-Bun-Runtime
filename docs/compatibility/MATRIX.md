@@ -12,7 +12,7 @@
 - ABI 栏依次显示设备与执行 payload. 设备存在 ARM bridge 不表示已验证的 x86 ELF 通过它执行. ADB shell、诊断和补充记录不构成应用完整兼容性验收.
 - `通过` 限定于行内套件; `未通过` 保留部分成功计数. 诊断中即使有成功观测也不纳入接受结果. 计数未知的失败不能写成 0/N; Release 验收组不换算为 JUnit 测试.
 
-已索引 130 份源报告, 224 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
+已索引 131 份源报告, 225 条设备/尝试记录. [机器索引](matrix.generated.json) 保留完整运行时 hash、每轮结果和源文件 UTF-8/LF SHA-256. [维护说明](../../tools/compatibility/README.md) 说明新增报告和同步检查方法.
 
 ## 官方运行时的设备记录
 
@@ -136,7 +136,7 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 
 来源: [2026-09-15-v0.2.2-release.json](2026-09-15-v0.2.2-release.json).
 
-四个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时.
+五个环境: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 发布后同日补充 Samsung SM-A566B API 36 原生 arm64 16 KiB 全新安装. 来源只记录通过组数 (每轮 9 组), 不转移到 Debug 或候选运行时.
 
 | 来源位置 | 设备 / API | 设备 ABI → payload / 执行 | 页 / 内核映射页 (bytes) | 运行时 | 各轮通过 / 总数 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -144,6 +144,7 @@ ARM64 API 33/35 两轮 32/32, 原始八个方法不变, 仅本批隔离 Debug AP
 | /signedFinalApkDeviceAcceptance/1 | 23046RP50C<br>API 35 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
 | /signedFinalApkDeviceAcceptance/2 | 22120RN86C<br>API 33 | arm64-v8a → arm64-v8a<br>原生 | 4096 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
 | /signedFinalApkDeviceAcceptance/3 | sdk_gphone64_x86_64<br>API 33 | x86_64 → x86_64<br>原生 | 4096 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
+| /signedFinalApkDeviceAcceptance/4 | SM-A566B<br>API 36 | arm64-v8a → arm64-v8a<br>原生 | 16384 / 未记录 | 未记录 | 9/未记录 验收组; 9/未记录 验收组 | 通过 (限定范围) |
 
 ## 实验运行时的设备记录
 
@@ -1359,6 +1360,14 @@ get-state前设备消失, 无安装或运行. 失败单独保留, 同一APK改�
 来源: [2026-09-14-m5-thirteen-patch-jsc-checkpoints.json](2026-09-14-m5-thirteen-patch-jsc-checkpoints.json).
 
 85输入APK、37输入独立诊断源码绑定、标准检查和两个UID/ownedAVD清理; 不增加设备计数.
+
+仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
+
+### M6 宿主到插件真实项目往返 (本地宿主构建, ARM64 真机 API 33 / API 36 16 KiB)
+
+来源: [2026-09-15-m6-host-round-trip-arm64.json](2026-09-15-m6-host-round-trip-arm64.json).
+
+同一 AutoJs6 master 7c31269cc 本地 debug 构建与已发布 v0.2.2 arm64-v8a 插件在 Samsung SM-A566B (API 36, 16 KiB) 与 Redmi 22120RN86C (API 33): project.json 项目两轮与 package.json TypeScript 项目通过, 裸文件对照按单源码失败; Redmi 宿主已还原. 宿主未发布, 不计为设备验收组.
 
 仅列入证据索引, 不生成新的测试通过数. 具体结论及限制见来源.
 

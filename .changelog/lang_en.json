@@ -12,7 +12,9 @@
       ],
       "improvement": [
         "Archive the published v0.2.2 APK/source asset verification and the signed final-APK acceptance in four environments: in-place upgrades from the published v0.2.0 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64 and an x86_64 API 33 AVD, each passing 9/9 groups before and after force-stop; the released tag is not rewritten and Android/16 KB compatibility is not expanded",
-        "Verify the real host-to-plugin project round trip with an AutoJs6 host built locally from its master (7c31269cc) against the published v0.2.2 x86_64 plugin on an API 33 AVD: a project.json project with relative and JSON imports, a package.json TypeScript project, and a bare-file control that still fails closed; the host release itself is still pending"
+        "Verify the real host-to-plugin project round trip with an AutoJs6 host built locally from its master (7c31269cc) against the published v0.2.2 x86_64 plugin on an API 33 AVD: a project.json project with relative and JSON imports, a package.json TypeScript project, and a bare-file control that still fails closed; the host release itself is still pending",
+        "Supplement the v0.2.2 release evidence with signed final-APK acceptance on native arm64 16 KiB hardware: the published arm64-v8a APK was freshly installed on Samsung SM-A566B (API 36, Remote Test Lab), passed 9/9 groups before and after force-stop with the installed bytes bound to the release asset, and was uninstalled afterwards; the record now covers five environments",
+        "Repeat the real host-to-plugin project round trip on two native ARM64 devices with the same locally built AutoJs6 host (master 7c31269cc) and the published v0.2.2 arm64-v8a plugin: Samsung SM-A566B (API 36, 16 KiB pages) and Redmi 22120RN86C (API 33) each ran the project.json project twice, the package.json TypeScript project once and the bare-file control, all with the expected outcome; the host release remains the user's decision"
       ]
     },
     "v0.2.2": {

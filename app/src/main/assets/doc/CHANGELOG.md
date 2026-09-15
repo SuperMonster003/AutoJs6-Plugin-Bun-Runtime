@@ -11,6 +11,8 @@
 * `提示` 尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本
 * `优化` 归档已发布 v0.2.2 的 APK/对应源码资产验证与四个环境的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 各在 force-stop 前后通过 9/9 组; 不改写已发布标签, 不扩大 Android 或 16 KB 兼容声明
 * `优化` 用从宿主 master (7c31269cc) 本地构建的 AutoJs6 与已发布的 v0.2.2 x86_64 插件在 API 33 AVD 上验证宿主到插件的真实项目往返: 含相对导入与 JSON 导入的 project.json 项目, package.json 的 TypeScript 项目, 以及仍按单文件失败的裸文件对照; 宿主自身的发布仍待进行
+* `优化` 为 v0.2.2 发布证据补充原生 arm64 16 KiB 硬件上的签名最终 APK 验收: 已发布的 arm64-v8a APK 在 Samsung SM-A566B (API 36, Remote Test Lab) 全新安装, force-stop 前后各通过 9/9 组, 安装后字节绑定到发布资产, 验收后已卸载; 记录现覆盖五个环境
+* `优化` 用同一本地构建的 AutoJs6 宿主 (master 7c31269cc) 与已发布的 v0.2.2 arm64-v8a 插件在两台原生 ARM64 真机上重复宿主到插件的真实项目往返: Samsung SM-A566B (API 36, 16 KiB 页) 与 Redmi 22120RN86C (API 33) 各运行 project.json 项目两轮, package.json 的 TypeScript 项目一轮以及裸文件对照, 结果均符合预期; 宿主是否发版仍由用户决定
 
 # v0.2.2
 

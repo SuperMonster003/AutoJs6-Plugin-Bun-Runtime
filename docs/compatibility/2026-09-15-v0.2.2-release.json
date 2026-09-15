@@ -6,7 +6,7 @@
     "M5",
     "M6"
   ],
-  "scope": "Published official v0.2.2 assets, signed final-APK in-place upgrade from the published v0.2.0 and fresh-install acceptance; does not close patched-runtime distribution or native arm64 16 KiB signed-APK gates.",
+  "scope": "Published official v0.2.2 assets, signed final-APK in-place upgrade from the published v0.2.0 and fresh-install acceptance, supplemented on 2026-09-15 with a native arm64 16 KiB fresh-install acceptance of the same arm64-v8a bytes; does not close patched-runtime distribution gates.",
   "verifiedAt": "2026-09-15T10:59:37.000Z",
   "url": "https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/releases/tag/v0.2.2",
   "id": 389063662,
@@ -235,6 +235,37 @@
       "probeSha256": "5a67a95248a4f32c8e0243d99195a98cfe9a9c2e95cc2a1e3047c75d1fd2df8f",
       "startedAt": "2026-09-15T10:44:07.553Z",
       "finishedAt": "2026-09-15T10:44:26.158Z"
+    },
+    {
+      "manufacturer": "samsung",
+      "model": "SM-A566B",
+      "apiLevel": 36,
+      "abi": "arm64-v8a",
+      "pageSizeBytes": 16384,
+      "kernel": "6.6.77-android15-8-abA566BXXU6BYIF",
+      "fingerprint": "samsung/a56xnaeea_16kb/a56x:16/BP2A.250605.031.A3/A566BXXU6BYIF_OXM6BYIF:user/release-keys",
+      "isEmulator": false,
+      "apkKind": "arm64-v8a",
+      "apk": "autojs6-plugin-bun-runtime-v0.2.2-arm64-v8a-1ee51372.apk",
+      "apkSha256": "3a7805a4f9703563b2779688a1a765d620210f301ab0406a70bd365f40a0f05c",
+      "installMode": "fresh",
+      "previousVersion": null,
+      "previousVersionCode": null,
+      "previousApkSha256": null,
+      "installedVersion": "0.2.2",
+      "installedVersionCode": 7,
+      "firstInstallTimePreserved": null,
+      "signingCertificateUnchanged": null,
+      "initialGroupsPassed": 9,
+      "restartGroupsPassed": 9,
+      "runtimeProcessAbsenceAfterForceStopVerified": true,
+      "pluginUninstalledAfterAcceptance": true,
+      "probeSha256": "5a67a95248a4f32c8e0243d99195a98cfe9a9c2e95cc2a1e3047c75d1fd2df8f",
+      "startedAt": "2026-09-15T15:34:37.275Z",
+      "finishedAt": "2026-09-15T15:35:40.989Z",
+      "access": "Samsung Remote Test Lab (remote adb), retail firmware, native bridge disabled",
+      "supplementedAt": "2026-09-15",
+      "note": "Added after publication on the same release bytes: closes the native arm64 16 KiB signed-APK gate for v0.2.2 (ROADMAP M5). The probe is the same private-permission black-box build used on devices without AutoJs6 ownership conflicts."
     }
   ],
   "acceptanceScope": [
@@ -250,10 +281,17 @@
   ],
   "limits": [
     "No v0.1.0 upgrade path exists: v0.1.0 was never published, so the only user-facing upgrade is v0.2.0 to v0.2.2; it was exercised on two devices holding the published v0.2.0 APKs.",
-    "Signed-APK acceptance was not repeated on native arm64 16 KiB hardware; the Samsung SM-A566B evidence binds a v0.2.1 development Debug APK, not these Release files.",
+    "The native arm64 16 KiB acceptance (Samsung SM-A566B, API 36, Remote Test Lab) was added on 2026-09-15 after publication as a fresh install of the published arm64-v8a bytes; it is not an upgrade path and the universal APK was not repeated on 16 KiB hardware.",
     "Native x86_64 large-page execution remains blocked; the x86_64 signed acceptance ran on a 4 KiB API 33 AVD.",
     "The black-box probe holds the plugin signature permission and drives the production Binder directly; it is not an AutoJs6 host round trip, and the workspace archive group packs its own ZIP because no released AutoJs6 sends project archives yet.",
     "The probe is compiled twice from the same source: devices carrying AutoJs6 (which owns org.autojs.permission.PLUGIN) use a private permission name, the AVD probe uses the AutoJs6 permission name.",
     "Official-source publication does not count as publication of patched APK/source assets."
+  ],
+  "supplements": [
+    {
+      "addedAt": "2026-09-15",
+      "what": "fifth signedFinalApkDeviceAcceptance environment: Samsung SM-A566B native arm64-v8a, API 36, 16 KiB pages, fresh install of the published arm64-v8a APK, 9/9 groups before and after force-stop, plugin uninstalled afterwards",
+      "localRecord": ".git/release-acceptance-v022-20260915-samsung16k/ (not tracked)"
+    }
   ]
 }

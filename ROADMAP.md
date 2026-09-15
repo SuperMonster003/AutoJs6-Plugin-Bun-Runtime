@@ -17,7 +17,7 @@
 | 优先级 | 里程碑 | 本轮可交付物 | 状态 |
 |---|---|---|---|
 | P0 | M6 多文件项目执行 (插件侧) | 有界工作区归档展开器 + 单元测试 + 契约 v2 提案, 见 M6 条目与 [设计稿](docs/design/m6-workspace-archive.md) | 已完成 (2026-09-14, G1) |
-| P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 插件侧完成并通过三台 ARM64 真机往返 (2026-09-15, G1, [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md)); 宿主到插件的真实项目往返已用本地构建的宿主 (master `7c31269cc`, 官方证书签名) 与已发布 v0.2.2 x86_64 插件在 API 33 AVD 完成 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md)); 宿主发布待做 |
+| P1 | M6 端到端 | 共享 API 归档请求键与能力位 (宿主仓库 `plugin-api/bun-runtime-api`, 新 AAR 已锁定), 插件 `runScript` 接入, 宿主 `BunPluginScriptEngine` 打包声明了 `project.json`/`package.json` 的项目目录, instrumentation 用例 | 插件侧完成并通过三台 ARM64 真机往返 (2026-09-15, G1, [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md)); 宿主到插件的真实项目往返已用本地构建的宿主 (master `7c31269cc`, 官方证书签名) 与已发布 v0.2.2 x86_64 插件在 API 33 AVD 完成 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md)), 并在 Samsung SM-A566B (API 36, 16 KiB) 与 Redmi 22120RN86C (API 33) 两台原生 ARM64 真机用 arm64-v8a 插件重复通过 (2026-09-15, G2, [归档](docs/compatibility/2026-09-15-m6-host-round-trip-arm64.md)); 宿主暂不发版 (用户决定, 2026-09-15), P1 技术部分完成 |
 | P2 | M1-B 收尾与发布 | 从已发布 v0.2.0 覆盖升级与全新安装验证 (v0.1.0 从未公开发布, 不存在该升级路径), 然后发布 v0.2.2 (监督器, 本地化错误, M6) | 已完成 (2026-09-15, G1/G2/G3, [发布报告](docs/compatibility/2026-09-15-v0.2.2-release.md)) |
 | P3 | M7 最小能力桥 | 只读的宿主版本/环境查询能力, 窄接口 + 能力协商 | 待做 |
 | 冻结 | M3/M4/M5 实验线 | 停在十三补丁 baseline `1.4.0+e8b129616`; 只在 (a) 用户报告的真实失败, (b) 上游 Bun 修复落地需要重建, 或 (c) 发布门禁本身要求时才新增设备批次 | 已冻结 |
@@ -39,7 +39,7 @@
 | HTTPS 服务端 ALPN 默认协商 | [TLS/IPv6 报告](docs/compatibility/2026-09-14-m4-runtime-network.md) | 上游 Bun 1.4.0 `node:https` 缺口, 随 M8 升级评估一并处理; [排错指南](docs/troubleshooting.md) 已记录规避方式 |
 | IPv6 固定模式 | 同上 (未进入执行) | 依赖上一项的夹具顺序; 若需要, 改为独立夹具并绑定产品改动 |
 | FD 70000 / UNSHARE, 更多 OEM, 长时压力, 性能对比 | M3/M4 条目 | 属于 M4 转正门禁, 在实验线解冻前不安排 |
-| 原生 ARM64 16 KiB Release 验收 | M5 条目 | 最终签名 x86_64 验收已随 v0.2.2 完成 (4 KiB AVD); 16 KiB 真机上的签名 APK 验收随下一次正式 Release 一并执行, 不单独跑 Debug 批次 |
+| 原生 ARM64 16 KiB Release 验收 | M5 条目 | 不再停放, 已完成 (2026-09-15): v0.2.2 已发布的 arm64-v8a 签名 APK 在 Samsung SM-A566B (API 36, 原生 16 KiB) 全新安装两轮 9/9, 安装后摘要绑定发布资产, 见 [发布报告](docs/compatibility/2026-09-15-v0.2.2-release.md) |
 
 停放不等于删除: 相关 `[ ]` 条目原样保留并标注 "停放", 失败记录与 `distributionReady=false` 不变.
 
@@ -48,9 +48,9 @@
 | 分类 | 内容 |
 |---|---|
 | 现在可用 | 在 Android 13+ (API 33+) 的 64 位设备上, 脚本首行写 `"bun";` 即可用官方 Bun 1.4.0 运行 JavaScript / TypeScript 单文件; 输出实时回传, 支持取消, 超时与预热 |
-| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 本地宿主构建的真实项目往返已通过, 待宿主发布); M7 最小能力桥待开始; M9 文档持续 |
+| 正在推进 | M6 端到端 (插件侧已随 v0.2.2 发布, 本地宿主构建的真实项目往返已在 x86_64 AVD 与两台 ARM64 真机通过, 宿主暂不发版); M7 最小能力桥 (用户同意提前开始); M9 文档持续 |
 | 尚未开始 | M7 AutoJs6 能力桥 (M6 端到端之后开始) |
-| 当前缺口 | M6 插件侧已随 v0.2.2 发布, 宿主打包代码已提交到宿主仓库并用本地宿主构建通过真实项目往返, 但未随 AutoJs6 发布, 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
+| 当前缺口 | M6 插件侧已随 v0.2.2 发布, 宿主打包代码已提交到宿主仓库并用本地宿主构建通过真实项目往返 (x86_64 AVD, ARM64 API 33 真机, ARM64 API 36 / 16 KiB 真机), 但宿主暂不发版 (用户决定, 2026-09-15), 因此用户手中的组合仍只支持单文件. 实验线 (Android 9-12L) 冻结在十三补丁 baseline, 开放根因见上文停放清单; 官方 Bun 与实验 Bun 的 HTTPS 服务端 ALPN 均受上游限制 |
 
 ## 如何阅读这份路线图
 
@@ -115,8 +115,8 @@
 | M2 patched Bun 可复现构建 | 十二补丁双 ABI 独立构建完成, 旧证据独立归档 | 两个全新 clean checkout 的双 ABI 成品一致, 两个实际 driver exit 0; 四份 ELF、源码与最终 Ninja 边已核对. 官方 v0.2.0 paired APK/source 已发布, patched 线仍未发布 | 上游/构建/测试/发布 |
 | M3 Android 9-12L 实验支持 | 冻结于十三补丁 baseline | 八个原生环境固定套件 560/560, Binder 128/128; 不宣称 Android 9 稳定支持, 停放项见路线调整 | 上游/测试/设备 |
 | M4 Android 9+ 稳定化 | 冻结 (等待实验线解冻) | 转正门禁只随用户报告的失败, 上游修复或发布门禁重新排期 | 测试/设备/发布 |
-| M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; v0.2.2 最终签名 x86_64 (4 KiB AVD) 验收完成, 原生 ARM64 16 KiB 上的签名 APK 验收待下次发布 | JSC 大页候选与 DFG 采样根因停放 | 构建/测试/设备/发布 |
-| M6 多文件项目执行 | 插件侧已发布, 宿主往返已验证 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; 三台 ARM64 真机 (API 33/33/35) 九项 Binder 54/54; 本地宿主构建 + v0.2.2 插件在 x86_64 AVD 完成真实项目往返; 宿主发布待做 | API/插件/宿主 |
+| M5 16 KB 页与发布完整性 | 官方 ARM64 原生真机已通过; v0.2.2 最终签名 APK 验收完成: x86_64 (4 KiB AVD) 与原生 ARM64 16 KiB (Samsung SM-A566B API 36, 发布后同日补充) | JSC 大页候选与 DFG 采样根因停放 | 构建/测试/设备/发布 |
+| M6 多文件项目执行 | 插件侧已发布, 宿主往返已验证 (2026-09-15) | 契约键/能力位, 插件展开与接入, 宿主项目打包均已实现; 三台 ARM64 真机 (API 33/33/35) 九项 Binder 54/54; 本地宿主构建 + v0.2.2 插件在 x86_64 AVD 及 ARM64 API 33 / API 36 (16 KiB) 真机完成真实项目往返; 宿主暂不发版 (用户决定) | API/插件/宿主 |
 | M7 AutoJs6 能力桥 | 未开始 | 窄接口, 权限感知, 版本化的宿主能力 | API/插件/宿主 |
 | M8 Bun 升级与可选 CLI | 持续项 | 上游监视, 升级审计和独立 CLI 可行性 | 上游/构建/测试 |
 | M9 文档与开发者体验 | 进行中 | 通俗文档, 可运行示例, 排错指南与人类可读兼容矩阵 | 插件/发布 |
@@ -371,7 +371,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (构建/x86_64) 在两个全新目录各构建一轮 WebKit/JSC, 并在两个全新九补丁 Bun checkout 各完成一轮完整离线 native/Rust 构建. 三个 JSC 库、config 与两个完整 Bun 的 SHA-256 均一致, Bun 均匹配已通过双页大小 Binder 的 `704cc156...3963e38` 候选. 原 incremental 来源锁不改写, [独立清洁构建 receipt](docs/compatibility/2026-09-12-m5-x86-16k-clean-builds.json) 单独绑定后续证据; 上游 ICU 复用而非重编. (2026-09-12, G1, 非 Release)
 - [x] (设备/arm64) Samsung Remote Test Lab SM-A566B 真机 (Android 16 / API 36, 原生 arm64-v8a, kernel aarch64, PAGE_SIZE=16384, native bridge=0) 完成官方 Bun 1.4.0 + 锁定监督器的 v0.2.1 开发版 arm64-only Debug APK 完整 8 项 Binder 两轮验收. 每项测试前硬断言 API/页大小, 每轮前 force-stop 并重新启动, 安装后双 payload 摘要与可执行权限通过, PluginInfo 与单 ABI 包内容一致; 10 次忽略 SIGTERM 的取消/超时/输出超限均真实回收并删除工作目录. 两个测试包卸载后 UID 进程数为 0, 不从翻译桥推断原生执行. 见 [M5 原生 ARM64 报告](docs/compatibility/2026-09-10-m5-native-arm64-16k.json). (2026-09-10, G1/G2, 开发版, 非已发布 Release APK)
 - [x] (测试/x86_64) 为不变的 `704cc156...3963e38` 大页 JSC 候选新增独立七模式有界压力套件, 通过实际插件 Binder 在 API 36 x86 4 KiB 与 16 KiB 用户空间页各跑两轮 (28/28). LLInt/Baseline/DFG/FTL 均有实际目标函数采样与独立算术对照, 另含 GC、Wasm 执行/增长和 64 个 worker 正常退出; 同一 APK 的原有 8 项 Binder 单独复测 32/32. ELF AT_PAGESZ/sysconf/getconf 一致, smaps 在两台 x86 AVD 都为 4 KiB, 明确 16 KiB 用户页为模拟模式而非 ARM64 硬件页. 早期工具失败完整保留, 测试包与 UID 进程清理完成, 仅关闭本轮两台 AVD. 见 [压力报告](docs/compatibility/2026-09-12-m5-x86-jsc-pressure.md); 不声称全 JIT/Wasm 路径、长时压力、性能或最终 Release 通过. (2026-09-12, G1/G2, 原字节与生产边界不变)
-- [ ] (发布/arm64) 对最终拟发布的签名 APK 在原生 arm64 16 KiB 环境重复匹配范围的验收, 绑定该产物的安装后摘要及同 Release 源码资产; 不将开发版 Debug APK 通过归因给未测试的 Release 文件. v0.2.2 未在 16 KiB 真机重复该验收, 条目保持开放 (2026-09-15).
+- [x] (发布/arm64) 对最终拟发布的签名 APK 在原生 arm64 16 KiB 环境重复匹配范围的验收, 绑定该产物的安装后摘要及同 Release 源码资产; 不将开发版 Debug APK 通过归因给未测试的 Release 文件. v0.2.2 发布后同日在 Samsung SM-A566B (API 36, Android 16, 原生 arm64-v8a, PAGE_SIZE=16384, Remote Test Lab) 用已发布的 arm64-v8a 资产文件全新安装, 安装后 base.apk SHA-256 与发布资产一致, force-stop 前后各 9/9 组, 卸载后无 UID 进程; 记录并入 [发布报告](docs/compatibility/2026-09-15-v0.2.2-release.md) 第五个环境. universal APK 未在 16 KiB 重复. (2026-09-15, G2)
 - [x] (环境/文档) 核查 x64 Windows 的 VMware/WSL 与 ARM64 16 KiB 路线, 形成 [环境选择指南](docs/compatibility/16k-arm64-test-environments.md). 本机 WSL 为 x86_64/4096-byte 页; 普通虚拟化不改变 CPU 架构, QEMU 全系统软件模拟另列证据. Samsung Remote Test Lab 官方提供 16 KiB 真机及 RDB/ADB; 最初的资料核查只确认候选路线, 不计为设备通过, 随后用户接入的 Samsung 真机已按上方独立条目归档实测结果. (2026-09-10, 环境资料核查; 设备 G2 见独立报告)
 - [ ] (测试/发布) patched Bun 的两个 ABI 重复 ELF/ZIP/安装后 payload/真实执行四层门禁: 九补丁双 ABI 各两轮 ELF 已复现, 原独立 24/25 项应用探针及其失败历史保持原样. 现有完整 8 项实验插件 Binder 分批累计十二环境 192/192, 含 native ARM64 16 KiB 和新增 ARM64 API 32 / 4 KiB; 单独大页 JSC 候选已有双页大小 Binder 32/32、独立全量清洁构建一致性, 另有七模式压力 28/28 及同一 APK 的 Binder 32/32 复测. x86 16 KiB 是用户空间模拟页, 不替代 ARM64 硬件页. 原九补丁 x86 lock 不因此换字节, 官方 x86 页保护仍保留; 其余 syscall/FD/API、扩展长时压力/性能和最终签名 APK/source 发布仍未完成.
 - [x] (发布) 官方 v0.2.0 三类 APK 已完成签名、ABI payload、CRC32 与 SHA-256 收集验证, 并由对应源码 manifest 和 GitHub digest 再次对照; Release notes 保留原生 16 KB 未完成的明确边界. (2026-09-08, G1/发布资产 G3)
@@ -394,6 +394,7 @@ M8 与 M9 作为横切主线持续推进, 但不得绕过任一里程碑的升�
 - [x] (测试/设备) instrumentation `workspaceArchiveProjectRoundTrip` (相对 ESM import, JSON 导入, `import.meta.dir` 位于 `project`, 展开后清理, 穿越/缺失入口/非 ZIP 三种拒绝, 后续单源码恢复) 随九项 Binder 套件在 Sony XQ-DQ72 API 33, Redmi 22120RN86C API 33 与 Xiaomi 23046RP50C API 35 (均原生 arm64-v8a, 4 KiB) 各两轮通过, 合计 54/54; 首次尝试暴露 Android 14+ ZIP 路径校验器把 `../` 条目先行拒绝的差异, 展开器已把该拒绝映射为 `INVALID_ENTRY_PATH` 并加 JVM 单测. 见 [归档](docs/compatibility/2026-09-15-m6-workspace-archive.md). (2026-09-15, G1)
 
 - [x] (宿主/设备) 用宿主 master `7c31269cc` 的本地 debug 构建 (官方证书签名, 含 `BunPluginWorkspaceArchive`) 与已发布 v0.2.2 x86_64 插件在 API 33 x86_64 AVD 完成宿主到插件的真实项目往返: 经 `RunIntentActivity` 运行 `project.json` 项目两轮 (相对 ESM import, JSON import, `import.meta.dir` 与 cwd 位于插件私有 `project`, 归档 6 个条目), `package.json` 的 TypeScript 项目一轮, 裸文件对照按单源码路径报 `Cannot find module` 并以 `NON_ZERO_EXIT` 返回宿主; 运行后插件 `bun-executions` 与宿主快照目录均为空, 卸载后无残留. 宿主控制台把 intent 启动的 `.ts` 入口标为 `[main.js]`, 属宿主显示细节. 宿主未发布. 见 [归档](docs/compatibility/2026-09-15-m6-host-round-trip.md). (2026-09-15, G2)
+- [x] (宿主/设备) 同一宿主 master `7c31269cc` 本地 debug 构建的 arm64-v8a APK 与已发布 v0.2.2 arm64-v8a 插件在两台原生 ARM64 真机重复上述往返: Samsung SM-A566B (API 36, 16 KiB 页, Remote Test Lab, 全新安装后卸载) 与 Redmi 22120RN86C (API 33, 4 KiB, `install -r` 覆盖用户宿主后还原为原 APK), 各运行 `project.json` 项目两轮, `package.json` TypeScript 项目一轮与裸文件对照, 结果与 x86_64 AVD 一致 (Bun 报 `arch=arm64`); 未 root, 插件 `bun-executions` 目录不可读, 宿主快照目录经 `run-as` 确认为空. 宿主暂不发版 (用户决定). 见 [归档](docs/compatibility/2026-09-15-m6-host-round-trip-arm64.md). (2026-09-15, G2)
 
 **M6 验收条件:** 新旧 contract 通过 capability negotiation 共存; 旧宿主继续使用单源码 v1, 项目运行不会扩大到任意宿主文件系统访问.
 

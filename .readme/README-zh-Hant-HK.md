@@ -238,6 +238,8 @@ _2026/09/15_
 - `提示` 尚未發佈的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更高版本
 - `優化` 歸檔已發佈 v0.2.2 的 APK/對應原始碼資產驗證及四個環境的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發佈 v0.2.0 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, 各在 force-stop 前後通過 9/9 組; 不改寫已發佈標籤, 不擴大 Android 或 16 KB 相容聲明
 - `優化` 用從宿主 master (7c31269cc) 本地建置的 AutoJs6 與已發佈的 v0.2.2 x86_64 外掛程式在 API 33 AVD 上驗證宿主到外掛程式的真實專案往返: 含相對匯入與 JSON 匯入的 project.json 專案, package.json 的 TypeScript 專案, 以及仍按單檔案失敗的裸檔案對照; 宿主自身的發佈仍待進行
+- `優化` 為 v0.2.2 發佈證據補充原生 arm64 16 KiB 硬件上的簽名最終 APK 驗收: 已發佈的 arm64-v8a APK 在 Samsung SM-A566B (API 36, Remote Test Lab) 全新安裝, force-stop 前後各通過 9/9 組, 安裝後位元組綁定到發佈資產, 驗收後已卸載; 記錄現覆蓋五個環境
+- `優化` 用同一本地建置的 AutoJs6 宿主 (master 7c31269cc) 與已發佈的 v0.2.2 arm64-v8a 外掛程式在兩台原生 ARM64 真機上重複宿主到外掛程式的真實專案往返: Samsung SM-A566B (API 36, 16 KiB 頁) 與 Redmi 22120RN86C (API 33) 各執行 project.json 專案兩輪, package.json 的 TypeScript 專案一輪以及裸檔案對照, 結果均符合預期; 宿主是否發佈仍由用戶決定
 
 #### v0.2.2
 
