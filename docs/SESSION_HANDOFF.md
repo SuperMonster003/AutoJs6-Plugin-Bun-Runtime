@@ -1,3 +1,22 @@
+# 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)
+
+2026-09-15, 从 master c900ac1 继续. 本轮没有设备批次, 没有 native 构建, 没有新增兼容归档.
+
+- 宿主仓库 `D:/idea-projects/AutoJs6`: `plugin-api/bun-runtime-api` 新增归档请求键/终态键/上限常量与 `SUPPORTS_WORKSPACE_ARCHIVE`,
+  `BunRuntimeContractTest` 3/3; `app/.../engine/BunPluginScriptEngine.kt` 改为按能力协商生成 payload, 新增 `BunPluginWorkspaceArchive.kt`
+  打包含 `project.json`/`package.json` 的项目目录 (符号链接/特殊文件报错, O_NOFOLLOW + inode 复核). `compileAppDebugKotlin` 通过.
+  宿主 changelog 与提交尚未进行: 另一任务在同一工作区活动 (其间曾出现并已解决的合并冲突), 提交时只能包含上述 5 个文件.
+- 本仓库: `libs/bun-runtime-api.aar` 更新为宿主 build 5280 的新 release AAR (13810 bytes), lock 与 `verify-api-artifacts` 通过.
+  `BunExecutionRequest` 解析归档字段 (`parseWorkspace` 纯函数), `BunRuntimeService.runScript` 按键接入展开器并映射错误码,
+  `PluginInfo` 宣告能力位, 展开器结束时关闭 ZIP 流; instrumentation 新增 `workspaceArchiveProjectRoundTrip` 与 `runArchive`/`dispatch` 辅助.
+  README FAQ, changelog (十语言), ROADMAP M6 条目, 设计稿, AGENTS 与排错指南已同步.
+- 宿主 mainline 已升到 compileSdk 37 (fc4b7445e), 新 AAR 元数据要求编译 SDK 37; 插件 `version.properties` 的 `COMPILE_SDK_VERSION` 同步升到 37 (minSdk 33 / targetSdk 36 不变),
+  单元测试 36/36, lint 与 `assembleDebugAndroidTest` 在 compileSdk 37 下通过.
+- 下一步: (1) 宿主仓库在另一任务收口后提交契约/引擎/打包三处与宿主 changelog; (2) API 33 与 35 原生 arm64 各一台真机执行完整 instrumentation
+  (含新用例), 归档到 `docs/compatibility` 并勾选 M6 设备条目; (3) 宿主发布后更新 README FAQ 与排错指南的 '尚未发布' 表述; (4) 回到 P2 覆盖升级验证与 v0.2.2 发布.
+
+## 前一批路线调整
+
 # 当前阶段: 2026-09-14 路线调整, M6 插件侧工作区归档展开器完成
 
 2026-09-14, 从干净 master b1eb77e 继续. 本轮没有设备批次, 没有 native 构建, 没有新增兼容归档.
