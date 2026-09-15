@@ -1394,6 +1394,17 @@
       "category": "experimental",
       "label": "M5 十三补丁 JSC 有界压力",
       "note": "原七模式及预算不变; x86 16KiB为用户页模拟, 非ARM64硬件或长时压力/性能."
+    },
+    {
+      "file": "2026-09-15-m6-workspace-archive-binder.json",
+      "sha256": "201b1b03e8c2a390747c382b52427538e33e573759262eda4319a8c67485a684",
+      "schema": 1,
+      "kind": "workspace-archive-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "official",
+      "label": "M6 工作区归档九项 Binder 真机往返",
+      "note": "生产 service 配官方 Bun, 三台 ARM64 4 KiB 真机各两轮; 新增多文件项目往返用例. 仅隔离 Debug APK, 不含宿主打包, 不扩大 native 或 Release 支持."
     }
   ]
 }

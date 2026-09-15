@@ -1,6 +1,6 @@
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)
 
-2026-09-15, 从 master c900ac1 继续. 本轮没有设备批次, 没有 native 构建, 没有新增兼容归档.
+2026-09-15, 从 master c900ac1 继续. 本轮一个设备批次 (三台 ARM64 真机, 见下), 没有 native 构建.
 
 - 宿主仓库 `D:/idea-projects/AutoJs6`: `plugin-api/bun-runtime-api` 新增归档请求键/终态键/上限常量与 `SUPPORTS_WORKSPACE_ARCHIVE`,
   `BunRuntimeContractTest` 3/3; `app/.../engine/BunPluginScriptEngine.kt` 改为按能力协商生成 payload, 新增 `BunPluginWorkspaceArchive.kt`
@@ -12,8 +12,14 @@
   README FAQ, changelog (十语言), ROADMAP M6 条目, 设计稿, AGENTS 与排错指南已同步.
 - 宿主 mainline 已升到 compileSdk 37 (fc4b7445e), 新 AAR 元数据要求编译 SDK 37; 插件 `version.properties` 的 `COMPILE_SDK_VERSION` 同步升到 37 (minSdk 33 / targetSdk 36 不变),
   单元测试 36/36, lint 与 `assembleDebugAndroidTest` 在 compileSdk 37 下通过.
-- 下一步: (1) 宿主仓库在另一任务收口后提交契约/引擎/打包三处与宿主 changelog; (2) API 33 与 35 原生 arm64 各一台真机执行完整 instrumentation
-  (含新用例), 归档到 `docs/compatibility` 并勾选 M6 设备条目; (3) 宿主发布后更新 README FAQ 与排错指南的 '尚未发布' 表述; (4) 回到 P2 覆盖升级验证与 v0.2.2 发布.
+- 设备批次: 用 `tools/diagnostics/build-runtime-messages.mjs` (已加 `--offline`) 构建隔离 `.diagnostics` 批次, `run-runtime-messages.mjs` 在
+  Sony XQ-DQ72 (API 33), Redmi 22120RN86C (API 33), Xiaomi 23046RP50C (API 35) 各跑两轮; 九项 Binder 54/54, 归档为
+  `docs/compatibility/2026-09-15-m6-workspace-archive-binder.json` (kind `workspace-archive-binder`, archiver 新增 `workspace` scope) 与同名 md.
+  首次尝试在 API 35 失败: Android 14+ ZIP 路径校验器先于展开器拒绝 `../` 条目, 已映射为 `INVALID_ENTRY_PATH` 并加 JVM 单测后重跑三台全过.
+  用户设备上的生产插件与宿主未被触碰. 在 Git Bash 下需 `env -u NoDefaultCurrentDirectoryInExePath` 才能让构建脚本的 cmd 找到 `gradlew.bat`.
+- 宿主仓库已提交 `d7cbd7124` (契约, 引擎, 打包, 十语言 changelog), 只含本会话文件; 另一任务的 `docs/dev/android-sdk-37-roadmap.md` 与 `tools/sdk37/*` 仍在其工作区.
+- 下一步: (1) 宿主发布携带 `BunPluginWorkspaceArchive` 的版本后, 用真实项目目录做一次宿主到插件的往返并更新 README FAQ 与排错指南的 '尚未发布' 表述;
+  (2) 回到 P2 覆盖升级验证与 v0.2.2 发布.
 
 ## 前一批路线调整
 

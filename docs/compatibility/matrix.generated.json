@@ -3235,6 +3235,29 @@
         "workersExited": 64,
         "workerTransferredBytes": 67108864
       }
+    },
+    {
+      "file": "2026-09-15-m6-workspace-archive-binder.json",
+      "sha256": "201b1b03e8c2a390747c382b52427538e33e573759262eda4319a8c67485a684",
+      "schema": 1,
+      "kind": "workspace-archive-binder",
+      "adapter": "binder",
+      "collection": "records",
+      "category": "official",
+      "label": "M6 工作区归档九项 Binder 真机往返",
+      "note": "生产 service 配官方 Bun, 三台 ARM64 4 KiB 真机各两轮; 新增多文件项目往返用例. 仅隔离 Debug APK, 不含宿主打包, 不扩大 native 或 Release 支持.",
+      "bytesUtf8Lf": 129659,
+      "rows": 3,
+      "reportedScope": "Nine-test Binder suite of the production service with the M6 workspace archive round-trip (relative ESM import, JSON import, project working directory, cleanup, traversal / missing entry / non-ZIP rejections and single-source recovery) on official Bun; isolated Debug APKs. Not host-side project packing.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": {
+        "deviceCount": 3,
+        "roundCount": 6,
+        "passedTests": 54,
+        "totalTests": 54,
+        "failedTests": 0
+      }
     }
   ],
   "rows": [
@@ -15350,6 +15373,174 @@
           "unit": "modes",
           "passed": 7,
           "total": 7,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-m6-workspace-archive-binder.json",
+      "pointer": "/records/0",
+      "environmentPointer": "/records/0/device",
+      "category": "official",
+      "scope": "M6 工作区归档九项 Binder 真机往返",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a960af0a523f717dfcb1ceeaeff416f5d4e2a6e58205ff987c7191b1ed75d1d8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-m6-workspace-archive-binder.json",
+      "pointer": "/records/1",
+      "environmentPointer": "/records/1/device",
+      "category": "official",
+      "scope": "M6 工作区归档九项 Binder 真机往返",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a960af0a523f717dfcb1ceeaeff416f5d4e2a6e58205ff987c7191b1ed75d1d8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": true,
+      "status": "passed",
+      "sourceReportedPassed": true,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-15-m6-workspace-archive-binder.json",
+      "pointer": "/records/2",
+      "environmentPointer": "/records/2/device",
+      "category": "official",
+      "scope": "M6 工作区归档九项 Binder 真机往返",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": "aarch64",
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": "0",
+        "pages": 4096,
+        "pageSizeSource": "getconf PAGE_SIZE plus instrumentation Os.sysconf assertion",
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": "1.4.0",
+        "revision": "1.4.0+34cbb9a40",
+        "commit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+        "variant": "bun-1.4.0-android",
+        "sha256": "44a83a9b716a2df09c7c62cfee94f99b4d0b389f9326c6318c4831d888e2a250",
+        "bytes": 87914400,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": "a960af0a523f717dfcb1ceeaeff416f5d4e2a6e58205ff987c7191b1ed75d1d8",
+      "apkVariant": null,
+      "rounds": [
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "tests",
+          "passed": 9,
+          "total": 9,
           "reportedPassed": true,
           "failedIds": []
         }
