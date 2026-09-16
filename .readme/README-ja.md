@@ -41,7 +41,7 @@
 
 Bun Runtime は, AutoJs6 に新しい選択肢となるモダンなスクリプトエンジン [Bun](https://bun.sh/) を追加する独立プラグインです. インストールして有効化した後, JavaScript または TypeScript ファイルの 1 行目に `"bun";` と書くだけで, そのファイルは内蔵の Rhino エンジンではなく本物の Bun 1.4.0 エンジンで実行されます. モダンな JavaScript 構文, TypeScript, `fetch` などの Bun 内蔵 API を Android 端末上で直接利用できます.
 
-仕組みはシンプルです. AutoJs6 がスクリプト内容をプラグインへ送り, プラグインは専用の独立プロセスで公式 Bun Android executable を起動してスクリプトを実行し, 出力と実行結果をリアルタイムで AutoJs6 コンソールへ返します. これは正真正銘の Bun であり, Rhino や Node.js の alias やエミュレーション層ではありません. Android 17 以降では, このプラグインの付近のデバイス権限を許可するとローカルネットワークのデバイスに接続できます. AutoJs6 の許可はプラグインに引き継がれません. インターネットとループバック接続にはこの権限は不要です. この操作でローカルネットワークを使用する場合は, AutoJs6 のプラグインセンターからこのプラグインを開き, 付近のデバイスを許可してください. AutoJs6 の許可は引き継がれません.
+仕組みはシンプルです. AutoJs6 がスクリプト内容をプラグインへ送り, プラグインは専用の独立プロセスで公式 Bun Android executable を起動してスクリプトを実行し, 出力と実行結果をリアルタイムで AutoJs6 コンソールへ返します. これは正真正銘の Bun であり, Rhino や Node.js の alias やエミュレーション層ではありません. Android 17 以降では, AutoJs6 プラグインセンターで有効にする前に, このプラグインに付近のデバイスへのアクセスを許可してください. プラグインの設定ページでもローカルネットワーク権限を管理できます. 未許可の場合は無効のままとなり, 自動起動は通知せずにスキップされます. この権限はプラグインに属し, AutoJs6 の権限とは独立しています.
 
 ******
 
@@ -237,6 +237,7 @@ _2026/09/16_
 
 - `ヒント` 未公開の開発スナップショット. 正式プラグインの要件は引き続き Android 13 (API 33) 以降
 - `機能` M7 第二部分: 実行時の動的呼び出し用機能ブリッジと最初の 2 つの動的機能 `ui.toast` / `device.info`. ホストが runScript リクエストに `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder), `hostCapabilities` (許可された機能 ID) を含めると, プラグインは実行ごとに私有キャッシュディレクトリへ unix socket を作成し (環境変数 `AUTOJS6_HOST_BRIDGE_SOCKET`), スクリプトは `fetch(url, { unix })` で `GET /v1/info` と `POST /v1/<機能 ID>` を送ります (JSON リクエスト <= 64 KiB, 結果 <= 256 KiB, 1 回の実行につき最大 1024 回, 同時 4 件, 1 回 10 s のタイムアウト). プラグインは oneway AIDL `IBunHostCapabilityBroker` でホストへ中継し, この実行に対するホスト UID からのコールバックだけを受け付けます. ブリッジレベルのエラーコード (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) は JSON 応答にのみ現れ, runScript の終端エラーコード集合は不変で, 終端 Bundle に `hostBridgeDelivered` と `hostCalls` が加わります; 実行終了時に socket と未完了の呼び出しを閉じます. 機能キー `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 共有契約 AAR は 22437 bytes に更新; ブリッジを提供しないホストの挙動は完全に不変
+- `改善` Android 17 のローカルネットワーク認可をプラグインセンターの有効化操作と設定に統一し, ランチャーの認可ページを削除; 未許可時は無効のまま自動起動を通知せずにスキップ
 - `改善` 公開済み v0.2.3 の APK/ソース資産検証と最終公開バイトでの 5 環境の署名済み最終 APK 受け入れ結果を記録: Sony API 33 arm64 と Xiaomi API 35 universal は公開済み v0.2.2 からの上書き更新, Redmi API 33 arm64, x86_64 API 33 AVD と Samsung SM-A566B API 36 ネイティブ arm64 16 KiB 実機は新規インストールで, いずれも force-stop 前後で 10/10 グループ (第 10 グループはホスト情報スナップショット); 公開済みタグは書き換えず, Android/16 KB 互換範囲も拡大しない
 - `改善` Android 17 (SDK 37) に対応し, プラグイン独立のローカルネットワーク権限設定と復旧案内を提供
 

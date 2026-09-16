@@ -41,7 +41,7 @@
 
 Bun Runtime 是 AutoJs6 的獨立插件, 為 AutoJs6 增加一個可選的現代腳本引擎: [Bun](https://bun.sh/). 安裝並啟用後, 只要在 JavaScript 或 TypeScript 檔案的第一行寫上 `"bun";`, 這個檔案就會交給真正的 Bun 1.4.0 引擎執行, 而不再使用 AutoJs6 內建的 Rhino 引擎. 現代 JavaScript 語法, TypeScript 以及 `fetch` 等 Bun 內建 API 因此可以直接在 Android 裝置上使用.
 
-插件的運作方式很簡單: AutoJs6 把腳本內容傳送給插件, 插件在自己的獨立行程中啟動官方 Bun Android executable 執行腳本, 並把輸出和執行結果即時傳回 AutoJs6 主控台. 這是名副其實的 Bun, 不是 Rhino 或 Node.js 的別名或模擬層. 在 Android 17 或更新版本上, 請為此外掛允許附近裝置權限, 以連線至區域網路裝置. AutoJs6 的授權不會授予此外掛權限. 公開網際網路及回送連線不需要此權限. 如果此操作使用區域網路, 請從 AutoJs6 外掛中心開啟此外掛, 並允許附近裝置權限. AutoJs6 的授權不會授予此外掛權限.
+插件的運作方式很簡單: AutoJs6 把腳本內容傳送給插件, 插件在自己的獨立行程中啟動官方 Bun Android executable 執行腳本, 並把輸出和執行結果即時傳回 AutoJs6 主控台. 這是名副其實的 Bun, 不是 Rhino 或 Node.js 的別名或模擬層. 在 Android 17 以上, 在 AutoJs6 外掛程式中心啟用此外掛程式前須允許存取附近的裝置. 也可在此外掛程式的設定頁面管理區域網路權限. 未獲授權時外掛程式保持關閉, 自動啟動將靜默略過. 此權限屬於外掛程式本身, 與 AutoJs6 的授權相互獨立.
 
 ******
 
@@ -237,6 +237,7 @@ _2026/09/16_
 
 - `提示` 尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本
 - `新增` M7 第二部分: 執行期動態呼叫能力橋與前兩項動態能力 `ui.toast` / `device.info`. 宿主在 runScript 請求裡攜帶 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder) 與 `hostCapabilities` (已授權能力 ID) 時, 插件為本次執行在私有快取目錄建立 unix socket (環境變數 `AUTOJS6_HOST_BRIDGE_SOCKET`), 指令碼用 `fetch(url, { unix })` 發 `GET /v1/info` 與 `POST /v1/<能力 ID>` (JSON 請求 <= 64 KiB, 結果 <= 256 KiB, 每次執行至多 1024 次, 4 路並行, 單次 10 s 逾時), 插件經 oneway AIDL `IBunHostCapabilityBroker` 中繼給宿主並只接受宿主 UID 對本次執行的回呼; 橋級錯誤碼 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) 只出現在 JSON 回應裡, runScript 終態錯誤碼集合不變, 終態新增 `hostBridgeDelivered` 與 `hostCalls`; 執行結束即關閉 socket 與在途呼叫. 能力位 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 共享契約 AAR 升級為 22437 bytes; 未提供橋的宿主行為完全不變
+- `優化` Android 17 區域網路授權統一移至外掛程式中心啟用流程及外掛程式設定, 不再提供啟動器授權頁面; 未獲授權時保持關閉並靜默略過自動啟動
 - `優化` 封存已發布 v0.2.3 的 APK/對應原始碼資產驗證及五個環境在最終發布位元組上的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發布 v0.2.2 原地覆蓋升級, Redmi API 33 arm64, x86_64 API 33 AVD 與 Samsung SM-A566B API 36 原生 arm64 16 KiB 實機全新安裝, force-stop 前後各 10/10 組 (第十組為宿主資訊快照); 已發布標籤不重寫, Android/16 KB 相容範圍不擴大
 - `優化` 支援 Android 17 (SDK 37), 提供外掛獨立的本機網路權限控制及復原指引
 

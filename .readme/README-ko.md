@@ -41,7 +41,7 @@
 
 Bun Runtime은 AutoJs6에 선택 가능한 현대적 스크립트 엔진을 추가하는 독립 플러그인입니다: [Bun](https://bun.sh/). 플러그인을 설치하고 활성화한 뒤 JavaScript 또는 TypeScript 파일의 첫 줄에 `"bun";`를 넣으면, 그 파일은 내장 Rhino 엔진 대신 진짜 Bun 1.4.0 엔진이 실행합니다. 현대 JavaScript 문법과 TypeScript, `fetch` 같은 Bun 내장 API를 Android 기기에서 바로 사용할 수 있습니다.
 
-플러그인의 동작 방식은 단순합니다. AutoJs6가 스크립트 내용을 플러그인에 보내면, 플러그인은 격리된 자체 프로세스에서 공식 Bun Android executable을 시작하고, 출력과 최종 결과를 실시간으로 AutoJs6 콘솔에 돌려보냅니다. 이는 진짜 Bun이며 Rhino나 Node.js 위의 alias 또는 에뮬레이션 레이어가 아닙니다. Android 17 이상에서는 이 플러그인의 근처 기기 권한을 허용해야 로컬 네트워크 기기에 연결할 수 있습니다. AutoJs6 권한은 이 플러그인에 적용되지 않습니다. 공용 인터넷 및 루프백 연결에는 이 권한이 필요하지 않습니다. 이 작업이 로컬 네트워크를 사용한다면 AutoJs6 플러그인 센터에서 이 플러그인을 열고 근처 기기를 허용하세요. AutoJs6 권한은 이 플러그인에 적용되지 않습니다.
+플러그인의 동작 방식은 단순합니다. AutoJs6가 스크립트 내용을 플러그인에 보내면, 플러그인은 격리된 자체 프로세스에서 공식 Bun Android executable을 시작하고, 출력과 최종 결과를 실시간으로 AutoJs6 콘솔에 돌려보냅니다. 이는 진짜 Bun이며 Rhino나 Node.js 위의 alias 또는 에뮬레이션 레이어가 아닙니다. Android 17 이상에서는 AutoJs6 플러그인 센터에서 이 플러그인을 켜기 전에 주변 기기 권한을 허용하세요. 이 플러그인의 설정 페이지에서도 로컬 네트워크 권한을 관리할 수 있습니다. 권한이 없으면 플러그인이 꺼진 상태로 유지되고 자동 시작은 알림 없이 건너뜁니다. 이 권한은 플러그인에 속하며 AutoJs6 권한과 별개입니다.
 
 ******
 
@@ -237,6 +237,7 @@ _2026/09/16_
 
 - `힌트` 아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
 - `기능` M7 두 번째 부분: 런타임 동적 호출용 기능 브리지와 처음 두 개의 동적 기능 `ui.toast` / `device.info`. 호스트가 runScript 요청에 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder), `hostCapabilities` (허용된 기능 ID)를 담으면 플러그인은 실행마다 비공개 캐시 디렉터리에 unix socket을 만들고 (환경 변수 `AUTOJS6_HOST_BRIDGE_SOCKET`), 스크립트는 `fetch(url, { unix })`로 `GET /v1/info`와 `POST /v1/<기능 ID>`를 보냅니다 (JSON 요청 <= 64 KiB, 결과 <= 256 KiB, 실행당 최대 1024회, 동시 4건, 호출당 10 s 시간 제한). 플러그인은 oneway AIDL `IBunHostCapabilityBroker`로 호스트에 중계하며 이 실행에 대한 호스트 UID의 콜백만 받아들입니다. 브리지 수준 오류 코드 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500)는 JSON 응답에만 나타나고, runScript 종료 오류 코드 집합은 그대로이며 종료 Bundle에 `hostBridgeDelivered`와 `hostCalls`가 추가됩니다; 실행이 끝나면 socket과 진행 중인 호출을 닫습니다. 기능 키 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 공유 계약 AAR은 22437 bytes로 갱신; 브리지를 제공하지 않는 호스트의 동작은 완전히 동일
+- `개선` Android 17 로컬 네트워크 권한 요청을 플러그인 센터의 활성화 흐름과 설정으로 통합하고 런처 권한 페이지 제거; 권한이 없으면 비활성 상태를 유지하고 자동 시작을 조용히 건너뜀
 - `개선` 게시된 v0.2.3 APK/소스 자산 검증과 최종 게시 바이트에서 다섯 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.2 에서 덮어쓰기 업그레이드, Redmi API 33 arm64, x86_64 API 33 AVD 와 Samsung SM-A566B API 36 네이티브 arm64 16 KiB 기기는 새로 설치, 각각 force-stop 전후 10/10 그룹 통과 (열 번째 그룹은 호스트 정보 스냅샷); 게시된 태그는 다시 쓰지 않으며 Android/16 KB 호환 범위도 확장하지 않음
 - `개선` Android 17 (SDK 37) 대응 및 플러그인별 로컬 네트워크 권한 설정과 복구 안내 제공
 
