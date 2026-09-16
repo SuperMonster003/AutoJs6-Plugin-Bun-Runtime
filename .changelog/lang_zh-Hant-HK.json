@@ -5,6 +5,15 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "依賴",
   "$data": {
+    "v0.2.5": {
+      "released_date": "2026/09/16",
+      "hint": [
+        "尚未發佈的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更高版本"
+      ],
+      "improvement": [
+        "歸檔已發佈 v0.2.4 的 APK/對應原始碼資產驗證與四個環境在最終發佈位元組上的最終簽名包驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發佈 v0.2.3 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, force-stop 前後各 11/11 組 (第十一組為處理程序內 broker 的動態能力橋); 本次沒有 16 KiB 裝置在線, 執行階段載荷自 v0.2.2 起未變; 已發佈標籤不重寫, Android/16 KB 相容範圍不擴大"
+      ]
+    },
     "v0.2.4": {
       "released_date": "2026/09/16",
       "feature": [

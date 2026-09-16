@@ -1471,6 +1471,17 @@
       "category": "official",
       "label": "v0.2.3 已签名最终 APK 五设备验收",
       "note": "发布字节 (d265c2a): Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.2 原地覆盖升级, Redmi API 33 arm64, x86_64 API 33 AVD 与 Samsung SM-A566B API 36 原生 arm64 16 KiB 全新安装, 五个环境同批并行. 每轮 10 组 (新增 M7 宿主信息快照组), force-stop 前后各一轮; 该源只记录通过组数, 不转移到 Debug 批次的选项与耗时."
+    },
+    {
+      "file": "2026-09-16-v0.2.4-release.json",
+      "sha256": "7325282860794a146af56f17d030c0766de25aeee1b3745e9e969574756ce09c",
+      "schema": 1,
+      "kind": null,
+      "adapter": "release",
+      "collection": "signedFinalApkDeviceAcceptance",
+      "category": "official",
+      "label": "v0.2.4 已签名最终 APK 的设备验收",
+      "note": "最终字节 (e8a0212): Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.3 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 四个环境同批并行. 每轮 11 组 (第十一组为 M7 动态能力桥, 进程内 broker), force-stop 前后各一轮; 本次没有 16 KiB 环境 (Samsung 不在线, x86_64 16 KiB 模拟器按设计拒绝), 运行时载荷自 v0.2.2 起未变."
     }
   ]
 }

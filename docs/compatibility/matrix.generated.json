@@ -3360,6 +3360,23 @@
       "reportedOutcome": null,
       "distributionReady": null,
       "summary": null
+    },
+    {
+      "file": "2026-09-16-v0.2.4-release.json",
+      "sha256": "7325282860794a146af56f17d030c0766de25aeee1b3745e9e969574756ce09c",
+      "schema": 1,
+      "kind": null,
+      "adapter": "release",
+      "collection": "signedFinalApkDeviceAcceptance",
+      "category": "official",
+      "label": "v0.2.4 已签名最终 APK 的设备验收",
+      "note": "最终字节 (e8a0212): Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.3 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 四个环境同批并行. 每轮 11 组 (第十一组为 M7 动态能力桥, 进程内 broker), force-stop 前后各一轮; 本次没有 16 KiB 环境 (Samsung 不在线, x86_64 16 KiB 模拟器按设计拒绝), 运行时载荷自 v0.2.2 起未变.",
+      "bytesUtf8Lf": 18206,
+      "rows": 4,
+      "reportedScope": "Published official v0.2.4 assets, signed final-APK in-place upgrade from the published v0.2.3 and fresh-install acceptance in four 4 KiB environments (three native arm64 phones, one x86_64 API 33 AVD), all on the final release bytes; the eleventh probe group covers the M7 dynamic capability bridge; no 16 KiB environment was available this time (the runtime payloads are unchanged since v0.2.2); does not close patched-runtime distribution gates.",
+      "reportedOutcome": null,
+      "distributionReady": null,
+      "summary": null
     }
   ],
   "rows": [
@@ -16202,6 +16219,230 @@
         {
           "unit": "groups",
           "passed": 10,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-16-v0.2.4-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/0",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/0",
+      "category": "official",
+      "scope": "v0.2.4 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Sony",
+        "model": "XQ-DQ72",
+        "api": 33,
+        "kernel": "5.15.74-android13-8-04992-g623fe372881f-ab10534577",
+        "fingerprint": "Sony/XQ-DQ72_CN/XQ-DQ72:13/67.0.F.1.255/067000F001025500390267680:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "arm64-v8a",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-16-v0.2.4-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/1",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/1",
+      "category": "official",
+      "scope": "v0.2.4 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "23046RP50C",
+        "api": 35,
+        "kernel": "5.10.209-android12-9-00019-g4ea09a298bb4-ab12292661",
+        "fingerprint": "Xiaomi/liuqin/liuqin:15/AQ3A.241006.001/OS2.0.9.0.VMYCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "universal",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-16-v0.2.4-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/2",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/2",
+      "category": "official",
+      "scope": "v0.2.4 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Xiaomi",
+        "model": "22120RN86C",
+        "api": 33,
+        "kernel": "4.19.191-perf-g2f9faa927855",
+        "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+        "deviceAbi": "arm64-v8a",
+        "runtimeAbi": "arm64-v8a",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "arm64-v8a",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        }
+      ],
+      "recordedOutcome": null,
+      "status": "passed",
+      "sourceReportedPassed": null,
+      "acceptedForRecordedScope": true
+    },
+    {
+      "source": "2026-09-16-v0.2.4-release.json",
+      "pointer": "/signedFinalApkDeviceAcceptance/3",
+      "environmentPointer": "/signedFinalApkDeviceAcceptance/3",
+      "category": "official",
+      "scope": "v0.2.4 已签名最终 APK 的设备验收",
+      "environment": {
+        "manufacturer": "Google",
+        "model": "sdk_gphone64_x86_64",
+        "api": 33,
+        "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+        "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+        "deviceAbi": "x86_64",
+        "runtimeAbi": "x86_64",
+        "machine": null,
+        "execution": "native",
+        "executionBasis": "matching recorded device/payload ABI and machine when available",
+        "bridge": null,
+        "pages": 4096,
+        "pageSizeSource": null,
+        "kernelMappingPages": null,
+        "userPageSizeEmulated": null
+      },
+      "runtime": {
+        "version": null,
+        "revision": null,
+        "commit": null,
+        "variant": null,
+        "sha256": null,
+        "bytes": null,
+        "jscCandidateKind": null,
+        "webkitCommit": null
+      },
+      "apkSha256": null,
+      "apkVariant": "x86_64",
+      "rounds": [
+        {
+          "unit": "groups",
+          "passed": 11,
+          "total": null,
+          "reportedPassed": true,
+          "failedIds": []
+        },
+        {
+          "unit": "groups",
+          "passed": 11,
           "total": null,
           "reportedPassed": true,
           "failedIds": []
