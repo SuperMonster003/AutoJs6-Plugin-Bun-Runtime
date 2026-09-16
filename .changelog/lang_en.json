@@ -7,9 +7,6 @@
   "$data": {
     "v0.2.4": {
       "released_date": "2026/09/16",
-      "hint": [
-        "Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later"
-      ],
       "feature": [
         "M7 second part: the runtime capability bridge for dynamic calls and the first two dynamic capabilities `ui.toast` / `device.info`. When the host puts `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (an IBinder) and `hostCapabilities` (the granted capability IDs) into the runScript request, the plugin opens a per-run unix socket in its private cache directory (environment variable `AUTOJS6_HOST_BRIDGE_SOCKET`); scripts send `GET /v1/info` and `POST /v1/<capability ID>` through `fetch(url, { unix })` (JSON requests up to 64 KiB, results up to 256 KiB, at most 1024 calls per run, 4 in flight, 10 s per call), and the plugin relays them over the oneway AIDL `IBunHostCapabilityBroker`, accepting callbacks only from the host UID for this execution. Bridge-level error codes (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) appear only in the JSON replies; the runScript terminal error codes are unchanged and the terminal Bundle gains `hostBridgeDelivered` and `hostCalls`; the socket and every pending call are closed when the run ends. Capability key `SUPPORTS_HOST_CAPABILITY_BRIDGE`, shared contract AAR now 22437 bytes; hosts that offer no bridge see no change"
       ],

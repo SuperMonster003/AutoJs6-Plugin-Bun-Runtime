@@ -7,9 +7,6 @@
   "$data": {
     "v0.2.4": {
       "released_date": "2026/09/16",
-      "hint": [
-        "Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure"
-      ],
       "feature": [
         "M7 seconde partie: le pont de capacités pour les appels dynamiques à l'exécution et les deux premières capacités dynamiques `ui.toast` / `device.info`. Lorsque l'hôte place `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (un IBinder) et `hostCapabilities` (les ID de capacité accordés) dans la requête runScript, le plugin ouvre un socket unix par exécution dans son répertoire de cache privé (variable d'environnement `AUTOJS6_HOST_BRIDGE_SOCKET`); les scripts envoient `GET /v1/info` et `POST /v1/<ID de capacité>` via `fetch(url, { unix })` (requêtes JSON jusqu'à 64 KiB, résultats jusqu'à 256 KiB, au plus 1024 appels par exécution, 4 en cours, 10 s par appel) et le plugin les relaie par l'AIDL oneway `IBunHostCapabilityBroker`, en n'acceptant que les rappels de l'UID hôte pour cette exécution. Les codes d'erreur du pont (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) n'apparaissent que dans les réponses JSON; les codes d'erreur terminaux de runScript sont inchangés et le Bundle terminal gagne `hostBridgeDelivered` et `hostCalls`; le socket et chaque appel en attente sont fermés à la fin de l'exécution. Clé de capacité `SUPPORTS_HOST_CAPABILITY_BRIDGE`, AAR du contrat partagé désormais de 22437 bytes; les hôtes qui n'offrent pas le pont ne voient aucun changement"
       ],
