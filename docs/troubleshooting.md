@@ -33,7 +33,7 @@ console.log("Bun is running", Bun.version);
 | npm 包找不到 | 插件以 `bun run --no-install <source>` 执行, 不会安装依赖或传输 node_modules | 对可打包的纯 JS 依赖, 先在电脑上生成一个适用于 Bun 的单文件产物. 在设备上运行前检查它是否仍含外部包导入. native addon 不能靠这种打包方式变成可用 |
 | `import './utils.js'` 找不到文件 | 当前发布的 AutoJs6 只把当前文件快照交给插件, 不传项目目录 | 在电脑上把需要的模块合并为单文件, 检查产物不再依赖相对工程导入. 单文件内 ESM 语法本身可用. 多文件项目执行 (Roadmap M6) 的契约, 插件接入与宿主打包代码已完成; 等 AutoJs6 宿主发布该能力后, 放在含 `project.json` 或 `package.json` 目录下的脚本即可使用相对导入 |
 | `https.createServer` 的客户端拿到 `alpnProtocol === false`, 或依赖 ALPN 的 HTTPS 客户端连不上 Bun 起的 HTTPS 服务 | 上游 Bun 1.4.0 的 `node:https` 服务端不默认协商 `http/1.1`; 官方与实验运行时相同, 与 Android 版本无关 | 需要 ALPN 时改用 `Bun.serve({ tls: { ... } })`, 或用 `node:tls` 的 `createServer({ ALPNProtocols: ['http/1.1'], ... })` 自行处理 HTTP. 作为客户端访问外部 HTTPS 站点 (`fetch`) 不受影响. 该项在 Roadmap 停放清单中登记为上游限制, 不是插件缺陷 |
-| `click()`、`toast()`、Rhino 对象或 Java 类不可用 | Bun 是独立引擎, 当前没有 AutoJs6 globals 或 Java bridge | 将这类自动化/Java 操作保留在宿主支持的引擎侧. Bun 脚本仅使用实际提供的 Bun/JavaScript 能力. 能力桥的第一项只读能力 (宿主信息快照, 由 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 文件) 已在插件侧实现, 等 AutoJs6 宿主发布后可用; 自动化接口仍未提供 (Roadmap M7) |
+| `click()`、`toast()`、Rhino 对象或 Java 类不可用 | Bun 是独立引擎, 当前没有 AutoJs6 globals 或 Java bridge | 将这类自动化/Java 操作保留在宿主支持的引擎侧; 宿主提供能力桥时, 可用 `fetch(url, { unix: process.env.AUTOJS6_HOST_BRIDGE_SOCKET })` 调用已授权的窄能力 (如 `POST /v1/ui.toast`), 403 表示该能力在插件中心被关闭. Bun 脚本仅使用实际提供的 Bun/JavaScript 能力. 能力桥的第一项只读能力 (宿主信息快照, 由 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 文件) 已在插件侧实现, 等 AutoJs6 宿主发布后可用; 自动化接口仍未提供 (Roadmap M7) |
 | 取消后仍看到进程, 或后续脚本无法启动 | 生命周期清理异常, 或脚本创建了脱离监督范围的后代 | 记录取消时间、终态和最小复现. 当前 supervisor 负责其直接 Bun 子进程, 不管理任意 detached 后代. 不要按猜测 PID 批量杀进程 |
 
 ## 读懂终态和诊断

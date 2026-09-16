@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 왜 Bun 스크립트에서 `click()`, `toast()` 같은 AutoJs6 함수를 사용할 수 없나요?
 
-Bun은 별도 프로세스에서 실행되며 Rhino와 완전히 다른 JavaScript 엔진이므로 AutoJs6 globals가 Bun 스크립트 안에 나타나지 않습니다. Bun 스크립트가 automation 기능을 호출하려면 각 기능을 명시적으로 노출하는 host bridge가 필요하며, 현재 버전은 의도적으로 automation 인터페이스를 제공하지 않습니다. 첫 번째 읽기 전용 기능 (호스트 정보 스냅샷: 환경 변수 `AUTOJS6_HOST_INFO_FILE`이 가리키는, 호스트와 플러그인 버전 등을 담은 JSON 파일)은 플러그인 쪽에 구현되어 있으며, 대응하는 AutoJs6 호스트가 릴리스되면 사용할 수 있습니다. 계획은 roadmap을 참고하세요.
+Bun은 별도 프로세스에서 실행되며 Rhino와 완전히 다른 JavaScript 엔진이므로 AutoJs6 globals가 Bun 스크립트 안에 나타나지 않습니다. Bun 스크립트가 automation 기능을 호출하려면 각 기능을 명시적으로 노출하는 host bridge가 필요하며, 현재 버전은 의도적으로 automation 인터페이스를 제공하지 않습니다. 첫 번째 읽기 전용 기능 (호스트 정보 스냅샷: 환경 변수 `AUTOJS6_HOST_INFO_FILE`이 가리키는, 호스트와 플러그인 버전 등을 담은 JSON 파일)은 플러그인 쪽에 구현되어 있으며, 두 번째 부분 (런타임 호출: `ui.toast`와 `device.info`, 스크립트는 환경 변수 `AUTOJS6_HOST_BRIDGE_SOCKET`이 가리키는 unix socket에 `fetch(url, { unix })`로 호출)도 플러그인 쪽에 구현되어 있습니다. 둘 다 대응하는 AutoJs6 호스트가 릴리스되면 사용할 수 있으며, 각 기능은 AutoJs6 플러그인 센터의 플러그인 설정 페이지에서 개별적으로 끌 수 있습니다. 계획은 roadmap을 참고하세요.
 
 #### npm 패키지를 사용할 수 있나요?
 
@@ -236,6 +236,7 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 _2026/09/16_
 
 - `힌트` 아직 게시되지 않은 개발 스냅샷. 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
+- `기능` M7 두 번째 부분: 런타임 동적 호출용 기능 브리지와 처음 두 개의 동적 기능 `ui.toast` / `device.info`. 호스트가 runScript 요청에 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder), `hostCapabilities` (허용된 기능 ID)를 담으면 플러그인은 실행마다 비공개 캐시 디렉터리에 unix socket을 만들고 (환경 변수 `AUTOJS6_HOST_BRIDGE_SOCKET`), 스크립트는 `fetch(url, { unix })`로 `GET /v1/info`와 `POST /v1/<기능 ID>`를 보냅니다 (JSON 요청 <= 64 KiB, 결과 <= 256 KiB, 실행당 최대 1024회, 동시 4건, 호출당 10 s 시간 제한). 플러그인은 oneway AIDL `IBunHostCapabilityBroker`로 호스트에 중계하며 이 실행에 대한 호스트 UID의 콜백만 받아들입니다. 브리지 수준 오류 코드 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500)는 JSON 응답에만 나타나고, runScript 종료 오류 코드 집합은 그대로이며 종료 Bundle에 `hostBridgeDelivered`와 `hostCalls`가 추가됩니다; 실행이 끝나면 socket과 진행 중인 호출을 닫습니다. 기능 키 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 공유 계약 AAR은 22437 bytes로 갱신; 브리지를 제공하지 않는 호스트의 동작은 완전히 동일
 - `개선` 게시된 v0.2.3 APK/소스 자산 검증과 최종 게시 바이트에서 다섯 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.2 에서 덮어쓰기 업그레이드, Redmi API 33 arm64, x86_64 API 33 AVD 와 Samsung SM-A566B API 36 네이티브 arm64 16 KiB 기기는 새로 설치, 각각 force-stop 전후 10/10 그룹 통과 (열 번째 그룹은 호스트 정보 스냅샷); 게시된 태그는 다시 쓰지 않으며 Android/16 KB 호환 범위도 확장하지 않음
 - `개선` Android 17 (SDK 37) 대응 및 플러그인별 로컬 네트워크 권한 설정과 복구 안내 제공
 
