@@ -76,6 +76,7 @@ class BunRuntimeService : Service() {
             var request: BunExecutionRequest? = null
             var handle: ExecutionHandle? = null
             var workspace: File? = null
+            var bridge: BunHostBridgeServer? = null
             var gateAcquired = false
             try {
                 request = BunExecutionRequestParser.parse(requestBundle)
@@ -116,7 +117,10 @@ class BunRuntimeService : Service() {
                 val hostInfoFile = request.hostInfo?.let { hostInfo ->
                     materializeHostInfo(hostInfo, callingUid, probe.abi.orEmpty(), request, prepared, workspace)
                 }
-                return execute(request, prepared, workspace, callback, handle, startedAt, hostInfoFile)
+                bridge = request.hostBridge?.let { hostBridge ->
+                    BunHostBridgeServer.start(applicationContext, hostBridge, callingUid, request.executionId)
+                }
+                return execute(request, prepared, workspace, callback, handle, startedAt, hostInfoFile, bridge)
             } catch (error: BunWorkspaceArchiveException) {
                 // Archive rules map onto the published error codes; the fixed archive code stays in the diagnostic.
                 val code = when (error.code) {
@@ -160,6 +164,7 @@ class BunRuntimeService : Service() {
             } finally {
                 runCatching { source?.close() }
                 handle?.terminateAndReap()
+                runCatching { bridge?.close() }
                 handle?.let { activeHandle ->
                     request?.executionId?.let { executionId ->
                         activeExecutions.remove(executionId, activeHandle)
@@ -186,6 +191,7 @@ class BunRuntimeService : Service() {
         handle: ExecutionHandle,
         startedAt: Long,
         hostInfoFile: File?,
+        bridge: BunHostBridgeServer?,
     ): Bundle {
         val command = buildList {
             add(runtimeBinary.file.path)
@@ -198,6 +204,7 @@ class BunRuntimeService : Service() {
         processBuilder.environment().apply {
             putAll(request.environment)
             hostInfoFile?.let { put(BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE, it.path) }
+            bridge?.let { put(BunRuntimeContract.HOST_BRIDGE_ENVIRONMENT_VARIABLE, it.path) }
             put("TMPDIR", File(workspace, "tmp").apply { mkdirs() }.path)
             put("BUN_INSTALL_CACHE_DIR", File(workspace, "bun-install-cache").apply { mkdirs() }.path)
             put("BUN_DISABLE_UPDATE_CHECK", "1")
@@ -295,6 +302,10 @@ class BunRuntimeService : Service() {
                 putLong(BunRuntimeContract.KEY_WORKSPACE_BYTES, expanded.totalBytes)
             }
             if (request.hostInfo != null) putBoolean(BunRuntimeContract.KEY_HOST_INFO_DELIVERED, hostInfoFile != null)
+            if (request.hostBridge != null) {
+                putBoolean(BunRuntimeContract.KEY_HOST_BRIDGE_DELIVERED, bridge != null)
+                putInt(BunRuntimeContract.KEY_HOST_CALLS, bridge?.relayedCalls ?: 0)
+            }
         }
         emitSequenced(
             callback,

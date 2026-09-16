@@ -1,6 +1,7 @@
 package io.github.supermonster003.autojs6.plugin.bun.runtime
 
 import android.os.Bundle
+import android.os.IBinder
 import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 
 /** Present only when the host sent a workspace archive instead of a single source. */
@@ -16,6 +17,12 @@ internal data class BunHostInfoRequest(
     val languageTag: String?,
 )
 
+/** Present only when the host offered the runtime capability bridge (M7, dynamic calls). */
+internal data class BunHostBridgeRequest(
+    val broker: IBinder,
+    val capabilities: List<String>,
+)
+
 internal data class BunExecutionRequest(
     val executionId: String,
     val sourceName: String,
@@ -25,6 +32,7 @@ internal data class BunExecutionRequest(
     val outputByteLimit: Long,
     val workspace: BunWorkspaceRequest? = null,
     val hostInfo: BunHostInfoRequest? = null,
+    val hostBridge: BunHostBridgeRequest? = null,
 )
 
 internal object BunExecutionRequestParser {
@@ -32,8 +40,13 @@ internal object BunExecutionRequestParser {
     private val environmentNamePattern = Regex("[A-Za-z_][A-Za-z0-9_]*")
     private val packageNamePattern = Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+")
     private val languageTagPattern = Regex("[A-Za-z0-9]{1,8}(-[A-Za-z0-9]{1,8})*")
+    private val capabilityIdPattern = Regex("[a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+")
 
     fun isValidExecutionId(value: String): Boolean = executionIdPattern.matches(value)
+
+    /** Capability IDs are dotted lowercase names (at least one dot, so they never collide with the bridge info path). */
+    fun isValidCapabilityId(value: String): Boolean =
+        value.toByteArray(Charsets.UTF_8).size <= BunRuntimeContract.MAX_HOST_CAPABILITY_ID_BYTES && capabilityIdPattern.matches(value)
 
     fun parse(request: Bundle?): BunExecutionRequest {
         requireNotNull(request) { "Request is missing" }
@@ -107,6 +120,17 @@ internal object BunExecutionRequestParser {
             null
         }
 
+        // The bridge marker is opt-in too: absent means no broker, no socket and no reserved environment variable.
+        val hostBridge = if (request.containsKey(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION)) {
+            parseHostBridge(
+                version = request.getInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, -1),
+                broker = request.getBinder(BunRuntimeContract.KEY_HOST_CAPABILITY_BROKER),
+                capabilities = request.getStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES),
+            )
+        } else {
+            null
+        }
+
         return BunExecutionRequest(
             executionId = executionId,
             sourceName = sourceName,
@@ -116,6 +140,7 @@ internal object BunExecutionRequestParser {
             outputByteLimit = outputByteLimit,
             workspace = workspace,
             hostInfo = hostInfo,
+            hostBridge = hostBridge,
         )
     }
 
@@ -144,6 +169,23 @@ internal object BunExecutionRequestParser {
             versionDate = advisoryHostInfoValue(versionDate, "Host info version date"),
             languageTag = tag,
         )
+    }
+
+    /**
+     * Validates the capability bridge fields. The broker Binder stays opaque here; the service pins it to the
+     * caller UID and the execution ID. Kept free of android.os calls so JVM tests cover the list rules.
+     */
+    fun parseHostBridge(version: Int, broker: IBinder?, capabilities: List<String?>?): BunHostBridgeRequest {
+        require(version == BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION) { "Unsupported host capability bridge version" }
+        requireNotNull(broker) { "Host capability broker is missing" }
+        require(!capabilities.isNullOrEmpty()) { "Host capability list is empty" }
+        require(capabilities.size <= BunRuntimeContract.MAX_HOST_CAPABILITY_COUNT) { "Too many host capabilities" }
+        val ids = capabilities.map { id ->
+            require(id != null && isValidCapabilityId(id)) { "Invalid host capability ID" }
+            id
+        }
+        require(ids.toSet().size == ids.size) { "Duplicate host capability ID" }
+        return BunHostBridgeRequest(broker = broker, capabilities = ids)
     }
 
     private fun advisoryHostInfoValue(value: String?, label: String): String? {
