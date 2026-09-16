@@ -41,7 +41,7 @@ El archivo README.md actual admite los siguientes idiomas:
 
 Bun Runtime es un plugin independiente que agrega a AutoJs6 un motor de scripts moderno opcional: [Bun](https://bun.sh/). Una vez instalado y activado el plugin, poner `"bun";` en la primera línea de un archivo JavaScript o TypeScript entrega ese archivo a un motor Bun 1.4.0 real en lugar del motor Rhino integrado, de modo que la sintaxis moderna de JavaScript, TypeScript y las API integradas de Bun como `fetch` quedan disponibles directamente en dispositivos Android.
 
-El plugin funciona de forma sencilla: AutoJs6 envía el contenido del script al plugin, el plugin inicia el ejecutable Android oficial de Bun en su propio proceso aislado, y la salida junto con el resultado final vuelven a la consola de AutoJs6 en tiempo real. Es Bun auténtico, no un alias ni una capa de emulación sobre Rhino o Node.js.
+El plugin funciona de forma sencilla: AutoJs6 envía el contenido del script al plugin, el plugin inicia el ejecutable Android oficial de Bun en su propio proceso aislado, y la salida junto con el resultado final vuelven a la consola de AutoJs6 en tiempo real. Es Bun auténtico, no un alias ni una capa de emulación sobre Rhino o Node.js. En Android 17 o posterior, permite los dispositivos cercanos para este plugin para conectar con dispositivos de tu red local. El permiso de AutoJs6 no se comparte con este plugin. Internet público y las conexiones de bucle local no requieren este permiso. Si esta operación usa la red local, abre este plugin desde el centro de plugins de AutoJs6 y permite los dispositivos cercanos. El permiso de AutoJs6 no se comparte con este plugin.
 
 ******
 
@@ -237,6 +237,7 @@ _2026/09/16_
 
 - `Aviso` Versión de desarrollo aún no publicada; el plugin oficial sigue requiriendo Android 13 (API 33) o posterior
 - `Mejora` Archivar la verificación de APK y fuentes publicados con v0.2.3 y la aceptación de los APK finales firmados en cinco entornos sobre los bytes finales publicados: actualización sobre la v0.2.2 publicada en Sony API 33 arm64 y Xiaomi API 35 universal, instalación limpia en Redmi API 33 arm64, un AVD x86_64 API 33 y un Samsung SM-A566B API 36 arm64 nativo con páginas de 16 KiB, cada uno con 10/10 grupos antes y después de force-stop (el décimo grupo es la instantánea de información del host); la etiqueta publicada no se reescribe y la compatibilidad Android/16 KB no se amplía
+- `Mejora` Compatibilidad con Android 17 (SDK 37), controles de permiso de red local propios del plugin y ayuda para recuperar el acceso
 
 #### v0.2.3
 
