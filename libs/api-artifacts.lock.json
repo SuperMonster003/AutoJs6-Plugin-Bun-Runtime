@@ -3,9 +3,9 @@
   "artifacts": [
     {
       "file": "bun-runtime-api.aar",
-      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5280 (adds workspace archive keys and capability, then the M7 host info snapshot keys and capability)",
-      "bytes": 14073,
-      "sha256": "69674a0b436a93bb7a4070768fe1bec380e8ed6a14b2bec1374ec38cff6368e4"
+      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5280 (adds workspace archive keys and capability, the M7 host info snapshot keys and capability, then the M7 dynamic capability bridge keys, error codes, capability and the IBunHostCapabilityBroker/IBunHostCapabilityCallback AIDL interfaces)",
+      "bytes": 22437,
+      "sha256": "9700510616e9edd44e28bd88e40876e2585d7b55c02f889745b1d83b03bf70de"
     },
     {
       "file": "common-plugin-api.aar",

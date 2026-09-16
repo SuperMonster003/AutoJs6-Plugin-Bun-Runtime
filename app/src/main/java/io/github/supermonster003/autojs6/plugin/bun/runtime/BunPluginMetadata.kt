@@ -60,6 +60,7 @@ internal fun Context.bunPluginInfo(): PluginInfo {
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT, true)
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_WORKSPACE_ARCHIVE, true)
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_INFO, true)
+            putBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_CAPABILITY_BRIDGE, true)
         }
     }
 }
