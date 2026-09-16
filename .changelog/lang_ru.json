@@ -7,9 +7,6 @@
   "$data": {
     "v0.2.4": {
       "released_date": "2026/09/16",
-      "hint": [
-        "Снимок разработки, ещё не опубликованный; официальный плагин по-прежнему требует Android 13 (API 33) или новее"
-      ],
       "feature": [
         "M7, вторая часть: мост возможностей для динамических вызовов во время выполнения и первые две динамические возможности `ui.toast` / `device.info`. Когда хост кладёт в запрос runScript `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder) и `hostCapabilities` (выданные ID возможностей), плагин открывает на каждый запуск unix-сокет в своём приватном каталоге кэша (переменная окружения `AUTOJS6_HOST_BRIDGE_SOCKET`); скрипты отправляют `GET /v1/info` и `POST /v1/<ID возможности>` через `fetch(url, { unix })` (JSON-запросы до 64 KiB, результаты до 256 KiB, не более 1024 вызовов за запуск, 4 одновременно, 10 s на вызов), а плагин ретранслирует их через oneway AIDL `IBunHostCapabilityBroker`, принимая ответы только от UID хоста для этого запуска. Коды ошибок моста (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) появляются только в JSON-ответах; набор терминальных кодов ошибок runScript не меняется, а терминальный Bundle получает `hostBridgeDelivered` и `hostCalls`; сокет и все незавершённые вызовы закрываются по окончании запуска. Ключ возможности `SUPPORTS_HOST_CAPABILITY_BRIDGE`, AAR общего контракта теперь 22437 bytes; хосты без моста не замечают изменений"
       ],
