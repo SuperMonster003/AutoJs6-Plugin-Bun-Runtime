@@ -5,7 +5,7 @@
   "h3_languages": "語言",
   "p_languages_all_supported": "目前 README.md 支援以下語言",
   "h3_introduction": "簡介",
-  "p_introduction": "Bun Runtime 是 AutoJs6 的獨立插件, 為 AutoJs6 增加一個可選的現代腳本引擎: [Bun]({{ bun_official_url }}). 安裝並啟用後, 只要在 JavaScript 或 TypeScript 檔案的第一行寫上 `\"bun\";`, 這個檔案就會交給真正的 Bun {{ bun_version }} 引擎執行, 而不再使用 AutoJs6 內置的 Rhino 引擎. 現代 JavaScript 語法, TypeScript 以及 `fetch` 等 Bun 內置 API 因此可以直接在 Android 裝置上使用.\n\n插件的運作方式很簡單: AutoJs6 把腳本內容傳送給插件, 插件在自己的獨立程序中啟動官方 Bun Android executable 執行腳本, 並把輸出和執行結果即時傳回 AutoJs6 控制台. 這是名副其實的 Bun, 不是 Rhino 或 Node.js 的別名或模擬層.",
+  "p_introduction": "Bun Runtime 是 AutoJs6 的獨立插件, 為 AutoJs6 增加一個可選的現代腳本引擎: [Bun]({{ bun_official_url }}). 安裝並啟用後, 只要在 JavaScript 或 TypeScript 檔案的第一行寫上 `\"bun\";`, 這個檔案就會交給真正的 Bun {{ bun_version }} 引擎執行, 而不再使用 AutoJs6 內置的 Rhino 引擎. 現代 JavaScript 語法, TypeScript 以及 `fetch` 等 Bun 內置 API 因此可以直接在 Android 裝置上使用.\n\n插件的運作方式很簡單: AutoJs6 把腳本內容傳送給插件, 插件在自己的獨立程序中啟動官方 Bun Android executable 執行腳本, 並把輸出和執行結果即時傳回 AutoJs6 控制台. 這是名副其實的 Bun, 不是 Rhino 或 Node.js 的別名或模擬層. 在 Android 17 或更高版本上, 請為此插件允許附近裝置權限, 以連接區域網絡裝置. AutoJs6 的授權不會授予此插件權限. 公開互聯網及回環連線不需要此權限. 如果此操作使用區域網絡, 請從 AutoJs6 插件中心開啟此插件, 並允許附近裝置權限. AutoJs6 的授權不會授予此插件權限.",
   "h3_features": "功能",
   "features": [
     "真正的 Bun 引擎: 腳本由官方 Bun {{ bun_version }} Android executable 直接執行, 不做轉譯, 也不會轉交 AutoJs6 的其他引擎.",

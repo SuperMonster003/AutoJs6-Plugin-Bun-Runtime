@@ -10,6 +10,7 @@
 
 * `提示` 尚未發布的開發快照; 正式外掛程式仍要求 Android 13 (API 33) 或更新版本
 * `優化` 封存已發布 v0.2.3 的 APK/對應原始碼資產驗證及五個環境在最終發布位元組上的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發布 v0.2.2 原地覆蓋升級, Redmi API 33 arm64, x86_64 API 33 AVD 與 Samsung SM-A566B API 36 原生 arm64 16 KiB 實機全新安裝, force-stop 前後各 10/10 組 (第十組為宿主資訊快照); 已發布標籤不重寫, Android/16 KB 相容範圍不擴大
+* `優化` 支援 Android 17 (SDK 37), 提供外掛獨立的本機網路權限控制及復原指引
 
 # v0.2.3
 

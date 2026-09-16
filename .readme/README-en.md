@@ -41,7 +41,7 @@ The current README.md supports the following languages:
 
 Bun Runtime is a standalone plugin that adds an optional modern script engine to AutoJs6: [Bun](https://bun.sh/). Once the plugin is installed and enabled, putting `"bun";` on the first line of a JavaScript or TypeScript file hands that file to a real Bun 1.4.0 engine instead of the built-in Rhino engine, so modern JavaScript syntax, TypeScript, and built-in Bun APIs such as `fetch` become directly usable on Android devices.
 
-The plugin works in a straightforward way: AutoJs6 sends the script content to the plugin, the plugin launches the official Bun Android executable in its own isolated process, and the output plus the final result stream back to the AutoJs6 console in real time. This is genuine Bun, not an alias or emulation layer over Rhino or Node.js.
+The plugin works in a straightforward way: AutoJs6 sends the script content to the plugin, the plugin launches the official Bun Android executable in its own isolated process, and the output plus the final result stream back to the AutoJs6 console in real time. This is genuine Bun, not an alias or emulation layer over Rhino or Node.js. On Android 17 or later, allow Nearby devices for this plugin to connect to devices on your local network. AutoJs6 permission does not grant access to this plugin. Public internet and loopback connections do not require this permission. If this operation uses the local network, open this plugin from the AutoJs6 plugin center and allow Nearby devices. AutoJs6 permission does not grant access to this plugin.
 
 ******
 
@@ -237,6 +237,7 @@ _2026/09/16_
 
 - `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
 - `Improvement` Archive the published v0.2.3 APK/source asset verification and the signed final-APK acceptance in five environments on the final release bytes: in-place upgrades from the published v0.2.2 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64, an x86_64 API 33 AVD and a Samsung SM-A566B API 36 native arm64 16 KiB device, each passing 10/10 groups before and after force-stop (the tenth group is the host info snapshot); the released tag is not rewritten and Android/16 KB compatibility is not expanded
+- `Improvement` Target Android 17 (SDK 37) with separate local network permission controls and recovery guidance
 
 #### v0.2.3
 

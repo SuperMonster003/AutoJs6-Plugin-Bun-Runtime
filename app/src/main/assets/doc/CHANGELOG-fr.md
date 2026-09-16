@@ -10,6 +10,7 @@
 
 * `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
 * `Amélioration` Archiver les vérifications des APK et sources publiés avec v0.2.3 et la validation des APK finaux signés dans cinq environnements sur les octets finaux publiés : mise à niveau par-dessus la v0.2.2 publiée sur Sony API 33 arm64 et Xiaomi API 35 universal, installation neuve sur Redmi API 33 arm64, un AVD x86_64 API 33 et un Samsung SM-A566B API 36 arm64 natif à pages de 16 KiB, chacun avec 10/10 groupes avant et après force-stop (le dixième groupe est l'instantané des informations de l'hôte) ; le tag publié n'est pas réécrit et la compatibilité Android/16 KB n'est pas étendue
+* `Amélioration` Cibler Android 17 (SDK 37) avec des autorisations réseau local propres au plugin et une aide à la récupération
 
 # v0.2.3
 

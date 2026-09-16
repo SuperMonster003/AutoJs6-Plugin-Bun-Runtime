@@ -5,7 +5,7 @@
   "h3_languages": "言語",
   "p_languages_all_supported": "現在の README.md は次の言語に対応しています",
   "h3_introduction": "概要",
-  "p_introduction": "Bun Runtime は, AutoJs6 に新しい選択肢となるモダンなスクリプトエンジン [Bun]({{ bun_official_url }}) を追加する独立プラグインです. インストールして有効化した後, JavaScript または TypeScript ファイルの 1 行目に `\"bun\";` と書くだけで, そのファイルは内蔵の Rhino エンジンではなく本物の Bun {{ bun_version }} エンジンで実行されます. モダンな JavaScript 構文, TypeScript, `fetch` などの Bun 内蔵 API を Android 端末上で直接利用できます.\n\n仕組みはシンプルです. AutoJs6 がスクリプト内容をプラグインへ送り, プラグインは専用の独立プロセスで公式 Bun Android executable を起動してスクリプトを実行し, 出力と実行結果をリアルタイムで AutoJs6 コンソールへ返します. これは正真正銘の Bun であり, Rhino や Node.js の alias やエミュレーション層ではありません.",
+  "p_introduction": "Bun Runtime は, AutoJs6 に新しい選択肢となるモダンなスクリプトエンジン [Bun]({{ bun_official_url }}) を追加する独立プラグインです. インストールして有効化した後, JavaScript または TypeScript ファイルの 1 行目に `\"bun\";` と書くだけで, そのファイルは内蔵の Rhino エンジンではなく本物の Bun {{ bun_version }} エンジンで実行されます. モダンな JavaScript 構文, TypeScript, `fetch` などの Bun 内蔵 API を Android 端末上で直接利用できます.\n\n仕組みはシンプルです. AutoJs6 がスクリプト内容をプラグインへ送り, プラグインは専用の独立プロセスで公式 Bun Android executable を起動してスクリプトを実行し, 出力と実行結果をリアルタイムで AutoJs6 コンソールへ返します. これは正真正銘の Bun であり, Rhino や Node.js の alias やエミュレーション層ではありません. Android 17 以降では, このプラグインの付近のデバイス権限を許可するとローカルネットワークのデバイスに接続できます. AutoJs6 の許可はプラグインに引き継がれません. インターネットとループバック接続にはこの権限は不要です. この操作でローカルネットワークを使用する場合は, AutoJs6 のプラグインセンターからこのプラグインを開き, 付近のデバイスを許可してください. AutoJs6 の許可は引き継がれません.",
   "h3_features": "機能",
   "features": [
     "本物の Bun エンジン: スクリプトは公式 Bun {{ bun_version }} Android executable が直接実行します. トランスパイルは行わず, 他の AutoJs6 エンジンへ転送することもありません.",

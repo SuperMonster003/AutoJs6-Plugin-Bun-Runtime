@@ -10,6 +10,7 @@
 
 * `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
 * `Improvement` Archive the published v0.2.3 APK/source asset verification and the signed final-APK acceptance in five environments on the final release bytes: in-place upgrades from the published v0.2.2 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64, an x86_64 API 33 AVD and a Samsung SM-A566B API 36 native arm64 16 KiB device, each passing 10/10 groups before and after force-stop (the tenth group is the host info snapshot); the released tag is not rewritten and Android/16 KB compatibility is not expanded
+* `Improvement` Target Android 17 (SDK 37) with separate local network permission controls and recovery guidance
 
 # v0.2.3
 
