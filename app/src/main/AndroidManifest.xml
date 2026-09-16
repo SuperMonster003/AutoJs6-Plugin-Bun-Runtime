@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <uses-permission android:name="org.autojs.permission.PLUGIN" />
 
     <!-- M7 host info snapshot: the runtime resolves the calling host's version from PackageManager instead of trusting the request. -->
@@ -25,6 +26,16 @@
         <meta-data
             android:name="org.autojs.plugin.info.AUTHOR"
             android:value="@string/plugin_author" />
+
+        <activity
+            android:name=".LocalNetworkSettingsActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".WakeActivity"

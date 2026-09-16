@@ -281,7 +281,12 @@ class BunRuntimeService : Service() {
             putString(BunRuntimeContract.KEY_STDOUT, "")
             putString(BunRuntimeContract.KEY_STDERR, "")
             putString(BunRuntimeContract.KEY_ERROR_CODE, errorCode)
-            putString(BunRuntimeContract.KEY_ERROR_MESSAGE, runtimeErrorMessage(errorCode, exitCode))
+            val message = runtimeErrorMessage(errorCode, exitCode)
+            putString(BunRuntimeContract.KEY_ERROR_MESSAGE,
+                if (errorCode == BunRuntimeContract.ERROR_NON_ZERO_EXIT && output.permissionFailure.get()
+                    && !LocalNetworkAccess.isGranted(this@BunRuntimeService)) {
+                    boundedTerminalMessage(message.orEmpty() + "\n" + getString(R.string.local_network_failure_hint))
+                } else message)
             putLong(BunRuntimeContract.KEY_DURATION_MILLIS, SystemClock.elapsedRealtime() - startedAt)
             putBoolean(BunRuntimeContract.KEY_CANCELLED, cancelled)
             putBoolean(BunRuntimeContract.KEY_TIMED_OUT, timedOut)
@@ -318,6 +323,7 @@ class BunRuntimeService : Service() {
                     if (count < 0) break
                     val chunk = String(buffer, 0, count)
                     if (!output.append(chunk)) break
+                    if (eventType == BunRuntimeContract.EVENT_STDERR) output.inspectError(chunk)
                     emitSequenced(callback, executionId, eventType, sequence, chunk)
                 }
             }
@@ -612,9 +618,18 @@ class BunRuntimeService : Service() {
     ) {
         val limitExceeded = AtomicBoolean(false)
         val streamFailure = AtomicBoolean(false)
+        val permissionFailure = AtomicBoolean(false)
+        private var errorTail = ""
         private val sealed = AtomicBoolean(false)
         private val closingStreams = AtomicBoolean(false)
         private var bytes = 0L
+
+        // Inspect only a bounded suffix across chunks; never retain or log script stderr.
+        fun inspectError(chunk: String) {
+            val text = errorTail + chunk
+            if (LocalNetworkAccess.isPermissionFailure(text)) permissionFailure.set(true)
+            errorTail = text.takeLast(32)
+        }
 
         @Synchronized
         fun append(chunk: String): Boolean {
