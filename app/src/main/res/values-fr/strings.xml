@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="local_network_allow">Autoriser les appareils à proximité</string>
+    <string name="local_network_denied">Non autorisé</string>
+    <string name="local_network_explanation">Sur Android 17 ou version ultérieure, autorisez les appareils à proximité pour ce plugin afin de contacter les appareils du réseau local. Les autorisations AutoJs6 ne sont pas partagées avec ce plugin. Internet public et les connexions en boucle locale ne nécessitent pas cette autorisation.</string>
+    <string name="local_network_failure_hint">Si cette opération utilise le réseau local, ouvrez ce plugin depuis le centre de plugins AutoJs6 et autorisez les appareils à proximité. Les autorisations AutoJs6 ne sont pas partagées avec ce plugin.</string>
+    <string name="local_network_granted">Autorisé</string>
+    <string name="local_network_not_required">Cette version Android ne nécessite aucune autorisation distincte.</string>
+    <string name="local_network_settings">Ouvrir les paramètres</string>
+    <string name="local_network_title">Accès au réseau local</string>
     <string name="plugin_description">Exécute JavaScript et TypeScript avec le moteur Bun indépendant dans un processus Android isolé</string>
     <string name="plugin_instruction">Placez \"bun\"; seul sur la première ligne d\'un fichier JS ou TS, puis exécutez-le depuis AutoJs6 comme d\'habitude. Chaque exécution traite uniquement ce fichier: les dépendances npm ne sont jamais installées automatiquement et les fonctions intégrées d\'AutoJs6 ne sont pas disponibles dans Bun.</string>
     <string name="runtime_diagnostic_label">Détails du diagnostic:</string>

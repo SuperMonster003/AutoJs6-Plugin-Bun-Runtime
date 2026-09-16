@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="local_network_allow">允許附近裝置</string>
+    <string name="local_network_denied">未允許</string>
+    <string name="local_network_explanation">在 Android 17 或更新版本上, 請為此外掛允許附近裝置權限, 以連線至區域網路裝置. AutoJs6 的授權不會授予此外掛權限. 公開網際網路及回送連線不需要此權限.</string>
+    <string name="local_network_failure_hint">如果此操作使用區域網路, 請從 AutoJs6 外掛中心開啟此外掛, 並允許附近裝置權限. AutoJs6 的授權不會授予此外掛權限.</string>
+    <string name="local_network_granted">已允許</string>
+    <string name="local_network_not_required">此 Android 版本不需要個別授權.</string>
+    <string name="local_network_settings">開啟應用程式設定</string>
+    <string name="local_network_title">本機網路存取</string>
     <string name="plugin_description">在隔離的 Android 行程中使用獨立 Bun 引擎執行 JavaScript 和 TypeScript</string>
     <string name="plugin_instruction">在 JS 或 TS 檔案第一行單獨加入 \"bun\";, 然後照常從 AutoJs6 執行該檔案. 每次執行只會執行這一個檔案: 不會自動安裝 npm dependency, Bun 腳本中也無法使用 AutoJs6 內建函數.</string>
     <string name="runtime_diagnostic_label">診斷詳細資訊:</string>

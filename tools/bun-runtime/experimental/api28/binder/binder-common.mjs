@@ -64,6 +64,7 @@ export const TESTS = Object.freeze([
     "workspaceArchiveProjectRoundTrip",
     "hostInfoSnapshotIsDeliveredOnlyWhenOffered",
     "hostGlobalsAreAbsentAndFailLoudly",
+    "localNetworkUsesThePluginGrant",
     "manifestPublishesWakeInfoAndRuntimeContracts",
 ]);
 export const facts = path => {

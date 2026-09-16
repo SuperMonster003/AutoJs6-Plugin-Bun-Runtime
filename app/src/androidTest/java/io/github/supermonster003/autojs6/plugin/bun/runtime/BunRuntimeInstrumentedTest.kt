@@ -700,6 +700,27 @@ class BunRuntimeInstrumentedTest {
         }
     }
 
+    @Test
+    fun localNetworkUsesThePluginGrant() {
+        val args = InstrumentationRegistry.getArguments()
+        org.junit.Assume.assumeTrue("Provide lanPort for the owned LAN fixture", args.containsKey("lanPort"))
+        val host = org.json.JSONObject.quote(args.getString("lanHost", "10.0.2.2"))
+        val port = requireNotNull(args.getString("lanPort")).toInt()
+        withBoundRuntime { runtime ->
+            val captured = runSource(runtime, "local-network.js", """
+                const s = require('net').createConnection({host: $host, port: $port});
+                s.setTimeout(3000, () => { s.destroy(); throw new Error('LAN timeout'); });
+                s.on('data', b => { if(b.toString() !== 'K') throw new Error('bad reply'); console.log('LAN_OK'); s.end(); });
+                s.on('error', e => { throw e; });
+            """.trimIndent())
+            val granted = LocalNetworkAccess.isGranted(context)
+            assertEquals(captured.stderr, granted, captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            if (granted) assertTrue(captured.stdout, captured.stdout.contains("LAN_OK"))
+            else assertTrue(captured.result.toString(), captured.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()
+                .contains(context.getString(R.string.local_network_failure_hint)))
+        }
+    }
+
     private fun runSource(
         runtime: IBunRuntimePlugin,
         sourceName: String,
