@@ -17,6 +17,8 @@ import org.autojs.plugin.bun.runtime.api.BunPluginActions
 import org.autojs.plugin.bun.runtime.api.BunPluginCapabilityKeys
 import org.autojs.plugin.bun.runtime.api.BunPluginIds
 import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
+import org.autojs.plugin.bun.runtime.api.IBunHostCapabilityBroker
+import org.autojs.plugin.bun.runtime.api.IBunHostCapabilityCallback
 import org.autojs.plugin.bun.runtime.api.IBunRuntimeCallback
 import org.autojs.plugin.bun.runtime.api.IBunRuntimePlugin
 import org.autojs.plugin.common.api.PluginCapabilityKeys
@@ -34,6 +36,7 @@ import java.net.ServerSocket
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.UUID
+import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -718,6 +721,182 @@ class BunRuntimeInstrumentedTest {
             if (granted) assertTrue(captured.stdout, captured.stdout.contains("LAN_OK"))
             else assertTrue(captured.result.toString(), captured.result.getString(BunRuntimeContract.KEY_ERROR_MESSAGE).orEmpty()
                 .contains(context.getString(R.string.local_network_failure_hint)))
+        }
+    }
+
+    /**
+     * M7 dynamic bridge: with an in-process fake host broker the plugin serves `fetch({ unix })` calls through the
+     * private socket, applies grants, shape and size rules, the concurrency bound and the call timeout, reports the
+     * relayed count in the terminal Bundle and removes the socket when the run ends.
+     */
+    @Test
+    fun hostCapabilityBridgeRoundTrip() {
+        val toasts = CopyOnWriteArrayList<String>()
+        val brokerCalls = CopyOnWriteArrayList<String>()
+        val broker = object : IBunHostCapabilityBroker.Stub() {
+            override fun invoke(request: Bundle?, callback: IBunHostCapabilityCallback?) {
+                requireNotNull(request)
+                requireNotNull(callback)
+                val capability = request.getString(BunRuntimeContract.KEY_HOST_CAPABILITY)
+                val callId = requireNotNull(request.getString(BunRuntimeContract.KEY_HOST_CALL_ID))
+                val executionId = request.getString(BunRuntimeContract.KEY_EXECUTION_ID)
+                val requestJson = request.getString(BunRuntimeContract.KEY_HOST_CALL_REQUEST_JSON).orEmpty()
+                brokerCalls += "$callId:$capability:$requestJson"
+                val result = Bundle().apply {
+                    putString(BunRuntimeContract.KEY_EXECUTION_ID, executionId)
+                    putString(BunRuntimeContract.KEY_HOST_CALL_ID, callId)
+                }
+                when (capability) {
+                    BunRuntimeContract.HOST_CAPABILITY_DEVICE_INFO -> {
+                        result.putBoolean(BunRuntimeContract.KEY_SUCCEEDED, true)
+                        result.putString(BunRuntimeContract.KEY_HOST_CALL_RESULT_JSON, "{\"model\":\"instrumentation\",\"sdkInt\":${Build.VERSION.SDK_INT}}")
+                    }
+                    BunRuntimeContract.HOST_CAPABILITY_UI_TOAST -> {
+                        val text = org.json.JSONObject(requestJson).getString("text")
+                        if (toasts.size >= 4) {
+                            result.putBoolean(BunRuntimeContract.KEY_SUCCEEDED, false)
+                            result.putString(BunRuntimeContract.KEY_ERROR_CODE, BunRuntimeContract.HOST_CALL_ERROR_QUOTA_EXCEEDED)
+                            result.putString(BunRuntimeContract.KEY_ERROR_MESSAGE, "toast quota")
+                        } else {
+                            toasts += text
+                            result.putBoolean(BunRuntimeContract.KEY_SUCCEEDED, true)
+                            result.putString(BunRuntimeContract.KEY_HOST_CALL_RESULT_JSON, "{\"shown\":true,\"text\":${org.json.JSONObject.quote(text)}}")
+                        }
+                    }
+                    "test.silent" -> return
+                    else -> {
+                        result.putBoolean(BunRuntimeContract.KEY_SUCCEEDED, false)
+                        result.putString(BunRuntimeContract.KEY_ERROR_CODE, BunRuntimeContract.HOST_CALL_ERROR_UNKNOWN_CAPABILITY)
+                        result.putString(BunRuntimeContract.KEY_ERROR_MESSAGE, "unknown")
+                    }
+                }
+                callback.onResult(result)
+            }
+        }
+        val offer: Bundle.() -> Unit = {
+            putInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION)
+            putBinder(BunRuntimeContract.KEY_HOST_CAPABILITY_BROKER, broker)
+            putStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES, arrayListOf("ui.toast", "device.info", "test.silent"))
+        }
+        val script = """
+            const unix = process.env.${BunRuntimeContract.HOST_BRIDGE_ENVIRONMENT_VARIABLE};
+            if (!unix) { console.log("no-bridge"); process.exit(0); }
+            console.log("socket=" + unix);
+            const call = async (method, path, body) => {
+              const response = await fetch("http://autojs6" + path, { unix, method, body });
+              const reply = await response.json();
+              return { status: response.status, ok: reply.ok, capability: reply.capability, result: reply.result, code: reply.error && reply.error.code };
+            };
+            const info = await fetch("http://autojs6/v1/info", { unix });
+            console.log("info=" + info.status + ":" + await info.text());
+            const device = await call("POST", "/v1/device.info", "{}");
+            console.log("device=" + device.status + ":" + device.ok + ":" + device.capability + ":" + device.result.model + ":" + device.result.sdkInt);
+            for (let i = 1; i <= 5; i++) {
+              const toast = await call("POST", "/v1/ui.toast", JSON.stringify({ text: "toast " + i }));
+              console.log("toast" + i + "=" + toast.status + ":" + (toast.ok ? toast.result.text : toast.code));
+            }
+            const checks = [
+              ["denied", "POST", "/v1/net.http", "{}"],
+              ["invalid", "POST", "/v1/toast", "{}"],
+              ["method", "GET", "/v1/device.info", undefined],
+              ["array", "POST", "/v1/device.info", "[1]"],
+              ["big", "POST", "/v1/device.info", JSON.stringify({ blob: "x".repeat(65536) })],
+              ["missing", "GET", "/nope", undefined],
+              ["notInfo", "POST", "/v1/info", "{}"],
+            ];
+            for (const [label, method, path, body] of checks) {
+              const reply = await call(method, path, body);
+              console.log(label + "=" + reply.status + ":" + reply.code);
+            }
+            const silent = [1, 2, 3, 4].map(() => call("POST", "/v1/test.silent", "{}"));
+            await Bun.sleep(1000);
+            const fifth = await call("POST", "/v1/test.silent", "{}");
+            console.log("fifth=" + fifth.status + ":" + fifth.code);
+            const timeouts = await Promise.all(silent);
+            console.log("timeouts=" + timeouts.map(reply => reply.status + ":" + reply.code).join(","));
+        """.trimIndent()
+
+        withBoundRuntime { runtime ->
+            val absent = runSource(runtime, "bridge-absent.js", script)
+            assertTrue(absent.stderr, absent.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(absent.stdout, absent.stdout.contains("no-bridge"))
+            assertFalse(absent.result.containsKey(BunRuntimeContract.KEY_HOST_BRIDGE_DELIVERED))
+            assertFalse(absent.result.containsKey(BunRuntimeContract.KEY_HOST_CALLS))
+
+            val captured = runSource(runtime, "bridge.js", script, executionId = "instrumentation-bridge", timeoutMillis = 60_000L, requestCustomizer = offer)
+            val stdout = captured.stdout
+            assertTrue(captured.stderr + stdout, captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(captured.result.getBoolean(BunRuntimeContract.KEY_HOST_BRIDGE_DELIVERED))
+            assertEquals(stdout, 10, captured.result.getInt(BunRuntimeContract.KEY_HOST_CALLS))
+            val socketPath = stdout.lineSequence().single { it.startsWith("socket=") }.removePrefix("socket=")
+            assertTrue(socketPath, socketPath.startsWith(File(context.cacheDir, "bun-bridge").path + "/") && socketPath.endsWith(".sock"))
+            assertFalse(socketPath, File(socketPath).exists())
+            assertFalse(File(context.cacheDir, "bun-bridge").exists())
+            assertTrue(
+                stdout,
+                stdout.contains(
+                    "info=200:{\"ok\":true,\"bridgeVersion\":1,\"capabilities\":[\"ui.toast\",\"device.info\",\"test.silent\"]," +
+                        "\"limits\":{\"maxRequestBytes\":65536,\"maxResultBytes\":262144,\"maxCallsPerExecution\":1024,\"maxConcurrentCalls\":4,\"callTimeoutMillis\":10000}}",
+                ),
+            )
+            assertTrue(stdout, stdout.contains("device=200:true:device.info:instrumentation:${Build.VERSION.SDK_INT}"))
+            (1..4).forEach { index -> assertTrue(stdout, stdout.contains("toast$index=200:toast $index")) }
+            assertTrue(stdout, stdout.contains("toast5=429:QUOTA_EXCEEDED"))
+            assertEquals(listOf("toast 1", "toast 2", "toast 3", "toast 4"), toasts)
+            assertTrue(stdout, stdout.contains("denied=403:NOT_GRANTED"))
+            assertTrue(stdout, stdout.contains("invalid=400:INVALID_REQUEST"))
+            assertTrue(stdout, stdout.contains("method=405:INVALID_REQUEST"))
+            assertTrue(stdout, stdout.contains("array=400:INVALID_REQUEST"))
+            assertTrue(stdout, stdout.contains("big=413:PAYLOAD_TOO_LARGE"))
+            assertTrue(stdout, stdout.contains("missing=404:UNKNOWN_CAPABILITY"))
+            assertTrue(stdout, stdout.contains("notInfo=405:INVALID_REQUEST"))
+            assertTrue(stdout, stdout.contains("fifth=429:TOO_MANY_REQUESTS"))
+            assertTrue(stdout, stdout.contains("timeouts=504:TIMEOUT,504:TIMEOUT,504:TIMEOUT,504:TIMEOUT"))
+            assertEquals(brokerCalls.joinToString("\n"), 10, brokerCalls.size)
+            assertTrue(brokerCalls.joinToString("\n"), brokerCalls.all { it.startsWith("instrumentation-bridge#") })
+            assertTrue(brokerCalls.joinToString("\n"), brokerCalls.contains("instrumentation-bridge#1:device.info:{}"))
+            assertTrue(brokerCalls.joinToString("\n"), brokerCalls.contains("instrumentation-bridge#2:ui.toast:{\"text\":\"toast 1\"}"))
+            // The accept thread of the finished run must be gone; the plugin and the test share one process.
+            val deadline = SystemClock.elapsedRealtime() + 3_000L
+            while (Thread.getAllStackTraces().keys.any { it.name == "AutoJs6-Bun-bridge-accept" } && SystemClock.elapsedRealtime() < deadline) {
+                Thread.sleep(50)
+            }
+            assertTrue(Thread.getAllStackTraces().keys.none { it.name == "AutoJs6-Bun-bridge-accept" })
+
+            // Unknown version, missing broker, malformed IDs and a reserved variable all fail closed before the run starts.
+            listOf<Bundle.() -> Unit>(
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION + 1)
+                    putBinder(BunRuntimeContract.KEY_HOST_CAPABILITY_BROKER, broker)
+                    putStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES, arrayListOf("ui.toast"))
+                },
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION)
+                    putStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES, arrayListOf("ui.toast"))
+                },
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION)
+                    putBinder(BunRuntimeContract.KEY_HOST_CAPABILITY_BROKER, broker)
+                    putStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES, arrayListOf("ui.toast", "info"))
+                },
+                {
+                    putInt(BunRuntimeContract.KEY_HOST_CAPABILITY_BRIDGE_VERSION, BunRuntimeContract.HOST_CAPABILITY_BRIDGE_VERSION)
+                    putBinder(BunRuntimeContract.KEY_HOST_CAPABILITY_BROKER, broker)
+                    putStringArrayList(BunRuntimeContract.KEY_HOST_CAPABILITIES, arrayListOf())
+                },
+                {
+                    putBundle(BunRuntimeContract.KEY_ENVIRONMENT, Bundle().apply { putString(BunRuntimeContract.HOST_BRIDGE_ENVIRONMENT_VARIABLE, "/dev/null") })
+                },
+            ).forEach { hostile ->
+                val rejected = runSource(runtime, "bridge-rejected.js", script, expectStarted = false, requestCustomizer = hostile)
+                assertFalse(rejected.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+                assertEquals(BunRuntimeContract.ERROR_INVALID_REQUEST, rejected.result.getString(BunRuntimeContract.KEY_ERROR_CODE))
+            }
+            assertFalse(File(context.cacheDir, "bun-bridge").exists())
+
+            val after = runSource(runtime, "bridge-after.js", script)
+            assertTrue(after.stderr, after.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
+            assertTrue(after.stdout.contains("no-bridge"))
         }
     }
 
