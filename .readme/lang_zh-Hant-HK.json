@@ -57,7 +57,7 @@
   "faq": [
     {
       "q": "為甚麼在 Bun 腳本裏用不了 `click()`, `toast()` 這些 AutoJs6 函數?",
-      "a": "Bun 執行在獨立程序中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函數不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意不提供自動化介面; 第一項唯讀能力 (宿主資訊快照, 由環境變數 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 檔案, 含宿主與插件版本等資訊) 已在插件側實現, 待 AutoJs6 宿主發佈對應版本後可用, 相關計劃見路線圖."
+      "a": "Bun 執行在獨立程序中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函數不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意不提供自動化介面; 第一項唯讀能力 (宿主資訊快照, 由環境變數 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 檔案, 含宿主與插件版本等資訊) 已在插件側實現, 第二部分 (執行期呼叫: `ui.toast` 與 `device.info`, 腳本透過環境變數 `AUTOJS6_HOST_BRIDGE_SOCKET` 指向的 unix socket 用 `fetch(url, { unix })` 呼叫) 也已在插件側實現; 兩者都待 AutoJs6 宿主發佈對應版本後可用, 每項能力可在 AutoJs6 插件中心的插件設定頁單獨關閉, 相關計劃見路線圖."
     },
     {
       "q": "可以使用 npm 套件嗎?",

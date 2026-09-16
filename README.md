@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 为什么在 Bun 脚本里用不了 `click()`, `toast()` 这些 AutoJs6 函数?
 
-Bun 运行在独立进程中, 是与 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全局函数不会出现在 Bun 脚本中. 让 Bun 脚本调用自动化能力需要宿主逐项显式开放的 bridge, 当前版本有意不提供自动化接口; 第一项只读能力 (宿主信息快照, 由环境变量 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 文件, 含宿主与插件版本等信息) 已在插件侧实现, 等 AutoJs6 宿主发布对应版本后可用, 相关计划见路线图.
+Bun 运行在独立进程中, 是与 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全局函数不会出现在 Bun 脚本中. 让 Bun 脚本调用自动化能力需要宿主逐项显式开放的 bridge, 当前版本有意不提供自动化接口; 第一项只读能力 (宿主信息快照, 由环境变量 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 文件, 含宿主与插件版本等信息) 已在插件侧实现, 第二部分 (运行期调用: `ui.toast` 与 `device.info`, 脚本通过环境变量 `AUTOJS6_HOST_BRIDGE_SOCKET` 指向的 unix socket 用 `fetch(url, { unix })` 调用) 也已在插件侧实现; 两者都等 AutoJs6 宿主发布对应版本后可用, 每项能力可在 AutoJs6 插件中心的插件设置页单独关闭, 相关计划见路线图.
 
 #### 可以使用 npm 包吗?
 
@@ -236,6 +236,7 @@ default timeout: 60 seconds
 _2026/09/16_
 
 - `提示` 尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本
+- `新增` M7 第二部分: 运行期动态调用能力桥与前两项动态能力 `ui.toast` / `device.info`. 宿主在 runScript 请求里携带 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder) 与 `hostCapabilities` (已授权能力 ID) 时, 插件为本次运行在私有缓存目录创建 unix socket (环境变量 `AUTOJS6_HOST_BRIDGE_SOCKET`), 脚本用 `fetch(url, { unix })` 发 `GET /v1/info` 与 `POST /v1/<能力 ID>` (JSON 请求 <= 64 KiB, 结果 <= 256 KiB, 每次运行至多 1024 次, 4 路并发, 单次 10 s 超时), 插件经 oneway AIDL `IBunHostCapabilityBroker` 中继给宿主并只接受宿主 UID 对本次执行的回调; 桥级错误码 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) 只出现在 JSON 响应里, runScript 终态错误码集合不变, 终态新增 `hostBridgeDelivered` 与 `hostCalls`; 运行结束即关闭 socket 与在途调用. 能力位 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 共享契约 AAR 升级为 22437 bytes; 未提供桥的宿主行为完全不变
 - `优化` 归档已发布 v0.2.3 的 APK/对应源码资产验证与五个环境在最终发布字节上的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.2 原地覆盖升级, Redmi API 33 arm64, x86_64 API 33 AVD 与 Samsung SM-A566B API 36 原生 arm64 16 KiB 真机全新安装, force-stop 前后各 10/10 组 (第十组为宿主信息快照); 已发布标签不重写, Android/16 KB 兼容范围不扩大
 - `优化` 适配 Android 17 (SDK 37), 提供插件独立的本地网络权限控制及恢复引导
 

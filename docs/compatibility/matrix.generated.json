@@ -3311,6 +3311,23 @@
       "summary": null
     },
     {
+      "file": "2026-09-16-m7-host-capability-bridge.json",
+      "sha256": "20d37ed9829d95786697e7b1d84a343020fd15e9b7acd0a700718d0ac92b9771",
+      "schema": 1,
+      "kind": "m7-host-capability-bridge",
+      "adapter": "index",
+      "collection": "root",
+      "category": "supplement",
+      "label": "M7 动态能力桥的真机验证 (instrumentation 双环境 + Redmi 宿主往返, 含 ui.toast / device.info 逐项撤销)",
+      "note": "本仓库 M7 动态桥工作树的 debug/androidTest APK 在 x86_64 API 33 AVD 与 Redmi 22120RN86C (API 33) 各 OK (1 test, 进程内假 broker 覆盖授权/限额/并发/超时/敌意请求/残留); 本地 AutoJs6 master d4e05a81d + 桥改动 (后本地提交 2634cc184) 与本地 0.2.4 debug 插件在 Redmi 往返 5/5 (默认授权 / 单独撤销 ui.toast / 全部撤销 / 恢复), 脚本经 fetch(url, { unix }) 收到 device.info 真实 Build 字段, toast 四条入队第五条 QUOTA_EXCEEDED. 宿主与插件均未发布, 不计为设备验收组.",
+      "bytesUtf8Lf": 22354,
+      "rows": 0,
+      "reportedScope": "Second part of the M7 capability bridge (runtime dynamic calls, HOST_CAPABILITY_BRIDGE_VERSION 1) with the first two dynamic capabilities ui.toast and device.info, verified end to end: the new plugin instrumentation test with an in-process fake host broker on an x86_64 API 33 AVD and on the native ARM64 Redmi 22120RN86C (API 33 / 4 KiB), then a real host-to-plugin round trip on the Redmi with a locally built AutoJs6 host (master d4e05a81d plus the bridge change, committed locally as 2634cc184) and the locally built plugin debug APK of this tree: scripts reach the host through fetch(url, { unix }) on the per-run socket, toasts are enqueued on the host, device facts come back, ui_toast and device_info were revoked one at a time and restored through the host preference file. Supplementary integration evidence, not a device acceptance group and not a host or plugin release.",
+      "reportedOutcome": true,
+      "distributionReady": false,
+      "summary": null
+    },
+    {
       "file": "2026-09-16-m7-host-info-snapshot.json",
       "sha256": "7f2ffb54f77bdafd1b5d783d7e0bcaa27f2e018716e09c93a84592cf587829df",
       "schema": 1,

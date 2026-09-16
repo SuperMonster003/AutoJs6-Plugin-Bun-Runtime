@@ -1,4 +1,4 @@
-# 当前阶段: v0.2.3 已公开发布 (含 M7 宿主信息快照), M6 端到端完成, 宿主侧 M7 (引擎 + 插件中心开关) 已在宿主仓库本地提交, 宿主暂不发版 (2026-09-16)
+# 当前阶段: v0.2.3 已公开发布, M7 动态能力桥 (ui.toast + device.info) 插件侧完成且 Redmi 宿主往返通过, 宿主侧本地提交 2634cc184, 宿主暂不发版 (2026-09-16)
 
 2026-09-15, 从 master 966cd1a 发布 v0.2.2 (P2 发布门禁). 本轮一个发布门禁设备批次 (三台 ARM64 真机 + 一台 x86_64 API 33 AVD), 没有 native 构建, 宿主仓库未触碰.
 
@@ -45,7 +45,10 @@
   随后发现发布说明生成器仍是 v0.2.2 措辞 (16 KiB 验收 "未重复", 无快照段落), 提交 d265c2a 后移标签 (当时无 Release), 重建 APK, 五环境在最终字节重跑. 90851a7 的验收与资产目录作为作废证据留在本地 (`*-90851a7-superseded*`).
   工具: `.git/release-v023-20260916.mjs`, `.git/release-v023-acceptance-20260916.mjs` (EXPECTED_GROUPS=10), `.git/release-probe-20260916/`, `.git/release-instrumentation-20260916.gradle`, `%TEMP%/release-build-20260916.sh`; v0.2.2 APK 备份 `E:/.wsl/release-assets/app-releases-v0.2.2-backup-20260916/` (assemble 要求 `app/releases` 恰好三个 APK).
   changelog 开启 v0.2.4 开发快照, `version.properties` 0.2.4 / build 9; ROADMAP P2/P3 与 M1/M5/M7 条目已更新.
-- 下一步: 宿主发版由用户决定 (暂无计划); 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述, 并在真实发布的宿主上各重跑一次 M6/M7 往返; M7 第二项能力 (若为动态调用) 先做接口评审 (Binder broker + 子进程通道, cancellation/backpressure/并发).
+- M7 第二部分 (2026-09-16 10:20-10:36 +08:00, 动态调用): 设计稿 `docs/design/m7-host-capability-bridge-dynamic.md` 落地并全部勾选. 脚本经每次执行独立的文件系统 unix socket (`<cacheDir>/bun-bridge/<12 hex>.sock`, 目录 0700, Bun `fetch(url, { unix })`, 有界 HTTP/1.1 `GET /v1/info` 与 `POST /v1/<capabilityId>`) 到插件, 插件经 `runScript` 请求里随包传入的 oneway AIDL `IBunHostCapabilityBroker` 到宿主; JSON 原样转发, 限额 64 KiB 请求 / 256 KiB 结果 / 1024 次 / 4 并发 / 10 s, 错误码 INVALID_REQUEST/NOT_GRANTED/UNKNOWN_CAPABILITY/PAYLOAD_TOO_LARGE/TOO_MANY_REQUESTS/QUOTA_EXCEEDED/HOST_UNAVAILABLE/TIMEOUT/INTERNAL 映射 400/403/404/413/429/429/503/504/500, 能力 ID 至少一个点. 插件新增 `BunHostBridgeHttp` / `BunHostBridgeDispatcher` / `BunHostBrokerClient` / `BunHostBridgeServer`, `BunExecutionRequest` 桥键解析, `BunRuntimeService` 启动/环境变量 `AUTOJS6_HOST_BRIDGE_SOCKET`/终态键 `hostBridgeDelivered`+`hostCalls`/收尾, 能力位 `SUPPORTS_HOST_CAPABILITY_BRIDGE`; 契约 AAR 22437 bytes (`97005106…`). 单测 59/59 (新增 14), lint 0 错误; instrumentation `hostCapabilityBridgeRoundTrip` (进程内假 broker) 在 x86_64 API 33 AVD 与 Redmi ARM64 各 OK, 已登记到 `binder-common.mjs` 的 `TESTS`. 宿主仓库 (master d4e05a81d 之上, 本地提交 `2634cc184`, 只含本会话的 hunk): 契约常量/AIDL/契约测试 5/5, `BunHostCapabilityBroker` (ui.toast 每次运行 4 条, device.info 仅 Build 字段), `BunPluginScriptEngine.createCapabilityBroker`, `BunHostCapabilityGrants` 新增 `ui_toast`/`device_info`, 插件中心两枚开关 (十一种语言).
+  Redmi 宿主往返 5/5 (默认 / 单独撤销 ui.toast / 全部撤销 / 恢复; 宿主已还原, 插件已卸载), 记录 `docs/compatibility/2026-09-16-m7-host-capability-bridge.json/.md`; 原始日志在本地 `.git/host-bridge-20260916/`. 坑: 公开 SDK 无 `UnixSocketAddress`, 监听用 `LocalSocket` 绑定后其余走 `Os` 裸 fd, `Os.accept(fd, null)` 只有 InetSocketAddress 重载; JVM 单测里 android.jar 的 `org.json` 与 `Binder` 不可用 (用 `java.lang.reflect.Proxy` 与字符串断言); `adb shell -n` 丢弃 stdin, `run-as … sh < script` 会静默写不进去; Bash heredoc 会把 `\\` 折叠成 `\`, 含反斜杠的 Kotlin/Python 内容用编辑工具写.
+  待办: 宿主仓库的 changelog/README 条目未加 (这些文件带有其他会话的未提交改动, 待其落地后补); x86_64 API 37 / 16 KiB 模拟器 (sdk_gphone16k) 完全跑不起插件运行时 (既有探针用例同样失败), 与本次无关, 未追查; 插件 0.2.4 发布时机由用户决定.
+- 下一步: 宿主发版由用户决定 (暂无计划); 发版后更新 README FAQ 与排错指南的 '等待宿主发布' 表述, 并在真实发布的宿主上各重跑一次 M6/M7 往返 (含动态能力桥); M7 后续能力按 ROADMAP 表逐项走 (先接口评审再实现, 复用 broker 通道与桥错误码, 每项一个可独立撤销的开关).
 
 ---
 # 当前阶段: M6 契约落锁, 插件接入与宿主打包代码完成 (2026-09-15)

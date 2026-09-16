@@ -57,7 +57,7 @@
   "faq": [
     {
       "q": "Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?",
-      "a": "Bun は独立プロセスで動く, Rhino とはまったく別の JavaScript エンジンであるため, AutoJs6 の globals は Bun スクリプト内に現れません. Automation 機能を Bun から呼ぶには各機能を明示的に公開する host bridge が必要で, 現在のバージョンは意図的に automation 用のインターフェースを提供していません. 最初の読み取り専用機能 (ホスト情報スナップショット: 環境変数 `AUTOJS6_HOST_INFO_FILE` が指す, ホストとプラグインのバージョンなどを含む JSON ファイル) はプラグイン側で実装済みで, 対応する AutoJs6 ホストがリリースされると使えるようになります. 計画は roadmap を参照してください."
+      "a": "Bun は独立プロセスで動く, Rhino とはまったく別の JavaScript エンジンであるため, AutoJs6 の globals は Bun スクリプト内に現れません. Automation 機能を Bun から呼ぶには各機能を明示的に公開する host bridge が必要で, 現在のバージョンは意図的に automation 用のインターフェースを提供していません. 最初の読み取り専用機能 (ホスト情報スナップショット: 環境変数 `AUTOJS6_HOST_INFO_FILE` が指す, ホストとプラグインのバージョンなどを含む JSON ファイル) はプラグイン側で実装済みで, 第二部分 (実行時呼び出し: `ui.toast` と `device.info`, スクリプトは環境変数 `AUTOJS6_HOST_BRIDGE_SOCKET` が指す unix socket に対して `fetch(url, { unix })` で呼び出します) もプラグイン側で実装済みです. どちらも対応する AutoJs6 ホストがリリースされると使えるようになり, 各機能は AutoJs6 プラグインセンターのプラグイン設定ページで個別に無効化できます. 計画は roadmap を参照してください."
     },
     {
       "q": "npm パッケージは使えますか?",

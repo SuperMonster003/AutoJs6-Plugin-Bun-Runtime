@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "kind": "m7-host-capability-bridge",
+  "capturedAt": "2026-09-16T02:40:00Z",
+  "milestone": "M7",
+  "scope": "Second part of the M7 capability bridge (runtime dynamic calls, HOST_CAPABILITY_BRIDGE_VERSION 1) with the first two dynamic capabilities ui.toast and device.info, verified end to end: the new plugin instrumentation test with an in-process fake host broker on an x86_64 API 33 AVD and on the native ARM64 Redmi 22120RN86C (API 33 / 4 KiB), then a real host-to-plugin round trip on the Redmi with a locally built AutoJs6 host (master d4e05a81d plus the bridge change, committed locally as 2634cc184) and the locally built plugin debug APK of this tree: scripts reach the host through fetch(url, { unix }) on the per-run socket, toasts are enqueued on the host, device facts come back, ui_toast and device_info were revoked one at a time and restored through the host preference file. Supplementary integration evidence, not a device acceptance group and not a host or plugin release.",
+  "result": "passed: instrumentation hostCapabilityBridgeRoundTrip OK on the AVD (12.2 s) and on the Redmi (11.6 s); host round trip 5/5 on the Redmi (project and single-source launches with both grants, single-source with ui_toast revoked, single-source with both revoked, project with the grants restored); Redmi restored to the user's original host APK, plugin uninstalled, no fixture, preference or socket residue",
+  "passed": true,
+  "distributionReady": false,
+  "relatedRecord": "2026-09-16-m7-host-info-snapshot.json (first M7 capability, same Redmi and launch path)",
+  "design": "docs/design/m7-host-capability-bridge-dynamic.md",
+  "contract": {
+    "artifact": "libs/bun-runtime-api.aar",
+    "bytes": 22437,
+    "sha256": "9700510616e9edd44e28bd88e40876e2585d7b55c02f889745b1d83b03bf70de",
+    "protocolVersion": 1,
+    "hostCapabilityBridgeVersion": 1,
+    "capability": "org.autojs.plugin.bun.SUPPORTS_HOST_CAPABILITY_BRIDGE",
+    "requestKeys": [
+      "hostCapabilityBridgeVersion",
+      "hostCapabilityBroker (IBinder implementing IBunHostCapabilityBroker)",
+      "hostCapabilities (1..64 IDs matching [a-z][a-z0-9]*(\\.[a-z][a-z0-9]*)+, at most 64 bytes each, no duplicates)"
+    ],
+    "brokerCallKeys": [
+      "hostCallId",
+      "hostCapability",
+      "hostCallRequestJson",
+      "hostCallResultJson (plus executionId, succeeded, errorCode, errorMessage on the result)"
+    ],
+    "terminalKeys": [
+      "hostBridgeDelivered",
+      "hostCalls"
+    ],
+    "environmentVariable": "AUTOJS6_HOST_BRIDGE_SOCKET",
+    "aidl": [
+      "org.autojs.plugin.bun.runtime.api.IBunHostCapabilityBroker (oneway invoke(Bundle, IBunHostCapabilityCallback))",
+      "org.autojs.plugin.bun.runtime.api.IBunHostCapabilityCallback (oneway onResult(Bundle))"
+    ],
+    "limits": {
+      "maxHostCallRequestBytes": 65536,
+      "maxHostCallResultBytes": 262144,
+      "maxHostCallsPerExecution": 1024,
+      "maxConcurrentHostCalls": 4,
+      "hostCallTimeoutMillis": 10000,
+      "httpRequestLineBytes": 1024,
+      "httpHeaderBytes": 8192,
+      "socketIdleTimeoutMillis": 5000
+    },
+    "bridgeErrorCodes": {
+      "INVALID_REQUEST": 400,
+      "NOT_GRANTED": 403,
+      "UNKNOWN_CAPABILITY": 404,
+      "PAYLOAD_TOO_LARGE": 413,
+      "TOO_MANY_REQUESTS": 429,
+      "QUOTA_EXCEEDED": 429,
+      "HOST_UNAVAILABLE": 503,
+      "TIMEOUT": 504,
+      "INTERNAL": 500
+    },
+    "newRunScriptErrorCodes": [],
+    "hostContractTest": "BunRuntimeContractTest 5/5 (host repository)"
+  },
+  "capabilities": {
+    "ui.toast": "request {\"text\": string, \"duration\"?: \"short\" | \"long\"}; text trimmed, 1..1024 UTF-8 bytes, no control characters except newline; four calls per run then QUOTA_EXCEEDED; the host posts Toast.makeText on its main thread; result {\"shown\":true}",
+    "device.info": "request {}; result {brand, manufacturer, model, device, product, sdkInt, release, supportedAbis} from android.os.Build; no serial, IMEI, Android ID, account or network identifier"
+  },
+  "plugin": {
+    "package": "io.github.supermonster003.autojs6.plugin.bun.runtime",
+    "versionName": "0.2.4",
+    "versionCode": 104,
+    "source": "master 5f39f3a plus the M7 dynamic bridge working tree committed together with this record (BunHostBridgeHttp, BunHostBridgeDispatcher, BunHostBrokerClient, BunHostBridgeServer, BunExecutionRequest hostBridge parsing, BunRuntimeService bridge start/env/terminal/close, SUPPORTS_HOST_CAPABILITY_BRIDGE)",
+    "unitTests": "testDebugUnitTest 59/59 (BunHostBridgeRequestTest 3, BunHostBridgeHttpTest 4, BunHostBridgeDispatcherTest 7 new)",
+    "lint": "lintDebug: 0 errors, 34 warnings (pre-existing, none in the new files)",
+    "instrumentationApks": [
+      {
+        "name": "app-x86_64-debug.apk",
+        "bytes": 43049962,
+        "sha256": "5f11780abad24996463c926e104694d193eca1468f416db90189b5376de39db5",
+        "usedOn": "AVD emulator-5612"
+      },
+      {
+        "name": "app-arm64-v8a-debug.apk",
+        "bytes": 41223868,
+        "sha256": "dae870dd9c241300d4c8b050ce048220c110baccb7b276ec68226701fdf56b32",
+        "signerCertificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213",
+        "usedOn": "Redmi 22120RN86C (instrumentation and host round trip)"
+      },
+      {
+        "name": "app-debug-androidTest.apk",
+        "bytes": 2457329,
+        "sha256": "02d7175e4db01cb0cc31614ca7f12282b1cd1d84137907f8b50394c100fa282f",
+        "note": "rebuilt once after the first AVD attempt (assertion text only, see attempts)"
+      }
+    ],
+    "runtime": {
+      "version": "1.4.0",
+      "upstreamCommit": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+      "note": "payload unchanged since v0.2.2"
+    }
+  },
+  "host": {
+    "project": "AutoJs6 (D:/idea-projects/AutoJs6)",
+    "commit": "d4e05a81dc159472a017715412ed1cc858b20a37",
+    "treeCleanAtBuild": false,
+    "committedAfterTheRunsAs": "2634cc184b8c8a8ec4bdac94b1f70eedc8827ab6",
+    "changes": [
+      "plugin-api/bun-runtime-api: bridge constants, keys, limits, error codes, SUPPORTS_HOST_CAPABILITY_BRIDGE, IBunHostCapabilityBroker.aidl, IBunHostCapabilityCallback.aidl, BunRuntimeContractTest",
+      "app engine/BunHostCapabilityBroker.kt (new, per-execution broker pinned to the plugin UID and execution ID; ui.toast and device.info)",
+      "app engine/BunPluginScriptEngine.kt (createCapabilityBroker + attachTo when SUPPORTS_HOST_CAPABILITY_BRIDGE and at least one grant; closed in finally)",
+      "app core/plugin/bun/BunHostCapabilityGrants.kt (ui_toast and device_info keys, default true, grantedBridgeCapabilities)",
+      "app plugin-center settings page: two ThemeColorSwitchPreference entries (plugin_bun_ui_toast_grant, plugin_bun_device_info_grant, app:persistent=false) and strings in eleven values folders"
+    ],
+    "uncommittedForeignChangesLeftInPlace": "another session's accessibility (a11y_advanced_protection) and changelog/README edits share PluginSettingsFragment.kt and strings.xml; only the bridge hunks were staged, the host changelog entry for this feature is still to be added once those edits land",
+    "versionName": "6.8.0",
+    "versionCode": 5280,
+    "build": "./gradlew :app:assembleAppDebug --offline (app flavor, debug build type, arm64-v8a ABI split, built 2026-09-16 10:28 +08:00)",
+    "apk": {
+      "name": "autojs6-v6.8.0-arm64-v8a.apk",
+      "bytes": 53873650,
+      "sha256": "a8a1e98299c71e124a8fe6f3a7822ec389dcac01b5eeb99c59f95d00a34ee131"
+    },
+    "signerCertificateSha256": "31a681fcfffb3e428420cae280ded89292b12a3b0f59e19b7a73e32a8ae4c213",
+    "released": false
+  },
+  "instrumentation": {
+    "test": "BunRuntimeInstrumentedTest#hostCapabilityBridgeRoundTrip (single test run; the rest of the suite was unchanged by this work and was last run in full for the v0.2.3 release and the SDK 37 step)",
+    "fakeBroker": "in-process IBunHostCapabilityBroker.Stub inside the test: device.info returns a fixed document, ui.toast echoes the text and enforces four per run, test.silent never answers",
+    "coverage": [
+      "no bridge keys: AUTOJS6_HOST_BRIDGE_SOCKET absent, no hostBridgeDelivered / hostCalls terminal keys",
+      "GET /v1/info returns the granted IDs and the contract limits verbatim",
+      "POST /v1/device.info 200 with the fake document; POST /v1/ui.toast 200 four times, the fifth 429 QUOTA_EXCEEDED from the fake host",
+      "ungranted ID 403 NOT_GRANTED; ID without a dot 400; GET on a capability 405; array body 400; 65536-byte body 413 PAYLOAD_TOO_LARGE; unknown path 404; POST /v1/info 405",
+      "four in-flight calls to the silent capability plus a fifth: the fifth gets 429 TOO_MANY_REQUESTS at once, the four get 504 TIMEOUT after 10 s",
+      "terminal Bundle: hostBridgeDelivered=true, hostCalls=10; the broker saw exactly ten calls with IDs <executionId>#<n>",
+      "after the run: socket file gone, <cacheDir>/bun-bridge gone, no AutoJs6-Bun-bridge-accept thread in the shared process",
+      "fail closed with INVALID_REQUEST and no Bun start: unknown bridge version, missing broker, ID without a dot, empty ID list, reserved AUTOJS6_HOST_BRIDGE_SOCKET environment name; the plain path works afterwards"
+    ],
+    "devices": [
+      {
+        "device": {
+          "manufacturer": "Google",
+          "model": "sdk_gphone64_x86_64",
+          "api": 33,
+          "release": "13",
+          "abi": "x86_64",
+          "pages": 4096,
+          "kernel": "5.15.119-android13-8-00034-gd34029c8258b-ab10871489",
+          "machine": "x86_64",
+          "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+          "isEmulator": true,
+          "access": "local adb (emulator-5612)"
+        },
+        "arguments": {
+          "requiredApiLevel": 33,
+          "requiredPageSizeBytes": 4096
+        },
+        "runnerSeconds": 12.229,
+        "result": "OK (1 test)",
+        "rawLog": ".git/host-bridge-20260916/instrumentation/avd-run.txt (local, not committed)"
+      },
+      {
+        "device": {
+          "manufacturer": "Xiaomi",
+          "model": "22120RN86C",
+          "api": 33,
+          "release": "13",
+          "abi": "arm64-v8a",
+          "pages": 4096,
+          "kernel": "4.19.191-perf-g2f9faa927855",
+          "machine": "aarch64",
+          "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+          "isEmulator": false,
+          "access": "USB adb",
+          "rooted": false
+        },
+        "arguments": {
+          "requiredApiLevel": 33,
+          "requiredPageSizeBytes": 4096
+        },
+        "runnerSeconds": 11.595,
+        "result": "OK (1 test)",
+        "rawLog": ".git/host-bridge-20260916/instrumentation/redmi-run.txt (local, not committed)"
+      }
+    ],
+    "attempts": [
+      "First AVD run: every bridge reply matched, only the info assertion failed because the script printed JSON.stringify of an object with undefined fields; the test now prints the raw /v1/info body and asserts the exact document. androidTest APK rebuilt, rerun recorded above.",
+      "An x86_64 API 37 / 16 KiB emulator (emulator-5566, sdk_gphone16k_x86_64) could not run the test: the run never started, and the pre-existing BunRuntimeProbeInstrumentedTest fails there the same way, so the plugin runtime is not usable on that image at all. Unrelated to the bridge; not investigated further under the diagnostic budget rule."
+    ]
+  },
+  "hostRoundTrip": {
+    "launch": {
+      "command": "adb shell am start -a android.intent.action.VIEW -d file://<entry> -t application/x-javascript -n org.autojs.autojs6/org.autojs.autojs.external.open.RunIntentActivity",
+      "observation": "host logcat: GlobalConsole (script console mirror) and NotificationService toast records"
+    },
+    "fixtures": [
+      {
+        "name": "project",
+        "devicePath": "/sdcard/AutoJs6/bun-bridge/project",
+        "projectMarker": "project.json",
+        "files": [
+          {
+            "path": "main.js",
+            "bytes": 1597,
+            "sha256": "f8b760fdc907afb2d194526a6eb7863ab32dfde0854fc2e6bff0c53179742e6f"
+          },
+          {
+            "path": "project.json",
+            "bytes": 140,
+            "sha256": "fca34ed19d901e1bbe58c0a406961be324576a2afd5012c76ad3d5e9b20bace5"
+          }
+        ]
+      },
+      {
+        "name": "bare",
+        "devicePath": "/sdcard/AutoJs6/bun-bridge/bare",
+        "projectMarker": null,
+        "files": [
+          {
+            "path": "main.js",
+            "bytes": 1597,
+            "sha256": "f8b760fdc907afb2d194526a6eb7863ab32dfde0854fc2e6bff0c53179742e6f",
+            "note": "byte-identical to project/main.js"
+          }
+        ]
+      }
+    ],
+    "script": "prints the AUTOJS6_* names, exits 0 with 'absent' when AUTOJS6_HOST_BRIDGE_SOCKET is missing, otherwise fetches GET /v1/info, POST /v1/device.info, five POST /v1/ui.toast (first one duration long), a blank toast text, an invalid duration, device.info with an extra field and the ungranted net.http, printing status plus result or error code and message for each",
+    "device": {
+      "manufacturer": "Xiaomi",
+      "model": "22120RN86C",
+      "api": 33,
+      "release": "13",
+      "abi": "arm64-v8a",
+      "pages": 4096,
+      "kernel": "4.19.191-perf-g2f9faa927855",
+      "fingerprint": "Redmi/earth/earth:13/TP1A.220624.014/V14.0.4.0.TCVCNXM:user/release-keys",
+      "isEmulator": false,
+      "access": "USB adb",
+      "rooted": false
+    },
+    "host": {
+      "install": "adb install -r over the user's own AutoJs6 6.8.0 (versionCode 5280) build with app data and UID preserved; the previous base.apk (SHA-256 340536cb...) is the backup verified before the M6 and M7 round trips",
+      "installedBaseApkSha256": "a8a1e98299c71e124a8fe6f3a7822ec389dcac01b5eeb99c59f95d00a34ee131",
+      "after": "restored to the user's original APK (installed base.apk SHA-256 340536cba762af8b..., versionName 6.8.0); grant preference file absent before the restore"
+    },
+    "plugin": {
+      "installedBaseApkSha256": "dae870dd9c241300d4c8b050ce048220c110baccb7b276ec68226701fdf56b32",
+      "versionName": "0.2.4",
+      "after": "uninstalled; the androidTest package reported DELETE_FAILED_INTERNAL_ERROR on uninstall but no plugin.bun.runtime package remains"
+    },
+    "runs": [
+      {
+        "name": "project",
+        "entry": "/sdcard/AutoJs6/bun-bridge/project/main.js",
+        "grants": "ui_toast=true, device_info=true (defaults)",
+        "launchedAt": "2026-09-16T02:31:28Z",
+        "finishedSeconds": 0.323,
+        "passed": true,
+        "observed": {
+          "reservedEnvironmentVariables": ["AUTOJS6_HOST_BRIDGE_SOCKET", "AUTOJS6_HOST_INFO_FILE"],
+          "info": "200 {\"ok\":true,\"bridgeVersion\":1,\"capabilities\":[\"ui.toast\",\"device.info\"],\"limits\":{\"maxRequestBytes\":65536,\"maxResultBytes\":262144,\"maxCallsPerExecution\":1024,\"maxConcurrentCalls\":4,\"callTimeoutMillis\":10000}}",
+          "device": "200 {\"brand\":\"Redmi\",\"manufacturer\":\"Xiaomi\",\"model\":\"22120RN86C\",\"device\":\"earth\",\"product\":\"earth\",\"sdkInt\":33,\"release\":\"13\",\"supportedAbis\":[\"arm64-v8a\",\"armeabi-v7a\",\"armeabi\"]}",
+          "toast1to4": "200 {\"shown\":true}",
+          "toast5": "429 QUOTA_EXCEEDED ui.toast allows 4 calls per run",
+          "badToast": "400 INVALID_REQUEST ui.toast text must be 1..1024 UTF-8 bytes",
+          "badDuration": "400 INVALID_REQUEST ui.toast duration must be \"short\" or \"long\"",
+          "badDevice": "400 INVALID_REQUEST device.info takes no fields",
+          "denied": "403 NOT_GRANTED Capability is not granted for this execution",
+          "toastsOnDevice": "NotificationService logged the host's TextToastRecord entries with the script text (Bun toast 1..4 via the capability bridge, duration 1 then 0)"
+        }
+      },
+      {
+        "name": "bare",
+        "entry": "/sdcard/AutoJs6/bun-bridge/bare/main.js",
+        "grants": "defaults",
+        "launchedAt": "2026-09-16T02:31:37Z",
+        "finishedSeconds": 0.251,
+        "passed": true,
+        "observed": "identical replies to the project launch; Android's per-package toast rate limit blocked some of the four toasts of this back-to-back launch ('Package has already queued 5 toasts' / 'above allowed toast quota'), which is system behaviour after the host enqueued them"
+      },
+      {
+        "name": "bare-toast-revoked",
+        "entry": "/sdcard/AutoJs6/bun-bridge/bare/main.js",
+        "grants": "ui_toast=false written to shared_prefs/bun_host_capability_grants.xml through run-as while the host was force-stopped; device_info default",
+        "launchedAt": "2026-09-16T02:33:13Z",
+        "finishedSeconds": 0.268,
+        "passed": true,
+        "observed": {
+          "info": "capabilities [\"device.info\"] only",
+          "device": "200 with the same Build facts",
+          "toast1to5AndBadToastAndBadDuration": "403 NOT_GRANTED Capability is not granted for this execution (the plugin refuses before relaying; no toast reached the host)",
+          "badDevice": "400 INVALID_REQUEST device.info takes no fields",
+          "denied": "403 NOT_GRANTED"
+        }
+      },
+      {
+        "name": "bare-all-revoked",
+        "entry": "/sdcard/AutoJs6/bun-bridge/bare/main.js",
+        "grants": "ui_toast=false, device_info=false",
+        "launchedAt": "2026-09-16T02:33:22Z",
+        "finishedSeconds": 0.170,
+        "passed": true,
+        "observed": {
+          "reservedEnvironmentVariables": ["AUTOJS6_HOST_INFO_FILE"],
+          "bridge": "absent (host did not offer the bridge); the host info snapshot (first capability) is still delivered because its own grant stayed on"
+        }
+      },
+      {
+        "name": "project-round2",
+        "entry": "/sdcard/AutoJs6/bun-bridge/project/main.js",
+        "grants": "preference file deleted through run-as (defaults again)",
+        "launchedAt": "2026-09-16T02:33:31Z",
+        "finishedSeconds": 0.292,
+        "passed": true,
+        "observed": "identical to the first project launch (executionId aside)"
+      }
+    ],
+    "residue": "run-as on the debuggable plugin after the runs: cache/ holds only an empty bun-executions directory, no bun-bridge directory",
+    "attempts": [
+      "First driver run (02:30Z): adb could not read the local APK and fixture paths because MSYS path conversion had been disabled for the whole script; nothing was installed or pushed and the five launches only produced the host's own file-not-found toasts. Paths rewritten to D:/ form and rerun.",
+      "Second driver run (02:31Z): installs, pushes and the two default-grant launches recorded above succeeded, but the three grant-toggle steps wrote nothing because run-as was fed through `adb shell -n` (no stdin); their launches (02:31:46Z, 02:31:55Z, 02:32:05Z) still had both grants and are kept in run.txt as no-ops. The toggle half was rerun as driver2.sh with stdin-fed run-as (02:33Z), which is what the recorded revoked and restored launches come from."
+    ]
+  },
+  "cleanup": {
+    "at": "2026-09-16T02:36:36Z",
+    "steps": [
+      "grant preference file confirmed absent",
+      "plugin uninstalled (the androidTest package returned DELETE_FAILED_INTERNAL_ERROR; no plugin.bun.runtime package listed afterwards)",
+      "host restored with adb install -r from %TEMP%/redmi-autojs6-base.apk; installed base.apk SHA-256 340536cba762af8b... matches the backup, versionName 6.8.0",
+      "/sdcard/AutoJs6/bun-bridge removed; no bun_runtime process"
+    ]
+  },
+  "observations": [
+    "The whole chain (script fetch -> plugin socket -> Binder broker -> host capability -> callback -> HTTP reply) adds no visible latency: launches finish in 0.17-0.32 s including 12 bridge calls, the same range as the M7 snapshot and M6 archive round trips.",
+    "Grant revocation is per run and per capability: with ui_toast off the info document lists only device.info and every toast call is refused by the plugin with 403 before the host sees it; with both off the request carries no bridge keys and the script sees no AUTOJS6_HOST_BRIDGE_SOCKET while the independent host info snapshot keeps arriving.",
+    "The host enqueues the toasts on its main thread and answers {\"shown\":true}; Android's own per-package toast rate limit then decides how many of four back-to-back toasts are displayed, which is visible in NotificationService as 'above allowed toast quota' and is not a bridge failure.",
+    "The plugin's bridge counters are consistent across the fake-broker instrumentation and the real host: hostCalls counts calls that held a relay slot (ten in the instrumentation script), fast rejections (403/400/413/405/404 and the fifth concurrent call) are not counted.",
+    "The listener is bound through android.net.LocalSocket because the public SDK has no unix SocketAddress; accept, read, write, shutdown and close run on the raw descriptor through android.system.Os, and the accept thread is gone after every run (asserted in the shared test process)."
+  ],
+  "boundaries": [
+    "The host is a local debug build of AutoJs6 master d4e05a81d with the bridge change (committed locally as 2634cc184 after the runs), signed with the official certificate; no released AutoJs6 offers the bridge yet, and the plugin capability ships only with the next plugin release.",
+    "The grant toggles were exercised through the host preference file (run-as on a debuggable host build), not by tapping the two new plugin-center switches; the switches read and write the same keys.",
+    "One instrumentation test on two environments (x86_64 API 33 AVD, ARM64 API 33 phone) and five host launches in one grant cycle on one phone; no 16 KiB device this time (the x86_64 API 37 / 16 KiB emulator cannot run the plugin at all, see attempts), no soak, no host-death test on a device (host death is covered by linkToDeath in code and by the dispatcher unit tests), no concurrent-script test.",
+    "Callback UID mismatch and a wrong execution ID on the callback cannot be produced with an in-process fake broker; those checks are covered by code review only.",
+    "Neither device is rooted: the plugin's cache directory was inspected with run-as on the debuggable plugin build, not as root.",
+    "No new error code, AIDL transaction or protocol version; the certificate digests come from apksigner 37.0.0 on the local APKs."
+  ]
+}
