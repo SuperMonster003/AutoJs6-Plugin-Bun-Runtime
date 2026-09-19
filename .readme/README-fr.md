@@ -233,9 +233,10 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 #### v0.2.5
 
-_2026/09/16_
+_2026/09/19_
 
 - `Note` Version de développement non encore publiée; le plugin officiel exige toujours Android 13 (API 33) ou version ultérieure
+- `Correctif` Avertissements de lecture SDK XML v4 avec AGP 9.1 et contrôles d'alignement natif des APK déclenchés par erreur lors de l'assemblage des tests unitaires JVM, avec les plugins de compilation partagés 1.8.3
 - `Amélioration` Archive la vérification des actifs APK/source publiés de v0.2.4 et l'acceptation de l'APK final signé dans quatre environnements sur les octets finaux de la publication: mises à niveau sur place depuis la v0.2.3 publiée sur Sony API 33 arm64 et Xiaomi API 35 universal, installations neuves sur Redmi API 33 arm64 et un AVD x86_64 API 33, chacune passant 11/11 groupes avant et après force-stop (le onzième groupe est le pont de capacités dynamiques avec un broker dans le même processus); aucun appareil 16 KiB n'était disponible et les charges du runtime sont inchangées depuis v0.2.2; la balise publiée n'est pas réécrite et la compatibilité Android/16 KB n'est pas étendue
 
 #### v0.2.4

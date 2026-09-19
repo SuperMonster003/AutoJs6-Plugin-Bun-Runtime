@@ -233,9 +233,10 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 #### v0.2.5
 
-_2026/09/16_
+_2026/09/19_
 
 - `Hint` Development snapshot, not yet published; the official plugin still requires Android 13 (API 33) or later
+- `Fix` SDK XML v4 parsing warnings with AGP 9.1 and APK native alignment checks incorrectly triggered by JVM unit-test assembly tasks, using shared build plugins 1.8.3
 - `Improvement` Archive the published v0.2.4 APK/source asset verification and the signed final-APK acceptance in four environments on the final release bytes: in-place upgrades from the published v0.2.3 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64 and an x86_64 API 33 AVD, each passing 11/11 groups before and after force-stop (the eleventh group is the dynamic capability bridge with an in-process broker); no 16 KiB device was available and the runtime payloads are unchanged since v0.2.2; the released tag is not rewritten and Android/16 KB compatibility is not expanded
 
 #### v0.2.4

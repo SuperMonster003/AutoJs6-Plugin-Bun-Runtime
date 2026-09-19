@@ -6,12 +6,15 @@
   "changelog_label_dependency": "依赖",
   "$data": {
     "v0.2.5": {
-      "released_date": "2026/09/16",
+      "released_date": "2026/09/19",
       "hint": [
         "尚未发布的开发快照; 正式插件仍要求 Android 13 (API 33) 或更高版本"
       ],
       "improvement": [
         "归档已发布 v0.2.4 的 APK/对应源码资产验证与四个环境在最终发布字节上的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.3 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, force-stop 前后各 11/11 组 (第十一组为进程内 broker 的动态能力桥); 本次没有 16 KiB 设备在线, 运行时载荷自 v0.2.2 起未变; 已发布标签不重写, Android/16 KB 兼容范围不扩大"
+      ],
+      "fix": [
+        "AGP 9.1 构建时的 SDK XML v4 解析警告及 JVM 单元测试组装任务误触发 APK 原生库对齐检查的问题 (共享构建插件 1.8.3)"
       ]
     },
     "v0.2.4": {
