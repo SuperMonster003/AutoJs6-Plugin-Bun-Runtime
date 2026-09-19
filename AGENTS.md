@@ -150,7 +150,7 @@ Do not add compatibility aliases for unpublished names or identifiers. Update th
 
 ## Gradle and packaging
 
-- Use the online `io.github.supermonster003.autojs6-platform-versions` plugin at version `1.8.0`, matching the pre-existing committed settings update. Do not add `mavenLocal()` or a copied local platform-version implementation.
+- Use the online `io.github.supermonster003.autojs6-platform-versions` plugin at version `1.8.3`. Do not add `mavenLocal()` or a copied local platform-version implementation.
 - Read compileSdk, minSdk, targetSdk, versionCode, versionName, JDK, and Gradle compatibility from the repository conventions and `version.properties`.
 - Keep AIDL and `resValue` build features enabled. `app_name` and stable identity strings must remain non-translatable build resources.
 - Keep native library extraction enabled and legacy JNI packaging configured so Android installs the PIE executable into `nativeLibraryDir` without changing its bytes.
