@@ -236,28 +236,28 @@ default timeout: 60 seconds
 _2026/09/20_
 
 - `提示` 正式插件仍要求 Android 13 (API 33) 或更高版本
-- `修复` AGP 9.1 构建时的 SDK XML v4 解析警告及 JVM 单元测试组装任务误触发 APK 原生库对齐检查的问题 (共享构建插件 1.8.3)
-- `优化` 归档已发布 v0.2.4 的 APK/对应源码资产验证与四个环境在最终发布字节上的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.3 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, force-stop 前后各 11/11 组 (第十一组为进程内 broker 的动态能力桥); 本次没有 16 KiB 设备在线, 运行时载荷自 v0.2.2 起未变; 已发布标签不重写, Android/16 KB 兼容范围不扩大
+- `修复` AGP 9.1 构建时的 SDK XML v4 解析警告, 以及 JVM 单元测试误触发 APK 原生库对齐检查的问题 (共享构建插件 1.8.3)
+- `优化` 补充 v0.2.4 在 Android 13/15 上的全新安装, 覆盖升级及动态宿主能力验证记录 (本轮未验证 16 KiB 设备, 运行时自 v0.2.2 起未变)
 
 #### v0.2.4
 
 _2026/09/16_
 
-- `新增` M7 第二部分: 运行期动态调用能力桥与前两项动态能力 `ui.toast` / `device.info`. 宿主在 runScript 请求里携带 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder) 与 `hostCapabilities` (已授权能力 ID) 时, 插件为本次运行在私有缓存目录创建 unix socket (环境变量 `AUTOJS6_HOST_BRIDGE_SOCKET`), 脚本用 `fetch(url, { unix })` 发 `GET /v1/info` 与 `POST /v1/<能力 ID>` (JSON 请求 <= 64 KiB, 结果 <= 256 KiB, 每次运行至多 1024 次, 4 路并发, 单次 10 s 超时), 插件经 oneway AIDL `IBunHostCapabilityBroker` 中继给宿主并只接受宿主 UID 对本次执行的回调; 桥级错误码 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) 只出现在 JSON 响应里, runScript 终态错误码集合不变, 终态新增 `hostBridgeDelivered` 与 `hostCalls`; 运行结束即关闭 socket 与在途调用. 能力位 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 共享契约 AAR 升级为 22437 bytes; 未提供桥的宿主行为完全不变
-- `优化` Android 17 本地网络授权统一移至插件中心启用流程和插件设置, 不再提供启动器授权页面; 未获授权时保持关闭并静默跳过自动启动
-- `优化` 归档已发布 v0.2.3 的 APK/对应源码资产验证与五个环境在最终发布字节上的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.2 原地覆盖升级, Redmi API 33 arm64, x86_64 API 33 AVD 与 Samsung SM-A566B API 36 原生 arm64 16 KiB 真机全新安装, force-stop 前后各 10/10 组 (第十组为宿主信息快照); 已发布标签不重写, Android/16 KB 兼容范围不扩大
+- `新增` 动态宿主能力桥, 支持经授权调用 ui.toast/device.info, 每次运行最多 1024 次调用及 4 路并发, 请求/结果上限为 64/256 KiB, 单次超时 10 s (需要配套宿主, 通过 AUTOJS6_HOST_BRIDGE_SOCKET 访问)
+- `优化` Android 17 本地网络授权移至插件中心启用流程及插件设置, 移除启动器授权页面 (未授权时保持关闭并跳过自动启动)
+- `优化` 补充 v0.2.3 在 Android 13/15/16 上的安装, 升级及宿主信息快照验证记录, 包含 ARM64 16 KiB 真机 (不扩大正式兼容范围)
 - `优化` 适配 Android 17 (SDK 37), 提供插件独立的本地网络权限控制及恢复引导
 
 #### v0.2.3
 
 _2026/09/16_
 
-- `新增` M7 第一项宿主能力: 只读的宿主信息快照. 宿主在 runScript 请求里携带 `hostInfoVersion = 1` 与 `hostInfo` (包名, 可选的 versionDate 与 languageTag) 时, 插件核对包名属于 Binder 调用方 UID, 自行通过 PackageManager 解析宿主版本, 把宿主/插件/本次运行的事实写成不超过 16 KiB 的 JSON 放到运行目录的 `autojs6/host-info.json` (`project` 之外, 随运行目录删除), 并通过环境变量 `AUTOJS6_HOST_INFO_FILE` 告知脚本; 终态新增 `hostInfoDelivered`. 能力位 `SUPPORTS_HOST_INFO`; 环境变量前缀 `AUTOJS6_` 归插件保留, 宿主请求携带即以 INVALID_REQUEST 拒绝, 冒用包名或未知版本同样在启动 Bun 之前拒绝. 共享契约 AAR 升级为 14073 bytes, 未提供快照的宿主行为完全不变
-- `优化` 归档已发布 v0.2.2 的 APK/对应源码资产验证与四个环境的最终签名包验收: Sony API 33 arm64 与 Xiaomi API 35 universal 从已发布 v0.2.0 原地覆盖升级, Redmi API 33 arm64 与 x86_64 API 33 AVD 全新安装, 各在 force-stop 前后通过 9/9 组; 不改写已发布标签, 不扩大 Android 或 16 KB 兼容声明
-- `优化` 用从宿主 master (7c31269cc) 本地构建的 AutoJs6 与已发布的 v0.2.2 x86_64 插件在 API 33 AVD 上验证宿主到插件的真实项目往返: 含相对导入与 JSON 导入的 project.json 项目, package.json 的 TypeScript 项目, 以及仍按单文件失败的裸文件对照; 宿主自身的发布仍待进行
-- `优化` 为 v0.2.2 发布证据补充原生 arm64 16 KiB 硬件上的签名最终 APK 验收: 已发布的 arm64-v8a APK 在 Samsung SM-A566B (API 36, Remote Test Lab) 全新安装, force-stop 前后各通过 9/9 组, 安装后字节绑定到发布资产, 验收后已卸载; 记录现覆盖五个环境
-- `优化` 用同一本地构建的 AutoJs6 宿主 (master 7c31269cc) 与已发布的 v0.2.2 arm64-v8a 插件在两台原生 ARM64 真机上重复宿主到插件的真实项目往返: Samsung SM-A566B (API 36, 16 KiB 页) 与 Redmi 22120RN86C (API 33) 各运行 project.json 项目两轮, package.json 的 TypeScript 项目一轮以及裸文件对照, 结果均符合预期; 宿主是否发版仍由用户决定
-- `优化` 在 Redmi 22120RN86C (API 33) 与 Samsung SM-A566B (API 36, 16 KiB 页) 上运行含两项新用例 (快照仅在提供时交付并核实, 宿主全局以 ReferenceError 明确失败) 的 instrumentation 套件, 各 OK (17 tests); 并用本地构建的 AutoJs6 宿主 (master d9b4033bd + attachHostInfo) 与本地 0.2.3 release 插件在 Redmi 与 Samsung 各完成宿主到插件的快照往返: 单源码与 project.json 项目都读到核实后的宿主/插件/运行事实, 撤销宿主授权后脚本得到 absent, 恢复后再次得到快照, 宿主已还原为用户原 APK; 记录见 docs/compatibility/2026-09-16-m7-host-info-snapshot
+- `新增` 只读宿主信息快照, 脚本可通过 AUTOJS6_HOST_INFO_FILE 读取经核实的宿主, 插件及运行信息 (需要宿主授权, AUTOJS6_ 前缀保留给插件使用)
+- `优化` 补充 v0.2.2 在 Android 13/15 上的全新安装及覆盖升级验证记录 (不扩大正式兼容范围)
+- `优化` 补充 x86_64 Android 13 环境的多文件项目示例及宿主联调记录, 包含相对导入, JSON 导入及 TypeScript (配套宿主当时尚未发布)
+- `优化` 补充 v0.2.2 在 Samsung SM-A566B (Android 16, ARM64 16 KiB) 上的发行安装包验证记录
+- `优化` 补充 ARM64 Android 13 及 Android 16 16 KiB 真机的多文件项目联调记录 (使用本地构建的宿主)
+- `优化` 补充宿主信息快照及授权撤销的真机验证记录, 覆盖单文件和多文件项目 (参阅 docs/compatibility/2026-09-16-m7-host-info-snapshot)
 
 ##### 更多发行历史
 
