@@ -231,6 +231,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.6
+
+_2026/10/04_
+
+- `Improvement` Plugin Center icons use the sizes, positions, light and dark artwork, and circular backgrounds adjusted in Icon Studio, retaining reproducible sources and parameters
+
 #### v0.2.5
 
 _2026/09/20_
@@ -247,17 +253,6 @@ _2026/09/16_
 - `Improvement` Android 17 local network authorization moves to plugin-center enablement and plugin settings, with no launcher permission page; missing permission keeps the plugin disabled and automatic startup silent
 - `Improvement` Archive the published v0.2.3 APK/source asset verification and the signed final-APK acceptance in five environments on the final release bytes: in-place upgrades from the published v0.2.2 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64, an x86_64 API 33 AVD and a Samsung SM-A566B API 36 native arm64 16 KiB device, each passing 10/10 groups before and after force-stop (the tenth group is the host info snapshot); the released tag is not rewritten and Android/16 KB compatibility is not expanded
 - `Improvement` Target Android 17 (SDK 37) with separate local network permission controls and recovery guidance
-
-#### v0.2.3
-
-_2026/09/16_
-
-- `Feature` First M7 host capability: a read-only host info snapshot. When the host sends `hostInfoVersion = 1` and `hostInfo` (package name, optional versionDate and languageTag) in the runScript request, the plugin checks that the package belongs to the Binder caller UID, resolves the host version itself through PackageManager, writes the host/plugin/execution facts as a JSON document of at most 16 KiB to `autojs6/host-info.json` inside the run directory (outside `project`, deleted with the run) and points the script at it through the `AUTOJS6_HOST_INFO_FILE` environment variable; the terminal Bundle gains `hostInfoDelivered`. Capability `SUPPORTS_HOST_INFO`; the `AUTOJS6_` environment prefix is reserved for the plugin (a host request carrying it is rejected with INVALID_REQUEST), and a spoofed package or unknown version is rejected before Bun starts. The shared contract AAR grows to 14073 bytes; hosts that do not offer the snapshot behave exactly as before
-- `Improvement` Archive the published v0.2.2 APK/source asset verification and the signed final-APK acceptance in four environments: in-place upgrades from the published v0.2.0 on Sony API 33 arm64 and Xiaomi API 35 universal, fresh installs on Redmi API 33 arm64 and an x86_64 API 33 AVD, each passing 9/9 groups before and after force-stop; the released tag is not rewritten and Android/16 KB compatibility is not expanded
-- `Improvement` Verify the real host-to-plugin project round trip with an AutoJs6 host built locally from its master (7c31269cc) against the published v0.2.2 x86_64 plugin on an API 33 AVD: a project.json project with relative and JSON imports, a package.json TypeScript project, and a bare-file control that still fails closed; the host release itself is still pending
-- `Improvement` Supplement the v0.2.2 release evidence with signed final-APK acceptance on native arm64 16 KiB hardware: the published arm64-v8a APK was freshly installed on Samsung SM-A566B (API 36, Remote Test Lab), passed 9/9 groups before and after force-stop with the installed bytes bound to the release asset, and was uninstalled afterwards; the record now covers five environments
-- `Improvement` Repeat the real host-to-plugin project round trip on two native ARM64 devices with the same locally built AutoJs6 host (master 7c31269cc) and the published v0.2.2 arm64-v8a plugin: Samsung SM-A566B (API 36, 16 KiB pages) and Redmi 22120RN86C (API 33) each ran the project.json project twice, the package.json TypeScript project once and the bare-file control, all with the expected outcome; the host release remains the user's decision
-- `Improvement` Run the instrumentation suite with the two new tests (snapshot delivered and verified only when offered, host globals fail with ReferenceError) on Redmi 22120RN86C (API 33) and Samsung SM-A566B (API 36, 16 KiB pages), OK (17 tests) each, and complete a host-to-plugin snapshot round trip on both devices with a locally built AutoJs6 host (master d9b4033bd plus attachHostInfo) and the local 0.2.3 release plugin: single-source and project.json launches read the verified host/plugin/execution facts, the script sees no snapshot after the host grant is revoked and receives it again once restored, and the host was restored to the user's original APK; recorded in docs/compatibility/2026-09-16-m7-host-info-snapshot
 
 ##### For more release history
 
