@@ -211,3 +211,9 @@ py -B -m unittest discover -s .python -p "test_*.py"
 ```
 
 Run instrumentation on available supported devices or emulators. Before a signed release, also verify release signing, all expected APK variants, runtime versions, package installation, discovery, activation, Binder execution, and checksums.
+
+
+## Icon Studio publication snapshot (2026-10-04)
+
+- `.icons/recipe.json` and its content-addressed original assets own the current icon geometry, tone and backgrounds. Keep the portable renderer, generated resources, keep rules and icon CI in the same change.
+- Use `.python/generate_icon_studio.py --check` for read-only reproduction checks. Optical size bands are advisory; retain canvas, transparency and safe-circle checks. Three uses neutral foregrounds and fixed #FAFAFA / #212121 surfaces; other plugins may use colored artwork and custom or transparent surfaces.

@@ -21,3 +21,13 @@
 *.json text eol=lf
 *.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
 app/src/main/assets/doc/licenses/* text eol=lf whitespace=-blank-at-eol,-blank-at-eof
+
+# Icon Studio reproducible assets
+.icons/assets/** binary
+.icons/recipe.json text eol=lf
+.python/icon_studio_runtime.py text eol=lf
+.python/generate_icon_studio.py text eol=lf
+app/src/main/res/raw/keep_plugin_center_icon.xml text eol=lf
+app/src/main/res/raw/keep_icon_studio.xml text eol=lf
+app/src/main/res/raw/keep_icon_studio_background.xml text eol=lf
+app/src/main/res/values*/icon_studio_backgrounds.xml text eol=lf
