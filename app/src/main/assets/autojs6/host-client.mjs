@@ -28,6 +28,7 @@ export const HOST_API_METHODS = Object.freeze({
     "findColor", "findMultiColors", "detectsColor", "findAllPointsForColor", "recycle",
   ]),
   "image.files": Object.freeze(["readImage", "saveImage"]),
+  "screen.capture": Object.freeze(["requestScreenCapture", "getRequestResult", "captureScreen", "stopScreenCapture"]),
   "screen.metrics": Object.freeze([
     "cX", "cY", "cXy", "cYx", "getInfo", "getScaleBaseX", "getScaleBaseY", "getScaleBases",
     "setScaleBaseX", "setScaleBaseY", "setScaleBases",
@@ -136,6 +137,29 @@ export async function createHostClient(options = {}) {
 
   const imageProcess = group("image.process");
   const imageFiles = group("image.files");
+  const screenCapture = group("screen.capture");
+  let capturePending = null;
+  function requestScreenCapture(options = {}) {
+    if (capturePending) return capturePending;
+    let operation;
+    operation = (async () => {
+      if (!isObject(options)) throw new TypeError("Screen capture options must be an object");
+      const timeout = options.timeoutMs ?? 120_000;
+      if (!Number.isInteger(timeout) || timeout < 1 || timeout > 120_000) throw new TypeError("Consent timeoutMs must be an integer in 1..120000");
+      const started = await screenCapture.requestScreenCapture(options);
+      if (typeof started?.requestId !== "string") throw new HostCallError("INVALID_RESPONSE", "Missing consent request id", "screen.capture");
+      const deadline = Date.now() + timeout + 5_000;
+      while (Date.now() < deadline) {
+        const result = await screenCapture.getRequestResult(started.requestId);
+        if (result?.state === "granted") return true;
+        if (result?.state !== "pending") throw new HostCallError("INVALID_RESPONSE", "Invalid consent state", "screen.capture");
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      throw new HostCallError("TIMEOUT", "Screen capture consent timed out", "screen.capture");
+    })().finally(() => { if (capturePending === operation) capturePending = null; });
+    capturePending = operation;
+    return operation;
+  }
   const imageArgument = image => {
     const id = image?.__autojs6ImageHandle ?? image?.id;
     if (typeof id !== "string" || !id) throw new TypeError("An execution-owned image handle is required");
@@ -177,6 +201,13 @@ export async function createHostClient(options = {}) {
   };
   const transform = async (method, image, options) => imageResult(await imageProcess[method](imageArgument(image), options));
   const images = {
+    requestScreenCapture,
+    captureScreen: async () => imageResult(await screenCapture.captureScreen()),
+    stopScreenCapture: async () => {
+      const stopped = await screenCapture.stopScreenCapture();
+      capturePending = null;
+      return stopped;
+    },
     fromBase64: async value => {
       if (typeof value !== "string") throw new TypeError("Encoded image base64 must be a string");
       return imageResult(await imageProcess.fromBase64(value));

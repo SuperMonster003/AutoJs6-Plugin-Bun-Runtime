@@ -46,7 +46,12 @@ await host.images.detectsColor(image, -65536, 0, 0, 0);
 await host.images.recycle(image);
 // @ts-expect-error Bun only returns encoded bytes; raw RGBA is a Node-specific transport
 await host.images.toBytes(image, "rgba");
-// @ts-expect-error no implicit capture permission or full Node bridge is supplied to Bun
-await host.images.captureScreen();
+const authorized: boolean = await host.images.requestScreenCapture({orientation:"portrait",timeoutMs:60_000});
+const captured = await host.images.captureScreen();
+await host.images.recycle(captured);
+const stopped: boolean = await host.images.stopScreenCapture();
+// @ts-expect-error capture reads the authorized display, not an arbitrary source
+await host.images.captureScreen("camera");
+void [authorized, stopped];
 void [pixels, bytes];
 void [compact, readings, info, width, traditional];

@@ -13,7 +13,8 @@
       ],
       "feature": [
         "Client explicite des API de l'hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)",
-        "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut"
+        "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut",
+        "Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande"
       ],
       "fix": [
         "Le client de coordonnées interprétait un premier argument undefined explicite comme une requête de dimensions sans argument ou une coordonnée nulle"

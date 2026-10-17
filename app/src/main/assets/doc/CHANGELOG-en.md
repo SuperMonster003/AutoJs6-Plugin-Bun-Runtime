@@ -10,6 +10,7 @@
 
 * `Feature` Explicit host API client with Pinyin/Pinyin4j, live coordinate conversion and console controls, TypeScript declarations and per-capability authorization (requires a matching AutoJs6 host)
 * `Feature` OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant
+* `Feature` Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization
 * `Fix` Coordinate client calls with an explicit undefined first argument being mistaken for dimension queries or zero-valued coordinates
 * `Improvement` Plugin Center icons use the sizes, positions, light and dark artwork, and circular backgrounds adjusted in Icon Studio, retaining reproducible sources and parameters
 * `Improvement` Android App info icons share Icon Studio artwork and light/dark backgrounds while preserving transparent Plugin Center artwork and existing launcher choices

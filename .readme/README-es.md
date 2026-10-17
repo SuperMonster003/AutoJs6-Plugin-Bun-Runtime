@@ -98,6 +98,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 - Procedencia verificable del motor: el ejecutable Bun incluido corresponde byte a byte a la versión oficial, y su tag, commit, tamaño, SHA-256 y propiedades ELF se verifican durante la compilación y en CI.
 - Entrega totalmente localizada: los metadatos del plugin, las instrucciones del centro de plugins, el README y el changelog cubren 10 idiomas, todos generados desde un único conjunto de fuentes validado.
 - Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto.
+- Bun ofrece captura de pantalla con permiso independiente, consentimiento de Android, limpieza al cancelar o expirar y nueva solicitud.
 
 ******
 
@@ -238,6 +239,7 @@ _2026/10/17_
 
 - `Función` Cliente explícito de API del host con Pinyin/Pinyin4j, conversión de coordenadas en tiempo real y controles de consola, declaraciones TypeScript y permisos por capacidad (requiere un host AutoJs6 compatible)
 - `Función` Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto
+- `Función` Bun ofrece captura de pantalla con permiso independiente, consentimiento de Android, limpieza al cancelar o expirar y nueva solicitud
 - `Corrección` El cliente de coordenadas interpretaba un primer argumento undefined explícito como una consulta de dimensiones sin argumentos o una coordenada cero
 - `Mejora` Los iconos del centro de plugins usan los tamaños, posiciones, imágenes claras y oscuras y fondos circulares ajustados en Icon Studio, conservando fuentes y parámetros reproducibles
 - `Mejora` Los iconos de información de la aplicación de Android comparten las imágenes y los fondos claros y oscuros de Icon Studio, conservando las imágenes transparentes del centro de plugins y las opciones del lanzador

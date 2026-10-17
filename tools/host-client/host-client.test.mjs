@@ -21,6 +21,38 @@ function transport(grants = capabilities, invoke = () => ({ value: null })) {
 }
 async function client(fake) { return createHostClient({ socket: "/private/bridge.sock", fetch: fake.fetch }); }
 
+test("screen consent polls without extending ordinary transport calls and deduplicates concurrent requests", async () => {
+  let polls = 0;
+  const image = {id:"capture",__autojs6ImageHandle:"capture",width:320,height:240};
+  const fake = transport(capabilities, (id, {method,args}) => {
+    assert.equal(id,"screen.capture");
+    if (method === "requestScreenCapture") { assert.deepEqual(args,[{timeoutMs:120000}]); return {value:{requestId:"consent"}}; }
+    if (method === "getRequestResult") { assert.deepEqual(args,["consent"]); return {value:{state:++polls === 1 ? "pending" : "granted"}}; }
+    return {value:method === "captureScreen" ? image : true};
+  });
+  const host = await client(fake);
+  const pending = host.images.requestScreenCapture({timeoutMs:120000});
+  assert.equal(host.images.requestScreenCapture(),pending);
+  assert.equal(await pending,true);
+  assert.equal(polls,2);
+  assert.deepEqual(await host.images.captureScreen(),image);
+  assert.equal(await host.images.stopScreenCapture(),true);
+  assert.equal(fake.requests.filter(r=>r.init.body?.includes('"method":"requestScreenCapture"')).length,1);
+});
+
+test("screen capture requires its own grant and rejects malformed or denied consent", async () => {
+  const denied = await client(transport(["image.process"]));
+  for (const method of ["requestScreenCapture","captureScreen","stopScreenCapture"]) await assert.rejects(denied.images[method](),{code:"NOT_GRANTED"});
+  const fake = transport(capabilities, () => ({value:{requestId:"attempt"}}));
+  const fetch = fake.fetch;
+  fake.fetch = async (url,init) => init.body?.includes('"getRequestResult"')
+    ? Response.json({ok:false,capability:"screen.capture",error:{code:"NOT_GRANTED",message:"User declined"}},{status:403}) : fetch(url,init);
+  const host = await client(fake);
+  await assert.rejects(host.images.requestScreenCapture(),{code:"NOT_GRANTED"});
+  await assert.rejects(host.images.requestScreenCapture({timeoutMs:Infinity}),TypeError);
+  await assert.rejects((await client(transport())).images.requestScreenCapture(),{code:"INVALID_RESPONSE"});
+});
+
 test("negotiates per-run grants and does not install Rhino globals", async () => {
   const fake = transport(["device.info"]);
   const before = Object.keys(globalThis);

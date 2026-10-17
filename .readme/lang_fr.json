@@ -14,7 +14,8 @@
     "Stable et contrôlable: chaque script s'exécute dans un processus isolé du plugin, peut être annulé à tout moment et est terminé automatiquement en cas de timeout, si bien qu'un script défaillant n'entraîne jamais AutoJs6 avec lui.",
     "Provenance vérifiable du moteur: l'exécutable Bun embarqué correspond octet par octet à la version officielle, et son tag, commit, taille, SHA-256 et propriétés ELF sont vérifiés au build et en CI.",
     "Livraison entièrement localisée: métadonnées du plugin, instructions du centre de plugins, README et changelog couvrent 10 langues, tous générés depuis un même jeu de sources validé.",
-    "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut."
+    "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut.",
+    "Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande."
   ],
   "h3_usage": "Installation et utilisation",
   "usage_steps": [

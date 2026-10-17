@@ -14,7 +14,8 @@
     "Stable and controllable: each script runs in an isolated plugin process, can be cancelled at any time, and is terminated automatically on timeout, so a misbehaving script never takes AutoJs6 down with it.",
     "Verifiable engine provenance: the bundled Bun executable corresponds byte for byte to the official release, and its tag, commit, size, SHA-256, and ELF properties are enforced during build and CI.",
     "Fully localized delivery: plugin metadata, plugin-center instructions, README, and changelog cover 10 languages, all generated from one validated source set.",
-    "OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant."
+    "OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant.",
+    "Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization."
   ],
   "h3_usage": "Install and Use",
   "usage_steps": [

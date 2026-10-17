@@ -10,6 +10,8 @@
 
 ## 2026-09-14 路线调整: 从诊断循环回到产品交付
 
+2026-10-17 第三批: screen.capture 作为独立的默认关闭授权, 提供 images.requestScreenCapture/captureScreen/stopScreenCapture. Android 同意等待使用短状态调用, 保留既有 10 秒单次桥接上限, 支持取消和执行清理. 宿主修复授权 Activity 生命周期, 默认显示屏请求和旋转/固定尺寸取帧问题. 本批不改变 Bun 原生二进制与兼容范围; 配套验证记录见宿主 docs/dev/runtime-capture-worker-2026-10-17.md.
+
 2026-10-17 宿主 API 扩展: 当前开发源码交付显式导入的客户端和 TypeScript 声明, 配套宿主增加 `text.pinyin`, `text.pinyin4j`, `screen.metrics`, `console.control` 四组独立授权, 复用实际拼音 provider、坐标换算和控制台实现. 客户端通过 `AUTOJS6_HOST_CLIENT_MODULE` 加载并协商本次执行的授权, 不注入 Rhino 全局. 本轮不改变 Bun 原生二进制、Android/ABI 支持范围或冻结的实验线. 入口、语义和验证命令见 [宿主 API](docs/host-api.md).
 
 同日第二批增加 `text.opencc`, `image.process`, `image.files` 三组授权, 分别提供完整 OpenCC 转换, 常用内存图像操作和单独授权的宿主图片文件访问. 图像复用宿主现有 provider 的 codec, 句柄所有权和清理; 不开放截图, PFD 或完整 Node 桥. Bun 字节便利方法仍通过有界 base64 JSON 传输, 不能代替大型图片的文件路径流程. 可运行的透明像素示例位于 `samples/opencc-images.bun.js`.
