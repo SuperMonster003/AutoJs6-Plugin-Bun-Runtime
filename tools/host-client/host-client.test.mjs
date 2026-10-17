@@ -21,6 +21,25 @@ function transport(grants = capabilities, invoke = () => ({ value: null })) {
 }
 async function client(fake) { return createHostClient({ socket: "/private/bridge.sock", fetch: fake.fetch }); }
 
+test("screen recorder uses a separate grant, preserves file metadata and rejects nonfinite options before transport", async () => {
+  const result={path:"/sdcard/video.mp4",size:4096,durationMs:1200,width:320,height:180,mimeType:"video/mp4",videoCodec:"h264",audio:false};
+  const fake=transport(capabilities,(id,{method,args})=>{
+    assert.equal(id,"screen.record");
+    if(method==='start') {assert.deepEqual(args,['video.mp4',{width:320,height:180}]);return {value:{state:'recording'}};}
+    return {value:method==='stop'?result:method==='cancel'?true:{state:'idle'}};
+  });
+  const host=await client(fake);
+  assert.deepEqual(await host.screenRecorder.start('video.mp4',{width:320,height:180}),{state:'recording'});
+  assert.deepEqual(await host.screenRecorder.stop(),result);
+  assert.equal(await host.screenRecorder.cancel(),true);
+  assert.deepEqual(await host.screenRecorder.getStatus(),{state:'idle'});
+  const before=fake.requests.length;
+  await assert.rejects(host.screenRecorder.start('video.mp4',{frameRate:NaN}),TypeError);
+  assert.equal(fake.requests.length,before);
+  const denied=await client(transport(['screen.capture','image.files']));
+  for(const method of HOST_API_METHODS['screen.record']) await assert.rejects(denied.screenRecorder[method]('file.mp4'),{code:'NOT_GRANTED'});
+});
+
 test("screen consent polls without extending ordinary transport calls and deduplicates concurrent requests", async () => {
   let polls = 0;
   const image = {id:"capture",__autojs6ImageHandle:"capture",width:320,height:240};

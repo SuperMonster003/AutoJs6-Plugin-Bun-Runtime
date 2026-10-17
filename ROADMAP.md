@@ -1,5 +1,7 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
+2026-10-17 宿主能力第四批: screen.record 独立授权的 screenRecorder 支持无声 H.264/MP4 文件输出, 固定尺寸, 显式停止收尾和取消/退出清理. 复用 screen.capture 的系统同意和同一个虚拟显示, 不改动冻结的 Bun 原生运行时. Android 13/15 真机验证见宿主 docs/dev/runtime-video-worker-2026-10-17.md.
+
 更新日期: 2026-09-14
 
 本轮恢复入口: [会话交接](docs/SESSION_HANDOFF.md). 2026-09-14 之前堆积在本文件顶部的逐批次状态日志已原样迁移到 [状态日志归档 (2026-09-01 至 2026-09-14)](docs/roadmap-status-journal-2026-09-14.md); 其中每条设备/构建/诊断结论及证据链接保持不变, 本文件只保留里程碑条目, 当前方向和验收规则.

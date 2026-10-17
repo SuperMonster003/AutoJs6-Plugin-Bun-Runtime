@@ -53,5 +53,13 @@ const stopped: boolean = await host.images.stopScreenCapture();
 // @ts-expect-error capture reads the authorized display, not an arbitrary source
 await host.images.captureScreen("camera");
 void [authorized, stopped];
+await host.screenRecorder.start("capture.mp4", {width:320,height:180,frameRate:30,bitRate:1000000});
+const recording=await host.screenRecorder.getStatus();
+if(recording.state!=="idle") { const width:number=recording.width; void width; }
+const movie=await host.screenRecorder.stop();
+if(movie) { const silent:false=movie.audio; const bytes:number=movie.size; void [silent,bytes]; }
+const cancelled:boolean=await host.screenRecorder.cancel();void cancelled;
+// @ts-expect-error audio capture has not been implemented
+await host.screenRecorder.start("capture.mp4", {audio:true});
 void [pixels, bytes];
 void [compact, readings, info, width, traditional];

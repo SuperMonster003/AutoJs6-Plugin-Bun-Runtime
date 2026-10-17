@@ -29,6 +29,7 @@ export const HOST_API_METHODS = Object.freeze({
   ]),
   "image.files": Object.freeze(["readImage", "saveImage"]),
   "screen.capture": Object.freeze(["requestScreenCapture", "getRequestResult", "captureScreen", "stopScreenCapture"]),
+  "screen.record": Object.freeze(["start", "stop", "cancel", "getStatus"]),
   "screen.metrics": Object.freeze([
     "cX", "cY", "cXy", "cYx", "getInfo", "getScaleBaseX", "getScaleBaseY", "getScaleBases",
     "setScaleBaseX", "setScaleBaseY", "setScaleBases",
@@ -276,6 +277,7 @@ export async function createHostClient(options = {}) {
     pinyin4j: group("text.pinyin4j"),
     opencc,
     images,
+    screenRecorder: group("screen.record"),
     coordinates: group("screen.metrics"),
     console: group("console.control"),
   });
