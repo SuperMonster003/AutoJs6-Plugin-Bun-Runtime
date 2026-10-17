@@ -18,8 +18,14 @@ await host.console.setContentTextColors({ warn: "#ff8800", info: null });
 await host.console.setTitleBackgroundTint(null);
 // @ts-expect-error a standalone null is not a color; null is allowed in lists/maps
 await host.console.setContentTextColors(null);
-// @ts-expect-error a coordinate cannot be a string
 await host.coordinates.cX("360");
+await host.coordinates.cY("0.5", true);
+await host.coordinates.cXy("0.5", "16:9");
+await host.coordinates.cYx("360", 1080, false);
+// @ts-expect-error an explicit undefined coordinate is rejected, unlike cX() with zero arguments
+await host.coordinates.cX(undefined);
+// @ts-expect-error cross-axis coordinates also require a defined first argument
+await host.coordinates.cXy(undefined);
 // @ts-expect-error unknown host methods should not autocomplete as callable
 await host.pinyin.missing();
 void [compact, readings, info, width];
