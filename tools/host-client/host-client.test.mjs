@@ -331,8 +331,31 @@ test("every delivered method has a declaration and a callable wrapper", async ()
     }
   }
   const imageBody = declaration.split("export interface ImagesApi {")[1].split("\n}")[0];
-  const imageMethods = [...new Set([...imageBody.matchAll(/^\s+(\w+)\(/gm)].map(match => match[1]))].sort();
+  const imageMethods = [...new Set([...imageBody.matchAll(/^\s+(?:readonly )?(\w+)(?:\(|:)/gm)].map(match => match[1]))].sort();
   assert.deepEqual(Object.keys(host.images).sort(), imageMethods);
   for (const method of [...HOST_API_METHODS["image.process"], ...HOST_API_METHODS["image.files"]]) assert.equal(typeof host.images[method], "function");
   assert.deepEqual(Object.keys(host.opencc).sort(), ["convert", ...OPENCC_CONVERSION_TYPES].sort());
+});
+
+test("advanced image handles, geometry and quantized bytes retain their contracts", async () => {
+  const image={id:'image',__autojs6ImageHandle:'image',width:10,height:8};
+  const feature={id:'feature',__autojs6ImageFeaturesHandle:'feature',count:20,method:'ORB',scale:1,region:{x:0,y:0,width:10,height:8}};
+  const fake=transport(capabilities,(_id,{method,args})=>({value:method==='detectAndComputeFeatures'?feature:
+    method==='matchFeatures'?{topLeft:{x:0,y:0},topRight:{x:10,y:0},bottomLeft:{x:0,y:8},bottomRight:{x:10,y:8},matches:20,inliers:18,points:[]}:
+    method==='quantize'?{base64:'iVBORw==',size:4,quality:90,quantizationError:1,peakWorkingMemoryBytes:1024}:
+    method==='ncc'?'NaN':method==='readImage'?{...image,id:args[0]}:null}));
+  const host=await client(fake);const descriptor=await host.images.detectAndComputeFeatures(image,{method:'ORB'});
+  const frame=await host.images.matchFeatures(descriptor,descriptor);assert(frame instanceof host.images.ObjectFrame);assert.equal(frame.centerX,5);assert.equal(frame.height,8);assert(frame.summary().includes('inliers=18'));
+  const quant=await host.images.quantize(image);assert(quant.bytes instanceof Uint8Array);assert.deepEqual([...quant.bytes],[137,80,78,71]);
+  assert(Number.isNaN(await host.images.ncc(image,image)));
+  assert.deepEqual(host.images.buildRegion(image,[1,2]),{x:1,y:2,width:9,height:6});
+  await host.images.recycle([descriptor,image]);assert(host.images.isRecycled(descriptor,image));
+  const before=fake.requests.length;await assert.rejects(host.images.load(null),TypeError);await assert.rejects(host.images.quantizeToFile(image,null),TypeError);assert.equal(fake.requests.length,before);
+});
+
+test("file-only grants can recycle their images without enabling image processing", async () => {
+  const fake=transport(['image.files'],(_id,{method})=>({value:method==='readImage'?{id:'file',__autojs6ImageHandle:'file',width:1,height:1}:null}));
+  const host=await client(fake);const image=await host.images.read('image.png');await host.images.recycle(image);
+  assert.equal(new URL(fake.requests.at(-1).url).pathname,'/v1/image.files');assert.equal(JSON.parse(fake.requests.at(-1).init.body).method,'recycle');
+  await assert.rejects(host.images.quantize(image),error=>error.code==='NOT_GRANTED');
 });

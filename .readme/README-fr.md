@@ -242,6 +242,9 @@ _2026/10/17_
 - `Fonctionnalité` Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut
 - `Fonctionnalité` Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande
 - `Fonctionnalité` Bun screenRecorder produit des MP4 H.264 avec audio AAC du microphone, des applications ou mixé et captures pendant la vidéo, avec autorisations audio distinctes et nettoyage après annulation
+- `Fonctionnalité` Bun images prend en charge les filtres avancés, la conversion des couleurs, les recherches multicolores, les cercles, les mesures de similarité et les URL
+- `Fonctionnalité` Bun images prend en charge SIFT/ORB avec coordonnées de scène, géométrie ObjectFrame et handles Mat/caractéristiques propres à chaque exécution
+- `Fonctionnalité` Bun images prend en charge la quantification PNG et la compression avec mesures de qualité/mémoire, résultats binaires et sortie par descripteur de fichier
 - `Correctif` Le client de coordonnées interprétait un premier argument undefined explicite comme une requête de dimensions sans argument ou une coordonnée nulle
 - `Amélioration` Les icônes du centre de plugins utilisent les tailles, positions, images claires et sombres et fonds circulaires réglés dans Icon Studio, avec les sources et paramètres permettant de les reproduire
 - `Amélioration` Les icônes des informations d'application Android utilisent les illustrations et les fonds clairs et sombres d'Icon Studio, en conservant les images transparentes du centre de plugins et les choix du lanceur

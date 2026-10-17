@@ -210,3 +210,6 @@ tsc --strict --noEmit --module NodeNext --moduleResolution NodeNext --target ES2
 ```
 
 单元测试检查实际客户端的请求、权限拒绝、JSON 数值、异步返回、错误传播以及方法/声明覆盖. Android `hostCapabilityBridgeRoundTrip` 还验证运行时 SDK 路径、真实 Bun 导入、协商、旧宿主能力及执行结束后的文件清理; 完整宿主的拼音、方向换算与窗口效果需要匹配宿主和真机验证.
+
+
+Advanced image functions now cover all 81 registered host image names, plus readImage and ObjectFrame. Mat/features are opaque execution handles. File/URL access and match drawings require image.files; quantizeToFile additionally requires image.process. File-only handles can still be recycled. Quantized bytes remain subject to the existing Base64 JSON budgets; use descriptor-backed quantizeToFile for large output. See the coordinated host docs/dev/runtime-image-parity-2026-10-17.md and the SDK declarations for exact portable signatures.
