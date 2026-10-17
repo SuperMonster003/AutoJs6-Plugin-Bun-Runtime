@@ -20,8 +20,8 @@ console.log(process.platform);
 
 ### 現在の制限
 
-- 実行は 1 ファイルのみ: プラグインは source snapshot を 1 つだけ受け取って実行し, プロジェクトディレクトリは転送しないため, `import './utils.js'` のような相対 import は解決できません. 単一ファイル内の ESM 構文は影響を受けません. 複数モジュールが必要な場合は, まず PC 上で 1 ファイルにバンドルしてください (FAQ 参照).
-- AutoJs6 内蔵関数なし: `click()` や `toast()` などの automation API と Rhino globals は Bun スクリプト内に存在しません. 現在の Bun スクリプトは計算, テキスト処理, ネットワークリクエストなど, ホスト機能に依存しないタスクに向いています.
+- プロジェクトファイルにはワークスペースアーカイブを交渉するホストが必要です. 対応時は project.json/package.json 以下のスクリプトで相対インポートを使えます. それ以外は単一ソースのスナップショットのみ転送されます. 依存関係は自動インストールされません (--no-install).
+- Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です.
 - Java bridge なし: Bun スクリプトは AutoJs6 プロセスの Java class や object に直接 access できません.
 - 完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.
 - Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください.

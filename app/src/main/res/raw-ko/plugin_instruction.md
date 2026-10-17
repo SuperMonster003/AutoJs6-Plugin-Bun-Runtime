@@ -20,8 +20,8 @@ console.log(process.platform);
 
 ### 현재 제한
 
-- 실행당 파일 하나: 플러그인은 프로젝트 디렉터리 없이 source snapshot 하나만 받아 실행하므로 `import './utils.js'` 같은 상대 경로 import를 해석할 수 없습니다. 단일 파일 내부의 ESM 문법은 영향을 받지 않습니다. 여러 module이 필요하면 먼저 컴퓨터에서 한 파일로 번들하세요 (FAQ 참고).
-- AutoJs6 내장 함수 없음: `click()`, `toast()` 같은 automation API와 Rhino globals는 Bun 스크립트 안에 존재하지 않으므로, Bun 스크립트는 현재 계산, 텍스트 처리, 네트워크 요청처럼 호스트 기능에 의존하지 않는 작업에 적합합니다.
+- 프로젝트 파일은 작업 공간 아카이브를 협상하는 호스트가 필요합니다. 지원 시 project.json/package.json 아래 스크립트에서 상대 가져오기를 사용할 수 있으며, 그렇지 않으면 단일 소스 스냅샷만 전송합니다. 의존성을 자동 설치하지 않습니다 (--no-install).
+- Rhino 전역 변수는 주입하지 않습니다. 허용된 Pinyin/Pinyin4j, 좌표 변환, toast/기기 정보 및 콘솔 제어는 명시적 호스트 클라이언트를 사용합니다. 다른 자동화 API 및 Java 객체 직접 접근은 제공하지 않습니다.
 - Java bridge 없음: Bun 스크립트는 AutoJs6 프로세스의 Java class나 object에 직접 접근할 수 없습니다.
 - 전체 Bun toolchain 보장 없음: `bunx`, 기기에서의 executable 생성, runtime C compilation, 임의 native addon은 지원 범위 밖입니다.
 - Security sandbox 아님: Bun 스크립트는 플러그인 프로세스에서 신뢰된 코드로 실행되며 플러그인에 부여된 permission을 사용할 수 있으므로, 신뢰하는 스크립트만 실행하세요.

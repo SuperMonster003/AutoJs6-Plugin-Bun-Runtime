@@ -6,10 +6,13 @@
   "changelog_label_dependency": "依存関係",
   "$data": {
     "v0.2.6": {
-      "released_date": "2026/10/05",
+      "released_date": "2026/10/17",
       "improvement": [
         "プラグインセンターのアイコンに Icon Studio で調整したサイズ, 位置, 明暗の図稿と円形背景を適用し, 再生成可能な原稿とパラメーターを保持",
         "Android のアプリ情報アイコンに Icon Studio と共通の図案と明暗の背景色を使用し, プラグインセンターの透明な図案と既存のランチャー設定を維持"
+      ],
+      "feature": [
+        "Pinyin/Pinyin4j, リアルタイム座標変換とコンソール操作用の明示的なホスト API クライアント, TypeScript 型宣言と機能別の許可設定 (対応する AutoJs6 ホストが必要)"
       ]
     },
     "v0.2.5": {

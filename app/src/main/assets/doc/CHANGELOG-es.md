@@ -6,8 +6,9 @@
 
 # v0.2.6
 
-###### 2026/10/05
+###### 2026/10/17
 
+* `Función` Cliente explícito de API del host con Pinyin/Pinyin4j, conversión de coordenadas en tiempo real y controles de consola, declaraciones TypeScript y permisos por capacidad (requiere un host AutoJs6 compatible)
 * `Mejora` Los iconos del centro de plugins usan los tamaños, posiciones, imágenes claras y oscuras y fondos circulares ajustados en Icon Studio, conservando fuentes y parámetros reproducibles
 * `Mejora` Los iconos de información de la aplicación de Android comparten las imágenes y los fondos claros y oscuros de Icon Studio, conservando las imágenes transparentes del centro de plugins y las opciones del lanzador
 

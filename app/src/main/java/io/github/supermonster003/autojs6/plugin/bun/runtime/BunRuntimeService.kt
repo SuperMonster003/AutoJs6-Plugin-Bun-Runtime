@@ -201,10 +201,12 @@ class BunRuntimeService : Service() {
             addAll(request.arguments)
         }
         val processBuilder = ProcessBuilder(command).directory(prepared.workingDirectory)
+        val hostClientFile = bridge?.let { BunHostClientModule.materialize(assets, workspace) }
         processBuilder.environment().apply {
             putAll(request.environment)
             hostInfoFile?.let { put(BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE, it.path) }
             bridge?.let { put(BunRuntimeContract.HOST_BRIDGE_ENVIRONMENT_VARIABLE, it.path) }
+            hostClientFile?.let { put(BunHostClientModule.ENVIRONMENT_VARIABLE, it.path) }
             put("TMPDIR", File(workspace, "tmp").apply { mkdirs() }.path)
             put("BUN_INSTALL_CACHE_DIR", File(workspace, "bun-install-cache").apply { mkdirs() }.path)
             put("BUN_DISABLE_UPDATE_CHECK", "1")

@@ -20,8 +20,8 @@ Si todo funciona, la primera línea de salida es `Bun 1.4.0` y la segunda es `an
 
 ### Limitaciones actuales
 
-- Un archivo por ejecución: el plugin recibe y ejecuta una única instantánea de código fuente sin el directorio del proyecto, así que las importaciones relativas como `import './utils.js'` no pueden resolverse. La sintaxis ESM dentro del archivo único no se ve afectada; cuando se necesiten varios módulos, empaquétalos antes en un solo archivo en un ordenador (ver las preguntas frecuentes).
-- Sin funciones integradas de AutoJs6: las API de automatización como `click()` y `toast()` y los globals de Rhino no existen dentro de los scripts Bun, así que estos scripts se adaptan por ahora a tareas que no dependen del host, como cálculo, procesamiento de texto y peticiones de red.
+- Los archivos del proyecto requieren un host que negocie archivos de espacio de trabajo: los scripts bajo project.json/package.json pueden usar importaciones relativas. De lo contrario se envía una sola instantánea de código. Nunca se instalan dependencias automáticamente (--no-install).
+- No se inyectan variables globales de Rhino: use el cliente explícito para Pinyin/Pinyin4j, coordenadas, toast/información del dispositivo y controles de consola autorizados. Otras API de automatización y objetos Java directos siguen sin estar disponibles.
 - Sin puente Java: los scripts Bun no pueden acceder directamente a clases u objetos Java del proceso de AutoJs6.
 - Sin promesa de toolchain completo de Bun: `bunx`, la generación de ejecutables en el dispositivo, la compilación C en runtime y los addons nativos arbitrarios quedan fuera del alcance admitido.
 - No es un sandbox de seguridad: un script Bun se ejecuta como código de confianza en el proceso del plugin y puede usar los permisos concedidos al plugin, así que ejecuta solo scripts en los que confíes.

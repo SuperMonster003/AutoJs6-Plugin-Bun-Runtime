@@ -20,8 +20,8 @@ console.log(process.platform);
 
 ### القيود الحالية
 
-- ملف واحد لكل تشغيل: يستقبل plugin وينفذ source snapshot واحدة دون مجلد المشروع, لذلك لا يمكن حل relative import مثل `import './utils.js'`. لا تتأثر ESM syntax داخل الملف الواحد; عند الحاجة إلى عدة module, اجمعها أولا في ملف واحد على حاسوب (انظر الأسئلة الشائعة).
-- لا توجد دوال AutoJs6 مدمجة: automation API مثل `click()` و `toast()` و Rhino globals غير موجودة داخل Bun script, لذلك تناسب Bun script حاليا المهام التي لا تعتمد على قدرات المضيف, مثل الحساب ومعالجة النصوص وطلبات الشبكة.
+- تحتاج ملفات المشروع إلى مضيف يتفاوض على أرشيف مساحة العمل. عندها يمكن لبرامج project.json/package.json استخدام الاستيراد النسبي; وإلا يرسل ملف مصدر واحد فقط. لا يتم تثبيت الاعتماديات تلقائيا (--no-install).
+- لا يتم حقن متغيرات Rhino العامة: استخدم العميل الصريح لاستدعاء Pinyin/Pinyin4j والإحداثيات وtoast ومعلومات الجهاز والتحكم في وحدة التحكم المصرح بها. لا تتوفر بقية واجهات الأتمتة أو كائنات Java المباشرة.
 - لا يوجد Java bridge: لا يستطيع Bun script الوصول مباشرة إلى Java class أو object في عملية AutoJs6.
 - لا يوجد وعد بـ Bun toolchain كاملة: تقع `bunx` و executable المنتجة على الجهاز و runtime C compilation وأي native addon خارج النطاق المدعوم.
 - ليس security sandbox: يعمل Bun script ككود موثوق في plugin process ويمكنه استخدام permission الممنوحة للـ plugin, لذلك شغل فقط script التي تثق بها.

@@ -122,6 +122,7 @@ EXPECTED_SAMPLE_FILES = {
     "fetch.bun.js": ("fetch(", "AbortController"),
     "file-io.bun.js": ("Bun.write", "Bun.file"),
     "hello.bun.js": ("Bun.version", "process.platform"),
+    "host-api.bun.js": ("AUTOJS6_HOST_CLIENT_MODULE", "createHostClient", "hasCapability", "coordinates.cX"),
     "output-streams.bun.js": ("console.log", "console.error", "process.stdout", "process.stderr"),
     "typescript.bun.ts": ("interface Task", "TaskState"),
 }

@@ -780,8 +780,20 @@ class BunRuntimeInstrumentedTest {
         }
         val script = """
             const unix = process.env.${BunRuntimeContract.HOST_BRIDGE_ENVIRONMENT_VARIABLE};
-            if (!unix) { console.log("no-bridge"); process.exit(0); }
+            if (!unix) {
+              if (process.env.AUTOJS6_HOST_CLIENT_MODULE) throw new Error("SDK must not be offered without a bridge");
+              console.log("no-bridge"); process.exit(0);
+            }
             console.log("socket=" + unix);
+            const sdkPath = process.env.AUTOJS6_HOST_CLIENT_MODULE;
+            if (!sdkPath) throw new Error("missing SDK module");
+            console.log("sdkPath=" + sdkPath);
+            const { createHostClient } = await import(sdkPath);
+            const host = await createHostClient();
+            if (host.hasCapability("text.pinyin")) throw new Error("unexpected text grant");
+            try { await host.pinyin.simple("北京上海"); throw new Error("grant bypass"); }
+            catch (error) { if (error.code !== "NOT_GRANTED") throw error; }
+            console.log("sdk=" + host.sdkVersion + ":" + host.bridgeVersion);
             const call = async (method, path, body) => {
               const response = await fetch("http://autojs6" + path, { unix, method, body });
               const reply = await response.json();
@@ -808,6 +820,7 @@ class BunRuntimeInstrumentedTest {
               const reply = await call(method, path, body);
               console.log(label + "=" + reply.status + ":" + reply.code);
             }
+            console.log("sdkDevice=" + (await host.device.info()).model);
             const silent = [1, 2, 3, 4].map(() => call("POST", "/v1/test.silent", "{}"));
             await Bun.sleep(1000);
             const fifth = await call("POST", "/v1/test.silent", "{}");
@@ -827,7 +840,12 @@ class BunRuntimeInstrumentedTest {
             val stdout = captured.stdout
             assertTrue(captured.stderr + stdout, captured.result.getBoolean(BunRuntimeContract.KEY_SUCCEEDED))
             assertTrue(captured.result.getBoolean(BunRuntimeContract.KEY_HOST_BRIDGE_DELIVERED))
-            assertEquals(stdout, 10, captured.result.getInt(BunRuntimeContract.KEY_HOST_CALLS))
+            assertEquals(stdout, 11, captured.result.getInt(BunRuntimeContract.KEY_HOST_CALLS))
+            assertTrue(stdout, stdout.contains("sdk=1:1"))
+            assertTrue(stdout, stdout.contains("sdkDevice=instrumentation"))
+            val sdkPath = stdout.lineSequence().single { it.startsWith("sdkPath=") }.removePrefix("sdkPath=")
+            assertTrue(sdkPath, sdkPath.endsWith("/autojs6/host-client.mjs"))
+            assertFalse(sdkPath, File(sdkPath).exists())
             val socketPath = stdout.lineSequence().single { it.startsWith("socket=") }.removePrefix("socket=")
             assertTrue(socketPath, socketPath.startsWith(File(context.cacheDir, "bun-bridge").path + "/") && socketPath.endsWith(".sock"))
             assertFalse(socketPath, File(socketPath).exists())
@@ -852,7 +870,7 @@ class BunRuntimeInstrumentedTest {
             assertTrue(stdout, stdout.contains("notInfo=405:INVALID_REQUEST"))
             assertTrue(stdout, stdout.contains("fifth=429:TOO_MANY_REQUESTS"))
             assertTrue(stdout, stdout.contains("timeouts=504:TIMEOUT,504:TIMEOUT,504:TIMEOUT,504:TIMEOUT"))
-            assertEquals(brokerCalls.joinToString("\n"), 10, brokerCalls.size)
+            assertEquals(brokerCalls.joinToString("\n"), 11, brokerCalls.size)
             assertTrue(brokerCalls.joinToString("\n"), brokerCalls.all { it.startsWith("instrumentation-bridge#") })
             assertTrue(brokerCalls.joinToString("\n"), brokerCalls.contains("instrumentation-bridge#1:device.info:{}"))
             assertTrue(brokerCalls.joinToString("\n"), brokerCalls.contains("instrumentation-bridge#2:ui.toast:{\"text\":\"toast 1\"}"))

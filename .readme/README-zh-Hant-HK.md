@@ -54,7 +54,7 @@ Bun Runtime 是 AutoJs6 的獨立插件, 為 AutoJs6 增加一個可選的現代
 3. 啟用插件: 開啟 AutoJs6 的插件中心並啟用 Bun Runtime. 如果新安裝的插件顯示為停止狀態, 點按宿主提供的 `啟動` 操作即可.
 4. 執行腳本: 在 JavaScript 或 TypeScript 檔案的第一行單獨寫上 `"bun";` (含引號和分號), 然後照常在 AutoJs6 中執行這個檔案.
 
-> 每次執行只會執行目前檔案的一份快照 (實際命令為 `bun run --no-install <source>`), 插件不會自動安裝 npm dependency, 也不會讀取專案中的其他檔案. 把現有 Rhino 或 Node.js 專案遷移到 Bun 之前, 請先閱讀下方的目前限制.
+> 專案檔案需要宿主協商工作區歸檔: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝依賴 (--no-install).
 
 ******
 
@@ -104,8 +104,8 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-- 只執行單一檔案: 插件每次接收並執行一個源碼快照, 不傳輸專案目錄, 因此 `import './utils.js'` 這類相對路徑 import 無法解析. 單檔內部的 ESM 語法不受影響; 需要多個模組時, 可先在電腦上打包為單一檔案 (見常見問題).
-- 沒有 AutoJs6 內置函數: `click()`, `toast()` 等自動化 API 和 Rhino 全域物件在 Bun 腳本中不存在, Bun 腳本目前適合計算, 文字處理, 網絡請求等不依賴宿主能力的任務.
+- 專案檔案需要宿主協商工作區歸檔: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝依賴 (--no-install).
+- 不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及控制台控制透過明確匯入的宿主客戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供.
 - 沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 程序中的 Java class 或 object.
 - 不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.
 - 不是 security sandbox: Bun 腳本以受信任程式碼身分在插件程序中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本.
@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 為甚麼在 Bun 腳本裏用不了 `click()`, `toast()` 這些 AutoJs6 函數?
 
-Bun 執行在獨立程序中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函數不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意不提供自動化介面; 第一項唯讀能力 (宿主資訊快照, 由環境變數 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 檔案, 含宿主與插件版本等資訊) 已在插件側實現, 第二部分 (執行期呼叫: `ui.toast` 與 `device.info`, 腳本透過環境變數 `AUTOJS6_HOST_BRIDGE_SOCKET` 指向的 unix socket 用 `fetch(url, { unix })` 呼叫) 也已在插件側實現; 兩者都待 AutoJs6 宿主發佈對應版本後可用, 每項能力可在 AutoJs6 插件中心的插件設定頁單獨關閉, 相關計劃見路線圖.
+Bun 使用獨立引擎, 不注入 Rhino 全域變數. 明確匯入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的客戶端, 呼叫 await createHostClient() 協商本次執行的授權. 配套宿主提供 toast/裝置資訊, Pinyin/Pinyin4j, 即時 cX/cY/cXy/cYx 換算及非同步控制台控制. 拼音仍需要對應插件, Android 權限仍需授予; 控制台控制預設關閉. 各項能力可在插件中心獨立撤銷. [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) 說明載入, 類型, 錯誤與尚未涵蓋的能力.
 
 #### 可以使用 npm 套件嗎?
 
@@ -126,7 +126,7 @@ Bun 執行在獨立程序中, 是與 Rhino 完全不同的 JavaScript 引擎, �
 
 #### 可以 `import` 專案裏的其他檔案嗎?
 
-目前發佈的 AutoJs6 還不能. 插件 0.2.2 起可以接收專案快照 (有界 ZIP 工作區歸檔) 並在本次執行的私有工作區展開, 專案內的相對路徑匯入可以解析. 前提是宿主打包專案目錄並宣告該能力; 宿主側改動已準備但尚未發佈. 在此之前仍只傳輸單檔案快照, 單檔案內部的 ESM 語法可正常使用.
+專案檔案需要宿主協商工作區歸檔: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝依賴 (--no-install).
 
 #### 為甚麼至少需要 Android 13?
 
@@ -233,8 +233,9 @@ default timeout: 60 seconds
 
 #### v0.2.6
 
-_2026/10/05_
+_2026/10/17_
 
+- `新增` 明確匯入的宿主 API 客戶端, 提供 Pinyin/Pinyin4j, 即時座標換算與控制台控制, 附 TypeScript 宣告及獨立能力授權 (需要配套 AutoJs6 宿主)
 - `優化` 外掛程式中心圖示採用統一工作台調整後的尺寸, 位置, 明暗圖稿與圓形底色, 保留可重建原稿和參數
 - `優化` Android 系統應用程式資訊圖示與圖示工作台共用圖稿及明暗底色, 保留外掛程式中心透明圖稿與現有啟動器選項
 

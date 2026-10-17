@@ -22,7 +22,7 @@
     "啟用插件: 開啟 AutoJs6 的插件中心並啟用 Bun Runtime. 如果新安裝的插件顯示為停止狀態, 點按宿主提供的 `啟用` 操作即可.",
     "執行腳本: 在 JavaScript 或 TypeScript 檔案的第一行單獨寫上 `\"bun\";` (含引號和分號), 然後照常在 AutoJs6 中執行這個檔案."
   ],
-  "p_usage_note": "每次執行只會執行目前檔案的一份快照 (實際命令為 `bun run --no-install <source>`), 插件不會自動安裝 npm dependency, 也不會讀取專案中的其他檔案. 把現有 Rhino 或 Node.js 專案遷移到 Bun 之前, 請先閱讀下方的目前限制.",
+  "p_usage_note": "專案檔案需要宿主協商工作區封存: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝相依套件 (--no-install).",
   "h3_quick_start": "快速開始",
   "p_quick_start_intro": "把下面的內容儲存為腳本檔案並執行, 即可確認 Bun 引擎已接管執行",
   "p_quick_start_result": "如果一切正常, 輸出第一行為 `Bun {{ bun_version }}`, 第二行為 `android`.",
@@ -39,8 +39,8 @@
   ],
   "h3_limitations": "目前限制",
   "limitations": [
-    "只執行單一檔案: 插件每次接收並執行一個原始碼快照, 不傳輸專案目錄, 因此 `import './utils.js'` 這類相對路徑 import 無法解析. 單檔內部的 ESM 語法不受影響; 需要多個模組時, 可先在電腦上打包為單一檔案 (見常見問題).",
-    "沒有 AutoJs6 內建函式: `click()`, `toast()` 等自動化 API 和 Rhino 全域物件在 Bun 腳本中不存在, Bun 腳本目前適合計算, 文字處理, 網路請求等不依賴宿主能力的任務.",
+    "專案檔案需要宿主協商工作區封存: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝相依套件 (--no-install).",
+    "不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及主控台控制透過明確匯入的宿主用戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供.",
     "沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 行程中的 Java class 或 object.",
     "不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.",
     "不是 security sandbox: Bun 腳本以受信任程式碼身分在插件行程中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本."
@@ -57,7 +57,7 @@
   "faq": [
     {
       "q": "為什麼在 Bun 腳本裡用不了 `click()`, `toast()` 這些 AutoJs6 函式?",
-      "a": "Bun 執行在獨立行程中, 是與 Rhino 完全不同的 JavaScript 引擎, 因此 AutoJs6 的全域函式不會出現在 Bun 腳本中. 讓 Bun 腳本呼叫自動化能力需要宿主逐項明確開放的 bridge, 目前版本刻意不提供自動化介面; 第一項唯讀能力 (宿主資訊快照, 由環境變數 `AUTOJS6_HOST_INFO_FILE` 指向的 JSON 檔案, 含宿主與插件版本等資訊) 已在插件側實作, 第二部分 (執行期呼叫: `ui.toast` 與 `device.info`, 指令碼透過環境變數 `AUTOJS6_HOST_BRIDGE_SOCKET` 指向的 unix socket 用 `fetch(url, { unix })` 呼叫) 也已在插件側實作; 兩者都待 AutoJs6 宿主發布對應版本後可用, 每項能力可在 AutoJs6 插件中心的插件設定頁單獨關閉, 相關計畫見路線圖."
+      "a": "Bun 使用獨立引擎, 不注入 Rhino 全域變數. 明確匯入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的用戶端, 呼叫 await createHostClient() 協商本次執行的授權. 配套宿主提供 toast/裝置資訊, Pinyin/Pinyin4j, 即時 cX/cY/cXy/cYx 換算及非同步主控台控制. 拼音仍需要對應外掛, Android 權限仍需授予; 主控台控制預設關閉. 各項能力可在外掛中心獨立撤銷. [宿主 API]({{ repo_url }}/blob/master/docs/host-api.md) 說明載入, 型別, 錯誤與尚未涵蓋的能力."
     },
     {
       "q": "可以使用 npm 套件嗎?",
@@ -65,7 +65,7 @@
     },
     {
       "q": "可以 `import` 專案裡的其他檔案嗎?",
-      "a": "目前發佈的 AutoJs6 還不能. 外掛 0.2.2 起可以接收專案快照 (有界 ZIP 工作區封存) 並在本次執行的私有工作區展開, 專案內的相對路徑匯入可以解析. 前提是宿主打包專案目錄並宣告該能力; 宿主側改動已準備但尚未發佈. 在此之前仍只傳輸單檔案快照, 單檔案內部的 ESM 語法可正常使用."
+      "a": "專案檔案需要宿主協商工作區封存: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝相依套件 (--no-install)."
     },
     {
       "q": "為什麼至少需要 Android 13?",

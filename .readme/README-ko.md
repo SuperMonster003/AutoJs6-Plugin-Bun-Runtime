@@ -54,7 +54,7 @@ Bun Runtime은 AutoJs6에 선택 가능한 현대적 스크립트 엔진을 추�
 3. 플러그인 활성화: AutoJs6 plugin center를 열고 Bun Runtime을 활성화합니다. 새로 설치한 플러그인이 중지 상태로 표시되면 호스트가 보여주는 `활성화` action을 누릅니다.
 4. 스크립트 실행: JavaScript 또는 TypeScript 파일의 첫 줄에 `"bun";`만 단독으로 넣고 (따옴표와 세미콜론 포함), 평소처럼 AutoJs6에서 그 파일을 실행합니다.
 
-> 각 실행은 현재 파일의 snapshot 하나를 실행합니다 (실제 명령은 `bun run --no-install <source>`). 플러그인은 npm dependency를 자동으로 설치하지 않으며 프로젝트의 다른 파일도 읽지 않습니다. 기존 Rhino 또는 Node.js 프로젝트를 Bun으로 옮기기 전에 아래의 현재 제한을 먼저 확인하세요.
+> 프로젝트 파일은 작업 공간 아카이브를 협상하는 호스트가 필요합니다. 지원 시 project.json/package.json 아래 스크립트에서 상대 가져오기를 사용할 수 있으며, 그렇지 않으면 단일 소스 스냅샷만 전송합니다. 의존성을 자동 설치하지 않습니다 (--no-install).
 
 ******
 
@@ -104,8 +104,8 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 ******
 
-- 실행당 파일 하나: 플러그인은 프로젝트 디렉터리 없이 source snapshot 하나만 받아 실행하므로 `import './utils.js'` 같은 상대 경로 import를 해석할 수 없습니다. 단일 파일 내부의 ESM 문법은 영향을 받지 않습니다. 여러 module이 필요하면 먼저 컴퓨터에서 한 파일로 번들하세요 (FAQ 참고).
-- AutoJs6 내장 함수 없음: `click()`, `toast()` 같은 automation API와 Rhino globals는 Bun 스크립트 안에 존재하지 않으므로, Bun 스크립트는 현재 계산, 텍스트 처리, 네트워크 요청처럼 호스트 기능에 의존하지 않는 작업에 적합합니다.
+- 프로젝트 파일은 작업 공간 아카이브를 협상하는 호스트가 필요합니다. 지원 시 project.json/package.json 아래 스크립트에서 상대 가져오기를 사용할 수 있으며, 그렇지 않으면 단일 소스 스냅샷만 전송합니다. 의존성을 자동 설치하지 않습니다 (--no-install).
+- Rhino 전역 변수는 주입하지 않습니다. 허용된 Pinyin/Pinyin4j, 좌표 변환, toast/기기 정보 및 콘솔 제어는 명시적 호스트 클라이언트를 사용합니다. 다른 자동화 API 및 Java 객체 직접 접근은 제공하지 않습니다.
 - Java bridge 없음: Bun 스크립트는 AutoJs6 프로세스의 Java class나 object에 직접 접근할 수 없습니다.
 - 전체 Bun toolchain 보장 없음: `bunx`, 기기에서의 executable 생성, runtime C compilation, 임의 native addon은 지원 범위 밖입니다.
 - Security sandbox 아님: Bun 스크립트는 플러그인 프로세스에서 신뢰된 코드로 실행되며 플러그인에 부여된 permission을 사용할 수 있으므로, 신뢰하는 스크립트만 실행하세요.
@@ -118,7 +118,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 왜 Bun 스크립트에서 `click()`, `toast()` 같은 AutoJs6 함수를 사용할 수 없나요?
 
-Bun은 별도 프로세스에서 실행되며 Rhino와 완전히 다른 JavaScript 엔진이므로 AutoJs6 globals가 Bun 스크립트 안에 나타나지 않습니다. Bun 스크립트가 automation 기능을 호출하려면 각 기능을 명시적으로 노출하는 host bridge가 필요하며, 현재 버전은 의도적으로 automation 인터페이스를 제공하지 않습니다. 첫 번째 읽기 전용 기능 (호스트 정보 스냅샷: 환경 변수 `AUTOJS6_HOST_INFO_FILE`이 가리키는, 호스트와 플러그인 버전 등을 담은 JSON 파일)은 플러그인 쪽에 구현되어 있으며, 두 번째 부분 (런타임 호출: `ui.toast`와 `device.info`, 스크립트는 환경 변수 `AUTOJS6_HOST_BRIDGE_SOCKET`이 가리키는 unix socket에 `fetch(url, { unix })`로 호출)도 플러그인 쪽에 구현되어 있습니다. 둘 다 대응하는 AutoJs6 호스트가 릴리스되면 사용할 수 있으며, 각 기능은 AutoJs6 플러그인 센터의 플러그인 설정 페이지에서 개별적으로 끌 수 있습니다. 계획은 roadmap을 참고하세요.
+Bun은 별도 엔진이며 Rhino 전역 변수를 주입하지 않습니다. process.env.AUTOJS6_HOST_CLIENT_MODULE의 클라이언트를 명시적으로 가져오고 await createHostClient()로 이번 실행의 권한을 확인합니다. 호환 호스트는 toast/기기 정보, Pinyin/Pinyin4j, 실시간 cX/cY/cXy/cYx 변환과 비동기 콘솔 제어를 제공합니다. 병음 플러그인과 Android 권한은 별도로 필요하며 콘솔 제어는 기본적으로 꺼져 있습니다. 플러그인 센터에서 각 권한을 개별적으로 취소할 수 있습니다. 로딩, 형식, 오류 및 미지원 기능은 [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md)를 참고하세요.
 
 #### npm 패키지를 사용할 수 있나요?
 
@@ -126,7 +126,7 @@ Bun은 별도 프로세스에서 실행되며 Rhino와 완전히 다른 JavaScri
 
 #### 스크립트가 프로젝트의 다른 파일을 `import`할 수 있나요?
 
-현재 공개된 AutoJs6에서는 아직 불가능합니다. 플러그인 0.2.2부터 런타임은 프로젝트 스냅샷 (크기가 제한된 ZIP 워크스페이스 아카이브)을 받아 실행별 비공개 워크스페이스에 확장하므로 프로젝트 내부의 상대 경로 가져오기가 해석됩니다. 단, 호스트가 프로젝트 디렉터리를 묶고 해당 기능을 선언해야 하며, 호스트 측 변경은 준비되었지만 아직 공개되지 않았습니다. 그때까지는 단일 파일 스냅샷만 전송되며 단일 파일 내부의 ESM 문법은 정상적으로 동작합니다.
+프로젝트 파일은 작업 공간 아카이브를 협상하는 호스트가 필요합니다. 지원 시 project.json/package.json 아래 스크립트에서 상대 가져오기를 사용할 수 있으며, 그렇지 않으면 단일 소스 스냅샷만 전송합니다. 의존성을 자동 설치하지 않습니다 (--no-install).
 
 #### 왜 최소 버전이 Android 13인가요?
 
@@ -233,8 +233,9 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 #### v0.2.6
 
-_2026/10/05_
+_2026/10/17_
 
+- `기능` Pinyin/Pinyin4j, 실시간 좌표 변환 및 콘솔 제어를 위한 명시적 호스트 API 클라이언트, TypeScript 선언 및 기능별 권한 설정 (호환 AutoJs6 호스트 필요)
 - `개선` 플러그인 센터 아이콘에 Icon Studio에서 조정한 크기, 위치, 밝은 이미지와 어두운 이미지 및 원형 배경을 적용하고 재생성 가능한 원본과 매개변수를 유지
 - `개선` Android 앱 정보 아이콘에 Icon Studio의 그림과 밝은 배경 및 어두운 배경을 사용하고 플러그인 센터의 투명 그림과 기존 런처 옵션을 유지
 

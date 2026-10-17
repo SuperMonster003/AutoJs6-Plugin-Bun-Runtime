@@ -20,8 +20,8 @@ If everything works, the first output line is `Bun 1.4.0` and the second line is
 
 ### Current Limitations
 
-- One file per run: the plugin receives and executes a single source snapshot without the project directory, so relative imports such as `import './utils.js'` cannot be resolved. ESM syntax inside the single file is unaffected; when multiple modules are needed, bundle them into one file on a computer first (see the FAQ).
-- No AutoJs6 built-ins: automation APIs such as `click()` and `toast()` and the Rhino globals do not exist inside Bun scripts, so Bun scripts currently suit tasks that do not depend on host capabilities, such as computation, text processing, and network requests.
+- Project files require a host that negotiates workspace archives: scripts under project.json/package.json can then use relative imports. Otherwise only one source snapshot is sent. Dependencies are never installed automatically (--no-install).
+- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable.
 - No Java bridge: Bun scripts cannot directly access Java classes or objects in the AutoJs6 process.
 - No full Bun toolchain promise: `bunx`, on-device executable output, runtime C compilation, and arbitrary native addons are outside the supported scope.
 - Not a security sandbox: a Bun script runs as trusted code in the plugin process and can use the permissions granted to the plugin, so only run scripts you trust.

@@ -6,8 +6,9 @@
 
 # v0.2.6
 
-###### 2026/10/05
+###### 2026/10/17
 
+* `Feature` Explicit host API client with Pinyin/Pinyin4j, live coordinate conversion and console controls, TypeScript declarations and per-capability authorization (requires a matching AutoJs6 host)
 * `Improvement` Plugin Center icons use the sizes, positions, light and dark artwork, and circular backgrounds adjusted in Icon Studio, retaining reproducible sources and parameters
 * `Improvement` Android App info icons share Icon Studio artwork and light/dark backgrounds while preserving transparent Plugin Center artwork and existing launcher choices
 

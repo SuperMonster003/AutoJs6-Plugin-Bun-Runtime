@@ -54,7 +54,7 @@ Le fonctionnement du plugin est simple: AutoJs6 envoie le contenu du script au p
 3. Activez le plugin: ouvrez le centre de plugins AutoJs6 et activez Bun Runtime. Si le plugin fraîchement installé apparaît arrêté, touchez l'action `Activer` proposée par l'hôte.
 4. Exécutez un script: placez `"bun";` seul sur la première ligne d'un fichier JavaScript ou TypeScript (guillemets et point-virgule compris), puis exécutez le fichier depuis AutoJs6 comme d'habitude.
 
-> Chaque exécution traite un instantané du fichier courant (la commande réelle est `bun run --no-install <source>`); le plugin n'installe jamais automatiquement de dépendances npm et ne lit jamais d'autres fichiers du projet. Lisez les limites actuelles ci-dessous avant de migrer un projet Rhino ou Node.js existant vers Bun.
+> Les fichiers du projet nécessitent un hôte négociant les archives de travail: les scripts sous project.json/package.json peuvent alors utiliser des imports relatifs. Sinon, seul un instantané source est transmis. Les dépendances ne sont jamais installées automatiquement (--no-install).
 
 ******
 
@@ -104,8 +104,8 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 
 ******
 
-- Un fichier par exécution: le plugin reçoit et exécute un seul instantané de source sans le répertoire du projet, donc les imports relatifs comme `import './utils.js'` ne peuvent pas être résolus. La syntaxe ESM à l'intérieur du fichier unique n'est pas affectée; quand plusieurs modules sont nécessaires, regroupez-les d'abord en un seul fichier sur un ordinateur (voir la FAQ).
-- Pas de fonctions intégrées AutoJs6: les API d'automatisation comme `click()` et `toast()` et les globals Rhino n'existent pas dans les scripts Bun, qui conviennent donc pour l'instant aux tâches indépendantes de l'hôte comme le calcul, le traitement de texte et les requêtes réseau.
+- Les fichiers du projet nécessitent un hôte négociant les archives de travail: les scripts sous project.json/package.json peuvent alors utiliser des imports relatifs. Sinon, seul un instantané source est transmis. Les dépendances ne sont jamais installées automatiquement (--no-install).
+- Aucune variable globale Rhino: utilisez le client explicite pour Pinyin/Pinyin4j, les coordonnées, toast/informations appareil et les commandes de console autorisés. Les autres API d’automatisation et les objets Java directs ne sont pas disponibles.
 - Pas de pont Java: les scripts Bun ne peuvent pas accéder directement aux classes ou objets Java du processus AutoJs6.
 - Pas de promesse de toolchain Bun complet: `bunx`, la production d'exécutables sur l'appareil, la compilation C au runtime et les addons natifs arbitraires restent hors périmètre.
 - Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance dans le processus du plugin et peut utiliser les permissions accordées au plugin, donc n'exécutez que des scripts fiables.
@@ -118,7 +118,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 
 #### Pourquoi les fonctions AutoJs6 comme `click()` et `toast()` sont-elles indisponibles dans les scripts Bun?
 
-Bun s'exécute dans un processus séparé et constitue un moteur JavaScript complètement différent de Rhino, donc les globals AutoJs6 n'apparaissent pas dans les scripts Bun. Permettre aux scripts Bun d'appeler des capacités d'automatisation nécessite un pont hôte exposant chaque capacité explicitement; la version actuelle ne fournit volontairement aucune interface d'automatisation. La première capacité en lecture seule (un instantané des informations de l'hôte: un fichier JSON désigné par la variable d'environnement `AUTOJS6_HOST_INFO_FILE` avec les versions de l'hôte et du plugin) est implémentée côté plugin, tout comme la seconde partie: des appels à l'exécution (`ui.toast` et `device.info`) que les scripts effectuent via `fetch(url, { unix })` sur le socket unix désigné par la variable d'environnement `AUTOJS6_HOST_BRIDGE_SOCKET`. Les deux deviendront utilisables dès qu'AutoJs6 publiera la version hôte correspondante, et chaque capacité peut être désactivée dans la page de réglages du plugin au sein du centre de plugins AutoJs6. Voir la feuille de route pour les plans.
+Bun utilise un moteur indépendant et ne reçoit pas les variables globales Rhino. Importez le client indiqué par process.env.AUTOJS6_HOST_CLIENT_MODULE puis appelez await createHostClient() pour consulter les autorisations de cette exécution. Un hôte compatible propose toast/informations appareil, Pinyin/Pinyin4j, conversion cX/cY/cXy/cYx en temps réel et commandes asynchrones de console. Les fournisseurs de pinyin et les permissions Android restent nécessaires; la console est désactivée par défaut. Chaque autorisation est révocable dans le centre des plugins. Voir [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) pour le chargement, les types, les erreurs et les fonctions non couvertes.
 
 #### Puis-je utiliser des paquets npm?
 
@@ -126,7 +126,7 @@ Pas en les installant sur l'appareil. Le plugin s'exécute toujours avec `--no-i
 
 #### Un script peut-il faire un `import` d'autres fichiers du projet?
 
-Pas avec l'AutoJs6 actuellement publiée. Depuis le plugin 0.2.2, le runtime accepte un instantané de projet (une archive ZIP d'espace de travail bornée) et le déploie dans l'espace de travail privé de l'exécution, de sorte que les imports relatifs à l'intérieur du projet sont résolus. L'hôte doit empaqueter le répertoire du projet et déclarer cette capacité ; cette modification de l'hôte est prête mais pas encore publiée. D'ici là, seuls des instantanés à fichier unique sont transférés, et la syntaxe ESM à l'intérieur de ce fichier fonctionne normalement.
+Les fichiers du projet nécessitent un hôte négociant les archives de travail: les scripts sous project.json/package.json peuvent alors utiliser des imports relatifs. Sinon, seul un instantané source est transmis. Les dépendances ne sont jamais installées automatiquement (--no-install).
 
 #### Pourquoi Android 13 est-il le minimum?
 
@@ -233,8 +233,9 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 #### v0.2.6
 
-_2026/10/05_
+_2026/10/17_
 
+- `Fonctionnalité` Client explicite des API de l’hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)
 - `Amélioration` Les icônes du centre de plugins utilisent les tailles, positions, images claires et sombres et fonds circulaires réglés dans Icon Studio, avec les sources et paramètres permettant de les reproduire
 - `Amélioration` Les icônes des informations d'application Android utilisent les illustrations et les fonds clairs et sombres d'Icon Studio, en conservant les images transparentes du centre de plugins et les choix du lanceur
 
