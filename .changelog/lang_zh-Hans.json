@@ -13,6 +13,9 @@
       ],
       "feature": [
         "显式宿主 API 客户端, 提供 Pinyin/Pinyin4j, 实时坐标换算与控制台控制, 附 TypeScript 声明及独立能力授权 (需要配套 AutoJs6 宿主)"
+      ],
+      "fix": [
+        "坐标客户端将显式 undefined 首参数误作无参尺寸查询或零坐标的问题"
       ]
     },
     "v0.2.5": {

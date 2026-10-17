@@ -13,6 +13,9 @@
       ],
       "feature": [
         "Client explicite des API de l’hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)"
+      ],
+      "fix": [
+        "Le client de coordonnées interprétait un premier argument undefined explicite comme une requête de dimensions sans argument ou une coordonnée nulle"
       ]
     },
     "v0.2.5": {

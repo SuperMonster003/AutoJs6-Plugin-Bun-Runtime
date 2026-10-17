@@ -84,6 +84,24 @@ test("rejects NaN and infinity before JSON can turn them into null", async () =>
   assert.equal(fake.requests.length, 1);
 });
 
+test("distinguishes an omitted coordinate from explicit undefined and preserves optional defaults", async () => {
+  const fake = transport(capabilities, () => ({ value: 540 }));
+  const host = await client(fake);
+  for (const name of ["cX", "cY", "cXy", "cYx"]) {
+    await assert.rejects(host.coordinates[name](undefined), TypeError);
+    await assert.rejects(host.coordinates[name](undefined, 720, false), TypeError);
+  }
+  assert.equal(fake.requests.length, 1, "invalid explicit coordinates must not reach the host");
+  await host.coordinates.cX();
+  await host.coordinates.cY();
+  await host.coordinates.cX(0.5, undefined, undefined);
+  await host.coordinates.cXy(0.5, undefined, true);
+  assert.deepEqual(fake.requests.slice(1).map(request => JSON.parse(request.init.body)), [
+    { method: "cX", args: [] }, { method: "cY", args: [] },
+    { method: "cX", args: [0.5] }, { method: "cXy", args: [0.5, null, true] },
+  ]);
+});
+
 test("console controls are real asynchronous calls and native console stays unchanged", async () => {
   const nativeConsole = globalThis.console;
   const calls = [];

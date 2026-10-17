@@ -13,6 +13,9 @@
       ],
       "feature": [
         "Cliente explícito de API del host con Pinyin/Pinyin4j, conversión de coordenadas en tiempo real y controles de consola, declaraciones TypeScript y permisos por capacidad (requiere un host AutoJs6 compatible)"
+      ],
+      "fix": [
+        "El cliente de coordenadas interpretaba un primer argumento undefined explícito como una consulta de dimensiones sin argumentos o una coordenada cero"
       ]
     },
     "v0.2.5": {

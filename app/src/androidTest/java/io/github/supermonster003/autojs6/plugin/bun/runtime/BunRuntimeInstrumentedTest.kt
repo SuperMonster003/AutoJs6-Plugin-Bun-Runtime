@@ -793,6 +793,10 @@ class BunRuntimeInstrumentedTest {
             if (host.hasCapability("text.pinyin")) throw new Error("unexpected text grant");
             try { await host.pinyin.simple("北京上海"); throw new Error("grant bypass"); }
             catch (error) { if (error.code !== "NOT_GRANTED") throw error; }
+            for (const invalidCoordinate of [() => host.coordinates.cX(undefined), () => host.coordinates.cXy(undefined, 720)]) {
+              try { await invalidCoordinate(); throw new Error("undefined coordinate accepted"); }
+              catch (error) { if (!(error instanceof TypeError)) throw error; }
+            }
             console.log("sdk=" + host.sdkVersion + ":" + host.bridgeVersion);
             const call = async (method, path, body) => {
               const response = await fetch("http://autojs6" + path, { unix, method, body });

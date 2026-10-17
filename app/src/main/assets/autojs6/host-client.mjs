@@ -97,6 +97,12 @@ export async function createHostClient(options = {}) {
 
   function group(capability) {
     return Object.freeze(Object.fromEntries(HOST_API_METHODS[capability].map(method => [method, async (...args) => {
+      if (capability === "screen.metrics" && ["cX", "cY", "cXy", "cYx"].includes(method)
+          && args.length > 0 && args[0] === undefined) {
+        // An explicitly supplied undefined coordinate must not become [] (dimension query) or
+        // JSON null (zero). Undefined optional base/mode slots still retain their normal defaults.
+        throw new TypeError(`${method} requires a defined coordinate when an argument is supplied`);
+      }
       // Omitting an optional trailing argument preserves the host overload/default; JSON null would not.
       while (args.length && args[args.length - 1] === undefined) args.pop();
       const result = await call(capability, { method, args });
