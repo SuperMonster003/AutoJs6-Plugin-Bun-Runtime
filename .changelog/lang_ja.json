@@ -5,6 +5,13 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun が実行に属する View ハンドル, 非同期 AndroidView ファクトリー, XML Compose コンテナへの接続, パッケージ化アプリに対応",
+        "Bun Runtime が独自署名の Bun プロジェクトに対応し, ホスト機能の明示的な宣言と対応する Runtime Kit で Compose 連携を提供"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

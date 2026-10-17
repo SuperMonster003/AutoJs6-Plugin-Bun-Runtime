@@ -234,6 +234,13 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.2.7
+
+_2026/10/18_
+
+- `新增` Bun 支援執行所屬 View 控制代碼, 非同步 AndroidView 工廠與 XML Compose 容器掛載, 同步支援打包應用程式
+- `新增` Bun Runtime 支援獨立簽署的 Bun 專案, 使用明確的宿主能力宣告及配套 Runtime Kit 實現 Compose 互通
+
 #### v0.2.6
 
 _2026/10/18_
@@ -257,15 +264,6 @@ _2026/09/20_
 - `提示` 正式外掛程式仍要求 Android 13 (API 33) 或更新版本
 - `修復` AGP 9.1 建置時的 SDK XML v4 解析警告及 JVM 單元測試組裝工作誤觸發 APK 原生程式庫對齊檢查的問題 (共用建置外掛 1.8.3)
 - `優化` 歸檔已發布 v0.2.4 的 APK/對應原始碼資產驗證與四個環境在最終發布位元組上的最終簽名包驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發布 v0.2.3 原地覆蓋升級, Redmi API 33 arm64 與 x86_64 API 33 AVD 全新安裝, force-stop 前後各 11/11 組 (第十一組為處理程序內 broker 的動態能力橋); 本次沒有 16 KiB 裝置在線, 執行階段載荷自 v0.2.2 起未變; 已發布標籤不重寫, Android/16 KB 相容範圍不擴大
-
-#### v0.2.4
-
-_2026/09/16_
-
-- `新增` M7 第二部分: 執行期動態呼叫能力橋與前兩項動態能力 `ui.toast` / `device.info`. 宿主在 runScript 請求裡攜帶 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder) 與 `hostCapabilities` (已授權能力 ID) 時, 插件為本次執行在私有快取目錄建立 unix socket (環境變數 `AUTOJS6_HOST_BRIDGE_SOCKET`), 指令碼用 `fetch(url, { unix })` 發 `GET /v1/info` 與 `POST /v1/<能力 ID>` (JSON 請求 <= 64 KiB, 結果 <= 256 KiB, 每次執行至多 1024 次, 4 路並行, 單次 10 s 逾時), 插件經 oneway AIDL `IBunHostCapabilityBroker` 中繼給宿主並只接受宿主 UID 對本次執行的回呼; 橋級錯誤碼 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) 只出現在 JSON 回應裡, runScript 終態錯誤碼集合不變, 終態新增 `hostBridgeDelivered` 與 `hostCalls`; 執行結束即關閉 socket 與在途呼叫. 能力位 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 共享契約 AAR 升級為 22437 bytes; 未提供橋的宿主行為完全不變
-- `優化` Android 17 區域網路授權統一移至外掛程式中心啟用流程及外掛程式設定, 不再提供啟動器授權頁面; 未獲授權時保持關閉並靜默略過自動啟動
-- `優化` 封存已發布 v0.2.3 的 APK/對應原始碼資產驗證及五個環境在最終發布位元組上的最終簽署套件驗收: Sony API 33 arm64 與 Xiaomi API 35 universal 從已發布 v0.2.2 原地覆蓋升級, Redmi API 33 arm64, x86_64 API 33 AVD 與 Samsung SM-A566B API 36 原生 arm64 16 KiB 實機全新安裝, force-stop 前後各 10/10 組 (第十組為宿主資訊快照); 已發布標籤不重寫, Android/16 KB 相容範圍不擴大
-- `優化` 支援 Android 17 (SDK 37), 提供外掛獨立的本機網路權限控制及復原指引
 
 ##### 更多發行記錄
 

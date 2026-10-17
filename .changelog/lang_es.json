@@ -5,6 +5,13 @@
   "changelog_label_improvement": "Mejora",
   "changelog_label_dependency": "Dependencia",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun admiten identificadores View de cada ejecución, fábricas AndroidView asíncronas, contenedores XML Compose, aplicaciones empaquetadas",
+        "Bun Runtime admite proyectos Bun firmados de forma independiente, con capacidades del host explícitas y un Runtime Kit compatible con Compose"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

@@ -234,6 +234,13 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.2.7
+
+_2026/10/18_
+
+- `기능` Bun에서 실행 소유 View 핸들, 비동기 AndroidView 팩터리, XML Compose 컨테이너 연결, 패키징 앱 지원
+- `기능` Bun Runtime에서 독립 서명된 Bun 프로젝트를 지원하며 명시적 호스트 기능 선언과 호환 Runtime Kit로 Compose 상호 운용 제공
+
 #### v0.2.6
 
 _2026/10/18_
@@ -257,15 +264,6 @@ _2026/09/20_
 - `힌트` 공식 플러그인은 계속 Android 13 (API 33) 이상이 필요함
 - `수정` 공유 빌드 플러그인 1.8.3을 통해 AGP 9.1의 SDK XML v4 파싱 경고 및 JVM 단위 테스트 조립 작업에서 APK 네이티브 라이브러리 정렬 검사가 잘못 실행되는 문제 해결
 - `개선` 게시된 v0.2.4의 APK/대응 소스 자산 검증과 최종 릴리스 바이트에서의 네 환경 서명 최종 APK 수락을 보관: Sony API 33 arm64와 Xiaomi API 35 universal은 게시된 v0.2.3에서 제자리 덮어쓰기 업그레이드, Redmi API 33 arm64와 x86_64 API 33 AVD는 새로 설치, force-stop 전후 각각 11/11 그룹 (열한 번째 그룹은 프로세스 내 broker를 사용하는 동적 기능 브리지); 이번에는 16 KiB 기기를 사용할 수 없었고 런타임 페이로드는 v0.2.2 이후 변경 없음; 게시된 태그는 다시 쓰지 않으며 Android/16 KB 호환 범위는 확장하지 않음
-
-#### v0.2.4
-
-_2026/09/16_
-
-- `기능` M7 두 번째 부분: 런타임 동적 호출용 기능 브리지와 처음 두 개의 동적 기능 `ui.toast` / `device.info`. 호스트가 runScript 요청에 `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (IBinder), `hostCapabilities` (허용된 기능 ID)를 담으면 플러그인은 실행마다 비공개 캐시 디렉터리에 unix socket을 만들고 (환경 변수 `AUTOJS6_HOST_BRIDGE_SOCKET`), 스크립트는 `fetch(url, { unix })`로 `GET /v1/info`와 `POST /v1/<기능 ID>`를 보냅니다 (JSON 요청 <= 64 KiB, 결과 <= 256 KiB, 실행당 최대 1024회, 동시 4건, 호출당 10 s 시간 제한). 플러그인은 oneway AIDL `IBunHostCapabilityBroker`로 호스트에 중계하며 이 실행에 대한 호스트 UID의 콜백만 받아들입니다. 브리지 수준 오류 코드 (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500)는 JSON 응답에만 나타나고, runScript 종료 오류 코드 집합은 그대로이며 종료 Bundle에 `hostBridgeDelivered`와 `hostCalls`가 추가됩니다; 실행이 끝나면 socket과 진행 중인 호출을 닫습니다. 기능 키 `SUPPORTS_HOST_CAPABILITY_BRIDGE`, 공유 계약 AAR은 22437 bytes로 갱신; 브리지를 제공하지 않는 호스트의 동작은 완전히 동일
-- `개선` Android 17 로컬 네트워크 권한 요청을 플러그인 센터의 활성화 흐름과 설정으로 통합하고 런처 권한 페이지 제거; 권한이 없으면 비활성 상태를 유지하고 자동 시작을 조용히 건너뜀
-- `개선` 게시된 v0.2.3 APK/소스 자산 검증과 최종 게시 바이트에서 다섯 환경의 서명된 최종 APK 검증 근거 보관: Sony API 33 arm64 와 Xiaomi API 35 universal 은 게시된 v0.2.2 에서 덮어쓰기 업그레이드, Redmi API 33 arm64, x86_64 API 33 AVD 와 Samsung SM-A566B API 36 네이티브 arm64 16 KiB 기기는 새로 설치, 각각 force-stop 전후 10/10 그룹 통과 (열 번째 그룹은 호스트 정보 스냅샷); 게시된 태그는 다시 쓰지 않으며 Android/16 KB 호환 범위도 확장하지 않음
-- `개선` Android 17 (SDK 37) 대응 및 플러그인별 로컬 네트워크 권한 설정과 복구 안내 제공
 
 ##### 더 많은 릴리스 기록
 

@@ -5,6 +5,13 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "يدعم Bun مقابض View الخاصة بالتنفيذ ومصانع AndroidView غير المتزامنة وحاويات XML Compose والتطبيقات المعبأة",
+        "يدعم Bun Runtime مشاريع Bun الموقعة بشكل مستقل مع قدرات مضيف صريحة و Runtime Kit متوافق لتكامل Compose"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

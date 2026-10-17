@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.7
+
+###### 2026/10/18
+
+* `Función` Bun admiten identificadores View de cada ejecución, fábricas AndroidView asíncronas, contenedores XML Compose, aplicaciones empaquetadas
+* `Función` Bun Runtime admite proyectos Bun firmados de forma independiente, con capacidades del host explícitas y un Runtime Kit compatible con Compose
+
 # v0.2.6
 
 ###### 2026/10/18

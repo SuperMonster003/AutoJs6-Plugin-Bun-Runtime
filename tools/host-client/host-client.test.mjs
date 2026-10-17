@@ -15,7 +15,7 @@ function transport(grants = capabilities, invoke = () => ({ value: null })) {
       assert.equal(init.unix, "/private/bridge.sock");
       assert.ok(init.signal instanceof AbortSignal);
       if (id === "info") return Response.json({ ok: true, bridgeVersion: 1, capabilities: grants, limits });
-      return Response.json({ ok: true, capability: id, result: invoke(id, JSON.parse(init.body)) });
+      return Response.json({ ok: true, capability: id, result: await invoke(id, JSON.parse(init.body)) });
     },
   };
 }
@@ -399,4 +399,22 @@ test("file-only grants can recycle their images without enabling image processin
   const host=await client(fake);const image=await host.images.read('image.png');await host.images.recycle(image);
   assert.equal(new URL(fake.requests.at(-1).url).pathname,'/v1/image.files');assert.equal(JSON.parse(fake.requests.at(-1).init.body).method,'recycle');
   await assert.rejects(host.images.quantize(image),error=>error.code==='NOT_GRANTED');
+});
+
+test("native View and Compose interop use independent grants and JSON identities", async () => {
+  const context={__autojs6UiContext:'context',packageName:'test',density:2,scaledDensity:2};
+  const view={__autojs6ViewHandle:'view',id:'view',type:'TextView',context};
+  let drains=0,closed=false;
+  const fake=transport(['ui.layout','ui.compose'],async (_id,{method})=>({value:
+    method==='context'?context:method==='inflate'?view:method==='attach'?{id:'compose',generation:1}:
+    method==='close'?(closed=true,null):method==='drainEvents'?(await new Promise(r=>setTimeout(r,5)),drains++===0?[{type:'shown'}]:closed?[{type:'close'}]:[]):null}));
+  const host=await client(fake);const native=await host.ui.createView('TextView',{text:'Native'});
+  assert.equal(typeof native.get,'function');assert.equal(structuredClone(native).get,undefined);
+  const session=await host.compose.attach(native,host.compose.AndroidView({view:async ctx=>ctx.createView('Text',{text:'Factory'})}));
+  await session.close();await native.dispose();
+  const calls=fake.requests.filter(r=>r.init?.body).map(r=>[new URL(r.url).pathname,JSON.parse(r.init.body).method]);
+  assert(calls.some(([path,method])=>path==='/v1/ui.layout'&&method==='inflate'));
+  assert(calls.some(([path,method])=>path==='/v1/ui.compose'&&method==='attach'));
+  const denied=await client(transport(['ui.compose']));
+  await assert.rejects(denied.ui.context(),{code:'NOT_GRANTED'});
 });

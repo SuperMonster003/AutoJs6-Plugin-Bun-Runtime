@@ -5,6 +5,13 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "相依性",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun 支援執行所屬 View 控制代碼, 非同步 AndroidView 工廠與 XML Compose 容器掛載, 同步支援打包應用程式",
+        "Bun Runtime 支援獨立簽署的 Bun 專案, 使用明確的宿主能力宣告及配套 Runtime Kit 實現 Compose 互通"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

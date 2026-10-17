@@ -234,6 +234,13 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.7
+
+_2026/10/18_
+
+- `Función` Bun admiten identificadores View de cada ejecución, fábricas AndroidView asíncronas, contenedores XML Compose, aplicaciones empaquetadas
+- `Función` Bun Runtime admite proyectos Bun firmados de forma independiente, con capacidades del host explícitas y un Runtime Kit compatible con Compose
+
 #### v0.2.6
 
 _2026/10/18_
@@ -257,15 +264,6 @@ _2026/09/20_
 - `Aviso` El plugin oficial sigue requiriendo Android 13 (API 33) o posterior
 - `Corrección` Advertencias de lectura de SDK XML v4 con AGP 9.1 y comprobaciones de alineación nativa de APK activadas por error al ensamblar pruebas unitarias JVM, mediante los plugins de compilación compartidos 1.8.3
 - `Mejora` Archiva la verificación de los activos APK/fuente publicados de v0.2.4 y la aceptación del APK final firmado en cuatro entornos sobre los bytes finales de la publicación: actualizaciones in situ desde la v0.2.3 publicada en Sony API 33 arm64 y Xiaomi API 35 universal, instalaciones limpias en Redmi API 33 arm64 y un AVD x86_64 API 33, cada una con 11/11 grupos antes y después de force-stop (el undécimo grupo es el puente de capacidades dinámicas con un broker en el mismo proceso); no hubo dispositivo de 16 KiB disponible y las cargas del runtime no cambian desde v0.2.2; la etiqueta publicada no se reescribe y la compatibilidad Android/16 KB no se amplía
-
-#### v0.2.4
-
-_2026/09/16_
-
-- `Función` M7 segunda parte: el puente de capacidades para llamadas dinámicas en tiempo de ejecución y las dos primeras capacidades dinámicas `ui.toast` / `device.info`. Cuando el host incluye `hostCapabilityBridgeVersion = 1`, `hostCapabilityBroker` (un IBinder) y `hostCapabilities` (los ID de capacidad concedidos) en la solicitud runScript, el plugin abre un socket unix por ejecución en su directorio de caché privado (variable de entorno `AUTOJS6_HOST_BRIDGE_SOCKET`); los scripts envían `GET /v1/info` y `POST /v1/<ID de capacidad>` mediante `fetch(url, { unix })` (solicitudes JSON de hasta 64 KiB, resultados de hasta 256 KiB, máximo 1024 llamadas por ejecución, 4 en curso, 10 s por llamada) y el plugin las retransmite por el AIDL oneway `IBunHostCapabilityBroker`, aceptando solo las respuestas del UID del host para esta ejecución. Los códigos de error del puente (INVALID_REQUEST 400, NOT_GRANTED 403, UNKNOWN_CAPABILITY 404, PAYLOAD_TOO_LARGE 413, TOO_MANY_REQUESTS/QUOTA_EXCEEDED 429, HOST_UNAVAILABLE 503, TIMEOUT 504, INTERNAL 500) solo aparecen en las respuestas JSON; los códigos de error terminales de runScript no cambian y el Bundle terminal añade `hostBridgeDelivered` y `hostCalls`; el socket y toda llamada pendiente se cierran al terminar la ejecución. Clave de capacidad `SUPPORTS_HOST_CAPABILITY_BRIDGE`, AAR del contrato compartido ahora de 22437 bytes; los hosts que no ofrecen el puente no notan ningún cambio
-- `Mejora` Autorización de red local de Android 17 integrada en la activación y los ajustes del plugin, sin página de permisos en el lanzador; sin permiso, el plugin permanece desactivado y se omite el inicio automático sin avisos
-- `Mejora` Archivar la verificación de APK y fuentes publicados con v0.2.3 y la aceptación de los APK finales firmados en cinco entornos sobre los bytes finales publicados: actualización sobre la v0.2.2 publicada en Sony API 33 arm64 y Xiaomi API 35 universal, instalación limpia en Redmi API 33 arm64, un AVD x86_64 API 33 y un Samsung SM-A566B API 36 arm64 nativo con páginas de 16 KiB, cada uno con 10/10 grupos antes y después de force-stop (el décimo grupo es la instantánea de información del host); la etiqueta publicada no se reescribe y la compatibilidad Android/16 KB no se amplía
-- `Mejora` Compatibilidad con Android 17 (SDK 37), controles de permiso de red local propios del plugin y ayuda para recuperar el acceso
 
 ##### Más historial de versiones
 

@@ -26,7 +26,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
-class BunRuntimeService : Service() {
+open class BunRuntimeService : Service() {
+    protected open val callerPermission: String get() = BunRuntimeContract.PLUGIN_PERMISSION
     private val executionGate = Semaphore(1, true)
     private val activeExecutions = ConcurrentHashMap<String, ExecutionHandle>()
     private val pendingCancellations = ConcurrentHashMap<String, Long>()
@@ -60,8 +61,9 @@ class BunRuntimeService : Service() {
         override fun cancelScript(executionId: String?): Boolean {
             enforcePluginCaller()
             if (executionId == null || !BunExecutionRequestParser.isValidExecutionId(executionId)) return false
-            activeExecutions[executionId]?.let { return it.cancel() }
-            rememberPendingCancellation(executionId)
+            val key = executionKey(Binder.getCallingUid(), executionId)
+            activeExecutions[key]?.let { return it.cancel() }
+            rememberPendingCancellation(key)
             return true
         }
 
@@ -82,7 +84,7 @@ class BunRuntimeService : Service() {
                 request = BunExecutionRequestParser.parse(requestBundle)
                 requireNotNull(source) { "Source descriptor is missing" }
                 requireNotNull(callback) { "Runtime callback is missing" }
-                if (consumePendingCancellation(request.executionId)) {
+                if (consumePendingCancellation(executionKey(callingUid, request.executionId))) {
                     return failureWithCallback(callback, request.executionId, BunRuntimeContract.ERROR_CANCELLED, null, startedAt, cancelled = true)
                 }
                 if (!executionGate.tryAcquire()) {
@@ -90,10 +92,10 @@ class BunRuntimeService : Service() {
                 }
                 gateAcquired = true
                 handle = ExecutionHandle()
-                require(activeExecutions.putIfAbsent(request.executionId, handle) == null) {
+                require(activeExecutions.putIfAbsent(executionKey(callingUid, request.executionId), handle) == null) {
                     "Execution ID is already active"
                 }
-                if (consumePendingCancellation(request.executionId)) handle.cancel()
+                if (consumePendingCancellation(executionKey(callingUid, request.executionId))) handle.cancel()
                 val probe = runtimeBinary.probe()
                 if (!probe.ready) {
                     return failureWithCallback(
@@ -167,7 +169,7 @@ class BunRuntimeService : Service() {
                 runCatching { bridge?.close() }
                 handle?.let { activeHandle ->
                     request?.executionId?.let { executionId ->
-                        activeExecutions.remove(executionId, activeHandle)
+                        activeExecutions.remove(executionKey(callingUid, executionId), activeHandle)
                     }
                 }
                 workspace?.takeIf { it.parentFile == executionRoot() }?.deleteRecursively()
@@ -176,9 +178,11 @@ class BunRuntimeService : Service() {
         }
     }
 
+    private fun executionKey(uid: Int, executionId: String) = "$uid:$executionId"
+
     private fun enforcePluginCaller() {
         enforceCallingPermission(
-            BunRuntimeContract.PLUGIN_PERMISSION,
+            callerPermission,
             getString(R.string.runtime_error_permission),
         )
     }

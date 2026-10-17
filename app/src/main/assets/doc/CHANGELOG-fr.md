@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.7
+
+###### 2026/10/18
+
+* `Fonctionnalité` Bun prennent en charge les handles View propres à une exécution, les fabriques AndroidView asynchrones, les conteneurs XML Compose, les applications empaquetées
+* `Fonctionnalité` Bun Runtime prend en charge les projets Bun signés indépendamment, avec des capacités hôtes explicites et un Runtime Kit compatible avec Compose
+
 # v0.2.6
 
 ###### 2026/10/18

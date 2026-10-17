@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.7
+
+###### 2026/10/18
+
+* `新增` Bun 支持执行所属 View 句柄, 异步 AndroidView 工厂与 XML Compose 容器挂载, 同步支持打包应用
+* `新增` Bun Runtime 支持独立签名的 Bun 项目, 使用显式宿主能力声明及配套 Runtime Kit 实现 Compose 互操作
+
 # v0.2.6
 
 ###### 2026/10/18

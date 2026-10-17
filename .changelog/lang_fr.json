@@ -5,6 +5,13 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun prennent en charge les handles View propres à une exécution, les fabriques AndroidView asynchrones, les conteneurs XML Compose, les applications empaquetées",
+        "Bun Runtime prend en charge les projets Bun signés indépendamment, avec des capacités hôtes explicites et un Runtime Kit compatible avec Compose"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

@@ -5,6 +5,13 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.2.7": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun поддерживают дескрипторы View в пределах выполнения, асинхронные фабрики AndroidView, контейнеры XML Compose, упакованные приложения",
+        "Bun Runtime поддерживает независимо подписанные проекты Bun с явным списком возможностей хоста и соответствующим Runtime Kit для Compose"
+      ]
+    },
     "v0.2.6": {
       "released_date": "2026/10/18",
       "improvement": [

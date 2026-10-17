@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.7
+
+###### 2026/10/18
+
+* `Feature` Bun support execution-owned View handles, asynchronous AndroidView factories and XML Compose container attachments, with packaged application support
+* `Feature` Bun Runtime supports independently signed Bun projects with explicit host capabilities and a matching Runtime Kit for Compose interoperability
+
 # v0.2.6
 
 ###### 2026/10/18
