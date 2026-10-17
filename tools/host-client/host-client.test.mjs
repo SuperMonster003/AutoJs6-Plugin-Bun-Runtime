@@ -21,6 +21,47 @@ function transport(grants = capabilities, invoke = () => ({ value: null })) {
 }
 async function client(fake) { return createHostClient({ socket: "/private/bridge.sock", fetch: fake.fetch }); }
 
+test("UI and Compose grants are separate and their local constructors never require a grant", async () => {
+  const denied=await client(transport([]));
+  assert.equal(denied.compose.Text({text:"local"}).get("text"),"local");
+  assert.equal(denied.ui.state({n:1}).get("n"),1);
+  await assert.rejects(denied.compose.isAvailable(),error=>error.code==="NOT_GRANTED");
+  await assert.rejects(denied.ui.showLayout({type:"Text",text:"denied"}),error=>error.code==="NOT_GRANTED");
+});
+
+test("parallel window and data calls stay within the negotiated four-call transport bound", async () => {
+  let active=0,peak=0;
+  const host=await createHostClient({socket:'/private/bridge.sock',fetch:async(url,init)=>{
+    const capability=url.split('/').at(-1);
+    if(capability==='info')return Response.json({ok:true,bridgeVersion:1,capabilities:['ui.compose'],limits});
+    active++;peak=Math.max(peak,active);await new Promise(resolve=>setTimeout(resolve,10));active--;
+    return Response.json({ok:true,capability,result:{value:true}});
+  }});
+  assert.deepEqual(await Promise.all(Array.from({length:12},()=>host.compose.isAvailable())),Array(12).fill(true));
+  assert.equal(peak,4);assert.equal(active,0);
+});
+
+test("Compose state, event callbacks, native frame updates and close use the bounded data protocol", async () => {
+  const calls=[],events=[{type:"shown"}];let tree,closed=false;
+  const host=await createHostClient({socket:"/private/bridge.sock",fetch:async(url,init)=>{
+    const capability=url.split('/').at(-1);
+    if(capability==='info')return Response.json({ok:true,bridgeVersion:1,capabilities:['ui.compose'],limits});
+    const {method,args}=JSON.parse(init.body);calls.push(method);let value=null;
+    if(method==='mount'){tree=args[0];value={id:'compose-bun'};}
+    if(method==='render')tree=args[1];
+    if(method==='close')closed=true;
+    if(method==='drainEvents'){await new Promise(resolve=>setTimeout(resolve,10));value=closed?[{type:'close'}]:events.splice(0);}
+    return Response.json({ok:true,capability,result:{value}});
+  }});
+  const count=host.compose.state(0),ref=host.compose.ref();
+  const session=await host.compose.mount(()=>host.compose.Button({ref,onClick(){count.value++;}},host.compose.Text({text:String(count.value)})));
+  events.push({type:'click',callbackId:tree.callbacks.onClick});
+  for(let n=0;n<50&&count.value===0;n++)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(count.value,1);await session.flush();assert.equal(tree.children[0].props.text,'1');
+  await session.close();assert.equal(ref.current,null);assert.equal(host.compose.sessions.length,0);assert(closed);
+  assert(calls.includes('render'));assert(calls.length<20);
+});
+
 test("screen recorder uses a separate grant, preserves file metadata and rejects nonfinite options before transport", async () => {
   const result={path:"/sdcard/video.mp4",size:4096,durationMs:1200,width:320,height:180,mimeType:"video/mp4",videoCodec:"h264",audio:false};
   const fake=transport(capabilities,(id,{method,args})=>{

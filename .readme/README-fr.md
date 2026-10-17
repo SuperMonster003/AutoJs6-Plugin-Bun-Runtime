@@ -236,7 +236,7 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 #### v0.2.6
 
-_2026/10/17_
+_2026/10/18_
 
 - `Fonctionnalité` Client explicite des API de l'hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)
 - `Fonctionnalité` Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut
@@ -245,6 +245,7 @@ _2026/10/17_
 - `Fonctionnalité` Bun images prend en charge les filtres avancés, la conversion des couleurs, les recherches multicolores, les cercles, les mesures de similarité et les URL
 - `Fonctionnalité` Bun images prend en charge SIFT/ORB avec coordonnées de scène, géométrie ObjectFrame et handles Mat/caractéristiques propres à chaque exécution
 - `Fonctionnalité` Bun images prend en charge la quantification PNG et la compression avec mesures de qualité/mémoire, résultats binaires et sortie par descripteur de fichier
+- `Fonctionnalité` Bun UI et Compose prennent en charge les interfaces natives, composants de données, états réactifs et événements, avec autorisations distinctes et fermeture automatique
 - `Correctif` Le client de coordonnées interprétait un premier argument undefined explicite comme une requête de dimensions sans argument ou une coordonnée nulle
 - `Amélioration` Les icônes du centre de plugins utilisent les tailles, positions, images claires et sombres et fonds circulaires réglés dans Icon Studio, avec les sources et paramètres permettant de les reproduire
 - `Amélioration` Les icônes des informations d'application Android utilisent les illustrations et les fonds clairs et sombres d'Icon Studio, en conservant les images transparentes du centre de plugins et les choix du lanceur

@@ -6,7 +6,7 @@
 
 # v0.2.6
 
-###### 2026/10/17
+###### 2026/10/18
 
 * `Feature` Explicit host API client with Pinyin/Pinyin4j, live coordinate conversion and console controls, TypeScript declarations and per-capability authorization (requires a matching AutoJs6 host)
 * `Feature` OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant
@@ -15,6 +15,7 @@
 * `Feature` Bun images supports advanced filters, color conversion, multi-color searches, circles, similarity metrics and URL loading
 * `Feature` Bun images supports SIFT/ORB extraction and matching with scene coordinates, ObjectFrame geometry and execution-owned Mat/feature handles
 * `Feature` Bun images supports PNG quantization and compression with quality/memory metrics, binary results and descriptor-backed file output
+* `Feature` Bun UI and Compose support native layouts, data components, reactive state and window events, with independent grants and automatic window cleanup
 * `Fix` Coordinate client calls with an explicit undefined first argument being mistaken for dimension queries or zero-valued coordinates
 * `Improvement` Plugin Center icons use the sizes, positions, light and dark artwork, and circular backgrounds adjusted in Icon Studio, retaining reproducible sources and parameters
 * `Improvement` Android App info icons share Icon Studio artwork and light/dark backgrounds while preserving transparent Plugin Center artwork and existing launcher choices
