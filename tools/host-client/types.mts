@@ -57,9 +57,13 @@ await host.screenRecorder.start("capture.mp4", {width:320,height:180,frameRate:3
 const recording=await host.screenRecorder.getStatus();
 if(recording.state!=="idle") { const width:number=recording.width; void width; }
 const movie=await host.screenRecorder.stop();
-if(movie) { const silent:false=movie.audio; const bytes:number=movie.size; void [silent,bytes]; }
+if(movie) { const audio:boolean=movie.audio; const bytes:number=movie.size; const source: import('../../app/src/main/assets/autojs6/host-client.mjs').ScreenRecordingAudioSource=movie.audioSource; void [audio,bytes,source]; }
 const cancelled:boolean=await host.screenRecorder.cancel();void cancelled;
-// @ts-expect-error audio capture has not been implemented
+await host.screenRecorder.start("audio.mp4", {audio:"microphone"});
+await host.screenRecorder.start("audio.mp4", {audio:"playback"});
+await host.screenRecorder.start("audio.mp4", {audio:"mixed"});
+await host.screenRecorder.start("silent.mp4", {audio:false});
+// @ts-expect-error select an explicit source rather than an ambiguous true
 await host.screenRecorder.start("capture.mp4", {audio:true});
 void [pixels, bytes];
 void [compact, readings, info, width, traditional];

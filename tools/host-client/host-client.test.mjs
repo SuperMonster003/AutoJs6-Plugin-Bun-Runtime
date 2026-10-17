@@ -40,6 +40,21 @@ test("screen recorder uses a separate grant, preserves file metadata and rejects
   for(const method of HOST_API_METHODS['screen.record']) await assert.rejects(denied.screenRecorder[method]('file.mp4'),{code:'NOT_GRANTED'});
 });
 
+test("audio recording modes and concurrent screenshots preserve the public bridge contracts", async () => {
+  const fake=transport([...capabilities,"screen.record.microphone","screen.record.playback"],(id,{method,args})=>{
+    if(id==='screen.capture'&&method==='captureScreen')return {value:{id:'live',__autojs6ImageHandle:'live',width:720,height:1280}};
+    assert.equal(id,'screen.record');assert.equal(method,'start');
+    return {value:{state:'recording',audio:args[1].audio!=='none',audioSource:args[1].audio}};
+  });
+  const host=await client(fake);
+  assert(host.hasCapability('screen.record.microphone'));assert(host.hasCapability('screen.record.playback'));
+  for(const audio of ['none','microphone','playback','mixed']){
+    const [active,frame]=await Promise.all([host.screenRecorder.start('test.mp4',{audio}),host.images.captureScreen()]);
+    assert.equal(active.audioSource,audio);assert.equal(frame.width,720);assert.equal(frame.height,1280);
+  }
+  assert.equal(fake.requests.filter(r=>r.init.body?.includes('"method":"start"')).length,4);
+});
+
 test("screen consent polls without extending ordinary transport calls and deduplicates concurrent requests", async () => {
   let polls = 0;
   const image = {id:"capture",__autojs6ImageHandle:"capture",width:320,height:240};

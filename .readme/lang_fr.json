@@ -16,7 +16,7 @@
     "Livraison entièrement localisée: métadonnées du plugin, instructions du centre de plugins, README et changelog couvrent 10 langues, tous générés depuis un même jeu de sources validé.",
     "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut.",
     "Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande.",
-    "Bun screenRecorder enregistre des vidéos écran H.264 MP4 sans son avec autorisation distincte, dimensions fixes, finalisation explicite et nettoyage après annulation."
+    "Bun screenRecorder produit des MP4 H.264 avec audio AAC du microphone, des applications ou mixé et captures pendant la vidéo, avec autorisations audio distinctes et nettoyage après annulation."
   ],
   "h3_usage": "Installation et utilisation",
   "usage_steps": [

@@ -1,5 +1,7 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
+2026-10-17 宿主能力第五批: 录屏支持可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 音频使用独立默认关闭的授权, 遵循 RECORD_AUDIO, 麦克风前台服务和来源捕获策略. 同一投影帧输入分发至编码与截图, 旋转时更换输入缓冲而不重建虚拟显示. 原生 Bun 字节与桥传输预算不变. 验证记录见宿主 docs/dev/runtime-audio-capture-2026-10-17.md.
+
 2026-10-17 宿主能力第四批: screen.record 独立授权的 screenRecorder 支持无声 H.264/MP4 文件输出, 固定尺寸, 显式停止收尾和取消/退出清理. 复用 screen.capture 的系统同意和同一个虚拟显示, 不改动冻结的 Bun 原生运行时. Android 13/15 真机验证见宿主 docs/dev/runtime-video-worker-2026-10-17.md.
 
 更新日期: 2026-09-14
