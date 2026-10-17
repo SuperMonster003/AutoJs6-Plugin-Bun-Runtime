@@ -1,6 +1,12 @@
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
 export const SDK_VERSION = 1;
 
+export const OPENCC_CONVERSION_TYPES = Object.freeze([
+  "hk2s", "hk2t", "jp2t", "s2hk", "s2t", "s2tw", "s2twp", "t2hk", "t2s", "t2tw", "t2jp", "tw2s", "tw2t", "tw2sp",
+  "s2twi", "twi2s", "s2jp", "t2twi", "hk2tw", "hk2twi", "hk2jp", "tw2hk", "tw2twi", "tw2jp",
+  "twi2t", "twi2hk", "twi2tw", "twi2jp", "jp2s", "jp2hk", "jp2tw", "jp2twi",
+]);
+
 export class HostCallError extends Error {
   constructor(code, message, capability = null, status = 0) {
     super(message);
@@ -15,6 +21,13 @@ export class HostCallError extends Error {
 export const HOST_API_METHODS = Object.freeze({
   "text.pinyin": Object.freeze(["convert", "simple", "compare", "compact", "fromCodePoint", "fromPhrase"]),
   "text.pinyin4j": Object.freeze(["of", "as", "readings"]),
+  "text.opencc": Object.freeze(["convert"]),
+  "image.process": Object.freeze([
+    "fromBase64", "toBase64", "pixel", "readPixels", "copy", "clip", "resize", "scale", "rotate", "flip",
+    "grayscale", "threshold", "blur", "gaussianBlur", "medianBlur", "invert", "findImage", "matchTemplate",
+    "findColor", "findMultiColors", "detectsColor", "findAllPointsForColor", "recycle",
+  ]),
+  "image.files": Object.freeze(["readImage", "saveImage"]),
   "screen.metrics": Object.freeze([
     "cX", "cY", "cXy", "cYx", "getInfo", "getScaleBaseX", "getScaleBaseY", "getScaleBases",
     "setScaleBaseX", "setScaleBaseY", "setScaleBases",
@@ -112,6 +125,113 @@ export async function createHostClient(options = {}) {
     }])));
   }
 
+  const convertText = group("text.opencc").convert;
+  const opencc = async (text, type) => {
+    if (text === null || text === undefined) throw new TypeError("OpenCC text must not be null or undefined");
+    return convertText(String(text), String(type));
+  };
+  Object.assign(opencc, { convert: opencc });
+  for (const type of OPENCC_CONVERSION_TYPES) opencc[type] = text => opencc(text, type);
+  Object.freeze(opencc);
+
+  const imageProcess = group("image.process");
+  const imageFiles = group("image.files");
+  const imageArgument = image => {
+    const id = image?.__autojs6ImageHandle ?? image?.id;
+    if (typeof id !== "string" || !id) throw new TypeError("An execution-owned image handle is required");
+    return { id, __autojs6ImageHandle: id };
+  };
+  const imageResult = value => {
+    const id = imageArgument(value).id;
+    if (!Number.isInteger(value.width) || value.width < 1 || !Number.isInteger(value.height) || value.height < 1) {
+      throw new HostCallError("INVALID_RESPONSE", "Host image dimensions are invalid");
+    }
+    return Object.freeze({ id, __autojs6ImageHandle: id, width: value.width, height: value.height });
+  };
+  const imageOptions = value => {
+    if (value === undefined || value === null) return {};
+    if (!isObject(value)) throw new TypeError("Image options must be an object");
+    return { ...value };
+  };
+  const number = (value, label) => {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`${label} must be a finite number`);
+    return value;
+  };
+  const encodingOptions = (value, quality) => {
+    const options = typeof value === "string" ? { format: value } : imageOptions(value);
+    if (quality !== undefined) options.quality = quality;
+    const format = options.format ?? "png";
+    if (!["png", "jpg", "jpeg", "webp"].includes(format)) throw new TypeError("Bun image encoding must be png, jpg, jpeg or webp");
+    return { ...options, format };
+  };
+  const bytesOf = value => {
+    if (value instanceof ArrayBuffer) return new Uint8Array(value);
+    if (ArrayBuffer.isView(value)) return new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+    if (Array.isArray(value) && value.every(byte => Number.isInteger(byte) && byte >= 0 && byte <= 255)) return Uint8Array.from(value);
+    throw new TypeError("Encoded image bytes must be an ArrayBuffer, byte view or byte array");
+  };
+  const encodeBytes = bytes => {
+    const parts = [];
+    for (let start = 0; start < bytes.length; start += 8192) parts.push(String.fromCharCode(...bytes.subarray(start, start + 8192)));
+    return btoa(parts.join(""));
+  };
+  const transform = async (method, image, options) => imageResult(await imageProcess[method](imageArgument(image), options));
+  const images = {
+    fromBase64: async value => {
+      if (typeof value !== "string") throw new TypeError("Encoded image base64 must be a string");
+      return imageResult(await imageProcess.fromBase64(value));
+    },
+    fromBytes: async value => images.fromBase64(encodeBytes(bytesOf(value))),
+    readImage: async path => imageResult(await imageFiles.readImage(path)),
+    saveImage: async (image, path, formatOrOptions, quality) => { await imageFiles.saveImage(imageArgument(image), path, encodingOptions(formatOrOptions, quality)); },
+    toBase64: async (image, formatOrOptions, quality) => imageProcess.toBase64(imageArgument(image), encodingOptions(formatOrOptions, quality)),
+    toBytes: async (image, formatOrOptions, quality) => {
+      const encoded = await images.toBase64(image, formatOrOptions, quality);
+      return Uint8Array.from(atob(encoded), char => char.charCodeAt(0));
+    },
+    pixel: async (image, x, y) => imageProcess.pixel(imageArgument(image), number(x, "x"), number(y, "y")),
+    readPixels: async (image, options) => imageProcess.readPixels(imageArgument(image), imageOptions(options)),
+    getSize: image => ({ width: imageResult(image).width, height: image.height }),
+    copy: async image => imageResult(await imageProcess.copy(imageArgument(image))),
+    clip: async (image, x, y, width, height) => transform("clip", image, {
+      x: number(x, "x"), y: number(y, "y"), width: number(width, "width"), height: number(height, "height"),
+    }),
+    resize: async (image, width, height, options) => transform("resize", image, { ...imageOptions(options), width: number(width, "width"), height: number(height, "height") }),
+    scale: async (image, fx, fyOrOptions, options) => transform("scale", image, {
+      ...imageOptions(isObject(fyOrOptions) ? fyOrOptions : options), fx: number(fx, "fx"),
+      ...(fyOrOptions === undefined || isObject(fyOrOptions) ? {} : { fy: number(fyOrOptions, "fy") }),
+    }),
+    rotate: async (image, degrees, centerXOrOptions, centerY) => transform("rotate", image, {
+      ...imageOptions(isObject(centerXOrOptions) ? centerXOrOptions : undefined), degrees: number(degrees, "degrees"),
+      ...(centerXOrOptions === undefined || isObject(centerXOrOptions) ? {} : { centerX: number(centerXOrOptions, "centerX") }),
+      ...(centerY === undefined ? {} : { centerY: number(centerY, "centerY") }),
+    }),
+    flip: async (image, direction = "horizontal", vertical) => transform("flip", image, typeof direction === "boolean"
+      ? { direction: direction ? (vertical ? "both" : "horizontal") : (vertical ? "vertical" : "none") }
+      : typeof direction === "string" ? { direction } : imageOptions(direction)),
+    grayscale: async image => transform("grayscale", image),
+    threshold: async (image, options) => transform("threshold", image, imageOptions(options)),
+    blur: async (image, size) => transform("blur", image, { size }),
+    gaussianBlur: async (image, size, sigmaXOrOptions, sigmaY) => transform("gaussianBlur", image, {
+      ...imageOptions(isObject(sigmaXOrOptions) ? sigmaXOrOptions : undefined), size,
+      ...(sigmaXOrOptions === undefined || isObject(sigmaXOrOptions) ? {} : { sigmaX: number(sigmaXOrOptions, "sigmaX") }),
+      ...(sigmaY === undefined ? {} : { sigmaY: number(sigmaY, "sigmaY") }),
+    }),
+    medianBlur: async (image, size) => transform("medianBlur", image, { size: number(size, "size") }),
+    invert: async image => transform("invert", image),
+    findImage: async (image, template, options) => imageProcess.findImage(imageArgument(image), imageArgument(template), imageOptions(options)),
+    matchTemplate: async (image, template, options) => imageProcess.matchTemplate(imageArgument(image), imageArgument(template), imageOptions(options)),
+    findColor: async (image, color, options) => imageProcess.findColor(imageArgument(image), color, imageOptions(options)),
+    findMultiColors: async (image, color, points, options) => imageProcess.findMultiColors(imageArgument(image), color, points, imageOptions(options)),
+    detectsColor: async (image, color, x, y, thresholdOrOptions) => imageProcess.detectsColor(imageArgument(image), color,
+      number(x, "x"), number(y, "y"), typeof thresholdOrOptions === "number" ? { threshold: thresholdOrOptions } : imageOptions(thresholdOrOptions)),
+    findAllPointsForColor: async (image, color, options) => imageProcess.findAllPointsForColor(imageArgument(image), color, imageOptions(options)),
+    recycle: async image => { await imageProcess.recycle(imageArgument(image)); },
+  };
+  images.detectColor = images.detectsColor;
+  images.findPointsByColor = images.findAllPointsForColor;
+  Object.freeze(images);
+
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     bridgeVersion: info.bridgeVersion,
@@ -123,6 +243,8 @@ export async function createHostClient(options = {}) {
     device: Object.freeze({ info: () => call("device.info") }),
     pinyin: group("text.pinyin"),
     pinyin4j: group("text.pinyin4j"),
+    opencc,
+    images,
     coordinates: group("screen.metrics"),
     console: group("console.control"),
   });

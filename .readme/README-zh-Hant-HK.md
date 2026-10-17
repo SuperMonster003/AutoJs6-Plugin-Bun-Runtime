@@ -97,6 +97,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - 穩定且可控: 每個腳本在隔離的插件程序中執行, 可隨時取消, timeout 時自動終止, 即使腳本異常也不影響 AutoJs6 本身.
 - 引擎來源可驗證: 內置 Bun executable 與官方 release 逐 byte 對應, tag, commit, size, SHA-256 和 ELF 屬性在 build 和 CI 中強制驗證.
 - 完整的多語言交付: 插件 metadata, 插件中心說明, README 和更新日誌涵蓋 10 種語言, 全部由同一組經驗證的文案來源自動產生.
+- 宿主客戶端支援完整 OpenCC 轉換及常用圖像 API, 包含像素讀取, 編解碼, 變換, 找色與按執行回收的圖像句柄; 宿主圖片檔案存取採用獨立授權且預設關閉.
 
 ******
 
@@ -105,7 +106,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - 專案檔案需要宿主協商工作區歸檔: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝依賴 (--no-install).
-- 不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及控制台控制透過明確匯入的宿主客戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供.
+- 不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及控制台控制透過明確匯入的宿主客戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供. 明確匯入的客戶端亦提供全部 32 類 OpenCC 轉換與常用圖像處理. 圖片檔案讀寫需要獨立的 image.files 授權, 預設關閉. 編碼圖片傳輸沿用請求 64 KiB / 結果 256 KiB 的 JSON 上限, 大型圖片應使用宿主檔案路徑.
 - 沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 程序中的 Java class 或 object.
 - 不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.
 - 不是 security sandbox: Bun 腳本以受信任程式碼身分在插件程序中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本.
@@ -118,7 +119,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 為甚麼在 Bun 腳本裏用不了 `click()`, `toast()` 這些 AutoJs6 函數?
 
-Bun 使用獨立引擎, 不注入 Rhino 全域變數. 明確匯入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的客戶端, 呼叫 await createHostClient() 協商本次執行的授權. 配套宿主提供 toast/裝置資訊, Pinyin/Pinyin4j, 即時 cX/cY/cXy/cYx 換算及非同步控制台控制. 拼音仍需要對應插件, Android 權限仍需授予; 控制台控制預設關閉. 各項能力可在插件中心獨立撤銷. [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) 說明載入, 類型, 錯誤與尚未涵蓋的能力.
+Bun 使用獨立引擎, 不注入 Rhino 全域變數. 明確匯入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的客戶端, 呼叫 await createHostClient() 協商本次執行的授權. 配套宿主提供 toast/裝置資訊, Pinyin/Pinyin4j, 即時 cX/cY/cXy/cYx 換算及非同步控制台控制. 拼音仍需要對應插件, Android 權限仍需授予; 控制台控制預設關閉. 各項能力可在插件中心獨立撤銷. [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) 說明載入, 類型, 錯誤與尚未涵蓋的能力. 明確匯入的客戶端亦提供全部 32 類 OpenCC 轉換與常用圖像處理. 圖片檔案讀寫需要獨立的 image.files 授權, 預設關閉. 編碼圖片傳輸沿用請求 64 KiB / 結果 256 KiB 的 JSON 上限, 大型圖片應使用宿主檔案路徑.
 
 #### 可以使用 npm 套件嗎?
 
@@ -236,6 +237,7 @@ default timeout: 60 seconds
 _2026/10/17_
 
 - `新增` 明確匯入的宿主 API 客戶端, 提供 Pinyin/Pinyin4j, 即時座標換算與控制台控制, 附 TypeScript 宣告及獨立能力授權 (需要配套 AutoJs6 宿主)
+- `新增` 宿主客戶端支援完整 OpenCC 轉換及常用圖像 API, 包含像素讀取, 編解碼, 變換, 找色與按執行回收的圖像句柄; 宿主圖片檔案存取採用獨立授權且預設關閉
 - `修復` 座標客戶端將明確傳入的 undefined 首參數誤作無參尺寸查詢或零座標的問題
 - `優化` 外掛程式中心圖示採用統一工作台調整後的尺寸, 位置, 明暗圖稿與圓形底色, 保留可重建原稿和參數
 - `優化` Android 系統應用程式資訊圖示與圖示工作台共用圖稿及明暗底色, 保留外掛程式中心透明圖稿與現有啟動器選項

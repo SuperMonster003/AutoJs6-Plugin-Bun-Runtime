@@ -21,7 +21,7 @@ If everything works, the first output line is `Bun 1.4.0` and the second line is
 ### Current Limitations
 
 - Project files require a host that negotiates workspace archives: scripts under project.json/package.json can then use relative imports. Otherwise only one source snapshot is sent. Dependencies are never installed automatically (--no-install).
-- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable.
+- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable. The explicit client also provides all 32 OpenCC conversion names and common image processing. Image file reads/writes require the separate image.files grant, which is disabled by default. Encoded image transfer uses the existing 64 KiB request / 256 KiB result JSON limits; use host file paths for large images.
 - No Java bridge: Bun scripts cannot directly access Java classes or objects in the AutoJs6 process.
 - No full Bun toolchain promise: `bunx`, on-device executable output, runtime C compilation, and arbitrary native addons are outside the supported scope.
 - Not a security sandbox: a Bun script runs as trusted code in the plugin process and can use the permissions granted to the plugin, so only run scripts you trust.

@@ -12,6 +12,10 @@
 
 2026-10-17 宿主 API 扩展: 当前开发源码交付显式导入的客户端和 TypeScript 声明, 配套宿主增加 `text.pinyin`, `text.pinyin4j`, `screen.metrics`, `console.control` 四组独立授权, 复用实际拼音 provider、坐标换算和控制台实现. 客户端通过 `AUTOJS6_HOST_CLIENT_MODULE` 加载并协商本次执行的授权, 不注入 Rhino 全局. 本轮不改变 Bun 原生二进制、Android/ABI 支持范围或冻结的实验线. 入口、语义和验证命令见 [宿主 API](docs/host-api.md).
 
+同日第二批增加 `text.opencc`, `image.process`, `image.files` 三组授权, 分别提供完整 OpenCC 转换, 常用内存图像操作和单独授权的宿主图片文件访问. 图像复用宿主现有 provider 的 codec, 句柄所有权和清理; 不开放截图, PFD 或完整 Node 桥. Bun 字节便利方法仍通过有界 base64 JSON 传输, 不能代替大型图片的文件路径流程. 可运行的透明像素示例位于 `samples/opencc-images.bun.js`.
+
+本批客户端 15 项回归, TypeScript 检查, 38 项 Python 检查和 Debug/JVM 构建通过. Sony XQ-DQ72 (Android 13/API 33, arm64, 4096-byte pages) 的完整 `BunRuntimeInstrumentedTest` 13 项通过, 耗时 22.940 s. 配套宿主还在真实 Bun 进程中验证全部 32 种 OpenCC 转换, 图像编解码与像素, JSON 超限拒绝, 文件授权撤销及原始调用不能越权. 原生 Bun 二进制未变, 此结果不扩展原生兼容范围或表示公开发布.
+
 **为什么调整.** 2026-09-08 至 09-14 的 60 余次提交里, 约六成是 `test`/`docs` 类型: 每一批固定夹具在多台设备各跑两轮, 再把结果归档到 `docs/compatibility`, 然后由归档里的 "仍开放" 项触发下一批夹具. 这个循环产出了大量证据, 但产品代码 (`app/src/main`, 约 1100 行) 自 2026-09-13 起没有新增用户可感知的能力, M6/M7 一直是 "未开始". 最新一例是 [HTTPS ALPN 阻断](docs/compatibility/2026-09-14-m4-runtime-network.md): 夹具断言了 Node.js 语义 (`https.createServer` 默认协商 `http/1.1`), 但这是上游 Bun 1.4.0 `node:https` 自身的缺口, 官方 Bun 在 Android 13+ 上同样如此 (见 oven-sh/bun [#41391](https://github.com/oven-sh/bun/pull/41391) 与 [#41672](https://github.com/oven-sh/bun/pull/41672)), 与 Android 9-12L 的 seccomp 兼容无关; 把它当作需要重新构建 native 的阻断, 就是这个循环的典型形态.
 
 **新的优先级.** 从上到下依次执行; 上一项没有可交付物之前, 不为下一项安排设备批次:

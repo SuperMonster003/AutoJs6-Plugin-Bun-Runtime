@@ -97,6 +97,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - 安定して制御できる: 各スクリプトは隔離されたプラグインプロセスで動作し, いつでも cancel でき, timeout で自動終了します. スクリプトが異常でも AutoJs6 本体には影響しません.
 - エンジンの出所を検証可能: 同梱の Bun executable は公式 release とバイト単位で一致し, tag, commit, size, SHA-256, ELF 属性が build と CI で強制検証されます.
 - 完全なローカライズ: plugin metadata, plugin center の説明, README, changelog を 10 言語で提供し, すべて検証済みの 1 つの文案 source から生成します.
+- ホストクライアントで OpenCC 変換と一般的な画像 API を提供, ピクセル取得, エンコード, 変換, 色検索と実行ごとの画像解放に対応; ホスト画像ファイルへのアクセスは個別許可で初期状態では無効.
 
 ******
 
@@ -105,7 +106,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - プロジェクトファイルにはワークスペースアーカイブを交渉するホストが必要です. 対応時は project.json/package.json 以下のスクリプトで相対インポートを使えます. それ以外は単一ソースのスナップショットのみ転送されます. 依存関係は自動インストールされません (--no-install).
-- Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です.
+- Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です. 明示的なクライアントは全32種類の OpenCC 変換と一般的な画像処理にも対応します. 画像ファイルの読み書きには初期状態で無効の image.files 許可が必要です. エンコード画像の転送も JSON リクエスト64 KiB / 結果256 KiB の上限に従うため, 大きい画像はホスト側のファイルパスを使ってください.
 - Java bridge なし: Bun スクリプトは AutoJs6 プロセスの Java class や object に直接 access できません.
 - 完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.
 - Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください.
@@ -118,7 +119,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?
 
-Bun は独立したエンジンであり, Rhino のグローバル変数は注入されません. process.env.AUTOJS6_HOST_CLIENT_MODULE のクライアントを明示的にインポートし, await createHostClient() で今回の実行の許可を確認します. 対応ホストでは toast/端末情報, Pinyin/Pinyin4j, リアルタイムの cX/cY/cXy/cYx 変換と非同期コンソール操作を利用できます. 拼音プラグインと Android 権限は別途必要です. コンソール操作は初期状態では無効です. 各機能はプラグインセンターで個別に無効化できます. 読み込み方, 型, エラーと未対応機能は [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) を参照してください.
+Bun は独立したエンジンであり, Rhino のグローバル変数は注入されません. process.env.AUTOJS6_HOST_CLIENT_MODULE のクライアントを明示的にインポートし, await createHostClient() で今回の実行の許可を確認します. 対応ホストでは toast/端末情報, Pinyin/Pinyin4j, リアルタイムの cX/cY/cXy/cYx 変換と非同期コンソール操作を利用できます. 拼音プラグインと Android 権限は別途必要です. コンソール操作は初期状態では無効です. 各機能はプラグインセンターで個別に無効化できます. 読み込み方, 型, エラーと未対応機能は [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) を参照してください. 明示的なクライアントは全32種類の OpenCC 変換と一般的な画像処理にも対応します. 画像ファイルの読み書きには初期状態で無効の image.files 許可が必要です. エンコード画像の転送も JSON リクエスト64 KiB / 結果256 KiB の上限に従うため, 大きい画像はホスト側のファイルパスを使ってください.
 
 #### npm パッケージは使えますか?
 
@@ -236,6 +237,7 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 _2026/10/17_
 
 - `機能` Pinyin/Pinyin4j, リアルタイム座標変換とコンソール操作用の明示的なホスト API クライアント, TypeScript 型宣言と機能別の許可設定 (対応する AutoJs6 ホストが必要)
+- `機能` ホストクライアントで OpenCC 変換と一般的な画像 API を提供, ピクセル取得, エンコード, 変換, 色検索と実行ごとの画像解放に対応; ホスト画像ファイルへのアクセスは個別許可で初期状態では無効
 - `修正` 座標クライアントの明示的な undefined 第1引数が引数なしの寸法取得や座標0として扱われる問題
 - `改善` プラグインセンターのアイコンに Icon Studio で調整したサイズ, 位置, 明暗の図稿と円形背景を適用し, 再生成可能な原稿とパラメーターを保持
 - `改善` Android のアプリ情報アイコンに Icon Studio と共通の図案と明暗の背景色を使用し, プラグインセンターの透明な図案と既存のランチャー設定を維持

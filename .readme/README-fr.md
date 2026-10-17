@@ -97,6 +97,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 - Stable et contrôlable: chaque script s'exécute dans un processus isolé du plugin, peut être annulé à tout moment et est terminé automatiquement en cas de timeout, si bien qu'un script défaillant n'entraîne jamais AutoJs6 avec lui.
 - Provenance vérifiable du moteur: l'exécutable Bun embarqué correspond octet par octet à la version officielle, et son tag, commit, taille, SHA-256 et propriétés ELF sont vérifiés au build et en CI.
 - Livraison entièrement localisée: métadonnées du plugin, instructions du centre de plugins, README et changelog couvrent 10 langues, tous générés depuis un même jeu de sources validé.
+- Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut.
 
 ******
 
@@ -105,7 +106,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 ******
 
 - Les fichiers du projet nécessitent un hôte négociant les archives de travail: les scripts sous project.json/package.json peuvent alors utiliser des imports relatifs. Sinon, seul un instantané source est transmis. Les dépendances ne sont jamais installées automatiquement (--no-install).
-- Aucune variable globale Rhino: utilisez le client explicite pour Pinyin/Pinyin4j, les coordonnées, toast/informations appareil et les commandes de console autorisés. Les autres API d’automatisation et les objets Java directs ne sont pas disponibles.
+- Aucune variable globale Rhino: utilisez le client explicite pour Pinyin/Pinyin4j, les coordonnées, toast/informations appareil et les commandes de console autorisés. Les autres API d'automatisation et les objets Java directs ne sont pas disponibles. Le client explicite propose aussi les 32 noms de conversion OpenCC et le traitement courant des images. La lecture/écriture de fichiers image exige l'autorisation séparée image.files, désactivée par défaut. Le transfert des images encodées conserve les limites JSON de 64 KiB par requête et 256 KiB par résultat; utilisez les chemins de l'hôte pour les grandes images.
 - Pas de pont Java: les scripts Bun ne peuvent pas accéder directement aux classes ou objets Java du processus AutoJs6.
 - Pas de promesse de toolchain Bun complet: `bunx`, la production d'exécutables sur l'appareil, la compilation C au runtime et les addons natifs arbitraires restent hors périmètre.
 - Pas un sandbox de sécurité: un script Bun s'exécute comme code de confiance dans le processus du plugin et peut utiliser les permissions accordées au plugin, donc n'exécutez que des scripts fiables.
@@ -118,7 +119,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 
 #### Pourquoi les fonctions AutoJs6 comme `click()` et `toast()` sont-elles indisponibles dans les scripts Bun?
 
-Bun utilise un moteur indépendant et ne reçoit pas les variables globales Rhino. Importez le client indiqué par process.env.AUTOJS6_HOST_CLIENT_MODULE puis appelez await createHostClient() pour consulter les autorisations de cette exécution. Un hôte compatible propose toast/informations appareil, Pinyin/Pinyin4j, conversion cX/cY/cXy/cYx en temps réel et commandes asynchrones de console. Les fournisseurs de pinyin et les permissions Android restent nécessaires; la console est désactivée par défaut. Chaque autorisation est révocable dans le centre des plugins. Voir [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) pour le chargement, les types, les erreurs et les fonctions non couvertes.
+Bun utilise un moteur indépendant et ne reçoit pas les variables globales Rhino. Importez le client indiqué par process.env.AUTOJS6_HOST_CLIENT_MODULE puis appelez await createHostClient() pour consulter les autorisations de cette exécution. Un hôte compatible propose toast/informations appareil, Pinyin/Pinyin4j, conversion cX/cY/cXy/cYx en temps réel et commandes asynchrones de console. Les fournisseurs de pinyin et les permissions Android restent nécessaires; la console est désactivée par défaut. Chaque autorisation est révocable dans le centre des plugins. Voir [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) pour le chargement, les types, les erreurs et les fonctions non couvertes. Le client explicite propose aussi les 32 noms de conversion OpenCC et le traitement courant des images. La lecture/écriture de fichiers image exige l'autorisation séparée image.files, désactivée par défaut. Le transfert des images encodées conserve les limites JSON de 64 KiB par requête et 256 KiB par résultat; utilisez les chemins de l'hôte pour les grandes images.
 
 #### Puis-je utiliser des paquets npm?
 
@@ -235,7 +236,8 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 _2026/10/17_
 
-- `Fonctionnalité` Client explicite des API de l’hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)
+- `Fonctionnalité` Client explicite des API de l'hôte avec Pinyin/Pinyin4j, conversion des coordonnées en temps réel et commandes de console, déclarations TypeScript et autorisations par capacité (hôte AutoJs6 compatible requis)
+- `Fonctionnalité` Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut
 - `Correctif` Le client de coordonnées interprétait un premier argument undefined explicite comme une requête de dimensions sans argument ou une coordonnée nulle
 - `Amélioration` Les icônes du centre de plugins utilisent les tailles, positions, images claires et sombres et fonds circulaires réglés dans Icon Studio, avec les sources et paramètres permettant de les reproduire
 - `Amélioration` Les icônes des informations d'application Android utilisent les illustrations et les fonds clairs et sombres d'Icon Studio, en conservant les images transparentes du centre de plugins et les choix du lanceur

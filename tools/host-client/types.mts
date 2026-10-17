@@ -1,6 +1,13 @@
 import { createHostClient, type HostClient, type ScreenInfo } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
 const host: HostClient = await createHostClient();
+const traditional: string = await host.opencc("汉语", "s2t");
+await host.opencc.convert("汉语", "S2TW");
+await host.opencc.jp2twi("漢字");
+// @ts-expect-error null text is not silently converted into a string
+await host.opencc.s2t(null);
+// @ts-expect-error unknown conversion types are not advertised as supported
+await host.opencc("汉字", "unknown");
 const matrix: string[][] = await host.pinyin.convert("北京上海", { style: "TONE" });
 const compact: string[][] = await host.pinyin.compact(matrix);
 const readings: string[][] = await host.pinyin4j.readings("重庆", { romanization: "HANYU_PINYIN" });
@@ -28,4 +35,18 @@ await host.coordinates.cX(undefined);
 await host.coordinates.cXy(undefined);
 // @ts-expect-error unknown host methods should not autocomplete as callable
 await host.pinyin.missing();
-void [compact, readings, info, width];
+const image = await host.images.fromBytes(new Uint8Array([137, 80, 78, 71]));
+const pixels: readonly number[] = (await host.images.readPixels(image)).data;
+const bytes: Uint8Array = await host.images.toBytes(image, { format: "png" });
+await host.images.rotate(image, 90, { filter: false });
+await host.images.flip(image, false, true);
+await host.images.scale(image, 2, { interpolation: "nearest" });
+await host.images.gaussianBlur(image, [3, 3], { sigmaX: 1 });
+await host.images.detectsColor(image, -65536, 0, 0, 0);
+await host.images.recycle(image);
+// @ts-expect-error Bun only returns encoded bytes; raw RGBA is a Node-specific transport
+await host.images.toBytes(image, "rgba");
+// @ts-expect-error no implicit capture permission or full Node bridge is supplied to Bun
+await host.images.captureScreen();
+void [pixels, bytes];
+void [compact, readings, info, width, traditional];

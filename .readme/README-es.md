@@ -97,6 +97,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 - Estable y controlable: cada script se ejecuta en un proceso aislado del plugin, puede cancelarse en cualquier momento y se termina automáticamente al agotarse el tiempo, así que un script problemático nunca arrastra a AutoJs6.
 - Procedencia verificable del motor: el ejecutable Bun incluido corresponde byte a byte a la versión oficial, y su tag, commit, tamaño, SHA-256 y propiedades ELF se verifican durante la compilación y en CI.
 - Entrega totalmente localizada: los metadatos del plugin, las instrucciones del centro de plugins, el README y el changelog cubren 10 idiomas, todos generados desde un único conjunto de fuentes validado.
+- Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto.
 
 ******
 
@@ -105,7 +106,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 ******
 
 - Los archivos del proyecto requieren un host que negocie archivos de espacio de trabajo: los scripts bajo project.json/package.json pueden usar importaciones relativas. De lo contrario se envía una sola instantánea de código. Nunca se instalan dependencias automáticamente (--no-install).
-- No se inyectan variables globales de Rhino: use el cliente explícito para Pinyin/Pinyin4j, coordenadas, toast/información del dispositivo y controles de consola autorizados. Otras API de automatización y objetos Java directos siguen sin estar disponibles.
+- No se inyectan variables globales de Rhino: use el cliente explícito para Pinyin/Pinyin4j, coordenadas, toast/información del dispositivo y controles de consola autorizados. Otras API de automatización y objetos Java directos siguen sin estar disponibles. El cliente explícito también ofrece los 32 nombres de conversión OpenCC y procesamiento habitual de imágenes. Leer/escribir imágenes requiere el permiso separado image.files, desactivado por defecto. La transferencia de imágenes codificadas mantiene los límites JSON de 64 KiB por solicitud y 256 KiB por resultado; use rutas del host para imágenes grandes.
 - Sin puente Java: los scripts Bun no pueden acceder directamente a clases u objetos Java del proceso de AutoJs6.
 - Sin promesa de toolchain completo de Bun: `bunx`, la generación de ejecutables en el dispositivo, la compilación C en runtime y los addons nativos arbitrarios quedan fuera del alcance admitido.
 - No es un sandbox de seguridad: un script Bun se ejecuta como código de confianza en el proceso del plugin y puede usar los permisos concedidos al plugin, así que ejecuta solo scripts en los que confíes.
@@ -118,7 +119,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 
 #### Por qué funciones de AutoJs6 como `click()` y `toast()` no están disponibles en los scripts Bun?
 
-Bun usa un motor independiente y no recibe variables globales de Rhino. Importe el cliente de process.env.AUTOJS6_HOST_CLIENT_MODULE y llame a await createHostClient() para consultar los permisos de esta ejecución. Un host compatible ofrece toast/información del dispositivo, Pinyin/Pinyin4j, conversión cX/cY/cXy/cYx en tiempo real y controles asíncronos de consola. Aún se necesitan los proveedores de pinyin y los permisos de Android; el control de consola está desactivado por defecto. Cada permiso puede revocarse en el Centro de plugins. Consulte [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) para carga, tipos, errores y funciones pendientes.
+Bun usa un motor independiente y no recibe variables globales de Rhino. Importe el cliente de process.env.AUTOJS6_HOST_CLIENT_MODULE y llame a await createHostClient() para consultar los permisos de esta ejecución. Un host compatible ofrece toast/información del dispositivo, Pinyin/Pinyin4j, conversión cX/cY/cXy/cYx en tiempo real y controles asíncronos de consola. Aún se necesitan los proveedores de pinyin y los permisos de Android; el control de consola está desactivado por defecto. Cada permiso puede revocarse en el Centro de plugins. Consulte [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) para carga, tipos, errores y funciones pendientes. El cliente explícito también ofrece los 32 nombres de conversión OpenCC y procesamiento habitual de imágenes. Leer/escribir imágenes requiere el permiso separado image.files, desactivado por defecto. La transferencia de imágenes codificadas mantiene los límites JSON de 64 KiB por solicitud y 256 KiB por resultado; use rutas del host para imágenes grandes.
 
 #### Puedo usar paquetes npm?
 
@@ -236,6 +237,7 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 _2026/10/17_
 
 - `Función` Cliente explícito de API del host con Pinyin/Pinyin4j, conversión de coordenadas en tiempo real y controles de consola, declaraciones TypeScript y permisos por capacidad (requiere un host AutoJs6 compatible)
+- `Función` Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto
 - `Corrección` El cliente de coordenadas interpretaba un primer argumento undefined explícito como una consulta de dimensiones sin argumentos o una coordenada cero
 - `Mejora` Los iconos del centro de plugins usan los tamaños, posiciones, imágenes claras y oscuras y fondos circulares ajustados en Icon Studio, conservando fuentes y parámetros reproducibles
 - `Mejora` Los iconos de información de la aplicación de Android comparten las imágenes y los fondos claros y oscuros de Icon Studio, conservando las imágenes transparentes del centro de plugins y las opciones del lanzador

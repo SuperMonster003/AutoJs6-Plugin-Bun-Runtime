@@ -9,6 +9,7 @@
 ###### 2026/10/17
 
 * `Función` Cliente explícito de API del host con Pinyin/Pinyin4j, conversión de coordenadas en tiempo real y controles de consola, declaraciones TypeScript y permisos por capacidad (requiere un host AutoJs6 compatible)
+* `Función` Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto
 * `Corrección` El cliente de coordenadas interpretaba un primer argumento undefined explícito como una consulta de dimensiones sin argumentos o una coordenada cero
 * `Mejora` Los iconos del centro de plugins usan los tamaños, posiciones, imágenes claras y oscuras y fondos circulares ajustados en Icon Studio, conservando fuentes y parámetros reproducibles
 * `Mejora` Los iconos de información de la aplicación de Android comparten las imágenes y los fondos claros y oscuros de Icon Studio, conservando las imágenes transparentes del centro de plugins y las opciones del lanzador

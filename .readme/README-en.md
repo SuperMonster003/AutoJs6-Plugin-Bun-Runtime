@@ -97,6 +97,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - Stable and controllable: each script runs in an isolated plugin process, can be cancelled at any time, and is terminated automatically on timeout, so a misbehaving script never takes AutoJs6 down with it.
 - Verifiable engine provenance: the bundled Bun executable corresponds byte for byte to the official release, and its tag, commit, size, SHA-256, and ELF properties are enforced during build and CI.
 - Fully localized delivery: plugin metadata, plugin-center instructions, README, and changelog cover 10 languages, all generated from one validated source set.
+- OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant.
 
 ******
 
@@ -105,7 +106,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 ******
 
 - Project files require a host that negotiates workspace archives: scripts under project.json/package.json can then use relative imports. Otherwise only one source snapshot is sent. Dependencies are never installed automatically (--no-install).
-- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable.
+- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable. The explicit client also provides all 32 OpenCC conversion names and common image processing. Image file reads/writes require the separate image.files grant, which is disabled by default. Encoded image transfer uses the existing 64 KiB request / 256 KiB result JSON limits; use host file paths for large images.
 - No Java bridge: Bun scripts cannot directly access Java classes or objects in the AutoJs6 process.
 - No full Bun toolchain promise: `bunx`, on-device executable output, runtime C compilation, and arbitrary native addons are outside the supported scope.
 - Not a security sandbox: a Bun script runs as trusted code in the plugin process and can use the permissions granted to the plugin, so only run scripts you trust.
@@ -118,7 +119,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 
 #### Why are AutoJs6 functions such as `click()` and `toast()` unavailable in Bun scripts?
 
-Bun has its own engine and does not receive Rhino globals. Import the client at `process.env.AUTOJS6_HOST_CLIENT_MODULE` explicitly and call `await createHostClient()` to negotiate this run's grants. With a matching AutoJs6 host, it provides toast/device info, Pinyin/Pinyin4j, live cX/cY/cXy/cYx conversion and asynchronous console controls. Pinyin providers and Android permissions remain necessary; console control is off by default. Each capability can be revoked independently in Plugin Center. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for loading, types, errors and remaining gaps.
+Bun has its own engine and does not receive Rhino globals. Import the client at `process.env.AUTOJS6_HOST_CLIENT_MODULE` explicitly and call `await createHostClient()` to negotiate this run's grants. With a matching AutoJs6 host, it provides toast/device info, Pinyin/Pinyin4j, live cX/cY/cXy/cYx conversion and asynchronous console controls. Pinyin providers and Android permissions remain necessary; console control is off by default. Each capability can be revoked independently in Plugin Center. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for loading, types, errors and remaining gaps. The explicit client also provides all 32 OpenCC conversion names and common image processing. Image file reads/writes require the separate image.files grant, which is disabled by default. Encoded image transfer uses the existing 64 KiB request / 256 KiB result JSON limits; use host file paths for large images.
 
 #### Can I use npm packages?
 
@@ -236,6 +237,7 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 _2026/10/17_
 
 - `Feature` Explicit host API client with Pinyin/Pinyin4j, live coordinate conversion and console controls, TypeScript declarations and per-capability authorization (requires a matching AutoJs6 host)
+- `Feature` OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant
 - `Fix` Coordinate client calls with an explicit undefined first argument being mistaken for dimension queries or zero-valued coordinates
 - `Improvement` Plugin Center icons use the sizes, positions, light and dark artwork, and circular backgrounds adjusted in Icon Studio, retaining reproducible sources and parameters
 - `Improvement` Android App info icons share Icon Studio artwork and light/dark backgrounds while preserving transparent Plugin Center artwork and existing launcher choices

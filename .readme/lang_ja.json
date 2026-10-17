@@ -13,7 +13,8 @@
     "実行状況がわかりやすい: `console.log` などの出力はリアルタイムで AutoJs6 コンソールへ届き, 終了時には exit status, 所要時間, timeout や cancel の有無が報告されます.",
     "安定して制御できる: 各スクリプトは隔離されたプラグインプロセスで動作し, いつでも cancel でき, timeout で自動終了します. スクリプトが異常でも AutoJs6 本体には影響しません.",
     "エンジンの出所を検証可能: 同梱の Bun executable は公式 release とバイト単位で一致し, tag, commit, size, SHA-256, ELF 属性が build と CI で強制検証されます.",
-    "完全なローカライズ: plugin metadata, plugin center の説明, README, changelog を 10 言語で提供し, すべて検証済みの 1 つの文案 source から生成します."
+    "完全なローカライズ: plugin metadata, plugin center の説明, README, changelog を 10 言語で提供し, すべて検証済みの 1 つの文案 source から生成します.",
+    "ホストクライアントで OpenCC 変換と一般的な画像 API を提供, ピクセル取得, エンコード, 変換, 色検索と実行ごとの画像解放に対応; ホスト画像ファイルへのアクセスは個別許可で初期状態では無効."
   ],
   "h3_usage": "インストールと使用方法",
   "usage_steps": [
@@ -40,7 +41,7 @@
   "h3_limitations": "現在の制限",
   "limitations": [
     "プロジェクトファイルにはワークスペースアーカイブを交渉するホストが必要です. 対応時は project.json/package.json 以下のスクリプトで相対インポートを使えます. それ以外は単一ソースのスナップショットのみ転送されます. 依存関係は自動インストールされません (--no-install).",
-    "Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です.",
+    "Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です. 明示的なクライアントは全32種類の OpenCC 変換と一般的な画像処理にも対応します. 画像ファイルの読み書きには初期状態で無効の image.files 許可が必要です. エンコード画像の転送も JSON リクエスト64 KiB / 結果256 KiB の上限に従うため, 大きい画像はホスト側のファイルパスを使ってください.",
     "Java bridge なし: Bun スクリプトは AutoJs6 プロセスの Java class や object に直接 access できません.",
     "完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.",
     "Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください."
@@ -57,7 +58,7 @@
   "faq": [
     {
       "q": "Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?",
-      "a": "Bun は独立したエンジンであり, Rhino のグローバル変数は注入されません. process.env.AUTOJS6_HOST_CLIENT_MODULE のクライアントを明示的にインポートし, await createHostClient() で今回の実行の許可を確認します. 対応ホストでは toast/端末情報, Pinyin/Pinyin4j, リアルタイムの cX/cY/cXy/cYx 変換と非同期コンソール操作を利用できます. 拼音プラグインと Android 権限は別途必要です. コンソール操作は初期状態では無効です. 各機能はプラグインセンターで個別に無効化できます. 読み込み方, 型, エラーと未対応機能は [Host API]({{ repo_url }}/blob/master/docs/host-api.md) を参照してください."
+      "a": "Bun は独立したエンジンであり, Rhino のグローバル変数は注入されません. process.env.AUTOJS6_HOST_CLIENT_MODULE のクライアントを明示的にインポートし, await createHostClient() で今回の実行の許可を確認します. 対応ホストでは toast/端末情報, Pinyin/Pinyin4j, リアルタイムの cX/cY/cXy/cYx 変換と非同期コンソール操作を利用できます. 拼音プラグインと Android 権限は別途必要です. コンソール操作は初期状態では無効です. 各機能はプラグインセンターで個別に無効化できます. 読み込み方, 型, エラーと未対応機能は [Host API]({{ repo_url }}/blob/master/docs/host-api.md) を参照してください. 明示的なクライアントは全32種類の OpenCC 変換と一般的な画像処理にも対応します. 画像ファイルの読み書きには初期状態で無効の image.files 許可が必要です. エンコード画像の転送も JSON リクエスト64 KiB / 結果256 KiB の上限に従うため, 大きい画像はホスト側のファイルパスを使ってください."
     },
     {
       "q": "npm パッケージは使えますか?",

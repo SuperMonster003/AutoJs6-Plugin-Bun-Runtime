@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { createHostClient, HostCallError, HOST_API_METHODS, SDK_VERSION } from "../../app/src/main/assets/autojs6/host-client.mjs";
+import { createHostClient, HostCallError, HOST_API_METHODS, OPENCC_CONVERSION_TYPES, SDK_VERSION } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
 const capabilities = ["ui.toast", "device.info", ...Object.keys(HOST_API_METHODS)];
 const limits = { maxRequestBytes: 65536, maxResultBytes: 262144, maxCallsPerExecution: 1024, maxConcurrentCalls: 4, callTimeoutMillis: 10000 };
@@ -55,6 +55,114 @@ test("keeps matrix and null results, without the old toy dictionary or string-on
   assert.equal(await host.pinyin.fromCodePoint(0x1f642), null);
   assert.deepEqual(await host.pinyin.compact([["zhāo", "cháo"], ["yáng"]]), [["zhāo", "yáng"], ["cháo", "yáng"]]);
   assert.deepEqual(await host.pinyin4j.readings("朝阳", { romanization: "HANYU_PINYIN" }), [["zhāo", "yáng"], ["cháo", "yáng"]]);
+});
+
+test("OpenCC callable, convert and all 32 aliases reach the real conversion route", async () => {
+  const calls = [];
+  const host = await client(transport(capabilities, (id, payload) => {
+    calls.push({ id, ...payload });
+    return { value: "漢語轉換" };
+  }));
+  assert.equal(await host.opencc("汉语转换", "s2t"), "漢語轉換");
+  assert.equal(await host.opencc.convert(123, "S2T"), "漢語轉換");
+  assert.equal(new Set(OPENCC_CONVERSION_TYPES).size, 32);
+  for (const type of OPENCC_CONVERSION_TYPES) assert.equal(await host.opencc[type]("汉语转换"), "漢語轉換");
+  assert.deepEqual(calls.slice(0, 2), [
+    { id: "text.opencc", method: "convert", args: ["汉语转换", "s2t"] },
+    { id: "text.opencc", method: "convert", args: ["123", "S2T"] },
+  ]);
+  assert.deepEqual(calls.slice(2).map(call => call.args[1]), [...OPENCC_CONVERSION_TYPES]);
+  assert.ok(calls.every(call => call.id === "text.opencc" && call.method === "convert"));
+  await assert.rejects(host.opencc(null, "s2t"), TypeError);
+  await assert.rejects(host.opencc.s2t(undefined), TypeError);
+  const deniedTransport = transport(["device.info"]);
+  const denied = await client(deniedTransport);
+  await assert.rejects(denied.opencc.s2t("汉字"), { code: "NOT_GRANTED" });
+  assert.equal(deniedTransport.requests.length, 1);
+});
+
+test("image codecs preserve bytes and offsets while file access uses its own grant", async () => {
+  const png = "iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAFklEQVR4nGP4z8DwHwgbGCDgPxiAGAB5qQp3ze/uggAAAABJRU5ErkJggg==";
+  const encoded = Uint8Array.from(atob(png), value => value.charCodeAt(0));
+  const calls = [];
+  let next = 0;
+  const fake = transport(capabilities, (id, payload) => {
+    calls.push({ id, ...payload });
+    if (["fromBase64", "readImage", "copy"].includes(payload.method)) return { value: { id: `image-${++next}`, width: 3, height: 2 } };
+    if (payload.method === "toBase64") return { value: png };
+    if (payload.method === "pixel") return { value: -65536 };
+    if (payload.method === "readPixels") return { value: { data: [-65536, -2147418368, 0, -16776961, -1, -16777216], width: 3, height: 2 } };
+    return { value: true };
+  });
+  const host = await client(fake);
+  const image = await host.images.fromBase64(png);
+  assert.ok(Object.isFrozen(image));
+  const padded = Uint8Array.from([99, ...encoded, 88]);
+  const decoded = await host.images.fromBytes(padded.subarray(1, -1));
+  assert.equal(calls[1].args[0], png, "byte views must not include bytes outside their offset/length");
+  const copiedBytes = await host.images.toBytes(decoded, "png");
+  assert.ok(copiedBytes instanceof Uint8Array);
+  assert.deepEqual(copiedBytes, encoded);
+  assert.equal(await host.images.pixel(image, 0, 0), -65536);
+  assert.deepEqual((await host.images.readPixels(image)).data, [-65536, -2147418368, 0, -16776961, -1, -16777216]);
+  await host.images.saveImage(image, "pattern.png", { format: "png" });
+  await host.images.readImage("pattern.png");
+  assert.deepEqual(calls.filter(call => ["readImage", "saveImage"].includes(call.method)).map(call => call.id), ["image.files", "image.files"]);
+  await host.images.recycle(image);
+  assert.deepEqual(copiedBytes, encoded, "encoded byte copies outlive the host bitmap");
+  const before = fake.requests.length;
+  await assert.rejects(host.images.toBytes(decoded, "rgba"), TypeError);
+  await assert.rejects(host.images.fromBytes([256]), TypeError);
+  await assert.rejects(host.images.pixel(decoded, undefined, 0), TypeError);
+  assert.equal(fake.requests.length, before);
+  const limited = await client(transport(["image.process"]));
+  await assert.rejects(limited.images.readImage("private.png"), { code: "NOT_GRANTED" });
+  await assert.rejects(limited.images.saveImage(decoded, "private.png"), { code: "NOT_GRANTED" });
+});
+
+test("image transforms retain their arguments and never recycle the input implicitly", async () => {
+  const calls = [];
+  const source = { id: "source", __autojs6ImageHandle: "source", width: 3, height: 2 };
+  const host = await client(transport(capabilities, (id, payload) => {
+    calls.push({ id, ...payload });
+    return { value: { id: `derived-${calls.length}`, width: 3, height: 2 } };
+  }));
+  await host.images.copy(source);
+  await host.images.clip(source, 0, 0, 2, 1);
+  await host.images.resize(source, 6, 4, { interpolation: "nearest" });
+  await host.images.scale(source, 2, 3, { interpolation: "linear" });
+  await host.images.rotate(source, 90, { filter: false });
+  await host.images.flip(source, false, false);
+  await host.images.grayscale(source);
+  await host.images.threshold(source, { threshold: 100, maxValue: 200, type: "binary_inv" });
+  await host.images.blur(source, [3, 5]);
+  await host.images.gaussianBlur(source, 3, { sigmaX: 1.2, sigmaY: 0.8 });
+  await host.images.medianBlur(source, 3);
+  await host.images.invert(source);
+  assert.deepEqual(calls.map(call => call.method), ["copy", "clip", "resize", "scale", "rotate", "flip", "grayscale", "threshold", "blur", "gaussianBlur", "medianBlur", "invert"]);
+  assert.ok(calls.every(call => call.id === "image.process" && call.args[0].id === source.id));
+  assert.deepEqual(calls[3].args[1], { interpolation: "linear", fx: 2, fy: 3 });
+  assert.deepEqual(calls[4].args[1], { filter: false, degrees: 90 });
+  assert.deepEqual(calls[5].args[1], { direction: "none" });
+  assert.deepEqual(calls[9].args[1], { sigmaX: 1.2, sigmaY: 0.8, size: 3 });
+  assert.deepEqual(host.images.getSize(source), { width: 3, height: 2 });
+});
+
+test("pixel searches retain signed ARGB values and public aliases use canonical routes", async () => {
+  const calls = [];
+  const image = { id: "sample" };
+  const host = await client(transport(capabilities, (id, payload) => {
+    calls.push({ id, ...payload });
+    return { value: payload.method === "detectsColor" ? true : [] };
+  }));
+  assert.equal(await host.images.detectColor(image, -65536, 0, 0, 0), true);
+  await host.images.findPointsByColor(image, -65536, { threshold: 0 });
+  await host.images.findMultiColors(image, "#ff0000", [[1, 0, -1]], { threshold: 0 });
+  await host.images.findImage(image, { id: "template" }, { threshold: 0.9 });
+  await host.images.matchTemplate(image, { id: "template" }, { max: 2 });
+  assert.deepEqual(calls.map(call => call.method), ["detectsColor", "findAllPointsForColor", "findMultiColors", "findImage", "matchTemplate"]);
+  assert.equal(calls[0].args[1], -65536);
+  assert.deepEqual(calls[0].args[4], { threshold: 0 });
 });
 
 test("coordinate calls retain overload positions, explicit ratio and large finite numbers", async () => {
@@ -156,4 +264,9 @@ test("every delivered method has a declaration and a callable wrapper", async ()
       assert.equal(typeof host[key][name], "function", `${key}.${name} wrapper missing`);
     }
   }
+  const imageBody = declaration.split("export interface ImagesApi {")[1].split("\n}")[0];
+  const imageMethods = [...new Set([...imageBody.matchAll(/^\s+(\w+)\(/gm)].map(match => match[1]))].sort();
+  assert.deepEqual(Object.keys(host.images).sort(), imageMethods);
+  for (const method of [...HOST_API_METHODS["image.process"], ...HOST_API_METHODS["image.files"]]) assert.equal(typeof host.images[method], "function");
+  assert.deepEqual(Object.keys(host.opencc).sort(), ["convert", ...OPENCC_CONVERSION_TYPES].sort());
 });

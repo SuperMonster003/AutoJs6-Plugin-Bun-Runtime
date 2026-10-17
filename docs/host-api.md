@@ -37,10 +37,13 @@ console.log(text);
 | `device.info` | `host.device.info()` | 开启 | Build 品牌/型号/系统版本/ABI, 不含标识符 |
 | `text.pinyin` | `host.pinyin` | 开启 | 宿主 Pinyin 插件, 无小字典回退 |
 | `text.pinyin4j` | `host.pinyin4j` | 开启 | 宿主 Pinyin4j 插件, 含多音字读音矩阵 |
+| `text.opencc` | `host.opencc` | 开启 | 宿主 3-Hanzi CC 插件, 完整 32 类转换及复合转换计划 |
+| `image.process` | `host.images` 的内存方法 | 开启 | 图像解码, 编码, 像素, 变换, 搜索和回收 |
+| `image.files` | `host.images.readImage/saveImage` | 关闭 | 读取或写入宿主可访问的图片文件 |
 | `screen.metrics` | `host.coordinates` | 开启 | 实时屏幕坐标换算, 本执行的 Scale 基数 |
 | `console.control` | `host.console` | 关闭 | 本执行控制台窗口, 外观及日志配置 |
 
-这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销. 拼音组还需要对应 Pinyin/Pinyin4j 插件安装并启用; 控制台显示还需要 Android 悬浮窗权限. 当前客户端没有无障碍、截图、OCR、UI 布局、Java、`rhino.run` 等能力, 也不是 Node Runtime 模块全集的别名.
+这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销. 拼音和 OpenCC 还需要对应 Pinyin/Pinyin4j/3-Hanzi CC 插件安装并启用; 控制台显示还需要 Android 悬浮窗权限. 图像的 OpenCV 运算需要宿主可用的 OpenCV 实现. 当前客户端没有无障碍, 截图, OCR, UI 布局, Java, `rhino.run` 等能力, 也不是 Node Runtime 模块全集的别名.
 
 所有客户端方法都返回 Promise, 应 `await` 成功或处理错误. 方法调用通过 `{method, args}` 发送, 成功值包含在 `{value: ...}` 中; `host.call` 可以直接发送能力请求, 仍受相同授权、白名单和参数规则约束, 不能借此打开任意 Node 宿主方法.
 
@@ -54,6 +57,43 @@ console.log(await host.pinyin4j.readings("重庆"));
 ```
 
 `pinyin` 提供 `convert`, `simple`, `compare`, `compact`, `fromCodePoint`, `fromPhrase`; `pinyin4j` 提供 `of`, `as`, `readings`. `compact` 与 `readings` 返回二维字符串数组. 字典外文字交给真实插件处理; 插件缺失或执行失败会返回错误, 不把原文当成成功转换.
+
+### OpenCC
+
+```js
+console.log(await host.opencc("简体中文", "s2t"));
+console.log(await host.opencc.convert("简体中文", "S2TW"));
+console.log(await host.opencc.s2twp("软件与鼠标"));
+console.log(await host.opencc.jp2twi("漢字"));
+```
+
+`host.opencc` 是可调用函数, 同时提供 `convert` 和 32 个小写转换名方法. `OPENCC_CONVERSION_TYPES` 导出完整名称列表. 宿主使用与 Rhino 一致的 OpenCC 转换计划, 包括别名和多阶段转换. 返回值均为 `Promise<string>`, 不再使用不支持的占位函数. 空字符串可以转换; `null` 和 `undefined` 会被拒绝. 缺少 provider 或用户撤销授权时返回错误, 不原样返回输入伪装成转换成功.
+
+### 图像和像素
+
+```js
+const image = await host.images.fromBytes(encodedPngBytes);
+try {
+  console.log(host.images.getSize(image));
+  console.log(await host.images.pixel(image, 0, 0));
+  console.log(await host.images.readPixels(image, { region: [0, 0, 2, 2] }));
+  const copy = await host.images.rotate(image, 90, { filter: false });
+  try { console.log(await host.images.toBase64(copy, "png")); }
+  finally { await host.images.recycle(copy); }
+} finally { await host.images.recycle(image); }
+```
+
+图像句柄是冻结值 `{id, __autojs6ImageHandle, width, height}`, 由本次执行的宿主图像 provider 所有. 句柄没有 Rhino `ImageWrapper` 的 Java 对象和实例方法. `copy`, `clip`, `resize`, `scale`, `rotate`, `flip`, `grayscale`, `threshold`, `blur`, `gaussianBlur`, `medianBlur`, `invert` 返回独立的新句柄, 不消耗输入图像. 显式 `recycle` 释放图像; 执行结束也会清理所有剩余句柄. 其他执行的句柄及已回收句柄不能用于图像操作, 默认每次执行最多保留 32 个宿主图像句柄.
+
+`pixel` 返回有符号 ARGB32 整数. `readPixels` 返回 `{data: number[], width, height}`, `data` 按行排列同样的 ARGB32 值, 含 alpha, 不是 RGBA 字节. 支持 `findColor`, `findMultiColors`, `detectsColor`/`detectColor`, `findAllPointsForColor`/`findPointsByColor`, `findImage`, `matchTemplate`. 这些方法不意味着全部高级 OpenCV 特征匹配接口已覆盖.
+
+`fromBase64` 解码编码图片, `fromBytes` 将 PNG/JPEG/WebP 等编码图片字节转为 base64 后调用同一入口. `toBase64` 默认 PNG, 可选 PNG/JPEG/WebP 和 quality; `toBytes` 将相同编码结果复制为 `Uint8Array`, 回收原图后字节仍有效. Bun 不支持 Node 的 PFD 上传或 `toBytes(..., "rgba")` 重载. JPEG 本身不保存透明度, 需要 alpha 时使用 PNG 或合适的 WebP 格式.
+
+图像也受 64 KiB 请求和 256 KiB 结果的既有 JSON 限制, base64 字符串、参数和封装字段共同占用额度. 不能把该额度当作可用原始像素或图片文件字节数. 大型图片使用 `readImage`/`saveImage` 的宿主文件路径, 分块像素读取使用 `region`. 该路径按宿主工作目录和 Android 文件权限解析, 不是 Bun 临时源码目录; 内存处理授权不能代替 `image.files` 文件授权. 此处没有开放 `captureScreen` 或录屏授权.
+
+完整可运行示例见 [`samples/opencc-images.bun.js`](../samples/opencc-images.bun.js), 使用包含透明度的 3x2 PNG 验证像素和编码往返, 并在 `finally` 中回收派生图像.
+
+`readPixels` 单次最多返回 16,384 个像素, `findAllPointsForColor` 最多返回 4,096 个匹配点, 超限会拒绝而非截断. 后者匹配不透明像素, 使用 RGB 各通道阈值并返回图像自身坐标. `detectsColor` 默认使用 diff 算法, 另可指定 rgb/rgb+/hs/h/equal/oklab. 编解码, 像素读取, 复制, 裁剪, 旋转, 翻转及 detectsColor 不依赖 OpenCV; 缩放, 滤镜和图像搜索需要可用的 OpenCV 插件.
 
 ### 坐标
 
