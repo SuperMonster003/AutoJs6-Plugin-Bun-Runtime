@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.2.10": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: Загрузки HTTP(S) в WebView, системный выбор файлов и асинхронные вызовы WebViewClient/WebChromeClient с правилами навигации и ресурсов"
+      ]
+    },
     "v0.2.9": {
       "released_date": "2026/10/18",
       "feature": [

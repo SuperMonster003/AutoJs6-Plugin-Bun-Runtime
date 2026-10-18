@@ -234,6 +234,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.2.10
+
+_2026/10/18_
+
+- `Fonctionnalité` Bun: Téléchargements HTTP(S) WebView, sélection de fichiers système et rappels WebViewClient/WebChromeClient asynchrones avec règles natives de navigation et de ressources
+
 #### v0.2.9
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Fonctionnalité` Bun prennent en charge les formulaires et interfaces XML courants, les propriétés View asynchrones, les affectations ordonnées, la reprise après erreur
-
-#### v0.2.7
-
-_2026/10/18_
-
-- `Fonctionnalité` Bun prennent en charge les handles View propres à une exécution, les fabriques AndroidView asynchrones, les conteneurs XML Compose, les applications empaquetées
-- `Fonctionnalité` Bun Runtime prend en charge les projets Bun signés indépendamment, avec des capacités hôtes explicites et un Runtime Kit compatible avec Compose
 
 ##### Pour plus d'historique
 

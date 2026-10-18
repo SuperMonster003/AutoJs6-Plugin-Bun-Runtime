@@ -5,6 +5,12 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "依賴",
   "$data": {
+    "v0.2.10": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: WebView HTTP(S) 下載, 系統檔案選擇及非同步 WebViewClient/WebChromeClient 回調, 支援原生導覽和資源規則"
+      ]
+    },
     "v0.2.9": {
       "released_date": "2026/10/18",
       "feature": [

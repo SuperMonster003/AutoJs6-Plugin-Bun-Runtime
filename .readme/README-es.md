@@ -234,6 +234,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.10
+
+_2026/10/18_
+
+- `Función` Bun: Descargas HTTP(S) de WebView, selección de archivos del sistema y callbacks asíncronos WebViewClient/WebChromeClient con reglas nativas de navegación y recursos
+
 #### v0.2.9
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Función` Bun admiten formularios y diseños XML comunes, propiedades View asíncronas, asignaciones ordenadas, recuperación de errores
-
-#### v0.2.7
-
-_2026/10/18_
-
-- `Función` Bun admiten identificadores View de cada ejecución, fábricas AndroidView asíncronas, contenedores XML Compose, aplicaciones empaquetadas
-- `Función` Bun Runtime admite proyectos Bun firmados de forma independiente, con capacidades del host explícitas y un Runtime Kit compatible con Compose
 
 ##### Más historial de versiones
 

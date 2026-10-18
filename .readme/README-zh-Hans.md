@@ -234,6 +234,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.2.10
+
+_2026/10/18_
+
+- `新增` Bun: WebView HTTP(S) 下载, 系统文件选择及异步 WebViewClient/WebChromeClient 回调, 支持原生导航和资源规则
+
 #### v0.2.9
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `新增` Bun 支持常用 XML 表单与布局组件及原生 View 异步属性代理, 包含顺序赋值, 错误恢复
-
-#### v0.2.7
-
-_2026/10/18_
-
-- `新增` Bun 支持执行所属 View 句柄, 异步 AndroidView 工厂与 XML Compose 容器挂载, 同步支持打包应用
-- `新增` Bun Runtime 支持独立签名的 Bun 项目, 使用显式宿主能力声明及配套 Runtime Kit 实现 Compose 互操作
 
 ##### 更多发行历史
 

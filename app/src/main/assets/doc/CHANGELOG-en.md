@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.10
+
+###### 2026/10/18
+
+* `Feature` Bun: WebView HTTP(S) downloads, system file selection and asynchronous WebViewClient/WebChromeClient callbacks with native navigation and resource rules
+
 # v0.2.9
 
 ###### 2026/10/18

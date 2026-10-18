@@ -440,14 +440,15 @@ test("native property writes remain ordered and observable through reads and flu
 });
 
 test("WebView, Drawer, Toolbar and ViewPager commands share the native write queue", async () => {
-  const token={__autojs6ViewHandle:'components',id:'components',type:'WebView'},state={},order=[];
+  const token={__autojs6ViewHandle:'components',id:'components',type:'WebView'},state={},order=[],events=[];
   const fake=transport(['ui.layout'],async (_id,{method,args})=>{
     if(method==='inflate')return {value:token};
+    if(method==='viewEvents'){await new Promise(resolve=>setTimeout(resolve,5));return {value:events.splice(0)};}
     order.push(method);
     if(method==='viewUpdate')Object.assign(state,args[1]);
     if(method==='viewGet')return {value:state[args[1]]};
     if(method==='viewCommand') {
-      if(args[1]==='evaluateJavascript'){assert.equal(state.javaScriptEnabled,true);return {value:{answer:42}};}
+      if(args[1]==='beginWebEvaluation'){assert.equal(state.javaScriptEnabled,true);events.push({type:'webTaskResult',taskId:'eval',value:{answer:42}});return {value:{taskId:'eval'}};}
       if(args[1]==='setCurrentItem')state.currentItem=args[2][0];
     }
     return {value:null};

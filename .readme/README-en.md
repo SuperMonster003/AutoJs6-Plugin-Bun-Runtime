@@ -234,6 +234,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.10
+
+_2026/10/18_
+
+- `Feature` Bun: WebView HTTP(S) downloads, system file selection and asynchronous WebViewClient/WebChromeClient callbacks with native navigation and resource rules
+
 #### v0.2.9
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Feature` Bun support common XML form and layout widgets and asynchronous native View property access, including ordered assignments, error recovery
-
-#### v0.2.7
-
-_2026/10/18_
-
-- `Feature` Bun support execution-owned View handles, asynchronous AndroidView factories and XML Compose container attachments, with packaged application support
-- `Feature` Bun Runtime supports independently signed Bun projects with explicit host capabilities and a matching Runtime Kit for Compose interoperability
 
 ##### For more release history
 
