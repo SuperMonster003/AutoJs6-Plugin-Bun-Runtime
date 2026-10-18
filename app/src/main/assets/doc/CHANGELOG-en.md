@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.9
+
+###### 2026/10/18
+
+* `Feature` Bun: WebView page loading and JavaScript results, Drawer panels, Toolbar navigation and menus, and ViewPager pages with asynchronous native events
+
 # v0.2.8
 
 ###### 2026/10/18

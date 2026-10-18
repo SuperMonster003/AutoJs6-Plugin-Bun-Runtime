@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.2.9": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: Загрузка WebView и результаты JavaScript, панели Drawer, навигация и меню Toolbar, страницы ViewPager и асинхронные события"
+      ]
+    },
     "v0.2.8": {
       "released_date": "2026/10/18",
       "feature": [

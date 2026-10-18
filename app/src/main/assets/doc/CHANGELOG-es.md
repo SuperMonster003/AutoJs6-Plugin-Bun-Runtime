@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.9
+
+###### 2026/10/18
+
+* `Función` Bun: Carga WebView y resultados JavaScript, paneles Drawer, navegación y menús Toolbar, páginas ViewPager y eventos nativos asíncronos
+
 # v0.2.8
 
 ###### 2026/10/18

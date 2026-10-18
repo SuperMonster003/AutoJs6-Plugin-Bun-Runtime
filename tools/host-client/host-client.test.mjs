@@ -438,3 +438,25 @@ test("native property writes remain ordered and observable through reads and flu
   view.text='invalid';await assert.rejects(view.flush());view.text='recovered';await view.flush();assert.equal(await view.text,'recovered');
   view.text='invalid';await assert.rejects(view.dispose());assert(disposed);
 });
+
+test("WebView, Drawer, Toolbar and ViewPager commands share the native write queue", async () => {
+  const token={__autojs6ViewHandle:'components',id:'components',type:'WebView'},state={},order=[];
+  const fake=transport(['ui.layout'],async (_id,{method,args})=>{
+    if(method==='inflate')return {value:token};
+    order.push(method);
+    if(method==='viewUpdate')Object.assign(state,args[1]);
+    if(method==='viewGet')return {value:state[args[1]]};
+    if(method==='viewCommand') {
+      if(args[1]==='evaluateJavascript'){assert.equal(state.javaScriptEnabled,true);return {value:{answer:42}};}
+      if(args[1]==='setCurrentItem')state.currentItem=args[2][0];
+    }
+    return {value:null};
+  });
+  const host=await client(fake),view=await host.ui.createView('WebView');
+  view.javaScriptEnabled=true;assert.deepEqual(await view.evaluateJavascript('({answer:42})'),{answer:42});
+  order.length=0;const command=view.setCurrentItem(1,false);view.currentItem=2;
+  assert.equal(await view.currentItem,2);await command;
+  assert.deepEqual(order,['viewCommand','viewUpdate','viewGet']);
+  await view.loadHtml('<p>local</p>');await view.loadUrl('about:blank');await view.openDrawer('start',false);await view.closeDrawer();
+  await view.showOverflowMenu();await view.hideOverflowMenu();await view.dispose();assert.throws(()=>view.reload(),/closed/);
+});
