@@ -234,6 +234,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.2.12
+
+_2026/10/18_
+
+- `新增` Bun: WebView 影片拍攝與前景 AAC/M4A 錄音, 支援媒體參數, 可設定選擇等待時限及暫存檔案清理
+
 #### v0.2.11
 
 _2026/10/18_
@@ -246,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `新增` Bun: WebView HTTP(S) 下載, 系統檔案選擇及非同步 WebViewClient/WebChromeClient 回呼, 支援原生導覽和資源規則
-
-#### v0.2.9
-
-_2026/10/18_
-
-- `新增` Bun: WebView 頁面載入與 JavaScript 回傳值, Drawer 側欄, Toolbar 導覽與選單, ViewPager 頁面及非同步原生事件
 
 ##### 更多發行記錄
 

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.2.12": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: WebView video capture and foreground AAC/M4A audio recording, with media options, configurable chooser deadlines and temporary-file cleanup"
+      ]
+    },
     "v0.2.11": {
       "released_date": "2026/10/18",
       "feature": [

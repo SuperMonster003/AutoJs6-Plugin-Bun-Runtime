@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.12
+
+###### 2026/10/18
+
+* `Feature` Bun: WebView video capture and foreground AAC/M4A audio recording, with media options, configurable chooser deadlines and temporary-file cleanup
+
 # v0.2.11
 
 ###### 2026/10/18

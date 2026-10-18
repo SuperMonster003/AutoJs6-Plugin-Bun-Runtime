@@ -234,6 +234,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.12
+
+_2026/10/18_
+
+- `Función` Bun: Captura de vídeo WebView y audio AAC/M4A en primer plano, con opciones multimedia, plazos configurables y limpieza de archivos temporales
+
 #### v0.2.11
 
 _2026/10/18_
@@ -246,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Función` Bun: Descargas HTTP(S) de WebView, selección de archivos del sistema y callbacks asíncronos WebViewClient/WebChromeClient con reglas nativas de navegación y recursos
-
-#### v0.2.9
-
-_2026/10/18_
-
-- `Función` Bun: Carga WebView y resultados JavaScript, paneles Drawer, navegación y menús Toolbar, páginas ViewPager y eventos nativos asíncronos
 
 ##### Más historial de versiones
 

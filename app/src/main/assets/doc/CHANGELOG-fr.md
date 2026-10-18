@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.12
+
+###### 2026/10/18
+
+* `Fonctionnalité` Bun: Capture vidéo WebView et enregistrement audio AAC/M4A au premier plan, avec options média, délais configurables et nettoyage des fichiers temporaires
+
 # v0.2.11
 
 ###### 2026/10/18
