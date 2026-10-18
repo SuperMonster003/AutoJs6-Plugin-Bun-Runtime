@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.11
+
+###### 2026/10/18
+
+* `Fonctionnalité` Bun: Capture photo WebView en pleine résolution, sélection de fichiers et dossiers, lecture des octets et téléchargements blob/data vers les emplacements choisis
+* `Fonctionnalité` Configuration timeoutMs des projets Bun pour les interactions photo et fichiers, y compris les applications empaquetées
+
 # v0.2.10
 
 ###### 2026/10/18

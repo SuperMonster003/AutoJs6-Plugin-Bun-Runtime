@@ -234,6 +234,13 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.2.11
+
+_2026/10/18_
+
+- `Fonctionnalité` Bun: Capture photo WebView en pleine résolution, sélection de fichiers et dossiers, lecture des octets et téléchargements blob/data vers les emplacements choisis
+- `Fonctionnalité` Configuration timeoutMs des projets Bun pour les interactions photo et fichiers, y compris les applications empaquetées
+
 #### v0.2.10
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Fonctionnalité` Bun: Chargement WebView et résultats JavaScript, panneaux Drawer, navigation et menus Toolbar, pages ViewPager et événements natifs asynchrones
-
-#### v0.2.8
-
-_2026/10/18_
-
-- `Fonctionnalité` Bun prennent en charge les formulaires et interfaces XML courants, les propriétés View asynchrones, les affectations ordonnées, la reprise après erreur
 
 ##### Pour plus d'historique
 

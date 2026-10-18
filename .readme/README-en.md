@@ -234,6 +234,13 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.11
+
+_2026/10/18_
+
+- `Feature` Bun: WebView full-size camera capture, save and directory selection, document byte reads, and streamed blob/data downloads with selected output locations
+- `Feature` Bun project timeoutMs configuration for interactive camera and file workflows, including packaged applications
+
 #### v0.2.10
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Feature` Bun: WebView page loading and JavaScript results, Drawer panels, Toolbar navigation and menus, and ViewPager pages with asynchronous native events
-
-#### v0.2.8
-
-_2026/10/18_
-
-- `Feature` Bun support common XML form and layout widgets and asynchronous native View property access, including ordered assignments, error recovery
 
 ##### For more release history
 

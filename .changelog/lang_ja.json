@@ -5,6 +5,13 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.2.11": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: WebView のフルサイズ写真撮影, 保存先とディレクトリの選択, 文書バイトの読み取り, blob/data の分割ダウンロードと選択先への出力",
+        "撮影やファイル操作を待つ Bun プロジェクトとパッケージ化アプリ向けの timeoutMs 実行時間設定"
+      ]
+    },
     "v0.2.10": {
       "released_date": "2026/10/18",
       "feature": [

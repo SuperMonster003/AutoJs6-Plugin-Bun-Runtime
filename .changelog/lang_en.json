@@ -5,6 +5,13 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.2.11": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: WebView full-size camera capture, save and directory selection, document byte reads, and streamed blob/data downloads with selected output locations",
+        "Bun project timeoutMs configuration for interactive camera and file workflows, including packaged applications"
+      ]
+    },
     "v0.2.10": {
       "released_date": "2026/10/18",
       "feature": [

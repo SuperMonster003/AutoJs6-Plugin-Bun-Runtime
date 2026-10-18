@@ -234,6 +234,13 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.11
+
+_2026/10/18_
+
+- `Función` Bun: Captura WebView de fotos completas, selección de archivos y directorios, lectura de bytes y descargas blob/data hacia los destinos elegidos
+- `Función` Configuración timeoutMs de proyectos Bun para fotos y archivos interactivos, incluidas las aplicaciones empaquetadas
+
 #### v0.2.10
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Función` Bun: Carga WebView y resultados JavaScript, paneles Drawer, navegación y menús Toolbar, páginas ViewPager y eventos nativos asíncronos
-
-#### v0.2.8
-
-_2026/10/18_
-
-- `Función` Bun admiten formularios y diseños XML comunes, propiedades View asíncronas, asignaciones ordenadas, recuperación de errores
 
 ##### Más historial de versiones
 

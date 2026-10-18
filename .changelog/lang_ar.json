@@ -5,6 +5,13 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.11": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: التقاط صور WebView بالحجم الكامل واختيار الملفات والمجلدات وقراءة بايتات المستندات وتنزيل blob/data إلى المواقع المختارة",
+        "إعداد timeoutMs لمشاريع Bun التي تنتظر التقاط الصور وعمليات الملفات بما فيها التطبيقات المجمعة"
+      ]
+    },
     "v0.2.10": {
       "released_date": "2026/10/18",
       "feature": [

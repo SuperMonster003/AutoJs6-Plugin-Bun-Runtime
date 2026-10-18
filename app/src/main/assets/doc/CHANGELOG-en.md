@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.11
+
+###### 2026/10/18
+
+* `Feature` Bun: WebView full-size camera capture, save and directory selection, document byte reads, and streamed blob/data downloads with selected output locations
+* `Feature` Bun project timeoutMs configuration for interactive camera and file workflows, including packaged applications
+
 # v0.2.10
 
 ###### 2026/10/18

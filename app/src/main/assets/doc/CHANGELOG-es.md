@@ -4,6 +4,13 @@
 
 ******
 
+# v0.2.11
+
+###### 2026/10/18
+
+* `Función` Bun: Captura WebView de fotos completas, selección de archivos y directorios, lectura de bytes y descargas blob/data hacia los destinos elegidos
+* `Función` Configuración timeoutMs de proyectos Bun para fotos y archivos interactivos, incluidas las aplicaciones empaquetadas
+
 # v0.2.10
 
 ###### 2026/10/18

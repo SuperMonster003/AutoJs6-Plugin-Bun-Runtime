@@ -5,6 +5,13 @@
   "changelog_label_improvement": "Mejora",
   "changelog_label_dependency": "Dependencia",
   "$data": {
+    "v0.2.11": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: Captura WebView de fotos completas, selección de archivos y directorios, lectura de bytes y descargas blob/data hacia los destinos elegidos",
+        "Configuración timeoutMs de proyectos Bun para fotos y archivos interactivos, incluidas las aplicaciones empaquetadas"
+      ]
+    },
     "v0.2.10": {
       "released_date": "2026/10/18",
       "feature": [

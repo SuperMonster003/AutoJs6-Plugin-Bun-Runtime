@@ -5,6 +5,13 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "依賴",
   "$data": {
+    "v0.2.11": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun: WebView 完整照片拍攝, 儲存和目錄選擇, 文件位元組讀取, blob/data 分塊下載及所選位置輸出",
+        "Bun 項目的 timeoutMs 執行期限設定, 適用於等待拍照或檔案操作的腳本及封裝應用"
+      ]
+    },
     "v0.2.10": {
       "released_date": "2026/10/18",
       "feature": [
