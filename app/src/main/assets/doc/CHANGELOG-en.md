@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.14
+
+###### 2026/10/18
+
+* `Feature` WebView screen sharing adapter, foreground-service audio capture and native background camera recording in Node.js/Bun, including Node Workers
+
 # v0.2.13
 
 ###### 2026/10/18

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.2.14": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Adaptateur de partage ecran WebView, capture audio par service de premier plan et enregistrement camera natif en arriere-plan pour Node.js/Bun et Node Worker"
+      ]
+    },
     "v0.2.13": {
       "released_date": "2026/10/18",
       "feature": [

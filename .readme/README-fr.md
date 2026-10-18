@@ -234,6 +234,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.2.14
+
+_2026/10/18_
+
+- `Fonctionnalité` Adaptateur de partage ecran WebView, capture audio par service de premier plan et enregistrement camera natif en arriere-plan pour Node.js/Bun et Node Worker
+
 #### v0.2.13
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Fonctionnalité` Bun: Capture vidéo WebView et enregistrement audio AAC/M4A au premier plan, avec options média, délais configurables et nettoyage des fichiers temporaires
-
-#### v0.2.11
-
-_2026/10/18_
-
-- `Fonctionnalité` Bun: Capture photo WebView en pleine résolution, sélection de fichiers et dossiers, lecture des octets et téléchargements blob/data vers les emplacements choisis
-- `Fonctionnalité` Configuration timeoutMs des projets Bun pour les interactions photo et fichiers, y compris les applications empaquetées
 
 ##### Pour plus d'historique
 

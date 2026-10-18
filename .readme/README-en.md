@@ -234,6 +234,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.14
+
+_2026/10/18_
+
+- `Feature` WebView screen sharing adapter, foreground-service audio capture and native background camera recording in Node.js/Bun, including Node Workers
+
 #### v0.2.13
 
 _2026/10/18_
@@ -245,13 +251,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Feature` Bun: WebView video capture and foreground AAC/M4A audio recording, with media options, configurable chooser deadlines and temporary-file cleanup
-
-#### v0.2.11
-
-_2026/10/18_
-
-- `Feature` Bun: WebView full-size camera capture, save and directory selection, document byte reads, and streamed blob/data downloads with selected output locations
-- `Feature` Bun project timeoutMs configuration for interactive camera and file workflows, including packaged applications
 
 ##### For more release history
 
