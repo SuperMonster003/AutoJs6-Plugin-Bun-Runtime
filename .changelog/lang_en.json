@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.3.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support"
+      ]
+    },
     "v0.2.14": {
       "released_date": "2026/10/18",
       "feature": [

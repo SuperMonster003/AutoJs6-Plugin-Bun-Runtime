@@ -4,6 +4,12 @@
 
 ******
 
+# v0.3.0
+
+###### 2026/10/19
+
+* `Función` API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas
+
 # v0.2.14
 
 ###### 2026/10/18

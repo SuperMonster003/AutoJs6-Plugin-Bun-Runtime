@@ -5,6 +5,12 @@
   "changelog_label_improvement": "개선",
   "changelog_label_dependency": "의존성",
   "$data": {
+    "v0.3.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원"
+      ]
+    },
     "v0.2.14": {
       "released_date": "2026/10/18",
       "feature": [

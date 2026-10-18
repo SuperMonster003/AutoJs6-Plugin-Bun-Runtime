@@ -19,6 +19,9 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "app.control": Object.freeze(["launchPackage", "launchApp", "openAppSetting", "startActivity", "getPackageName", "getAppName", "isInstalled", "viewFile", "editFile", "startService", "sendBroadcast", "getInstalledApps", "getPackageInfo"]),
+  "accessibility.control": Object.freeze(["isEnabled", "ensureEnabled", "click", "back", "home", "recentApps", "findByText", "clickText", "findOne", "findAll", "longClick", "setText", "scrollForward", "scrollBackward", "swipe", "gesture"]),
+  "clipboard.control": Object.freeze(["getText", "setText", "hasText"]),
   "text.pinyin": Object.freeze(["convert", "simple", "compare", "compact", "fromCodePoint", "fromPhrase"]),
   "text.pinyin4j": Object.freeze(["of", "as", "readings"]),
   "text.opencc": Object.freeze(["convert"]),
@@ -1216,6 +1219,1393 @@ const isObject = value => value !== null && typeof value === "object" && !Array.
     return Object.freeze(api);
   }
 
+// BEGIN GENERATED AUTOMATION
+// Reproduced from Node's public adapters by tools/host-client/sync-automation.mjs.
+function createAutomation(dispatch, hostInfo) {
+  let __autojs6_limited_app_cache, __autojs6_limited_clipboard_cache, __autojs6_limited_accessibility_cache;
+  const __autojs6_call_autojs = dispatch;
+  const __autojs6_bridge_signal_from_options = options => options && options.signal;
+  const __autojs6_host_app_info = () => hostInfo || {};
+  const __autojs6_bridge_error = (message, code, module, method) => Object.assign(new HostCallError(
+    message.includes('not available') ? 'NOT_SUPPORTED' : 'INVALID_REQUEST', message, module + '.control'), { method });
+  function __autojs6_clipboard_options(value) {
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  }
+  function __autojs6_clipboard_timeout_from_options(options, fallbackMs) {
+    return options && typeof options === "object" && options.timeoutMs !== undefined
+      ? options.timeoutMs
+      : fallbackMs;
+  }
+  function __autojs6_clipboard_bridge_options(options, fallbackMs) {
+    return {
+      timeoutMs: __autojs6_clipboard_timeout_from_options(options, fallbackMs),
+      permissions: ["clipboard"],
+      signal: __autojs6_bridge_signal_from_options(options)
+    };
+  }
+  function __autojs6_limited_clipboard() {
+    if (__autojs6_limited_clipboard_cache) {
+      return __autojs6_limited_clipboard_cache;
+    }
+    function getText(options) {
+      const bridgeOptions = __autojs6_clipboard_options(options);
+      return __autojs6_call_autojs(
+        "clipboard",
+        "getText",
+        [],
+        __autojs6_clipboard_bridge_options(bridgeOptions, 5000)
+      ).then(function(result) {
+        return result === undefined || result === null ? "" : String(result);
+      });
+    }
+    function setText(text, options) {
+      const bridgeOptions = __autojs6_clipboard_options(options);
+      const value = text === undefined || text === null ? "" : String(text);
+      return __autojs6_call_autojs(
+        "clipboard",
+        "setText",
+        [value],
+        __autojs6_clipboard_bridge_options(bridgeOptions, 5000)
+      ).then(function() {
+        return undefined;
+      });
+    }
+    function hasText(options) {
+      const bridgeOptions = __autojs6_clipboard_options(options);
+      return __autojs6_call_autojs(
+        "clipboard",
+        "hasText",
+        [],
+        __autojs6_clipboard_bridge_options(bridgeOptions, 5000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    __autojs6_limited_clipboard_cache = Object.freeze({
+      getText,
+      setText,
+      hasText
+    });
+    return __autojs6_limited_clipboard_cache;
+  }
+
+  function __autojs6_app_timeout_from_options(options, fallbackMs) {
+    return options && typeof options === "object" && options.timeoutMs !== undefined
+      ? options.timeoutMs
+      : fallbackMs;
+  }
+  function __autojs6_app_bridge_options(options, fallbackMs) {
+    return {
+      timeoutMs: __autojs6_app_timeout_from_options(options, fallbackMs),
+      signal: __autojs6_bridge_signal_from_options(options)
+    };
+  }
+  function __autojs6_app_invalid_argument_error(methodName, message) {
+    return __autojs6_bridge_error(
+      message,
+      "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED",
+      "app",
+      methodName
+    );
+  }
+  function __autojs6_app_non_empty_string(value) {
+    return value === undefined || value === null ? "" : String(value);
+  }
+  function __autojs6_app_intent_plain_object(value) {
+    return value && typeof value === "object" && !Array.isArray(value);
+  }
+  function __autojs6_app_intent_error(methodName, message) {
+    throw __autojs6_app_invalid_argument_error(methodName, message);
+  }
+  function __autojs6_app_optional_intent_string(value, methodName, fieldName) {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    const text = String(value);
+    return text.length > 0 ? text : undefined;
+  }
+  function __autojs6_app_expand_android_constant(kind, value) {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    const text = String(value).trim();
+    if (!text) {
+      return undefined;
+    }
+    if (text.indexOf(".") >= 0) {
+      return text;
+    }
+    return "android.intent." + kind + "." + text.toUpperCase();
+  }
+  function __autojs6_app_normalize_action(value) {
+    return __autojs6_app_expand_android_constant("action", value);
+  }
+  function __autojs6_app_normalize_category(value) {
+    return __autojs6_app_expand_android_constant("category", value);
+  }
+  function __autojs6_app_has_uri_scheme(value) {
+    return /^[a-z][a-z0-9+.-]*:/i.test(String(value || ""));
+  }
+  function __autojs6_app_parse_uri_descriptor(value, methodName) {
+    if (value === undefined || value === null) {
+      return null;
+    }
+    const text = String(value);
+    const descriptor = {
+      schema: "autojs6-node-app-uri-descriptor-v1",
+      value: text
+    };
+    const schemeMatch = /^([a-z][a-z0-9+.-]*):(.*)$/i.exec(text);
+    if (!schemeMatch) {
+      if (text.length > 0) {
+        descriptor.path = text;
+      }
+      return Object.freeze(descriptor);
+    }
+    descriptor.scheme = schemeMatch[1].toLowerCase();
+    try {
+      const parsed = new URL(text);
+      const userInfo = parsed.username || parsed.password
+        ? parsed.username + (parsed.password ? ":" + parsed.password : "")
+        : "";
+      const authority = (userInfo ? userInfo + "@" : "") + parsed.host;
+      if (authority) descriptor.authority = authority;
+      if (userInfo) descriptor.userInfo = userInfo;
+      if (parsed.hostname) descriptor.host = parsed.hostname;
+      if (parsed.port) descriptor.port = Number(parsed.port);
+      if (parsed.pathname) descriptor.path = parsed.pathname;
+      if (parsed.search) descriptor.query = parsed.search.slice(1);
+      if (parsed.hash) descriptor.fragment = parsed.hash.slice(1);
+    } catch (_) {
+      const rest = schemeMatch[2] || "";
+      if (rest) descriptor.path = rest;
+    }
+    return Object.freeze(descriptor);
+  }
+  function __autojs6_app_looks_like_web_url(value) {
+    const text = String(value || "").trim();
+    return /^(www\.)?[-a-z0-9]+(\.[a-z0-9-]+)+(\/|$|\?|#)/i.test(text);
+  }
+  function __autojs6_app_normalize_url(value, methodName, fieldName) {
+    const text = __autojs6_app_optional_intent_string(value, methodName, fieldName);
+    if (text === undefined) {
+      return undefined;
+    }
+    const trimmed = text.trim();
+    if (!trimmed) {
+      return undefined;
+    }
+    if (__autojs6_app_has_uri_scheme(trimmed)) {
+      return trimmed;
+    }
+    if (__autojs6_app_looks_like_web_url(trimmed)) {
+      return "http://" + trimmed;
+    }
+    __autojs6_app_intent_error(methodName, "app." + methodName + " " + fieldName + " must include a URI scheme or a web host.");
+  }
+  function __autojs6_app_intent_categories(value, methodName, fieldName) {
+    if (value === undefined || value === null) {
+      return [];
+    }
+    const values = Array.isArray(value) ? value : [value];
+    return values.map(function(entry) {
+      if (entry === undefined || entry === null) {
+        return "";
+      }
+      return __autojs6_app_normalize_category(entry) || "";
+    }).filter(function(entry) {
+      return entry.length > 0;
+    });
+  }
+  function __autojs6_app_intent_flag(value, methodName, fieldName) {
+    if (typeof value !== "number" || !Number.isFinite(value) || Math.floor(value) !== value) {
+      __autojs6_app_intent_error(methodName, "app." + methodName + " intent " + fieldName + " must be an integer flag value.");
+    }
+    return value | 0;
+  }
+  function __autojs6_app_intent_flags(value, methodName) {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    if (Array.isArray(value)) {
+      return value.reduce(function(flags, entry, index) {
+        return flags | __autojs6_app_intent_flag(entry, methodName, "flags[" + index + "]");
+      }, 0);
+    }
+    return __autojs6_app_intent_flag(value, methodName, "flags");
+  }
+  function __autojs6_app_intent_extra_value(value, methodName, key) {
+    if (value === undefined) {
+      return undefined;
+    }
+    if (value === null || typeof value === "string" || typeof value === "boolean") {
+      return value;
+    }
+    if (typeof value === "number") {
+      if (!Number.isFinite(value)) {
+        __autojs6_app_intent_error(methodName, "app." + methodName + " extras." + key + " must be a finite number.");
+      }
+      return value;
+    }
+    if (Array.isArray(value)) {
+      let elementType = "";
+      return Object.freeze(value.map(function(entry, index) {
+        const parsed = __autojs6_app_intent_extra_value(entry, methodName, key + "[" + index + "]");
+        const parsedType = parsed === null ? "null" : typeof parsed;
+        if (parsed === undefined || parsed === null || (parsed && typeof parsed === "object")) {
+          __autojs6_app_intent_error(methodName, "app." + methodName + " extras." + key + " arrays may only contain string, number, or boolean primitives.");
+        }
+        if (!elementType) {
+          elementType = parsedType;
+        } else if (elementType !== parsedType) {
+          __autojs6_app_intent_error(methodName, "app." + methodName + " extras." + key + " arrays must not mix primitive types.");
+        }
+        return parsed;
+      }));
+    }
+    __autojs6_app_intent_error(methodName, "app." + methodName + " extras." + key + " must be a JSON primitive or primitive array.");
+  }
+  function __autojs6_app_intent_extras(value, methodName) {
+    if (value === undefined || value === null) {
+      return undefined;
+    }
+    if (!__autojs6_app_intent_plain_object(value)) {
+      __autojs6_app_intent_error(methodName, "app." + methodName + " intent extras must be a JSON object.");
+    }
+    const extras = {};
+    Object.keys(value).forEach(function(key) {
+      const parsed = __autojs6_app_intent_extra_value(value[key], methodName, key);
+      if (parsed !== undefined) {
+        extras[key] = parsed;
+      }
+    });
+    return Object.freeze(extras);
+  }
+  function __autojs6_app_reject_privileged_intent_options(options, methodName) {
+    ["root", "shizuku", "dual", "user", "userId"].forEach(function(key) {
+      if (Object.prototype.hasOwnProperty.call(options, key)) {
+        __autojs6_app_intent_error(
+          methodName,
+          "app." + methodName + " does not accept privileged Rhino intent option: " + key + ". Use a dedicated shell/root/Shizuku capability instead."
+        );
+      }
+    });
+  }
+  function __autojs6_app_normalize_intent_descriptor(options, methodName) {
+    if (!__autojs6_app_intent_plain_object(options)) {
+      __autojs6_app_intent_error(methodName, "app." + methodName + " requires a JSON intent descriptor object.");
+    }
+    __autojs6_app_reject_privileged_intent_options(options, methodName);
+    const descriptor = {};
+    [
+      "action",
+      "data",
+      "url",
+      "type",
+      "packageName",
+      "package",
+      "className",
+      "component"
+    ].forEach(function(key) {
+      const value = key === "url"
+        ? __autojs6_app_normalize_url(options[key], methodName, key)
+        : __autojs6_app_optional_intent_string(options[key], methodName, key);
+      if (value !== undefined) {
+        if (key === "package") {
+          descriptor.packageName = value;
+        } else if (key === "url") {
+          descriptor.data = value;
+        } else if (key === "action") {
+          descriptor.action = __autojs6_app_normalize_action(value);
+        } else {
+          descriptor[key] = value;
+        }
+      }
+    });
+    const categories = []
+      .concat(__autojs6_app_intent_categories(options.category, methodName, "category"))
+      .concat(__autojs6_app_intent_categories(options.categories, methodName, "categories"));
+    if (categories.length > 0) {
+      descriptor.categories = Object.freeze(Array.from(new Set(categories)));
+    }
+    const flags = __autojs6_app_intent_flags(options.flags, methodName);
+    if (flags !== undefined) {
+      descriptor.flags = flags;
+    }
+    const extras = __autojs6_app_intent_extras(options.extras, methodName);
+    if (extras !== undefined) {
+      descriptor.extras = extras;
+    }
+    if (!__autojs6_app_has_start_activity_target(descriptor)) {
+      __autojs6_app_intent_error(
+        methodName,
+        "app." + methodName + " requires action, data, type, packageName, className, or component."
+      );
+    }
+    return Object.freeze(descriptor);
+  }
+  function __autojs6_app_has_start_activity_target(options) {
+    if (!options || typeof options !== "object" || Array.isArray(options)) {
+      return false;
+    }
+    return Boolean(
+      options.action ||
+      options.data ||
+      options.url ||
+      options.type ||
+      options.packageName ||
+      options.package ||
+      options.className ||
+      options.component
+    );
+  }
+  function __autojs6_app_open_url_descriptor(url, methodName) {
+    return __autojs6_app_normalize_intent_descriptor({
+      action: "VIEW",
+      url: url,
+      category: "BROWSABLE"
+    }, methodName);
+  }
+  function __autojs6_app_email_values(value, methodName, fieldName) {
+    if (value === undefined || value === null) {
+      return [];
+    }
+    const values = Array.isArray(value) ? value : [value];
+    return values.map(function(entry) {
+      return String(entry === undefined || entry === null ? "" : entry).trim();
+    }).filter(function(entry) {
+      return entry.length > 0;
+    }).map(function(entry) {
+      if (/[\r\n]/.test(entry)) {
+        __autojs6_app_intent_error(methodName, "app." + methodName + " " + fieldName + " must not contain line breaks.");
+      }
+      return entry;
+    });
+  }
+  function __autojs6_app_email_request(value, methodName) {
+    if (typeof value === "string" || Array.isArray(value)) {
+      return { to: value };
+    }
+    if (!__autojs6_app_intent_plain_object(value)) {
+      __autojs6_app_intent_error(methodName, "app." + methodName + " requires an email request object or recipient string.");
+    }
+    return value;
+  }
+  function __autojs6_app_email_descriptor(value, methodName) {
+    const request = __autojs6_app_email_request(value, methodName);
+    const to = __autojs6_app_email_values(request.to || request.email || request.address, methodName, "to");
+    const cc = __autojs6_app_email_values(request.cc, methodName, "cc");
+    const bcc = __autojs6_app_email_values(request.bcc, methodName, "bcc");
+    const subject = request.subject === undefined || request.subject === null ? "" : String(request.subject);
+    const body = request.text === undefined || request.text === null
+      ? request.body === undefined || request.body === null ? "" : String(request.body)
+      : String(request.text);
+    const query = [];
+    if (cc.length > 0) query.push("cc=" + encodeURIComponent(cc.join(",")));
+    if (bcc.length > 0) query.push("bcc=" + encodeURIComponent(bcc.join(",")));
+    if (subject) query.push("subject=" + encodeURIComponent(subject));
+    if (body) query.push("body=" + encodeURIComponent(body));
+    const data = "mailto:" + to.map(encodeURIComponent).join(",") + (query.length > 0 ? "?" + query.join("&") : "");
+    const extras = {};
+    if (to.length > 0) extras["android.intent.extra.EMAIL"] = Object.freeze(to.slice());
+    if (cc.length > 0) extras["android.intent.extra.CC"] = Object.freeze(cc.slice());
+    if (bcc.length > 0) extras["android.intent.extra.BCC"] = Object.freeze(bcc.slice());
+    if (subject) extras["android.intent.extra.SUBJECT"] = subject;
+    if (body) extras["android.intent.extra.TEXT"] = body;
+    return __autojs6_app_normalize_intent_descriptor({
+      action: "SENDTO",
+      data: data,
+      extras: extras
+    }, methodName);
+  }
+  function __autojs6_app_uninstall_descriptor(packageName, methodName) {
+    const target = __autojs6_app_non_empty_string(packageName).trim();
+    if (!target) {
+      __autojs6_app_intent_error(methodName, "app." + methodName + " requires a non-empty package name.");
+    }
+    return __autojs6_app_normalize_intent_descriptor({
+      action: "DELETE",
+      data: "package:" + target
+    }, methodName);
+  }
+  function __autojs6_app_shell_quote(value) {
+    return "'" + String(value).replace(/'/g, "'\\''") + "'";
+  }
+  function __autojs6_app_shell_array_value(value) {
+    return String(value).replace(/\\/g, "\\\\").replace(/,/g, "\\,");
+  }
+  function __autojs6_app_shell_join_array(values) {
+    return values.map(__autojs6_app_shell_array_value).join(",");
+  }
+  function __autojs6_app_shell_number_type(value) {
+    if (Number.isInteger(value)) {
+      return value >= -2147483648 && value <= 2147483647 ? "i" : "l";
+    }
+    return "f";
+  }
+  function __autojs6_app_shell_number_array_type(values) {
+    let allInt32 = true;
+    let allInteger = true;
+    values.forEach(function(value) {
+      if (!Number.isInteger(value)) {
+        allInt32 = false;
+        allInteger = false;
+      } else if (value < -2147483648 || value > 2147483647) {
+        allInt32 = false;
+      }
+    });
+    return allInt32 ? "ia" : allInteger ? "la" : "fa";
+  }
+  function __autojs6_app_shell_extra_option(value, methodName, key) {
+    if (value === null) {
+      return "esn";
+    }
+    if (typeof value === "string") {
+      return "es";
+    }
+    if (typeof value === "boolean") {
+      return "ez";
+    }
+    if (typeof value === "number") {
+      return "e" + __autojs6_app_shell_number_type(value);
+    }
+    if (Array.isArray(value)) {
+      if (value.length === 0 || typeof value[0] === "string") {
+        return "esa";
+      }
+      if (typeof value[0] === "boolean") {
+        return "eza";
+      }
+      if (typeof value[0] === "number") {
+        return "e" + __autojs6_app_shell_number_array_type(value);
+      }
+    }
+    __autojs6_app_intent_error(methodName, "app." + methodName + " extras." + key + " cannot be converted to shell intent arguments.");
+  }
+  function __autojs6_app_intent_to_shell(descriptor, methodName) {
+    const parts = [];
+    const component = descriptor.component ||
+      (descriptor.packageName && descriptor.className ? descriptor.packageName + "/" + descriptor.className : "") ||
+      (descriptor.className || "");
+    if (component) {
+      parts.push("-n", __autojs6_app_shell_quote(component));
+    } else if (descriptor.packageName) {
+      parts.push("-p", __autojs6_app_shell_quote(descriptor.packageName));
+    }
+    if (descriptor.extras) {
+      Object.keys(descriptor.extras).forEach(function(key) {
+        const value = descriptor.extras[key];
+        const option = __autojs6_app_shell_extra_option(value, methodName, key);
+        if (option === "esn") {
+          parts.push("--" + option, __autojs6_app_shell_quote(key));
+        } else if (Array.isArray(value)) {
+          parts.push("--" + option, __autojs6_app_shell_quote(key), __autojs6_app_shell_quote(__autojs6_app_shell_join_array(value)));
+        } else {
+          const shellValue = typeof value === "string" ? __autojs6_app_shell_quote(value) : String(value);
+          parts.push("--" + option, __autojs6_app_shell_quote(key), shellValue);
+        }
+      });
+    }
+    (descriptor.categories || []).forEach(function(category) {
+      parts.push("-c", __autojs6_app_shell_quote(category));
+    });
+    if (descriptor.action) {
+      parts.push("-a", __autojs6_app_shell_quote(descriptor.action));
+    }
+    if (descriptor.flags !== undefined) {
+      parts.push("-f", String(descriptor.flags));
+    }
+    if (descriptor.type) {
+      parts.push("-t", __autojs6_app_shell_quote(descriptor.type));
+    }
+    if (descriptor.data) {
+      parts.push("-d", __autojs6_app_shell_quote(descriptor.data));
+    }
+    return parts.join(" ");
+  }
+  function __autojs6_app_raw_uri_unavailable_error(methodName) {
+    return __autojs6_bridge_error(
+      "app." + methodName + " is not available in the Bun engine yet; P13-23 keeps raw Android Uri and FileProvider handles out of Node. Use app.parseUri() for JSON-safe URI inspection or app.viewFile()/app.editFile() for scoped file activity routing.",
+      "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED",
+      "app",
+      methodName
+    );
+  }
+  function __autojs6_app_privileged_unavailable_error(methodName) {
+    return __autojs6_bridge_error(
+      "app." + methodName + " is not available in the Bun engine yet; P13-23 keeps root, Shizuku, and dual-user app helpers blocked until they are routed through explicit P13-24 shell/root/Shizuku capabilities.",
+      "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED",
+      "app",
+      methodName
+    );
+  }
+  function __autojs6_limited_app() {
+    if (__autojs6_limited_app_cache) {
+      return __autojs6_limited_app_cache;
+    }
+    const info = __autojs6_host_app_info();
+    function intent(options) {
+      return __autojs6_app_normalize_intent_descriptor(options, "intent");
+    }
+    function parseUri(uri) {
+      return __autojs6_app_parse_uri_descriptor(uri, "parseUri");
+    }
+    function getUriForFile(path) {
+      throw __autojs6_app_raw_uri_unavailable_error("getUriForFile");
+    }
+    function intentToShell(options) {
+      return __autojs6_app_intent_to_shell(
+        __autojs6_app_normalize_intent_descriptor(options, "intentToShell"),
+        "intentToShell"
+      );
+    }
+    function openUrl(url, options) {
+      let descriptor;
+      try {
+        descriptor = __autojs6_app_open_url_descriptor(url, "openUrl");
+      } catch (error) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "openUrl",
+          error && error.message ? error.message : "app.openUrl requires a URI string."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "startActivity",
+        [descriptor],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function sendEmail(request, options) {
+      let descriptor;
+      try {
+        const emailRequest = (typeof request === "string" || Array.isArray(request)) && options && typeof options === "object"
+          ? Object.assign({}, options, { to: request })
+          : request;
+        descriptor = __autojs6_app_email_descriptor(emailRequest, "sendEmail");
+      } catch (error) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "sendEmail",
+          error && error.message ? error.message : "app.sendEmail requires a JSON-safe email request."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "startActivity",
+        [descriptor],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function uninstall(packageName, options) {
+      let descriptor;
+      try {
+        descriptor = __autojs6_app_uninstall_descriptor(packageName, "uninstall");
+      } catch (error) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "uninstall",
+          error && error.message ? error.message : "app.uninstall requires a non-empty package name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "startActivity",
+        [descriptor],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function getPackageName(appName, options) {
+      const target = __autojs6_app_non_empty_string(appName).trim();
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "getPackageName",
+          "app.getPackageName requires a non-empty app name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "getPackageName",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function getAppName(packageName, options) {
+      const target = __autojs6_app_non_empty_string(packageName).trim();
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "getAppName",
+          "app.getAppName requires a non-empty package name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "getAppName",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function isInstalled(packageName, options) {
+      const target = __autojs6_app_non_empty_string(packageName).trim();
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "isInstalled",
+          "app.isInstalled requires a non-empty package name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "isInstalled",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function viewFile(path, options) {
+      const target = __autojs6_app_non_empty_string(path).trim();
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "viewFile",
+          "app.viewFile requires a non-empty scoped file path."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "viewFile",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function editFile(path, options) {
+      const target = __autojs6_app_non_empty_string(path).trim();
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "editFile",
+          "app.editFile requires a non-empty scoped file path."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "editFile",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function launchPackage(packageName, options) {
+      const target = __autojs6_app_non_empty_string(packageName);
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "launchPackage",
+          "app.launchPackage requires a non-empty package name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "launchPackage",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function launchApp(name, options) {
+      const target = __autojs6_app_non_empty_string(name);
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "launchApp",
+          "app.launchApp requires a non-empty app name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "launchApp",
+        [target],
+        __autojs6_app_bridge_options(options, 10000)
+      );
+    }
+    function openAppSetting(packageName, options) {
+      let target = packageName;
+      let bridgeOptions = options;
+      if (target && typeof target === "object") {
+        bridgeOptions = target;
+        target = info.packageName;
+      }
+      target = __autojs6_app_non_empty_string(target || info.packageName);
+      if (!target) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "openAppSetting",
+          "app.openAppSetting requires a non-empty package name."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "openAppSetting",
+        [target],
+        __autojs6_app_bridge_options(bridgeOptions, 10000)
+      );
+    }
+    function startActivity(options, callOptions) {
+      let descriptor;
+      try {
+        descriptor = typeof options === "string"
+          ? __autojs6_app_open_url_descriptor(options, "startActivity")
+          : __autojs6_app_normalize_intent_descriptor(options, "startActivity");
+      } catch (error) {
+        return Promise.reject(__autojs6_app_invalid_argument_error(
+          "startActivity",
+          error && error.message ? error.message : "app.startActivity requires a JSON intent descriptor."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "app",
+        "startActivity",
+        [descriptor],
+        __autojs6_app_bridge_options(callOptions, 10000)
+      );
+    }
+    function startDualActivity(options, callOptions) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("startDualActivity"));
+    }
+    function dispatchIntent(method, options, callOptions) {
+      let descriptor;
+      try { descriptor = __autojs6_app_normalize_intent_descriptor(typeof options === "string" ? {action: options} : options, method); }
+      catch (error) { return Promise.reject(error); }
+      return __autojs6_call_autojs("app", method, [descriptor], __autojs6_app_bridge_options(callOptions, 10000));
+    }
+    function sendBroadcast(options, callOptions) { return dispatchIntent("sendBroadcast", options, callOptions); }
+    function startService(options, callOptions) { return dispatchIntent("startService", options, callOptions); }
+    function getInstalledApps(options, callOptions) {
+      return __autojs6_call_autojs("app", "getInstalledApps", [options || {}], __autojs6_app_bridge_options(callOptions, 10000));
+    }
+    function getPackageInfo(packageName, options) {
+      return __autojs6_call_autojs("app", "getPackageInfo", [String(packageName || "")], __autojs6_app_bridge_options(options, 10000));
+    }
+    function openDualUrl(url, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("openDualUrl"));
+    }
+    function launchDualPackage(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("launchDualPackage"));
+    }
+    function launchDualApp(appName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("launchDualApp"));
+    }
+    function launchDualAppDetailsSettings(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("launchDualAppDetailsSettings"));
+    }
+    function isDualInstalled(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("isDualInstalled"));
+    }
+    function uninstallDual(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("uninstallDual"));
+    }
+    function kill(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("kill"));
+    }
+    function killDual(packageName, options) {
+      return Promise.reject(__autojs6_app_privileged_unavailable_error("killDual"));
+    }
+    __autojs6_limited_app_cache = Object.freeze({
+      packageName: info.packageName,
+      versionName: info.versionName,
+      versionCode: info.versionCode,
+      intent,
+      parseUri,
+      getUriForFile,
+      intentToShell,
+      openUrl,
+      openDualUrl,
+      sendEmail,
+      uninstall,
+      uninstallDual,
+      getPackageName,
+      getAppName,
+      isInstalled,
+      isDualInstalled,
+      viewFile,
+      editFile,
+      launch: launchPackage,
+      launchDual: launchDualPackage,
+      launchPackage,
+      launchDualPackage,
+      launchApp,
+      launchDualApp,
+      openAppSetting,
+      openAppSettings: openAppSetting,
+      launchSettings: openAppSetting,
+      launchAppDetailsSettings: openAppSetting,
+      openDualAppSetting: launchDualAppDetailsSettings,
+      openDualAppSettings: launchDualAppDetailsSettings,
+      launchDualSettings: launchDualAppDetailsSettings,
+      launchDualAppDetailsSettings,
+      startActivity,
+      startDualActivity,
+      sendBroadcast,
+      startService,
+      getInstalledApps,
+      getPackageInfo,
+      kill,
+      killDual
+    });
+    return __autojs6_limited_app_cache;
+  }
+
+  function __autojs6_accessibility_timeout_from_options(options, fallbackMs) {
+    return options && typeof options === "object" && options.timeoutMs !== undefined
+      ? options.timeoutMs
+      : fallbackMs;
+  }
+  function __autojs6_accessibility_bridge_options(options, fallbackMs) {
+    return {
+      timeoutMs: __autojs6_accessibility_timeout_from_options(options, fallbackMs),
+      permissions: ["accessibility"],
+      signal: __autojs6_bridge_signal_from_options(options)
+    };
+  }
+  function __autojs6_accessibility_options(value) {
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  }
+  function __autojs6_accessibility_invalid_argument_error(methodName, message) {
+    return __autojs6_bridge_error(
+      message,
+      "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED",
+      "accessibility",
+      methodName
+    );
+  }
+  function __autojs6_accessibility_finite_number(value) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : NaN;
+  }
+  function __autojs6_accessibility_non_empty_string(value) {
+    const text = value === undefined || value === null ? "" : String(value);
+    return text;
+  }
+  function __autojs6_accessibility_text_input(value, methodName) {
+    const text = value === undefined || value === null ? "" : String(value);
+    if (text.indexOf("\u0000") !== -1) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " text must not contain NUL bytes."
+      );
+    }
+    return text;
+  }
+  const __autojs6_accessibility_selector_type = "autojs6.accessibility.selector";
+  const __autojs6_accessibility_selector_fields = Object.freeze([
+    "text",
+    "desc",
+    "id",
+    "className",
+    "textContains",
+    "descContains",
+    "textMatches",
+    "descMatches",
+    "idMatches",
+    "classNameMatches",
+    "clickable",
+    "enabled",
+    "scrollable",
+    "depth",
+    "boundsInside",
+    "boundsContains"
+  ]);
+  function __autojs6_accessibility_selector_text(value, methodName, fieldName) {
+    const text = value === undefined || value === null ? "" : String(value);
+    if (text.length === 0 || text.indexOf("\u0000") !== -1) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires non-empty selector " + fieldName + " without NUL bytes."
+      );
+    }
+    return text;
+  }
+  function __autojs6_accessibility_selector_regex(value, methodName, fieldName) {
+    let pattern = "";
+    let flags = "";
+    if (value instanceof RegExp) {
+      pattern = value.source;
+      flags = (value.ignoreCase ? "i" : "") + (value.multiline ? "m" : "") + (value.dotAll ? "s" : "");
+    } else if (value && typeof value === "object" && !Array.isArray(value)) {
+      pattern = value.pattern === undefined || value.pattern === null ? "" : String(value.pattern);
+      const rawFlags = value.flags === undefined || value.flags === null ? "" : String(value.flags);
+      for (let i = 0; i < rawFlags.length; i++) {
+        const flag = rawFlags.charAt(i);
+        if ((flag === "i" || flag === "m" || flag === "s") && flags.indexOf(flag) < 0) {
+          flags += flag;
+        }
+      }
+    } else {
+      pattern = value === undefined || value === null ? "" : String(value);
+    }
+    if (pattern.length === 0 || pattern.indexOf("\u0000") !== -1) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires non-empty selector " + fieldName + " pattern without NUL bytes."
+      );
+    }
+    return Object.freeze({ pattern, flags });
+  }
+  function __autojs6_accessibility_selector_boolean(value) {
+    return value !== false;
+  }
+  function __autojs6_accessibility_selector_depth(value, methodName, fieldName) {
+    const number = Number(value);
+    if (!Number.isFinite(number) || Math.trunc(number) < 0) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires non-negative integer selector " + fieldName + "."
+      );
+    }
+    return Math.trunc(number);
+  }
+  function __autojs6_accessibility_selector_bounds(value, methodName, fieldName) {
+    const input = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const bounds = Object.freeze({
+      left: __autojs6_accessibility_finite_number(input.left),
+      top: __autojs6_accessibility_finite_number(input.top),
+      right: __autojs6_accessibility_finite_number(input.right),
+      bottom: __autojs6_accessibility_finite_number(input.bottom)
+    });
+    if (!Number.isFinite(bounds.left) || !Number.isFinite(bounds.top) ||
+        !Number.isFinite(bounds.right) || !Number.isFinite(bounds.bottom) ||
+        bounds.right < bounds.left || bounds.bottom < bounds.top) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires finite selector " + fieldName + " bounds."
+      );
+    }
+    return bounds;
+  }
+  function __autojs6_accessibility_selector_value(fieldName, value, methodName) {
+    if (fieldName === "textMatches" || fieldName === "descMatches" ||
+        fieldName === "idMatches" || fieldName === "classNameMatches") {
+      return __autojs6_accessibility_selector_regex(value, methodName, fieldName);
+    }
+    if (fieldName === "clickable" || fieldName === "enabled" || fieldName === "scrollable") {
+      return __autojs6_accessibility_selector_boolean(value);
+    }
+    if (fieldName === "depth") {
+      return __autojs6_accessibility_selector_depth(value, methodName, fieldName);
+    }
+    if (fieldName === "boundsInside" || fieldName === "boundsContains") {
+      return __autojs6_accessibility_selector_bounds(value, methodName, fieldName);
+    }
+    return __autojs6_accessibility_selector_text(value, methodName, fieldName);
+  }
+  function __autojs6_accessibility_selector(fieldName, value, methodName) {
+    const selector = {
+      type: __autojs6_accessibility_selector_type,
+      version: 1
+    };
+    selector[fieldName] = __autojs6_accessibility_selector_value(fieldName, value, methodName);
+    return Object.freeze(selector);
+  }
+  function __autojs6_accessibility_bounds_input(args) {
+    if (args.length === 1 && args[0] && typeof args[0] === "object" && !Array.isArray(args[0])) {
+      return args[0];
+    }
+    return { left: args[0], top: args[1], right: args[2], bottom: args[3] };
+  }
+  function __autojs6_accessibility_is_selector_input(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return false;
+    }
+    if (value.type === __autojs6_accessibility_selector_type || Number(value.version) === 1) {
+      return true;
+    }
+    for (let i = 0; i < __autojs6_accessibility_selector_fields.length; i++) {
+      if (value[__autojs6_accessibility_selector_fields[i]] !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function __autojs6_accessibility_selector_descriptor(value, methodName) {
+    if (!value || typeof value !== "object" || Array.isArray(value) ||
+        value.type !== __autojs6_accessibility_selector_type ||
+        Number(value.version) !== 1) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires a selector descriptor created by an accessibility selector builder."
+      );
+    }
+    const descriptor = {
+      type: __autojs6_accessibility_selector_type,
+      version: 1
+    };
+    let fieldCount = 0;
+    for (let i = 0; i < __autojs6_accessibility_selector_fields.length; i++) {
+      const fieldName = __autojs6_accessibility_selector_fields[i];
+      if (value[fieldName] !== undefined) {
+        descriptor[fieldName] = __autojs6_accessibility_selector_value(fieldName, value[fieldName], methodName);
+        fieldCount += 1;
+      }
+    }
+    if (fieldCount === 0) {
+      throw __autojs6_accessibility_invalid_argument_error(
+        methodName,
+        "accessibility." + methodName + " requires at least one selector field."
+      );
+    }
+    return Object.freeze(descriptor);
+  }
+  function __autojs6_accessibility_number_property(object, name) {
+    const number = object && object[name] !== undefined && object[name] !== null ? Number(object[name]) : 0;
+    return Number.isFinite(number) ? number : 0;
+  }
+  function __autojs6_accessibility_normalize_bounds(value) {
+    const input = value && typeof value === "object" ? value : {};
+    return Object.freeze({
+      left: __autojs6_accessibility_number_property(input, "left"),
+      top: __autojs6_accessibility_number_property(input, "top"),
+      right: __autojs6_accessibility_number_property(input, "right"),
+      bottom: __autojs6_accessibility_number_property(input, "bottom")
+    });
+  }
+  function __autojs6_accessibility_optional_string(value) {
+    return value === undefined || value === null ? "" : String(value);
+  }
+  function __autojs6_accessibility_normalize_node(value) {
+    if (!value || typeof value !== "object") {
+      return null;
+    }
+    return Object.freeze({
+      text: __autojs6_accessibility_optional_string(value.text),
+      desc: __autojs6_accessibility_optional_string(value.desc),
+      id: __autojs6_accessibility_optional_string(value.id),
+      className: __autojs6_accessibility_optional_string(value.className),
+      bounds: __autojs6_accessibility_normalize_bounds(value.bounds),
+      clickable: value.clickable === true,
+      enabled: value.enabled !== false
+    });
+  }
+  function __autojs6_accessibility_normalize_nodes(value) {
+    if (!Array.isArray(value)) {
+      return Object.freeze([]);
+    }
+    const nodes = [];
+    for (let i = 0; i < value.length; i++) {
+      const node = __autojs6_accessibility_normalize_node(value[i]);
+      if (node) {
+        nodes.push(node);
+      }
+    }
+    return Object.freeze(nodes);
+  }
+  function __autojs6_limited_accessibility() {
+    if (__autojs6_limited_accessibility_cache) {
+      return __autojs6_limited_accessibility_cache;
+    }
+    function isEnabled(options) {
+      return __autojs6_call_autojs(
+        "accessibility",
+        "isEnabled",
+        [],
+        __autojs6_accessibility_bridge_options(__autojs6_accessibility_options(options), 5000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function ensureEnabled(options) {
+      const bridgeOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "ensureEnabled",
+        [{ prompt: bridgeOptions.prompt === true }],
+        __autojs6_accessibility_bridge_options(bridgeOptions, 30000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function click(x, y, options) {
+      if (__autojs6_accessibility_is_selector_input(x) &&
+          (y === undefined || y === null || (typeof y === "object" && !Array.isArray(y)))) {
+        let selector;
+        try {
+          selector = __autojs6_accessibility_selector_descriptor(x, "click");
+        } catch (error) {
+          return Promise.reject(error);
+        }
+        const findOptions = __autojs6_accessibility_options(y);
+        return __autojs6_call_autojs(
+          "accessibility",
+          "click",
+          [selector, findOptions],
+          __autojs6_accessibility_bridge_options(findOptions, 10000)
+        ).then(function(result) {
+          return result === true;
+        });
+      }
+      const targetX = __autojs6_accessibility_finite_number(x);
+      const targetY = __autojs6_accessibility_finite_number(y);
+      if (!Number.isFinite(targetX) || !Number.isFinite(targetY)) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "click",
+          "accessibility.click requires finite x and y coordinates."
+        ));
+      }
+      return __autojs6_call_autojs(
+        "accessibility",
+        "click",
+        [targetX, targetY],
+        __autojs6_accessibility_bridge_options(__autojs6_accessibility_options(options), 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function simpleAction(methodName, options) {
+      return __autojs6_call_autojs(
+        "accessibility",
+        methodName,
+        [],
+        __autojs6_accessibility_bridge_options(__autojs6_accessibility_options(options), 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function findByText(text, options) {
+      const target = __autojs6_accessibility_non_empty_string(text);
+      if (!target) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "findByText",
+          "accessibility.findByText requires non-empty text."
+        ));
+      }
+      const findOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "findByText",
+        [target, findOptions],
+        __autojs6_accessibility_bridge_options(findOptions, 10000)
+      ).then(__autojs6_accessibility_normalize_node);
+    }
+    function findOne(selector, options) {
+      let descriptor;
+      try {
+        descriptor = __autojs6_accessibility_selector_descriptor(selector, "findOne");
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      const findOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "findOne",
+        [descriptor, findOptions],
+        __autojs6_accessibility_bridge_options(findOptions, 10000)
+      ).then(__autojs6_accessibility_normalize_node);
+    }
+    function findAll(selector, options) {
+      let descriptor;
+      try {
+        descriptor = __autojs6_accessibility_selector_descriptor(selector, "findAll");
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      const findOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "findAll",
+        [descriptor, findOptions],
+        __autojs6_accessibility_bridge_options(findOptions, 10000)
+      ).then(__autojs6_accessibility_normalize_nodes);
+    }
+    function selectorAction(methodName, selector, options) {
+      let descriptor;
+      try {
+        descriptor = __autojs6_accessibility_selector_descriptor(selector, methodName);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      const actionOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        methodName,
+        [descriptor, actionOptions],
+        __autojs6_accessibility_bridge_options(actionOptions, 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function setText(selector, text, options) {
+      let descriptor;
+      let targetText;
+      try {
+        descriptor = __autojs6_accessibility_selector_descriptor(selector, "setText");
+        targetText = __autojs6_accessibility_text_input(text, "setText");
+      } catch (error) {
+        return Promise.reject(error);
+      }
+      const actionOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "setText",
+        [descriptor, targetText, actionOptions],
+        __autojs6_accessibility_bridge_options(actionOptions, 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function clickText(text, options) {
+      const target = __autojs6_accessibility_non_empty_string(text);
+      if (!target) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "clickText",
+          "accessibility.clickText requires non-empty text."
+        ));
+      }
+      const findOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "clickText",
+        [target, findOptions],
+        __autojs6_accessibility_bridge_options(findOptions, 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function gestureBridgeOptions(options, fallbackMs) {
+      // M3.2: coordinate gestures need the dedicated capability on top of
+      // plain accessibility; the host rejects the call without it.
+      return {
+        timeoutMs: __autojs6_accessibility_timeout_from_options(options, fallbackMs),
+        permissions: ["accessibility", "accessibility.gesture"],
+        signal: __autojs6_bridge_signal_from_options(options)
+      };
+    }
+    function swipe(x1, y1, x2, y2, durationMs, options) {
+      const coordinates = [x1, y1, x2, y2].map(__autojs6_accessibility_finite_number);
+      if (!coordinates.every(function(value) { return Number.isFinite(value) && value >= 0; })) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "swipe",
+          "accessibility.swipe requires finite non-negative x1, y1, x2 and y2 coordinates."
+        ));
+      }
+      const duration = durationMs === undefined || durationMs === null ? 300 : Number(durationMs);
+      if (!Number.isFinite(duration) || duration <= 0) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "swipe",
+          "accessibility.swipe requires a positive durationMs."
+        ));
+      }
+      const bridgeOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "swipe",
+        [coordinates[0], coordinates[1], coordinates[2], coordinates[3], duration],
+        gestureBridgeOptions(bridgeOptions, duration + 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    function gesture(durationMs, points, options) {
+      const duration = Number(durationMs);
+      const path = Array.isArray(points) ? points.map(function(point) {
+        if (!Array.isArray(point) || point.length < 2) return null;
+        const x = __autojs6_accessibility_finite_number(point[0]);
+        const y = __autojs6_accessibility_finite_number(point[1]);
+        return Number.isFinite(x) && Number.isFinite(y) && x >= 0 && y >= 0 ? [x, y] : null;
+      }) : [];
+      if (!Number.isFinite(duration) || duration <= 0 || path.length < 2 || path.some(function(point) { return point === null; })) {
+        return Promise.reject(__autojs6_accessibility_invalid_argument_error(
+          "gesture",
+          "accessibility.gesture requires a positive durationMs and at least two [x, y] points with finite non-negative coordinates."
+        ));
+      }
+      const bridgeOptions = __autojs6_accessibility_options(options);
+      return __autojs6_call_autojs(
+        "accessibility",
+        "gesture",
+        [duration, path],
+        gestureBridgeOptions(bridgeOptions, duration + 10000)
+      ).then(function(result) {
+        return result === true;
+      });
+    }
+    __autojs6_limited_accessibility_cache = Object.freeze({
+      text: function(value) {
+        return __autojs6_accessibility_selector("text", value, "text");
+      },
+      desc: function(value) {
+        return __autojs6_accessibility_selector("desc", value, "desc");
+      },
+      id: function(value) {
+        return __autojs6_accessibility_selector("id", value, "id");
+      },
+      className: function(value) {
+        return __autojs6_accessibility_selector("className", value, "className");
+      },
+      textContains: function(value) {
+        return __autojs6_accessibility_selector("textContains", value, "textContains");
+      },
+      descContains: function(value) {
+        return __autojs6_accessibility_selector("descContains", value, "descContains");
+      },
+      textMatches: function(value) {
+        return __autojs6_accessibility_selector("textMatches", value, "textMatches");
+      },
+      descMatches: function(value) {
+        return __autojs6_accessibility_selector("descMatches", value, "descMatches");
+      },
+      idMatches: function(value) {
+        return __autojs6_accessibility_selector("idMatches", value, "idMatches");
+      },
+      classNameMatches: function(value) {
+        return __autojs6_accessibility_selector("classNameMatches", value, "classNameMatches");
+      },
+      clickable: function(value) {
+        return __autojs6_accessibility_selector("clickable", value, "clickable");
+      },
+      enabled: function(value) {
+        return __autojs6_accessibility_selector("enabled", value, "enabled");
+      },
+      scrollable: function(value) {
+        return __autojs6_accessibility_selector("scrollable", value, "scrollable");
+      },
+      depth: function(value) {
+        return __autojs6_accessibility_selector("depth", value, "depth");
+      },
+      boundsInside: function(left, top, right, bottom) {
+        return __autojs6_accessibility_selector("boundsInside", __autojs6_accessibility_bounds_input(arguments), "boundsInside");
+      },
+      boundsContains: function(left, top, right, bottom) {
+        return __autojs6_accessibility_selector("boundsContains", __autojs6_accessibility_bounds_input(arguments), "boundsContains");
+      },
+      isEnabled,
+      ensureEnabled,
+      click,
+      back: function(options) {
+        return simpleAction("back", options);
+      },
+      home: function(options) {
+        return simpleAction("home", options);
+      },
+      recentApps: function(options) {
+        return simpleAction("recentApps", options);
+      },
+      findByText,
+      findOne,
+      findAll,
+      clickText,
+      longClick: function(selector, options) {
+        return selectorAction("longClick", selector, options);
+      },
+      setText,
+      scrollForward: function(selector, options) {
+        return selectorAction("scrollForward", selector, options);
+      },
+      scrollBackward: function(selector, options) {
+        return selectorAction("scrollBackward", selector, options);
+      },
+      swipe,
+      gesture
+    });
+    return __autojs6_limited_accessibility_cache;
+  }
+
+  const app = { ...__autojs6_limited_app() };
+  for (const key of ['packageName','versionName','versionCode']) Object.defineProperty(app,key,{enumerable:true,get(){
+    if (!hostInfo) throw new HostCallError('NOT_GRANTED','Host application identity requires app.control','app.control');
+    return hostInfo[key];
+  }});
+  return {app:Object.freeze(app),accessibility:__autojs6_limited_accessibility(),clipboard:__autojs6_limited_clipboard()};
+}
+// END GENERATED AUTOMATION
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -1286,6 +2676,41 @@ export async function createHostClient(options = {}) {
     if (!isObject(payload)) throw new TypeError("Host call payload must be an object");
     return request(capability, capability, payload);
   }
+
+  // Long gestures/activation wait through short polls, preserving the fixed per-RPC limit.
+  let activeAutomation=0;
+  const automationWaiting=[];
+  async function automationCall(...args) {
+    if(activeAutomation>=4)await new Promise(resolve=>automationWaiting.push(resolve));else activeAutomation++;
+    try{return await performAutomationCall(...args);}
+    finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
+  }
+  async function performAutomationCall(module, method, args, options = {}) {
+    const capability = module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
+    const signal = options.signal;
+    if (signal !== undefined && !(signal instanceof AbortSignal)) throw new TypeError('signal must be an AbortSignal');
+    if (signal?.aborted) throw signal.reason;
+    if (module === 'accessibility' && ['swipe','gesture'].includes(method) && !grants.has('accessibility.gesture'))
+      throw new HostCallError('NOT_GRANTED','Gestures require accessibility.gesture',capability);
+    const id = (await call(capability, { action:'start', method, args, timeoutMs })).value?.id;
+    if (typeof id !== 'string') throw new HostCallError('INVALID_RESPONSE','Missing automation task id',capability);
+    let done = false;
+    try {
+      const deadline=Date.now()+timeoutMs+1000;
+      while (true) {
+        if (signal?.aborted) throw signal.reason;
+        if (Date.now() > deadline) throw new HostCallError('TIMEOUT','Automation task timed out',capability);
+        const result=(await call(capability,{action:'poll',id})).value;
+        if (typeof result?.done !== 'boolean') throw new HostCallError('INVALID_RESPONSE','Invalid automation result',capability);
+        if (result.done) { done=true; return result.value; }
+      }
+    } finally { if(!done) await call(capability,{action:'cancel',id}).catch(()=>{}); }
+  }
+  const appInfo = grants.has('app.control') ? (await call('app.control',{action:'identity'})).value : null;
+  if (appInfo !== null && (!isObject(appInfo) || typeof appInfo.packageName !== 'string' || typeof appInfo.versionName !== 'string' || !Number.isInteger(appInfo.versionCode)))
+    throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
+  const automation = createAutomation(automationCall, appInfo);
 
   function group(capability) {
     return Object.freeze(Object.fromEntries(HOST_API_METHODS[capability].map(method => [method, async (...args) => {
@@ -1451,6 +2876,7 @@ export async function createHostClient(options = {}) {
 
   return Object.freeze({
     sdkVersion: SDK_VERSION,
+    ...automation,
     bridgeVersion: info.bridgeVersion,
     capabilities,
     limits,

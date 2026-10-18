@@ -489,3 +489,10 @@ applies independently. Nothing records automatically or continues as a hidden
 background audio service. Cancellation, navigation, window/Worker shutdown and
 View disposal close the capture and release owned temporary files. Confirmed
 files remain available while the View or a copying download holds them.
+
+
+## Bun automation (2026-10-19)
+
+Bun Runtime 0.3.0 and host 5572 expose `host.app`, `host.accessibility` and `host.clipboard`. Their public adapters and declarations are reproducibly copied from the Node counterparts; the host dispatches only 13 public app operations, 16 accessibility operations and three clipboard operations. Local Intent/URI helpers, selector builders and aliases stay synchronous. Android operations return Promises. `app.control`, `accessibility.control`, `accessibility.gesture` and `clipboard.control` are independent, default-off grants; packaged projects declare them in `bun.hostCapabilities`. Gestures require both accessibility grants. Android accessibility and clipboard foreground rules still apply to the host or packaged app.
+
+Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10-second per-RPC bound for long gestures/activation; four operations may be outstanding and the SDK queues further operations. Cancellation stops waiting but cannot undo an Android action already dispatched. Polls count toward the original execution quota. Raw Java nodes, internal Agent diagnostics, root/Shizuku and dual-app actions are not exposed. Coordinate click retains the current Node provider rejection; use an explicitly granted single-point gesture. Native Bun payloads and the frozen compatibility matrix are unchanged. Validation: host docs/dev/bun-automation-2026-10-19.md.

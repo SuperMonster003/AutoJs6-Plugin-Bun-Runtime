@@ -100,6 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - 宿主客户端支持完整 OpenCC 转换及常用图像 API, 包含像素读取, 编解码, 变换, 找色与按执行回收的图像句柄; 宿主图片文件访问采用独立授权且默认关闭.
 - Bun 支持独立授权的屏幕截图, Android 录屏权限申请, 超时/取消清理和重新申请.
 - Bun screenRecorder 支持 H.264 MP4 录屏, 可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 包含独立音频授权和取消清理.
+- Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用.
 
 ******
 
@@ -108,7 +109,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - 项目文件需要宿主协商工作区归档: 此时 project.json/package.json 目录内的脚本可以使用相对导入, 否则仅传输单个源码快照. 不自动安装依赖 (--no-install).
-- 不注入 Rhino 全局: 已授权的 Pinyin/Pinyin4j, 坐标换算, toast/设备信息及控制台控制通过显式宿主客户端调用. 其他自动化 API 与直接 Java 对象尚未提供. 显式客户端还提供全部 32 类 OpenCC 转换与常用图像处理. 图片文件读写需要独立的 image.files 授权, 默认关闭. 编码图片传输沿用请求 64 KiB / 结果 256 KiB 的 JSON 上限, 大型图片应使用宿主文件路径.
+- 不注入 Rhino 全局. 已记录的文本, 图像, 截图/录屏, UI/Compose, WebView 和自动化宿主 API 通过显式 SDK 使用. 未列出的 API 和任意 Java 对象仍不支持.
 - 没有 Java bridge: Bun 脚本无法直接访问 AutoJs6 进程中的 Java 类或对象.
 - 不承诺完整的 Bun 工具链: `bunx`, 设备端生成可执行文件, 运行时 C 编译和任意 native addon 均不在支持范围内.
 - 不是安全沙箱: Bun 脚本以受信任代码身份在插件进程中运行, 可以使用授予插件的权限, 请只运行你信任的脚本.
@@ -121,7 +122,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 为什么在 Bun 脚本里用不了 `click()`, `toast()` 这些 AutoJs6 函数?
 
-Bun 使用独立引擎, 不注入 Rhino 全局变量. 显式导入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的客户端, 调用 await createHostClient() 协商本次运行的授权. 配套宿主提供 toast/设备信息, Pinyin/Pinyin4j, 实时 cX/cY/cXy/cYx 换算及异步控制台控制. 拼音仍需要对应插件, Android 权限仍需授予; 控制台控制默认关闭. 各项能力可在插件中心独立撤销. [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) 说明加载, 类型, 错误与尚未覆盖的能力. 显式客户端还提供全部 32 类 OpenCC 转换与常用图像处理. 图片文件读写需要独立的 image.files 授权, 默认关闭. 编码图片传输沿用请求 64 KiB / 结果 256 KiB 的 JSON 上限, 大型图片应使用宿主文件路径.
+显式导入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 并等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在插件中心开启各自独立授权, 手势还需 `accessibility.gesture`. 打包项目声明相同授权. Android 无障碍服务授权和剪贴板前台访问限制仍适用. 完整接口及限制参阅 [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
 
 #### 可以使用 npm 包吗?
 
@@ -234,6 +235,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.3.0
+
+_2026/10/19_
+
+- `新增` Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用
+
 #### v0.2.14
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `新增` WebView getUserMedia/MediaRecorder 流式音视频, 支持等待网页 Promise, 显式申请 Android 媒体权限及 Worker 生命周期管理
-
-#### v0.2.12
-
-_2026/10/18_
-
-- `新增` Bun: WebView 视频拍摄与前台 AAC/M4A 录音, 支持媒体参数, 可配置选择等待时限和临时文件清理
 
 ##### 更多发行历史
 

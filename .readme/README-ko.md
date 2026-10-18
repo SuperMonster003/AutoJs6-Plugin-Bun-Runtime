@@ -100,6 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - 호스트 클라이언트의 OpenCC 변환 및 일반 이미지 API, 픽셀 읽기, 인코딩, 변환, 색상 검색과 실행별 이미지 핸들 정리 지원; 호스트 이미지 파일 접근은 별도 권한이며 기본적으로 꺼짐.
 - Bun에서 별도 허용이 필요한 화면 캡처, Android 승인, 시간 초과/취소 정리 및 재요청 지원.
 - Bun screenRecorder에서 H.264 MP4 녹화, 선택적 마이크/앱 재생/혼합 AAC 오디오 및 녹화 중 화면 캡처 지원, 별도 오디오 허용과 취소 정리 포함.
+- Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원.
 
 ******
 
@@ -108,7 +109,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - 프로젝트 파일은 작업 공간 아카이브를 협상하는 호스트가 필요합니다. 지원 시 project.json/package.json 아래 스크립트에서 상대 가져오기를 사용할 수 있으며, 그렇지 않으면 단일 소스 스냅샷만 전송합니다. 의존성을 자동 설치하지 않습니다 (--no-install).
-- Rhino 전역 변수는 주입하지 않습니다. 허용된 Pinyin/Pinyin4j, 좌표 변환, toast/기기 정보 및 콘솔 제어는 명시적 호스트 클라이언트를 사용합니다. 다른 자동화 API 및 Java 객체 직접 접근은 제공하지 않습니다. 명시적 클라이언트는 32가지 OpenCC 변환과 일반 이미지 처리도 제공합니다. 이미지 파일 읽기/쓰기는 기본적으로 꺼진 image.files 별도 권한이 필요합니다. 인코딩된 이미지 전송도 JSON 요청64 KiB / 결과256 KiB 제한을 따르므로 큰 이미지는 호스트 파일 경로를 사용하세요.
+- Rhino 전역 객체는 주입되지 않습니다. 문서화된 텍스트, 이미지, 화면 캡처, UI/Compose, WebView 및 자동화 호스트 API는 명시적 SDK로 사용합니다. 나열되지 않은 API와 임의의 Java 객체는 지원하지 않습니다.
 - Java bridge 없음: Bun 스크립트는 AutoJs6 프로세스의 Java class나 object에 직접 접근할 수 없습니다.
 - 전체 Bun toolchain 보장 없음: `bunx`, 기기에서의 executable 생성, runtime C compilation, 임의 native addon은 지원 범위 밖입니다.
 - Security sandbox 아님: Bun 스크립트는 플러그인 프로세스에서 신뢰된 코드로 실행되며 플러그인에 부여된 permission을 사용할 수 있으므로, 신뢰하는 스크립트만 실행하세요.
@@ -121,7 +122,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 왜 Bun 스크립트에서 `click()`, `toast()` 같은 AutoJs6 함수를 사용할 수 없나요?
 
-Bun은 별도 엔진이며 Rhino 전역 변수를 주입하지 않습니다. process.env.AUTOJS6_HOST_CLIENT_MODULE의 클라이언트를 명시적으로 가져오고 await createHostClient()로 이번 실행의 권한을 확인합니다. 호환 호스트는 toast/기기 정보, Pinyin/Pinyin4j, 실시간 cX/cY/cXy/cYx 변환과 비동기 콘솔 제어를 제공합니다. 병음 플러그인과 Android 권한은 별도로 필요하며 콘솔 제어는 기본적으로 꺼져 있습니다. 플러그인 센터에서 각 권한을 개별적으로 취소할 수 있습니다. 로딩, 형식, 오류 및 미지원 기능은 [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md)를 참고하세요. 명시적 클라이언트는 32가지 OpenCC 변환과 일반 이미지 처리도 제공합니다. 이미지 파일 읽기/쓰기는 기본적으로 꺼진 image.files 별도 권한이 필요합니다. 인코딩된 이미지 전송도 JSON 요청64 KiB / 결과256 KiB 제한을 따르므로 큰 이미지는 호스트 파일 경로를 사용하세요.
+`process.env.AUTOJS6_HOST_CLIENT_MODULE`을 가져오고 `createHostClient()`를 기다립니다. 호스트 build 5572와 Bun Runtime 0.3.0은 `host.app`, `host.accessibility`, `host.clipboard`를 제공합니다. 플러그인 센터에서 개별 권한을 켜고 제스처에는 `accessibility.gesture`도 허용합니다. 패키징 프로젝트도 같은 권한을 선언합니다. Android 접근성 승인과 클립보드 포그라운드 제한은 계속 적용됩니다. 전체 인터페이스와 제한은 [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md)를 참고하세요.
 
 #### npm 패키지를 사용할 수 있나요?
 
@@ -234,6 +235,12 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.3.0
+
+_2026/10/19_
+
+- `기능` Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원
+
 #### v0.2.14
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `기능` WebView getUserMedia/MediaRecorder 오디오 및 비디오 스트리밍, 페이지 Promise 대기, 명시적 Android 미디어 권한 요청 및 Worker 수명 주기 관리
-
-#### v0.2.12
-
-_2026/10/18_
-
-- `기능` Bun: WebView 동영상 촬영과 전면 AAC/M4A 오디오 녹음, 미디어 옵션, 선택 대기 시간 설정 및 임시 파일 정리
 
 ##### 더 많은 릴리스 기록
 

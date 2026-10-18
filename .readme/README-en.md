@@ -100,6 +100,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant.
 - Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization.
 - Bun screenRecorder writes H.264 MP4 with optional microphone, app-playback or mixed AAC audio and screenshots during recording, with independent audio grants and cancellation cleanup.
+- Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.
 
 ******
 
@@ -108,7 +109,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 ******
 
 - Project files require a host that negotiates workspace archives: scripts under project.json/package.json can then use relative imports. Otherwise only one source snapshot is sent. Dependencies are never installed automatically (--no-install).
-- No Rhino globals: use the explicit host client for granted Pinyin/Pinyin4j, coordinates, toast/device information and console controls. Other automation APIs and direct Java objects remain unavailable. The explicit client also provides all 32 OpenCC conversion names and common image processing. Image file reads/writes require the separate image.files grant, which is disabled by default. Encoded image transfer uses the existing 64 KiB request / 256 KiB result JSON limits; use host file paths for large images.
+- Rhino globals are not injected. Use the explicit SDK for documented host text, image, capture, UI/Compose, WebView and automation APIs. Unlisted APIs and arbitrary Java objects remain unsupported.
 - No Java bridge: Bun scripts cannot directly access Java classes or objects in the AutoJs6 process.
 - No full Bun toolchain promise: `bunx`, on-device executable output, runtime C compilation, and arbitrary native addons are outside the supported scope.
 - Not a security sandbox: a Bun script runs as trusted code in the plugin process and can use the permissions granted to the plugin, so only run scripts you trust.
@@ -121,7 +122,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 
 #### Why are AutoJs6 functions such as `click()` and `toast()` unavailable in Bun scripts?
 
-Bun has its own engine and does not receive Rhino globals. Import the client at `process.env.AUTOJS6_HOST_CLIENT_MODULE` explicitly and call `await createHostClient()` to negotiate this run's grants. With a matching AutoJs6 host, it provides toast/device info, Pinyin/Pinyin4j, live cX/cY/cXy/cYx conversion and asynchronous console controls. Pinyin providers and Android permissions remain necessary; console control is off by default. Each capability can be revoked independently in Plugin Center. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for loading, types, errors and remaining gaps. The explicit client also provides all 32 OpenCC conversion names and common image processing. Image file reads/writes require the separate image.files grant, which is disabled by default. Encoded image transfer uses the existing 64 KiB request / 256 KiB result JSON limits; use host file paths for large images.
+Import `process.env.AUTOJS6_HOST_CLIENT_MODULE` and await `createHostClient()`. Host build 5572 with Bun Runtime 0.3.0 adds `host.app`, `host.accessibility` and `host.clipboard`. Enable their independent grants in Plugin Center; gestures need the additional `accessibility.gesture` grant. Packaged projects declare the same grants. Android accessibility-service authorization and clipboard foreground restrictions still apply. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for all supported interfaces and limits.
 
 #### Can I use npm packages?
 
@@ -234,6 +235,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.3.0
+
+_2026/10/19_
+
+- `Feature` Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support
+
 #### v0.2.14
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Feature` WebView getUserMedia/MediaRecorder streaming audio and video, awaited page Promises, explicit Android media permission requests and Worker lifecycle support
-
-#### v0.2.12
-
-_2026/10/18_
-
-- `Feature` Bun: WebView video capture and foreground AAC/M4A audio recording, with media options, configurable chooser deadlines and temporary-file cleanup
 
 ##### For more release history
 

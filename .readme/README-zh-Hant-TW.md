@@ -100,6 +100,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - 宿主用戶端支援完整 OpenCC 轉換及常用影像 API, 包含像素讀取, 編解碼, 變換, 找色與依執行回收的影像控制代碼; 宿主圖片檔案存取採用獨立授權且預設關閉.
 - Bun 支援獨立授權的螢幕擷取, Android 錄製權限申請, 逾時/取消清理和重新申請.
 - Bun screenRecorder 支援 H.264 MP4 螢幕錄製, 可選麥克風/應用程式播放/混合 AAC 音軌及錄製期間擷取畫面, 包含獨立音訊授權和取消清理.
+- Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式.
 
 ******
 
@@ -108,7 +109,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 ******
 
 - 專案檔案需要宿主協商工作區封存: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝相依套件 (--no-install).
-- 不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及主控台控制透過明確匯入的宿主用戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供. 明確匯入的用戶端亦提供全部 32 類 OpenCC 轉換與常用影像處理. 圖片檔案讀寫需要獨立的 image.files 授權, 預設關閉. 編碼圖片傳輸沿用請求 64 KiB / 結果 256 KiB 的 JSON 上限, 大型圖片應使用宿主檔案路徑.
+- 不注入 Rhino 全域物件. 已記錄的文字, 圖像, 截圖/錄影, UI/Compose, WebView 和自動化宿主 API 透過顯式 SDK 使用. 未列出的 API 和任意 Java 物件仍不支援.
 - 沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 行程中的 Java class 或 object.
 - 不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.
 - 不是 security sandbox: Bun 腳本以受信任程式碼身分在插件行程中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本.
@@ -121,7 +122,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 為什麼在 Bun 腳本裡用不了 `click()`, `toast()` 這些 AutoJs6 函式?
 
-Bun 使用獨立引擎, 不注入 Rhino 全域變數. 明確匯入 process.env.AUTOJS6_HOST_CLIENT_MODULE 指向的用戶端, 呼叫 await createHostClient() 協商本次執行的授權. 配套宿主提供 toast/裝置資訊, Pinyin/Pinyin4j, 即時 cX/cY/cXy/cYx 換算及非同步主控台控制. 拼音仍需要對應外掛, Android 權限仍需授予; 主控台控制預設關閉. 各項能力可在外掛中心獨立撤銷. [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) 說明載入, 型別, 錯誤與尚未涵蓋的能力. 明確匯入的用戶端亦提供全部 32 類 OpenCC 轉換與常用影像處理. 圖片檔案讀寫需要獨立的 image.files 授權, 預設關閉. 編碼圖片傳輸沿用請求 64 KiB / 結果 256 KiB 的 JSON 上限, 大型圖片應使用宿主檔案路徑.
+顯式匯入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 並等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在外掛程式中心開啟各自獨立授權, 手勢還需 `accessibility.gesture`. 打包專案宣告相同授權. Android 無障礙服務授權和剪貼簿前景存取限制仍適用. 完整介面及限制參閱 [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
 
 #### 可以使用 npm 套件嗎?
 
@@ -234,6 +235,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.3.0
+
+_2026/10/19_
+
+- `新增` Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式
+
 #### v0.2.14
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `新增` WebView getUserMedia/MediaRecorder 串流音訊與影片, 支援等待網頁 Promise, 明確申請 Android 媒體權限及 Worker 生命週期管理
-
-#### v0.2.12
-
-_2026/10/18_
-
-- `新增` Bun: WebView 影片拍攝與前景 AAC/M4A 錄音, 支援媒體參數, 可設定選擇等待時限及暫存檔案清理
 
 ##### 更多發行記錄
 

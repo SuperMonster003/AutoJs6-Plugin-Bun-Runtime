@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.3.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "واجهات Bun لإمكانية الوصول وعمليات التطبيقات والحافظة متوافقة مع Node.js مع أذونات مستقلة ودعم التطبيقات المحزمة"
+      ]
+    },
     "v0.2.14": {
       "released_date": "2026/10/18",
       "feature": [

@@ -21,7 +21,7 @@ console.log(process.platform);
 ### 目前限制
 
 - 專案檔案需要宿主協商工作區歸檔: 此時 project.json/package.json 目錄內的腳本可以使用相對匯入, 否則僅傳輸單一原始碼快照. 不自動安裝依賴 (--no-install).
-- 不注入 Rhino 全域變數: 已授權的 Pinyin/Pinyin4j, 座標換算, toast/裝置資訊及控制台控制透過明確匯入的宿主客戶端呼叫. 其他自動化 API 與直接 Java 物件尚未提供. 明確匯入的客戶端亦提供全部 32 類 OpenCC 轉換與常用圖像處理. 圖片檔案讀寫需要獨立的 image.files 授權, 預設關閉. 編碼圖片傳輸沿用請求 64 KiB / 結果 256 KiB 的 JSON 上限, 大型圖片應使用宿主檔案路徑.
+- 不注入 Rhino 全域物件. 已記錄的文字, 圖像, 截圖/錄影, UI/Compose, WebView 和自動化宿主 API 透過顯式 SDK 使用. 未列出的 API 和任意 Java 物件仍不支援.
 - 沒有 Java bridge: Bun 腳本無法直接存取 AutoJs6 程序中的 Java class 或 object.
 - 不保證完整的 Bun toolchain: `bunx`, 裝置端產生 executable, runtime C compilation 和任意 native addon 均不在支援範圍內.
 - 不是 security sandbox: Bun 腳本以受信任程式碼身分在插件程序中執行, 可以使用授予插件的 permission, 請只執行你信任的腳本.

@@ -21,7 +21,7 @@ console.log(process.platform);
 ### 現在の制限
 
 - プロジェクトファイルにはワークスペースアーカイブを交渉するホストが必要です. 対応時は project.json/package.json 以下のスクリプトで相対インポートを使えます. それ以外は単一ソースのスナップショットのみ転送されます. 依存関係は自動インストールされません (--no-install).
-- Rhino グローバルは注入されません. 許可された Pinyin/Pinyin4j, 座標変換, toast/端末情報とコンソール操作は明示的なホストクライアントを使います. その他の自動化 API や直接の Java オブジェクトは未対応です. 明示的なクライアントは全32種類の OpenCC 変換と一般的な画像処理にも対応します. 画像ファイルの読み書きには初期状態で無効の image.files 許可が必要です. エンコード画像の転送も JSON リクエスト64 KiB / 結果256 KiB の上限に従うため, 大きい画像はホスト側のファイルパスを使ってください.
+- Rhino のグローバルは注入されません. 文書化されたテキスト, 画像, 画面キャプチャ, UI/Compose, WebView, 自動化のホスト API は明示的な SDK から利用します. 未記載の API と任意の Java オブジェクトは対象外です.
 - Java bridge なし: Bun スクリプトは AutoJs6 プロセスの Java class や object に直接 access できません.
 - 完全な Bun toolchain は保証しません: `bunx`, 端末上での executable 生成, runtime C compilation, 任意の native addon は support 対象外です.
 - Security sandbox ではありません: Bun スクリプトはプラグインプロセス内で trusted code として動作し, プラグインに付与された permission を利用できます. 信頼できるスクリプトだけを実行してください.

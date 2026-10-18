@@ -15,6 +15,7 @@ function transport(grants = capabilities, invoke = () => ({ value: null })) {
       assert.equal(init.unix, "/private/bridge.sock");
       assert.ok(init.signal instanceof AbortSignal);
       if (id === "info") return Response.json({ ok: true, bridgeVersion: 1, capabilities: grants, limits });
+      if (id === "app.control" && JSON.parse(init.body).action === "identity") return Response.json({ok:true,capability:id,result:{value:{packageName:'test.host',versionName:'1.0',versionCode:1}}});
       return Response.json({ ok: true, capability: id, result: await invoke(id, JSON.parse(init.body)) });
     },
   };
@@ -296,7 +297,7 @@ test("rejects NaN and infinity before JSON can turn them into null", async () =>
     await assert.rejects(host.coordinates.cY(0.5, number), TypeError);
     await assert.rejects(host.coordinates.setScaleBases(720, number), TypeError);
   }
-  assert.equal(fake.requests.length, 1);
+  assert.equal(fake.requests.filter(request=>request.url.endsWith('/screen.metrics')).length, 0);
 });
 
 test("distinguishes an omitted coordinate from explicit undefined and preserves optional defaults", async () => {
@@ -306,12 +307,12 @@ test("distinguishes an omitted coordinate from explicit undefined and preserves 
     await assert.rejects(host.coordinates[name](undefined), TypeError);
     await assert.rejects(host.coordinates[name](undefined, 720, false), TypeError);
   }
-  assert.equal(fake.requests.length, 1, "invalid explicit coordinates must not reach the host");
+  assert.equal(fake.requests.filter(request=>request.url.endsWith('/screen.metrics')).length, 0, "invalid explicit coordinates must not reach the host");
   await host.coordinates.cX();
   await host.coordinates.cY();
   await host.coordinates.cX(0.5, undefined, undefined);
   await host.coordinates.cXy(0.5, undefined, true);
-  assert.deepEqual(fake.requests.slice(1).map(request => JSON.parse(request.init.body)), [
+  assert.deepEqual(fake.requests.filter(request=>request.url.endsWith('/screen.metrics')).map(request => JSON.parse(request.init.body)), [
     { method: "cX", args: [] }, { method: "cY", args: [] },
     { method: "cX", args: [0.5] }, { method: "cXy", args: [0.5, null, true] },
   ]);
@@ -332,7 +333,7 @@ test("console controls are real asynchronous calls and native console stays unch
 });
 
 test("preserves bridge failures, without retries or fabricated successful values", async () => {
-  const fake = transport();
+  const fake = transport(['text.pinyin']);
   const fetch = fake.fetch;
   fake.fetch = async (url, init) => url.endsWith("/info") ? fetch(url, init) : Response.json({
     ok: false, capability: "text.pinyin", error: { code: "HOST_UNAVAILABLE", message: "Pinyin provider is disabled" },
@@ -355,7 +356,7 @@ test("old toast and device calls keep the original payload and result contract",
   const host = await client(fake);
   assert.deepEqual(await host.toast("Bun"), { shown: true });
   assert.equal(await host.device.info().then(value => value.model), "device");
-  assert.deepEqual(JSON.parse(fake.requests[1].init.body), { text: "Bun" });
+  assert.deepEqual(JSON.parse(fake.requests.find(request=>request.url.endsWith('/ui.toast')).init.body), { text: "Bun" });
 });
 
 test("every delivered method has a declaration and a callable wrapper", async () => {

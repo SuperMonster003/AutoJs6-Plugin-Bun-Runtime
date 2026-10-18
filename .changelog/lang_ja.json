@@ -5,6 +5,12 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.3.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun のユーザー補助, アプリ操作, クリップボード API を Node.js の対応インターフェースに合わせ, 個別の許可とパッケージ化アプリに対応"
+      ]
+    },
     "v0.2.14": {
       "released_date": "2026/10/18",
       "feature": [

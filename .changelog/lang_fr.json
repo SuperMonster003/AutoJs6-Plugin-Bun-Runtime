@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.3.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées"
+      ]
+    },
     "v0.2.14": {
       "released_date": "2026/10/18",
       "feature": [

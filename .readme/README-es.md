@@ -100,6 +100,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 - Conversiones OpenCC y API habituales de imagen mediante el cliente del host, con lectura de píxeles, codificación, transformaciones, búsquedas de color y liberación de imágenes por ejecución; el acceso a archivos del host requiere un permiso separado desactivado por defecto.
 - Bun ofrece captura de pantalla con permiso independiente, consentimiento de Android, limpieza al cancelar o expirar y nueva solicitud.
 - Bun screenRecorder genera MP4 H.264 con audio AAC opcional del micrófono, aplicaciones o mezcla y capturas durante la grabación, con permisos de audio independientes y limpieza al cancelar.
+- API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas.
 
 ******
 
@@ -108,7 +109,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 ******
 
 - Los archivos del proyecto requieren un host que negocie archivos de espacio de trabajo: los scripts bajo project.json/package.json pueden usar importaciones relativas. De lo contrario se envía una sola instantánea de código. Nunca se instalan dependencias automáticamente (--no-install).
-- No se inyectan variables globales de Rhino: use el cliente explícito para Pinyin/Pinyin4j, coordenadas, toast/información del dispositivo y controles de consola autorizados. Otras API de automatización y objetos Java directos siguen sin estar disponibles. El cliente explícito también ofrece los 32 nombres de conversión OpenCC y procesamiento habitual de imágenes. Leer/escribir imágenes requiere el permiso separado image.files, desactivado por defecto. La transferencia de imágenes codificadas mantiene los límites JSON de 64 KiB por solicitud y 256 KiB por resultado; use rutas del host para imágenes grandes.
+- No se inyectan globales de Rhino. Use el SDK explícito para las API documentadas de texto, imagen, captura, UI/Compose, WebView y automatización. Las API no enumeradas y los objetos Java arbitrarios no están admitidos.
 - Sin puente Java: los scripts Bun no pueden acceder directamente a clases u objetos Java del proceso de AutoJs6.
 - Sin promesa de toolchain completo de Bun: `bunx`, la generación de ejecutables en el dispositivo, la compilación C en runtime y los addons nativos arbitrarios quedan fuera del alcance admitido.
 - No es un sandbox de seguridad: un script Bun se ejecuta como código de confianza en el proceso del plugin y puede usar los permisos concedidos al plugin, así que ejecuta solo scripts en los que confíes.
@@ -121,7 +122,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 
 #### Por qué funciones de AutoJs6 como `click()` y `toast()` no están disponibles en los scripts Bun?
 
-Bun usa un motor independiente y no recibe variables globales de Rhino. Importe el cliente de process.env.AUTOJS6_HOST_CLIENT_MODULE y llame a await createHostClient() para consultar los permisos de esta ejecución. Un host compatible ofrece toast/información del dispositivo, Pinyin/Pinyin4j, conversión cX/cY/cXy/cYx en tiempo real y controles asíncronos de consola. Aún se necesitan los proveedores de pinyin y los permisos de Android; el control de consola está desactivado por defecto. Cada permiso puede revocarse en el Centro de plugins. Consulte [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) para carga, tipos, errores y funciones pendientes. El cliente explícito también ofrece los 32 nombres de conversión OpenCC y procesamiento habitual de imágenes. Leer/escribir imágenes requiere el permiso separado image.files, desactivado por defecto. La transferencia de imágenes codificadas mantiene los límites JSON de 64 KiB por solicitud y 256 KiB por resultado; use rutas del host para imágenes grandes.
+Importe `process.env.AUTOJS6_HOST_CLIENT_MODULE` y espere a `createHostClient()`. El anfitrión build 5572 con Bun Runtime 0.3.0 proporciona `host.app`, `host.accessibility` y `host.clipboard`. Active sus permisos independientes en el centro de plugins; los gestos también necesitan `accessibility.gesture`. Los proyectos empaquetados declaran los mismos permisos. Se mantienen las reglas Android de accesibilidad y acceso al portapapeles en primer plano. Consulte [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
 
 #### Puedo usar paquetes npm?
 
@@ -234,6 +235,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.3.0
+
+_2026/10/19_
+
+- `Función` API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas
+
 #### v0.2.14
 
 _2026/10/18_
@@ -245,12 +252,6 @@ _2026/10/18_
 _2026/10/18_
 
 - `Función` Audio y video en directo con WebView getUserMedia/MediaRecorder, espera de Promise de pagina, solicitudes explicitas de permisos multimedia Android y ciclo de vida de Worker
-
-#### v0.2.12
-
-_2026/10/18_
-
-- `Función` Bun: Captura de vídeo WebView y audio AAC/M4A en primer plano, con opciones multimedia, plazos configurables y limpieza de archivos temporales
 
 ##### Más historial de versiones
 

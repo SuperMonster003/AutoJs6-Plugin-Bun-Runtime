@@ -21,7 +21,7 @@ Si todo funciona, la primera línea de salida es `Bun 1.4.0` y la segunda es `an
 ### Limitaciones actuales
 
 - Los archivos del proyecto requieren un host que negocie archivos de espacio de trabajo: los scripts bajo project.json/package.json pueden usar importaciones relativas. De lo contrario se envía una sola instantánea de código. Nunca se instalan dependencias automáticamente (--no-install).
-- No se inyectan variables globales de Rhino: use el cliente explícito para Pinyin/Pinyin4j, coordenadas, toast/información del dispositivo y controles de consola autorizados. Otras API de automatización y objetos Java directos siguen sin estar disponibles. El cliente explícito también ofrece los 32 nombres de conversión OpenCC y procesamiento habitual de imágenes. Leer/escribir imágenes requiere el permiso separado image.files, desactivado por defecto. La transferencia de imágenes codificadas mantiene los límites JSON de 64 KiB por solicitud y 256 KiB por resultado; use rutas del host para imágenes grandes.
+- No se inyectan globales de Rhino. Use el SDK explícito para las API documentadas de texto, imagen, captura, UI/Compose, WebView y automatización. Las API no enumeradas y los objetos Java arbitrarios no están admitidos.
 - Sin puente Java: los scripts Bun no pueden acceder directamente a clases u objetos Java del proceso de AutoJs6.
 - Sin promesa de toolchain completo de Bun: `bunx`, la generación de ejecutables en el dispositivo, la compilación C en runtime y los addons nativos arbitrarios quedan fuera del alcance admitido.
 - No es un sandbox de seguridad: un script Bun se ejecuta como código de confianza en el proceso del plugin y puede usar los permisos concedidos al plugin, así que ejecuta solo scripts en los que confíes.
