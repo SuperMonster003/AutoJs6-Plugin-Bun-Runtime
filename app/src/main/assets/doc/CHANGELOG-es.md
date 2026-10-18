@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.8
+
+###### 2026/10/18
+
+* `Función` Bun admiten formularios y diseños XML comunes, propiedades View asíncronas, asignaciones ordenadas, recuperación de errores
+
 # v0.2.7
 
 ###### 2026/10/18

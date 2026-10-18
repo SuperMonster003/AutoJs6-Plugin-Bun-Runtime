@@ -5,6 +5,12 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "相依性",
   "$data": {
+    "v0.2.8": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Bun 支援常用 XML 表單與版面配置元件及原生 View 非同步屬性代理, 包含循序賦值, 錯誤復原"
+      ]
+    },
     "v0.2.7": {
       "released_date": "2026/10/18",
       "feature": [

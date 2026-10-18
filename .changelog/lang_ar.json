@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.8": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "يدعم Bun نماذج وتخطيطات XML الشائعة وخصائص View غير المتزامنة مع الإسناد المرتب والتعافي من الأخطاء"
+      ]
+    },
     "v0.2.7": {
       "released_date": "2026/10/18",
       "feature": [

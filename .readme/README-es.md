@@ -234,6 +234,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.8
+
+_2026/10/18_
+
+- `Función` Bun admiten formularios y diseños XML comunes, propiedades View asíncronas, asignaciones ordenadas, recuperación de errores
+
 #### v0.2.7
 
 _2026/10/18_
@@ -256,14 +262,6 @@ _2026/10/18_
 - `Corrección` El cliente de coordenadas interpretaba un primer argumento undefined explícito como una consulta de dimensiones sin argumentos o una coordenada cero
 - `Mejora` Los iconos del centro de plugins usan los tamaños, posiciones, imágenes claras y oscuras y fondos circulares ajustados en Icon Studio, conservando fuentes y parámetros reproducibles
 - `Mejora` Los iconos de información de la aplicación de Android comparten las imágenes y los fondos claros y oscuros de Icon Studio, conservando las imágenes transparentes del centro de plugins y las opciones del lanzador
-
-#### v0.2.5
-
-_2026/09/20_
-
-- `Aviso` El plugin oficial sigue requiriendo Android 13 (API 33) o posterior
-- `Corrección` Advertencias de lectura de SDK XML v4 con AGP 9.1 y comprobaciones de alineación nativa de APK activadas por error al ensamblar pruebas unitarias JVM, mediante los plugins de compilación compartidos 1.8.3
-- `Mejora` Archiva la verificación de los activos APK/fuente publicados de v0.2.4 y la aceptación del APK final firmado en cuatro entornos sobre los bytes finales de la publicación: actualizaciones in situ desde la v0.2.3 publicada en Sony API 33 arm64 y Xiaomi API 35 universal, instalaciones limpias en Redmi API 33 arm64 y un AVD x86_64 API 33, cada una con 11/11 grupos antes y después de force-stop (el undécimo grupo es el puente de capacidades dinámicas con un broker en el mismo proceso); no hubo dispositivo de 16 KiB disponible y las cargas del runtime no cambian desde v0.2.2; la etiqueta publicada no se reescribe y la compatibilidad Android/16 KB no se amplía
 
 ##### Más historial de versiones
 

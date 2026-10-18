@@ -418,3 +418,23 @@ test("native View and Compose interop use independent grants and JSON identities
   const denied=await client(transport(['ui.compose']));
   await assert.rejects(denied.ui.context(),{code:'NOT_GRANTED'});
 });
+
+test("native property writes remain ordered and observable through reads and flush", async () => {
+  const token={__autojs6ViewHandle:'view',id:'view',type:'TextView'},state={text:'before'},writes=[];
+  let disposed=false;
+  const fake=transport(['ui.layout'],async (_id,{method,args})=>{
+    if(method==='inflate')return {value:token};
+    if(method==='viewUpdate') {
+      await new Promise(r=>setTimeout(r,3));
+      if(args[1].text==='invalid')throw Error('native rejected');
+      Object.assign(state,args[1]);writes.push(args[1].text);return {value:state};
+    }
+    if(method==='viewGet')return {value:state[args[1]]};
+    if(method==='disposeView')disposed=true;
+    return {value:null};
+  });
+  const host=await client(fake),view=await host.ui.createView('Text');
+  view.text='one';view.text='two';assert.equal(await view.text,'two');assert.deepEqual(writes,['one','two']);
+  view.text='invalid';await assert.rejects(view.flush());view.text='recovered';await view.flush();assert.equal(await view.text,'recovered');
+  view.text='invalid';await assert.rejects(view.dispose());assert(disposed);
+});

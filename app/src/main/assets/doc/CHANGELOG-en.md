@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.8
+
+###### 2026/10/18
+
+* `Feature` Bun support common XML form and layout widgets and asynchronous native View property access, including ordered assignments, error recovery
+
 # v0.2.7
 
 ###### 2026/10/18

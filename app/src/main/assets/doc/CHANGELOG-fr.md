@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.8
+
+###### 2026/10/18
+
+* `Fonctionnalité` Bun prennent en charge les formulaires et interfaces XML courants, les propriétés View asynchrones, les affectations ordonnées, la reprise après erreur
+
 # v0.2.7
 
 ###### 2026/10/18
