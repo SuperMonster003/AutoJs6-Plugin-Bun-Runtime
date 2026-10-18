@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.13
+
+###### 2026/10/18
+
+* `新增` WebView getUserMedia/MediaRecorder 串流音訊與影片, 支援等待網頁 Promise, 明確申請 Android 媒體權限及 Worker 生命週期管理
+
 # v0.2.12
 
 ###### 2026/10/18

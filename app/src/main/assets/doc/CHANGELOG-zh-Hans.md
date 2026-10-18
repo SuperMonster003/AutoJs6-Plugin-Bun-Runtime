@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.13
+
+###### 2026/10/18
+
+* `新增` WebView getUserMedia/MediaRecorder 流式音视频, 支持等待网页 Promise, 显式申请 Android 媒体权限及 Worker 生命周期管理
+
 # v0.2.12
 
 ###### 2026/10/18

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.2.13": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "بث الصوت والفيديو عبر WebView getUserMedia/MediaRecorder, وانتظار Promise للصفحة, وطلب أذونات الوسائط في Android صراحة, وإدارة دورة حياة Worker"
+      ]
+    },
     "v0.2.12": {
       "released_date": "2026/10/18",
       "feature": [

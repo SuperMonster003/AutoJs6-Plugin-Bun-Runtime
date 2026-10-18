@@ -234,6 +234,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.2.13
+
+_2026/10/18_
+
+- `Feature` WebView getUserMedia/MediaRecorder streaming audio and video, awaited page Promises, explicit Android media permission requests and Worker lifecycle support
+
 #### v0.2.12
 
 _2026/10/18_
@@ -246,12 +252,6 @@ _2026/10/18_
 
 - `Feature` Bun: WebView full-size camera capture, save and directory selection, document byte reads, and streamed blob/data downloads with selected output locations
 - `Feature` Bun project timeoutMs configuration for interactive camera and file workflows, including packaged applications
-
-#### v0.2.10
-
-_2026/10/18_
-
-- `Feature` Bun: WebView HTTP(S) downloads, system file selection and asynchronous WebViewClient/WebChromeClient callbacks with native navigation and resource rules
 
 ##### For more release history
 

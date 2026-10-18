@@ -518,3 +518,12 @@ py -B -m unittest discover -s .python -p "test_*.py"
 - 诊断预算: 见 "2026-09-14 路线调整". 停放清单中的条目不得再触发新夹具, 新归档或 native 重建; 解除停放需要用户报告的真实失败, 上游修复或发布门禁, 并在本文件记录理由.
 
 2026-10-18: WebView 视频和前台录音捕获扩展到主线程及 Worker, 同步媒体参数, 声明与补全. 真机和打包验证记录见宿主 docs/dev/runtime-webview-media-2026-10-18.md. Bun 原生载荷和冻结的兼容范围不变.
+
+
+## WebView streaming media (2026-10-18)
+
+Host build 5568 adds `evaluateJavascriptAsync(source, {timeoutMs})`: await a page expression or Promise, returning JSON with page errors propagated. The default is 30000 ms (100..2147483647). Waiting does not occupy the UI command queue or a Bun RPC. Navigation, disposal and Worker exit cancel pending results; timeout cannot abort arbitrary page code. Keep DOM MediaStream/MediaRecorder objects in the page and stop tracks explicitly in finally.
+
+`onPermissionRequest` also accepts `{resources, requestAndroidPermissions:true}` after checking the requesting origin. This explicitly requests missing CAMERA/RECORD_AUDIO through Android. An array still requires existing Android grants. The installed host or packaged app must declare the relevant permissions. Missing callbacks, rejected OS prompts and undeclared permissions deny capture. Pending media authorization is cancelled on navigation, client replacement and View disposal.
+
+Use a secure page (HTTPS or loopback), actual WebView `navigator.mediaDevices.getUserMedia` and `MediaRecorder`. Pause/resume/requestData/stop remain page APIs. Transfer each emitted Blob through existing download/readDownload calls (32768 bytes per read), and concatenate chunks in order for the final recording. Codec availability and timing depend on WebView. This does not add DOM globals to Node or Bun, guarantee background capture, or implement getDisplayMedia. See host docs/dev/runtime-webview-streams-2026-10-18.md for device evidence.

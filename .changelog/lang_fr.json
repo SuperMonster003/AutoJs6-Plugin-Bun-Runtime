@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.2.13": {
+      "released_date": "2026/10/18",
+      "feature": [
+        "Flux audio et video WebView getUserMedia/MediaRecorder, attente des Promise de page, demandes explicites de permissions multimedia Android et cycle de vie des Worker"
+      ]
+    },
     "v0.2.12": {
       "released_date": "2026/10/18",
       "feature": [

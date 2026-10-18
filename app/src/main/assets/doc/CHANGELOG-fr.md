@@ -4,6 +4,12 @@
 
 ******
 
+# v0.2.13
+
+###### 2026/10/18
+
+* `Fonctionnalité` Flux audio et video WebView getUserMedia/MediaRecorder, attente des Promise de page, demandes explicites de permissions multimedia Android et cycle de vie des Worker
+
 # v0.2.12
 
 ###### 2026/10/18

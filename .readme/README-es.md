@@ -234,6 +234,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.2.13
+
+_2026/10/18_
+
+- `Función` Audio y video en directo con WebView getUserMedia/MediaRecorder, espera de Promise de pagina, solicitudes explicitas de permisos multimedia Android y ciclo de vida de Worker
+
 #### v0.2.12
 
 _2026/10/18_
@@ -246,12 +252,6 @@ _2026/10/18_
 
 - `Función` Bun: Captura WebView de fotos completas, selección de archivos y directorios, lectura de bytes y descargas blob/data hacia los destinos elegidos
 - `Función` Configuración timeoutMs de proyectos Bun para fotos y archivos interactivos, incluidas las aplicaciones empaquetadas
-
-#### v0.2.10
-
-_2026/10/18_
-
-- `Función` Bun: Descargas HTTP(S) de WebView, selección de archivos del sistema y callbacks asíncronos WebViewClient/WebChromeClient con reglas nativas de navegación y recursos
 
 ##### Más historial de versiones
 
