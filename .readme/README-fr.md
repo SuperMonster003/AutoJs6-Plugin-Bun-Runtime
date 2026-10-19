@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.11.0
+
+_2026/10/20_
+
+- `Fonctionnalité` Interopérabilité Java/Android pour Node.js, Bun et Workers, avec constructeurs et membres publics, tableaux, valeurs long exactes, surcharges explicites et handles Context
+
 #### v0.10.0
 
 _2026/10/19_
@@ -251,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Fonctionnalité` Commandes de périphérique et dialogues pour Bun et les Workers Node.js, avec luminosité, volume et nettoyage indépendant des fenêtres
-
-#### v0.8.0
-
-_2026/10/19_
-
-- `Fonctionnalité` Événements et notifications hôtes pour Bun et les Workers Node.js, avec nettoyage indépendant des abonnements et notifications
 
 ##### Pour plus d'historique
 

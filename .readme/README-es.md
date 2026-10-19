@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.11.0
+
+_2026/10/20_
+
+- `Función` Interoperabilidad Java/Android para Node.js, Bun y Workers, con constructores y miembros públicos, matrices, valores long exactos, sobrecargas explícitas y referencias Context
+
 #### v0.10.0
 
 _2026/10/19_
@@ -251,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Función` Control del dispositivo y diálogos para Bun y Workers de Node.js, con brillo, volumen y limpieza independiente de ventanas
-
-#### v0.8.0
-
-_2026/10/19_
-
-- `Función` Eventos y notificaciones del anfitrión para Bun y Workers de Node.js, con limpieza independiente de suscripciones y notificaciones
 
 ##### Más historial de versiones
 

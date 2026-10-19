@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.11.0": {
+      "released_date": "2026/10/20",
+      "feature": [
+        "Java/Android object interop for Node.js, Bun and Workers, including public constructors and members, arrays, exact long values, explicit overloads and application Context handles"
+      ]
+    },
     "v0.10.0": {
       "released_date": "2026/10/19",
       "feature": [

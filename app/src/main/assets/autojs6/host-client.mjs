@@ -23,6 +23,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName"]),
   "android.objects": Object.freeze(["createPaint","setPaintColor","getPaintInfo","measureText","createColorStateList","getColorForState","close","getThemeColor","getUriForFile","parseUri"]),
   "tasks.control": Object.freeze(["addTimedTask","addIntentTask","queryTimedTasks","queryIntentTasks","getTimedTask","getIntentTask","removeTimedTask","removeIntentTask","updateTask","sendLocalBroadcastSync"]),
   "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope"]),
@@ -3998,6 +3999,139 @@ function createStorage(dispatch) {
   }
 // END GENERATED ANDROID TASK FACADES
 
+// BEGIN GENERATED JAVA FACADE
+  // Shared Java object facade for Node, Bun and Worker transports.
+  function __autojs6_create_java(call, policy = {}, enabled = true) {
+    const error = (message, code = "ERR_AUTOJS6_JAVA_METHOD_DENIED") => Object.assign(new TypeError(message), {code});
+    const check = () => { if (!enabled) throw error("Java interop is disabled for this execution.", "ERR_AUTOJS6_JAVA_INTEROP_DISABLED"); };
+    const name = (value, code = "ERR_AUTOJS6_JAVA_CLASS_DENIED") => {
+      check(); const result = typeof value === "string" ? value.trim() : value && (value.className || value.name);
+      if (!result || typeof result !== "string") throw error("A non-empty Java class/member name is required.", code);
+      return result;
+    };
+    const id = value => {
+      check(); const result = typeof value === "string" ? value : value && (value.__autojs6JavaHandle || value.handle);
+      if (!result || typeof result !== "string") throw error("A Java object handle is required.");
+      return result;
+    };
+    const argument = (value, seen = new Set()) => {
+      if (value === undefined || value === null) return null;
+      if (typeof value === "bigint") return {__autojs6JavaType:"long", value:String(value)};
+      if (typeof value === "number") {
+        if (!Number.isFinite(value)) return {__autojs6JavaType:"double", value:String(value)};
+        if (Number.isInteger(value) && !Number.isSafeInteger(value)) throw error("Unsafe Java integer; use bigint or java.cast('long', decimalString).");
+        return value;
+      }
+      if (typeof value === "string" || typeof value === "boolean") return value;
+      if (typeof value !== "object") throw error("Java arguments accept primitives, arrays, typed values and Java handles.");
+      if (value.__autojs6JavaHandle) return {__autojs6JavaHandle:id(value)};
+      if (seen.has(value)) throw error("Cyclic Java argument array.");
+      seen.add(value);
+      try {
+        if (Array.isArray(value) || ArrayBuffer.isView(value) && !(value instanceof DataView)) return Array.from(value, item => argument(item, seen));
+        if (value.__autojs6JavaType) {
+          const type = name(value.__autojs6JavaType);
+          const raw = typeof value.value === "bigint" || typeof value.value === "number" && !Number.isFinite(value.value) ? String(value.value) : argument(value.value, seen);
+          return {__autojs6JavaType:type, value:raw};
+        }
+      } finally { seen.delete(value); }
+      throw error("Plain objects are not Java objects; construct a Bundle/Map or pass a Java handle.");
+    };
+    const args = value => {
+      if (value == null) return [];
+      if (!Array.isArray(value)) throw error("Java args must be an array.");
+      return value.map(item => argument(item));
+    };
+    const releaseRaw = async value => {
+      if (Array.isArray(value)) { for (const item of value) await releaseRaw(item); }
+      else if (value && typeof value === "object" && value.__autojs6JavaHandle)
+        await call("java", "release", [{handle:value.__autojs6JavaHandle}], {timeoutMs:5000,permissions:["java_interop"]});
+    };
+    const invoke = async (method, payload, options = {}) => {
+      check(); if (options.signal?.aborted) throw error("Java call aborted.", "ABORT_ERR");
+      if (options.thread !== undefined && !["default","main"].includes(options.thread)) throw error("Java thread must be default or main.");
+      if (options.parameterTypes !== undefined) {
+        if (!Array.isArray(options.parameterTypes)) throw error("parameterTypes must be an array of class names.");
+        payload.parameterTypes = options.parameterTypes.map(value=>name(value));
+      }
+      if (options.thread !== undefined) payload.thread = options.thread;
+      // Keep the transport reply after JS cancellation so newly returned references can be released.
+      const pending = Promise.resolve(call("java", method, [payload], {timeoutMs:5000,...options,signal:undefined,permissions:["java_interop"]}));
+      return new Promise((resolve,reject)=>{
+        let aborted=false;
+        const abort=()=>{aborted=true;reject(error("Java call aborted.","ABORT_ERR"));};
+        options.signal?.addEventListener("abort",abort,{once:true});
+        if(options.signal?.aborted)abort();
+        pending.then(value=>{
+          options.signal?.removeEventListener("abort",abort);
+          if(aborted){releaseRaw(value).catch(()=>{});return;}
+          try{resolve(decode(value));}catch(cause){reject(cause);}
+        },cause=>{options.signal?.removeEventListener("abort",abort);if(!aborted)reject(cause);});
+      });
+    };
+    const decode = value => {
+      if (!value || typeof value !== "object") return value;
+      if (value.__autojs6JavaLong !== undefined) return BigInt(value.__autojs6JavaLong);
+      if (value.__autojs6JavaNumber !== undefined) return Number(value.__autojs6JavaNumber);
+      if (Array.isArray(value)) return Object.freeze(value.map(decode));
+      if (!value.__autojs6JavaHandle) return Object.freeze(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,decode(v)])));
+      const target = {...value, ...(value.value ? {value:decode(value.value)} : {})};
+      // Methods are non-enumerable so handles can be cloned through MessagePort.
+      Object.defineProperties(target, Object.fromEntries(Object.entries({
+        call:(method,values,options)=>api.call(target,method,values,options),
+        callInstance:(method,values,options)=>api.call(target,method,values,options),
+        getField:(field,options)=>api.getField(target,field,options),
+        setField:(field,value,options)=>api.setField(target,field,value,options),
+        getClassName:options=>api.getClassName(target,options),
+        instanceOf:(type,options)=>api.instanceOf(target,type,options),
+        arrayLength:options=>api.arrayLength(target,options),
+        getArrayItem:(index,options)=>api.getArrayItem(target,index,options),
+        setArrayItem:(index,value,options)=>api.setArrayItem(target,index,value,options),
+        toArray:options=>api.toArray(target,options),
+        release:options=>api.release(target,options),
+        dispose:options=>api.release(target,options),
+        toJSON:()=>value
+      }).map(([key,fn])=>[key,{value:fn}])));
+      return Object.freeze(target);
+    };
+    const descriptor = value => {
+      const className = name(value);
+      return Object.freeze({className,name:className,
+        callStatic:(method,values,options)=>api.callStatic(className,method,values,options),
+        new:(values,options)=>api.new(className,values,options),create:(values,options)=>api.new(className,values,options),
+        getStatic:(field,options)=>api.getStatic(className,field,options),
+        setStatic:(field,value,options)=>api.setStatic(className,field,value,options),
+        describe:options=>api.describe(className,options)
+      });
+    };
+    const api = {
+      policy:Object.freeze({enabled,limitsEnforcedBy:"host_provider",published:!!policy,allowedClasses:[],deniedClassPrefixes:[],classes:{},...policy}),
+      findClass:descriptor,type:descriptor,
+      cast:(type,value)=>Object.freeze({__autojs6JavaType:name(type),value}),
+      callStatic:async(type,method,values,options)=>invoke("callStatic",{className:name(type),method:name(method,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),args:args(values)},options),
+      new:async(type,values,options)=>invoke("new",{className:name(type),args:args(values)},options),
+      call:async(target,method,values,options)=>invoke("call",{handle:id(target),method:name(method,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),args:args(values)},options),
+      getField:async(target,field,options)=>invoke("getField",{handle:id(target),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED")},options),
+      setField:async(target,field,value,options)=>invoke("setField",{handle:id(target),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),value:argument(value)},options),
+      getStatic:async(type,field,options)=>invoke("getStatic",{className:name(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED")},options),
+      setStatic:async(type,field,value,options)=>invoke("setStatic",{className:name(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),value:argument(value)},options),
+      describe:async(type,options)=>invoke("type",{className:name(type)},options),
+      getContext:options=>invoke("getContext",{},options),
+      newArray:async(type,value,options)=>invoke("newArray",{className:name(type),value:argument(value)},options),
+      arrayLength:async(target,options)=>invoke("arrayLength",{handle:id(target)},options),
+      getArrayItem:async(target,index,options)=>invoke("getArrayItem",{handle:id(target),index},options),
+      setArrayItem:async(target,index,value,options)=>invoke("setArrayItem",{handle:id(target),index,value:argument(value)},options),
+      toArray:async(target,options)=>invoke("toArray",{handle:id(target)},options),
+      getClassName:async(target,options)=>invoke("getClassName",{handle:id(target)},options),
+      instanceOf:async(target,type,options)=>invoke("instanceOf",{handle:id(target),className:name(type)},options),
+      release:async(target,options)=>invoke("release",{handle:id(target)},options),
+      defineClass:()=>{ throw error("Java subclass/callback generation is not implemented."); }
+    };
+    api.create=api.new;api.callInstance=api.call;api.dispose=api.release;
+    return Object.freeze(api);
+  }
+// END GENERATED JAVA FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -4078,7 +4212,7 @@ export async function createHostClient(options = {}) {
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
   }
   async function performAutomationCall(module, method, args, options = {}) {
-    const capability = module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
     if (module === 'device' && options.permissions?.includes('device.power') && !grants.has('device.power')) throw new HostCallError('NOT_GRANTED','Device power control requires device.power',capability);
     const signal = options.signal;
@@ -4288,6 +4422,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    java: __autojs6_create_java(automationCall,{access:"public"}),
     android,
     colors,
     tasks,

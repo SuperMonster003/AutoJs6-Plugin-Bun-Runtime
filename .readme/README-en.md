@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.11.0
+
+_2026/10/20_
+
+- `Feature` Java/Android object interop for Node.js, Bun and Workers, including public constructors and members, arrays, exact long values, explicit overloads and application Context handles
+
 #### v0.10.0
 
 _2026/10/19_
@@ -251,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Device controls and dialogs for Bun and Node.js Workers, including brightness, volume and independent window cleanup
-
-#### v0.8.0
-
-_2026/10/19_
-
-- `Feature` Host event observers and notifications for Bun and Node.js Workers, with independent subscription and notification cleanup
 
 ##### For more release history
 
