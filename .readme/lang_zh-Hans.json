@@ -18,7 +18,8 @@
     "Bun 支持独立授权的屏幕截图, Android 录屏权限申请, 超时/取消清理和重新申请.",
     "Bun screenRecorder 支持 H.264 MP4 录屏, 可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 包含独立音频授权和取消清理.",
     "Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用.",
-    "Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通."
+    "Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通.",
+    "Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化."
   ],
   "h3_usage": "安装和使用",
   "usage_steps": [

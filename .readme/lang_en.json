@@ -18,7 +18,8 @@
     "Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization.",
     "Bun screenRecorder writes H.264 MP4 with optional microphone, app-playback or mixed AAC audio and screenshots during recording, with independent audio grants and cancellation cleanup.",
     "Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.",
-    "Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage."
+    "Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.",
+    "Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence."
   ],
   "h3_usage": "Install and Use",
   "usage_steps": [

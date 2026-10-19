@@ -5,6 +5,12 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "相依性",
   "$data": {
+    "v0.5.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Node.js Worker 與 Bun 的 database/sqlite API, 支援參數化查詢, 交易和資料庫持久化"
+      ]
+    },
     "v0.4.0": {
       "released_date": "2026/10/19",
       "feature": [

@@ -18,7 +18,8 @@
     "Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande.",
     "Bun screenRecorder produit des MP4 H.264 avec audio AAC du microphone, des applications ou mixé et captures pendant la vidéo, avec autorisations audio distinctes et nettoyage après annulation.",
     "API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées.",
-    "API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js."
+    "API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js.",
+    "API hôtes database/sqlite pour Bun et les Workers Node.js, avec requêtes paramétrées, transactions et persistance."
   ],
   "h3_usage": "Installation et utilisation",
   "usage_steps": [

@@ -102,6 +102,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - Bun screenRecorder writes H.264 MP4 with optional microphone, app-playback or mixed AAC audio and screenshots during recording, with independent audio grants and cancellation cleanup.
 - Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.
 - Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.
+- Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence.
 
 ******
 
@@ -236,6 +237,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.5.0
+
+_2026/10/19_
+
+- `Feature` Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence
+
 #### v0.4.0
 
 _2026/10/19_
@@ -247,12 +254,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support
-
-#### v0.2.14
-
-_2026/10/18_
-
-- `Feature` WebView screen sharing adapter, foreground-service audio capture and native background camera recording in Node.js/Bun, including Node Workers
 
 ##### For more release history
 

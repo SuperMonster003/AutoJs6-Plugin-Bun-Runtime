@@ -21,6 +21,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "database.control": Object.freeze(["open", "exec", "run", "get", "all", "transaction", "close"]),
   "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir"]),
   "storage.control": Object.freeze(["get", "put", "remove", "clear", "keys", "contains"]),
   "app.control": Object.freeze(["launchPackage", "launchApp", "openAppSetting", "startActivity", "getPackageName", "getAppName", "isInstalled", "viewFile", "editFile", "startService", "sendBroadcast", "getInstalledApps", "getPackageInfo"]),
@@ -2820,6 +2821,245 @@ function createStorage(dispatch) {
 }
 // END GENERATED STORAGE
 
+// BEGIN GENERATED DATABASE
+// Shared with Node main threads and Workers by tools/host-client/sync-database.mjs.
+  function __autojs6_create_database(call, error, normalizeTimeout, signalFromOptions) {
+    let __autojs6_limited_database_cache, __autojs6_limited_sqlite_cache;
+    const __autojs6_call_autojs = call;
+    const __autojs6_bridge_error = error || ((message, code, module, method) => Object.assign(new Error(message), {code, module, method}));
+    const __autojs6_bridge_timeout_ms = normalizeTimeout || (value => {
+      const number = Number(value == null ? 30000 : value);
+      return !Number.isFinite(number) || number <= 0 ? 30000 : Math.max(1, Math.min(Math.floor(number), 2147483647));
+    });
+    const __autojs6_bridge_signal_from_options = signalFromOptions || (options => options && options.signal);
+  function __autojs6_database_options(value) {
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  }
+  function __autojs6_database_invalid_argument_error(moduleName, methodName, message, code) {
+    return __autojs6_bridge_error(
+      message,
+      code || "ERR_AUTOJS6_BRIDGE_INVALID_REQUEST",
+      moduleName,
+      methodName
+    );
+  }
+  function __autojs6_database_open_payload(moduleName, value) {
+    let name = "";
+    if (typeof value === "string" || typeof value === "number") {
+      name = String(value).trim();
+    } else if (value && typeof value === "object" && !Array.isArray(value)) {
+      const selected = value.name === undefined || value.name === null ? value.path : value.name;
+      name = selected == null ? "" : String(selected).trim();
+    }
+    if (!name || name.length > 64 || name.indexOf("\u0000") !== -1) {
+      throw __autojs6_database_invalid_argument_error(moduleName, "open", moduleName + ".open requires a non-empty database name up to 64 characters.");
+    }
+    const normalized = name.replace(/\\/g, "/");
+    if (
+      normalized.charAt(0) === "/" ||
+      normalized.indexOf("/") >= 0 ||
+      normalized.indexOf(":") >= 0 ||
+      normalized === "." ||
+      normalized === ".." ||
+      normalized.indexOf("..") >= 0 ||
+      !/^[A-Za-z0-9_.-]+$/.test(normalized)
+    ) {
+      throw __autojs6_database_invalid_argument_error(
+        moduleName,
+        "open",
+        moduleName + ".open only accepts scoped database names, not paths.",
+        "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED"
+      );
+    }
+    return { name: normalized };
+  }
+  function __autojs6_database_sql(moduleName, methodName, value) {
+    const sql = String(value === undefined || value === null ? "" : value).trim();
+    if (!sql || sql.length > 16384 || sql.indexOf("\u0000") !== -1) {
+      throw __autojs6_database_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " requires non-empty SQL up to 16384 characters.");
+    }
+    if (/(^|[^A-Za-z0-9_])(load_extension|attach|detach)($|[^A-Za-z0-9_])/i.test(sql)) {
+      throw __autojs6_database_invalid_argument_error(
+        moduleName,
+        methodName,
+        moduleName + "." + methodName + " SQL is denied by policy.",
+        "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED"
+      );
+    }
+    return sql;
+  }
+  function __autojs6_database_params(moduleName, methodName, value) {
+    if (value === undefined || value === null) {
+      return [];
+    }
+    if (!Array.isArray(value)) {
+      throw __autojs6_database_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " parameters must be an array.");
+    }
+    if (value.length > 128) {
+      throw __autojs6_database_invalid_argument_error(
+        moduleName,
+        methodName,
+        moduleName + "." + methodName + " parameters exceeded 128 entries.",
+        "ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT"
+      );
+    }
+    return value.map(function(item) {
+      if (
+        item === null ||
+        typeof item === "string" ||
+        typeof item === "number" ||
+        typeof item === "boolean"
+      ) {
+        if (typeof item === "number" && !Number.isFinite(item)) {
+          throw __autojs6_database_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " numeric parameters must be finite.");
+        }
+        return item;
+      }
+      throw __autojs6_database_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " parameters must be JSON primitive values.");
+    });
+  }
+  function __autojs6_database_bridge_options(options, fallbackMs) {
+    const input = __autojs6_database_options(options);
+    return {
+      timeoutMs: __autojs6_bridge_timeout_ms(input.timeoutMs === undefined ? fallbackMs : input.timeoutMs),
+      signal: __autojs6_bridge_signal_from_options(input),
+      permissions: ["database"]
+    };
+  }
+  function __autojs6_database_transaction_operations(moduleName, operations) {
+    if (typeof operations === "function") {
+      throw __autojs6_database_invalid_argument_error(moduleName, "transaction", moduleName + ".transaction callback form is not supported by the controlled bridge.");
+    }
+    if (!Array.isArray(operations)) {
+      throw __autojs6_database_invalid_argument_error(moduleName, "transaction", moduleName + ".transaction requires an array of operations.");
+    }
+    if (operations.length > 64) {
+      throw __autojs6_database_invalid_argument_error(
+        moduleName,
+        "transaction",
+        moduleName + ".transaction exceeded 64 operations.",
+        "ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT"
+      );
+    }
+    return operations.map(function(operation) {
+      if (!operation || typeof operation !== "object" || Array.isArray(operation)) {
+        throw __autojs6_database_invalid_argument_error(moduleName, "transaction", moduleName + ".transaction operations must be objects.");
+      }
+      const type = String(operation.type || operation.method || "").trim().toLowerCase();
+      if (["exec", "run", "get", "all"].indexOf(type) < 0) {
+        throw __autojs6_database_invalid_argument_error(moduleName, "transaction", moduleName + ".transaction supports only exec, run, get, and all operations.");
+      }
+      return {
+        type,
+        sql: __autojs6_database_sql(moduleName, "transaction", operation.sql),
+        params: __autojs6_database_params(moduleName, "transaction", operation.params)
+      };
+    });
+  }
+  function __autojs6_limited_database(moduleName) {
+    if (moduleName === "sqlite" && __autojs6_limited_sqlite_cache) {
+      return __autojs6_limited_sqlite_cache;
+    }
+    if (moduleName === "database" && __autojs6_limited_database_cache) {
+      return __autojs6_limited_database_cache;
+    }
+    function createDatabaseHandle(openResult) {
+      const handleId = openResult && typeof openResult.id === "string" ? openResult.id : "";
+      const databaseName = openResult && typeof openResult.name === "string" ? openResult.name : "";
+      if (!handleId) {
+        throw __autojs6_database_invalid_argument_error(moduleName, "open", moduleName + ".open did not receive a database handle from the bridge.");
+      }
+      let closed = false;
+      function ensureOpen(methodName) {
+        if (closed) {
+          throw __autojs6_database_invalid_argument_error(moduleName, methodName, moduleName + " database handle is closed.");
+        }
+      }
+      function call(methodName, args, options, fallbackMs) {
+        ensureOpen(methodName);
+        return __autojs6_call_autojs(
+          moduleName,
+          methodName,
+          [handleId].concat(args || []),
+          __autojs6_database_bridge_options(options, fallbackMs || 10000)
+        );
+      }
+      function exec(sql, params, options) {
+        return call("exec", [__autojs6_database_sql(moduleName, "exec", sql), __autojs6_database_params(moduleName, "exec", params)], options, 10000).then(function() {
+          return undefined;
+        });
+      }
+      function run(sql, params, options) {
+        return call("run", [__autojs6_database_sql(moduleName, "run", sql), __autojs6_database_params(moduleName, "run", params)], options, 10000);
+      }
+      function get(sql, params, options) {
+        return call("get", [__autojs6_database_sql(moduleName, "get", sql), __autojs6_database_params(moduleName, "get", params)], options, 10000);
+      }
+      function all(sql, params, options) {
+        return call("all", [__autojs6_database_sql(moduleName, "all", sql), __autojs6_database_params(moduleName, "all", params)], options, 10000).then(function(result) {
+          return Object.freeze(Array.isArray(result) ? result.slice() : []);
+        });
+      }
+      function transaction(operations, options) {
+        return call("transaction", [__autojs6_database_transaction_operations(moduleName, operations)], options, 15000);
+      }
+      function close(options) {
+        if (closed) {
+          return Promise.resolve(false);
+        }
+        return __autojs6_call_autojs(
+          moduleName,
+          "close",
+          [handleId],
+          __autojs6_database_bridge_options(options, 5000)
+        ).then(function(result) {
+          closed = true;
+          return result === true;
+        });
+      }
+      return Object.freeze({
+        id: handleId,
+        name: databaseName,
+        exec,
+        run,
+        get,
+        all,
+        transaction,
+        close
+      });
+    }
+    function open(nameOrOptions, options) {
+      const payload = __autojs6_database_open_payload(moduleName, nameOrOptions);
+      return __autojs6_call_autojs(
+        moduleName,
+        "open",
+        [payload],
+        __autojs6_database_bridge_options(options === undefined ? nameOrOptions : options, 10000)
+      ).then(createDatabaseHandle);
+    }
+    const moduleValue = moduleName === "sqlite"
+      ? (function() {
+          const sqlite = function(nameOrOptions, options) {
+            return open(nameOrOptions, options);
+          };
+          Object.defineProperty(sqlite, "open", {
+            value: open,
+            enumerable: true
+          });
+          return Object.freeze(sqlite);
+        })()
+      : Object.freeze({ open });
+    if (moduleName === "sqlite") {
+      __autojs6_limited_sqlite_cache = moduleValue;
+    } else {
+      __autojs6_limited_database_cache = moduleValue;
+    }
+    return moduleValue;
+  }
+    return Object.freeze({database:__autojs6_limited_database("database"), sqlite:__autojs6_limited_database("sqlite")});
+  }
+// END GENERATED DATABASE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -2926,6 +3166,9 @@ export async function createHostClient(options = {}) {
     throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
   const automation = createAutomation(automationCall, appInfo);
   const storage = createStorage(automationCall);
+  const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
+    (message,code,module,method)=>Object.assign(new HostCallError(
+      code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':code==='ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT'?'QUOTA_EXCEEDED':'INVALID_REQUEST',message,'database.control'),{method}),value=>value);
   const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value);
 
   function group(capability) {
@@ -3094,6 +3337,7 @@ export async function createHostClient(options = {}) {
     sdkVersion: SDK_VERSION,
     ...automation,
     ...storage,
+    ...database,
     files,
     bridgeVersion: info.bridgeVersion,
     capabilities,

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const nodeRoot=process.argv.includes('--node-root')?resolve(process.argv[process.argv.indexOf('--node-root')+1]):resolve(root,'../AutoJs6-Plugin-NodeJs-Runtime');
 const source=readFileSync(resolve(nodeRoot,'app/src/main/cpp/node_bridge_sources.cpp'),'utf8').replaceAll('\r\n','\n');
-const start=source.indexOf('  function __autojs6_storage_options('),end=source.indexOf('  function __autojs6_database_options(',start);
+const start=source.indexOf('  function __autojs6_storage_options('),end=source.indexOf('  function __autojs6_create_database(',start);
 assert(start>=0&&end>start);
 const generated=`// BEGIN GENERATED STORAGE
 // Reproduced from Node's public storage/storages facade by tools/host-client/sync-storage.mjs.

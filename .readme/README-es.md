@@ -102,6 +102,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 - Bun screenRecorder genera MP4 H.264 con audio AAC opcional del micrófono, aplicaciones o mezcla y capturas durante la grabación, con permisos de audio independientes y limpieza al cancelar.
 - API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas.
 - API de archivos y almacenamiento persistente de Bun, con permisos independientes y almacenamiento compartido con Node.js.
+- API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia.
 
 ******
 
@@ -236,6 +237,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.5.0
+
+_2026/10/19_
+
+- `Función` API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia
+
 #### v0.4.0
 
 _2026/10/19_
@@ -247,12 +254,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Función` API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas
-
-#### v0.2.14
-
-_2026/10/18_
-
-- `Función` Adaptador para compartir pantalla WebView, captura de audio mediante servicio en primer plano y grabacion de camara nativa en segundo plano para Node.js/Bun y Node Worker
 
 ##### Más historial de versiones
 

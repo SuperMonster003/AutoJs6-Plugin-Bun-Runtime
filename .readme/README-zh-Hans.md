@@ -102,6 +102,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun screenRecorder 支持 H.264 MP4 录屏, 可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 包含独立音频授权和取消清理.
 - Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用.
 - Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通.
+- Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化.
 
 ******
 
@@ -236,6 +237,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.5.0
+
+_2026/10/19_
+
+- `新增` Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化
+
 #### v0.4.0
 
 _2026/10/19_
@@ -247,12 +254,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `新增` Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用
-
-#### v0.2.14
-
-_2026/10/18_
-
-- `新增` Node.js/Bun 的 WebView 屏幕共享适配, 前台服务后台录音及原生后台摄像头录像, 包括 Node Worker 封装
 
 ##### 更多发行历史
 
