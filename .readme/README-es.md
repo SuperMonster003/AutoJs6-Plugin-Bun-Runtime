@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.8.0
+
+_2026/10/19_
+
+- `Función` Eventos y notificaciones del anfitrión para Bun y Workers de Node.js, con limpieza independiente de suscripciones y notificaciones
+
 #### v0.7.0
 
 _2026/10/19_
@@ -250,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Función` Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas
-
-#### v0.5.0
-
-_2026/10/19_
-
-- `Función` API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia
 
 ##### Más historial de versiones
 

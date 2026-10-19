@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.8.0
+
+_2026/10/19_
+
+- `Feature` Host event observers and notifications for Bun and Node.js Workers, with independent subscription and notification cleanup
+
 #### v0.7.0
 
 _2026/10/19_
@@ -250,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup
-
-#### v0.5.0
-
-_2026/10/19_
-
-- `Feature` Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence
 
 ##### For more release history
 

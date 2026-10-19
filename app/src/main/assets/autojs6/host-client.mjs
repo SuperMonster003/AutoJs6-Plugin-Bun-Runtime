@@ -23,6 +23,8 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "events.observe": Object.freeze(["observeNotification","observeToast","observeKey","observeBroadcasts","drainEvents","close"]),
+  "notifications.post": Object.freeze(["notify","cancel","cancelAll","getPermissionStatus","openSettings"]),
   "shell.control": Object.freeze(["exec", "spawn", "open", "drain", "write", "closeInput", "kill", "close", "getAccess", "requestShizukuPermission"]),
   "sensors.control": Object.freeze(["getAvailableSensors", "once", "subscribe", "unsubscribe", "drainEvents"]),
   "database.control": Object.freeze(["open", "exec", "run", "get", "all", "transaction", "close"]),
@@ -3302,6 +3304,153 @@ function createStorage(dispatch) {
 
 // END GENERATED SHELL
 
+// BEGIN GENERATED EVENT FACADES
+  function __autojs6_create_host_events(call, EventEmitter, attachEvents, createError) {
+    const moduleEmitter = new EventEmitter(), subscriptions = new Map();
+    const error = message => createError ? createError(message, "ERR_AUTOJS6_BRIDGE_INVALID_REQUEST", "events") : Object.assign(new TypeError(message), {code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
+    const abortError = () => Object.assign(new Error("Event observation was aborted."), {name:"AbortError",code:"ABORT_ERR"});
+    const options = value => {
+      if (value === undefined) return {};
+      if (!value || typeof value !== "object" || Array.isArray(value)) throw error("Event options must be an object.");
+      if (value.signal !== undefined && (typeof value.signal?.addEventListener !== "function" || typeof value.signal?.removeEventListener !== "function")) throw error("signal must be an AbortSignal.");
+      if (value.drainIntervalMs !== undefined && (!Number.isInteger(value.drainIntervalMs) || value.drainIntervalMs < 25 || value.drainIntervalMs > 60000)) throw error("drainIntervalMs must be an integer in 25..60000.");
+      return value;
+    };
+    const required = method => ["events", ...({observeNotification:["events.notification"],observeToast:["events.toast"],observeKey:["events.key"]}[method] || [])];
+    const invoke = (method,args,opts={}) => call("events",method,args,{timeoutMs:5000,...opts,permissions:required(method)});
+    let closing = false, generation = 0;
+    function observe(method, input) {
+      let opts;
+      try { opts=options(input); if(opts.signal?.aborted)throw abortError(); if(closing)throw error("Event observers are closing."); }
+      catch(e){return Promise.reject(e);}
+      if(subscriptions.has(method))return subscriptions.get(method).promise;
+      const entry={promise:null,refresh:()=>{}}, current=generation;
+      entry.promise=(async()=>{
+        // Keep late replies deliverable, so abort/Worker shutdown can release the native observer.
+        const record=await invoke(method,[],{...opts,signal:undefined,events:!!attachEvents});
+        if(opts.signal?.aborted || current!==generation){await invoke("close",[record.id]).catch(()=>{});throw abortError();}
+        const emitter=new EventEmitter(), buffered=[];
+        let closed=false,timer=null,draining=null,stopEvents=null,closePromise=null,dropped=0;
+        const kinds={broadcast:["screen_on","screen_off","battery_changed"],notification:["notification"],toast:["toast"],key:["key"]};
+        const names=["event","error","close","overflow",...(kinds[record.source]||[])];
+        const count=()=>emitter.eventNames().reduce((n,key)=>n+emitter.listenerCount(key),0)+names.reduce((n,key)=>n+moduleEmitter.listenerCount(key),0);
+        const detach=()=>{if(timer!==null){clearTimeout(timer);timer=null;}if(stopEvents){stopEvents();stopEvents=null;}opts.signal?.removeEventListener("abort",onAbort);};
+        function forget(){closed=true;detach();if(subscriptions.get(method)===entry)subscriptions.delete(method);}
+        const emit=(target,name,value)=>{if(name!=="error"||target.listenerCount("error"))target.emit(name,value);};
+        function publish(event){
+          emit(emitter,"event",event);emit(moduleEmitter,"event",event);
+          if(event.type!=="event"){emit(emitter,event.type,event);emit(moduleEmitter,event.type,event);}
+        }
+        function receive(raw){
+          if(closed)return;
+          const event=Object.freeze({...raw,source:raw.source||record.source});
+          try {
+            if(count())publish(event);
+            else {if(buffered.length===128){buffered.shift();dropped++;}buffered.push(event);}
+          } finally {
+            if(event.type==="close")forget();else refresh();
+          }
+        }
+        function flush(){
+          if(!count())return;
+          if(dropped){publish(Object.freeze({type:"overflow",source:record.source,time:Date.now(),dropped}));dropped=0;}
+          while(buffered.length&&count())publish(buffered.shift());
+          refresh();
+        }
+        function refresh(){
+          if(closed)return;
+          if(stopEvents)stopEvents.ref?.(count()>0);
+          if(count()&&buffered.length)queueMicrotask(flush);
+          if(!count()&&timer!==null){clearTimeout(timer);timer=null;}
+          if(!stopEvents&&count()&&timer===null&&!draining)timer=setTimeout(poll,opts.drainIntervalMs??100);
+        }
+        function fail(e){
+          if(closed)return;
+          try {emit(emitter,"error",e);emit(moduleEmitter,"error",e);}
+          finally {api.close().catch(()=>{});}
+        }
+        function poll(){
+          timer=null;if(closed)return;
+          draining=invoke("drainEvents",[record.id]);
+          draining.then(events=>{for(const event of events)receive(event);}).catch(fail).finally(()=>{draining=null;refresh();});
+        }
+        function onAbort(){fail(abortError());}
+        const api=Object.freeze({
+          id:record.id,source:record.source,get closed(){return closed;},
+          on(name,listener){emitter.on(name,listener);refresh();return api;},
+          once(name,listener){emitter.once(name,listener);refresh();return api;},
+          off(name,listener){emitter.off(name,listener);refresh();return api;},
+          async drainEvents(callOptions){
+            if(draining)await draining;
+            const events=buffered.splice(0);
+            if(dropped){events.unshift(Object.freeze({type:"overflow",source:record.source,time:Date.now(),dropped}));dropped=0;}
+            if(!closed&&!stopEvents)for(const raw of await invoke("drainEvents",[record.id],options(callOptions))){
+              const event=Object.freeze({...raw,source:raw.source||record.source});events.push(event);if(event.type==="close")forget();
+            }
+            return Object.freeze(events);
+          },
+          close(callOptions){
+            if(closed)return Promise.resolve(false);
+            if(closePromise)return closePromise;
+            let control;try{control=options(callOptions);}catch(e){return Promise.reject(e);}
+            forget();buffered.length=0;
+            closePromise=invoke("close",[record.id],{...control,signal:undefined}).then(Boolean).finally(()=>publish(Object.freeze({type:"close",source:record.source,time:Date.now(),reason:"closed"})));
+            return closePromise;
+          }
+        });
+        entry.refresh=refresh;
+        if(attachEvents)stopEvents=attachEvents(record,receive,false);
+        opts.signal?.addEventListener("abort",onAbort,{once:true});
+        if(opts.signal?.aborted){await api.close();throw abortError();}
+        refresh();return api;
+      })().catch(e=>{if(subscriptions.get(method)===entry)subscriptions.delete(method);throw e;});
+      subscriptions.set(method,entry);return entry.promise;
+    }
+    function listen(name,listener,once){
+      moduleEmitter[once?"once":"on"](name,listener);
+      if(["screen_on","screen_off","battery_changed"].includes(name))observe("observeBroadcasts").catch(e=>{if(moduleEmitter.listenerCount("error"))moduleEmitter.emit("error",e);});
+      for(const sub of subscriptions.values())sub.refresh();
+      return api;
+    }
+    const api=Object.freeze({
+      observeNotification:opts=>observe("observeNotification",opts),observeToast:opts=>observe("observeToast",opts),
+      observeKey:opts=>observe("observeKey",opts),observeBroadcasts:opts=>observe("observeBroadcasts",opts),
+      on:(name,listener)=>listen(name,listener,false),once:(name,listener)=>listen(name,listener,true),
+      off(name,listener){moduleEmitter.off(name,listener);for(const sub of subscriptions.values())sub.refresh();return api;},
+      async close(opts){
+        options(opts);closing=true;generation++;
+        try{
+          const results=await Promise.allSettled([...subscriptions.values()].map(entry=>entry.promise.then(sub=>sub.close(opts))));
+          const failed=results.find(row=>row.status==="rejected"&&row.reason?.code!=="ABORT_ERR");if(failed)throw failed.reason;
+        }finally{moduleEmitter.removeAllListeners();closing=false;}
+      }
+    });
+    return api;
+  }
+  function __autojs6_create_notifications(call, createError, scope="notifications-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2)) {
+    const error=message=>createError?createError(message,"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST","notifications"):Object.assign(new TypeError(message),{code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
+    const options=value=>{if(value===undefined)return {};if(!value||typeof value!=="object"||Array.isArray(value))throw error("Notification options must be an object.");if(value.signal!==undefined&&(typeof value.signal?.addEventListener!=="function"||typeof value.signal?.removeEventListener!=="function"))throw error("signal must be an AbortSignal.");return value;};
+    const id=value=>{const n=Number(value);if(!Number.isInteger(n)||n<1||n>2147483647)throw error("Notification id must be an integer in 1..2147483647.");return n;};
+    const invoke=(method,args,input)=>{const opts=options(input);return call("notifications",method,args,{timeoutMs:5000,...opts,permissions:method==="openSettings"?["notifications","notifications.settings"]:["notifications"]});};
+    async function notify(input,callOptions){
+      if(!input||typeof input!=="object"||Array.isArray(input))throw error("notify requires an options object.");
+      const opts=options(callOptions),payload={};
+      for(const key of ["id","title","text","channel","channelName","ongoing","priority"])if(input[key]!==undefined)payload[key]=key==="id"?id(input[key]):input[key];
+      const abort=()=>Object.assign(new Error("Notification posting was aborted."),{name:"AbortError",code:"ABORT_ERR"});
+      if(opts.signal?.aborted)throw abort();
+      const result=Number(await invoke("notify",[payload,scope],{...opts,signal:undefined}));
+      if(opts.signal?.aborted){await invoke("cancel",[result,scope]).catch(()=>{});throw abort();}
+      return result;
+    }
+    async function openSettings(input){const opts=options(input);return Object.freeze({...await invoke("openSettings",[{dryRun:opts.dryRun===true}],opts)});}
+    return Object.freeze({notify,
+      async cancel(value,opts){await invoke("cancel",[id(value),scope],opts);},
+      async cancelAll(opts){await invoke("cancelAll",[scope],opts);},
+      async getPermissionStatus(opts){return Object.freeze({...await invoke("getPermissionStatus",[],opts)});},
+      openSettings,openNotificationSettings:openSettings});
+  }
+// END GENERATED EVENT FACADES
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -3382,7 +3531,7 @@ export async function createHostClient(options = {}) {
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
   }
   async function performAutomationCall(module, method, args, options = {}) {
-    const capability = module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
     const signal = options.signal;
     if (signal !== undefined && !(signal instanceof AbortSignal)) throw new TypeError('signal must be an AbortSignal');
@@ -3411,6 +3560,10 @@ export async function createHostClient(options = {}) {
   const shellModules = __autojs6_create_shell(automationCall,EventEmitter,shellStreams,Buffer,
     required=>required.filter(name=>!grants.has(name==='shell'?'shell.control':name)),
     (message,code)=>new HostCallError(code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':'INVALID_REQUEST',message,'shell.control'));
+  const events = __autojs6_create_host_events(automationCall,EventEmitter,undefined,
+    (message)=>new HostCallError("INVALID_REQUEST",message,"events.observe"));
+  const notifications = __autojs6_create_notifications(automationCall,
+    (message)=>new HostCallError("INVALID_REQUEST",message,"notifications.post"));
   const sensors = __autojs6_create_sensors(automationCall, EventEmitter, undefined,
     (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
@@ -3587,6 +3740,8 @@ export async function createHostClient(options = {}) {
     ...database,
     sensors,
     ...shellModules,
+    events,
+    notifications,
     files,
     bridgeVersion: info.bridgeVersion,
     capabilities,
