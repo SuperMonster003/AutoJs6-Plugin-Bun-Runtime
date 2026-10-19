@@ -23,6 +23,8 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "android.objects": Object.freeze(["createPaint","setPaintColor","getPaintInfo","measureText","createColorStateList","getColorForState","close","getThemeColor","getUriForFile","parseUri"]),
+  "tasks.control": Object.freeze(["addTimedTask","addIntentTask","queryTimedTasks","queryIntentTasks","getTimedTask","getIntentTask","removeTimedTask","removeIntentTask","updateTask","sendLocalBroadcastSync"]),
   "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope"]),
   "device.audio": Object.freeze(["getAudioStreamVolume","getAudioStreamMaxVolume","setAudioStreamVolume"]),
   "dialogs.control": Object.freeze(["alert","confirm","input","rawInput","select","singleChoice","multiChoice","progressShow","progressUpdate","progressDismiss","cancelRequest","closeScope"]),
@@ -1806,8 +1808,8 @@ function createAutomation(dispatch, hostInfo) {
     function parseUri(uri) {
       return __autojs6_app_parse_uri_descriptor(uri, "parseUri");
     }
-    function getUriForFile(path) {
-      throw __autojs6_app_raw_uri_unavailable_error("getUriForFile");
+    function getUriForFile(path, options) {
+      return __autojs6_call_autojs("android","getUriForFile",[String(path)],options);
     }
     function intentToShell(options) {
       return __autojs6_app_intent_to_shell(
@@ -3555,6 +3557,447 @@ function createStorage(dispatch) {
   }
 // END GENERATED DEVICE DIALOG FACADES
 
+// BEGIN GENERATED ANDROID TASK FACADES
+  // Shared native Android helpers, colors and calendar task facades.
+  function __autojs6_create_android(call, toColor = value => Number(value)) {
+    const invoke=(method,args,options={})=>call("android",method,args,{timeoutMs:5000,...options,permissions:["android.objects"]});
+    const freeze=value=>{if(value&&typeof value==="object"){for(const child of Object.values(value))freeze(child);Object.freeze(value);}return value;};
+    const id=value=>typeof value==='string'?value:value?.id;
+    async function create(method,payload,options={}) {
+      const abort=()=>Object.assign(new Error('Android object creation was aborted.'),{name:'AbortError',code:'ABORT_ERR'});
+      if(options.signal?.aborted)throw abort();
+      let state=await invoke(method,[payload],{...options,signal:undefined}),closed=false;
+      if(options.signal?.aborted){await invoke('close',[state.id]).catch(()=>{});throw abort();}
+      state=freeze(state);const handle={};
+      for(const key of Object.keys(state))Object.defineProperty(handle,key,{enumerable:true,get:()=>state[key]});
+      const methods={toJSON:()=>state,async close(opts){if(closed)return false;const result=await invoke('close',[state.id],opts);closed=true;return result;}};
+      if(method==='createPaint')Object.assign(methods,{
+        async getInfo(opts){state=freeze(await invoke('getPaintInfo',[state.id],opts));return state;},
+        async setColor(color,opts){await invoke('setPaintColor',[state.id,toColor(color)],opts);state=freeze({...state,color:toColor(color)});},
+        measureText:(text,opts)=>invoke('measureText',[state.id,String(text)],opts)
+      });else methods.getColorForState=(states=[],fallback=state.defaultColor,opts)=>invoke('getColorForState',[state.id,states,toColor(fallback)],opts);
+      for(const [key,value] of Object.entries(methods))Object.defineProperty(handle,key,{value});
+      return Object.freeze(handle);
+    }
+    const api={
+      createPaint(options={},control){return create('createPaint',{...options,...(options.color===undefined?{}:{color:toColor(options.color)})},control);},
+      createColorStateList(descriptor,control){
+        if(!descriptor||!Array.isArray(descriptor.colors)||!Array.isArray(descriptor.states)||descriptor.colors.length!==descriptor.states.length||!descriptor.colors.length)throw new TypeError('Color states and colors must have equal non-zero lengths.');
+        return create('createColorStateList',{states:descriptor.states,colors:descriptor.colors.map(toColor)},control);
+      },
+      async setPaintColor(paint,color,options){
+        if(paint?.__autojs6AndroidObject!=='paint'||!id(paint))throw new TypeError('setPaintColor requires a Paint handle.');
+        if(typeof paint.setColor==='function')await paint.setColor(color,options);else await invoke('setPaintColor',[id(paint),toColor(color)],options);
+      },
+      async getThemeColor(options){return freeze(await invoke('getThemeColor',[],options));},
+      async getUriForFile(path,options){return freeze(await invoke('getUriForFile',[String(path)],options));},
+      async parseUri(uri,options){return uri==null?null:freeze(await invoke('parseUri',[String(uri)],options));}
+    };
+    return Object.freeze(api);
+  }
+  function __autojs6_create_tasks(call) {
+    const freeze=value=>{if(value&&typeof value==='object'){for(const child of Object.values(value))freeze(child);Object.freeze(value);}return value;};
+    const options=value=>{if(!value||typeof value!=='object'||Array.isArray(value))throw new TypeError('Task options must be an object.');return value;};
+    const payload=input=>{const {signal,timeoutMs,...value}=options(input);for(const key of ['time','date'])if(value[key] instanceof Date)value[key]=value[key].getTime();return value;};
+    const invoke=(method,args,input={})=>call('tasks',method,args,{timeoutMs:5000,...input,permissions:['tasks']});
+    const identity=value=>{
+      const n=Number(value&&typeof value==='object'?value.id:value);
+      if(!Number.isSafeInteger(n)||n<=0)throw new TypeError('Task id must be a positive integer.');return n;
+    };
+    async function add(method,input) {
+      const opts=options(input),abort=()=>Object.assign(new Error('Task registration was aborted.'),{name:'AbortError',code:'ABORT_ERR'});
+      if(opts.signal?.aborted)throw abort();
+      const task=await invoke(method,[payload(opts)],{...opts,signal:undefined});
+      if(opts.signal?.aborted){await invoke(task.kind==='intent'?'removeIntentTask':'removeTimedTask',[task.id]).catch(()=>{});throw abort();}
+      return freeze(task);
+    }
+    const api={
+      addTask:input=>input?.kind==='intent'||input?.action!==undefined?add('addIntentTask',input):add('addTimedTask',input),
+      addTimedTask:input=>add('addTimedTask',input),addIntentTask:input=>add('addIntentTask',input),addBroadcastIntentTask:input=>add('addIntentTask',input),
+      async queryTimedTasks(input={}){return freeze(await invoke('queryTimedTasks',[payload(input)],input));},
+      async queryIntentTasks(input={}){return freeze(await invoke('queryIntentTasks',[payload(input)],input));},
+      async queryTasks(input={}){return freeze([...(await api.queryTimedTasks(input)),...(await api.queryIntentTasks(input))]);},
+      async getTimedTask(value,opts){return freeze(await invoke('getTimedTask',[identity(value)],opts));},
+      async getIntentTask(value,opts){return freeze(await invoke('getIntentTask',[identity(value)],opts));},
+      removeTimedTask:(value,opts)=>invoke('removeTimedTask',[identity(value)],opts),
+      removeIntentTask:(value,opts)=>invoke('removeIntentTask',[identity(value)],opts),
+      removeTask:(value,opts)=>value?.kind==='intent'?api.removeIntentTask(value,opts):api.removeTimedTask(value,opts),
+      async updateTask(task,patch={}) {
+        const input={...(task.options?{}:task),...patch,id:identity(task),kind:task.kind};delete input.options;
+        return freeze(await invoke('updateTask',[payload(input)],patch));
+      },
+      sendLocalBroadcastSync:(action,opts)=>invoke('sendLocalBroadcastSync',[typeof action==='string'?action:payload(action)],opts),
+      daysToTimeFlag(days){if(!Array.isArray(days)||days.some(day=>!Number.isInteger(day)||day<0||day>6))throw new TypeError('Days must be integers in 0..6.');return days.reduce((mask,day)=>mask|(1<<day),0);},
+      timeFlagToDays(flag){if(!Number.isInteger(flag)||flag<0||flag>127)throw new TypeError('Weekday flag must be an integer in 0..127.');return Object.freeze([0,1,2,3,4,5,6].filter(day=>(flag&(1<<day))!==0));}
+    };
+    for(const mode of ['Daily','Weekly','Monthly','Yearly','Disposable','Countdown'])api['add'+mode+'Task']=input=>add('addTimedTask',{...options(input),repeatMode:mode.toLowerCase()});
+    return Object.freeze(api);
+  }
+  function __autojs6_create_colors(android) {
+    let __autojs6_limited_colors_cache;
+    const __autojs6_invalid_arg_type=message=>new TypeError(message);
+  const __autojs6_color_names = Object.freeze({
+    black: 0xff000000,
+    white: 0xffffffff,
+    red: 0xffff0000,
+    green: 0xff00ff00,
+    blue: 0xff0000ff,
+    yellow: 0xffffff00,
+    cyan: 0xff00ffff,
+    magenta: 0xffff00ff,
+    transparent: 0x00000000,
+    gray: 0xff808080,
+    grey: 0xff808080
+  });
+  function __autojs6_color_byte(value, name) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) {
+      throw __autojs6_invalid_arg_type("colors." + name + " component must be a finite number.");
+    }
+    const scaled = number >= 0 && number <= 1 && !Number.isInteger(number)
+      ? number * 255
+      : number;
+    return Math.max(0, Math.min(255, Math.round(scaled)));
+  }
+  function __autojs6_color_component(value, shift) {
+    return (__autojs6_color_uint(value) >>> shift) & 0xff;
+  }
+  function __autojs6_color_int(value) {
+    return (__autojs6_color_uint(value) | 0);
+  }
+  function __autojs6_color_uint(value) {
+    if (typeof value === "number") {
+      return value >>> 0;
+    }
+    if (typeof value === "bigint") {
+      return Number(value & 0xffffffffn) >>> 0;
+    }
+    if (typeof value === "string") {
+      const text = value.trim();
+      const named = __autojs6_color_names[text.toLowerCase()];
+      if (named !== undefined) {
+        return named >>> 0;
+      }
+      const hex = text.charAt(0) === "#" ? text.slice(1) : text;
+      if (/^[0-9a-f]{3}$/i.test(hex)) {
+        const r = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+        const g = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+        const b = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+        return __autojs6_color_argb_uint(255, r, g, b);
+      }
+      if (/^[0-9a-f]{4}$/i.test(hex)) {
+        const a = parseInt(hex.charAt(0) + hex.charAt(0), 16);
+        const r = parseInt(hex.charAt(1) + hex.charAt(1), 16);
+        const g = parseInt(hex.charAt(2) + hex.charAt(2), 16);
+        const b = parseInt(hex.charAt(3) + hex.charAt(3), 16);
+        return __autojs6_color_argb_uint(a, r, g, b);
+      }
+      if (/^[0-9a-f]{6}$/i.test(hex)) {
+        return (0xff000000 | parseInt(hex, 16)) >>> 0;
+      }
+      if (/^[0-9a-f]{8}$/i.test(hex)) {
+        return parseInt(hex, 16) >>> 0;
+      }
+    }
+    if (value && typeof value === "object") {
+      if (typeof value.color === "number") {
+        return value.color >>> 0;
+      }
+      if (typeof value.colorPrimary === "number") {
+        return value.colorPrimary >>> 0;
+      }
+      if ("a" in value || "r" in value || "g" in value || "b" in value) {
+        return __autojs6_color_argb_uint(
+          value.a === undefined ? 255 : value.a,
+          value.r === undefined ? 0 : value.r,
+          value.g === undefined ? 0 : value.g,
+          value.b === undefined ? 0 : value.b
+        );
+      }
+    }
+    throw __autojs6_invalid_arg_type("colors value cannot be converted to an ARGB integer.");
+  }
+  function __autojs6_color_argb_uint(a, r, g, b) {
+    return (
+      (__autojs6_color_byte(a, "argb") << 24) |
+      (__autojs6_color_byte(r, "argb") << 16) |
+      (__autojs6_color_byte(g, "argb") << 8) |
+      __autojs6_color_byte(b, "argb")
+    ) >>> 0;
+  }
+  function __autojs6_color_hex_pair(value) {
+    return value.toString(16).padStart(2, "0");
+  }
+  function __autojs6_color_to_full_hex(value) {
+    const color = __autojs6_color_uint(value);
+    return "#" +
+      __autojs6_color_hex_pair((color >>> 24) & 0xff) +
+      __autojs6_color_hex_pair((color >>> 16) & 0xff) +
+      __autojs6_color_hex_pair((color >>> 8) & 0xff) +
+      __autojs6_color_hex_pair(color & 0xff);
+  }
+  function __autojs6_color_to_hex(value, alphaOrLength) {
+    const color = __autojs6_color_uint(value);
+    const includeAlpha = alphaOrLength === true || Number(alphaOrLength) === 8;
+    const body = __autojs6_color_hex_pair((color >>> 16) & 0xff) +
+      __autojs6_color_hex_pair((color >>> 8) & 0xff) +
+      __autojs6_color_hex_pair(color & 0xff);
+    return includeAlpha ? "#" + __autojs6_color_hex_pair((color >>> 24) & 0xff) + body : "#" + body;
+  }
+  function __autojs6_color_set_component(value, shift, component) {
+    const color = __autojs6_color_uint(value);
+    const mask = ~(0xff << shift);
+    return (((color & mask) | (__autojs6_color_byte(component, "setComponent") << shift)) >>> 0) | 0;
+  }
+  function __autojs6_color_remove_component(value, shift) {
+    return __autojs6_color_set_component(value, shift, 0);
+  }
+  function __autojs6_color_round_alpha(value, keepTrailingZero) {
+    const rounded = Math.round(value * 1000) / 1000;
+    if (rounded === 1 && keepTrailingZero !== false) {
+      return "1.0";
+    }
+    return String(rounded).replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function __autojs6_color_rgb_array(value) {
+    return [
+      __autojs6_color_component(value, 16),
+      __autojs6_color_component(value, 8),
+      __autojs6_color_component(value, 0)
+    ];
+  }
+  function __autojs6_color_argb_array(value) {
+    return [
+      __autojs6_color_component(value, 24),
+      __autojs6_color_component(value, 16),
+      __autojs6_color_component(value, 8),
+      __autojs6_color_component(value, 0)
+    ];
+  }
+  function __autojs6_color_rgb_to_hsv(r, g, b) {
+    const rn = __autojs6_color_byte(r, "hsv") / 255;
+    const gn = __autojs6_color_byte(g, "hsv") / 255;
+    const bn = __autojs6_color_byte(b, "hsv") / 255;
+    const max = Math.max(rn, gn, bn);
+    const min = Math.min(rn, gn, bn);
+    const delta = max - min;
+    let hue = 0;
+    if (delta !== 0) {
+      if (max === rn) {
+        hue = 60 * (((gn - bn) / delta) % 6);
+      } else if (max === gn) {
+        hue = 60 * (((bn - rn) / delta) + 2);
+      } else {
+        hue = 60 * (((rn - gn) / delta) + 4);
+      }
+    }
+    if (hue < 0) hue += 360;
+    const saturation = max === 0 ? 0 : delta / max;
+    return [hue, saturation, max];
+  }
+  function __autojs6_color_hsv_to_rgb(h, s, v) {
+    const hue = ((((Number(h) || 0) % 360) + 360) % 360) / 60;
+    const saturation = Math.max(0, Math.min(1, Number(s) > 1 ? Number(s) / 100 : Number(s) || 0));
+    const value = Math.max(0, Math.min(1, Number(v) > 1 ? Number(v) / 100 : Number(v) || 0));
+    const c = value * saturation;
+    const x = c * (1 - Math.abs((hue % 2) - 1));
+    const m = value - c;
+    let rgb;
+    if (hue < 1) rgb = [c, x, 0];
+    else if (hue < 2) rgb = [x, c, 0];
+    else if (hue < 3) rgb = [0, c, x];
+    else if (hue < 4) rgb = [0, x, c];
+    else if (hue < 5) rgb = [x, 0, c];
+    else rgb = [c, 0, x];
+    return rgb.map(function(part) { return Math.round((part + m) * 255); });
+  }
+  function __autojs6_color_rgb_to_hsl(r, g, b) {
+    const rn = __autojs6_color_byte(r, "hsl") / 255;
+    const gn = __autojs6_color_byte(g, "hsl") / 255;
+    const bn = __autojs6_color_byte(b, "hsl") / 255;
+    const max = Math.max(rn, gn, bn);
+    const min = Math.min(rn, gn, bn);
+    const delta = max - min;
+    const lightness = (max + min) / 2;
+    let hue = 0;
+    let saturation = 0;
+    if (delta !== 0) {
+      saturation = delta / (1 - Math.abs(2 * lightness - 1));
+      if (max === rn) {
+        hue = 60 * (((gn - bn) / delta) % 6);
+      } else if (max === gn) {
+        hue = 60 * (((bn - rn) / delta) + 2);
+      } else {
+        hue = 60 * (((rn - gn) / delta) + 4);
+      }
+    }
+    if (hue < 0) hue += 360;
+    return [hue, saturation, lightness];
+  }
+  function __autojs6_color_hsl_to_rgb(h, s, l) {
+    const hue = ((((Number(h) || 0) % 360) + 360) % 360);
+    const saturation = Math.max(0, Math.min(1, Number(s) > 1 ? Number(s) / 100 : Number(s) || 0));
+    const lightness = Math.max(0, Math.min(1, Number(l) > 1 ? Number(l) / 100 : Number(l) || 0));
+    const c = (1 - Math.abs(2 * lightness - 1)) * saturation;
+    const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
+    const m = lightness - c / 2;
+    let rgb;
+    if (hue < 60) rgb = [c, x, 0];
+    else if (hue < 120) rgb = [x, c, 0];
+    else if (hue < 180) rgb = [0, c, x];
+    else if (hue < 240) rgb = [0, x, c];
+    else if (hue < 300) rgb = [x, 0, c];
+    else rgb = [c, 0, x];
+    return rgb.map(function(part) { return Math.round((part + m) * 255); });
+  }
+  function __autojs6_limited_colors() {
+    if (__autojs6_limited_colors_cache) {
+      return __autojs6_limited_colors_cache;
+    }
+    const colorsModule = {
+      toInt: __autojs6_color_int,
+      toHex: __autojs6_color_to_hex,
+      toFullHex: __autojs6_color_to_full_hex,
+      toString: __autojs6_color_to_hex,
+      alpha: function(value, options) {
+        const alpha = __autojs6_color_component(value, 24);
+        return options && Number(options.max) === 1 ? alpha / 255 : alpha;
+      },
+      getAlpha: function(value, options) { return colorsModule.alpha(value, options); },
+      alphaDouble: function(value) { return __autojs6_color_component(value, 24) / 255; },
+      getAlphaDouble: function(value) { return colorsModule.alphaDouble(value); },
+      setAlpha: function(value, alpha) { return __autojs6_color_set_component(value, 24, alpha); },
+      setAlphaRelative: function(value, percentage) { return colorsModule.setAlpha(value, colorsModule.alpha(value) * Number(percentage)); },
+      removeAlpha: function(value) { return __autojs6_color_remove_component(value, 24); },
+      red: function(value, options) {
+        const red = __autojs6_color_component(value, 16);
+        return options && Number(options.max) === 1 ? red / 255 : red;
+      },
+      getRed: function(value, options) { return colorsModule.red(value, options); },
+      redDouble: function(value) { return __autojs6_color_component(value, 16) / 255; },
+      getRedDouble: function(value) { return colorsModule.redDouble(value); },
+      setRed: function(value, red) { return __autojs6_color_set_component(value, 16, red); },
+      setRedRelative: function(value, percentage) { return colorsModule.setRed(value, colorsModule.red(value) * Number(percentage)); },
+      removeRed: function(value) { return __autojs6_color_remove_component(value, 16); },
+      green: function(value, options) {
+        const green = __autojs6_color_component(value, 8);
+        return options && Number(options.max) === 1 ? green / 255 : green;
+      },
+      getGreen: function(value, options) { return colorsModule.green(value, options); },
+      greenDouble: function(value) { return __autojs6_color_component(value, 8) / 255; },
+      getGreenDouble: function(value) { return colorsModule.greenDouble(value); },
+      setGreen: function(value, green) { return __autojs6_color_set_component(value, 8, green); },
+      setGreenRelative: function(value, percentage) { return colorsModule.setGreen(value, colorsModule.green(value) * Number(percentage)); },
+      removeGreen: function(value) { return __autojs6_color_remove_component(value, 8); },
+      blue: function(value, options) {
+        const blue = __autojs6_color_component(value, 0);
+        return options && Number(options.max) === 1 ? blue / 255 : blue;
+      },
+      getBlue: function(value, options) { return colorsModule.blue(value, options); },
+      blueDouble: function(value) { return __autojs6_color_component(value, 0) / 255; },
+      getBlueDouble: function(value) { return colorsModule.blueDouble(value); },
+      setBlue: function(value, blue) { return __autojs6_color_set_component(value, 0, blue); },
+      setBlueRelative: function(value, percentage) { return colorsModule.setBlue(value, colorsModule.blue(value) * Number(percentage)); },
+      removeBlue: function(value) { return __autojs6_color_remove_component(value, 0); },
+      argb: function(a, r, g, b) { return __autojs6_color_argb_uint(a, r, g, b) | 0; },
+      rgb: function(r, g, b) { return __autojs6_color_argb_uint(255, r, g, b) | 0; },
+      rgba: function(r, g, b, a) { return __autojs6_color_argb_uint(a === undefined ? 255 : a, r, g, b) | 0; },
+      hsv: function(h, s, v) {
+        const rgb = __autojs6_color_hsv_to_rgb(h, s, v);
+        return __autojs6_color_argb_uint(255, rgb[0], rgb[1], rgb[2]) | 0;
+      },
+      hsva: function(h, s, v, a) {
+        const rgb = __autojs6_color_hsv_to_rgb(h, s, v);
+        return __autojs6_color_argb_uint(a === undefined ? 255 : a, rgb[0], rgb[1], rgb[2]) | 0;
+      },
+      hsl: function(h, s, l) {
+        const rgb = __autojs6_color_hsl_to_rgb(h, s, l);
+        return __autojs6_color_argb_uint(255, rgb[0], rgb[1], rgb[2]) | 0;
+      },
+      hsla: function(h, s, l, a) {
+        const rgb = __autojs6_color_hsl_to_rgb(h, s, l);
+        return __autojs6_color_argb_uint(a === undefined ? 255 : a, rgb[0], rgb[1], rgb[2]) | 0;
+      },
+      toRgb: function(value) { return Object.freeze(__autojs6_color_rgb_array(value)); },
+      toRgba: function(value) { return Object.freeze(__autojs6_color_rgb_array(value).concat([colorsModule.alphaDouble(value)])); },
+      toArgb: function(value) { return Object.freeze(__autojs6_color_argb_array(value)); },
+      toHsv: function(value) {
+        const rgb = __autojs6_color_rgb_array(value);
+        return Object.freeze(__autojs6_color_rgb_to_hsv(rgb[0], rgb[1], rgb[2]));
+      },
+      toHsva: function(value) { return Object.freeze(colorsModule.toHsv(value).concat([colorsModule.alphaDouble(value)])); },
+      toHsl: function(value) {
+        const rgb = __autojs6_color_rgb_array(value);
+        return Object.freeze(__autojs6_color_rgb_to_hsl(rgb[0], rgb[1], rgb[2]));
+      },
+      toHsla: function(value) { return Object.freeze(colorsModule.toHsl(value).concat([colorsModule.alphaDouble(value)])); },
+      toRgbString: function(value) { return "rgb(" + __autojs6_color_rgb_array(value).join(", ") + ")"; },
+      toRgbaString: function(value, options) {
+        return "rgba(" + __autojs6_color_rgb_array(value).join(", ") + ", " + __autojs6_color_round_alpha(colorsModule.alphaDouble(value), options && options.keepTrailingZeroForFullAlpha) + ")";
+      },
+      toArgbString: function(value, options) {
+        const argb = __autojs6_color_argb_array(value);
+        return "argb(" + __autojs6_color_round_alpha(argb[0] / 255, options && options.keepTrailingZeroForFullAlpha) + ", " + argb.slice(1).join(", ") + ")";
+      },
+      toHsvString: function(value) {
+        const hsv = colorsModule.toHsv(value);
+        return "hsv(" + Math.round(hsv[0] * 1000) / 1000 + ", " + Math.round(hsv[1] * 1000) / 1000 + ", " + Math.round(hsv[2] * 1000) / 1000 + ")";
+      },
+      toHsvaString: function(value) {
+        const hsva = colorsModule.toHsva(value);
+        return "hsva(" + Math.round(hsva[0] * 1000) / 1000 + ", " + Math.round(hsva[1] * 1000) / 1000 + ", " + Math.round(hsva[2] * 1000) / 1000 + ", " + __autojs6_color_round_alpha(hsva[3], true) + ")";
+      },
+      toHslString: function(value) {
+        const hsl = colorsModule.toHsl(value);
+        return "hsl(" + Math.round(hsl[0] * 1000) / 1000 + ", " + Math.round(hsl[1] * 1000) / 1000 + ", " + Math.round(hsl[2] * 1000) / 1000 + ")";
+      },
+      toHslaString: function(value) {
+        const hsla = colorsModule.toHsla(value);
+        return "hsla(" + Math.round(hsla[0] * 1000) / 1000 + ", " + Math.round(hsla[1] * 1000) / 1000 + ", " + Math.round(hsla[2] * 1000) / 1000 + ", " + __autojs6_color_round_alpha(hsla[3], true) + ")";
+      },
+      isEqual: function(left, right) { return __autojs6_color_uint(left) === __autojs6_color_uint(right); },
+      isSimilar: function(left, right, threshold) {
+        const max = threshold === undefined || threshold === null ? 4 : Number(threshold);
+        return Math.abs(colorsModule.red(left) - colorsModule.red(right)) <= max &&
+          Math.abs(colorsModule.green(left) - colorsModule.green(right)) <= max &&
+          Math.abs(colorsModule.blue(left) - colorsModule.blue(right)) <= max &&
+          Math.abs(colorsModule.alpha(left) - colorsModule.alpha(right)) <= max;
+      },
+      luminance: function(value) {
+        const rgb = __autojs6_color_rgb_array(value).map(function(part) {
+          const normalized = part / 255;
+          return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+      },
+      build: function() { return colorsModule.argb.apply(colorsModule, arguments); },
+      summary: function(value) {
+        const color = __autojs6_color_int(value);
+        return "Color { " + colorsModule.toHex(color) + " | " + colorsModule.toRgbaString(color) + " | int(" + color + ") }";
+      },
+      toColorStateList: function(...colors) {
+        if(!colors.length)throw new TypeError("At least one color is required.");
+        return android.createColorStateList({states:[[]],colors:[colorsModule.toInt(colors[0])]});
+      },
+      createColorStateList: (descriptor,options)=>android.createColorStateList(descriptor,options),
+      createPaint: (options,control)=>android.createPaint(options,control),
+      setPaintColor: (paint,color,options)=>android.setPaintColor(paint,color,options),
+      getThemeColor: options=>android.getThemeColor(options)
+    };
+    Object.defineProperty(colorsModule, "all", { value: __autojs6_color_names, enumerable: true });
+    Object.defineProperty(colorsModule, "themeColor", {
+      enumerable: true,
+      get: function() {
+        const result=android.getThemeColor();result.catch(()=>{});return result;
+      }
+    });
+    __autojs6_limited_colors_cache = Object.freeze(colorsModule);
+    return __autojs6_limited_colors_cache;
+  }
+    return __autojs6_limited_colors();
+  }
+// END GENERATED ANDROID TASK FACADES
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -3635,7 +4078,7 @@ export async function createHostClient(options = {}) {
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
   }
   async function performAutomationCall(module, method, args, options = {}) {
-    const capability = module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
     if (module === 'device' && options.permissions?.includes('device.power') && !grants.has('device.power')) throw new HostCallError('NOT_GRANTED','Device power control requires device.power',capability);
     const signal = options.signal;
@@ -3661,6 +4104,10 @@ export async function createHostClient(options = {}) {
   if (appInfo !== null && (!isObject(appInfo) || typeof appInfo.packageName !== 'string' || typeof appInfo.versionName !== 'string' || !Number.isInteger(appInfo.versionCode)))
     throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
   const automation = createAutomation(automationCall, appInfo);
+  let colors;
+  const android = __autojs6_create_android(automationCall,value=>colors.toInt(value));
+  colors = __autojs6_create_colors(android);
+  const tasks = __autojs6_create_tasks(automationCall);
   const storage = createStorage(automationCall);
   const shellModules = __autojs6_create_shell(automationCall,EventEmitter,shellStreams,Buffer,
     required=>required.filter(name=>!grants.has(name==='shell'?'shell.control':name)),
@@ -3841,6 +4288,9 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    android,
+    colors,
+    tasks,
     ...storage,
     ...database,
     sensors,

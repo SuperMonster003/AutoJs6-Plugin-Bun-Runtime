@@ -30,7 +30,7 @@ test('app identity, aliases, URL/email/uninstall intents and nonprivileged opera
  assert.equal(starts[3].method,'startService');assert.equal(starts[4].args[0].action,'owned.fixture.EVENT');
  assert.deepEqual(await app.getInstalledApps(),[]);
  for(const name of ['launchDual','uninstallDual','kill','startDualActivity'])await assert.rejects(app[name]('owned.fixture'),{code:'NOT_SUPPORTED'});
- assert.throws(()=>app.getUriForFile('/private/file'),{code:'NOT_SUPPORTED'});
+ await assert.rejects(app.getUriForFile('/private/file'),{code:'NOT_GRANTED'});
 });
 test('all 16 local selector builders preserve descriptor validation, regex flags and frozen snapshots',async()=>{
  const {host}=await fixture(all,()=>({text:'fixture',bounds:{left:1,top:2,right:3,bottom:4}}));const a=host.accessibility;

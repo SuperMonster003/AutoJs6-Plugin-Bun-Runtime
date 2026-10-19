@@ -239,6 +239,13 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.10.0
+
+_2026/10/19_
+
+- `Feature` Android object helpers for Node.js, Bun and Workers, including Paint, ColorStateList, theme colors and FileProvider URIs
+- `Feature` Persistent calendar and IntentTask APIs for Node.js and Bun, with daily, weekly, monthly, yearly, one-shot, countdown and broadcast tasks
+
 #### v0.9.0
 
 _2026/10/19_
@@ -250,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Host event observers and notifications for Bun and Node.js Workers, with independent subscription and notification cleanup
-
-#### v0.7.0
-
-_2026/10/19_
-
-- `Feature` Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers
 
 ##### For more release history
 

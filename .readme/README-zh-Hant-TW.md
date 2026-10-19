@@ -239,6 +239,13 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.10.0
+
+_2026/10/19_
+
+- `新增` Node.js/Bun 的 Android 物件輔助介面及 Worker 封裝, 支援 Paint, ColorStateList, 主題色和 FileProvider URI
+- `新增` Node.js/Bun 的持久日曆與 IntentTask API, 支援每日, 每週, 每月, 每年, 單次, 倒數計時和廣播工作
+
 #### v0.9.0
 
 _2026/10/19_
@@ -250,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `新增` Bun 與 Node.js Worker 的宿主事件及通知 API, 支援獨立訂閱與通知清理
-
-#### v0.7.0
-
-_2026/10/19_
-
-- `新增` Bun, Node.js 及 Worker 的宿主 Shell API, 支援串流輸入輸出, Shizuku 授權與程序清理
 
 ##### 更多發行記錄
 

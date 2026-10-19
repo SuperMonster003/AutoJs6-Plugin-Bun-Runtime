@@ -239,6 +239,13 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.10.0
+
+_2026/10/19_
+
+- `Fonctionnalité` Objets Android pour Node.js, Bun et les Workers, avec Paint, ColorStateList, couleurs du thème et URI FileProvider
+- `Fonctionnalité` API persistantes de calendrier et IntentTask pour Node.js et Bun, avec tâches quotidiennes, hebdomadaires, mensuelles, annuelles, ponctuelles, différées et de diffusion
+
 #### v0.9.0
 
 _2026/10/19_
@@ -250,12 +257,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Fonctionnalité` Événements et notifications hôtes pour Bun et les Workers Node.js, avec nettoyage indépendant des abonnements et notifications
-
-#### v0.7.0
-
-_2026/10/19_
-
-- `Fonctionnalité` Shell hôte avec flux, autorisation Shizuku et nettoyage des processus pour Bun, Node.js et les Workers
 
 ##### Pour plus d'historique
 
