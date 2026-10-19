@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.9.0
+
+_2026/10/19_
+
+- `Función` Control del dispositivo y diálogos para Bun y Workers de Node.js, con brillo, volumen y limpieza independiente de ventanas
+
 #### v0.8.0
 
 _2026/10/19_
@@ -250,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Función` Shell del anfitrión con flujos, autorización Shizuku y limpieza de procesos para Bun, Node.js y Workers
-
-#### v0.6.0
-
-_2026/10/19_
-
-- `Función` Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas
 
 ##### Más historial de versiones
 

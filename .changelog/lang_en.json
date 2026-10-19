@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.9.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Device controls and dialogs for Bun and Node.js Workers, including brightness, volume and independent window cleanup"
+      ]
+    },
     "v0.8.0": {
       "released_date": "2026/10/19",
       "feature": [

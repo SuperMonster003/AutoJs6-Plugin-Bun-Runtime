@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.9.0
+
+_2026/10/19_
+
+- `Feature` Device controls and dialogs for Bun and Node.js Workers, including brightness, volume and independent window cleanup
+
 #### v0.8.0
 
 _2026/10/19_
@@ -250,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers
-
-#### v0.6.0
-
-_2026/10/19_
-
-- `Feature` Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup
 
 ##### For more release history
 

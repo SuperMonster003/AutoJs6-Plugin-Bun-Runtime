@@ -4,6 +4,12 @@
 
 ******
 
+# v0.9.0
+
+###### 2026/10/19
+
+* `Feature` Device controls and dialogs for Bun and Node.js Workers, including brightness, volume and independent window cleanup
+
 # v0.8.0
 
 ###### 2026/10/19

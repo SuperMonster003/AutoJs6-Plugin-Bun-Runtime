@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.9.0
+
+_2026/10/19_
+
+- `Fonctionnalité` Commandes de périphérique et dialogues pour Bun et les Workers Node.js, avec luminosité, volume et nettoyage indépendant des fenêtres
+
 #### v0.8.0
 
 _2026/10/19_
@@ -250,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Fonctionnalité` Shell hôte avec flux, autorisation Shizuku et nettoyage des processus pour Bun, Node.js et les Workers
-
-#### v0.6.0
-
-_2026/10/19_
-
-- `Fonctionnalité` Mesures et abonnements aux capteurs pour Bun et les Workers Node.js, avec annulation et libération automatique des écouteurs
 
 ##### Pour plus d'historique
 

@@ -23,6 +23,9 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope"]),
+  "device.audio": Object.freeze(["getAudioStreamVolume","getAudioStreamMaxVolume","setAudioStreamVolume"]),
+  "dialogs.control": Object.freeze(["alert","confirm","input","rawInput","select","singleChoice","multiChoice","progressShow","progressUpdate","progressDismiss","cancelRequest","closeScope"]),
   "events.observe": Object.freeze(["observeNotification","observeToast","observeKey","observeBroadcasts","drainEvents","close"]),
   "notifications.post": Object.freeze(["notify","cancel","cancelAll","getPermissionStatus","openSettings"]),
   "shell.control": Object.freeze(["exec", "spawn", "open", "drain", "write", "closeInput", "kill", "close", "getAccess", "requestShizukuPermission"]),
@@ -3451,6 +3454,107 @@ function createStorage(dispatch) {
   }
 // END GENERATED EVENT FACADES
 
+// BEGIN GENERATED DEVICE DIALOG FACADES
+  // Shared device and dialog facades for Node main threads, Workers and Bun.
+  function __autojs6_create_device(call, snapshot = {}, scope = "device-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)) {
+    const invoke = (method, args, options = {}, power = false) => call("device", method, args,
+      { timeoutMs: 5000, ...options, permissions: power ? ["device", "device.power"] : ["device"] });
+    const invalid = message => Object.assign(new TypeError(message), {code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
+    const info = options => invoke("info", [], options);
+    const control = async (method, value, options) => {
+      if (!Number.isSafeInteger(value) || (method === "setBrightness" ? value < 0 || value > 255 : value !== 0 && value !== 1)) throw invalid("Invalid device." + method + " value.");
+      await invoke(method, [value], options, true);
+    };
+    const api = {...snapshot, info, getInfo: info,
+      setBrightness: (value, opts) => control("setBrightness", value, opts),
+      setBrightnessMode: (value, opts) => control("setBrightnessMode", value, opts),
+      async keepScreenOn(timeoutMs, options = {}) {
+        if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) throw invalid("keepScreenOn requires a positive integer timeout.");
+        const abort = () => Object.assign(new Error("Keeping the screen awake was aborted."), {name:"AbortError",code:"ABORT_ERR"});
+        if (options.signal?.aborted) throw abort();
+        await invoke("keepScreenOn", [timeoutMs, scope], {...options, signal:undefined}, true);
+        if (options.signal?.aborted) { await api.cancelKeepingAwake(); throw abort(); }
+      },
+      async cancelKeepingAwake(options) { await invoke("cancelKeepingAwake", [scope], options, true); },
+      async isScreenOn(options) { return await invoke("isScreenOn", [], options) === true; },
+      async wakeUp(options) { await invoke("wakeUp", [], options); },
+      async vibrate(value, options) {
+        const duration = Number(value);
+        if (!Number.isFinite(duration) || duration < 0) throw invalid("vibrate requires a non-negative finite duration.");
+        await invoke("vibrate", [Math.min(10000, Math.trunc(duration))], options);
+      },
+      async isIgnoringBatteryOptimizations(options) { return await invoke("isIgnoringBatteryOptimizations", [], options, true) === true; },
+      async openBatteryOptimizationSettings(options = {}) { return Object.freeze({...await invoke("openBatteryOptimizationSettings", [{dryRun:options.dryRun === true}], options, true)}); }
+    };
+    const fields = {getWidth:["screen","width"],getHeight:["screen","height"],getDensity:["screen","density"],getDensityDpi:["screen","densityDpi"],
+      getBrightness:["screen","brightness"],getBrightnessMode:["screen","brightnessMode"],getBattery:["battery","percent"],isCharging:["battery","isCharging"],
+      getTotalMem:["memory","totalMem"],getAvailMem:["memory","availMem"]};
+    for (const key of ["sdkInt","release","model","brand","product","board","bootloader","hardware","fingerprint","buildId"]) fields["get"+key[0].toUpperCase()+key.slice(1)] = ["build",key];
+    for (const [method,[section,key]] of Object.entries(fields)) api[method] = async options => {
+      const value = (await info(options))?.[section];
+      if (value?.[key] === undefined || value[key] === null) throw new Error("device."+method+": "+(value?.error || "device information unavailable"));
+      return value[key];
+    };
+    for (const [name,stream] of [["Music","music"],["Notification","notification"],["Alarm","alarm"]]) {
+      const audio = (method,args,options={}) => call("media",method,args,{timeoutMs:5000,...options,permissions:["media","media.audio"]});
+      api["get"+name+"Volume"] = options => audio("getAudioStreamVolume",[stream],options).then(Number);
+      api["get"+name+"MaxVolume"] = options => audio("getAudioStreamMaxVolume",[stream],options).then(Number);
+      api["set"+name+"Volume"] = async (value,options) => {
+        if (!Number.isSafeInteger(value) || value < 0) throw invalid("Volume must be a non-negative integer.");
+        await audio("setAudioStreamVolume",[stream,value],options);
+      };
+    }
+    return Object.freeze(api);
+  }
+  function __autojs6_create_dialogs(call, scope = "dialogs-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)) {
+    let sequence = 0;
+    const text = value => value == null ? "" : String(value);
+    const invoke = (method,args,options={},timeoutMs=30000) => call("dialogs",method,args,{timeoutMs,...options,permissions:["dialogs"]});
+    const invalid = message => Object.assign(new TypeError(message),{code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
+    const presentation = options => Object.fromEntries(["positive","negative","neutral"].filter(key => options?.[key] !== undefined).map(key => [key,text(options[key])]));
+    async function show(method,args,options = {},descriptor) {
+      const token = scope + ":" + (++sequence);
+      const payload = {...(descriptor || presentation(options)),__scope:scope,__requestId:token};
+      const cancel = () => invoke("cancelRequest",[token,scope],{},5000).catch(()=>{});
+      // The native token also covers cancellation before the Activity is attached.
+      try { return await invoke(method,[...args,payload],options,method === "progressShow" ? 10000 : 30000); }
+      catch (error) { await cancel(); throw error; }
+    }
+    function message(method,title,value,options) {
+      if (value && typeof value === "object" && !Array.isArray(value)) { options=value; value=""; }
+      return show(method,[text(title),text(value)],options);
+    }
+    function choose(method,title,items,selected,options) {
+      if (!Array.isArray(items)) return Promise.reject(invalid("Dialog choices must be an array."));
+      if (method === "singleChoice" && (!Number.isInteger(selected) || selected < -1 || selected >= items.length)) return Promise.reject(invalid("Selected index is out of range."));
+      if (method === "multiChoice" && (!Array.isArray(selected) || selected.some(index => !Number.isInteger(index) || index < 0 || index >= items.length))) return Promise.reject(invalid("Selected indices are out of range."));
+      return show(method,[text(title),items.map(text),...(method === "select" ? [] : [selected])],options);
+    }
+    const progress = Object.freeze({
+      async show(descriptor = {}, options) {
+        let state = await show("progressShow",[],options,descriptor);
+        const handle = {id:state.id,
+          async update(patch,opts) { state = await progress.update(state.id,patch,opts); return state; },
+          async dismiss(opts) { const result = await progress.dismiss(state.id,opts); state={...state,shown:false}; return result; }
+        };
+        for (const key of ["title","message","shown","max","value","indeterminate"]) Object.defineProperty(handle,key,{enumerable:true,get:()=>state[key]});
+        return Object.freeze(handle);
+      },
+      async update(id,patch,options) { return Object.freeze({...await invoke("progressUpdate",[id,patch,scope],options,5000)}); },
+      dismiss:(id,options) => invoke("progressDismiss",[id,scope],options,5000)
+    });
+    const input = (title,value,options) => message("input",title,value,options);
+    return Object.freeze({
+      async alert(title,value,options) { await message("alert",title,value,options); },
+      async confirm(title,value,options) { return await message("confirm",title,value,options) === true; },
+      input,prompt:input,rawInput:(title,value,options)=>message("rawInput",title,value,options),
+      select:(title,items,options)=>choose("select",title,items,undefined,options),
+      singleChoice:(title,items,selected=-1,options)=>choose("singleChoice",title,items,selected,options),
+      multiChoice:(title,items,selected=[],options)=>choose("multiChoice",title,items,selected,options),progress
+    });
+  }
+// END GENERATED DEVICE DIALOG FACADES
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -3531,8 +3635,9 @@ export async function createHostClient(options = {}) {
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
   }
   async function performAutomationCall(module, method, args, options = {}) {
-    const capability = module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
+    if (module === 'device' && options.permissions?.includes('device.power') && !grants.has('device.power')) throw new HostCallError('NOT_GRANTED','Device power control requires device.power',capability);
     const signal = options.signal;
     if (signal !== undefined && !(signal instanceof AbortSignal)) throw new TypeError('signal must be an AbortSignal');
     if (signal?.aborted) throw signal.reason;
@@ -3751,7 +3856,8 @@ export async function createHostClient(options = {}) {
     ui: __autojs6_create_ui(async (module, method, args) => (await call("ui.layout", { method, args })).value),
     compose: __autojs6_create_compose(async (module, method, args) => (await call(module === "ui" ? "ui.layout" : "ui.compose", { method, args })).value),
     toast: (text, duration) => call("ui.toast", { text, ...(duration === undefined ? {} : { duration }) }),
-    device: Object.freeze({ info: () => call("device.info") }),
+    device: Object.freeze({ ...__autojs6_create_device(automationCall), info: () => call("device.info") }),
+    dialogs: __autojs6_create_dialogs(automationCall),
     pinyin: group("text.pinyin"),
     pinyin4j: group("text.pinyin4j"),
     opencc,

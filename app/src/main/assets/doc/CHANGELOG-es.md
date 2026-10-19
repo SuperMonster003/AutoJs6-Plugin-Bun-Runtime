@@ -4,6 +4,12 @@
 
 ******
 
+# v0.9.0
+
+###### 2026/10/19
+
+* `Función` Control del dispositivo y diálogos para Bun y Workers de Node.js, con brillo, volumen y limpieza independiente de ventanas
+
 # v0.8.0
 
 ###### 2026/10/19
