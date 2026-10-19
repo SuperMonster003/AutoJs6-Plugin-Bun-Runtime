@@ -101,6 +101,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun が個別許可による画面キャプチャ, Android の同意, タイムアウト/キャンセル時の解放と再申請に対応.
 - Bun screenRecorder が H.264 MP4 録画, マイク/アプリ再生/ミックスの AAC 音声と録画中の画面取得に対応し, 個別の音声許可とキャンセル時の削除を提供.
 - Bun のユーザー補助, アプリ操作, クリップボード API を Node.js の対応インターフェースに合わせ, 個別の許可とパッケージ化アプリに対応.
+- Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応.
 
 ******
 
@@ -122,7 +123,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?
 
-`process.env.AUTOJS6_HOST_CLIENT_MODULE` をインポートし, `createHostClient()` を待機してください. ホスト build 5572 と Bun Runtime 0.3.0 は `host.app`, `host.accessibility`, `host.clipboard` を提供します. プラグインセンターで個別に許可し, ジェスチャーには `accessibility.gesture` も許可してください. パッケージ化プロジェクトでも同じ許可を宣言します. Android のユーザー補助とクリップボードのフォアグラウンド制限は引き続き適用されます. 詳細は [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
+`process.env.AUTOJS6_HOST_CLIENT_MODULE` をインポートし, `createHostClient()` を待機してください. ホスト build 5572 と Bun Runtime 0.3.0 は `host.app`, `host.accessibility`, `host.clipboard` を提供します. プラグインセンターで個別に許可し, ジェスチャーには `accessibility.gesture` も許可してください. パッケージ化プロジェクトでも同じ許可を宣言します. Android のユーザー補助とクリップボードのフォアグラウンド制限は引き続き適用されます. 詳細は [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md). Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### npm パッケージは使えますか?
 
@@ -235,6 +236,12 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `機能` Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `機能` Node.js/Bun の WebView 画面共有アダプター, フォアグラウンドサービスによる録音とネイティブのバックグラウンド動画録画, Node Worker にも対応
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `機能` WebView の getUserMedia/MediaRecorder による音声と動画のストリーミング, ページの Promise 待機, Android メディア権限の明示的な要求と Worker のライフサイクル管理
 
 ##### その他のリリース履歴
 

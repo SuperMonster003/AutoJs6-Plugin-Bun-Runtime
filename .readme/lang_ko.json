@@ -17,7 +17,8 @@
     "호스트 클라이언트의 OpenCC 변환 및 일반 이미지 API, 픽셀 읽기, 인코딩, 변환, 색상 검색과 실행별 이미지 핸들 정리 지원; 호스트 이미지 파일 접근은 별도 권한이며 기본적으로 꺼짐.",
     "Bun에서 별도 허용이 필요한 화면 캡처, Android 승인, 시간 초과/취소 정리 및 재요청 지원.",
     "Bun screenRecorder에서 H.264 MP4 녹화, 선택적 마이크/앱 재생/혼합 AAC 오디오 및 녹화 중 화면 캡처 지원, 별도 오디오 허용과 취소 정리 포함.",
-    "Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원."
+    "Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원.",
+    "Bun 파일 및 영구 저장소 API, 별도의 호스트 파일 권한과 Node.js 저장소 공유 지원."
   ],
   "h3_usage": "설치 및 사용",
   "usage_steps": [
@@ -61,7 +62,7 @@
   "faq": [
     {
       "q": "왜 Bun 스크립트에서 `click()`, `toast()` 같은 AutoJs6 함수를 사용할 수 없나요?",
-      "a": "`process.env.AUTOJS6_HOST_CLIENT_MODULE`을 가져오고 `createHostClient()`를 기다립니다. 호스트 build 5572와 Bun Runtime 0.3.0은 `host.app`, `host.accessibility`, `host.clipboard`를 제공합니다. 플러그인 센터에서 개별 권한을 켜고 제스처에는 `accessibility.gesture`도 허용합니다. 패키징 프로젝트도 같은 권한을 선언합니다. Android 접근성 승인과 클립보드 포그라운드 제한은 계속 적용됩니다. 전체 인터페이스와 제한은 [Host API]({{ repo_url }}/blob/master/docs/host-api.md)를 참고하세요."
+      "a": "`process.env.AUTOJS6_HOST_CLIENT_MODULE`을 가져오고 `createHostClient()`를 기다립니다. 호스트 build 5572와 Bun Runtime 0.3.0은 `host.app`, `host.accessibility`, `host.clipboard`를 제공합니다. 플러그인 센터에서 개별 권한을 켜고 제스처에는 `accessibility.gesture`도 허용합니다. 패키징 프로젝트도 같은 권한을 선언합니다. Android 접근성 승인과 클립보드 포그라운드 제한은 계속 적용됩니다. 전체 인터페이스와 제한은 [Host API]({{ repo_url }}/blob/master/docs/host-api.md)를 참고하세요. Bun 파일 및 영구 저장소 API, 별도의 호스트 파일 권한과 Node.js 저장소 공유 지원. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)"
     },
     {
       "q": "npm 패키지를 사용할 수 있나요?",

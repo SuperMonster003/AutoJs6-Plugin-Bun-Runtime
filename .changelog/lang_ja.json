@@ -5,6 +5,12 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.4.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応"
+      ]
+    },
     "v0.3.0": {
       "released_date": "2026/10/19",
       "feature": [

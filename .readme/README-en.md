@@ -101,6 +101,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization.
 - Bun screenRecorder writes H.264 MP4 with optional microphone, app-playback or mixed AAC audio and screenshots during recording, with independent audio grants and cancellation cleanup.
 - Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.
+- Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.
 
 ******
 
@@ -122,7 +123,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 
 #### Why are AutoJs6 functions such as `click()` and `toast()` unavailable in Bun scripts?
 
-Import `process.env.AUTOJS6_HOST_CLIENT_MODULE` and await `createHostClient()`. Host build 5572 with Bun Runtime 0.3.0 adds `host.app`, `host.accessibility` and `host.clipboard`. Enable their independent grants in Plugin Center; gestures need the additional `accessibility.gesture` grant. Packaged projects declare the same grants. Android accessibility-service authorization and clipboard foreground restrictions still apply. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for all supported interfaces and limits.
+Import `process.env.AUTOJS6_HOST_CLIENT_MODULE` and await `createHostClient()`. Host build 5572 with Bun Runtime 0.3.0 adds `host.app`, `host.accessibility` and `host.clipboard`. Enable their independent grants in Plugin Center; gestures need the additional `accessibility.gesture` grant. Packaged projects declare the same grants. Android accessibility-service authorization and clipboard foreground restrictions still apply. See [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md) for all supported interfaces and limits. Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### Can I use npm packages?
 
@@ -235,6 +236,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `Feature` Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `Feature` WebView screen sharing adapter, foreground-service audio capture and native background camera recording in Node.js/Bun, including Node Workers
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `Feature` WebView getUserMedia/MediaRecorder streaming audio and video, awaited page Promises, explicit Android media permission requests and Worker lifecycle support
 
 ##### For more release history
 

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.4.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js"
+      ]
+    },
     "v0.3.0": {
       "released_date": "2026/10/19",
       "feature": [

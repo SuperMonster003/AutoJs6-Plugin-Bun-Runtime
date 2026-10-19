@@ -101,6 +101,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - يدعم Bun التقاط الشاشة بإذن مستقل وموافقة Android والتنظيف عند الإلغاء أو انتهاء المهلة وإعادة الطلب.
 - يحفظ Bun screenRecorder ملفات H.264 MP4 مع صوت AAC اختياري من الميكروفون أو التطبيقات أو مزيجهما ولقطات أثناء التسجيل, مع أذونات صوت مستقلة وتنظيف عند الإلغاء.
 - واجهات Bun لإمكانية الوصول وعمليات التطبيقات والحافظة متوافقة مع Node.js مع أذونات مستقلة ودعم التطبيقات المحزمة.
+- واجهات Bun للملفات والتخزين الدائم مع أذونات مستقلة وبيانات تخزين مشتركة مع Node.js.
 
 ******
 
@@ -122,7 +123,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### لماذا دوال AutoJs6 مثل `click()` و `toast()` غير متاحة في Bun script?
 
-استورد `process.env.AUTOJS6_HOST_CLIENT_MODULE` وانتظر `createHostClient()`. يوفر المضيف build 5572 مع Bun Runtime 0.3.0 الواجهات `host.app` و`host.accessibility` و`host.clipboard`. فعّل الأذونات المستقلة في مركز الإضافات. تتطلب الإيماءات أيضا `accessibility.gesture`. تصرح المشاريع المحزمة بالأذونات نفسها. تبقى قواعد Android لخدمة إمكانية الوصول والوصول إلى الحافظة في المقدمة سارية. راجع [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
+استورد `process.env.AUTOJS6_HOST_CLIENT_MODULE` وانتظر `createHostClient()`. يوفر المضيف build 5572 مع Bun Runtime 0.3.0 الواجهات `host.app` و`host.accessibility` و`host.clipboard`. فعّل الأذونات المستقلة في مركز الإضافات. تتطلب الإيماءات أيضا `accessibility.gesture`. تصرح المشاريع المحزمة بالأذونات نفسها. تبقى قواعد Android لخدمة إمكانية الوصول والوصول إلى الحافظة في المقدمة سارية. راجع [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md). واجهات Bun للملفات والتخزين الدائم مع أذونات مستقلة وبيانات تخزين مشتركة مع Node.js. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### هل يمكنني استخدام حزم npm?
 
@@ -235,6 +236,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `ميزة` واجهات Bun للملفات والتخزين الدائم مع أذونات مستقلة وبيانات تخزين مشتركة مع Node.js
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `ميزة` مهايئ مشاركة شاشة WebView وتسجيل الصوت عبر خدمة أمامية وتسجيل الكاميرا الأصلي في الخلفية في Node.js/Bun مع دعم Node Worker
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `ميزة` بث الصوت والفيديو عبر WebView getUserMedia/MediaRecorder, وانتظار Promise للصفحة, وطلب أذونات الوسائط في Android صراحة, وإدارة دورة حياة Worker
 
 ##### لمزيد من سجل الإصدارات
 

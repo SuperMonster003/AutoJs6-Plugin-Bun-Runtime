@@ -17,7 +17,8 @@
     "宿主用戶端支援完整 OpenCC 轉換及常用影像 API, 包含像素讀取, 編解碼, 變換, 找色與依執行回收的影像控制代碼; 宿主圖片檔案存取採用獨立授權且預設關閉.",
     "Bun 支援獨立授權的螢幕擷取, Android 錄製權限申請, 逾時/取消清理和重新申請.",
     "Bun screenRecorder 支援 H.264 MP4 螢幕錄製, 可選麥克風/應用程式播放/混合 AAC 音軌及錄製期間擷取畫面, 包含獨立音訊授權和取消清理.",
-    "Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式."
+    "Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式.",
+    "Bun 檔案與持久化儲存 API, 支援獨立授權的宿主檔案讀寫及 Node.js 儲存互通."
   ],
   "h3_usage": "安裝和使用",
   "usage_steps": [
@@ -61,7 +62,7 @@
   "faq": [
     {
       "q": "為什麼在 Bun 腳本裡用不了 `click()`, `toast()` 這些 AutoJs6 函式?",
-      "a": "顯式匯入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 並等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在外掛程式中心開啟各自獨立授權, 手勢還需 `accessibility.gesture`. 打包專案宣告相同授權. Android 無障礙服務授權和剪貼簿前景存取限制仍適用. 完整介面及限制參閱 [宿主 API]({{ repo_url }}/blob/master/docs/host-api.md)."
+      "a": "顯式匯入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 並等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在外掛程式中心開啟各自獨立授權, 手勢還需 `accessibility.gesture`. 打包專案宣告相同授權. Android 無障礙服務授權和剪貼簿前景存取限制仍適用. 完整介面及限制參閱 [宿主 API]({{ repo_url }}/blob/master/docs/host-api.md). Bun 檔案與持久化儲存 API, 支援獨立授權的宿主檔案讀寫及 Node.js 儲存互通. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)"
     },
     {
       "q": "可以使用 npm 套件嗎?",

@@ -101,6 +101,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun поддерживает захват экрана с отдельным разрешением, согласием Android, очисткой при отмене/тайм-ауте и повторным запросом.
 - Bun screenRecorder сохраняет H.264 MP4 с выбором AAC микрофона, приложений или микширования и снимками во время записи, отдельными разрешениями звука и очисткой при отмене.
 - API доступности, операций с приложениями и буфера обмена Bun согласованы с Node.js, с отдельными разрешениями и поддержкой упакованных приложений.
+- API файлов и постоянного хранилища Bun с отдельными разрешениями и общим хранилищем Node.js.
 
 ******
 
@@ -122,7 +123,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### Почему функции AutoJs6, такие как `click()` и `toast()`, недоступны в Bun-скриптах?
 
-Импортируйте `process.env.AUTOJS6_HOST_CLIENT_MODULE` и дождитесь `createHostClient()`. Хост build 5572 и Bun Runtime 0.3.0 предоставляют `host.app`, `host.accessibility`, `host.clipboard`. Включите отдельные разрешения в центре плагинов; для жестов дополнительно требуется `accessibility.gesture`. Упакованные проекты объявляют те же разрешения. Правила Android для службы доступности и фонового чтения буфера обмена сохраняются. См. [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
+Импортируйте `process.env.AUTOJS6_HOST_CLIENT_MODULE` и дождитесь `createHostClient()`. Хост build 5572 и Bun Runtime 0.3.0 предоставляют `host.app`, `host.accessibility`, `host.clipboard`. Включите отдельные разрешения в центре плагинов; для жестов дополнительно требуется `accessibility.gesture`. Упакованные проекты объявляют те же разрешения. Правила Android для службы доступности и фонового чтения буфера обмена сохраняются. См. [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md). API файлов и постоянного хранилища Bun с отдельными разрешениями и общим хранилищем Node.js. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### Можно ли использовать пакеты npm?
 
@@ -235,6 +236,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `Функция` API файлов и постоянного хранилища Bun с отдельными разрешениями и общим хранилищем Node.js
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `Функция` Адаптер демонстрации экрана WebView, запись звука через foreground service и нативная фоновая запись камеры для Node.js/Bun и Node Worker
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `Функция` Потоковое аудио и видео WebView getUserMedia/MediaRecorder, ожидание Promise страницы, явные запросы разрешений Android и управление жизненным циклом Worker
 
 ##### Дополнительная история выпусков
 

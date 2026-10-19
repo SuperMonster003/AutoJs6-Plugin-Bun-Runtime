@@ -101,6 +101,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun 支持独立授权的屏幕截图, Android 录屏权限申请, 超时/取消清理和重新申请.
 - Bun screenRecorder 支持 H.264 MP4 录屏, 可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 包含独立音频授权和取消清理.
 - Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用.
+- Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通.
 
 ******
 
@@ -122,7 +123,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 为什么在 Bun 脚本里用不了 `click()`, `toast()` 这些 AutoJs6 函数?
 
-显式导入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 并等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在插件中心开启各自独立授权, 手势还需 `accessibility.gesture`. 打包项目声明相同授权. Android 无障碍服务授权和剪贴板前台访问限制仍适用. 完整接口及限制参阅 [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
+显式导入 `process.env.AUTOJS6_HOST_CLIENT_MODULE`, 并等待 `createHostClient()`. 配套宿主 build 5572 和 Bun Runtime 0.3.0 提供 `host.app`, `host.accessibility`, `host.clipboard`. 在插件中心开启各自独立授权, 手势还需 `accessibility.gesture`. 打包项目声明相同授权. Android 无障碍服务授权和剪贴板前台访问限制仍适用. 完整接口及限制参阅 [宿主 API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md). Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### 可以使用 npm 包吗?
 
@@ -235,6 +236,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `新增` Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `新增` Node.js/Bun 的 WebView 屏幕共享适配, 前台服务后台录音及原生后台摄像头录像, 包括 Node Worker 封装
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `新增` WebView getUserMedia/MediaRecorder 流式音视频, 支持等待网页 Promise, 显式申请 Android 媒体权限及 Worker 生命周期管理
 
 ##### 更多发行历史
 

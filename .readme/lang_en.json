@@ -17,7 +17,8 @@
     "OpenCC conversions and common image APIs through the host client, including pixel reads, encoding, transforms, color searches and execution-owned image handles; host image file access has a separate opt-in grant.",
     "Bun supports screen capture with a separate opt-in grant, Android consent, timeout/cancellation cleanup and repeated authorization.",
     "Bun screenRecorder writes H.264 MP4 with optional microphone, app-playback or mixed AAC audio and screenshots during recording, with independent audio grants and cancellation cleanup.",
-    "Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support."
+    "Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.",
+    "Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage."
   ],
   "h3_usage": "Install and Use",
   "usage_steps": [
@@ -61,7 +62,7 @@
   "faq": [
     {
       "q": "Why are AutoJs6 functions such as `click()` and `toast()` unavailable in Bun scripts?",
-      "a": "Import `process.env.AUTOJS6_HOST_CLIENT_MODULE` and await `createHostClient()`. Host build 5572 with Bun Runtime 0.3.0 adds `host.app`, `host.accessibility` and `host.clipboard`. Enable their independent grants in Plugin Center; gestures need the additional `accessibility.gesture` grant. Packaged projects declare the same grants. Android accessibility-service authorization and clipboard foreground restrictions still apply. See [Host API]({{ repo_url }}/blob/master/docs/host-api.md) for all supported interfaces and limits."
+      "a": "Import `process.env.AUTOJS6_HOST_CLIENT_MODULE` and await `createHostClient()`. Host build 5572 with Bun Runtime 0.3.0 adds `host.app`, `host.accessibility` and `host.clipboard`. Enable their independent grants in Plugin Center; gestures need the additional `accessibility.gesture` grant. Packaged projects declare the same grants. Android accessibility-service authorization and clipboard foreground restrictions still apply. See [Host API]({{ repo_url }}/blob/master/docs/host-api.md) for all supported interfaces and limits. Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)"
     },
     {
       "q": "Can I use npm packages?",

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.4.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage"
+      ]
+    },
     "v0.3.0": {
       "released_date": "2026/10/19",
       "feature": [

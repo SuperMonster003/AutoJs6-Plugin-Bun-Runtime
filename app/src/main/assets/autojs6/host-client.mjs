@@ -1,4 +1,6 @@
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
+import {posix as filePath} from 'node:path';
+import {Buffer} from 'node:buffer';
 export const SDK_VERSION = 1;
 
 export const OPENCC_CONVERSION_TYPES = Object.freeze([
@@ -19,6 +21,8 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir"]),
+  "storage.control": Object.freeze(["get", "put", "remove", "clear", "keys", "contains"]),
   "app.control": Object.freeze(["launchPackage", "launchApp", "openAppSetting", "startActivity", "getPackageName", "getAppName", "isInstalled", "viewFile", "editFile", "startService", "sendBroadcast", "getInstalledApps", "getPackageInfo"]),
   "accessibility.control": Object.freeze(["isEnabled", "ensureEnabled", "click", "back", "home", "recentApps", "findByText", "clickText", "findOne", "findAll", "longClick", "setText", "scrollForward", "scrollBackward", "swipe", "gesture"]),
   "clipboard.control": Object.freeze(["getText", "setText", "hasText"]),
@@ -168,6 +172,48 @@ export const HOST_API_METHODS = Object.freeze({
   }
 
 const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
+
+function createFiles(dispatch) {
+  const text = value => value == null ? '' : String(value);
+  const encoding = value => value == null || value === '' ? 'utf8' : String(value);
+  function path(value,required=false) {
+    if(value==null) {
+      if(required) throw new TypeError('File path must not be nullish');
+      return null;
+    }
+    const valueText=String(value);
+    if(!/^file:/i.test(valueText))return valueText;
+    const url=new URL(valueText);
+    if(url.hostname&&url.hostname!=='localhost')throw new TypeError('Android file URLs must be local');
+    if(/%2f/i.test(url.pathname))throw new TypeError('File URL must not contain an encoded slash');
+    return decodeURIComponent(url.pathname);
+  }
+  function required(value) {
+    if(value==null)throw new TypeError('File name must not be nullish');
+    return String(value);
+  }
+  const result={
+    path:async value=>dispatch('path',[path(value)]),
+    join:(...values)=>filePath.join(...values.map(text)),
+    read:async(value,charset)=>{const data=await dispatch('read',[path(value)]);return value==null?'':Buffer.from(data,'base64').toString(encoding(charset));},
+    write:async(value,data,charset)=>{await dispatch('write',[path(value,true),Buffer.from(text(data),encoding(charset)).toString('base64')]);},
+    append:async(value,data,charset)=>{await dispatch('append',[path(value,true),Buffer.from(text(data),encoding(charset)).toString('base64')]);},
+    listDir:async(value,filter)=>{
+      if(value!=null&&filter!=null&&typeof filter!=='function')throw new TypeError('files.listDir filter must be a function');
+      const names=await dispatch('listDir',[path(value)]);
+      return typeof filter==='function'?names.filter(name=>filter(name)===true):names;
+    },
+    copy:async(from,to)=>dispatch('copy',[path(from,true),path(to,true)]),
+    move:async(from,to)=>dispatch('move',[path(from,true),path(to,true)]),
+    ensureDir:async value=>dispatch('ensureDir',[path(value,true)]),
+    getName:value=>filePath.basename(required(value)),
+    getExtension:value=>filePath.extname(required(value)).slice(1),
+    open(){throw new HostCallError('NOT_SUPPORTED','Rhino file handles are unavailable; use Bun or node:fs file handles for runtime-local files','files.control');},
+    toFile(){throw new HostCallError('NOT_SUPPORTED','Raw java.io.File objects are not exposed by Bun','files.control');},
+  };
+  for(const method of ['exists','remove','isFile','isDir'])result[method]=async value=>dispatch(method,[path(value)]);
+  return Object.freeze(result);
+}
 
 /**
  * Connect to the bridge and negotiate the grants for this execution. A capability grant does not
@@ -2606,6 +2652,174 @@ function createAutomation(dispatch, hostInfo) {
 }
 // END GENERATED AUTOMATION
 
+// BEGIN GENERATED STORAGE
+// Reproduced from Node's public storage/storages facade by tools/host-client/sync-storage.mjs.
+function createStorage(dispatch) {
+  let __autojs6_limited_storage_cache, __autojs6_limited_storages_cache;
+  const __autojs6_call_autojs = (_,method,args,options) => dispatch('storage',method,args,options);
+  const __autojs6_bridge_signal_from_options = options => options && options.signal;
+  const __autojs6_bridge_timeout_ms = value => value;
+  const __autojs6_bridge_error = (message,code,module,method) => Object.assign(new HostCallError('INVALID_REQUEST',message,'storage.control'),{method});
+  const __autojs6_rhino_compat_unsupported = (api,message) => Object.assign(new HostCallError('NOT_SUPPORTED',message,'storage.control'),{api});
+  function __autojs6_storage_options(value) {
+    return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  }
+  function __autojs6_storage_invalid_argument_error(moduleName, methodName, message) {
+    return __autojs6_bridge_error(
+      message,
+      "ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED",
+      moduleName,
+      methodName
+    );
+  }
+  function __autojs6_storage_name(moduleName, methodName, value, label) {
+    const text = value === undefined || value === null ? "" : String(value).trim();
+    if (!text) {
+      throw __autojs6_storage_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " requires a non-empty " + label + ".");
+    }
+    if (text.indexOf("\u0000") !== -1 || text.length > 128) {
+      throw __autojs6_storage_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " received an invalid " + label + ".");
+    }
+    return text;
+  }
+  function __autojs6_storage_json_value(moduleName, methodName, value) {
+    if (value === undefined || typeof value === "function" || typeof value === "symbol") {
+      throw __autojs6_storage_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " value must be JSON-serializable.");
+    }
+    let json = "";
+    try {
+      json = JSON.stringify(value);
+    } catch (error) {
+      throw __autojs6_storage_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " value must be JSON-serializable.");
+    }
+    if (json === undefined) {
+      throw __autojs6_storage_invalid_argument_error(moduleName, methodName, moduleName + "." + methodName + " value must be JSON-serializable.");
+    }
+    return value;
+  }
+  function __autojs6_storage_bridge_options(options, fallbackMs) {
+    const input = __autojs6_storage_options(options);
+    return {
+      timeoutMs: __autojs6_bridge_timeout_ms(input.timeoutMs === undefined ? fallbackMs : input.timeoutMs),
+      signal: __autojs6_bridge_signal_from_options(input),
+      permissions: ["storage"]
+    };
+  }
+  function __autojs6_limited_storage(moduleName) {
+    if (moduleName === "storages" && __autojs6_limited_storages_cache) {
+      return __autojs6_limited_storages_cache;
+    }
+    if (moduleName === "storage" && __autojs6_limited_storage_cache) {
+      return __autojs6_limited_storage_cache;
+    }
+    function createStore(name) {
+      const storeName = __autojs6_storage_name(moduleName, "create", name, "storage name");
+      function call(methodName, args, options, fallbackMs) {
+        return __autojs6_call_autojs(
+          moduleName,
+          methodName,
+          [storeName].concat(args || []),
+          __autojs6_storage_bridge_options(options, fallbackMs || 5000)
+        );
+      }
+      function get(key, defaultValue, options) {
+        const checkedKey = __autojs6_storage_name(moduleName, "get", key, "key");
+        return call("get", [checkedKey], options, 5000).then(function(result) {
+          if (result && typeof result === "object" && result.found === true) {
+            return result.value;
+          }
+          return defaultValue;
+        });
+      }
+      function put(key, value, options) {
+        const checkedKey = __autojs6_storage_name(moduleName, "put", key, "key");
+        const checkedValue = __autojs6_storage_json_value(moduleName, "put", value);
+        return call("put", [checkedKey, checkedValue], options, 5000).then(function() {
+          return undefined;
+        });
+      }
+      function remove(key, options) {
+        const checkedKey = __autojs6_storage_name(moduleName, "remove", key, "key");
+        return call("remove", [checkedKey], options, 5000).then(function() {
+          return undefined;
+        });
+      }
+      function clear(options) {
+        return call("clear", [], options, 5000).then(function() {
+          return undefined;
+        });
+      }
+      function keys(options) {
+        return call("keys", [], options, 5000).then(function(result) {
+          return Object.freeze(Array.isArray(result) ? result.map(String) : []);
+        });
+      }
+      function contains(key, options) {
+        const checkedKey = __autojs6_storage_name(moduleName, "contains", key, "key");
+        return call("contains", [checkedKey], options, 5000).then(function(result) {
+          return result === true;
+        });
+      }
+      function selfRemove(options) {
+        return removeStorage(storeName, options);
+      }
+      return Object.freeze({
+        name: storeName,
+        get,
+        put,
+        putSync: put,
+        remove,
+        removeSync: remove,
+        clear,
+        clearSync: clear,
+        keys,
+        contains,
+        selfRemove,
+        selfRemoveSync: selfRemove
+      });
+    }
+    function create(name) {
+      return createStore(name);
+    }
+    function open(name) {
+      return createStore(name);
+    }
+    function removeStorage(name, options) {
+      const storeName = __autojs6_storage_name(moduleName, "remove", name, "storage name");
+      return createStore(storeName).clear(options);
+    }
+    function names() {
+      throw __autojs6_rhino_compat_unsupported(
+        "storages.names",
+        "The controlled Bun storage bridge is scoped by package and working directory and does not expose storage namespace enumeration."
+      );
+    }
+    function all() {
+      throw __autojs6_rhino_compat_unsupported(
+        "storages.all",
+        "The controlled Bun storage bridge is scoped by package and working directory and does not expose storage namespace enumeration."
+      );
+    }
+    const moduleValue = Object.freeze({
+      create,
+      open,
+      remove: removeStorage,
+      removeSync: removeStorage,
+      names,
+      all
+    });
+    if (moduleName === "storages") {
+      __autojs6_limited_storages_cache = moduleValue;
+    } else {
+      __autojs6_limited_storage_cache = moduleValue;
+    }
+    return moduleValue;
+  }
+
+  return {storage:__autojs6_limited_storage('storage'),storages:__autojs6_limited_storage('storages')};
+}
+// END GENERATED STORAGE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -2711,6 +2925,8 @@ export async function createHostClient(options = {}) {
   if (appInfo !== null && (!isObject(appInfo) || typeof appInfo.packageName !== 'string' || typeof appInfo.versionName !== 'string' || !Number.isInteger(appInfo.versionCode)))
     throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
   const automation = createAutomation(automationCall, appInfo);
+  const storage = createStorage(automationCall);
+  const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value);
 
   function group(capability) {
     return Object.freeze(Object.fromEntries(HOST_API_METHODS[capability].map(method => [method, async (...args) => {
@@ -2877,6 +3093,8 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    ...storage,
+    files,
     bridgeVersion: info.bridgeVersion,
     capabilities,
     limits,

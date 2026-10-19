@@ -17,7 +17,8 @@
     "ホストクライアントで OpenCC 変換と一般的な画像 API を提供, ピクセル取得, エンコード, 変換, 色検索と実行ごとの画像解放に対応; ホスト画像ファイルへのアクセスは個別許可で初期状態では無効.",
     "Bun が個別許可による画面キャプチャ, Android の同意, タイムアウト/キャンセル時の解放と再申請に対応.",
     "Bun screenRecorder が H.264 MP4 録画, マイク/アプリ再生/ミックスの AAC 音声と録画中の画面取得に対応し, 個別の音声許可とキャンセル時の削除を提供.",
-    "Bun のユーザー補助, アプリ操作, クリップボード API を Node.js の対応インターフェースに合わせ, 個別の許可とパッケージ化アプリに対応."
+    "Bun のユーザー補助, アプリ操作, クリップボード API を Node.js の対応インターフェースに合わせ, 個別の許可とパッケージ化アプリに対応.",
+    "Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応."
   ],
   "h3_usage": "インストールと使用方法",
   "usage_steps": [
@@ -61,7 +62,7 @@
   "faq": [
     {
       "q": "Bun スクリプトで `click()` や `toast()` などの AutoJs6 関数が使えないのはなぜですか?",
-      "a": "`process.env.AUTOJS6_HOST_CLIENT_MODULE` をインポートし, `createHostClient()` を待機してください. ホスト build 5572 と Bun Runtime 0.3.0 は `host.app`, `host.accessibility`, `host.clipboard` を提供します. プラグインセンターで個別に許可し, ジェスチャーには `accessibility.gesture` も許可してください. パッケージ化プロジェクトでも同じ許可を宣言します. Android のユーザー補助とクリップボードのフォアグラウンド制限は引き続き適用されます. 詳細は [Host API]({{ repo_url }}/blob/master/docs/host-api.md)."
+      "a": "`process.env.AUTOJS6_HOST_CLIENT_MODULE` をインポートし, `createHostClient()` を待機してください. ホスト build 5572 と Bun Runtime 0.3.0 は `host.app`, `host.accessibility`, `host.clipboard` を提供します. プラグインセンターで個別に許可し, ジェスチャーには `accessibility.gesture` も許可してください. パッケージ化プロジェクトでも同じ許可を宣言します. Android のユーザー補助とクリップボードのフォアグラウンド制限は引き続き適用されます. 詳細は [Host API]({{ repo_url }}/blob/master/docs/host-api.md). Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)"
     },
     {
       "q": "npm パッケージは使えますか?",

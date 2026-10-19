@@ -5,6 +5,12 @@
   "changelog_label_improvement": "優化",
   "changelog_label_dependency": "相依性",
   "$data": {
+    "v0.4.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun 檔案與持久化儲存 API, 支援獨立授權的宿主檔案讀寫及 Node.js 儲存互通"
+      ]
+    },
     "v0.3.0": {
       "released_date": "2026/10/19",
       "feature": [

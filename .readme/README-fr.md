@@ -101,6 +101,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 - Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande.
 - Bun screenRecorder produit des MP4 H.264 avec audio AAC du microphone, des applications ou mixé et captures pendant la vidéo, avec autorisations audio distinctes et nettoyage après annulation.
 - API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées.
+- API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js.
 
 ******
 
@@ -122,7 +123,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 
 #### Pourquoi les fonctions AutoJs6 comme `click()` et `toast()` sont-elles indisponibles dans les scripts Bun?
 
-Importez `process.env.AUTOJS6_HOST_CLIENT_MODULE` et attendez `createHostClient()`. Le build hôte 5572 avec Bun Runtime 0.3.0 fournit `host.app`, `host.accessibility` et `host.clipboard`. Activez leurs autorisations distinctes dans le centre de plugins; les gestes exigent aussi `accessibility.gesture`. Les projets empaquetés déclarent les mêmes autorisations. Les règles Android sur le service accessibilité et le presse-papiers au premier plan restent applicables. Voir [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md).
+Importez `process.env.AUTOJS6_HOST_CLIENT_MODULE` et attendez `createHostClient()`. Le build hôte 5572 avec Bun Runtime 0.3.0 fournit `host.app`, `host.accessibility` et `host.clipboard`. Activez leurs autorisations distinctes dans le centre de plugins; les gestes exigent aussi `accessibility.gesture`. Les projets empaquetés déclarent les mêmes autorisations. Les règles Android sur le service accessibilité et le presse-papiers au premier plan restent applicables. Voir [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md). API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### Puis-je utiliser des paquets npm?
 
@@ -235,6 +236,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `Fonctionnalité` API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `Fonctionnalité` Adaptateur de partage ecran WebView, capture audio par service de premier plan et enregistrement camera natif en arriere-plan pour Node.js/Bun et Node Worker
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `Fonctionnalité` Flux audio et video WebView getUserMedia/MediaRecorder, attente des Promise de page, demandes explicites de permissions multimedia Android et cycle de vie des Worker
 
 ##### Pour plus d'historique
 

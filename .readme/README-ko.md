@@ -101,6 +101,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun에서 별도 허용이 필요한 화면 캡처, Android 승인, 시간 초과/취소 정리 및 재요청 지원.
 - Bun screenRecorder에서 H.264 MP4 녹화, 선택적 마이크/앱 재생/혼합 AAC 오디오 및 녹화 중 화면 캡처 지원, 별도 오디오 허용과 취소 정리 포함.
 - Bun 접근성, 앱 작업 및 클립보드 API를 Node.js 인터페이스에 맞추고 개별 권한과 패키징 앱 지원.
+- Bun 파일 및 영구 저장소 API, 별도의 호스트 파일 권한과 Node.js 저장소 공유 지원.
 
 ******
 
@@ -122,7 +123,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 
 #### 왜 Bun 스크립트에서 `click()`, `toast()` 같은 AutoJs6 함수를 사용할 수 없나요?
 
-`process.env.AUTOJS6_HOST_CLIENT_MODULE`을 가져오고 `createHostClient()`를 기다립니다. 호스트 build 5572와 Bun Runtime 0.3.0은 `host.app`, `host.accessibility`, `host.clipboard`를 제공합니다. 플러그인 센터에서 개별 권한을 켜고 제스처에는 `accessibility.gesture`도 허용합니다. 패키징 프로젝트도 같은 권한을 선언합니다. Android 접근성 승인과 클립보드 포그라운드 제한은 계속 적용됩니다. 전체 인터페이스와 제한은 [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md)를 참고하세요.
+`process.env.AUTOJS6_HOST_CLIENT_MODULE`을 가져오고 `createHostClient()`를 기다립니다. 호스트 build 5572와 Bun Runtime 0.3.0은 `host.app`, `host.accessibility`, `host.clipboard`를 제공합니다. 플러그인 센터에서 개별 권한을 켜고 제스처에는 `accessibility.gesture`도 허용합니다. 패키징 프로젝트도 같은 권한을 선언합니다. Android 접근성 승인과 클립보드 포그라운드 제한은 계속 적용됩니다. 전체 인터페이스와 제한은 [Host API](https://github.com/SuperMonster003/AutoJs6-Plugin-Bun-Runtime/blob/master/docs/host-api.md)를 참고하세요. Bun 파일 및 영구 저장소 API, 별도의 호스트 파일 권한과 Node.js 저장소 공유 지원. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)
 
 #### npm 패키지를 사용할 수 있나요?
 
@@ -235,6 +236,12 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.4.0
+
+_2026/10/19_
+
+- `기능` Bun 파일 및 영구 저장소 API, 별도의 호스트 파일 권한과 Node.js 저장소 공유 지원
+
 #### v0.3.0
 
 _2026/10/19_
@@ -246,12 +253,6 @@ _2026/10/19_
 _2026/10/18_
 
 - `기능` Node.js/Bun WebView 화면 공유 어댑터, 포그라운드 서비스 녹음 및 네이티브 백그라운드 카메라 녹화, Node Worker 지원
-
-#### v0.2.13
-
-_2026/10/18_
-
-- `기능` WebView getUserMedia/MediaRecorder 오디오 및 비디오 스트리밍, 페이지 Promise 대기, 명시적 Android 미디어 권한 요청 및 Worker 수명 주기 관리
 
 ##### 더 많은 릴리스 기록
 

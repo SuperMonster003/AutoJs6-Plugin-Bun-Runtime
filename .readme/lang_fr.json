@@ -17,7 +17,8 @@
     "Conversions OpenCC et API courantes d'image via le client hôte, avec lecture des pixels, encodage, transformations, recherche de couleurs et libération des images par exécution; accès aux fichiers de l'hôte soumis à une autorisation séparée désactivée par défaut.",
     "Bun propose la capture écran avec autorisation distincte, consentement Android, nettoyage après expiration/annulation et nouvelle demande.",
     "Bun screenRecorder produit des MP4 H.264 avec audio AAC du microphone, des applications ou mixé et captures pendant la vidéo, avec autorisations audio distinctes et nettoyage après annulation.",
-    "API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées."
+    "API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées.",
+    "API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js."
   ],
   "h3_usage": "Installation et utilisation",
   "usage_steps": [
@@ -61,7 +62,7 @@
   "faq": [
     {
       "q": "Pourquoi les fonctions AutoJs6 comme `click()` et `toast()` sont-elles indisponibles dans les scripts Bun?",
-      "a": "Importez `process.env.AUTOJS6_HOST_CLIENT_MODULE` et attendez `createHostClient()`. Le build hôte 5572 avec Bun Runtime 0.3.0 fournit `host.app`, `host.accessibility` et `host.clipboard`. Activez leurs autorisations distinctes dans le centre de plugins; les gestes exigent aussi `accessibility.gesture`. Les projets empaquetés déclarent les mêmes autorisations. Les règles Android sur le service accessibilité et le presse-papiers au premier plan restent applicables. Voir [Host API]({{ repo_url }}/blob/master/docs/host-api.md)."
+      "a": "Importez `process.env.AUTOJS6_HOST_CLIENT_MODULE` et attendez `createHostClient()`. Le build hôte 5572 avec Bun Runtime 0.3.0 fournit `host.app`, `host.accessibility` et `host.clipboard`. Activez leurs autorisations distinctes dans le centre de plugins; les gestes exigent aussi `accessibility.gesture`. Les projets empaquetés déclarent les mêmes autorisations. Les règles Android sur le service accessibilité et le presse-papiers au premier plan restent applicables. Voir [Host API]({{ repo_url }}/blob/master/docs/host-api.md). API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js. (`host.files`, `host.storage`, `host.storages`; `files.control`, `storage.control`.)"
     },
     {
       "q": "Puis-je utiliser des paquets npm?",
