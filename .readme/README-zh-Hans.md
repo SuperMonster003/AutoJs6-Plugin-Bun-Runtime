@@ -104,6 +104,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通.
 - Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化.
 - Bun 与 Node.js Worker 的传感器采样及订阅 API, 支持取消和监听器自动释放.
+- Bun, Node.js 及 Worker 的宿主 Shell API, 支持流式输入输出, Shizuku 授权与进程清理.
 
 ******
 
@@ -238,6 +239,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.7.0
+
+_2026/10/19_
+
+- `新增` Bun, Node.js 及 Worker 的宿主 Shell API, 支持流式输入输出, Shizuku 授权与进程清理
+
 #### v0.6.0
 
 _2026/10/19_
@@ -249,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `新增` Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化
-
-#### v0.4.0
-
-_2026/10/19_
-
-- `新增` Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通
 
 ##### 更多发行历史
 

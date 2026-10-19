@@ -104,6 +104,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応.
 - Node.js Worker と Bun の database/sqlite API. パラメーター付きクエリ, トランザクション, 永続化に対応.
 - Bun と Node.js Worker のセンサー取得と購読 API, キャンセルとリスナーの自動解放.
+- Bun, Node.js と Worker のホスト Shell API, ストリーム入出力, Shizuku 許可とプロセス解放.
 
 ******
 
@@ -238,6 +239,12 @@ Roadmap は 2 つの質問に答えます. いま何が使えるか, 次に何�
 
 ******
 
+#### v0.7.0
+
+_2026/10/19_
+
+- `機能` Bun, Node.js と Worker のホスト Shell API, ストリーム入出力, Shizuku 許可とプロセス解放
+
 #### v0.6.0
 
 _2026/10/19_
@@ -249,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `機能` Node.js Worker と Bun の database/sqlite API. パラメーター付きクエリ, トランザクション, 永続化に対応
-
-#### v0.4.0
-
-_2026/10/19_
-
-- `機能` Bun ファイルと永続ストレージ API. 個別のホストファイル権限と Node.js ストレージの共有に対応
 
 ##### その他のリリース履歴
 

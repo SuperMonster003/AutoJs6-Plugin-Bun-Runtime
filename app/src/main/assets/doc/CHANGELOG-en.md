@@ -4,6 +4,12 @@
 
 ******
 
+# v0.7.0
+
+###### 2026/10/19
+
+* `Feature` Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers
+
 # v0.6.0
 
 ###### 2026/10/19

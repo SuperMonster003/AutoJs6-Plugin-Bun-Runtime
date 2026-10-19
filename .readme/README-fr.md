@@ -104,6 +104,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 - API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js.
 - API hôtes database/sqlite pour Bun et les Workers Node.js, avec requêtes paramétrées, transactions et persistance.
 - Mesures et abonnements aux capteurs pour Bun et les Workers Node.js, avec annulation et libération automatique des écouteurs.
+- Shell hôte avec flux, autorisation Shizuku et nettoyage des processus pour Bun, Node.js et les Workers.
 
 ******
 
@@ -238,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.7.0
+
+_2026/10/19_
+
+- `Fonctionnalité` Shell hôte avec flux, autorisation Shizuku et nettoyage des processus pour Bun, Node.js et les Workers
+
 #### v0.6.0
 
 _2026/10/19_
@@ -249,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Fonctionnalité` API hôtes database/sqlite pour Bun et les Workers Node.js, avec requêtes paramétrées, transactions et persistance
-
-#### v0.4.0
-
-_2026/10/19_
-
-- `Fonctionnalité` API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js
 
 ##### Pour plus d'historique
 

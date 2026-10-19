@@ -1,3 +1,4 @@
+import * as shellStreams from "node:stream";
 import {EventEmitter} from "node:events";
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
 import {posix as filePath} from 'node:path';
@@ -22,6 +23,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "shell.control": Object.freeze(["exec", "spawn", "open", "drain", "write", "closeInput", "kill", "close", "getAccess", "requestShizukuPermission"]),
   "sensors.control": Object.freeze(["getAvailableSensors", "once", "subscribe", "unsubscribe", "drainEvents"]),
   "database.control": Object.freeze(["open", "exec", "run", "get", "all", "transaction", "close"]),
   "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir"]),
@@ -3177,6 +3179,129 @@ function createStorage(dispatch) {
   }
 // END GENERATED SENSORS
 
+// BEGIN GENERATED SHELL
+// Shared with Node main threads and Workers by tools/host-client/sync-shell.mjs.
+  function __autojs6_create_shell(call, EventEmitter, streams, BufferClass, missingCapabilities = () => [], createError) {
+    const fail=(message,code="ERR_AUTOJS6_BRIDGE_INVALID_REQUEST") => createError ? createError(message,code,"shell") : Object.assign(new Error(message),{code,module:"shell"});
+    const abortError=signal => Object.assign(new Error("Shell operation was aborted",{cause:signal?.reason}),{name:"AbortError",code:"ABORT_ERR"});
+    let defaultTimeout=30000;
+    function options(value){if(value==null)return {};if(typeof value!=="object"||Array.isArray(value))throw fail("Shell options must be an object");return value;}
+    function duration(value,fallback){value=value??fallback;if(!Number.isInteger(value)||value<0||value>2147483647)throw fail("Shell timeout must be a nonnegative integer");return value;}
+    const quote=value=>"'"+String(value).replace(/'/g,"'\"'\"'")+"'";
+    function normalize(value,lifetime=0){
+      const opts=options(value),result={root:opts.root===true,shizuku:opts.shizuku===true||opts.adb===true,pty:opts.pty===true,timeoutMs:duration(opts.timeoutMs,lifetime),env:{},cwd:opts.cwd??""};
+      for(const key of ["root","shizuku","adb","pty"])if(opts[key]!==undefined&&typeof opts[key]!=="boolean")throw fail(key+" must be boolean");
+      if(typeof result.cwd!=="string"||result.cwd.includes("\0"))throw fail("cwd must be a string without NUL");
+      if(opts.env!==undefined){const env=options(opts.env);for(const [name,value] of Object.entries(env)){if(!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)||typeof value!=="string"||value.includes("\0"))throw fail("env requires valid names and string values without NUL");result.env[name]=value;}}
+      if(opts.signal!==undefined&&!(opts.signal instanceof AbortSignal))throw fail("signal must be an AbortSignal");
+      return result;
+    }
+    function start(method,command,input){
+      const opts=options(input),descriptor=normalize(opts),signal=opts.signal;
+      if(method==="spawn"&&(typeof command!=="string"||!command.trim()||command.includes("\0")))throw fail("command must be a non-empty string without NUL");
+      if(method==="open"&&opts.cmd!==undefined){if(typeof opts.cmd!=="string"||!opts.cmd.trim()||opts.cmd.includes("\0"))throw fail("cmd must be a non-empty string without NUL");descriptor.cmd=opts.cmd;}
+      const permissions=["shell",...(descriptor.root?["shell.root"]:[]),...(descriptor.shizuku?["shell.shizuku"]:[])];
+      const emitter=new EventEmitter(),claimed={},lineReaders={},lineFlushers={},pipes={},blocked={stdout:false,stderr:false};
+      let id="",pid=-1,mode=descriptor.shizuku?(descriptor.root?"adb+root":"adb"):(descriptor.root?"root":"sh"),closed=false,killed=false,exitCode=null,timedOut=false,timer=null,polling=false,closePromise,aborted=false;
+      let resolveExit,rejectExit;const exited=new Promise((resolve,reject)=>{resolveExit=resolve;rejectExit=reject;});exited.catch(()=>{});
+      const report=error=>{if(emitter.listenerCount("error"))emitter.emit("error",error);};
+      const invoke=(name,args,extra={})=>call("shell",name,args,{timeoutMs:5000,permissions:["shell"],...extra});
+      function end(code,error){
+        if(closed)return;closed=true;exitCode=code;clearTimeout(timer);signal?.removeEventListener("abort",onAbort);
+        for(const [name,stream] of Object.entries(pipes)){if(!stream.readableEnded)stream.push(null);lineFlushers[name]?.();}
+        stdin.destroy();if(error){rejectExit(error);report(error);}else resolveExit(code);
+        emitter.emit("exit",code);emitter.emit("close",code);
+      }
+      function schedule(delay=0){
+        if(closed||!id||timer!==null||polling||blocked.stdout||blocked.stderr)return;
+        timer=setTimeout(async()=>{
+          timer=null;if(closed)return;polling=true;
+          try{
+            const batch=await invoke("drain",[id]);
+            for(const event of Array.isArray(batch)?batch:[]){
+              if(closed)break;
+              if(event.type==="stdout"||event.type==="stderr"){if(!pipes[event.type].push(BufferClass.from(event.data,"base64")))blocked[event.type]=true;}
+              else if(event.type==="end"){pipes[event.stream]?.push(null);lineFlushers[event.stream]?.();}
+              else if(event.type==="error")throw fail(event.message||"Shell stream failed","ERR_AUTOJS6_BRIDGE_PROVIDER_FAILED");
+              else if(event.type==="exit"){timedOut=event.timedOut===true;end(Number(event.code),aborted?abortError(signal):undefined);}
+            }
+          }catch(error){if(!closed){await invoke("close",[id]).catch(()=>{});end(null,error);}}
+          finally{polling=false;schedule(duration(opts.drainIntervalMs,25));}
+        },delay);
+      }
+      for(const name of ["stdout","stderr"]){pipes[name]=new streams.Readable({read(){blocked[name]=false;schedule();}});pipes[name].on("error",report);}
+      const stdin=new streams.Writable({
+        write(chunk,encoding,callback){ready.then(async()=>{const data=BufferClass.isBuffer(chunk)?chunk:BufferClass.from(chunk,encoding);for(let i=0;i<data.length;i+=8192)await invoke("write",[id,data.subarray(i,i+8192).toString("base64")]);}).then(()=>callback(),callback);},
+        final(callback){ready.then(()=>invoke("closeInput",[id])).then(()=>callback(),callback);}
+      });stdin.on("error",error=>{report(error);emitter.close().catch(()=>{});});
+      function claim(name,kind){if(claimed[name]&&claimed[name]!==kind)throw fail(name+" is already used through "+claimed[name]);claimed[name]=kind;return pipes[name];}
+      function readLine(name){
+        const stream=claim(name,"lines");let reader=lineReaders[name];
+        if(!reader){stream.setEncoding("utf8");reader=lineReaders[name]={iterator:stream[Symbol.asyncIterator](),text:"",ended:false,tail:Promise.resolve()};}
+        const result=reader.tail.then(async()=>{
+          while(true){const newline=reader.text.indexOf("\n");if(newline>=0){const line=reader.text.slice(0,newline).replace(/\r$/,"");reader.text=reader.text.slice(newline+1);return line;}
+            if(reader.ended){const text=reader.text;reader.text="";return text||null;}
+            const next=await reader.iterator.next();if(next.done)reader.ended=true;else reader.text+=next.value;
+          }
+        });reader.tail=result.catch(()=>{});return result;
+      }
+
+      function lineEvents(event){
+        const name=event==="output"?"stdout":event==="errorOutput"?"stderr":null;if(!name||claimed[name]==="events")return;
+        const stream=claim(name,"events");let text="";stream.setEncoding("utf8");
+        stream.on("data",chunk=>{text+=chunk;let n;while((n=text.indexOf("\n"))>=0){const line=text.slice(0,n).replace(/\r$/,"");text=text.slice(n+1);emitter.emit(event,line);}});
+        lineFlushers[name]=()=>{if(text){const rest=text;text="";emitter.emit(event,rest);}};stream.on("end",lineFlushers[name]);
+      }
+      for(const method of ["on","addListener","once","prependListener","prependOnceListener"]){const original=emitter[method];emitter[method]=function(event,listener){lineEvents(event);return original.call(this,event,listener);};}
+      Object.defineProperties(emitter,{
+        id:{get:()=>id},pid:{get:()=>pid},command:{value:method==="open"?descriptor.cmd||"sh /proc/self/fd/0":command},mode:{get:()=>mode},closed:{get:()=>closed},killed:{get:()=>killed},exitCode:{get:()=>exitCode},timedOut:{get:()=>timedOut},
+        ready:{get:()=>ready},exited:{value:exited},stdin:{value:stdin},stdout:{get:()=>claim("stdout","raw")},stderr:{get:()=>claim("stderr","raw")}
+      });
+      Object.assign(emitter,{
+        readLine:()=>readLine("stdout"),readErrorLine:()=>readLine("stderr"),
+        write(data){return new Promise((resolve,reject)=>stdin.write(data,error=>error?reject(error):resolve(emitter)));},
+        writeLine(text){if(typeof text!=="string")return Promise.reject(fail("writeLine requires a string"));return emitter.write(text+"\n");},
+        closeInput(){return new Promise((resolve,reject)=>{if(closed||stdin.writableFinished)return resolve(emitter);stdin.end(error=>error?reject(error):resolve(emitter));});},
+        async waitFor(timeoutMs){if(timeoutMs===undefined)return exited;const millis=duration(timeoutMs,0);let timeout;try{return await Promise.race([exited,new Promise(resolve=>timeout=setTimeout(()=>resolve(null),millis))]);}finally{clearTimeout(timeout);}},
+        async kill(){await ready;if(closed)return false;killed=true;const alive=await invoke("kill",[id]);schedule();return alive;},
+        close(){if(closePromise)return closePromise;closePromise=ready.catch(()=>{}).then(async()=>{if(closed)return false;killed=true;try{const status=await invoke("close",[id]);end(Number(status?.code??-1),aborted?abortError(signal):undefined);return status?.wasAlive===true;}catch(error){end(null,error);throw error;}});return closePromise;}
+      });
+      function onAbort(){aborted=true;emitter.close().catch(()=>{});}
+      const ready=Promise.resolve().then(async()=>{
+        if(signal?.aborted)throw abortError(signal);
+        const record=await invoke(method,method==="open"?[descriptor]:[command,descriptor],{permissions,timeoutMs:15000});
+        id=String(record?.id||"");pid=Number(record?.pid??-1);mode=String(record?.mode||mode);
+        if(!id)throw fail("Shell start returned no process handle");
+        if(signal?.aborted){await invoke("close",[id]).catch(()=>{});throw abortError(signal);}
+        schedule();
+      }).catch(error=>{end(null,error);throw error;});ready.catch(()=>{});
+      signal?.addEventListener("abort",onAbort,{once:true});
+      return emitter;
+    }
+    function spawn(command,opts){return start("spawn",command,opts);}
+    function open(opts){return start("open",null,opts);}
+    async function exec(command,input){
+      const opts=options(input),limit=opts.maxOutputBytes??1048576;if(!Number.isInteger(limit)||limit<1)throw fail("maxOutputBytes must be a positive integer");
+      const child=spawn(command,{...opts,timeoutMs:duration(opts.timeoutMs,defaultTimeout)}),out=[],err=[];let bytes=0,truncated=false;
+      const collect=target=>chunk=>{const keep=Math.min(chunk.length,Math.max(0,limit-bytes));if(keep)target.push(chunk.subarray(0,keep));bytes+=keep;if(keep<chunk.length)truncated=true;};
+      child.stdout.on("data",collect(out));child.stderr.on("data",collect(err));
+      try{await child.ready;await child.closeInput();const code=await child.waitFor();return Object.freeze({code,stdout:BufferClass.concat(out).toString("utf8"),stderr:BufferClass.concat(err).toString("utf8")+(child.timedOut?"\nAutoJs6 shell command timed out after "+duration(opts.timeoutMs,defaultTimeout)+"ms.":""),timedOut:child.timedOut,truncated});}
+      finally{await child.close().catch(()=>{});}
+    }
+    function execRoot(command,opts){return exec(command,{...options(opts),root:true});}
+    function execShizuku(command,opts){return exec(command,{...options(opts),shizuku:true});}
+    function execFile(file,args=[],opts){if(typeof file!=="string"||!file||file.includes("\0")||!Array.isArray(args)||args.some(a=>typeof a!=="string"||a.includes("\0")))return Promise.reject(fail("execFile requires a path and string arguments without NUL"));return exec([file.includes("/")?file:"./"+file,...args].map(quote).join(" "),opts);}
+    function checkAccess(input){const opts=options(input),required=["shell",...(opts.root?["shell.root"]:[]),...(opts.shizuku||opts.adb?["shell.shizuku"]:[])],missing=missingCapabilities(required);return Object.freeze({shell:!missing.includes("shell"),root:opts.root===true&&!missing.includes("shell.root"),shizuku:(opts.shizuku===true||opts.adb===true)&&!missing.includes("shell.shizuku"),missingCapabilities:Object.freeze(missing.slice())});}
+    async function getAccess(opts){return Object.freeze(await call("shell","getAccess",[],{timeoutMs:5000,...options(opts),permissions:["shell"]}));}
+    function setDefaultTimeout(ms){if(!Number.isFinite(ms)||ms<=0)throw fail("Default timeout must be positive");return defaultTimeout=duration(ms,defaultTimeout);}
+    const requestShizukuPermission=opts=>call("shell","requestShizukuPermission",[],{timeoutMs:60000,...options(opts),permissions:["shell","shell.shizuku"]});
+    const shell=Object.freeze({exec,execRoot,execShizuku,execFile,checkAccess,getAccess,setDefaultTimeout,spawn,open,requestShizukuPermission});
+    const shizuku=Object.assign((command,opts)=>execShizuku(command,opts),{exec:execShizuku,spawn:(command,opts)=>spawn(command,{...options(opts),shizuku:true}),open:opts=>open({...options(opts),shizuku:true}),checkAccess:opts=>checkAccess({...options(opts),shizuku:true}),getAccess,requestPermission:requestShizukuPermission});
+    return Object.freeze({shell,shizuku:Object.freeze(shizuku)});
+  }
+
+// END GENERATED SHELL
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -3283,6 +3408,9 @@ export async function createHostClient(options = {}) {
     throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
   const automation = createAutomation(automationCall, appInfo);
   const storage = createStorage(automationCall);
+  const shellModules = __autojs6_create_shell(automationCall,EventEmitter,shellStreams,Buffer,
+    required=>required.filter(name=>!grants.has(name==='shell'?'shell.control':name)),
+    (message,code)=>new HostCallError(code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':'INVALID_REQUEST',message,'shell.control'));
   const sensors = __autojs6_create_sensors(automationCall, EventEmitter, undefined,
     (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
@@ -3458,6 +3586,7 @@ export async function createHostClient(options = {}) {
     ...storage,
     ...database,
     sensors,
+    ...shellModules,
     files,
     bridgeVersion: info.bridgeVersion,
     capabilities,

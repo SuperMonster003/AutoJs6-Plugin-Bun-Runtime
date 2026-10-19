@@ -104,6 +104,7 @@ Hay más ejemplos comentados y listos para copiar y ejecutar en [samples/](https
 - API de archivos y almacenamiento persistente de Bun, con permisos independientes y almacenamiento compartido con Node.js.
 - API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia.
 - Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas.
+- Shell del anfitrión con flujos, autorización Shizuku y limpieza de procesos para Bun, Node.js y Workers.
 
 ******
 
@@ -238,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.7.0
+
+_2026/10/19_
+
+- `Función` Shell del anfitrión con flujos, autorización Shizuku y limpieza de procesos para Bun, Node.js y Workers
+
 #### v0.6.0
 
 _2026/10/19_
@@ -249,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Función` API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia
-
-#### v0.4.0
-
-_2026/10/19_
-
-- `Función` API de archivos y almacenamiento persistente de Bun, con permisos independientes y almacenamiento compartido con Node.js
 
 ##### Más historial de versiones
 

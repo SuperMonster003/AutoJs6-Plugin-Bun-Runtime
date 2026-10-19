@@ -20,7 +20,8 @@
     "API de accesibilidad, aplicaciones y portapapeles de Bun alineadas con Node.js, con permisos independientes y aplicaciones empaquetadas.",
     "API de archivos y almacenamiento persistente de Bun, con permisos independientes y almacenamiento compartido con Node.js.",
     "API database/sqlite del anfitrión para Bun y Workers de Node.js, con consultas parametrizadas, transacciones y persistencia.",
-    "Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas."
+    "Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas.",
+    "Shell del anfitrión con flujos, autorización Shizuku y limpieza de procesos para Bun, Node.js y Workers."
   ],
   "h3_usage": "Instalación y uso",
   "usage_steps": [

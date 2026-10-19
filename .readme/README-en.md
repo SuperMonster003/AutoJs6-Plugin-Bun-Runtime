@@ -104,6 +104,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.
 - Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence.
 - Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup.
+- Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers.
 
 ******
 
@@ -238,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.7.0
+
+_2026/10/19_
+
+- `Feature` Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers
+
 #### v0.6.0
 
 _2026/10/19_
@@ -249,12 +256,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence
-
-#### v0.4.0
-
-_2026/10/19_
-
-- `Feature` Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage
 
 ##### For more release history
 

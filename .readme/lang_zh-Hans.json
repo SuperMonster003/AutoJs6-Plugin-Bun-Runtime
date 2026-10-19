@@ -20,7 +20,8 @@
     "Bun 无障碍, 应用操作与剪贴板 API 对齐 Node.js 对应接口, 支持独立授权和打包应用.",
     "Bun 文件与持久化存储 API, 支持独立授权的宿主文件读写及 Node.js 存储互通.",
     "Node.js Worker 与 Bun 的 database/sqlite API, 支持参数化查询, 事务和数据库持久化.",
-    "Bun 与 Node.js Worker 的传感器采样及订阅 API, 支持取消和监听器自动释放."
+    "Bun 与 Node.js Worker 的传感器采样及订阅 API, 支持取消和监听器自动释放.",
+    "Bun, Node.js 及 Worker 的宿主 Shell API, 支持流式输入输出, Shizuku 授权与进程清理."
   ],
   "h3_usage": "安装和使用",
   "usage_steps": [

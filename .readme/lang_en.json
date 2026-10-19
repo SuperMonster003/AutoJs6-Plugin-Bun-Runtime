@@ -20,7 +20,8 @@
     "Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.",
     "Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.",
     "Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence.",
-    "Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup."
+    "Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup.",
+    "Host Shell streaming, Shizuku authorization and process cleanup for Bun, Node.js and Workers."
   ],
   "h3_usage": "Install and Use",
   "usage_steps": [
