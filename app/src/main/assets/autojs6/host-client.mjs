@@ -1,3 +1,4 @@
+import {AsyncLocalStorage} from 'node:async_hooks';
 import * as shellStreams from "node:stream";
 import {EventEmitter} from "node:events";
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
@@ -23,7 +24,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
-  "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName"]),
+  "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName","proxy","defineClass","loadDex","loadJar","drainCallbacks","completeCallback","closeCallbacks","callSuper","retain"]),
   "android.objects": Object.freeze(["createPaint","setPaintColor","getPaintInfo","measureText","createColorStateList","getColorForState","close","getThemeColor","getUriForFile","parseUri"]),
   "tasks.control": Object.freeze(["addTimedTask","addIntentTask","queryTimedTasks","queryIntentTasks","getTimedTask","getIntentTask","removeTimedTask","removeIntentTask","updateTask","sendLocalBroadcastSync"]),
   "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope"]),
@@ -4001,11 +4002,11 @@ function createStorage(dispatch) {
 
 // BEGIN GENERATED JAVA FACADE
   // Shared Java object facade for Node, Bun and Worker transports.
-  function __autojs6_create_java(call, policy = {}, enabled = true) {
+  function __autojs6_create_java(call, policy = {}, enabled = true, AsyncContext) {
     const error = (message, code = "ERR_AUTOJS6_JAVA_METHOD_DENIED") => Object.assign(new TypeError(message), {code});
     const check = () => { if (!enabled) throw error("Java interop is disabled for this execution.", "ERR_AUTOJS6_JAVA_INTEROP_DISABLED"); };
     const name = (value, code = "ERR_AUTOJS6_JAVA_CLASS_DENIED") => {
-      check(); const result = typeof value === "string" ? value.trim() : value && (value.className || value.name);
+      check(); const result = typeof value === "string" ? value.trim() : value && (value.__autojs6JavaClass || value.className || value.name);
       if (!result || typeof result !== "string") throw error("A non-empty Java class/member name is required.", code);
       return result;
     };
@@ -4037,6 +4038,53 @@ function createStorage(dispatch) {
       } finally { seen.delete(value); }
       throw error("Plain objects are not Java objects; construct a Bundle/Map or pass a Java handle.");
     };
+    const context = AsyncContext ? new AsyncContext() : null;
+    const client = "java-client-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2);
+    const callbacks = new Map(), owners = new Map();let sequence=0,polling=false;
+    const classFields = value => ({className:name(value),...(value && typeof value==='object' && value.loader ? {loader:value.loader}: {})});
+    const control = (method,payload) => call("java",method,[payload],{timeoutMs:2000,permissions:["java_interop"]});
+    const report = (entry,cause,event) => {try{if(entry?.options.onError)Promise.resolve(entry.options.onError(cause,event)).catch(error=>console.error(error));else console.error(cause);}catch(error){console.error(error);}};
+    const dispatchCallback = async event => {
+      const entry=callbacks.get(event.callback);if(!entry)return;
+      const receiver=decode(event.receiver);
+      try {
+        const scope=Object.freeze({java:api,receiver,method:event.method,signature:event.signature,
+          callSuper:(...values)=>invoke("callSuper",{handle:id(receiver),args:args(values),callbackInvocationId:event.id})});
+        const result=await context.run(event.id,()=>entry.implementation[event.key].apply(scope,event.args.map(decode)));
+        if(callbacks.get(event.callback)!==entry)return;
+        await control("completeCallback",{client,id:event.id,value:argument(result)});
+      } catch(cause) {
+        if(callbacks.get(event.callback)!==entry)return;
+        report(entry,cause,event);
+        await control("completeCallback",{client,id:event.id,error:String(cause.stack||cause).slice(0,16000)}).catch(()=>{});
+      }
+    };
+    const pump = async () => {
+      if(polling)return;polling=true;
+      try {
+        while([...callbacks.values()].some(entry=>Object.keys(entry.implementation).length)) {
+          try {
+            const events=await control("drainCallbacks",{client,waitMs:500});
+            for(const event of events||[])dispatchCallback(event).catch(error=>report(null,error,event));
+          } catch(cause) {
+            if(!callbacks.size)break;
+            const entries=[...callbacks.entries()];callbacks.clear();
+            for(const [callback,entry]of entries){await control("closeCallbacks",{client,callback}).catch(()=>{});report(entry,cause,null);}
+          }
+        }
+      } finally {polling=false;}
+    };
+    const removeCallback=async callback=>{callbacks.delete(callback);await control("closeCallbacks",{client,callback}).catch(()=>{});};
+    const createCallback=async(mode,definition,implementation,options={})=>{
+      if(!context)throw error("Java callbacks require AsyncLocalStorage support in this runtime.");
+      const methods=typeof implementation==='function'?{'*':implementation}:implementation;
+      if(!methods || typeof methods!=='object' || Object.values(methods).some(value=>typeof value!=='function'))throw error("Java implementations must contain callback functions.");
+      const callback=client+'-'+ ++sequence;callbacks.set(callback,{implementation:methods,options});pump();
+      try{return await invoke(mode,{...definition,client,callback,methods:Object.keys(methods),callbackTimeoutMs:options.callbackTimeoutMs??5000},
+        {timeoutMs:options.timeoutMs??120000,signal:options.signal});}
+      catch(cause){await removeCallback(callback);throw cause;}
+    };
+
     const args = value => {
       if (value == null) return [];
       if (!Array.isArray(value)) throw error("Java args must be an array.");
@@ -4055,6 +4103,7 @@ function createStorage(dispatch) {
         payload.parameterTypes = options.parameterTypes.map(value=>name(value));
       }
       if (options.thread !== undefined) payload.thread = options.thread;
+      const callbackInvocationId=context?.getStore();if(callbackInvocationId && !payload.callbackInvocationId)payload.callbackInvocationId=callbackInvocationId;
       // Keep the transport reply after JS cancellation so newly returned references can be released.
       const pending = Promise.resolve(call("java", method, [payload], {timeoutMs:5000,...options,signal:undefined,permissions:["java_interop"]}));
       return new Promise((resolve,reject)=>{
@@ -4076,8 +4125,14 @@ function createStorage(dispatch) {
       if (Array.isArray(value)) return Object.freeze(value.map(decode));
       if (!value.__autojs6JavaHandle) return Object.freeze(Object.fromEntries(Object.entries(value).map(([k,v])=>[k,decode(v)])));
       const target = {...value, ...(value.value ? {value:decode(value.value)} : {})};
+      if(value.__autojs6JavaCallbackOwner)owners.set(value.__autojs6JavaHandle,value.__autojs6JavaCallbackOwner);
+      if(value.__autojs6JavaClass){target.className=value.__autojs6JavaClass;target.name=value.__autojs6JavaClass;}
+      const generated=value.__autojs6JavaClass ? descriptor(value.__autojs6JavaClass) : null;
       // Methods are non-enumerable so handles can be cloned through MessagePort.
       Object.defineProperties(target, Object.fromEntries(Object.entries({
+        ...(generated ? Object.fromEntries(Object.getOwnPropertyNames(generated).map(key=>[key,generated[key]]).filter(([,v])=>typeof v==='function')):{}),
+        ...(value.__autojs6JavaLoader ? {type:name=>descriptor(name,value.__autojs6JavaHandle),findClass:name=>descriptor(name,value.__autojs6JavaHandle)}:{}),
+        retain:options=>api.retain(target,options),
         call:(method,values,options)=>api.call(target,method,values,options),
         callInstance:(method,values,options)=>api.call(target,method,values,options),
         getField:(field,options)=>api.getField(target,field,options),
@@ -4094,38 +4149,44 @@ function createStorage(dispatch) {
       }).map(([key,fn])=>[key,{value:fn}])));
       return Object.freeze(target);
     };
-    const descriptor = value => {
-      const className = name(value);
-      return Object.freeze({className,name:className,
-        callStatic:(method,values,options)=>api.callStatic(className,method,values,options),
-        new:(values,options)=>api.new(className,values,options),create:(values,options)=>api.new(className,values,options),
-        getStatic:(field,options)=>api.getStatic(className,field,options),
-        setStatic:(field,value,options)=>api.setStatic(className,field,value,options),
-        describe:options=>api.describe(className,options)
-      });
+    const descriptor = (value,loader) => {
+      const className=name(value),target={className,name:className,...(loader?{loader}:{})};
+      Object.defineProperties(target,Object.fromEntries(Object.entries({
+        callStatic:(method,values,options)=>api.callStatic(target,method,values,options),
+        new:(values,options)=>api.new(target,values,options),create:(values,options)=>api.new(target,values,options),
+        getStatic:(field,options)=>api.getStatic(target,field,options),setStatic:(field,value,options)=>api.setStatic(target,field,value,options),
+        describe:options=>api.describe(target,options)
+      }).map(([key,fn])=>[key,{value:fn}])));
+      return Object.freeze(target);
     };
     const api = {
       policy:Object.freeze({enabled,limitsEnforcedBy:"host_provider",published:!!policy,allowedClasses:[],deniedClassPrefixes:[],classes:{},...policy}),
       findClass:descriptor,type:descriptor,
       cast:(type,value)=>Object.freeze({__autojs6JavaType:name(type),value}),
-      callStatic:async(type,method,values,options)=>invoke("callStatic",{className:name(type),method:name(method,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),args:args(values)},options),
-      new:async(type,values,options)=>invoke("new",{className:name(type),args:args(values)},options),
+      callStatic:async(type,method,values,options)=>invoke("callStatic",{...classFields(type),method:name(method,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),args:args(values)},options),
+      new:async(type,values,options)=>invoke("new",{...classFields(type),args:args(values)},options),
       call:async(target,method,values,options)=>invoke("call",{handle:id(target),method:name(method,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),args:args(values)},options),
       getField:async(target,field,options)=>invoke("getField",{handle:id(target),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED")},options),
       setField:async(target,field,value,options)=>invoke("setField",{handle:id(target),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),value:argument(value)},options),
-      getStatic:async(type,field,options)=>invoke("getStatic",{className:name(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED")},options),
-      setStatic:async(type,field,value,options)=>invoke("setStatic",{className:name(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),value:argument(value)},options),
-      describe:async(type,options)=>invoke("type",{className:name(type)},options),
+      getStatic:async(type,field,options)=>invoke("getStatic",{...classFields(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED")},options),
+      setStatic:async(type,field,value,options)=>invoke("setStatic",{...classFields(type),field:name(field,"ERR_AUTOJS6_JAVA_METHOD_DENIED"),value:argument(value)},options),
+      describe:async(type,options)=>invoke("type",{...classFields(type)},options),
       getContext:options=>invoke("getContext",{},options),
-      newArray:async(type,value,options)=>invoke("newArray",{className:name(type),value:argument(value)},options),
+      newArray:async(type,value,options)=>invoke("newArray",{...classFields(type),value:argument(value)},options),
       arrayLength:async(target,options)=>invoke("arrayLength",{handle:id(target)},options),
       getArrayItem:async(target,index,options)=>invoke("getArrayItem",{handle:id(target),index},options),
       setArrayItem:async(target,index,value,options)=>invoke("setArrayItem",{handle:id(target),index,value:argument(value)},options),
       toArray:async(target,options)=>invoke("toArray",{handle:id(target)},options),
       getClassName:async(target,options)=>invoke("getClassName",{handle:id(target)},options),
-      instanceOf:async(target,type,options)=>invoke("instanceOf",{handle:id(target),className:name(type)},options),
-      release:async(target,options)=>invoke("release",{handle:id(target)},options),
-      defineClass:()=>{ throw error("Java subclass/callback generation is not implemented."); }
+      instanceOf:async(target,type,options)=>invoke("instanceOf",{handle:id(target),...classFields(type)},options),
+      retain:async(target,options)=>invoke("retain",{handle:id(target)},options),
+      release:async(target,options)=>{const handle=id(target),callback=owners.get(handle);const result=await invoke("release",{handle},options);if(callback){owners.delete(handle);await removeCallback(callback);}return result;},
+      proxy:async(interfaces,implementation,options)=>createCallback("proxy",{interfaces:(Array.isArray(interfaces)?interfaces:[interfaces]).map(value=>name(value))},implementation,options),
+      defineClass:async(definition,options)=>{if(!definition||typeof definition!=="object")throw error("A class definition is required.");return createCallback("defineClass",{name:definition.name,extends:name(definition.extends||"java.lang.Object"),interfaces:(definition.interfaces||[]).map(value=>name(value)),...(definition.extends?.loader?{loader:definition.extends.loader}:{})},definition.methods||{},options);},
+      loadDex:async(paths,options)=>invoke("loadDex",{paths:(Array.isArray(paths)?paths:[paths]).map(value=>String(value))},{timeoutMs:120000,...options}),
+      loadJar:async(paths,options)=>invoke("loadJar",{paths:(Array.isArray(paths)?paths:[paths]).map(value=>String(value))},{timeoutMs:120000,...options}),
+      closeCallbacks:async()=>{for(const callback of [...callbacks.keys()])await removeCallback(callback);},
+      wrap:(fn,interfaceName="java.lang.Runnable",options)=>api.proxy(interfaceName,fn,options)
     };
     api.create=api.new;api.callInstance=api.call;api.dispose=api.release;
     return Object.freeze(api);
@@ -4207,6 +4268,8 @@ export async function createHostClient(options = {}) {
   let activeAutomation=0;
   const automationWaiting=[];
   async function automationCall(...args) {
+    if(args[0]==='java' && ['drainCallbacks','completeCallback','closeCallbacks'].includes(args[1]))
+      return (await call('java.interop',{action:'callback',method:args[1],args:args[2]})).value;
     if(activeAutomation>=4)await new Promise(resolve=>automationWaiting.push(resolve));else activeAutomation++;
     try{return await performAutomationCall(...args);}
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
@@ -4422,7 +4485,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
-    java: __autojs6_create_java(automationCall,{access:"public"}),
+    java: __autojs6_create_java(automationCall,{access:"public"},true,AsyncLocalStorage),
     android,
     colors,
     tasks,

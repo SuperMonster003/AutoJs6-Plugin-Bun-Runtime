@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.12.0
+
+_2026/10/20_
+
+- `Feature` Java callbacks, generated subclasses and JAR/DEX loading for Node.js, Bun and Workers, with Promise results, superclass calls and execution cleanup
+
 #### v0.11.0
 
 _2026/10/20_
@@ -251,12 +257,6 @@ _2026/10/19_
 
 - `Feature` Android object helpers for Node.js, Bun and Workers, including Paint, ColorStateList, theme colors and FileProvider URIs
 - `Feature` Persistent calendar and IntentTask APIs for Node.js and Bun, with daily, weekly, monthly, yearly, one-shot, countdown and broadcast tasks
-
-#### v0.9.0
-
-_2026/10/19_
-
-- `Feature` Device controls and dialogs for Bun and Node.js Workers, including brightness, volume and independent window cleanup
 
 ##### For more release history
 

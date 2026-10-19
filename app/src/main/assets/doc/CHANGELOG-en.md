@@ -4,6 +4,12 @@
 
 ******
 
+# v0.12.0
+
+###### 2026/10/20
+
+* `Feature` Java callbacks, generated subclasses and JAR/DEX loading for Node.js, Bun and Workers, with Promise results, superclass calls and execution cleanup
+
 # v0.11.0
 
 ###### 2026/10/20

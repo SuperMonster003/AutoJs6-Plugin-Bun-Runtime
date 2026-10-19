@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.12.0
+
+_2026/10/20_
+
+- `Función` Callbacks Java, subclases generadas y carga de JAR/DEX para Node.js, Bun y Workers, con resultados Promise, llamadas a la superclase y limpieza al terminar
+
 #### v0.11.0
 
 _2026/10/20_
@@ -251,12 +257,6 @@ _2026/10/19_
 
 - `Función` Objetos Android para Node.js, Bun y Workers, con Paint, ColorStateList, colores del tema y URI FileProvider
 - `Función` API persistentes de calendario e IntentTask para Node.js y Bun, con tareas diarias, semanales, mensuales, anuales, únicas, de cuenta atrás y de difusión
-
-#### v0.9.0
-
-_2026/10/19_
-
-- `Función` Control del dispositivo y diálogos para Bun y Workers de Node.js, con brillo, volumen y limpieza independiente de ventanas
 
 ##### Más historial de versiones
 

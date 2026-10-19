@@ -239,6 +239,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.12.0
+
+_2026/10/20_
+
+- `新增` Node.js/Bun/Worker 的 Java 回调代理, 子类生成和 JAR/DEX 加载, 支持 Promise 返回值, 父类调用及执行结束清理
+
 #### v0.11.0
 
 _2026/10/20_
@@ -251,12 +257,6 @@ _2026/10/19_
 
 - `新增` Node.js/Bun 的 Android 对象辅助接口及 Worker 封装, 支持 Paint, ColorStateList, 主题色和 FileProvider URI
 - `新增` Node.js/Bun 的持久日历与 IntentTask API, 支持每日, 每周, 每月, 每年, 一次性, 倒计时和广播任务
-
-#### v0.9.0
-
-_2026/10/19_
-
-- `新增` Bun 与 Node.js Worker 的设备控制和对话框 API, 支持亮度, 音量和独立窗口清理
 
 ##### 更多发行历史
 

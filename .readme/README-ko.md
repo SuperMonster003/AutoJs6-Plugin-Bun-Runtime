@@ -239,6 +239,12 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.12.0
+
+_2026/10/20_
+
+- `기능` Node.js/Bun/Worker의 Java 콜백, 하위 클래스 생성 및 JAR/DEX 로드로 Promise 반환값, 부모 클래스 호출 및 실행 종료 정리 지원
+
 #### v0.11.0
 
 _2026/10/20_
@@ -251,12 +257,6 @@ _2026/10/19_
 
 - `기능` Node.js, Bun 및 Worker의 Android 객체 도우미, Paint, ColorStateList, 테마 색상 및 FileProvider URI 지원
 - `기능` Node.js 및 Bun의 영구 달력 및 IntentTask API, 일간, 주간, 월간, 연간, 일회성, 카운트다운 및 브로드캐스트 작업 지원
-
-#### v0.9.0
-
-_2026/10/19_
-
-- `기능` Bun 및 Node.js Worker의 기기 제어와 대화상자 API, 밝기, 음량 및 독립 창 정리
 
 ##### 더 많은 릴리스 기록
 
