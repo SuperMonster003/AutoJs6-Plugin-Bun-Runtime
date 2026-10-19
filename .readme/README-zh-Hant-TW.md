@@ -103,6 +103,7 @@ console.log(`Hello, ${greeting.name} from Bun ${Bun.version}`);
 - Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式.
 - Bun 檔案與持久化儲存 API, 支援獨立授權的宿主檔案讀寫及 Node.js 儲存互通.
 - Node.js Worker 與 Bun 的 database/sqlite API, 支援參數化查詢, 交易和資料庫持久化.
+- Bun 與 Node.js Worker 的感測器取樣及訂閱 API, 支援取消和監聽器自動釋放.
 
 ******
 
@@ -237,6 +238,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.6.0
+
+_2026/10/19_
+
+- `新增` Bun 與 Node.js Worker 的感測器取樣及訂閱 API, 支援取消和監聽器自動釋放
+
 #### v0.5.0
 
 _2026/10/19_
@@ -248,12 +255,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `新增` Bun 檔案與持久化儲存 API, 支援獨立授權的宿主檔案讀寫及 Node.js 儲存互通
-
-#### v0.3.0
-
-_2026/10/19_
-
-- `新增` Bun 無障礙, 應用程式操作與剪貼簿 API 對齊 Node.js 對應介面, 支援獨立授權和打包應用程式
 
 ##### 更多發行記錄
 

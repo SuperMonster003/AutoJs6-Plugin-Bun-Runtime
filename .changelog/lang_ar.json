@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.6.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "أخذ عينات المستشعرات والاشتراك بها في Bun وWorkers من Node.js مع الإلغاء والتحرير التلقائي للمستمعين"
+      ]
+    },
     "v0.5.0": {
       "released_date": "2026/10/19",
       "feature": [

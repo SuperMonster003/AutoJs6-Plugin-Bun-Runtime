@@ -1,3 +1,4 @@
+import {EventEmitter} from "node:events";
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
 import {posix as filePath} from 'node:path';
 import {Buffer} from 'node:buffer';
@@ -21,6 +22,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "sensors.control": Object.freeze(["getAvailableSensors", "once", "subscribe", "unsubscribe", "drainEvents"]),
   "database.control": Object.freeze(["open", "exec", "run", "get", "all", "transaction", "close"]),
   "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir"]),
   "storage.control": Object.freeze(["get", "put", "remove", "clear", "keys", "contains"]),
@@ -3060,6 +3062,121 @@ function createStorage(dispatch) {
   }
 // END GENERATED DATABASE
 
+// BEGIN GENERATED SENSORS
+// Shared with Node main threads and Workers by tools/host-client/sync-sensors.mjs.
+  function __autojs6_create_sensors(call, EventEmitter, attachEvents, createError) {
+    const policy = Object.freeze({maxSubscriptions:4, minSamplingIntervalMs:20, defaultSamplingIntervalMs:250,
+      maxSamplingIntervalMs:60000, defaultTimeoutMs:5000, drainIntervalMs:100, defaultMaxQueueSize:16, hardMaxQueueSize:64});
+    const number = (value, fallback, min, max) => Number.isFinite(Number(value ?? fallback))
+      ? Math.min(max, Math.max(min, Math.trunc(Number(value ?? fallback)))) : fallback;
+    const error = (message, code = "ERR_AUTOJS6_BRIDGE_INVALID_REQUEST") => createError ? createError(message,code) : Object.assign(new Error(message), {code, module:"sensors"});
+    const options = value => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    function descriptor(type, input) {
+      type = String(type ?? "").trim().toLowerCase();
+      if (!["accelerometer", "gyroscope", "light"].includes(type)) throw error("Sensors support only accelerometer, gyroscope, and light.");
+      return {type, samplingIntervalMs:number(input.samplingIntervalMs ?? input.intervalMs,250,20,60000),
+        maxQueueSize:number(input.maxQueueSize,16,1,64), timeoutMs:number(input.timeoutMs,5000,100,60000)};
+    }
+    function callOptions(input, fallback = 5000) {
+      const value = options(input), signal = value.signal;
+      if (signal !== undefined && !(signal instanceof AbortSignal)) throw new TypeError("signal must be an AbortSignal");
+      return {timeoutMs:number(value.timeoutMs,fallback,1,120000),signal,permissions:["sensors"]};
+    }
+    const eventValue = value => Object.freeze({type:String(value?.type || ""),timestamp:Number(value?.timestamp || 0),
+      accuracy:Number(value?.accuracy || 0),values:Object.freeze(Array.isArray(value?.values) ? value.values.map(Number) : [])});
+    async function getAvailableSensors(input) {
+      const result = await call("sensors","getAvailableSensors",[],callOptions(input));
+      return Object.freeze((Array.isArray(result) ? result : []).map(value => Object.freeze({...value})));
+    }
+    function subscribe(type, callback, input) {
+      if (callback !== undefined && typeof callback !== "function") throw error("sensors.subscribe requires a callback function.");
+      const opts = options(input), request = descriptor(type,opts), transport = callOptions(opts), signal = transport.signal;
+      const emitter = new EventEmitter();
+      if (callback) emitter.on("event",callback);
+      let id = "", subscriptionId, closed = false, timer, drain, stopEvents, closePromise, closeEmitted = false;
+      const report = value => { if (emitter.listenerCount("error")) emitter.emit("error",value); };
+      const closedEvent = () => { if (!closeEmitted) { closeEmitted=true; emitter.emit("close"); } };
+      const detach = () => { clearTimeout(timer); if (stopEvents) { stopEvents(); stopEvents=null; } signal?.removeEventListener("abort",abort); };
+      const abort = () => { subscription.close().catch(report); };
+      function processEvent(event) {
+        if (closed || !event || typeof event !== "object") return;
+        if (event.type === "close") { closed=true; detach(); closedEvent(); }
+        else if (event.type === "event") emitter.emit("event",eventValue(event.event));
+        else if (event.type === "error") report(event.error || event);
+        else if (event.type === "accuracy") emitter.emit("accuracy",event);
+      }
+      function schedule() {
+        if (closed) return;
+        timer=setTimeout(() => {
+          if (closed) return;
+          drain=call("sensors","drainEvents",[{id}],callOptions()).then(events => {
+            for (const event of Array.isArray(events) ? events : []) processEvent(event);
+          });
+          drain.then(() => { drain=null; schedule(); }, reason => {
+            drain=null;
+            if (!closed) subscription.close().then(() => report(reason),report);
+          });
+        },number(opts.drainIntervalMs,100,25,5000));
+      }
+      const subscription = Object.freeze({
+        on(event,listener) { emitter.on(event,listener); return this; },
+        once(event,listener) { emitter.once(event,listener); return this; },
+        off(event,listener) { emitter.off(event,listener); return this; },
+        get id() { return id; }, get subscriptionId() { return subscriptionId; },
+        get type() { return request.type; }, get closed() { return closed; }, get ready() { return ready; },
+        close(closeOptions) {
+          if (closePromise) return closePromise;
+          closed=true; detach();
+          // Registration is allowed to finish so cancellation cannot lose its native handle.
+          // Cleanup must not inherit an already-aborted signal from the subscription.
+          closePromise=ready.catch(() => {}).then(async () => {
+            await Promise.resolve(drain).catch(() => {});
+            if (id) await call("sensors","unsubscribe",[{id}],{...callOptions(closeOptions),signal:undefined});
+            closedEvent();
+          });
+          return closePromise;
+        }
+      });
+      const ready=Promise.resolve().then(async () => {
+        if (signal?.aborted) throw signal.reason;
+        const record=await call("sensors","subscribe",[request],{...transport,signal:undefined,events:!!attachEvents});
+        id=String(record?.id || ""); subscriptionId=record?.subscriptionId;
+        if (!id) throw error("Sensor subscription did not return a handle.");
+        if (signal?.aborted) throw signal.reason;
+        if (!closed) {
+          stopEvents=attachEvents?.(record,processEvent);
+          if (!stopEvents) schedule();
+        }
+      }).catch(reason => {
+        closed=true; detach();
+        if (id) return call("sensors","unsubscribe",[{id}],callOptions()).catch(() => {}).then(() => { id=""; throw reason; });
+        throw reason;
+      });
+      if (signal) signal.addEventListener("abort",abort,{once:true});
+      return subscription;
+    }
+    async function once(type, input) {
+      const opts=options(input), spec=descriptor(type,opts), transport=callOptions(opts);
+      if (transport.signal?.aborted) throw transport.signal.reason;
+      const sub=subscribe(type,undefined,{...opts,signal:undefined});
+      let timeout, abort;
+      try {
+        return await new Promise((resolve,reject) => {
+          abort=() => reject(transport.signal.reason);
+          transport.signal?.addEventListener("abort",abort,{once:true});
+          timeout=setTimeout(() => reject(error("Sensor sampling timed out.","ERR_AUTOJS6_BRIDGE_TIMEOUT")),spec.timeoutMs);
+          sub.once("event",resolve).once("error",reject);
+          sub.ready.catch(reject);
+        });
+      } finally {
+        clearTimeout(timeout); transport.signal?.removeEventListener("abort",abort);
+        await sub.close();
+      }
+    }
+    return Object.freeze({policy,getAvailableSensors,once,subscribe});
+  }
+// END GENERATED SENSORS
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -3166,6 +3283,8 @@ export async function createHostClient(options = {}) {
     throw new HostCallError('INVALID_RESPONSE','Invalid host application identity','app.control');
   const automation = createAutomation(automationCall, appInfo);
   const storage = createStorage(automationCall);
+  const sensors = __autojs6_create_sensors(automationCall, EventEmitter, undefined,
+    (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
     (message,code,module,method)=>Object.assign(new HostCallError(
       code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':code==='ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT'?'QUOTA_EXCEEDED':'INVALID_REQUEST',message,'database.control'),{method}),value=>value);
@@ -3338,6 +3457,7 @@ export async function createHostClient(options = {}) {
     ...automation,
     ...storage,
     ...database,
+    sensors,
     files,
     bridgeVersion: info.bridgeVersion,
     capabilities,

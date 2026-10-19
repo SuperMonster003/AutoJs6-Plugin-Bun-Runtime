@@ -5,6 +5,12 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.6.0": {
+      "released_date": "2026/10/19",
+      "feature": [
+        "Bun と Node.js Worker のセンサー取得と購読 API, キャンセルとリスナーの自動解放"
+      ]
+    },
     "v0.5.0": {
       "released_date": "2026/10/19",
       "feature": [

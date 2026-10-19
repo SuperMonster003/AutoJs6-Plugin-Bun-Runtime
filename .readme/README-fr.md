@@ -103,6 +103,7 @@ D'autres exemples commentés, prêts à copier et à exécuter, sont disponibles
 - API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées.
 - API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js.
 - API hôtes database/sqlite pour Bun et les Workers Node.js, avec requêtes paramétrées, transactions et persistance.
+- Mesures et abonnements aux capteurs pour Bun et les Workers Node.js, avec annulation et libération automatique des écouteurs.
 
 ******
 
@@ -237,6 +238,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.6.0
+
+_2026/10/19_
+
+- `Fonctionnalité` Mesures et abonnements aux capteurs pour Bun et les Workers Node.js, avec annulation et libération automatique des écouteurs
+
 #### v0.5.0
 
 _2026/10/19_
@@ -248,12 +255,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Fonctionnalité` API Bun de fichiers et de stockage persistant, avec autorisations distinctes et stockage partagé avec Node.js
-
-#### v0.3.0
-
-_2026/10/19_
-
-- `Fonctionnalité` API Bun pour accessibilité, applications et presse-papiers alignées sur Node.js, avec autorisations distinctes et applications empaquetées
 
 ##### Pour plus d'historique
 

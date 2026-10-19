@@ -4,6 +4,12 @@
 
 ******
 
+# v0.6.0
+
+###### 2026/10/19
+
+* `Función` Muestras y suscripciones de sensores para Bun y Workers de Node.js, con cancelación y liberación automática de escuchas
+
 # v0.5.0
 
 ###### 2026/10/19

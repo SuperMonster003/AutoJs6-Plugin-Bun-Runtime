@@ -103,6 +103,7 @@ More annotated, copy-and-run examples for network requests, private-workspace fi
 - Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support.
 - Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage.
 - Host database/sqlite APIs for Bun and Node.js Workers with parameterized queries, transactions and persistence.
+- Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup.
 
 ******
 
@@ -237,6 +238,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.6.0
+
+_2026/10/19_
+
+- `Feature` Sensor sampling and subscriptions for Bun and Node.js Workers with cancellation and automatic listener cleanup
+
 #### v0.5.0
 
 _2026/10/19_
@@ -248,12 +255,6 @@ _2026/10/19_
 _2026/10/19_
 
 - `Feature` Bun file and persistent storage APIs with separate host-file grants and shared Node.js storage
-
-#### v0.3.0
-
-_2026/10/19_
-
-- `Feature` Bun accessibility, app operations and clipboard APIs aligned with the Node.js interfaces, with independent grants and packaged-app support
 
 ##### For more release history
 
