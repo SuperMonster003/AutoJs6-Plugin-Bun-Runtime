@@ -24,6 +24,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "epub.control": Object.freeze(["open","start","poll","cancel","close"]),
   "speech.control": Object.freeze(["open","start","poll","cancel","uploadBegin","uploadChunk","uploadDiscard","close"]),
   "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
   "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName","proxy","defineClass","loadDex","loadJar","drainCallbacks","completeCallback","closeCallbacks","callSuper","retain"]),
@@ -4653,6 +4654,279 @@ function createStorage(dispatch) {
   // End shared speech facade.
 // END GENERATED SPEECH FACADE
 
+// BEGIN GENERATED EPUB FACADE
+  // Shared EPUB facade. Operations and reader callbacks stay on the owning JS thread.
+  function __autojs6_create_epub(call) {
+    let opening = null, generation = 0, pumping = false;
+    const records = new Map(), pending = new Set();
+    function EpubError(message = "", code = "INTERNAL") {
+      const error = new Error(String(message));
+      Object.setPrototypeOf(error, EpubError.prototype);
+      error.name = "EpubError"; error.code = String(code ?? "INTERNAL");
+      return error;
+    }
+    EpubError.prototype = Object.create(Error.prototype, {
+      constructor: {value: EpubError, writable: true, configurable: true},
+      toString: {value() { return "EpubError [" + this.code + "]: " + this.message; }, configurable: true}
+    });
+    const failure = error => error instanceof EpubError ? error :
+      EpubError(error?.message || String(error), String(error?.code || "INTERNAL").replace(/^ERR_AUTOJS6_EPUB_/, ""));
+    const raw = (method, args) => Promise.resolve().then(() =>
+      call("epub", method, args, {timeoutMs: 10000, permissions: ["epub"]})).catch(error => { throw failure(error); });
+    const closedError = () => EpubError("EPUB client or handle is closed", "SESSION_CLOSED");
+    function validate(args) {
+      try {
+        JSON.stringify(args, (_, value) => {
+          if (typeof value === "number" && !Number.isFinite(value) ||
+              ["function", "symbol", "bigint"].includes(typeof value))
+            throw EpubError("EPUB arguments must contain finite JSON values", "INVALID_ARGUMENT");
+          return value;
+        });
+      } catch (error) { throw error instanceof EpubError ? error : EpubError(error.message, "INVALID_ARGUMENT"); }
+    }
+    async function client() {
+      if (!opening) {
+        const epoch = generation;
+        const value = raw("open", []).then(async descriptor => {
+          if (epoch !== generation) { await raw("close", [descriptor.id]); throw closedError(); }
+          return descriptor.id;
+        });
+        opening = value;
+        value.catch(() => { if (opening === value) opening = null; });
+      }
+      return opening;
+    }
+    function forget(record) {
+      if (record.key) records.delete(record.key);
+      pending.delete(record); record.cleanup?.(); record.fragments = [];
+    }
+    function settle(record, error, value) {
+      if (record.settled) return;
+      record.settled = true;
+      forget(record);
+      error ? record.reject(error) : record.resolve(value);
+    }
+    function emit(record, name, value) {
+      const listeners = [...(record.listeners.get(name) || [])];
+      if (!listeners.length) {
+        const values = record.buffered.get(name) || [];
+        // Preserve startup/terminal events for listeners installed after awaiting read().
+        if (values.length < 32) values.push(value);
+        record.buffered.set(name, values);
+      }
+      for (const entry of listeners) {
+        if (entry.once) record.listeners.set(name, record.listeners.get(name).filter(x => x !== entry));
+        try { entry.listener(value); } catch (error) { setTimeout(() => { throw error; }, 0); }
+      }
+    }
+    function readerEvent(record, event) {
+      if (record.state === "closed") return;
+      if (event.type === "open") { record.state = "open"; record.title = event.title ?? null; }
+      if ("locator" in event) record.locator = event.locator;
+      record.progress = event.totalProgression ?? event.locator?.locations?.totalProgression ?? record.progress;
+      if ("href" in event) record.href = event.href;
+      if ("positions" in event) record.positions = event.positions;
+      if (event.type === "progress") {
+        record.chapterTitle = event.chapterTitle ?? null;
+        event = {...event, totalProgression: record.progress < 0 ? null : record.progress};
+      }
+      if (event.type === "close") {
+        record.state = "closed"; record.reason = event.reason || "host"; forget(record);
+      }
+      const {type, ...payload} = event;
+      emit(record, type, type === "error" ? failure(payload) : payload);
+    }
+    function makeReader(record, descriptor) {
+      record.kind = "reader"; record.state = "pending"; record.reason = null;
+      record.locator = null; record.progress = -1; record.title = null;
+      record.chapterTitle = null; record.href = null; record.positions = 0;
+      record.listeners = new Map(); record.buffered = new Map();
+      const handle = {path: descriptor.path};
+      for (const key of ["state", "reason", "locator", "progress", "title", "chapterTitle", "href", "positions"])
+        Object.defineProperty(handle, key, {enumerable: true, get: () => record[key]});
+      Object.defineProperties(handle, {
+        isOpen: {enumerable: true, get: () => record.state === "open"},
+        isClosed: {enumerable: true, get: () => record.state === "closed"}
+      });
+      for (const method of ["on", "once"]) handle[method] = (name, listener) => {
+        if (typeof listener !== "function") throw new TypeError("EPUB listener must be a function");
+        record.listeners.set(name, [...(record.listeners.get(name) || []), {listener, once: method === "once"}]);
+        if (record.buffered.has(name)) queueMicrotask(() => {
+          const values = record.buffered.get(name) || []; record.buffered.delete(name);
+          for (const value of values) emit(record, name, value);
+        });
+        return handle;
+      };
+      handle.addListener = handle.on;
+      handle.off = handle.removeListener = (name, listener) => {
+        record.listeners.set(name, (record.listeners.get(name) || []).filter(x => x.listener !== listener)); return handle;
+      };
+      handle.removeAllListeners = name => {
+        name === undefined ? record.listeners.clear() : record.listeners.delete(name); return handle;
+      };
+      handle.listenerCount = name => (record.listeners.get(name) || []).length;
+      for (const method of ["goTo", "next", "prev", "nextChapter", "prevChapter", "setPreferences", "bookmarks"]) {
+        const hasValue = method === "goTo" || method === "setPreferences";
+        handle[method] = (value, options) => {
+          if (record.state === "closed" || record.epoch !== generation) return Promise.reject(closedError());
+          return run("reader." + method, [descriptor.id, ...(hasValue ? [value] : [])],
+            hasValue ? options : value).then(result => method === "bookmarks" ? result : handle);
+        };
+      }
+      handle.close = (options, callOptions) => {
+        if (record.state === "closed") return Promise.resolve(handle);
+        return run("reader.close", [descriptor.id, options], callOptions).then(() => handle);
+      };
+      record.handle = handle;
+      for (const event of record.early.splice(0)) readerEvent(record, event);
+      return handle;
+    }
+    function makeBook(descriptor, epoch) {
+      let closed = false;
+      const book = {};
+      for (const key of ["path", "metadata", "toc", "readingOrder", "positions"])
+        Object.defineProperty(book, key, {enumerable: true, value: descriptor[key]});
+      Object.defineProperty(book, "isClosed", {enumerable: true, get: () => closed || epoch !== generation});
+      const operation = (name, args, options) => book.isClosed ? Promise.reject(closedError()) :
+        run("book." + name, [descriptor.id, ...args], options).then(value =>
+          name === "cover" && value && typeof value.base64 === "string" ? Buffer.from(value.base64, "base64") : value);
+      book.text = (target, options, callOptions) => operation("text", [target, options], callOptions);
+      book.textAll = (options, callOptions) => operation("textAll", [options], callOptions);
+      book.cover = (path, options, callOptions) => operation("cover", [path, options], callOptions);
+      book.resource = (href, path, options, callOptions) => operation("resource", [href, path, options], callOptions);
+      book.search = (query, options, callOptions) => operation("search", [query, options], callOptions);
+      book.annotations = options => operation("annotations", [], options);
+      book.close = async options => {
+        if (book.isClosed) return;
+        closed = true;
+        try { await run("book.close", [descriptor.id], options); }
+        catch (error) { closed = epoch !== generation; throw error; }
+      };
+      for (const name of ["text", "textAll", "cover", "resource", "search", "annotations"]) book[name + "Async"] = book[name];
+      return book;
+    }
+    function deliver(record, message) {
+      if (message.type === "event") {
+        if (record.kind === "reader") readerEvent(record, message.value);
+        else record.early.push(message.value);
+      } else if (message.type === "reject") settle(record, failure(message.value));
+      else if (message.type === "resolve") {
+        if (record.method === "read") {
+          const handle = makeReader(record, message.value);
+          record.settled = true; pending.delete(record); record.clearTimeout?.(); record.resolve(handle);
+        } else settle(record, null, record.method === "openBook" ? makeBook(message.value, record.epoch) : message.value);
+      }
+    }
+    async function pump() {
+      if (pumping || !records.size) return;
+      pumping = true; const epoch = generation;
+      try {
+        const id = await client();
+        while (epoch === generation && records.size) {
+          const parts = await raw("poll", [id, [...records.keys()]]);
+          if (epoch !== generation) break;
+          for (const part of parts) {
+            const record = records.get(part.id); if (!record) continue;
+            record.fragments.push(Buffer.from(part.data, "base64"));
+            if (part.last) {
+              const value = JSON.parse(Buffer.concat(record.fragments).toString("utf8"));
+              record.fragments = []; deliver(record, value);
+            }
+          }
+          if (!parts.length) await new Promise(resolve => setTimeout(resolve, 25));
+        }
+      } catch (error) {
+        if (epoch === generation) {
+          for (const record of [...records.values()]) {
+            if (record.kind === "reader") { readerEvent(record, {type: "error", code: failure(error).code, message: failure(error).message}); readerEvent(record, {type: "close", reason: "error"}); }
+            else settle(record, failure(error));
+          }
+          const old = opening; opening = null; generation++;
+          old?.then(id => raw("close", [id])).catch(() => {});
+        }
+      } finally { pumping = false; if (records.size) setTimeout(pump, 0); }
+    }
+    function run(method, args, options = {}) {
+      return new Promise((resolve, reject) => {
+        let timer;
+        const record = {method, resolve, reject, key: null, client: null, epoch: generation,
+          kind: "operation", fragments: [], early: [], settled: false};
+        const cancel = error => {
+          record.cancelError ||= error;
+          if (record.key) raw("cancel", [record.client, record.key]).catch(() => {});
+          if (record.kind === "reader") readerEvent(record, {type: "close", reason: "cancelled"});
+          else settle(record, record.cancelError);
+        };
+        try {
+          validate(args);
+          if (!options || typeof options !== "object" || Array.isArray(options)) throw EpubError("Call options must be an object", "INVALID_ARGUMENT");
+          const timeout = options.timeoutMs ?? 60000, signal = options.signal;
+          if (!Number.isFinite(timeout) || timeout <= 0) throw EpubError("timeoutMs must be positive and finite", "INVALID_ARGUMENT");
+          if (signal != null && (typeof signal.addEventListener !== "function" || typeof signal.removeEventListener !== "function"))
+            throw EpubError("signal must be an AbortSignal", "INVALID_ARGUMENT");
+          const abort = () => cancel(EpubError("EPUB operation cancelled", "CANCELLED"));
+          record.clearTimeout = () => clearTimeout(timer);
+          record.cleanup = () => { clearTimeout(timer); signal?.removeEventListener("abort", abort); };
+          pending.add(record);
+          const deadline = Date.now() + timeout;
+          const watchDeadline = () => {
+            const remaining = deadline - Date.now();
+            if (remaining <= 0) cancel(EpubError("EPUB operation timed out", "TIMEOUT"));
+            else timer = setTimeout(watchDeadline, Math.min(remaining, 2147483647));
+          };
+          signal?.addEventListener("abort", abort, {once: true});
+          if (signal?.aborted) { abort(); return; }
+          watchDeadline();
+          if (record.cancelError) return;
+          (async () => {
+            record.client = await client();
+            if (record.cancelError || record.epoch !== generation) throw record.cancelError || closedError();
+            const value = await raw("start", [record.client, method, args]);
+            record.key = value.id;
+            if (record.cancelError || record.epoch !== generation) {
+              await raw("cancel", [record.client, record.key]).catch(() => {});
+              throw record.cancelError || closedError();
+            }
+            records.set(record.key, record); pump();
+          })().catch(error => settle(record, failure(error)));
+        } catch (error) { settle(record, failure(error)); }
+      });
+    }
+    const api = {
+      EpubError,
+      isAvailable: options => run("isAvailable", [], options),
+      open: (source, options) => run("openBook", [source], options),
+      read: (source, options, callOptions) => run("read", [source, options], callOptions),
+      async close() {
+        generation++;
+        const old = opening; opening = null;
+        for (const record of new Set([...pending, ...records.values()])) {
+          if (record.kind === "reader") readerEvent(record, {type: "close", reason: "host"});
+          else settle(record, closedError());
+        }
+        if (old) await old.then(id => raw("close", [id]), () => {});
+      }
+    };
+    const withBook = async (source, method, args, options) => {
+      const book = await api.open(source, options);
+      try { return await book[method](...args, options); } finally { await book.close(); }
+    };
+    for (const name of ["metadata", "toc", "readingOrder"])
+      api[name] = async (source, options) => {
+        const book = await api.open(source, options);
+        try { return book[name]; } finally { await book.close(); }
+      };
+    api.text = (source, target, options, callOptions) => withBook(source, "text", [target, options], callOptions);
+    api.cover = (source, outputPath, options, callOptions) => withBook(source, "cover", [outputPath, options], callOptions);
+    api.search = (source, query, options, callOptions) => withBook(source, "search", [query, options], callOptions);
+    api.annotations = (source, options) => withBook(source, "annotations", [], options);
+    for (const name of ["isAvailable", "open", "metadata", "toc", "readingOrder", "text", "cover", "search", "annotations", "read"])
+      api[name + "Async"] = api[name];
+    return api;
+  }
+  // End shared EPUB facade.
+// END GENERATED EPUB FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -4945,6 +5219,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    epub: __autojs6_create_epub(automationCall),
     speech: __autojs6_create_speech(automationCall),
     tts: __autojs6_create_tts(automationCall),
     java: __autojs6_create_java(automationCall,{access:"public"},true,AsyncLocalStorage),

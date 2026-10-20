@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.15.0
+
+_2026/10/21_
+
+- `Fonctionnalité` Bun: Lecture EPUB, export des ressources, recherche et sessions du lecteur avec événements
+
 #### v0.14.0
 
 _2026/10/20_
@@ -250,12 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `Fonctionnalité` API de synthèse vocale pour Node.js, Bun et Workers avec requêtes des moteurs et voix, lecture, silence, fichiers audio et événements des tâches
-
-#### v0.12.0
-
-_2026/10/20_
-
-- `Fonctionnalité` Callbacks Java, sous-classes générées et chargement JAR/DEX pour Node.js, Bun et Workers, avec retours Promise, appels de la superclasse et libération en fin de session
 
 ##### Pour plus d'historique
 

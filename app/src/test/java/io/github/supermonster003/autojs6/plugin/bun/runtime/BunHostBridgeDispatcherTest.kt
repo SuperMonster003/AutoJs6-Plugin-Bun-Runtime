@@ -12,19 +12,19 @@ import java.util.concurrent.TimeUnit
 /** The android.jar `org.json` stubs are unusable on the JVM, so replies are checked as the exact strings the bridge emits. */
 class BunHostBridgeDispatcherTest {
     @Test
-    fun speechStreamingKeepsUniqueCallIdsWithoutExhaustingTheOrdinaryCallBudget() {
+    fun streamingKeepsUniqueCallIdsWithoutExhaustingTheOrdinaryCallBudget() = listOf("speech.control", "epub.control").forEach { capability ->
         val ids = mutableSetOf<String>()
-        val dispatcher = BunHostBridgeDispatcher(listOf("speech.control", "device.info"), BunHostBrokerInvoker { id, _, _ ->
+        val dispatcher = BunHostBridgeDispatcher(listOf(capability, "device.info"), BunHostBrokerInvoker { id, _, _ ->
             assertTrue(ids.add(id))
             """{"value":true}"""
         }, maxCalls = 2)
-        repeat(1100) { assertEquals(200, dispatcher.handle(request("POST", "/v1/speech.control")).status) }
+        repeat(1100) { assertEquals(200, dispatcher.handle(request("POST", "/v1/$capability")).status) }
         assertEquals(0, dispatcher.relayedCalls)
         repeat(2) { assertEquals(200, dispatcher.handle(request("POST", "/v1/device.info")).status) }
         assertEquals(429, dispatcher.handle(request("POST", "/v1/device.info")).status)
-        assertEquals(200, dispatcher.handle(request("POST", "/v1/speech.control")).status)
+        assertEquals(200, dispatcher.handle(request("POST", "/v1/$capability")).status)
         dispatcher.close()
-        assertEquals(503, dispatcher.handle(request("POST", "/v1/speech.control")).status)
+        assertEquals(503, dispatcher.handle(request("POST", "/v1/$capability")).status)
     }
 
     private val calls = CopyOnWriteArrayList<Triple<String, String, String>>()

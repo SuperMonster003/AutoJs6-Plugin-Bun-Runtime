@@ -598,3 +598,7 @@ The shared TTS facade covers 31 Rhino method names and four constants, with asyn
 
 
 2026-10-20 speech API: Node/Bun/Worker 的文件与 PCM 识别, VAD, 听写/唤醒, 模型管理及插件合成已接入共享 speech provider. 自动化回归与本批设备验证见宿主 docs/dev/runtime-speech-2026-10-20.md; 本次不修改 Bun 原生载荷或兼容矩阵, 不表示公开发布.
+
+## Runtime EPUB follow-up (2026-10-21)
+
+Bun 0.15.0 exposes host.epub under the independent default-off epub.control grant. It shares the Node book/session implementation and types. Fragment/event calls are exempt from the ordinary lifetime quota while size, permission, concurrency and per-call deadlines remain. Native Bun files and compatibility evidence are unchanged. Client and local build checks pass; physical host and generated-app acceptance will be recorded in the host runtime-epub report after verification.

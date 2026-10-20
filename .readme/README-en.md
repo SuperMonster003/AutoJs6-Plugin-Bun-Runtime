@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.15.0
+
+_2026/10/21_
+
+- `Feature` Bun: EPUB book reading, resource export, search and reader sessions with events
+
 #### v0.14.0
 
 _2026/10/20_
@@ -250,12 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `Feature` Text-to-speech APIs for Node.js, Bun and Workers, with engine and voice queries, speech, silence, audio file synthesis and task events
-
-#### v0.12.0
-
-_2026/10/20_
-
-- `Feature` Java callbacks, generated subclasses and JAR/DEX loading for Node.js, Bun and Workers, with Promise results, superclass calls and execution cleanup
 
 ##### For more release history
 

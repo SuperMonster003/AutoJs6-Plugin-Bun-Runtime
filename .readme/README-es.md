@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.15.0
+
+_2026/10/21_
+
+- `Función` Bun: Lectura de EPUB, exportación de recursos, búsqueda y sesiones del lector con eventos
+
 #### v0.14.0
 
 _2026/10/20_
@@ -250,12 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `Función` API de síntesis de voz para Node.js, Bun y Workers con consultas de motores y voces, lectura, silencio, archivos de audio y eventos de tareas
-
-#### v0.12.0
-
-_2026/10/20_
-
-- `Función` Callbacks Java, subclases generadas y carga de JAR/DEX para Node.js, Bun y Workers, con resultados Promise, llamadas a la superclase y limpieza al terminar
 
 ##### Más historial de versiones
 

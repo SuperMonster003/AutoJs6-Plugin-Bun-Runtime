@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.15.0": {
+      "released_date": "2026/10/21",
+      "feature": [
+        "Bun: Чтение EPUB, экспорт ресурсов, поиск и сеансы чтения с событиями"
+      ]
+    },
     "v0.14.0": {
       "released_date": "2026/10/20",
       "feature": [

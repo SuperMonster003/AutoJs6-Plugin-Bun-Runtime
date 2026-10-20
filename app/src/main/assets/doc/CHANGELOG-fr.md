@@ -4,6 +4,12 @@
 
 ******
 
+# v0.15.0
+
+###### 2026/10/21
+
+* `Fonctionnalité` Bun: Lecture EPUB, export des ressources, recherche et sessions du lecteur avec événements
+
 # v0.14.0
 
 ###### 2026/10/20

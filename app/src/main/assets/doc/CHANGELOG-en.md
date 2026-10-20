@@ -4,6 +4,12 @@
 
 ******
 
+# v0.15.0
+
+###### 2026/10/21
+
+* `Feature` Bun: EPUB book reading, resource export, search and reader sessions with events
+
 # v0.14.0
 
 ###### 2026/10/20

@@ -5,6 +5,12 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.15.0": {
+      "released_date": "2026/10/21",
+      "feature": [
+        "Bun: Lecture EPUB, export des ressources, recherche et sessions du lecteur avec événements"
+      ]
+    },
     "v0.14.0": {
       "released_date": "2026/10/20",
       "feature": [

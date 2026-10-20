@@ -1203,3 +1203,14 @@ PCM views preserve offsets and are transferred in chunks. Speech operations use 
 See the [runtime reference](https://docs.autojs6.com/#/runtimeApis) for signatures, event types, limits and model license options. Regression commands: `node tools/host-client/sync-speech.mjs --check` in Bun, and `node --test tools/nodejs/api/test-speech.js tools/nodejs/api/test-worker-speech.js` in Node.
 
 Independently signed applications need the build 5621 Runtime Kit and the separate packaged entry of 3-Macaw Speech 1.1.0/build 69 or later. The builder requests org.autojs.plugin.speech.permission.RUNTIME for speech access. Microphone/wake calls also require the application's own declared and granted RECORD_AUDIO permission; WAV/PCM and model operations do not. Applications share the plugin model store and defaults. The original host signature entry stays protected.
+## EPUB books and reader sessions (2026-10-21)
+
+The explicit SDK exposes `host.epub` under the independent, default-off `epub.control` grant. The shared Node/Bun/Worker factory supplies all 20 registered EPUB root names, asynchronous book operations and reader sessions. Metadata is available when `open()` resolves. Text and encoded cover bytes are fragmented across bounded responses; `cover(path)` and `resource(href,path)` export files through the host's Android identity.
+
+Reader events retain the EPUB script field names, including `totalProgression`, `chapterTitle`, and flattened bookmark/highlight changes. Control methods return Promises. Operations default to a 60000 ms deadline and support AbortSignal cancellation; late handles are closed. Client/execution cleanup owns only its books and reader sessions. Session close leaves the reader visible unless `finish:true` is supplied.
+
+`epub.control` polling and fragments are exempt from the ordinary 1024-call execution quota, like `speech.control`. Grant, payload, concurrency and per-RPC deadline checks remain active. Native Bun executables, the runtime lock and the Android/ABI compatibility matrix are unchanged.
+
+Packaged applications declare `epub.control` and use the paired Runtime Kit. Builder derives `org.autojs.plugin.epub.permission.RUNTIME`; 3-Folio EPUB 2.1.0 provides the separate packaged service and reader alias while preserving the original host entry. The provider checks the creating UID on returned handles. Reader preferences, progress, bookmarks and annotations remain shared plugin state.
+
+See Documentation `api/runtimeApis.md` for complete signatures. `node tools/host-client/sync-epub.mjs --check` verifies the shared implementation and declarations; `node --test tools/host-client/epub.test.mjs` exercises SDK negotiation and denied grants.
