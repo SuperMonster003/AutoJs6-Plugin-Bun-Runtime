@@ -239,6 +239,12 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.13.0
+
+_2026/10/20_
+
+- `新增` Node.js/Bun/Worker 的文字轉語音介面, 支援引擎與音色查詢, 朗讀, 靜音任務, 音訊檔案合成和任務事件
+
 #### v0.12.0
 
 _2026/10/20_
@@ -250,13 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `新增` Node.js/Bun/Worker 的 Java/Android 物件互操作, 支援公開建構函式和成員, 陣列, 精確 long 值, 明確多載及應用程式 Context 控制代碼
-
-#### v0.10.0
-
-_2026/10/19_
-
-- `新增` Node.js/Bun 的 Android 物件輔助介面及 Worker 封裝, 支援 Paint, ColorStateList, 主題色和 FileProvider URI
-- `新增` Node.js/Bun 的持久日曆與 IntentTask API, 支援每日, 每週, 每月, 每年, 單次, 倒數計時和廣播任務
 
 ##### 更多發行記錄
 

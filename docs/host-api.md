@@ -1187,3 +1187,8 @@ CallbackOptions 提供 timeoutMs, signal, callbackTimeoutMs 和 onError. callbac
 对象快照的 value.string 使用对象标识, 避免序列化时隐式执行用户的 toString 并再次触发回调. 需要文字内容时明确 `await object.call('toString')`. 本批仍不注入 Rhino 的同步 Java 包全局, 不自动把任意函数实参转换为 Java 回调.
 
 Bun 打包应用隐藏启动页和日志页时, 与 Node 一样使用现有的 12 秒启动可见性窗口, 避免运行时尚在初始化就关闭启动 Activity. 实际脚本 UI 出现后由其窗口保持前台状态; 该启动窗口不承诺长期后台驻留.
+
+
+## Runtime TTS
+
+Host 5603, Node 1.24.0 and Bun 0.13.0 add the explicit tts/autojs6:tts module and host.tts. The shared Android TTS actor supports engine/voice/language queries, speech, silence, atomic file synthesis and observable task events, with isolated Worker clients and execution cleanup. Await task creation, then await task.result; audio events contain Uint8Array. Bun requires the independent default-off tts.control grant and retains its transport budgets. Node projects declare tts. No microphone permission or model installation is implied. See Documentation api/runtimeApis.md and host docs/dev/runtime-tts-2026-10-20.md for the contract and validation.

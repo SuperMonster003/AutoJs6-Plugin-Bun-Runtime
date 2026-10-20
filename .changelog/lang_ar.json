@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.13.0": {
+      "released_date": "2026/10/20",
+      "feature": [
+        "واجهات تحويل النص إلى كلام في Node.js وBun وWorkers مع استعلامات المحركات والأصوات والنطق والصمت وملفات الصوت وأحداث المهام"
+      ]
+    },
     "v0.12.0": {
       "released_date": "2026/10/20",
       "feature": [

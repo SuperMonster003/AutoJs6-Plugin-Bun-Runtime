@@ -24,6 +24,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
   "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName","proxy","defineClass","loadDex","loadJar","drainCallbacks","completeCallback","closeCallbacks","callSuper","retain"]),
   "android.objects": Object.freeze(["createPaint","setPaintColor","getPaintInfo","measureText","createColorStateList","getColorForState","close","getThemeColor","getUriForFile","parseUri"]),
   "tasks.control": Object.freeze(["addTimedTask","addIntentTask","queryTimedTasks","queryIntentTasks","getTimedTask","getIntentTask","removeTimedTask","removeIntentTask","updateTask","sendLocalBroadcastSync"]),
@@ -4193,6 +4194,160 @@ function createStorage(dispatch) {
   }
 // END GENERATED JAVA FACADE
 
+// BEGIN GENERATED TTS FACADE
+  // Shared TTS facade. Node, Workers and Bun use the same task and event semantics.
+  function __autojs6_create_tts(call) {
+    let opening = null, generation = 0, pumping = false;
+    const tasks = new Map(), listeners = new Map();
+    const error = (message, code = "ABORTED") => Object.assign(new Error(message), {code: "ERR_AUTOJS6_TTS_" + code});
+    const raw = (method, args, options = {}) => call("tts", method, args, {timeoutMs: 60000, ...options, permissions: ["tts"]});
+    function emit(map, name, value) {
+      for (const entry of [...(map.get(name) || [])]) {
+        if (entry.once) map.set(name, (map.get(name) || []).filter(x => x !== entry));
+        try { entry.listener(value); } catch (failure) { setTimeout(() => { throw failure; }, 0); }
+      }
+    }
+    function emitter(target, map) {
+      target.on = (name, listener) => { if (typeof listener !== "function") throw new TypeError("TTS listener must be a function"); map.set(name, [...(map.get(name) || []), {listener}]); return target; };
+      target.once = (name, listener) => { if (typeof listener !== "function") throw new TypeError("TTS listener must be a function"); map.set(name, [...(map.get(name) || []), {listener, once: true}]); return target; };
+      target.off = (name, listener) => { map.set(name, (map.get(name) || []).filter(x => x.listener !== listener)); return target; };
+      target.removeAllListeners = name => { name === undefined ? map.clear() : map.delete(name); return target; };
+      return target;
+    }
+    async function session() {
+      if (!opening) {
+        const epoch = generation;
+        const pending = raw("open", []).then(async value => {
+          if (epoch !== generation) { await raw("close", [value.id]); throw error("TTS client closed during initialization"); }
+          return value.id;
+        });
+        opening = pending;
+        pending.catch(() => { if (opening === pending) opening = null; });
+      }
+      return opening;
+    }
+    async function invoke(method, args, options) {
+      const epoch = generation, id = await session();
+      const value = await raw("invoke", [id, method, args], options);
+      if (epoch !== generation) throw error("TTS client has closed");
+      return value;
+    }
+    function settle(record, failure, value) {
+      if (record.done) return;
+      record.done = true; tasks.delete(record.handle.id); record.removeAbort?.();
+      failure ? record.reject(failure) : record.resolve(value);
+    }
+    async function pump() {
+      if (pumping || !tasks.size) return;
+      pumping = true; const epoch = generation;
+      try {
+        const id = await session();
+        while (tasks.size && epoch === generation) {
+          const events = await raw("drain", [id, [...tasks.keys()]], {timeoutMs: 5000});
+          if (epoch !== generation) break;
+          for (const event of events) {
+            const record = tasks.get(event.id); if (!record) continue;
+            record.state = event.state;
+            let value = event.value;
+            if (event.event === "audio") value = {...value, data: Buffer.from(value.data, "base64")};
+            const failure = ["error", "stop", "cancelled"].includes(event.event) ? Object.assign(error(value.message || "TTS interrupted", value.code || "ABORTED"), value, {code: "ERR_AUTOJS6_TTS_" + (value.code || "ABORTED")}) : null;
+            if (event.terminal) settle(record, failure, value);
+            if (event.event === "cancelled") emit(record.listeners, "stop", value.info);
+            emit(record.listeners, event.event, failure && event.event === "error" ? failure : value?.info ?? value);
+            emit(listeners, event.event, {id: event.id, value: event.event === "error" ? failure : value?.info ?? value});
+          }
+          if (!events.length) await new Promise(resolve => setTimeout(resolve, 25));
+        }
+      } catch (failure) {
+        if (epoch === generation) {
+          for (const record of [...tasks.values()]) { record.state = "error"; emit(record.listeners, "error", failure); settle(record, failure); }
+          const old = opening; opening = null; generation++;
+          if (old) old.then(id => raw("close", [id])).catch(() => {});
+        }
+      } finally { pumping = false; if (tasks.size) setTimeout(pump, 0); }
+    }
+    async function start(method, args, options = {}) {
+      if (options.signal?.aborted) throw error("TTS operation was aborted");
+      const epoch = generation, id = await session();
+      const value = await raw("invoke", [id, method, args], {...options, signal: undefined});
+      if (epoch !== generation) { await raw("close", [id]).catch(() => {}); throw error("TTS client has closed"); }
+      const record = {state: value.state, done: false, listeners: new Map()};
+      const result = new Promise((resolve, reject) => { record.resolve = resolve; record.reject = reject; });
+      result.catch(() => {});
+      const handle = emitter({id: value.id, operation: value.operation, text: value.text, result,
+        get state() { return record.state; }, get isDone() { return record.done; },
+        async stop() { if (!record.done) await raw("stopTask", [id, value.id]); return handle; },
+        async cancel() { return handle.stop(); }
+      }, record.listeners);
+      record.handle = handle; tasks.set(value.id, record);
+      if (options.signal) {
+        const aborted = () => handle.stop().catch(failure => settle(record, failure));
+        options.signal.addEventListener("abort", aborted, {once: true});
+        record.removeAbort = () => options.signal.removeEventListener("abort", aborted);
+        if (options.signal.aborted) aborted();
+      }
+      setTimeout(pump, 0);
+      return handle;
+    }
+    const object = value => {
+      if (value == null) return {};
+      if (typeof value !== "object" || Array.isArray(value)) throw new TypeError("TTS options must be an object");
+      JSON.stringify(value, (key, item) => {
+        if (typeof item === "number" && !Number.isFinite(item) || typeof item === "function" || typeof item === "symbol" || typeof item === "bigint") throw new TypeError("TTS options require finite JSON values");
+        return item;
+      });
+      return value;
+    };
+    function engine(value) {
+      if (value === undefined) return [];
+      if (value === null || typeof value === "string") return [value];
+      const options = object(value);
+      if (Object.keys(options).some(key => key !== "engine")) throw new TypeError("Unknown TTS engine query option");
+      return options.engine === undefined ? [] : engine(options.engine);
+    }
+    const api = async (text, options, callOptions) => api.speak(text, options, callOptions);
+    Object.assign(api, {
+      maxInputLength: 3999, maxSynthesisFileSize: 536870912, QUEUE_FLUSH: "flush", QUEUE_ADD: "add",
+      getMaxInputLength: () => 3999,
+      utterance: (text, options, callOptions) => start("utterance", [text, object(options)], callOptions),
+      enqueueUtterance: (text, options, callOptions) => start("enqueueUtterance", [text, object(options)], callOptions),
+      synthesis: (text, path, options, callOptions) => start("synthesis", [text, path, object(options)], callOptions),
+      silenceTask: (duration, options, callOptions) => {
+        if (!Number.isSafeInteger(duration) || duration < 0) return Promise.reject(new TypeError("TTS silence duration must be a non-negative integer"));
+        return start("silenceTask", [duration, object(options)], callOptions);
+      },
+      speak: async (text, options, callOptions) => (await api.utterance(text, options, callOptions)).result,
+      enqueue: async (text, options, callOptions) => (await api.enqueueUtterance(text, options, callOptions)).result,
+      synthesize: async (text, path, options, callOptions) => (await api.synthesis(text, path, options, callOptions)).result,
+      silence: async (duration, options, callOptions) => (await api.silenceTask(duration, options, callOptions)).result,
+      voices: (value, callOptions) => {
+        const input = value === undefined ? {} : value === null || typeof value === "string" ? {engine: value} : object(value);
+        if (Object.keys(input).some(key => !["engine", "locale", "language", "lang", "offlineOnly", "offline", "installedOnly", "installed"].includes(key))) return Promise.reject(new TypeError("Unknown TTS voice filter"));
+        const filter = {...input};
+        filter.locale = input.locale ?? input.language ?? input.lang;
+        filter.offlineOnly = input.offlineOnly ?? input.offline;
+        filter.installedOnly = input.installedOnly ?? input.installed;
+        for (const key of ["language", "lang", "offline", "installed"]) delete filter[key];
+        return invoke("voices", [filter], callOptions);
+      },
+      configure: (options, callOptions) => invoke("configure", [object(options)], callOptions),
+      async close() {
+        generation++;
+        const old = opening; opening = null;
+        for (const record of [...tasks.values()]) { record.state = "cancelled"; settle(record, error("TTS client closed")); }
+        listeners.clear();
+        return old ? old.then(id => raw("close", [id]), () => false) : false;
+      }
+    });
+    for (const method of ["ready", "engines", "languages", "installData"]) api[method] = (value, options) => invoke(method, engine(value), options);
+    for (const method of ["status", "defaults", "stop", "reset", "isSpeaking", "isBusy", "openSettings"]) api[method] = options => invoke(method, [], options);
+    for (const method of ["isLanguageAvailable", "languageAvailability"]) api[method] = (locale, value, options) => invoke(method, [locale, ...engine(value)], options);
+    for (const [alias, original] of Object.entries({speakTask: "utterance", enqueueTask: "enqueueUtterance", synthesizeToFile: "synthesize", synthesizeTask: "synthesis", synthesisTask: "synthesis", stopAll: "stop", config: "defaults"})) api[alias] = api[original];
+    return Object.freeze(emitter(api, listeners));
+  }
+  // End shared TTS facade.
+// END GENERATED TTS FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -4485,6 +4640,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    tts: __autojs6_create_tts(automationCall),
     java: __autojs6_create_java(automationCall,{access:"public"},true,AsyncLocalStorage),
     android,
     colors,
