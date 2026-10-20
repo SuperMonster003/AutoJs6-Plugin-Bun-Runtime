@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.14.0
+
+_2026/10/20_
+
+- `Feature` Speech recognition and model management APIs for Node.js, Bun and Workers, with WAV/PCM, dictation and wake sessions, model installation/import, synthesis and cancellation cleanup
+
 #### v0.13.0
 
 _2026/10/20_
@@ -250,12 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `Feature` Java callbacks, generated subclasses and JAR/DEX loading for Node.js, Bun and Workers, with Promise results, superclass calls and execution cleanup
-
-#### v0.11.0
-
-_2026/10/20_
-
-- `Feature` Java/Android object interop for Node.js, Bun and Workers, including public constructors and members, arrays, exact long values, explicit overloads and application Context handles
 
 ##### For more release history
 

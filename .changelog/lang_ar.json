@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.14.0": {
+      "released_date": "2026/10/20",
+      "feature": [
+        "واجهات speech للتعرف على الكلام وإدارة النماذج في Node.js وBun وWorkers مع WAV/PCM والإملاء وكلمات التنبيه وتثبيت النماذج واستيرادها والتوليف والتنظيف عند الإلغاء"
+      ]
+    },
     "v0.13.0": {
       "released_date": "2026/10/20",
       "feature": [

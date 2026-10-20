@@ -11,6 +11,22 @@ import java.util.concurrent.TimeUnit
 
 /** The android.jar `org.json` stubs are unusable on the JVM, so replies are checked as the exact strings the bridge emits. */
 class BunHostBridgeDispatcherTest {
+    @Test
+    fun speechStreamingKeepsUniqueCallIdsWithoutExhaustingTheOrdinaryCallBudget() {
+        val ids = mutableSetOf<String>()
+        val dispatcher = BunHostBridgeDispatcher(listOf("speech.control", "device.info"), BunHostBrokerInvoker { id, _, _ ->
+            assertTrue(ids.add(id))
+            """{"value":true}"""
+        }, maxCalls = 2)
+        repeat(1100) { assertEquals(200, dispatcher.handle(request("POST", "/v1/speech.control")).status) }
+        assertEquals(0, dispatcher.relayedCalls)
+        repeat(2) { assertEquals(200, dispatcher.handle(request("POST", "/v1/device.info")).status) }
+        assertEquals(429, dispatcher.handle(request("POST", "/v1/device.info")).status)
+        assertEquals(200, dispatcher.handle(request("POST", "/v1/speech.control")).status)
+        dispatcher.close()
+        assertEquals(503, dispatcher.handle(request("POST", "/v1/speech.control")).status)
+    }
+
     private val calls = CopyOnWriteArrayList<Triple<String, String, String>>()
     private val echo = BunHostBrokerInvoker { callId, capability, requestJson ->
         calls += Triple(callId, capability, requestJson)

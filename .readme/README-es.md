@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.14.0
+
+_2026/10/20_
+
+- `Función` API speech de reconocimiento y gestión de modelos para Node.js, Bun y Workers con WAV/PCM, dictado y activación por voz, instalación/importación, síntesis y cancelación
+
 #### v0.13.0
 
 _2026/10/20_
@@ -250,12 +256,6 @@ _2026/10/20_
 _2026/10/20_
 
 - `Función` Callbacks Java, subclases generadas y carga de JAR/DEX para Node.js, Bun y Workers, con resultados Promise, llamadas a la superclase y limpieza al terminar
-
-#### v0.11.0
-
-_2026/10/20_
-
-- `Función` Interoperabilidad Java/Android para Node.js, Bun y Workers, con constructores y miembros públicos, matrices, valores long exactos, sobrecargas explícitas y referencias Context
 
 ##### Más historial de versiones
 

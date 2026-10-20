@@ -33,11 +33,12 @@ internal class BunHostBridgeDispatcher(
     private val maxResultBytes: Int = BunRuntimeContract.MAX_HOST_CALL_RESULT_BYTES,
 ) {
     private val capabilities = capabilities.toList()
+    private val sequence = java.util.concurrent.atomic.AtomicLong(0)
     private val attempted = AtomicInteger(0)
     private val inFlight = AtomicInteger(0)
     private val closed = AtomicBoolean(false)
 
-    /** Calls that held a relay slot, including the ones the host failed; info requests and fast rejections are not counted. */
+    /** Budgeted ordinary calls, including host failures. Speech streaming, info and fast rejections are not charged. */
     val relayedCalls: Int get() = minOf(attempted.get(), maxCalls)
 
     fun handle(request: BunHostBridgeHttpRequest): BunHostBridgeReply {
@@ -65,8 +66,10 @@ internal class BunHostBridgeDispatcher(
         }
         try {
             // Only calls that hold a slot count against the budget, so a concurrency rejection is free to retry.
-            val callNumber = attempted.incrementAndGet()
-            if (callNumber > maxCalls) {
+            val callNumber = sequence.incrementAndGet()
+            // Speech has long-running sessions and chunked PCM. Keep size, grant and concurrency
+            // checks, but do not charge every transport fragment to the finite ordinary-call budget.
+            if (capability != "speech.control" && attempted.incrementAndGet() > maxCalls) {
                 return error(429, capability, TOO_MANY_REQUESTS, "Call limit of $maxCalls per execution reached")
             }
             val resultJson = try {
