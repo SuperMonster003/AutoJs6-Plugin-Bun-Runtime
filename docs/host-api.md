@@ -1242,3 +1242,9 @@ Node snapshots are relocated and checked before actions. EventFlow.ready confirm
 ## 2026-10-21 Flow scopes and gestures
 
 Node 1.30.0 and Bun 0.19.0 add Flow instance within/scope, inherited root/compass/resultType, branch-local overrides, and press/swipe/gesture/gestures overloads. Search roots are relocated snapshots; stale roots reject instead of widening the search. Result aliases use the core picker table, compass uses the core parser, and projections return data or navigation snapshots rather than Java objects. Node arrays can perform actions on every element. Global gestures retain their input and validate gesture permission before dispatch; cancellation cannot undo strokes already accepted by Android. Scope reads retain the accessibility query grant; gesture actions also use flow.control in Bun. See Documentation api/runtimeApis.md for overloads and type inference. Native Node/Bun payloads and compatibility matrices are unchanged. Physical/package acceptance will be recorded in host docs/dev/runtime-flow-scope-2026-10-21.md.
+
+## AI provider core
+
+`host.ai` provides callable ask, chat, stream, catalog and persistent sessions under the separate default-off `ai.control` grant. Its factory and declarations are synchronized from Node, including events, cancellation, UTF-8 result fragments, stream ready/result and explicit close. AI polling is excluded from the ordinary cumulative bridge-call budget; permission, byte, concurrency and per-request limits still apply. No Bun native payload or compatibility matrix changes.
+
+Packaged apps declare `ai.control`, then call `host.ai.hasAccess()` / `requestAccess()` for the Android AI_RUNTIME permission. The user authorizes use of 3-Stone AI local models and configured online accounts; paid quota may be consumed. Node/Bun do not inject Rhino AI globals or expose ai.agent in this core batch.

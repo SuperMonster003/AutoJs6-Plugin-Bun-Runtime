@@ -4,6 +4,12 @@
 
 ******
 
+# v0.20.0
+
+###### 2026/10/22
+
+* `Feature` AI text generation, streaming, model catalog and persistent sessions for Node.js, Bun and Workers, with cancellation and Android authorization for packaged apps
+
 # v0.19.0
 
 ###### 2026/10/21

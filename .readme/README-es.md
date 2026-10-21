@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.20.0
+
+_2026/10/22_
+
+- `Función` Generación de texto con IA, transmisión, catálogo de modelos y sesiones persistentes para Node.js, Bun y Workers, con cancelación y autorización Android de aplicaciones empaquetadas
+
 #### v0.19.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Función` Clics avanzados, desplazamiento, entrada, recopilación de listas y espera de eventos reales de Flow para Node.js, Bun y Workers, con suscripciones listas, validación de instantáneas y cancelación
 - `Corrección` Las esperas de eventos de interfaz de Bun bloqueaban otras llamadas al anfitrión y agotaban el tiempo de verificación asíncrona de Flow
-
-#### v0.17.0
-
-_2026/10/21_
-
-- `Función` Cadenas asíncronas flow y esperas de condición/estabilidad para Node.js, Bun y Workers, con cancelación de ramas, reintentos por paso e instantáneas de la interfaz del anfitrión
 
 ##### Más historial de versiones
 

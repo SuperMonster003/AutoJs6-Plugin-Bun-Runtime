@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.20.0
+
+_2026/10/22_
+
+- `Feature` AI text generation, streaming, model catalog and persistent sessions for Node.js, Bun and Workers, with cancellation and Android authorization for packaged apps
+
 #### v0.19.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Feature` Flow advanced clicks, scrolling, text entry, list collection and real event waits for Node.js, Bun and Workers, with subscription readiness, snapshot validation and cancellation
 - `Fix` Bun UI event waits blocking other host calls and causing asynchronous Flow verification to time out
-
-#### v0.17.0
-
-_2026/10/21_
-
-- `Feature` Flow asynchronous chains and condition/stability waits for Node.js, Bun and Workers, with branch cancellation, step retries and host UI snapshots
 
 ##### For more release history
 

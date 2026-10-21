@@ -26,6 +26,7 @@ export class HostCallError extends Error {
 export const HOST_API_METHODS = Object.freeze({
   "flow.control": Object.freeze(["open","start","poll","cancel","answer","close"]),
   "mail.control": Object.freeze(["open","start","poll","cancel","answer","close"]),
+  "ai.control": Object.freeze(["open","start","poll","ack","cancel","close"]),
   "epub.control": Object.freeze(["open","start","poll","cancel","close"]),
   "speech.control": Object.freeze(["open","start","poll","cancel","uploadBegin","uploadChunk","uploadDiscard","close"]),
   "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
@@ -6053,6 +6054,219 @@ function createStorage(dispatch) {
   // End shared flow core.
 // END GENERATED FLOW FACADE
 
+// BEGIN GENERATED AI FACADE
+  // Shared AI facade. Provider calls and events belong to their originating JS runtime.
+  function __autojs6_create_ai(call) {
+    let opening = null, generation = 0, pumping = false;
+    const records = new Map(), pending = new Set(), sessions = new Set();
+    class AiError extends Error {
+      constructor(message = '', code = 'INTERNAL_FAILURE') {
+        super(String(message)); this.name = 'AiError'; this.code = code; this.route = 'plugin';
+      }
+    }
+    const failure = value => value instanceof AiError ? value : new AiError(value?.message || String(value),
+      String(value?.code || 'INTERNAL_FAILURE').replace(/^ERR_AUTOJS6_AI_/, ''));
+    const closedError = () => new AiError('AI client or session is closed', 'SESSION_CLOSED');
+    const raw = (method, args) => Promise.resolve().then(() => call('ai', method, args,
+      {timeoutMs: 10000, permissions: ['ai']})).catch(error => { throw failure(error); });
+    const deferred = () => {
+      let resolve, reject;
+      const promise = new Promise((a, b) => { resolve = a; reject = b; });
+      promise.catch(() => {});
+      return {promise, resolve, reject};
+    };
+    function json(value) {
+      try {
+        return JSON.parse(JSON.stringify(value, (_, item) => {
+          if (typeof item === 'number' && !Number.isFinite(item) || ['function', 'symbol', 'bigint'].includes(typeof item))
+            throw new TypeError('AI arguments must contain finite JSON values');
+          return item;
+        }));
+      } catch (error) { throw new AiError(error.message, 'INVALID_REQUEST'); }
+    }
+    async function client() {
+      if (!opening) {
+        const epoch = generation;
+        const promise = raw('open', []).then(async value => {
+          if (epoch !== generation) { await raw('close', [value.id]); throw closedError(); }
+          return value.id;
+        });
+        opening = promise;
+        promise.catch(() => { if (opening === promise) opening = null; });
+      }
+      return opening;
+    }
+    function forget(record) {
+      pending.delete(record); if (record.id) records.delete(record.id);
+      record.cleanup?.(); record.fragments = [];
+    }
+    function emit(record, name, ...args) {
+      if (!record.listeners) return;
+      for (const entry of [...(record.listeners.get(name) || [])]) {
+        if (entry.once) record.listeners.set(name, (record.listeners.get(name) || []).filter(item => item !== entry));
+        entry.listener(...args);
+      }
+    }
+    function settle(record, error, value, cancelled = false) {
+      if (record.settled) return;
+      record.settled = true; forget(record);
+      let listenerFailed = false;
+      if (record.stream) {
+        record.state = cancelled ? 'cancelled' : error ? 'error' : 'done';
+        error ? record.ready.reject(error) : record.ready.resolve(record.stream);
+        try { emit(record, cancelled ? 'cancelled' : error ? 'error' : 'done', ...(cancelled ? [] : [error || value])); }
+        catch (listenerError) { error = listenerError; listenerFailed = true; record.state = 'error'; }
+      }
+      if (record.owner && record.id && !cancelled) {
+        if (listenerFailed && record.session) record.session.closed = true;
+        raw(listenerFailed ? 'cancel' : 'ack', [record.owner, record.id]).catch(() => {});
+      }
+      error ? record.result.reject(error) : record.result.resolve(value);
+    }
+    function cancel(record, error = new AiError('AI operation cancelled', 'CANCELLED')) {
+      if (record.settled) return;
+      if (record.session && record.owner) record.session.closed = true;
+      settle(record, error, undefined, true);
+      if (record.owner && record.id) raw('cancel', [record.owner, record.id]).catch(() => {});
+    }
+    function makeStream(record) {
+      record.listeners = new Map(); record.ready = deferred(); record.state = 'created';
+      const stream = {};
+      Object.defineProperties(stream, {
+        state: {enumerable: true, get: () => record.state},
+        isDone: {enumerable: true, get: () => record.settled},
+        ready: {enumerable: true, value: record.ready.promise},
+        result: {enumerable: true, value: record.result.promise}
+      });
+      for (const method of ['on', 'once']) stream[method] = (name, listener) => {
+        if (typeof listener !== 'function') throw new TypeError('AI listener must be a function');
+        record.listeners.set(name, [...(record.listeners.get(name) || []), {listener, once: method === 'once'}]);
+        return stream;
+      };
+      stream.addListener = stream.on;
+      stream.off = stream.removeListener = (name, listener) => {
+        record.listeners.set(name, (record.listeners.get(name) || []).filter(item => item.listener !== listener)); return stream;
+      };
+      stream.removeAllListeners = name => { name === undefined ? record.listeners.clear() : record.listeners.delete(name); return stream; };
+      stream.listenerCount = name => (record.listeners.get(name) || []).length;
+      stream.cancel = () => { cancel(record); return stream; };
+      record.stream = stream;
+      return stream;
+    }
+    function makeSession(value, epoch) {
+      const record = {closed: false}; sessions.add(record);
+      const session = {};
+      for (const name of ['provider', 'model', 'target', 'profile', 'backend'])
+        Object.defineProperty(session, name, {enumerable: true, value: value[name] ?? null});
+      Object.defineProperties(session, {
+        isClosed: {enumerable: true, get: () => record.closed || epoch !== generation},
+        state: {enumerable: true, get: () => session.isClosed ? 'closed' : 'ready'}
+      });
+      for (const name of ['ask', 'chat', 'stream']) session[name] = (prompt, options) => {
+        const result = run('session.' + name, [value.id, prompt], options, name === 'stream', record,
+          session.isClosed ? closedError() : null);
+        return result;
+      };
+      session.close = async () => {
+        if (session.isClosed) return;
+        record.closed = true; sessions.delete(record);
+        await run('session.close', [value.id]);
+      };
+      return Object.freeze(session);
+    }
+    function accept(record, event) {
+      if (record.settled) return;
+      if (event.type === 'sessionClosed') { if (record.session) record.session.closed = true; return; }
+      if (event.type === 'reject') { settle(record, failure(event.value)); return; }
+      if (event.type === 'resolve') {
+        settle(record, null, record.method === 'session' ? makeSession(event.value, record.epoch) : event.value); return;
+      }
+      if (!record.stream) return;
+      if (event.type === 'open') { record.state = 'open'; record.ready.resolve(record.stream); emit(record, 'open', event.value); }
+      else if (event.type === 'chunk') {
+        record.state = 'open'; emit(record, 'chunk', event.value);
+        if (!record.settled) emit(record, 'delta', event.value.text, event.value);
+      } else if (event.type === 'usage') emit(record, 'usage', event.value);
+    }
+    async function pump() {
+      if (pumping) return;
+      pumping = true;
+      try {
+        while (records.size) {
+          const grouped = new Map();
+          for (const record of records.values()) grouped.set(record.owner, [...(grouped.get(record.owner) || []), record.id]);
+          for (const [owner, ids] of grouped) {
+            let packets;
+            try { packets = await raw('poll', [owner, ids]); }
+            catch (error) { for (const id of ids) { const record = records.get(id); if (record) cancel(record, error); } continue; }
+            for (const packet of packets) {
+              const record = records.get(packet.id); if (!record || record.owner !== owner) continue;
+              try {
+                record.fragments.push(Buffer.from(packet.data, 'base64'));
+                if (packet.last) {
+                  const event = JSON.parse(Buffer.concat(record.fragments).toString('utf8')); record.fragments = [];
+                  accept(record, event);
+                }
+              } catch (error) { cancel(record, failure(error)); }
+            }
+          }
+          if (records.size) await new Promise(resolve => setTimeout(resolve, 40));
+        }
+      } finally { pumping = false; if (records.size) pump(); }
+    }
+    function run(method, args, options, streaming = false, session = null, initialError = null) {
+      const record = {method, epoch: generation, result: deferred(), fragments: [], settled: false, session};
+      const result = streaming ? makeStream(record) : record.result.promise;
+      pending.add(record);
+      try {
+        if (initialError) throw initialError;
+        const input = json(args);
+        options ??= {};
+        if (typeof options !== 'object' || Array.isArray(options)) throw new TypeError('AI call options must be an object');
+        const {signal, timeoutMs} = options;
+        if (signal != null && (typeof signal.addEventListener !== 'function' || typeof signal.removeEventListener !== 'function'))
+          throw new TypeError('AI signal must be an AbortSignal');
+        if (timeoutMs != null && (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 2147483647))
+          throw new TypeError('AI timeoutMs must be positive and at most 2147483647');
+        const abort = () => cancel(record);
+        const timer = timeoutMs == null ? null : setTimeout(() => cancel(record, new AiError('AI operation timed out', 'TIMEOUT')), timeoutMs);
+        record.cleanup = () => { if (timer != null) clearTimeout(timer); signal?.removeEventListener('abort', abort); };
+        signal?.addEventListener('abort', abort, {once: true});
+        if (signal?.aborted) { cancel(record); return result; }
+        Promise.resolve().then(async () => {
+          if (record.settled) return;
+          const owner = await client(); record.owner = owner;
+          if (record.settled || record.epoch !== generation) { cancel(record, closedError()); return; }
+          const value = await raw('start', [owner, method, input]); record.id = value.id;
+          if (record.settled || record.epoch !== generation) {
+            await raw('cancel', [owner, value.id]); cancel(record, closedError()); return;
+          }
+          records.set(value.id, record); pump();
+        }).catch(error => settle(record, failure(error)));
+      } catch (error) { settle(record, failure(error)); }
+      return result;
+    }
+    const ai = (input, options, callOptions) => run('ask', [input, options], callOptions);
+    Object.assign(ai, {AiError, ask: ai,
+      chat: (input, options, callOptions) => run('chat', [input, options], callOptions),
+      stream: (input, options, callOptions) => run('stream', [input, options], callOptions, true),
+      session: (options, callOptions) => run('session', [options], callOptions),
+      catalog: (options, callOptions) => run('catalog', [options], callOptions),
+      hasAccess: options => run('hasAccess', [], options),
+      requestAccess: options => run('requestAccess', [], options),
+      close: async () => {
+        const previous = opening; opening = null; generation++;
+        for (const record of [...pending]) cancel(record, closedError());
+        for (const record of sessions) record.closed = true;
+        sessions.clear();
+        return previous ? previous.then(owner => raw('close', [owner]), () => false) : false;
+      }
+    });
+    return Object.freeze(ai);
+  }
+  // End shared AI facade.
+// END GENERATED AI FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -6359,6 +6573,7 @@ export async function createHostClient(options = {}) {
     ...automation,
     flow: __autojs6_create_flow(automationCall,undefined,AsyncLocalStorage),
     mail: __autojs6_create_mail(automationCall),
+    ai: __autojs6_create_ai(automationCall),
     epub: __autojs6_create_epub(automationCall),
     speech: __autojs6_create_speech(automationCall),
     tts: __autojs6_create_tts(automationCall),

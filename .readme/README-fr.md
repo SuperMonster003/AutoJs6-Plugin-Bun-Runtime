@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.20.0
+
+_2026/10/22_
+
+- `Fonctionnalité` Génération de texte IA, flux, catalogue de modèles et sessions persistantes pour Node.js, Bun et Workers, avec annulation et autorisation Android des applications générées
+
 #### v0.19.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Fonctionnalité` Clics avancés, défilement, saisie, collecte de listes et attente des événements réels Flow pour Node.js, Bun et Workers, avec préparation des abonnements, validation des instantanés et annulation
 - `Correctif` Attentes des événements UI Bun bloquant les autres appels hôte et provoquant une expiration de la vérification asynchrone Flow
-
-#### v0.17.0
-
-_2026/10/21_
-
-- `Fonctionnalité` Chaînes asynchrones flow et attentes de condition/stabilité pour Node.js, Bun et Workers, avec annulation des branches, reprise des étapes et instantanés de l'interface hôte
 
 ##### Pour plus d'historique
 
