@@ -5,6 +5,12 @@
   "changelog_label_improvement": "تحسين",
   "changelog_label_dependency": "تبعية",
   "$data": {
+    "v0.18.0": {
+      "released_date": "2026/10/21",
+      "feature": [
+        "نقرات Flow المتقدمة والتمرير والإدخال وجمع القوائم وانتظار الأحداث الفعلية في Node.js وBun وWorkers, مع جاهزية الاشتراك والتحقق من اللقطات والإلغاء"
+      ]
+    },
     "v0.17.0": {
       "released_date": "2026/10/21",
       "feature": [

@@ -239,6 +239,12 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.18.0
+
+_2026/10/21_
+
+- `Función` Clics avanzados, desplazamiento, entrada, recopilación de listas y espera de eventos reales de Flow para Node.js, Bun y Workers, con suscripciones listas, validación de instantáneas y cancelación
+
 #### v0.17.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Función` Bun mail.control: Conexiones de correo, mensajes, adjuntos y vigilancia de buzones, con cancelación y limpieza de Workers
 - `Corrección` Valores tts.control, speech.control y epub.control ausentes del tipo de capacidades de Bun
-
-#### v0.15.0
-
-_2026/10/21_
-
-- `Función` Bun: Lectura de EPUB, exportación de recursos, búsqueda y sesiones del lector con eventos
 
 ##### Más historial de versiones
 

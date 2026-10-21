@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.18.0
+
+_2026/10/21_
+
+- `Feature` Flow advanced clicks, scrolling, text entry, list collection and real event waits for Node.js, Bun and Workers, with subscription readiness, snapshot validation and cancellation
+
 #### v0.17.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Feature` Bun mail.control: Mail account connections, message operations, attachments and mailbox watches, with cancellation and Worker cleanup
 - `Fix` Missing tts.control, speech.control and epub.control values in the Bun capability type
-
-#### v0.15.0
-
-_2026/10/21_
-
-- `Feature` Bun: EPUB book reading, resource export, search and reader sessions with events
 
 ##### For more release history
 

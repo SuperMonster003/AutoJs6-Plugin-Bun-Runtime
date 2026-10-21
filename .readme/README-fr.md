@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.18.0
+
+_2026/10/21_
+
+- `Fonctionnalité` Clics avancés, défilement, saisie, collecte de listes et attente des événements réels Flow pour Node.js, Bun et Workers, avec préparation des abonnements, validation des instantanés et annulation
+
 #### v0.17.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 
 - `Fonctionnalité` Bun mail.control: Connexions aux comptes mail, messages, pièces jointes et surveillance des boîtes, avec annulation et nettoyage des Workers
 - `Correctif` Valeurs tts.control, speech.control et epub.control manquantes dans le type des capacités Bun
-
-#### v0.15.0
-
-_2026/10/21_
-
-- `Fonctionnalité` Bun: Lecture EPUB, export des ressources, recherche et sessions du lecteur avec événements
 
 ##### Pour plus d'historique
 
