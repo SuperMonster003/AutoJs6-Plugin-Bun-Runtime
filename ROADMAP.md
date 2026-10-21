@@ -602,3 +602,10 @@ The shared TTS facade covers 31 Rhino method names and four constants, with asyn
 ## Runtime EPUB follow-up (2026-10-21)
 
 Bun 0.15.0 exposes host.epub under the independent default-off epub.control grant. It shares the Node book/session implementation and types. Fragment/event calls are exempt from the ordinary lifetime quota while size, permission, concurrency and per-call deadlines remain. Native Bun files and compatibility evidence are unchanged. Client and local build checks pass. Both Android 13/15 devices verify real book/reader operations, denied grants and more than 1024 streaming calls. Real independently signed Bun and Node/Worker applications pass first/restart launches with cold provider binding. Host implementation f58d824ad8fc310e6d631a14010d23699303acdb pairs with Runtime Kit build 5679. The host docs/dev/runtime-epub-2026-10-21.md report records 185 accepted physical cases and complete restoration, separately from historical native-runtime compatibility evidence.
+
+
+## Runtime Mail acceptance (2026-10-21)
+
+Portable mail is accepted with host/Runtime Kit build 5702, Node 1.27.0/build 278, Bun 0.16.0/build 278 and 3-Stamp Mail 2.1.0/build 162. The 57 registered names, message/attachment helpers, watch events and token callbacks are covered across main threads and CJS/ESM/nested Workers. Independently signed apps use their own inline credentials; saved accounts/background watches retain the signed-host boundary.
+
+Redmi/API 33 and Xiaomi/API 35 each pass 96 consolidated device checks, including real generated Bun and Node/Worker apps on first start and after force-stop. Eight final launches yield twelve program results; unchanged component APK evidence is reused without duplicate counts. All mail uses isolated loopback synthetic accounts. Both devices are restored; Xiaomi preserves its fresh build 5679 takeover state. Host acceptance report: `AutoJs6/docs/dev/runtime-mail-2026-10-21.md`. Native engine versions/compatibility matrices are unchanged. No push, tag or release was performed.
