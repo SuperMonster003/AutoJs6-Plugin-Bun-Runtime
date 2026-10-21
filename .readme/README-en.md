@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.17.0
+
+_2026/10/21_
+
+- `Feature` Flow asynchronous chains and condition/stability waits for Node.js, Bun and Workers, with branch cancellation, step retries and host UI snapshots
+
 #### v0.16.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 _2026/10/21_
 
 - `Feature` Bun: EPUB book reading, resource export, search and reader sessions with events
-
-#### v0.14.0
-
-_2026/10/20_
-
-- `Feature` Speech recognition and model management APIs for Node.js, Bun and Workers, with WAV/PCM, dictation and wake sessions, model installation/import, synthesis and cancellation cleanup
 
 ##### For more release history
 

@@ -58,7 +58,8 @@ test('clipboard values, pre-abort and timeout validation do not dispatch uninten
  await assert.rejects(host.clipboard.setText('denied',{signal:controller.signal}),/owned abort/);await assert.rejects(host.clipboard.setText('denied',{timeoutMs:Infinity}));assert.equal(requests.length,count);
 });
 test('automation wire catalog excludes internal Node diagnostics and generic module dispatch',()=>{
- assert.equal(HOST_API_METHODS['app.control'].length,13);assert.equal(HOST_API_METHODS['accessibility.control'].length,16);assert.equal(HOST_API_METHODS['clipboard.control'].length,3);
+ assert.equal(HOST_API_METHODS['app.control'].length,13);assert.equal(HOST_API_METHODS['accessibility.control'].length,18);assert.equal(HOST_API_METHODS['clipboard.control'].length,3);
+ for(const name of ['flowProbe','flowForeground'])assert(HOST_API_METHODS['accessibility.control'].includes(name));
  for(const name of ['dump','readScreenText','inspectNode','currentWindow','readDoc','pluginCapabilities'])assert(!Object.values(HOST_API_METHODS).flat().includes(name));
 });
 test('parallel automation operations queue at the four-task limit and release every task',async()=>{

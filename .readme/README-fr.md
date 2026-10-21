@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.17.0
+
+_2026/10/21_
+
+- `Fonctionnalité` Chaînes asynchrones flow et attentes de condition/stabilité pour Node.js, Bun et Workers, avec annulation des branches, reprise des étapes et instantanés de l'interface hôte
+
 #### v0.16.0
 
 _2026/10/21_
@@ -251,12 +257,6 @@ _2026/10/21_
 _2026/10/21_
 
 - `Fonctionnalité` Bun: Lecture EPUB, export des ressources, recherche et sessions du lecteur avec événements
-
-#### v0.14.0
-
-_2026/10/20_
-
-- `Fonctionnalité` API speech de reconnaissance vocale et de gestion des modèles pour Node.js, Bun et Workers avec WAV/PCM, dictée et activation vocale, installation/importation, synthèse et annulation
 
 ##### Pour plus d'historique
 
