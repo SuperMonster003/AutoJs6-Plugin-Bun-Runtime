@@ -5844,7 +5844,7 @@ function createStorage(dispatch) {
             if (message.type === 'resolve') finishNative(task, true, decode(message.value, task));
             else if (message.type === 'reject') {
               const v = message.value;
-              const error = task.errors.get(v.callbackError) ?? Object.assign(v.name === 'FlowError' ? FlowError(v.code, v.step) : new Error(v.message), v);
+              const error = task.errors.has(v.callbackError) ? task.errors.get(v.callbackError) : Object.assign(v.name === 'FlowError' ? FlowError(v.code, v.step) : new Error(v.message), v);
               finishNative(task, false, error);
             } else throw new TypeError('Invalid Flow packet');
           }
