@@ -244,6 +244,7 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 _2026/10/21_
 
 - `Fonctionnalité` Clics avancés, défilement, saisie, collecte de listes et attente des événements réels Flow pour Node.js, Bun et Workers, avec préparation des abonnements, validation des instantanés et annulation
+- `Correctif` Attentes des événements UI Bun bloquant les autres appels hôte et provoquant une expiration de la vérification asynchrone Flow
 
 #### v0.17.0
 

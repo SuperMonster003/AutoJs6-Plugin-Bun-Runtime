@@ -9,6 +9,7 @@
 ###### 2026/10/21
 
 * `Feature` Flow advanced clicks, scrolling, text entry, list collection and real event waits for Node.js, Bun and Workers, with subscription readiness, snapshot validation and cancellation
+* `Fix` Bun UI event waits blocking other host calls and causing asynchronous Flow verification to time out
 
 # v0.17.0
 

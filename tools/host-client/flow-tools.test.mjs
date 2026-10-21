@@ -53,3 +53,31 @@ test('Bun automation transport allows reentrant Flow callbacks and large Unicode
   }finally{await f.host.flow.dispose();}
   assert.equal(f.closed,1);
 });
+
+test('Four UI event readers leave capacity for the Flow call that can trigger their event',async()=>{
+  let release,entered=0,active=0,maximum=0;
+  const gate=new Promise(resolve=>release=resolve),jobs=new Map(),packets=[];let serial=0;
+  const host=await createHostClient({socket:'/flow-fairness.sock',fetch:async(url,init)=>{
+    const capability=url.split('/').at(-1);
+    if(capability==='info')return Response.json({ok:true,bridgeVersion:1,capabilities:['ui.layout','flow.control','accessibility.control'],limits:{maxConcurrentCalls:4}});
+    active++;maximum=Math.max(maximum,active);
+    try {
+      const p=JSON.parse(init.body);let value;
+      if(capability==='ui.layout'){entered++;await gate;value=[];}
+      else if(p.action==='start'){
+        const id=String(++serial);let result=true;
+        if(p.method==='open')result={id:'client'};
+        if(p.method==='start')packets.push({id:p.args[1],data:Buffer.from(JSON.stringify({type:'resolve',value:null})).toString('base64'),last:true});
+        if(p.method==='poll')result=packets.splice(0);
+        jobs.set(id,result);value={id};
+      }else {value={done:true,value:jobs.get(p.id)};jobs.delete(p.id);}
+      return Response.json({ok:true,capability,result:{value}});
+    } finally {active--;}
+  }});
+  const readers=Array.from({length:4},()=>host.call('ui.layout',{method:'viewEvents',args:[]}));
+  try {
+    await new Promise(resolve=>setTimeout(resolve,10));assert.equal(entered,3);
+    const result=await Promise.race([host.flow.findAny(['ready']),new Promise((_,reject)=>setTimeout(()=>reject(Error('Flow starved behind UI readers')),1000))]);
+    assert.equal(result,null);assert.equal(entered,3);assert(maximum<=4);
+  }finally{release();await Promise.all(readers);await host.flow.dispose();}
+});

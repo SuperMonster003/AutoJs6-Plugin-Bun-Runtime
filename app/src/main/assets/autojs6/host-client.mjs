@@ -6027,12 +6027,22 @@ export async function createHostClient(options = {}) {
   }
   if (typeof fetcher !== "function") throw new TypeError("A Bun-compatible fetch implementation is required");
 
-  let inFlight = 0;
+  let inFlight = 0, eventReads = 0;
   const waiting = [];
-  async function scheduled(action) {
-    if (inFlight >= 4) await new Promise(resolve => waiting.push(resolve)); else inFlight++;
-    try { return await action(); }
-    finally { const next = waiting.shift(); if (next) next(); else inFlight--; }
+  function scheduleNext() {
+    while (inFlight < 4) {
+      // UI long polls must leave a slot for the action/callback that can produce their event.
+      const index = waiting.findIndex(item => !item.eventRead || eventReads < 3);
+      if (index < 0) return;
+      const item = waiting.splice(index, 1)[0];
+      inFlight++; if (item.eventRead) eventReads++;
+      Promise.resolve().then(item.action).then(item.resolve, item.reject).finally(() => {
+        inFlight--; if (item.eventRead) eventReads--; scheduleNext();
+      });
+    }
+  }
+  function scheduled(action, eventRead = false) {
+    return new Promise((resolve, reject) => { waiting.push({action, eventRead, resolve, reject}); scheduleNext(); });
   }
 
   async function request(path, capability, payload) {
@@ -6048,6 +6058,8 @@ export async function createHostClient(options = {}) {
         return value;
       });
     }
+    const eventRead = ['ui.layout','ui.compose'].includes(capability) &&
+      (['viewEvents','drainEvents'].includes(payload?.method) || payload?.method === 'windowCommand' && payload.args?.[1] === 'drainEvents');
     return scheduled(async () => {
     init.signal = AbortSignal.timeout(15_000);
     let response;
@@ -6070,7 +6082,7 @@ export async function createHostClient(options = {}) {
       throw new HostCallError("INVALID_RESPONSE", "The AutoJs6 host bridge returned a mismatched result", capability, response.status);
     }
     return capability === null ? reply : reply.result;
-    });
+    }, eventRead);
   }
 
   const info = await request("info", null);
