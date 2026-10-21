@@ -7,7 +7,8 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const nodeRoot=process.argv.includes('--node-root')?resolve(process.argv[process.argv.indexOf('--node-root')+1]):resolve(root,'../AutoJs6-Plugin-NodeJs-Runtime');
 const source=readFileSync(resolve(nodeRoot,'app/src/main/cpp/node_bridge_sources.cpp'),'utf8').replaceAll('\r\n','\n');
 function section(first,last){const start=source.indexOf('  function '+first+'('),end=source.indexOf('  function '+last+'(',start);assert(start>=0&&end>start);return source.slice(start,end);}
-const body=[section('__autojs6_clipboard_options','__autojs6_device_options'),section('__autojs6_app_timeout_from_options','__autojs6_engine_timeout_from_options'),section('__autojs6_accessibility_timeout_from_options','__autojs6_number_property')].join('\n').replaceAll('Node.js engine','Bun engine');
+const body=[section('__autojs6_clipboard_options','__autojs6_device_options'),section('__autojs6_app_timeout_from_options','__autojs6_engine_timeout_from_options'),section('__autojs6_accessibility_timeout_from_options','__autojs6_number_property')].join('\n').replaceAll('Node.js engine','Bun engine')
+  .replace('__autojs6_limited_android().getUriForFile(path,options)', '__autojs6_call_autojs("android","getUriForFile",[String(path)],options)');
 const generated=`// BEGIN GENERATED AUTOMATION
 // Reproduced from Node's public adapters by tools/host-client/sync-automation.mjs.
 function createAutomation(dispatch, hostInfo) {
@@ -42,7 +43,7 @@ let declarations='// BEGIN GENERATED AUTOMATION TYPES\nexport interface Automati
 for(const [name,namespace] of [['app','RuntimeApp'],['accessibility','RuntimeAccessibility'],['clipboard','RuntimeClipboard']]) {
  const input=readFileSync(resolve(nodeRoot,`docs/nodejs/types/autojs6-node/${name}.d.ts`),'utf8').replaceAll('\r\n','\n');
  const start=input.indexOf(`  namespace ${name} {`),end=input.indexOf('\n  }\n\n  const ',start);assert(start>=0&&end>start);
- declarations+=input.slice(start,end+4).replace(`  namespace ${name}`,`export namespace ${namespace}`).replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions').replaceAll('AutoJs6Node.Bounds','AutomationBounds').replaceAll('AutoJs6Node.JsonPrimitive','null | boolean | number | string')+'\n';
+ declarations+=input.slice(start,end+4).replace(`  namespace ${name}`,`export namespace ${namespace}`).replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions').replaceAll('AutoJs6Node.Bounds','AutomationBounds').replaceAll('AutoJs6Node.JsonPrimitive','null | boolean | number | string').replaceAll('import("autojs6:android").','RuntimeAndroid.')+'\n';
 }
 declarations+='// END GENERATED AUTOMATION TYPES';
 const typesPath=resolve(root,'app/src/main/assets/autojs6/host-client.d.mts');
