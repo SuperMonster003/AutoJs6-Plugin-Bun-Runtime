@@ -5,6 +5,15 @@
   "changelog_label_improvement": "改善",
   "changelog_label_dependency": "依存関係",
   "$data": {
+    "v0.16.0": {
+      "released_date": "2026/10/21",
+      "fix": [
+        "Bun の機能名の型に tts.control, speech.control と epub.control が欠落する問題"
+      ],
+      "feature": [
+        "Bun mail.control: メールアカウント接続, メール操作, 添付ファイルとメールボックス監視, キャンセルと Worker 終了時の解放"
+      ]
+    },
     "v0.15.0": {
       "released_date": "2026/10/21",
       "feature": [

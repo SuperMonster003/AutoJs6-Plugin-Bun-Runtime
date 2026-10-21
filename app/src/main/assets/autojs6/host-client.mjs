@@ -24,6 +24,7 @@ export class HostCallError extends Error {
 
 /** This list describes callable wrappers, not grants or provider availability. */
 export const HOST_API_METHODS = Object.freeze({
+  "mail.control": Object.freeze(["open","start","poll","cancel","answer","close"]),
   "epub.control": Object.freeze(["open","start","poll","cancel","close"]),
   "speech.control": Object.freeze(["open","start","poll","cancel","uploadBegin","uploadChunk","uploadDiscard","close"]),
   "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
@@ -4927,6 +4928,406 @@ function createStorage(dispatch) {
   // End shared EPUB facade.
 // END GENERATED EPUB FACADE
 
+// BEGIN GENERATED MAIL FACADE
+  // Shared mail facade. Protocol callbacks run on the owning JavaScript thread.
+  function __autojs6_create_mail(call) {
+    let opening = null, generation = 0, pumping = false, defaultClient = null;
+    const records = new Map(), pending = new Set(), accounts = new Map(), accountHandles = new WeakMap();
+    function MailError(message = "", code = "INTERNAL", details = null, retryable = false) {
+      const error = new Error(message == null ? "" : String(message));
+      Object.setPrototypeOf(error, MailError.prototype);
+      error.name = "MailError"; error.code = String(code ?? "INTERNAL");
+      error.details = details; error.retryable = !!retryable;
+      return error;
+    }
+    MailError.prototype = Object.create(Error.prototype, {
+      constructor: {value: MailError, writable: true, configurable: true},
+      toString: {value() { return this.name + " [" + this.code + "]: " + this.message; }, configurable: true}
+    });
+    function failure(error) {
+      if (error instanceof MailError) return error;
+      let details = error?.details ?? null;
+      if (typeof details === "string") { try { details = JSON.parse(details); } catch (_) {} }
+      return MailError(error?.message || String(error), String(error?.code || "INTERNAL").replace(/^ERR_AUTOJS6_MAIL_/, ""),
+        details, error?.retryable);
+    }
+    const raw = (method, args) => Promise.resolve().then(() =>
+      call("mail", method, args, {timeoutMs: 10000, permissions: ["mail"]})).catch(error => { throw failure(error); });
+    const closedError = () => MailError("Mail client or handle is closed", "SESSION_CLOSED");
+    function validate(args) {
+      try {
+        JSON.stringify(args, (_, value) => {
+          if (typeof value === "number" && !Number.isFinite(value) ||
+              ["function", "symbol", "bigint"].includes(typeof value))
+            throw MailError("Mail arguments must contain finite JSON values", "INVALID_ARGUMENT");
+          return value;
+        });
+      } catch (error) { throw error instanceof MailError ? error : MailError("Mail arguments must be JSON-compatible", "INVALID_ARGUMENT"); }
+    }
+    async function owner() {
+      if (!opening) {
+        const epoch = generation;
+        const value = raw("open", []).then(async descriptor => {
+          if (epoch !== generation) { await raw("close", [descriptor.id]); throw closedError(); }
+          return descriptor.id;
+        });
+        opening = value;
+        value.catch(() => { if (opening === value) opening = null; });
+      }
+      return opening;
+    }
+    function forget(record) {
+      if (record.key) records.delete(record.key);
+      pending.delete(record); record.cleanup?.(); record.fragments = [];
+    }
+    function settle(record, error, value) {
+      if (record.settled) return;
+      record.settled = true; forget(record);
+      error ? record.reject(error) : record.resolve(value);
+    }
+    function emit(record, name, value) {
+      const listeners = [...(record.listeners.get(name) || [])];
+      if (!listeners.length) {
+        const values = record.buffered.get(name) || [];
+        if (values.length < 32) values.push(value);
+        record.buffered.set(name, values);
+      }
+      for (const entry of listeners) {
+        if (entry.once) record.listeners.set(name, record.listeners.get(name).filter(x => x !== entry));
+        try { if (name === "message") entry.listener(value, record.handle); else entry.listener(value); } catch (error) { setTimeout(() => { throw error; }, 0); }
+      }
+    }
+    function watchEvent(record, event) {
+      if (record.state === "closed") return;
+      const name = event.name;
+      let value = event.value;
+      if (name === "mode") record.mode = value;
+      if (name === "close") {
+        record.state = "closed"; record.reason = value || "closed"; forget(record);
+      }
+      if (name === "error") value = failure(value);
+      if (name === "message") value = message(value, record.account);
+      emit(record, name, value);
+    }
+    function makeWatch(record, descriptor) {
+      record.kind = "watch"; record.state = descriptor.isClosed ? "closed" : "active";
+      record.reason = descriptor.reason ?? null; record.mode = descriptor.mode ?? null;
+      record.watchGeneration = descriptor.generation || 0;
+      record.listeners = new Map(); record.buffered = new Map();
+      const handle = {folder: descriptor.folder};
+      for (const key of ["state", "reason", "mode"])
+        Object.defineProperty(handle, key, {enumerable: true, get: () => record[key]});
+      Object.defineProperties(handle, {
+        generation: {enumerable: true, get: () => record.watchGeneration},
+        isActive: {enumerable: true, get: () => record.state === "active"},
+        isClosed: {enumerable: true, get: () => record.state === "closed"}
+      });
+      for (const method of ["on", "once"]) handle[method] = (name, listener) => {
+        if (typeof listener !== "function") throw new TypeError("Mail listener must be a function");
+        record.listeners.set(name, [...(record.listeners.get(name) || []), {listener, once: method === "once"}]);
+        if (record.buffered.has(name)) queueMicrotask(() => {
+          const values = record.buffered.get(name) || []; record.buffered.delete(name);
+          for (const value of values) emit(record, name, value);
+        });
+        return handle;
+      };
+      handle.addListener = handle.on;
+      handle.off = handle.removeListener = (name, listener) => {
+        record.listeners.set(name, (record.listeners.get(name) || []).filter(x => x.listener !== listener)); return handle;
+      };
+      handle.removeAllListeners = name => {
+        name === undefined ? record.listeners.clear() : record.listeners.delete(name); return handle;
+      };
+      handle.listenerCount = name => (record.listeners.get(name) || []).length;
+      handle.stop = async options => {
+        if (record.state !== "closed") {
+          await run("watch.stop", [descriptor.id], options);
+          watchEvent(record, {name: "close", value: "stopped"});
+        }
+        return handle;
+      };
+      record.handle = handle;
+      for (const packet of record.early.splice(0)) deliver(record, packet);
+      if (record.state === "closed") forget(record);
+      return handle;
+    }
+    function bind(object, key, value) {
+      Object.defineProperty(object, key, {value, enumerable: false, configurable: true});
+    }
+    function message(value, client) {
+      if (!value || typeof value !== "object") throw MailError("Mail provider returned no message object", "INTERNAL");
+      for (const key of ["date", "receivedDate"]) if (typeof value[key] === "number") value[key] = new Date(value[key]);
+      const address = item => {
+        if (item && typeof item === "object") bind(item, "toString", () =>
+          item.name?.trim() ? item.name.trim() + " <" + item.address + ">" : String(item.address ?? ""));
+      };
+      for (const key of ["from", "sender"]) address(value[key]);
+      for (const key of ["to", "cc", "bcc", "replyTo"]) for (const item of value[key] || []) address(item);
+      for (const key of ["attachments", "bodyParts"]) for (const attachment of value[key] || []) {
+        if (!("uid" in attachment)) attachment.uid = value.uid;
+        if (!("folder" in attachment)) attachment.folder = value.folder;
+        const download = (target, options, callOptions) => client.download(attachment, target, options, callOptions);
+        bind(attachment, "download", download); bind(attachment, "downloadAsync", download);
+      }
+      const load = (options, callOptions) => client.get(value, options, callOptions);
+      bind(value, "load", load); bind(value, "loadAsync", load);
+      return value;
+    }
+    const arities = {
+      test: 0, send: 2, folders: 1, folderStatus: 1, createFolder: 1, deleteFolder: 1, renameFolder: 2,
+      fetch: 1, search: 2, get: 2, fetchBody: 2, download: 3, raw: 3, setFlags: 4,
+      markRead: 2, markUnread: 2, flag: 2, unflag: 2, move: 3, copy: 3, delete: 2, expunge: 1, append: 3
+    };
+    function makeAccount(descriptor, epoch, tokenProvider) {
+      const record = {key: descriptor.id, epoch, closed: false, connected: !!descriptor.isConnected,
+        fragments: [], tokenProvider};
+      const client = {};
+      Object.defineProperties(client, {
+        account: {enumerable: true, value: descriptor.account},
+        isConnected: {enumerable: true, get: () => !record.closed && epoch === generation && record.connected},
+        isClosed: {enumerable: true, get: () => record.closed || epoch !== generation}
+      });
+      for (const [name, count] of Object.entries(arities)) {
+        client[name] = (...input) => {
+          if (client.isClosed) return Promise.reject(closedError());
+          const args = Array.from({length: count}, (_, i) => input[i]);
+          const callOptions = input[count];
+          let onProgress;
+          if (name === "download" || name === "raw") {
+            const options = args[2];
+            if (options && typeof options === "object") {
+              onProgress = options.onProgress;
+              if (onProgress != null && typeof onProgress !== "function")
+                return Promise.reject(MailError("onProgress must be a function", "INVALID_ARGUMENT"));
+              args[2] = {...options}; delete args[2].onProgress;
+            }
+          }
+          return run("client." + name, [descriptor.id, ...args], callOptions, {account: client, onProgress}).then(value => {
+            if (name === "get" || name === "fetchBody") return message(value, client);
+            if (name === "fetch") return (value || []).map(item => message(item, client));
+            if (name === "search") {
+              const list = (value?.messages || []).map(item => message(item, client));
+              bind(list, "fallback", value?.fallback ?? "server"); return list;
+            }
+            return value;
+          });
+        };
+        client[name + "Async"] = client[name];
+      }
+      client.folder = path => {
+        if (client.isClosed) throw closedError();
+        if (typeof path !== "string" || !path.trim()) throw MailError("Folder path must be a nonempty string", "INVALID_ARGUMENT");
+        path = path.trim();
+        const folder = {path, name: path.substring(path.lastIndexOf("/") + 1)};
+        for (const [name, op] of [["status", "folderStatus"], ["create", "createFolder"], ["delete", "deleteFolder"], ["rename", "renameFolder"]]) {
+          folder[name] = (...args) => client[op](path, ...args);
+          folder[name + "Async"] = folder[name];
+        }
+        bind(folder, "toString", () => path);
+        return folder;
+      };
+      client.watch = (folder, options, callOptions) => {
+        if (client.isClosed) return Promise.reject(closedError());
+        if (folder && typeof folder === "object") { callOptions = options; options = folder; folder = undefined; }
+        return run("client.watch", [descriptor.id, folder, options], callOptions, {account: client});
+      };
+      client.close = async options => {
+        if (client.isClosed) return;
+        await run("client.close", [descriptor.id], options);
+        record.closed = true; record.connected = false; accounts.delete(descriptor.id);
+        if (defaultClient === client) defaultClient = null;
+        for (const watch of [...records.values()])
+          if (watch.kind === "watch" && watch.account === client) watchEvent(watch, {name: "close", value: "closed"});
+      };
+      bind(client, "toString", () => "MailClient { " + (client.account.alias ? "alias=" + client.account.alias :
+        "address=" + (client.account.address ?? "")) + " }");
+      record.handle = client; accounts.set(descriptor.id, record); accountHandles.set(client, record);
+      return client;
+    }
+    async function answerToken(record, requestId) {
+      const epoch = generation;
+      try {
+        const token = await record.tokenProvider?.();
+        if (epoch !== generation || record.closed || record.cancelError) return;
+        if (typeof token !== "string" || !token.trim()) throw MailError("Token provider must return a nonempty string", "AUTH_FAILED");
+        await raw("answer", [await owner(), requestId, token, true]);
+      } catch (_) {
+        if (epoch === generation && !record.closed && !record.cancelError) await raw("answer", [await owner(), requestId, "", false]).catch(() => {});
+      }
+    }
+    function deliver(record, packet) {
+      if (packet.type === "token") { void answerToken(record, packet.value.id); return; }
+      if (packet.type === "debug") {
+        if (Array.isArray(packet.value)) for (const line of packet.value) globalThis.console?.debug(String(line));
+        return;
+      }
+      if (packet.type === "progress") {
+        try { record.onProgress?.(packet.value.transferred, packet.value.total ?? null); }
+        catch (error) { setTimeout(() => { throw error; }, 0); }
+        return;
+      }
+      if (packet.type === "event" || packet.type === "state") {
+        if (record.kind === "watch") {
+          if (packet.type === "event") watchEvent(record, packet.value);
+          else record.watchGeneration = packet.value.generation ?? record.watchGeneration;
+        } else record.early.push(packet);
+      } else if (packet.type === "reject") settle(record, failure(packet.value));
+      else if (packet.type === "resolve") {
+        if (record.method === "client.watch") {
+          const handle = makeWatch(record, packet.value);
+          record.settled = true; pending.delete(record); record.clearTimeout?.(); record.resolve(handle);
+        } else settle(record, null, record.method === "connect" ?
+          makeAccount(packet.value, record.epoch, record.tokenProvider) : packet.value);
+      }
+    }
+    async function pump() {
+      if (pumping || !records.size) return;
+      pumping = true; const epoch = generation;
+      try {
+        const id = await owner();
+        while (epoch === generation && records.size) {
+          const parts = await raw("poll", [id, [...new Set([...records.keys(), ...accounts.keys()])]]);
+          if (epoch !== generation) break;
+          for (const part of parts) {
+            const record = records.get(part.id) || accounts.get(part.id); if (!record) continue;
+            record.fragments.push(Buffer.from(part.data, "base64"));
+            if (!part.last) continue;
+            const value = JSON.parse(Buffer.concat(record.fragments).toString("utf8"));
+            record.fragments = [];
+            if (accounts.get(part.id) === record) {
+              if (value.type === "token") void answerToken(record, value.value.id);
+              if (value.type === "state") {
+                record.connected = !!value.value.isConnected;
+                record.closed = !!value.value.isClosed;
+              }
+            } else deliver(record, value);
+          }
+          if (!parts.length) await new Promise(resolve => setTimeout(resolve, 25));
+        }
+      } catch (error) {
+        if (epoch === generation) {
+          for (const record of [...records.values()]) {
+            if (record.kind === "watch") {
+              watchEvent(record, {name: "error", value: failure(error)});
+              watchEvent(record, {name: "close", value: "error"});
+            } else settle(record, failure(error));
+          }
+          for (const account of accounts.values()) account.closed = true;
+          accounts.clear(); defaultClient = null;
+          const old = opening; opening = null; generation++;
+          old?.then(id => raw("close", [id])).catch(() => {});
+        }
+      } finally { pumping = false; if (records.size) setTimeout(pump, 0); }
+    }
+    function run(method, args, options = {}, meta = {}) {
+      return new Promise((resolve, reject) => {
+        let timer;
+        const record = {method, resolve, reject, key: null, owner: null, epoch: generation,
+          kind: "operation", fragments: [], early: [], settled: false, ...meta};
+        const cancel = error => {
+          record.cancelError ||= error;
+          if (record.key) raw("cancel", [record.owner, record.key]).catch(() => {});
+          if (record.kind === "watch") {
+            watchEvent(record, {name: "close", value: "cancelled"});
+          } else settle(record, record.cancelError);
+        };
+        try {
+          validate(args);
+          if (!options || typeof options !== "object" || Array.isArray(options))
+            throw MailError("Call options must be an object", "INVALID_ARGUMENT");
+          const timeout = options.timeoutMs ?? 60000, signal = options.signal;
+          if (!Number.isFinite(timeout) || timeout <= 0) throw MailError("timeoutMs must be positive and finite", "INVALID_ARGUMENT");
+          if (signal != null && (typeof signal.addEventListener !== "function" || typeof signal.removeEventListener !== "function"))
+            throw MailError("signal must be an AbortSignal", "INVALID_ARGUMENT");
+          const abort = () => cancel(MailError("Mail operation cancelled", "CANCELLED"));
+          record.clearTimeout = () => clearTimeout(timer);
+          record.cleanup = () => { clearTimeout(timer); signal?.removeEventListener("abort", abort); };
+          pending.add(record);
+          const deadline = Date.now() + timeout;
+          const watchDeadline = () => {
+            const remaining = deadline - Date.now();
+            if (remaining <= 0) cancel(MailError("Mail operation timed out", "TIMEOUT"));
+            else timer = setTimeout(watchDeadline, Math.min(remaining, 2147483647));
+          };
+          signal?.addEventListener("abort", abort, {once: true});
+          if (signal?.aborted) { abort(); return; }
+          watchDeadline();
+          if (record.cancelError) return;
+          (async () => {
+            record.owner = await owner();
+            if (record.cancelError || record.epoch !== generation) throw record.cancelError || closedError();
+            const value = await raw("start", [record.owner, method, args]);
+            record.key = value.id;
+            if (record.cancelError || record.epoch !== generation) {
+              await raw("cancel", [record.owner, record.key]).catch(() => {});
+              throw record.cancelError || closedError();
+            }
+            records.set(record.key, record); pump();
+          })().catch(error => settle(record, failure(error)));
+        } catch (error) { settle(record, failure(error)); }
+      });
+    }
+    const api = {
+      MailError,
+      connect(options, callOptions) {
+        let tokenProvider;
+        if (options && typeof options === "object") {
+          tokenProvider = options.tokenProvider;
+          if (tokenProvider != null && typeof tokenProvider !== "function")
+            return Promise.reject(MailError("tokenProvider must be a function", "INVALID_ARGUMENT"));
+          options = {...options}; delete options.tokenProvider;
+        }
+        return run("connect", [options, !!tokenProvider], callOptions, {tokenProvider});
+      },
+      async setDefault(value, options) {
+        let client = value;
+        if (!accountHandles.has(client)) client = await api.connect(value, options);
+        const record = accountHandles.get(client);
+        if (!record || record.epoch !== generation || client.isClosed) throw closedError();
+        defaultClient = client;
+        return client;
+      },
+      async close(options) { await defaultClient?.close(options); },
+      async dispose() {
+        generation++;
+        const old = opening; opening = null;
+        for (const record of new Set([...pending, ...records.values()])) {
+          if (record.kind === "watch") watchEvent(record, {name: "close", value: "script-exit"});
+          else settle(record, closedError());
+        }
+        for (const record of accounts.values()) record.closed = true;
+        accounts.clear(); defaultClient = null;
+        if (old) await old.then(id => raw("close", [id]), () => {});
+      }
+    };
+    api.connectAsync = api.connect;
+    Object.defineProperty(api, "default", {enumerable: true, get: () => defaultClient});
+    api.providers = {
+      list: options => run("providers.list", [], options),
+      get: (id, options) => run("providers.get", [id], options),
+      resolve: (address, options) => run("providers.resolve", [address], options)
+    };
+    api.accounts = {
+      list: options => run("accounts.list", [], options),
+      has: async (alias, options) => typeof alias === "string" && !!alias.trim() &&
+        (await api.accounts.list(options)).some(account => account.alias === alias.trim())
+    };
+    for (const name of [...Object.keys(arities), "folder", "watch"]) {
+      api[name] = (...args) => {
+        if (!defaultClient) {
+          const error = MailError("No default mail account: call mail.setDefault first", "NO_DEFAULT_ACCOUNT");
+          if (name === "folder") throw error;
+          return Promise.reject(error);
+        }
+        return defaultClient[name](...args);
+      };
+      if (name in arities) api[name + "Async"] = api[name];
+    }
+    return api;
+  }
+  // End shared mail facade.
+// END GENERATED MAIL FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -5219,6 +5620,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
+    mail: __autojs6_create_mail(automationCall),
     epub: __autojs6_create_epub(automationCall),
     speech: __autojs6_create_speech(automationCall),
     tts: __autojs6_create_tts(automationCall),

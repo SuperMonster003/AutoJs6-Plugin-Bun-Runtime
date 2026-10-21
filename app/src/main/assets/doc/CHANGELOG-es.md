@@ -4,6 +4,13 @@
 
 ******
 
+# v0.16.0
+
+###### 2026/10/21
+
+* `Función` Bun mail.control: Conexiones de correo, mensajes, adjuntos y vigilancia de buzones, con cancelación y limpieza de Workers
+* `Corrección` Valores tts.control, speech.control y epub.control ausentes del tipo de capacidades de Bun
+
 # v0.15.0
 
 ###### 2026/10/21

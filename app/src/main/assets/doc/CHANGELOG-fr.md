@@ -4,6 +4,13 @@
 
 ******
 
+# v0.16.0
+
+###### 2026/10/21
+
+* `Fonctionnalité` Bun mail.control: Connexions aux comptes mail, messages, pièces jointes et surveillance des boîtes, avec annulation et nettoyage des Workers
+* `Correctif` Valeurs tts.control, speech.control et epub.control manquantes dans le type des capacités Bun
+
 # v0.15.0
 
 ###### 2026/10/21

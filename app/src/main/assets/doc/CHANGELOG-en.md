@@ -4,6 +4,13 @@
 
 ******
 
+# v0.16.0
+
+###### 2026/10/21
+
+* `Feature` Bun mail.control: Mail account connections, message operations, attachments and mailbox watches, with cancellation and Worker cleanup
+* `Fix` Missing tts.control, speech.control and epub.control values in the Bun capability type
+
 # v0.15.0
 
 ###### 2026/10/21

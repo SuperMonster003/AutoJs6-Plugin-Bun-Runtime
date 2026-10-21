@@ -4,6 +4,13 @@
 
 ******
 
+# v0.16.0
+
+###### 2026/10/21
+
+* `新增` Bun mail.control: 郵件帳戶連線, 郵件操作, 附件與郵箱監聽, 支援取消及 Worker 結束清理
+* `修復` Bun 能力名稱類型遺漏 tts.control, speech.control 和 epub.control 的問題
+
 # v0.15.0
 
 ###### 2026/10/21

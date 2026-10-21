@@ -4,6 +4,13 @@
 
 ******
 
+# v0.16.0
+
+###### 2026/10/21
+
+* `기능` Bun mail.control: 메일 계정 연결, 메시지 작업, 첨부 파일 및 메일함 감시, 취소와 Worker 종료 시 정리
+* `수정` Bun 기능 이름 타입에서 tts.control, speech.control 및 epub.control이 누락된 문제
+
 # v0.15.0
 
 ###### 2026/10/21

@@ -5,6 +5,15 @@
   "changelog_label_improvement": "Improvement",
   "changelog_label_dependency": "Dependency",
   "$data": {
+    "v0.16.0": {
+      "released_date": "2026/10/21",
+      "fix": [
+        "Missing tts.control, speech.control and epub.control values in the Bun capability type"
+      ],
+      "feature": [
+        "Bun mail.control: Mail account connections, message operations, attachments and mailbox watches, with cancellation and Worker cleanup"
+      ]
+    },
     "v0.15.0": {
       "released_date": "2026/10/21",
       "feature": [

@@ -5,6 +5,15 @@
   "changelog_label_improvement": "Amélioration",
   "changelog_label_dependency": "Dépendance",
   "$data": {
+    "v0.16.0": {
+      "released_date": "2026/10/21",
+      "fix": [
+        "Valeurs tts.control, speech.control et epub.control manquantes dans le type des capacités Bun"
+      ],
+      "feature": [
+        "Bun mail.control: Connexions aux comptes mail, messages, pièces jointes et surveillance des boîtes, avec annulation et nettoyage des Workers"
+      ]
+    },
     "v0.15.0": {
       "released_date": "2026/10/21",
       "feature": [

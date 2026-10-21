@@ -239,6 +239,13 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.16.0
+
+_2026/10/21_
+
+- `Fonctionnalité` Bun mail.control: Connexions aux comptes mail, messages, pièces jointes et surveillance des boîtes, avec annulation et nettoyage des Workers
+- `Correctif` Valeurs tts.control, speech.control et epub.control manquantes dans le type des capacités Bun
+
 #### v0.15.0
 
 _2026/10/21_
@@ -250,12 +257,6 @@ _2026/10/21_
 _2026/10/20_
 
 - `Fonctionnalité` API speech de reconnaissance vocale et de gestion des modèles pour Node.js, Bun et Workers avec WAV/PCM, dictée et activation vocale, installation/importation, synthèse et annulation
-
-#### v0.13.0
-
-_2026/10/20_
-
-- `Fonctionnalité` API de synthèse vocale pour Node.js, Bun et Workers avec requêtes des moteurs et voix, lecture, silence, fichiers audio et événements des tâches
 
 ##### Pour plus d'historique
 

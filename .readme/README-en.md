@@ -239,6 +239,13 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.16.0
+
+_2026/10/21_
+
+- `Feature` Bun mail.control: Mail account connections, message operations, attachments and mailbox watches, with cancellation and Worker cleanup
+- `Fix` Missing tts.control, speech.control and epub.control values in the Bun capability type
+
 #### v0.15.0
 
 _2026/10/21_
@@ -250,12 +257,6 @@ _2026/10/21_
 _2026/10/20_
 
 - `Feature` Speech recognition and model management APIs for Node.js, Bun and Workers, with WAV/PCM, dictation and wake sessions, model installation/import, synthesis and cancellation cleanup
-
-#### v0.13.0
-
-_2026/10/20_
-
-- `Feature` Text-to-speech APIs for Node.js, Bun and Workers, with engine and voice queries, speech, silence, audio file synthesis and task events
 
 ##### For more release history
 

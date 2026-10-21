@@ -5,6 +5,15 @@
   "changelog_label_improvement": "Улучшение",
   "changelog_label_dependency": "Зависимость",
   "$data": {
+    "v0.16.0": {
+      "released_date": "2026/10/21",
+      "fix": [
+        "Отсутствующие значения tts.control, speech.control и epub.control в типе возможностей Bun"
+      ],
+      "feature": [
+        "Bun mail.control: Подключение почтовых аккаунтов, операции с письмами, вложения и наблюдение за почтой с отменой и очисткой при выходе Worker"
+      ]
+    },
     "v0.15.0": {
       "released_date": "2026/10/21",
       "feature": [
