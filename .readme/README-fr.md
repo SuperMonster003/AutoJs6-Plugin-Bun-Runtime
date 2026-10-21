@@ -239,6 +239,12 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.19.0
+
+_2026/10/21_
+
+- `Fonctionnalité` Flow within/scope pour Node.js, Bun et les Workers, avec racines de recherche héritées, navigation par boussole, projections typées et surcharges press/swipe/gesture/gestures
+
 #### v0.18.0
 
 _2026/10/21_
@@ -251,13 +257,6 @@ _2026/10/21_
 _2026/10/21_
 
 - `Fonctionnalité` Chaînes asynchrones flow et attentes de condition/stabilité pour Node.js, Bun et Workers, avec annulation des branches, reprise des étapes et instantanés de l'interface hôte
-
-#### v0.16.0
-
-_2026/10/21_
-
-- `Fonctionnalité` Bun mail.control: Connexions aux comptes mail, messages, pièces jointes et surveillance des boîtes, avec annulation et nettoyage des Workers
-- `Correctif` Valeurs tts.control, speech.control et epub.control manquantes dans le type des capacités Bun
 
 ##### Pour plus d'historique
 

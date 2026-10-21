@@ -35,6 +35,16 @@ test('Bun Flow queries pass through its normal granted automation transport', as
   assert.equal(calls.length, 2); assert.equal(jobs.size, 0);
   assert(HOST_API_METHODS['accessibility.control'].includes('flowForeground'));
 });
+
+test('Bun scoped queries need only accessibility and retain captured branch scope', async()=>{
+  const root={windowId:1,indexInParent:0,packageName:'fixture',bounds:{left:0,top:0,right:100,bottom:100}};
+  const seen=[],{host}=await client(['accessibility.control'],payload=>{
+    seen.push(payload.args);return {available:true,value:payload.args[1]?.resultType==='text'?'scoped':root};
+  });
+  const base=host.flow.of(7),scoped=base.within('container').scope({resultType:'text'});
+  assert.equal(await scoped.wait('child'),'scoped');assert.deepEqual(seen.at(-1)[1].root,root);
+  assert.equal(seen.at(-1)[1].resultType,'text');await base.wait('outside');assert.equal(seen.at(-1).length,1);
+});
 test('Bun service outages cannot become successful hidden waits', async () => {
   const {host} = await client(['accessibility.control'], () => ({available:false}));
   await assert.rejects(host.flow.waitForHidden('not visible').toPromise(), error => error.code === 'A11Y_UNAVAILABLE');

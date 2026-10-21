@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.19.0
+
+_2026/10/21_
+
+- `Feature` Flow within/scope with inherited search roots, compass navigation and typed result projections, plus press/swipe/gesture/gestures overloads for Node.js, Bun and Workers
+
 #### v0.18.0
 
 _2026/10/21_
@@ -251,13 +257,6 @@ _2026/10/21_
 _2026/10/21_
 
 - `Feature` Flow asynchronous chains and condition/stability waits for Node.js, Bun and Workers, with branch cancellation, step retries and host UI snapshots
-
-#### v0.16.0
-
-_2026/10/21_
-
-- `Feature` Bun mail.control: Mail account connections, message operations, attachments and mailbox watches, with cancellation and Worker cleanup
-- `Fix` Missing tts.control, speech.control and epub.control values in the Bun capability type
 
 ##### For more release history
 

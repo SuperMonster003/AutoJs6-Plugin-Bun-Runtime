@@ -239,6 +239,12 @@ Roadmap은 두 가지 질문에 답합니다: 지금 무엇이 동작하고 다�
 
 ******
 
+#### v0.19.0
+
+_2026/10/21_
+
+- `기능` Node.js, Bun 및 Worker의 Flow within/scope 검색 범위 상속, 나침반 탐색 및 결과 투영과 press/swipe/gesture/gestures 오버로드
+
 #### v0.18.0
 
 _2026/10/21_
@@ -251,13 +257,6 @@ _2026/10/21_
 _2026/10/21_
 
 - `기능` Node.js, Bun, Worker의 flow 비동기 체인 및 조건/안정성 대기, 분기 취소, 단계 재시도, 호스트 화면 스냅샷 지원
-
-#### v0.16.0
-
-_2026/10/21_
-
-- `기능` Bun mail.control: 메일 계정 연결, 메시지 작업, 첨부 파일 및 메일함 감시, 취소와 Worker 종료 시 정리
-- `수정` Bun 기능 이름 타입에서 tts.control, speech.control 및 epub.control이 누락된 문제
 
 ##### 더 많은 릴리스 기록
 

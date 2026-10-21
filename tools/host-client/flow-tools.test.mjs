@@ -16,7 +16,8 @@ async function fixture(grants) {
     if(method==='answer'){answers.get(args[2])?.(args[4]);return true;}
     assert.equal(method,'start');
     const [,id,name,values,options]=args;
-    if(name==='findAny')emit(id,'resolve',{index:0,node:{text:'ready'},target:values[0][0]});
+    if(name==='globalAction')emit(id,'resolve',true);
+    else if(name==='findAny')emit(id,'resolve',{index:0,node:{text:'ready'},target:values[0][0]});
     else if(name==='smartClick'){
       const token=String(++serial);const reply=new Promise(resolve=>answers.set(token,resolve));
       emit(id,'callback',{token,callback:options.verify.__flowCallback,args:[]});
@@ -42,6 +43,16 @@ test('Bun Flow tools have a distinct default-off grant and a streamed method man
   const f=await fixture(['accessibility.control']);
   await assert.rejects(f.host.flow.smartClick('ready').toPromise(),e=>e.code==='NOT_GRANTED'&&e.capability==='flow.control');
   assert.equal(f.calls.length,0);assert.equal(await f.host.flow.of(5),5);await f.host.flow.dispose();
+});
+
+test('Bun gesture overloads survive its automation transport and preserve chain input',async()=>{
+  const f=await fixture(['flow.control','accessibility.control','accessibility.gesture']);
+  try {
+    assert.equal(await f.host.flow.of('kept').press([10,20],100).swipe(200,[[10,20],[30,40]]).gestures([100,[10,20]],[30,100,[30,40]]),'kept');
+    const actions=f.calls.filter(p=>p.method==='start').map(p=>p.args);
+    assert.deepEqual(actions.map(a=>a[3][0]),['press','swipe','gestures']);
+    assert.deepEqual(actions[1][3],['swipe',[200,[[10,20],[30,40]]]]);
+  }finally{await f.host.flow.dispose();}
 });
 test('Bun automation transport allows reentrant Flow callbacks and large Unicode event packets',async()=>{
   const f=await fixture(['flow.control','accessibility.control','events.observe','events.toast']);

@@ -4,6 +4,12 @@
 
 ******
 
+# v0.19.0
+
+###### 2026/10/21
+
+* `機能` Node.js, Bun と Worker の Flow within/scope による検索範囲の継承, コンパス移動と結果の射影, および press/swipe/gesture/gestures のオーバーロード
+
 # v0.18.0
 
 ###### 2026/10/21
