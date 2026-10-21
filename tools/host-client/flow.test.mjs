@@ -42,3 +42,14 @@ test('Bun service outages cannot become successful hidden waits', async () => {
   await assert.rejects(timed.toPromise(), error => error.code === 'TIMEOUT');
   assert.equal(host.flow.pending, 0);
 });
+test('Bun preserves Flow ownership across asynchronous callback continuations', async () => {
+  const {host} = await client([], () => { throw Error('No host query expected'); });
+  const flow = host.flow; let late;
+  try {
+    const task = flow.run(async () => { await new Promise(resolve => setTimeout(resolve, 20)); late = flow.sleep(10000); return late; });
+    await new Promise(resolve => setTimeout(resolve, 2)); task.cancel();
+    await assert.rejects(task.toPromise(), error => error.code === 'CANCELLED');
+    await new Promise(resolve => setTimeout(resolve, 40));
+    assert.equal(late.state, 'cancelled'); assert.equal(flow.pending, 0);
+  } finally { flow.cancelAll(); }
+});

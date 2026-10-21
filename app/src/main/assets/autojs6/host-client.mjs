@@ -5335,8 +5335,9 @@ function createStorage(dispatch) {
 
 // BEGIN GENERATED FLOW FACADE
   // Shared flow core. Callbacks and timers belong to the importing JavaScript runtime.
-  function __autojs6_create_flow(call, logger = globalThis.console) {
+  function __autojs6_create_flow(call, logger = globalThis.console, AsyncContext) {
     const records = new WeakMap(), pending = new Set();
+    const creationContext = AsyncContext ? new AsyncContext() : null;
     const clock = () => globalThis.performance?.now?.() ?? Date.now();
     let defaults = {timeout: 10000, interval: 200, stableFor: 100, recoverService: false, trace: false};
     let creating = null;
@@ -5450,8 +5451,11 @@ function createStorage(dispatch) {
     }
     async function invoke(r, callback, args) {
       checkpoint(r);
-      const previous = creating; let result;
-      try { creating = r; result = callback(...args); } finally { creating = previous; }
+      const run = () => {
+        const previous = creating;
+        try { creating = r; return callback(...args); } finally { creating = previous; }
+      };
+      const result = creationContext ? creationContext.run(r, run) : run();
       return waitPromise(r, result);
     }
     function make(step, parent, execute, acceptsError = false, rerunnable = true) {
@@ -5462,9 +5466,11 @@ function createStorage(dispatch) {
       // Flow rejections may be observed later through state/error, retry, catch or toPromise.
       r.promise.catch(() => {});
       records.set(handle, r); pending.add(r); parent?.children.add(r);
-      if (creating) {
-        const owner = creating; owner.owned.add(r);
+      const owner = creationContext?.getStore() ?? creating;
+      if (owner) {
+        owner.owned.add(r);
         const release = () => owner.owned.delete(r); r.promise.then(release, release);
+        if (owner.controller.signal.aborted || own(owner.handle).state !== 'pending') stop(r, failure(r, 'CANCELLED'));
       }
       async function start() {
         if (r.state !== 'pending') return;
@@ -6035,7 +6041,7 @@ export async function createHostClient(options = {}) {
   return Object.freeze({
     sdkVersion: SDK_VERSION,
     ...automation,
-    flow: __autojs6_create_flow(automationCall),
+    flow: __autojs6_create_flow(automationCall,undefined,AsyncLocalStorage),
     mail: __autojs6_create_mail(automationCall),
     epub: __autojs6_create_epub(automationCall),
     speech: __autojs6_create_speech(automationCall),
