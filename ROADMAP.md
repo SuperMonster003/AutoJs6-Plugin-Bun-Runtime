@@ -1,6 +1,6 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
-2026-10-22 Agent 扩展: 0.21.0 的 host.ai.agent 通过独立且默认关闭的 agent.control 提供任务控制, 事件, 异步等待和注册脚本通道. 共享 Node/Worker 的公开工厂与声明; 打包应用在已安装的 AutoJs6 宿主中明确授权. 本地 SDK 检查通过, Xiaomi 真机/打包与恢复证据由宿主 runtime-ai-agent 报告记录. 本批不重建 Bun 原生字节, 不扩展兼容矩阵, 不发布.
+2026-10-22 Agent 扩展: 0.21.0 的 host.ai.agent 通过独立且默认关闭的 agent.control 提供任务控制, 事件, 异步等待和注册脚本通道. 共享 Node/Worker 的公开工厂与声明; 打包应用在已安装的 AutoJs6 宿主中明确授权. 固定 Bun build 296 与宿主 5850 在 Xiaomi/API 35 通过本批 58 项设备测试 (含 Bun 13 项), Bun 宿主执行完成 27 条断言, 独立签名 Bun 应用通过拒绝/授权/重启/活动任务撤权/再次拒绝/重新授权六轮验证. 首次模型遗漏证据被原生规则降为 partial; 测试明确交付物证据后通过完整复验, 失败记录仍保留. 原始设备状态已恢复, Redmi 未操作; 证据见宿主 runtime-ai-agent 报告. 本批不重建 Bun 原生字节, 不扩展兼容矩阵, 不发布.
 
 2026-10-18 WebView 文件能力: 系统完整照片捕获, SAF 保存/目录选择, readDocument, blob/data/content 下载及所选目标输出已与 Node.js/Worker 契约同步. 宿主还支持 project.json 的 bun.timeoutMs 执行预算, 供拍照和文件交互及打包应用使用. 本批不改变冻结的 Bun 原生字节与兼容范围; 实机与打包记录见宿主 docs/dev/runtime-webview-files-2026-10-18.md.
 
