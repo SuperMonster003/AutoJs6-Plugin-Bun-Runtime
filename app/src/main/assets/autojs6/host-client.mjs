@@ -6443,7 +6443,11 @@ function createStorage(dispatch) {
           Object.defineProperty(assistant, 'options', {enumerable: true, get: () => clone(base)});
           return Object.freeze(assistant);
         },
-        get: (id, callOptions) => query('get', [id], callOptions),
+        get: (id, callOptions) => {
+          const previous = byRun.get(id);
+          return previous && !previous.done && previous.owner === ownerId
+            ? query('status', [], callOptions).then(() => previous.public) : query('get', [id], callOptions);
+        },
         list: (filter = {}, callOptions) => query('list', [object(filter)], callOptions),
         catalog: (queryText = null, callOptions) => query('catalog', [queryText], callOptions),
         presets: callOptions => query('presets', [], callOptions),
