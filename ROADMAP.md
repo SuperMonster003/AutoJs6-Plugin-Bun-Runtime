@@ -1,5 +1,7 @@
 # AutoJs6 Bun Runtime 插件 Roadmap
 
+2026-10-22 Agent 扩展: 0.21.0 的 host.ai.agent 通过独立且默认关闭的 agent.control 提供任务控制, 事件, 异步等待和注册脚本通道. 共享 Node/Worker 的公开工厂与声明; 打包应用在已安装的 AutoJs6 宿主中明确授权. 本地 SDK 检查通过, Xiaomi 真机/打包与恢复证据由宿主 runtime-ai-agent 报告记录. 本批不重建 Bun 原生字节, 不扩展兼容矩阵, 不发布.
+
 2026-10-18 WebView 文件能力: 系统完整照片捕获, SAF 保存/目录选择, readDocument, blob/data/content 下载及所选目标输出已与 Node.js/Worker 契约同步. 宿主还支持 project.json 的 bun.timeoutMs 执行预算, 供拍照和文件交互及打包应用使用. 本批不改变冻结的 Bun 原生字节与兼容范围; 实机与打包记录见宿主 docs/dev/runtime-webview-files-2026-10-18.md.
 
 2026-10-17 宿主能力第五批: 录屏支持可选麦克风/应用播放/混合 AAC 音轨及录制期间截图, 音频使用独立默认关闭的授权, 遵循 RECORD_AUDIO, 麦克风前台服务和来源捕获策略. 同一投影帧输入分发至编码与截图, 旋转时更换输入缓冲而不重建虚拟显示. 原生 Bun 字节与桥传输预算不变. 验证记录见宿主 docs/dev/runtime-audio-capture-2026-10-17.md.
