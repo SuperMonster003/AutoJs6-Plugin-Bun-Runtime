@@ -27,6 +27,7 @@ export const HOST_API_METHODS = Object.freeze({
   "flow.control": Object.freeze(["open","start","poll","cancel","answer","close"]),
   "mail.control": Object.freeze(["open","start","poll","cancel","answer","close"]),
   "ai.control": Object.freeze(["open","start","poll","ack","cancel","close"]),
+  "agent.control": Object.freeze(["open","start","poll","ack","cancel","release","close","context","result","hasAccess","requestAccess"]),
   "epub.control": Object.freeze(["open","start","poll","cancel","close"]),
   "speech.control": Object.freeze(["open","start","poll","cancel","uploadBegin","uploadChunk","uploadDiscard","close"]),
   "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
@@ -6246,8 +6247,236 @@ function createStorage(dispatch) {
       } catch (error) { settle(record, failure(error)); }
       return result;
     }
+    function createAgent() {
+      let opening = null, ownerId = null, epoch = 0, pumping = false, timer = null;
+      const tasks = new Map(), runs = new Map(), byRun = new Map(), pending = new Set(), accessRequests = new Set();
+      const events = new Set(['state', 'progress', 'step', 'input', 'confirmation', 'done', 'error']);
+      class AgentError extends Error {
+        constructor(message, code = 'INVALID_REQUEST', hint) {
+          super(String(message)); this.name = 'AgentError'; this.code = code;
+          if (hint != null) this.hint = String(hint);
+        }
+      }
+      const fail = value => value instanceof AgentError ? value : new AgentError(value?.message || String(value),
+        String(value?.code || 'INTERNAL_FAILURE').replace(/^ERR_AUTOJS6_AGENT_/, ''), value?.hint);
+      const stopped = () => new AgentError('Agent client is closed', 'SESSION_CLOSED');
+      const raw = (method, args) => Promise.resolve().then(() => call('aiAgent', method, args,
+        {timeoutMs: method === 'requestAccess' ? 120000 : 10000, permissions: ['ai.agent']})).catch(error => {
+          const failure = fail(error);
+          if (ownerId !== null && args[0] === ownerId && ['PERMISSION_DENIED','SESSION_CLOSED','HOST_UNAVAILABLE','LINK_DETACHED'].includes(failure.code)) {
+            opening = null; ownerId = null;
+          }
+          throw failure;
+        });
+      const clone = value => {
+        try { return JSON.parse(JSON.stringify(value, (_, item) => {
+          if (item === undefined || ['function', 'symbol', 'bigint'].includes(typeof item) || typeof item === 'number' && !Number.isFinite(item))
+            throw new TypeError('Agent values must be finite JSON');
+          return item;
+        })); } catch (error) { throw new AgentError(error.message); }
+      };
+      const object = value => {
+        if (!value || typeof value !== 'object' || Array.isArray(value)) throw new AgentError('Agent options must be an object');
+        return clone(value);
+      };
+      function options(value = {}) {
+        const result = object(value);
+        const allowed = ['preset', 'target', 'tools', 'budget', 'confirm', 'interaction', 'detached', 'context', 'parameters', 'memory', 'scriptRoots', 'locale', 'plan'];
+        if (Object.keys(result).some(key => !allowed.includes(key))) throw new AgentError('Unknown Agent option');
+        return result;
+      }
+      async function client() {
+        if (!opening) {
+          const generation = epoch;
+          const promise = raw('open', []).then(async value => {
+            if (generation !== epoch) { await raw('close', [value.id]); throw stopped(); }
+            ownerId = value.id;
+            return value.id;
+          });
+          opening = promise;
+          promise.catch(() => { if (opening === promise) opening = null; });
+        }
+        return opening;
+      }
+      function referenced() { return tasks.size || [...runs.values()].some(run => !run.detached || run.observed || run.waiters); }
+      function updateTimer() { if (timer) referenced() ? timer.ref?.() : timer.unref?.(); }
+      function emit(run, name, value) {
+        for (const entry of [...(run.listeners.get(name) || [])]) {
+          if (entry.once) run.listeners.set(name, (run.listeners.get(name) || []).filter(item => item !== entry));
+          entry.listener(clone(value));
+        }
+      }
+      function finishRun(run, error, result) {
+        if (run.done) return;
+        run.done = true; runs.delete(run.handle); run.fragments = [];
+        if (byRun.get(run.id) === run) byRun.delete(run.id);
+        if (error) { run.error = fail(error); run.state = 'failed'; }
+        else run.state = result.status;
+        try { emit(run, error ? 'error' : 'done', error ? {name: run.error.name, message: run.error.message, code: run.error.code,
+          ...(run.error.hint ? {hint: run.error.hint} : {})} : result); }
+        catch (listenerError) { error = fail(listenerError); }
+        finally {
+          run.listeners.clear(); error ? run.completion.reject(fail(error)) : run.completion.resolve(result);
+          if (!run.released) raw('release', [run.owner, run.handle, !!error]).catch(() => {});
+        }
+      }
+      function makeRun(value, owner) {
+        const previous = byRun.get(value.id);
+        if (previous && !previous.done && previous.owner === owner) {
+          raw('release', [owner, value.handle, false]).catch(() => {});
+          return previous.public;
+        }
+        const run = {...value, owner, fragments: [], listeners: new Map(), completion: deferred(), done: false, error: null, observed: false, waiters: 0};
+        const handle = {};
+        for (const key of ['id', 'goal', 'startedAt', 'detached']) Object.defineProperty(handle, key, {enumerable: true, value: value[key]});
+        Object.defineProperties(handle, {
+          state: {enumerable: true, get: () => run.state}, error: {enumerable: true, get: () => run.error},
+          result: {enumerable: true, get: () => { run.observed = true; updateTimer(); return run.completion.promise; }}
+        });
+        for (const method of ['on', 'once', 'off']) handle[method] = (name, listener) => {
+          if (!events.has(name) || typeof listener !== 'function') throw new AgentError('Agent event and listener are required');
+          if (method === 'off') run.listeners.set(name, (run.listeners.get(name) || []).filter(entry => entry.listener !== listener));
+          else if (!run.done) run.listeners.set(name, [...(run.listeners.get(name) || []), {listener, once: method === 'once'}]);
+          return handle;
+        };
+        handle.respond = (id, answer, callOptions) => query('run.respond', [run.handle, id, answer], callOptions);
+        handle.confirm = (id, allowed, scope = 'once', callOptions) => query('run.confirm', [run.handle, id, allowed, scope], callOptions);
+        handle.cancel = async (reason = 'script-request', callOptions) => {
+          if (!run.done) await query('run.cancel', [run.handle, reason], callOptions);
+          return handle;
+        };
+        handle.join = async timeoutMs => {
+          if (timeoutMs !== undefined && (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 3600000))
+            throw new AgentError('Agent join timeout must be an integer from 1 to 3600000');
+          run.waiters++; updateTimer(); let timeout;
+          try { return await (timeoutMs === undefined ? run.completion.promise : Promise.race([run.completion.promise,
+            new Promise((_, reject) => { timeout = setTimeout(() => reject(new AgentError('Agent join timed out; task is still running', 'JOIN_TIMEOUT')), timeoutMs); })])); }
+          finally { if (timeout) clearTimeout(timeout); run.waiters--; updateTimer(); }
+        };
+        runs.set(run.handle, run); byRun.set(run.id, run);
+        run.public = Object.freeze(handle);
+        return run.public;
+      }
+      function settleTask(task, error, value) {
+        if (task.done) return;
+        task.done = true; pending.delete(task); if (task.id) tasks.delete(task.id);
+        task.cleanup?.(); task.fragments = [];
+        if (!error && (task.method === 'run' || task.method === 'get') && value != null) value = makeRun(value, task.owner);
+        error ? task.result.reject(fail(error)) : task.result.resolve(value);
+        if (task.owner && task.id && !task.cancelled) raw('ack', [task.owner, task.id]).catch(() => {});
+      }
+      function cancelTask(task, error) {
+        if (task.done) return;
+        task.cancelled = true; settleTask(task, error);
+        if (task.owner && task.id) raw('cancel', [task.owner, task.id]).catch(() => {});
+      }
+      function receive(run, event) {
+        if (event.type === 'reject') { finishRun(run, event.value); return; }
+        if (event.type !== 'event') throw new AgentError('Invalid Agent event');
+        const value = {...event.value}, type = value.type;
+        delete value.type; delete value.sequence; delete value.runId;
+        if (type === 'handle_error') { finishRun(run, value.error); return; }
+        if (type === 'done') { finishRun(run, null, value); return; }
+        if (type === 'state') run.state = value.to;
+        if (type === 'input' || type === 'confirmation') value.readOnly = run.interaction !== 'script';
+        emit(run, type, value);
+      }
+      async function pump() {
+        if (pumping) return;
+        pumping = true;
+        try {
+          while (tasks.size || runs.size) {
+            const groups = new Map();
+            for (const [id, record] of [...tasks, ...runs]) groups.set(record.owner, [...(groups.get(record.owner) || []), id]);
+            for (const [owner, ids] of groups) {
+              try {
+                const packets = await raw('poll', [owner, ids]);
+                for (const packet of packets) {
+                  const task = tasks.get(packet.id), run = runs.get(packet.id), record = task || run;
+                  if (!record || record.owner !== owner) continue;
+                  record.fragments.push(Buffer.from(packet.data, 'base64'));
+                  if (!packet.last) continue;
+                  const event = JSON.parse(Buffer.concat(record.fragments).toString('utf8')); record.fragments = [];
+                  if (task) settleTask(task, event.type === 'reject' ? event.value : null, event.value);
+                  else try { receive(run, event); } catch (error) {
+                    finishRun(run, error);
+                  }
+                }
+              } catch (error) {
+                for (const id of ids) { if (tasks.has(id)) cancelTask(tasks.get(id), error); if (runs.has(id)) finishRun(runs.get(id), error); }
+              }
+            }
+            if (tasks.size || runs.size) await new Promise(resolve => { timer = setTimeout(() => { timer = null; resolve(); }, 40); updateTimer(); });
+          }
+        } finally { pumping = false; if (tasks.size || runs.size) pump(); }
+      }
+      function query(method, args, callOptions = {}) {
+        const task = {method, epoch, result: deferred(), fragments: [], done: false}; pending.add(task);
+        try {
+          const input = clone(args);
+          if (!callOptions || typeof callOptions !== 'object' || Array.isArray(callOptions)) throw new AgentError('Agent call options must be an object');
+          const {signal, timeoutMs} = callOptions;
+          if (signal != null && (typeof signal.addEventListener !== 'function' || typeof signal.removeEventListener !== 'function')) throw new AgentError('Expected AbortSignal');
+          if (timeoutMs != null && (!Number.isFinite(timeoutMs) || timeoutMs <= 0 || timeoutMs > 2147483647)) throw new AgentError('Invalid Agent timeout');
+          const abort = () => cancelTask(task, new AgentError('Agent call cancelled', 'CANCELLED'));
+          const timeout = timeoutMs == null ? null : setTimeout(() => cancelTask(task, new AgentError('Agent call timed out', 'TIMEOUT')), timeoutMs);
+          task.cleanup = () => { if (timeout != null) clearTimeout(timeout); signal?.removeEventListener('abort', abort); };
+          signal?.addEventListener('abort', abort, {once: true});
+          if (signal?.aborted) abort();
+          Promise.resolve().then(async () => {
+            if (task.done) return;
+            task.owner = await client();
+            if (task.done || task.epoch !== epoch) { cancelTask(task, stopped()); return; }
+            const response = await raw('start', [task.owner, method, input]); task.id = response.id;
+            if (task.done || task.epoch !== epoch) { await raw('cancel', [task.owner, task.id]); cancelTask(task, stopped()); return; }
+            tasks.set(task.id, task); pump(); updateTimer();
+          }).catch(error => settleTask(task, error));
+        } catch (error) { settleTask(task, error); }
+        return task.result.promise;
+      }
+      const agent = {
+        AgentError,
+        run: (goal, value = {}, callOptions) => query('run', [goal, {}, options(value)], callOptions),
+        create: value => {
+          if (value === undefined) throw new AgentError('Assistant options are required');
+          const base = options(value), assistant = {run: (goal, overrides = {}, callOptions) => query('run', [goal, base, options(overrides)], callOptions)};
+          Object.defineProperty(assistant, 'options', {enumerable: true, get: () => clone(base)});
+          return Object.freeze(assistant);
+        },
+        get: (id, callOptions) => query('get', [id], callOptions),
+        list: (filter = {}, callOptions) => query('list', [object(filter)], callOptions),
+        catalog: (queryText = null, callOptions) => query('catalog', [queryText], callOptions),
+        presets: callOptions => query('presets', [], callOptions),
+        status: callOptions => query('status', [], callOptions),
+        context: () => raw('context', []),
+        result: value => raw('result', [clone(value)]),
+        hasAccess: () => raw('hasAccess', []),
+        requestAccess: async () => {
+          const generation = epoch;
+          const granted = await agent.hasAccess();
+          if (generation !== epoch) throw stopped();
+          if (granted) return true;
+          const previous = opening; opening = null; ownerId = null;
+          if (previous) await previous.then(owner => raw('close', [owner]).catch(() => false), () => false);
+          if (generation !== epoch) throw stopped();
+          const id = 'access-' + Date.now() + '-' + Math.random(); accessRequests.add(id);
+          try { return await raw('requestAccess', [id]); }
+          finally { accessRequests.delete(id); await raw('close', [id]).catch(() => {}); }
+        },
+        close: async () => {
+          const previous = opening; opening = null; ownerId = null; epoch++;
+          for (const task of [...pending]) cancelTask(task, stopped());
+          for (const run of [...runs.values()]) { run.released = true; finishRun(run, stopped()); }
+          await Promise.all([...accessRequests].map(id => raw('close', [id]).catch(() => false))); accessRequests.clear();
+          return previous ? previous.then(owner => raw('close', [owner]), () => false) : false;
+        }
+      };
+      return Object.freeze(agent);
+    }
+
+    const agent = createAgent();
     const ai = (input, options, callOptions) => run('ask', [input, options], callOptions);
-    Object.assign(ai, {AiError, ask: ai,
+    Object.assign(ai, {AiError, agent, ask: ai,
       chat: (input, options, callOptions) => run('chat', [input, options], callOptions),
       stream: (input, options, callOptions) => run('stream', [input, options], callOptions, true),
       session: (options, callOptions) => run('session', [options], callOptions),
@@ -6255,6 +6484,7 @@ function createStorage(dispatch) {
       hasAccess: options => run('hasAccess', [], options),
       requestAccess: options => run('requestAccess', [], options),
       close: async () => {
+        await agent.close();
         const previous = opening; opening = null; generation++;
         for (const record of [...pending]) cancel(record, closedError());
         for (const record of sessions) record.closed = true;
@@ -6361,7 +6591,7 @@ export async function createHostClient(options = {}) {
     finally{const next=automationWaiting.shift();if(next)next();else activeAutomation--;}
   }
   async function performAutomationCall(module, method, args, options = {}) {
-    const capability = module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > 120000) throw new TypeError('Automation timeoutMs must be in 1..120000');
     if (module === 'device' && options.permissions?.includes('device.power') && !grants.has('device.power')) throw new HostCallError('NOT_GRANTED','Device power control requires device.power',capability);
     const signal = options.signal;
@@ -6379,7 +6609,11 @@ export async function createHostClient(options = {}) {
         if (Date.now() > deadline) throw new HostCallError('TIMEOUT','Automation task timed out',capability);
         const result=(await call(capability,{action:'poll',id})).value;
         if (typeof result?.done !== 'boolean') throw new HostCallError('INVALID_RESPONSE','Invalid automation result',capability);
-        if (result.done) { done=true; return result.value; }
+        if (result.done) {
+          done=true;
+          if (capability === 'agent.control' && result.error) throw new HostCallError(result.error.code, result.error.message, capability);
+          return result.value;
+        }
       }
     } finally { if(!done) await call(capability,{action:'cancel',id}).catch(()=>{}); }
   }

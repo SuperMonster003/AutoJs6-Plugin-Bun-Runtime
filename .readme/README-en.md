@@ -239,6 +239,12 @@ The roadmap answers two questions: what works now and what comes next. Checked i
 
 ******
 
+#### v0.21.0
+
+_2026/10/22_
+
+- `Feature` ai.agent task controls, events and registered-script context/results for Node.js, Bun and Workers, with explicit authorization for packaged applications
+
 #### v0.20.0
 
 _2026/10/22_
@@ -250,13 +256,6 @@ _2026/10/22_
 _2026/10/21_
 
 - `Feature` Flow within/scope with inherited search roots, compass navigation and typed result projections, plus press/swipe/gesture/gestures overloads for Node.js, Bun and Workers
-
-#### v0.18.0
-
-_2026/10/21_
-
-- `Feature` Flow advanced clicks, scrolling, text entry, list collection and real event waits for Node.js, Bun and Workers, with subscription readiness, snapshot validation and cancellation
-- `Fix` Bun UI event waits blocking other host calls and causing asynchronous Flow verification to time out
 
 ##### For more release history
 

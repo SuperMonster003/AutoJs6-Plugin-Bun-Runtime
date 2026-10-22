@@ -4,6 +4,12 @@
 
 ******
 
+# v0.21.0
+
+###### 2026/10/22
+
+* `Fonctionnalité` Contrôle des tâches ai.agent, événements et contexte/résultats des scripts enregistrés pour Node.js, Bun et Workers, avec autorisation explicite des applications empaquetées
+
 # v0.20.0
 
 ###### 2026/10/22

@@ -69,7 +69,7 @@ internal class BunHostBridgeDispatcher(
             val callNumber = sequence.incrementAndGet()
             // Speech and EPUB have long-running sessions and chunked results. Keep size, grant and concurrency
             // checks, but do not charge every transport fragment to the finite ordinary-call budget.
-            if (capability !in setOf("ai.control", "flow.control", "speech.control", "epub.control", "mail.control") && attempted.incrementAndGet() > maxCalls) {
+            if (capability !in setOf("agent.control", "ai.control", "flow.control", "speech.control", "epub.control", "mail.control") && attempted.incrementAndGet() > maxCalls) {
                 return error(429, capability, TOO_MANY_REQUESTS, "Call limit of $maxCalls per execution reached")
             }
             val resultJson = try {

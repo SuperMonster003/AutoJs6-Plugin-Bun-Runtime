@@ -4,6 +4,12 @@
 
 ******
 
+# v0.21.0
+
+###### 2026/10/22
+
+* `Función` Control de tareas ai.agent, eventos y contexto/resultados de scripts registrados para Node.js, Bun y Workers, con autorización explícita para las aplicaciones empaquetadas
+
 # v0.20.0
 
 ###### 2026/10/22
