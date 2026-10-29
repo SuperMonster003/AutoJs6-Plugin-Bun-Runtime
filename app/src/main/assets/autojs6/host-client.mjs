@@ -207,6 +207,16 @@ export const HOST_API_METHODS = Object.freeze({
 
 const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
+// files.readAssets takes Java charset names like Rhino (looked up the ICU way, ignoring case and all but letters and
+// digits: "ISO-8859-1", "us ascii"), as well as Buffer encodings; TextDecoder decodes the other labels it knows.
+function assetText(bytes, charset) {
+  if (charset == null || charset === '') return bytes.toString('utf8');
+  const name = String(charset);
+  const known = {utf8: 'utf8', iso88591: 'latin1', usascii: 'ascii', utf16le: 'utf16le'}[name.toLowerCase().replace(/[^a-z0-9]/g, '')];
+  if (known) return bytes.toString(known);
+  return Buffer.isEncoding(name) ? bytes.toString(name) : new TextDecoder(name).decode(bytes);
+}
+
 function createFiles(dispatch, device = null, shared = null) {
   const text = value => value == null ? '' : String(value);
   const encoding = value => value == null || value === '' ? 'utf8' : String(value);
@@ -266,7 +276,7 @@ function createFiles(dispatch, device = null, shared = null) {
     appendBytes: async (value, data) => { await dispatch('appendBytes', [path(value, true), bytes(data, 'appendBytes')]); },
     rename: async (value, name) => dispatch('rename', [path(value, true), required(name)]),
     renameWithoutExtension: async (value, name) => dispatch('renameWithoutExtension', [path(value, true), required(name)]),
-    readAssets: async (name, charset) => Buffer.from(await dispatch('readAssets', [required(name)]), 'base64').toString(encoding(charset)),
+    readAssets: async (name, charset) => assetText(Buffer.from(await dispatch('readAssets', [required(name)]), 'base64'), charset),
     getSimplifiedPath: async value => dispatch('getSimplifiedPath', [required(value)]),
   });
   for (const method of ['create', 'createIfNotExists', 'createWithDirs', 'removeDir', 'isEmptyDir']) result[method] = async value => dispatch(method, [path(value)]);
@@ -16523,7 +16533,10 @@ export async function createHostClient(options = {}) {
   }, encoded => Uint8Array.from(atob(encoded), character => character.charCodeAt(0))));
   Object.freeze(images);
 
-  const java = __autojs6_create_java(automationCall,{access:"public"},true,AsyncLocalStorage);
+  // A Bun host call lasts at most 120 s: the shared JS tools core asks zip4j work without a time limit (2147483647 ms,
+  // as the Node bridge allows), so a longer Java timeout is held to that limit.
+  const java = __autojs6_create_java((module, method, args, options) => automationCall(module, method, args,
+    options?.timeoutMs > 120000 ? {...options, timeoutMs: 120000} : options),{access:"public"},true,AsyncLocalStorage);
   // Local, as Rhino computes them; the Java-handle entries (util.java, s13n.point / throwable, morse vibration) use java.
   // global.axios is the embedded axios, created on first use.
   // colors / Color, files' pure helpers and open / toFile, zip, mime and the timing recorder are the core's too (P4.2b);

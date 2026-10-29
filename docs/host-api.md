@@ -534,7 +534,7 @@ Rhino `files` 对象的原型成员 (api-coverage P4.2b) 同样经 `files.contro
 | rename / renameWithoutExtension | path: string, newName: string | boolean; renameWithoutExtension 保留原扩展名 |
 | removeDir | path?: string 或 null | boolean, 递归删除 |
 | isEmptyDir | path?: string 或 null | boolean |
-| readAssets | name: string, encoding?: string | 宿主应用 assets 中该文件的文本 |
+| readAssets | name: string, charset?: string | 宿主应用 assets 中该文件的文本; charset 与 Rhino 一样是 Java 字符集名 (ISO-8859-1, US-ASCII 等, 忽略大小写与字母数字以外的字符), 也接受 Buffer 编码名 |
 | getSimplifiedPath | path: string | 外部存储前缀简化后的路径 (同 Rhino) |
 
 `files.sdcardPath` 是同步属性: 执行开始时插件写入 device-info.json 的外部存储路径 (Android 用户的共享存储, 与宿主相同), 不需要授权. readBytes 与 read 共用单次读取上限, writeBytes / appendBytes 与 write 共用请求上限.
@@ -1336,7 +1336,7 @@ host.jsox.extend("Mathx"); // 与 Rhino 相同, 把 Mathx 的方法装到本执�
 `host.colors`, `host.global.Color`, `host.zip`, `host.mime` 与 `host.recorder` 是 Node.js 运行时共享 JS 核心的同名模块 (Node 提交 b92e7a99, 由 `tools/host-client/sync-js-tools.mjs` 同步), 首次读取时创建, 在客户端本地执行, 与 Rhino 的参数个数, 转换与错误相同 (Java 异常是以简单类名为 name 的 Error).
 
 - colors / Color: 75 个模块函数, 四张颜色表 (android / css / web / material), parseColor / RGBToHSV / colorToHSV / HSVToColor. 需要 Java 对象的成员 (toColorStateList, setPaintColor 传入 Java Paint, extract, themeColor, 以及传入 float[] 句柄的 toHsv / toHsva / toHsl) 经 `host.java` 调用宿主, 需要 `java.interop` 授权并返回 Promise. colors.theme 尚无入口 (api-coverage Q80).
-- zip: zip4j 经 Java 门面在宿主进程执行 (`java.interop`), 文件由宿主打开. 模块函数与 Zip 的成员都返回 Promise, 参数错误也以 reject 报告 (Rhino 同步抛出); 相对路径的解析见 host.files 的 open / toFile.
+- zip: zip4j 经 Java 门面在宿主进程执行 (`java.interop`), 文件由宿主打开. 模块函数与 Zip 的成员都返回 Promise, 参数错误也以 reject 报告 (Rhino 同步抛出); 相对路径的解析见 host.files 的 open / toFile. 单次 zip4j 调用最长 120 秒: Bun 的宿主调用上限是 120000 毫秒, 客户端把更长的 Java 调用超时 (Node 运行时对 zip4j 不设上限) 按 120000 毫秒计.
 - mime: `mime(mimeString)` 与 getMediaType / parseMediaType / fromFile / fromFileOr / fromFileOrWildcard / getType / getSubtype; fromFile 按扩展名查 Android MimeTypeMap 的表 (按 `util.version.sdkInt` 选择 Android 10 - 14 或 15 起的表), 不读取文件.
 - recorder: 计时的 recorder(key?, ts?) 与 save / load / isLessThan / isGreaterThan / has / remove / clear 同步执行, 记录按客户端保存. Bun 不提供 Node.js 的音频录制成员 getStatus / start / stop.
 - 尚未提供: files.batchRename (api-coverage Q82), gallery (Q81).

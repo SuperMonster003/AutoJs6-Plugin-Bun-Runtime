@@ -74,7 +74,7 @@ test('Bun zip, files.open and files.toFile first learn the host script directory
   const host=await createHostClient({socket:'fixture',fetch:async(url,init)=>{
     if(url.endsWith('/info'))return Response.json({ok:true,bridgeVersion:1,capabilities:['files.control'],limits:{}});
     const capability=url.split('/').at(-1),request=JSON.parse(init.body);calls.push({capability,request});
-    return Response.json({ok:true,capability,result:{value:{value:request.method==='cwd'?'/sdcard/Scripts':null}}});
+    return Response.json({ok:true,capability,result:{value:request.method==='cwd'?'/sdcard/Scripts':null}});
   }});
   // Without java.interop the zip4j and java.io.File calls are refused after the directory is known.
   await assert.rejects(host.zip.open('a.zip'),error=>error.code==='NOT_GRANTED');
@@ -83,4 +83,23 @@ test('Bun zip, files.open and files.toFile first learn the host script directory
   assert.deepEqual(calls.map(x=>[x.capability,x.request.method]),[['files.control','cwd']]);
   assert.equal(host.global.open,host.files.open);
   assert.equal(typeof host.zip,'function');assert.equal(host.zip,host.zip);
+});
+
+test('Bun holds the zip4j work of the shared core to the 120 s host call limit and reads assets in Java charsets',async()=>{
+  const calls=[];
+  const host=await createHostClient({socket:'fixture',fetch:async(url,init)=>{
+    if(url.endsWith('/info'))return Response.json({ok:true,bridgeVersion:1,capabilities:['files.control','java.interop'],limits:{}});
+    const capability=url.split('/').at(-1),request=JSON.parse(init.body);calls.push({capability,request});
+    if(capability==='files.control')return Response.json({ok:true,capability,result:{value:request.method==='cwd'?'/sdcard/Scripts':
+      request.method==='readAssets'?Buffer.from([0x41,0xe9]).toString('base64'):null}});
+    const start=calls.find(x=>x.request.action==='start'&&String(calls.indexOf(x))===request.id);
+    const value=request.action==='start'?{id:String(calls.length-1)}:request.action==='poll'?{done:true,value:start?.request.method==='new'
+      ?{__autojs6JavaHandle:'h'+request.id,className:'net.lingala.zip4j.ZipFile'}:null}:true;
+    return Response.json({ok:true,capability,result:{value}});
+  }});
+  assert.deepEqual([await host.files.readAssets('a','ISO-8859-1'),await host.files.readAssets('a','latin1'),await host.files.readAssets('a','us ascii')],['A\u00e9','A\u00e9','Ai']);
+  await host.zip.zipFile('/sdcard/a.txt','/sdcard/a.zip').catch(error=>assert.doesNotMatch(String(error.message),/timeoutMs/));
+  const timeouts=calls.filter(x=>x.capability==='java.interop'&&x.request.action==='start').map(x=>x.request.timeoutMs);
+  assert(timeouts.length>0&&timeouts.every(t=>t>=1&&t<=120000),JSON.stringify(timeouts));
+  assert(timeouts.includes(120000),'the zip4j work asks the longest host call: '+JSON.stringify(timeouts));
 });
