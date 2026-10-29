@@ -59,6 +59,8 @@ console.log(await host.pinyin4j.readings("重庆"));
 
 `pinyin` 提供 `convert`, `simple`, `compare`, `compact`, `fromCodePoint`, `fromPhrase`; `pinyin4j` 提供 `of`, `as`, `readings`. `compact` 与 `readings` 返回二维字符串数组. 字典外文字交给真实插件处理; 插件缺失或执行失败会返回错误, 不把原文当成成功转换.
 
+`host.pinyin` 还带有同步常量 `STYLE_NORMAL` (0), `STYLE_TONE` (1), `STYLE_TONE2` (2), `STYLE_INITIALS` (3), `STYLE_FIRST_LETTER` (4), `STYLE_TO3NE` (5), `MODE_NORMAL` (0), `MODE_SURNAME` (1), `MODE_PLACENAME` / `MODE_PLACE_NAME` (2), 取值与 Node 运行时的 pinyin 模块相同 (两者经同一个宿主拼音桥转换), 不需要授权即可读取.
+
 ### OpenCC
 
 ```js
@@ -206,6 +208,8 @@ if (host.hasCapability("console.control")) {
 
 ```powershell
 node --test tools/host-client/host-client.test.mjs
+node --test tools/host-client/js-tools.test.mjs
+node tools/host-client/sync-js-tools.mjs --check
 tsc --strict --noEmit --module NodeNext --moduleResolution NodeNext --target ES2022 tools/host-client/types.mts
 ```
 
@@ -1256,3 +1260,23 @@ Bun 0.21.0 adds `host.ai.agent` with the independent, default-off `agent.control
 Packaged applications delegate these tasks to the installed official AutoJs6 host, which owns the existing 3-Stove Agent model/device brokers. The AGENT_RUNTIME entry permission is derived from agent.control, and explicit per-application consent is requested in AutoJs6. Identity-bound grants and run ownership survive ordinary app restarts, while another application's tasks remain inaccessible. Plugin Center settings can revoke access and stop ordinary or detached tasks. Direct host.ai inference retains its separate 3-Stone AI authorization.
 
 Context and result reporting belong to the current registered script; outside it they return null/false. Client exit cancels owned non-detached tasks and releases borrowed observers. A pending submission cancelled before its reply is acknowledged also cancels a late detached admission. Long Agent polling is exempt from the ordinary cumulative bridge-call budget while existing byte, concurrency and per-call limits remain. Native Bun bytes and compatibility claims do not change. See Documentation `api/ai.md` and the host Agent batch report for signatures, validation and restoration.
+
+## 纯 JS 工具: util, species, global, s13n, cvt, fmt, jsox
+
+`host.util`, `host.species`, `host.global`, `host.s13n`, `host.cvt`, `host.fmt` 与 `host.jsox` 对应 Rhino 的同名模块: `cvt` / `fmt` 即 `converter` / `formatter`, `host.jsox.mathx` / `arrayx` / `numberx` 即 `Mathx` / `Arrayx` / `Numberx`, `host.global` 收录 Rhino 全局对象上的数据函数 `random`, `randomInt`, `randomFloat`, `isInteger`, `isPrimitive`, `isObject`, `isReference`, `isBigInt`, `isEmptyObject`, `isObjectSpecies`. 它们在客户端本地执行, 与 Rhino 一样同步返回, 不经过宿主桥, 不占每次执行 1024 次调用的预算, 不需要授权, 也不注入为 Bun 全局变量.
+
+```js
+console.log(host.util.isList([1, 2]), host.species([]), host.global.randomInt(1, 6));
+console.log(host.jsox.mathx.sum(1, 2), host.cvt.bytes(1024, "KB"), host.fmt.bytes(2048));
+host.jsox.extend("Mathx"); // 与 Rhino 相同, 把 Mathx 的方法装到本执行的内建 Math 上
+```
+
+实现与 Node.js 运行时共用: `tools/host-client/sync-js-tools.mjs` 把 Node 插件 `node_bridge_sources.cpp` 的 "Shared JS tools core" 及其声明同步进 `host-client.mjs` / `host-client.d.mts` 的 GENERATED JS TOOLS 段 (不要手改这两段, 改 Node 的源后重新同步; `--check` 只核对). 共享用例 `tools/host-client/js-tools/cases.js` (523 例) 与真机 Rhino 的结果 `rhino-expected.json` 逐项对照; 宿主仓库的 `tools/api-coverage/device_bun_js_tools.py` 在真机上对 Bun 主线程与 Worker 跑同一组用例.
+
+- 需要 Java 对象的成员经 `host.java` 调用宿主, 受默认关闭的 `java.interop` 授权约束并返回 Promise (Rhino 中是同步调用): `util.java.array` / `instanceof` / `instanceOf` / `toJsArray` / `objectToMap` / `mapToObject`, `s13n.point`, `s13n.throwable`, `util.morseCode.vibrate` 与 `util.morseCode(...).vibrate()`. 未授权时以 `NOT_GRANTED` 拒绝; 参数检查在调用宿主之前完成, 抛出的错误与 Rhino 相同.
+- `util.dpToPx` / `spToPx` / `pxToDp` / `pxToSp` 与 `util.version.sdkInt` 读取插件在本次执行开始时写在客户端旁边的 `device-info.json` (DisplayMetrics 的 `density` / `densityDpi` / `scaledDensity` 与 SDK 级别), 按宿主 DisplayUtils 的方式换算; 执行期间改动显示大小或字体缩放不会刷新. sp 按 `scaledDensity` 线性换算, Android 14 起系统字体放大时与宿主的非线性曲线不同 (api-coverage Q60). 单独导入 `host-client.mjs` 而旁边没有该文件时 (例如桌面测试), 按 density 1, SDK 0 计算.
+- `host.jsox.extend` / `extendAll` 与 Rhino 一样修改本执行 (主线程或各 Worker) 的内建对象 (api-coverage Q59).
+- 与 Rhino 的已知差异同 Node 运行时 (api-coverage Q62): `util.inspect` / `format` 遇到 Java 句柄时按普通对象打印, `species.isJavaPackage` 恒为 false, `util.toRegularAndCall` / `toRegularAndApply` 抛出的错误 name 为 `ObsoletedRhinoFunctionException` (Rhino 包装为 `JavaException`).
+- 尚未提供: Rhino 全局对象上的库 getter `axios`, `dayjs`, `pangu`, `cheerio`, `i18n` (待 api-coverage Q61 / Q64; 现在可在项目中安装同名 npm 包, 网络请求也可直接用 Bun 的 `fetch`), 以及 Rhino 专有的 `util.unwrapJavaObject`.
+
+工作线程用 `await import(process.env.AUTOJS6_HOST_CLIENT_MODULE)` 取得各自的客户端, 这些工具在 Worker 中的行为相同. 客户端只在宿主提供动态桥时出现 (至少开启一项 Bun 授权, 默认开启 8 项); 撤销全部授权后, 这些本地工具也随客户端一起不可用.

@@ -5,6 +5,7 @@ import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Binder
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.ParcelFileDescriptor
@@ -187,6 +188,11 @@ open class BunRuntimeService : Service() {
         )
     }
 
+    @Suppress("DEPRECATION") // DisplayMetrics.scaledDensity: util.spToPx / pxToSp of the host client are linear in it.
+    private fun deviceInfo(): String = resources.displayMetrics.let {
+        BunHostClientModule.deviceInfo(Build.VERSION.SDK_INT, it.density, it.densityDpi, it.scaledDensity)
+    }
+
     private fun execute(
         request: BunExecutionRequest,
         prepared: PreparedExecution,
@@ -205,7 +211,7 @@ open class BunRuntimeService : Service() {
             addAll(request.arguments)
         }
         val processBuilder = ProcessBuilder(command).directory(prepared.workingDirectory)
-        val hostClientFile = bridge?.let { BunHostClientModule.materialize(assets, workspace) }
+        val hostClientFile = bridge?.let { BunHostClientModule.materialize(assets, workspace, deviceInfo()) }
         processBuilder.environment().apply {
             putAll(request.environment)
             hostInfoFile?.let { put(BunRuntimeContract.HOST_INFO_ENVIRONMENT_VARIABLE, it.path) }

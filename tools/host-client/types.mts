@@ -67,3 +67,14 @@ await host.screenRecorder.start("silent.mp4", {audio:false});
 await host.screenRecorder.start("capture.mp4", {audio:true});
 void [pixels, bytes];
 void [compact, readings, info, width, traditional];
+const isList: boolean = host.util.isArray([1]) && host.species.isObject({}) && host.global.isInteger(1);
+const speciesName: string = host.species("text");
+const sum: number = host.jsox.mathx.sum(1, 2) + host.global.randomInt(1, 6);
+const kibibytes: number = host.cvt.bytes(1024, "KB");
+const readable: string = host.fmt.bytes(2048);
+const dpPixels: number = host.util.dpToPx(8) + host.util.version.sdkInt;
+const ints = await host.util.java.array("int", 2);
+const pinyinStyle: 1 = host.pinyin.STYLE_TONE;
+host.jsox.extend("Mathx");
+// @ts-expect-error the Node main thread's axios is not part of the Bun client
+host.global.axios;
