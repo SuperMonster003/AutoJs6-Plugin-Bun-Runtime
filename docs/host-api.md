@@ -823,6 +823,31 @@ host.app, host.shell 与 host.shizuku 和 Node.js 主线程及 Worker 共用同�
 
 Tap / Swipe 的坐标在 SetScreenMetrics 之后按插件写入 device-info.json 的显示尺寸 (DisplayMetrics widthPixels / heightPixels) 缩放; 没有该文件时不缩放. 真机结果见宿主 docs/dev/bun-app-shell-2026-10-29.md.
 
+### Rhino 的系统信息与引擎族 (2026-10-30, api-coverage P4.1b)
+
+host.autojs, host.installer, host.memory, host.settings, host.sysprops, host.powerManager, host.engines, host.plugins, host.dialogs.build, host.notifications 上 notice 的扩展成员 (config / isEnabled / ensureEnabled / launchSettings / getBuilder / builder / channel) 与 host.global 上的全局系统函数, 和 Node.js 主线程共用同一份共享工厂 (Node `__autojs6_create_system` 与主线程 engines, 由 sync-system.mjs 原样同步; notice 与 dialogs.build 随 sync-events.mjs / sync-device-dialogs.mjs 同步), 成员与语义见 Node.js Runtime 的 HOST-API "系统信息与引擎族". Rhino 的 workManager 就是 host.tasks 的同名函数. 访问宿主的成员返回 Promise, 主线程与 Worker 相同.
+
+授权 (宿主 6.8.0, 均默认关闭, 打包项目在 `bun.hostCapabilities` 中声明; Q136 (a) / Q137 (a)):
+
+| Bun 授权 | 用途 | 对应 Node 能力 |
+|---|---|---|
+| autojs.control | autojs 的查询: Root 模式, 显示语言, 屏幕方向, 主题色, 资源 ID (R), 特殊权限 | autojs |
+| autojs.manage | autojs.setRootMode / restart / exit (另需 autojs.control) | autojs.control |
+| settings.control / settings.write | settings 的查询与导出 / setEnabled; export 写文件还需 files.control | settings / settings.write |
+| sysprops.control | sysprops | sysprops |
+| memory.control / memory.dump | memory 的 snapshot / collect / retained / dumpHeap | memory / memory.dump |
+| installer.control / installer.mutate | installer 的查询 / install, uninstall, setDefault, session, authorizer.request | installer / installer.mutate |
+| engines.control / engines.exec | engines 的列表与停止 / execScript, execScriptFile, execAutoFile | engines / engines:exec |
+| plugin_tools.control / plugin_tools.user_granted | plugins.tools / 另放行用户授权 (USER_GRANTED) 的第三方插件的工具; 工具要截屏或读写路径时还需 screen.capture / files.control | plugin_tools / plugin_tools.user_granted |
+
+powerManager 使用已有的 device.control 与 device.power, notice 的扩展成员使用 notifications.post (ensureEnabled / launchSettings 另需 notifications.settings), notice.builder 与 notify(builder) 经 host.java (java.interop). 当前包名 / Activity (current* 与 waitFor*) 的 auto 模式依次尝试 shell.shizuku, shell.root 与 accessibility.control, 都不可用时得到空字符串. 授权关闭时在访问宿主之前 reject HostCallError NOT_GRANTED, missingCapabilities 列出缺少的 Bun 授权名 (Q90). installer 的安装类操作与插件工具调用最长等待 15 分钟 5 秒 (等待用户确认或工具完成), 其他调用 120 秒.
+
+与 Node.js 的差异 (Bun 特有, 见宿主 ROADMAP 附录 C Q138 - Q140):
+
+- autojs 的版本字段 (versionName / versionCode / versionDate / packageName) 读取插件写入的宿主信息快照 (`AUTOJS6_HOST_INFO_FILE`, 宿主的 host_info 授权, 默认开启); 开启 engines.control 时客户端创建时向宿主取一次本次执行的记录, engines.myEngine() 带 cwd / spawnDepth, autojs.name 与 versionDate 取宿主记录. 只有快照时 myEngine().cwd 为空, autojs.restart / exit 的 "@" 只给出脚本名.
+- exit / stop 结束当前线程: 主线程结束整个执行, Worker 中只结束该 Worker (Bun Worker 的 process.exit). 宿主停止 Bun 执行时直接结束进程, isStopped 只反映本线程调用过的 exit / stop.
+- memory.watch 不提供 (not-portable: runtime-native, 与 Node 相同的 D-22; 对应写法是 FinalizationRegistry 与 bun:jsc 的 heapStats).
+
 
 
 ## Bun 与 Node.js Worker 事件和通知
