@@ -81,3 +81,22 @@ test('files and storage grants remain independent and local filename helpers req
   assert.equal(host.files.join('a','b'),'a/b');assert.equal(requests.length,0);
  }
 });
+test('files prototype members of Rhino reach the host with encoded bytes and keep host results',async()=>{
+ const {host:{files},requests}=await fixture();
+ assert.equal(await files.writeBytes('b.bin',new Uint8Array([0,255,65])),undefined);
+ assert.equal(requests.at(-1).args[1],Buffer.from([0,255,65]).toString('base64'));
+ await files.appendBytes('b.bin',[-1,256,66]);
+ assert.equal(requests.at(-1).args[1],Buffer.from([255,0,66]).toString('base64'));
+ await files.writeBytes('c.bin',new Uint16Array([0x4241]).buffer);
+ assert.equal(requests.at(-1).args[1],Buffer.from([0x41,0x42]).toString('base64'));
+ await assert.rejects(files.writeBytes('b.bin',null),TypeError);
+ await assert.rejects(files.writeBytes('b.bin','text'),TypeError);
+ await assert.rejects(files.readBytes(null),TypeError);
+ await assert.rejects(files.rename('x',null),TypeError);
+ for(const method of ['create','createIfNotExists','createWithDirs','removeDir','isEmptyDir'])assert.equal(await files[method]('p'),true);
+ assert.equal(await files.rename('x','y'),true);assert.deepEqual(requests.at(-1).args,['x','y']);
+ assert.equal(await files.renameWithoutExtension('x.txt','y'),true);
+ await files.cwd();assert.deepEqual([requests.at(-1).method,requests.at(-1).args],['cwd',[]]);
+ assert.equal(files.sdcardPath,null);
+ assert(requests.every(request=>request.capability==='files.control'));
+});

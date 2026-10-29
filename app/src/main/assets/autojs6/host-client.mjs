@@ -49,8 +49,11 @@ export const HOST_API_METHODS = Object.freeze({
   "shell.control": Object.freeze(["exec", "spawn", "open", "drain", "write", "closeInput", "kill", "close", "getAccess", "requestShizukuPermission"]),
   "sensors.control": Object.freeze(["getAvailableSensors", "once", "subscribe", "unsubscribe", "drainEvents"]),
   "database.control": Object.freeze(["open", "exec", "run", "get", "all", "transaction", "close"]),
-  "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir"]),
+  "files.control": Object.freeze(["path", "read", "write", "append", "exists", "listDir", "remove", "copy", "move", "ensureDir", "isFile", "isDir",
+    "cwd", "create", "createIfNotExists", "createWithDirs", "readBytes", "writeBytes", "appendBytes", "rename", "renameWithoutExtension",
+    "removeDir", "isEmptyDir", "readAssets", "getSimplifiedPath"]),
   "storage.control": Object.freeze(["get", "put", "remove", "clear", "keys", "contains"]),
+  "mediainfo.control": Object.freeze(["read", "get", "countGet", "capabilities"]),
   "app.control": Object.freeze(["launchPackage", "launchApp", "openAppSetting", "startActivity", "getPackageName", "getAppName", "isInstalled", "viewFile", "editFile", "startService", "sendBroadcast", "getInstalledApps", "getPackageInfo"]),
   "accessibility.control": Object.freeze(["isEnabled", "ensureEnabled", "click", "back", "home", "recentApps", "findByText", "clickText", "findOne", "findAll", "flowProbe", "flowForeground", "longClick", "setText", "scrollForward", "scrollBackward", "swipe", "gesture"]),
   "clipboard.control": Object.freeze(["getText", "setText", "hasText"]),
@@ -201,7 +204,7 @@ export const HOST_API_METHODS = Object.freeze({
 
 const isObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
-function createFiles(dispatch) {
+function createFiles(dispatch, device = null) {
   const text = value => value == null ? '' : String(value);
   const encoding = value => value == null || value === '' ? 'utf8' : String(value);
   function path(value,required=false) {
@@ -240,7 +243,105 @@ function createFiles(dispatch) {
     toFile(){throw new HostCallError('NOT_SUPPORTED','Raw java.io.File objects are not exposed by Bun','files.control');},
   };
   for(const method of ['exists','remove','isFile','isDir'])result[method]=async value=>dispatch(method,[path(value)]);
+  // The members of the Rhino files prototype (api-coverage P4.2b): host operations with the host's results; bytes are
+  // Buffers here (Rhino: Java byte[]), any byte source is accepted (numbers keep their low 8 bits).
+  const bytes = (value, method) => {
+    if (value == null) throw new TypeError(`files.${method} bytes must not be nullish`);
+    if (typeof value === 'string' || typeof value !== 'object' && typeof value !== 'function')
+      throw new TypeError(`files.${method} bytes must be a byte array`);
+    const view = ArrayBuffer.isView(value) ? new Uint8Array(value.buffer, value.byteOffset, value.byteLength)
+      : value instanceof ArrayBuffer ? new Uint8Array(value) : Uint8Array.from(Array.from(value, item => Number(item) & 0xff));
+    return Buffer.from(view).toString('base64');
+  };
+  Object.assign(result, {
+    cwd: async () => dispatch('cwd', []),
+    sdcardPath: device?.externalStoragePath ?? null,
+    readBytes: async value => Buffer.from(await dispatch('readBytes', [path(value, true)]), 'base64'),
+    writeBytes: async (value, data) => { await dispatch('writeBytes', [path(value, true), bytes(data, 'writeBytes')]); },
+    appendBytes: async (value, data) => { await dispatch('appendBytes', [path(value, true), bytes(data, 'appendBytes')]); },
+    rename: async (value, name) => dispatch('rename', [path(value, true), required(name)]),
+    renameWithoutExtension: async (value, name) => dispatch('renameWithoutExtension', [path(value, true), required(name)]),
+    readAssets: async (name, charset) => Buffer.from(await dispatch('readAssets', [required(name)]), 'base64').toString(encoding(charset)),
+    getSimplifiedPath: async value => dispatch('getSimplifiedPath', [required(value)]),
+  });
+  for (const method of ['create', 'createIfNotExists', 'createWithDirs', 'removeDir', 'isEmptyDir']) result[method] = async value => dispatch(method, [path(value)]);
   return Object.freeze(result);
+}
+
+// Node's mediainfo module over mediainfo.control (api-coverage P4.2b): the same argument checks, query gates and frozen
+// records; snapshot is Rhino's (the plugin snapshot in the asked or the plugin's default schema).
+function createMediainfo(call) {
+  const options = value => isObject(value) ? value : {};
+  const invoke = (method, args, value, timeoutMs) => {
+    const input = options(value);
+    return call('mediainfo', method, args, {timeoutMs: input.timeoutMs ?? timeoutMs, signal: input.signal});
+  };
+  const freeze = value => {
+    if (!value || typeof value !== 'object') return value === undefined ? null : value;
+    if (Array.isArray(value)) return Object.freeze(value.map(freeze));
+    return Object.freeze(Object.fromEntries(Object.keys(value).map(key => [key, freeze(value[key])])));
+  };
+  function target(value, method) {
+    const text = value == null ? '' : String(value);
+    if (!text || text.includes('\0')) throw new TypeError(`mediainfo.${method} path must be a non-empty file path without NUL bytes.`);
+    return text;
+  }
+  function streamKind(value, method) {
+    const text = value == null || value === '' ? 'general' : String(value).trim();
+    if (!/^[A-Za-z]+$/.test(text)) throw new TypeError(`mediainfo.${method} stream kind must be a MediaInfo stream name.`);
+    return text.toLowerCase();
+  }
+  async function read(path, opts) {
+    const {signal, ...input} = options(opts);
+    return freeze(await invoke('read', [target(path, 'read'), input], opts, 10000));
+  }
+  async function capabilities(opts) {
+    return freeze(await invoke('capabilities', [], opts, 5000));
+  }
+  async function get(path, kind, parameter, opts) {
+    const args = [target(path, 'get'), streamKind(kind, 'get'), parameter == null ? '' : String(parameter)];
+    const input = options(opts);
+    if (input.streamNumber !== undefined || input.infoKind !== undefined) {
+      const streamNumber = input.streamNumber === undefined ? 0 : input.streamNumber;
+      if (!Number.isInteger(streamNumber) || streamNumber < 0 || streamNumber > 2147483647)
+        throw new TypeError('MediaInfo streamNumber must be a non-negative integer no greater than 2147483647.');
+      if (input.infoKind !== undefined && typeof input.infoKind !== 'string') throw new TypeError('MediaInfo infoKind must be a string.');
+      const infoKind = input.infoKind === undefined ? 'TEXT' : input.infoKind.trim().toUpperCase();
+      if (!['NAME', 'TEXT', 'MEASURE', 'OPTIONS', 'NAME_TEXT', 'MEASURE_TEXT', 'INFO', 'HOWTO', 'DOMAIN'].includes(infoKind))
+        throw new TypeError('Unsupported MediaInfo infoKind: ' + input.infoKind);
+      args.push({streamNumber, infoKind});
+      if (streamNumber !== 0 || infoKind !== 'TEXT') {
+        const value = await capabilities(opts);
+        if (!value || value.streamNumber !== true || !Array.isArray(value.infoKinds) || !value.infoKinds.includes(infoKind))
+          throw new Error('MEDIAINFO_QUERY_UNSUPPORTED: host or plugin does not support the requested query options.');
+      }
+    }
+    const value = await invoke('get', args, opts, 10000);
+    return value == null ? '' : String(value);
+  }
+  async function countGet(path, kind, opts) {
+    const args = [target(path, 'countGet'), streamKind(kind, 'countGet')];
+    const value = await capabilities(opts);
+    if (!value || value.streamCount !== true) throw new Error('MEDIAINFO_QUERY_UNSUPPORTED: host or plugin does not support stream counting.');
+    return invoke('countGet', args, opts, 10000);
+  }
+  async function snapshot(path, opts) {
+    const input = options(opts);
+    if (input.schema != null && typeof input.schema !== 'string') throw new TypeError('MediaInfo snapshot schema must be a string.');
+    const schema = input.schema || (await capabilities(opts))?.defaultSnapshotSchema || 'autojs6-plugin-mediainfo-snapshot-v1';
+    return read(path, {...input, schema});
+  }
+  const facade = (path, opts) => read(path, opts);
+  Object.defineProperties(facade, {
+    read: {value: read, enumerable: true},
+    snapshot: {value: snapshot, enumerable: true},
+    get: {value: get, enumerable: true},
+    countGet: {value: countGet, enumerable: true},
+    capabilities: {value: capabilities, enumerable: true},
+    SNAPSHOT_SCHEMA_V1: {value: 'autojs6-plugin-mediainfo-snapshot-v1', enumerable: true},
+    SNAPSHOT_SCHEMA_V2: {value: 'autojs6-plugin-mediainfo-snapshot-v2', enumerable: true},
+  });
+  return Object.freeze(facade);
 }
 
 /**
@@ -10059,6 +10160,7 @@ function __autojs6_bun_device_info() {
     info.densityDpi = Math.max(0, Math.trunc(number(parsed.densityDpi, 0)));
   }
   info.scaledDensity = Math.max(0, number(parsed?.scaledDensity, info.density));
+  if (typeof parsed?.externalStoragePath === "string") info.externalStoragePath = parsed.externalStoragePath;
   return Object.freeze(info);
 }
 
@@ -10203,7 +10305,7 @@ export async function createHostClient(options = {}) {
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
     (message,code,module,method)=>Object.assign(new HostCallError(
       code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':code==='ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT'?'QUOTA_EXCEEDED':'INVALID_REQUEST',message,'database.control'),{method}),value=>value);
-  const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value);
+  const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value, __autojs6_bun_device_info());
 
   function group(capability) {
     return Object.freeze(Object.fromEntries(HOST_API_METHODS[capability].map(method => [method, async (...args) => {
@@ -10402,6 +10504,7 @@ export async function createHostClient(options = {}) {
     events,
     notifications,
     files,
+    mediainfo: createMediainfo(automationCall),
     bridgeVersion: info.bridgeVersion,
     capabilities,
     limits,

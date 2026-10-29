@@ -13,6 +13,19 @@ class BunHostClientModuleTest {
     }
 
     @Test
+    fun deviceInfoCarriesTheExternalStoragePathForFilesSdcardPath() {
+        assertEquals(
+            "{\"sdkInt\":35,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0,\"externalStoragePath\":\"/storage/emulated/0\"}",
+            BunHostClientModule.deviceInfo(35, 2f, 320, 2f, "/storage/emulated/0"),
+        )
+        // Quotes are escaped so the client always parses the file.
+        assertEquals(
+            "{\"sdkInt\":35,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0,\"externalStoragePath\":\"/a\\\"b\"}",
+            BunHostClientModule.deviceInfo(35, 2f, 320, 2f, "/a\"b"),
+        )
+    }
+
+    @Test
     fun invalidDensitiesFallBackToOne() {
         assertEquals(
             "{\"sdkInt\":33,\"density\":1.0,\"densityDpi\":0,\"scaledDensity\":1.0}",

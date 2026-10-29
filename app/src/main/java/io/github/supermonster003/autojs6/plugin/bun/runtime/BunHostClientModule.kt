@@ -26,10 +26,15 @@ internal object BunHostClientModule {
      * The display metrics and SDK level of this device for the client's local util module (util.dpToPx / spToPx /
      * pxToDp / pxToSp convert with them as the host's DisplayUtils does, util.version.sdkInt), the values the Node
      * runtime injects as its device-info module. A density that is not a positive finite number falls back to 1.
+     * [externalStoragePath] is files.sdcardPath (the shared external storage of this Android user, the host's as well).
      */
-    fun deviceInfo(sdkInt: Int, density: Float, densityDpi: Int, scaledDensity: Float): String {
+    fun deviceInfo(sdkInt: Int, density: Float, densityDpi: Int, scaledDensity: Float, externalStoragePath: String? = null): String {
         val dp = if (density.isFinite() && density > 0f) density else 1f
         val sp = if (scaledDensity.isFinite() && scaledDensity > 0f) scaledDensity else dp
-        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}}"
+        val storage = externalStoragePath?.let { path ->
+            val quoted = path.map { c -> if (c == '"' || c == '\\') "\\$c" else if (c < ' ') "\\u%04x".format(c.code) else c.toString() }
+            ",\"externalStoragePath\":\"" + quoted.joinToString("") + "\""
+        }.orEmpty()
+        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}$storage}"
     }
 }
