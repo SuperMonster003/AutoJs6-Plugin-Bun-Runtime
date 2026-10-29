@@ -497,9 +497,9 @@ files remain available while the View or a copying download holds them.
 
 ## Bun automation (2026-10-19)
 
-Bun Runtime 0.3.0 and host 5572 expose `host.app`, `host.accessibility` and `host.clipboard`. Their public adapters and declarations are reproducibly copied from the Node counterparts; the host dispatches only 13 public app operations, 16 accessibility operations and three clipboard operations. Local Intent/URI helpers, selector builders and aliases stay synchronous. Android operations return Promises. `app.control`, `accessibility.control`, `accessibility.gesture` and `clipboard.control` are independent, default-off grants; packaged projects declare them in `bun.hostCapabilities`. Gestures require both accessibility grants. Android accessibility and clipboard foreground rules still apply to the host or packaged app.
+Bun Runtime 0.3.0 and host 5572 expose `host.app`, `host.accessibility` and `host.clipboard`. Their public adapters and declarations are reproducibly copied from the Node counterparts; the host dispatches only 13 public app operations (19 since api-coverage P4.1a), 16 accessibility operations and three clipboard operations. Local Intent/URI helpers, selector builders and aliases stay synchronous. Android operations return Promises. `app.control`, `accessibility.control`, `accessibility.gesture` and `clipboard.control` are independent, default-off grants; packaged projects declare them in `bun.hostCapabilities`. Gestures require both accessibility grants. Android accessibility and clipboard foreground rules still apply to the host or packaged app.
 
-Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10-second per-RPC bound for long gestures/activation; four operations may be outstanding and the SDK queues further operations. Cancellation stops waiting but cannot undo an Android action already dispatched. Polls count toward the original execution quota. Raw Java nodes, internal Agent diagnostics, root/Shizuku and dual-app actions are not exposed. Coordinate click retains the current Node provider rejection; use an explicitly granted single-point gesture. Native Bun payloads and the frozen compatibility matrix are unchanged. Validation: host docs/dev/bun-automation-2026-10-19.md.
+Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10-second per-RPC bound for long gestures/activation; four operations may be outstanding and the SDK queues further operations. Cancellation stops waiting but cannot undo an Android action already dispatched. Polls count toward the original execution quota. Raw Java nodes and internal Agent diagnostics are not exposed; root/Shizuku and dual-app actions run through the shell grants (see "Rhino 的应用与 shell 成员" below, api-coverage P4.1a). Coordinate click retains the current Node provider rejection; use an explicitly granted single-point gesture. Native Bun payloads and the frozen compatibility matrix are unchanged. Validation: host docs/dev/bun-automation-2026-10-19.md.
 
 
 ## Bun 文件与存储
@@ -809,6 +809,20 @@ shizuku 同时可作为函数调用, 并提供 exec/spawn/open/checkAccess/getAc
 写入以 8 KiB 原始字节分块, 给 Base64 与 JSON 转义预留空间. 宿主最多排队 32 个 4 KiB 数据块, 单次 drain 最多取 8 个事件, 队列满时暂停读取而不丢字节. Node/Bun 客户端用可读流的回压暂停轮询. 这些队列大小不等于 Java/JS 对象的实际内存开销.
 
 Bun 继续使用原有每次执行最多 1024 次桥接调用, 4 个并行任务, 64 KiB 请求, 256 KiB 响应及单次 RPC 10 秒的限制. start/poll 均消耗调用额度, Shell 流不能视为无限时长通道. 额度耗尽时宿主释放该执行的 Shell 进程. 长时间或大量数据可按实际场景使用 Node 原生 child_process 或 Bun.spawn, 它们的运行身份与宿主 Shell 不同.
+
+### Rhino 的应用与 shell 成员 (2026-10-29, api-coverage P4.1a)
+
+host.app, host.shell 与 host.shizuku 和 Node.js 主线程及 Worker 共用同一份共享工厂 (Node `__autojs6_create_app` / `__autojs6_create_shell`, 由 sync-automation.mjs / sync-shell.mjs 原样同步), 成员与语义见 Node.js Runtime 的 HOST-API "应用与 shell 族的 Rhino 对照". Rhino 的同步成员在 Bun 中同样返回 Promise (Q93), 主线程与 Worker 相同.
+
+- app: kill 与双开辅助 launchDual / launchDualPackage / launchDualApp / launchDualSettings / launchDualAppDetailsSettings / openDualAppSetting / openDualAppSettings / startDualActivity / openDualUrl / uninstallDual / isDualInstalled / killDual (D-4) 照 Rhino 运行 `am` / `cmd package`, 路线按 Shizuku, Root, 普通 shell 的顺序取第一个已授权且设备可用的; startActivity / startService / sendBroadcast 接受 root / shizuku / dual 选项; getInstalledPackages / getApkInfo / getAppByAlias 返回 JSON 快照, sendLocalBroadcastSync 在宿主进程同步投递本地广播. app.autojs 随 autojs 模块另行提供.
+- shell: execCommand (结果 `{code, result, error, timedOut, truncated}`), getCommand, fromIntent (只收 JSON intent), setDefaultOptions, kill, isRootAvailable, currentPackage / currentActivity / currentComponent, 以及 Rhino 的全局按键与输入函数 Menu / Home / Back / Up / Down / Left / Right / OK / VolumeUp / VolumeDown / Power / Camera / KeyCode / Text / Input / Tap / Swipe / Screencap / SetScreenMetrics (Bun 没有全局对象, 作为 host.shell 的成员提供).
+- shizuku: execCommand / getCommand / kill / currentPackage / currentActivity / currentComponent, isInstalled / hasService / isRunning / hasPermission / isOperational 与每次读取返回新 Promise 的 state 属性. getAccess 另报告 shizukuInstalled / shizukuHasService / shizukuOperational.
+- ShellProcess: isAlive, getInputStream / getErrorStream (stdout / stderr 流), getOutputStream (stdin), toString, 以及 addListener / removeListener / listenerCount / prependListener / prependOnceListener.
+
+授权: 共享工厂使用 Node 的能力名, Bun 按 shell -> shell.control, app 及其子能力 (app.query / app.activity / app.launch / app.settings) -> app.control 对应, shell.root / shell.shizuku 同名, 不新增授权 (Q89). 双开辅助与 app.kill 需要 app.control 与 shell.control, 另有 shell.shizuku 或 shell.root 时才走特权路线; shell.kill 与 shizuku.kill 解析包名还需 app.control; 全局按键需要 shell.control, 再加可用的 shell.shizuku 或 shell.root. 授权关闭时在访问宿主之前 reject HostCallError NOT_GRANTED, missingCapabilities 列出缺少的 Bun 授权名 (Q90); 授权已开但宿主拒绝 (例如 Shizuku 未运行或未授权宿主) 时, execCommand 等照 Rhino 返回带 error 的失败结果. shell.checkAccess 的报告仍使用 shell / shell.root / shell.shizuku. app.control 的宿主路由新增 resolvePackage / getUserProfiles / getInstalledPackages / getApkInfo / getAppByAlias / sendLocalBroadcastSync (宿主 6.8.0).
+
+Tap / Swipe 的坐标在 SetScreenMetrics 之后按插件写入 device-info.json 的显示尺寸 (DisplayMetrics widthPixels / heightPixels) 缩放; 没有该文件时不缩放. 真机结果见宿主 docs/dev/bun-app-shell-2026-10-29.md.
+
 
 
 ## Bun 与 Node.js Worker 事件和通知
