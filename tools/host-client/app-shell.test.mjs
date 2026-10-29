@@ -88,10 +88,12 @@ test('Rhino command results, root defaults and host denials as failed results',a
  assert.equal((await host.shell.execCommand('bad')).code,3);
  assert.equal(host.shell.getCommand('ls',true),'su\nls');
  assert.deepEqual(spawned().map(c=>c.command),['echo hi','bad']);
- // A host denial (Shizuku not authorizing the host) is a failed result, as in Rhino; a grant that is off rejects.
+ // A process the host does not start is a failed result with code 1, as in Rhino; a Shizuku that cannot be used
+ // rejects (Rhino's Shizuku shell throws) without being a grant error; a grant that is off rejects.
  const denied=await fixture({denySpawn:true});
- const result=await denied.host.shizuku.execCommand('id');
+ const result=await denied.host.shell.execCommand('id',true);
  assert.equal(result.code,1);assert.match(result.error,/Shizuku must be running/);
+ await assert.rejects(denied.host.shizuku.execCommand('id'),error=>/Shizuku must be running/.test(error.message)&&!error.missingCapabilities);
  const partial=await fixture({grants:['shell.control']});
  await assert.rejects(partial.host.shell.execCommand('id',true),missing(['shell.root']));
  assert.equal(partial.requests.length,0);
