@@ -662,6 +662,8 @@ export namespace RuntimeStorage {
 
     export interface StorageStore {
       readonly name: string;
+      /** The number of keys (a read-only property in Rhino). */
+      size(options?: AutomationCallOptions): Promise<number>;
       get<T extends StorageValue = StorageValue>(key: string, defaultValue: T, options?: AutomationCallOptions): Promise<StorageValue | T>;
       get<T extends StorageValue = StorageValue>(key: string, defaultValue?: T, options?: AutomationCallOptions): Promise<StorageValue | T | undefined>;
       put(key: string, value: StorageValue, options?: AutomationCallOptions): Promise<void>;
@@ -681,35 +683,72 @@ export namespace RuntimeStorage {
       open(name: string): StorageStore;
       remove(name: string, options?: AutomationCallOptions): Promise<void>;
       removeSync(name: string, options?: AutomationCallOptions): Promise<void>;
-      names(): never;
-      all(): never;
+      /** The non-empty stores of this package and working directory that Node scripts have put values in (the runtime keeps their names), sorted. */
+      names(options?: AutomationCallOptions): Promise<readonly string[]>;
+      all(options?: AutomationCallOptions): Promise<readonly StorageStore[]>;
     }
   }
 // END GENERATED STORAGE TYPES
 
 // BEGIN GENERATED FILE TYPES
 export namespace RuntimeFiles {
+    /** A Java charset name; UTF-8, UTF-16 (BE / LE), ISO-8859-1 and US-ASCII are built in, other names are read only. */
     export type TextEncoding = string;
-    export type ListDirFilter = (name: string) => boolean | null | undefined;
+    export type ListDirFilter = (name: string) => unknown;
+    export type JavaHandle = RuntimeJava.ObjectHandle;
+    export type Bytes = readonly number[] | Uint8Array | Int8Array | Uint8ClampedArray;
 
+    /**
+     * Rhino's files module (FilesModule and its prototype, the host's Files object): same argument counts, path
+     * resolution (java.io.File, relative to cwd()), conversions and errors (a Java exception is an Error named after
+     * its class). The file operations run synchronously in this process with node:fs, so the plugin's Android file
+     * access applies; open, toFile and readAssets go through the Java facade (java_interop) and return Promises of
+     * handles the caller releases. files.batchRename is not available yet (api-coverage Q82).
+     */
     export interface FilesModule {
-      path(path?: string | null): Promise<string | null>;
-      join(parent: string, ...children: string[]): string;
-      read(path?: string | null, encoding?: TextEncoding | null): Promise<string>;
-      write(path: string, text: unknown, encoding?: TextEncoding | null): Promise<void>;
-      append(path: string, text: unknown, encoding?: TextEncoding | null): Promise<void>;
-      exists(path?: string | null): Promise<boolean>;
-      listDir(path?: string | null, filter?: ListDirFilter | null): Promise<string[]>;
-      remove(path?: string | null): Promise<boolean>;
-      copy(pathFrom: string, pathTo: string): Promise<boolean>;
-      move(path: string, newPath: string): Promise<boolean>;
+      /** Environment.getExternalStorageDirectory() of this Android user. */
+      readonly sdcardPath: string;
+      getSdcardPath(): string;
+      /** The working directory of the execution (process.cwd()). */
+      cwd(): Promise<string>;
+      /** The absolute path, or null without a path (or above /). */
+      path(relativePath?: string | null): Promise<string | null>;
+      nonNullPath(relativePath: string): Promise<string>;
+      join(base: string, ...paths: string[]): string;
+      /** PFiles.open: a PReadableTextFile / PWritableTextFile handle (call("read"), call("write", [text]), call("close")). */
+      open(path: string, mode?: "r" | "w" | "a" | string | null, encoding?: TextEncoding | null, bufferSize?: number | null): Promise<JavaHandle>;
+      /** A java.io.File handle of the resolved path. */
+      toFile(path: string): Promise<JavaHandle>;
+      create(path: string): Promise<boolean>;
+      createIfNotExists(path: string): Promise<boolean>;
+      createWithDirs(path: string): Promise<boolean>;
+      exists(path: string): Promise<boolean>;
       ensureDir(path: string): Promise<boolean>;
-      isFile(path?: string | null): Promise<boolean>;
-      isDir(path?: string | null): Promise<boolean>;
-      getName(filePath: string): string;
+      read(path: string, encoding?: TextEncoding): Promise<string>;
+      /** A file of the host app's assets. */
+      readAssets(fileName: string, encoding?: TextEncoding): Promise<string>;
+      /** Unsigned bytes (Rhino: a signed Java byte[]). */
+      readBytes(path: string): Promise<Uint8Array>;
+      write(path: string, text: unknown, encoding?: TextEncoding): Promise<void>;
+      append(path: string, text: unknown, encoding?: TextEncoding): Promise<void>;
+      writeBytes(path: string, bytes: Bytes): Promise<void>;
+      appendBytes(path: string, bytes: Bytes): Promise<void>;
+      copy(pathFrom: string, pathTo: string): Promise<boolean>;
+      rename(path: string, newName: string): Promise<boolean>;
+      renameWithoutExtension(path: string, newName: string): Promise<boolean>;
+      move(path: string, newPath: string): Promise<boolean>;
       getExtension(fileName: string): string;
-      open(path?: string | null, mode?: string | null, encoding?: TextEncoding | null, bufferSize?: number | null): never;
-      toFile(path: string): never;
+      getName(filePath: string): string;
+      getNameWithoutExtension(filePath: string): string;
+      remove(path: string): Promise<boolean>;
+      removeDir(path: string): Promise<boolean>;
+      listDir(path: string, filter?: ListDirFilter): Promise<string[]>;
+      isFile(path: string): Promise<boolean>;
+      isDir(path: string): Promise<boolean>;
+      isEmptyDir(path: string): Promise<boolean>;
+      getHumanReadableSize(bytes: number, useIecIdentifier?: boolean): string;
+      formatSizeWithUnit(bytes: number): string;
+      getSimplifiedPath(path: string): Promise<string>;
     }
   }
 // END GENERATED FILE TYPES
@@ -1365,6 +1404,11 @@ export namespace RuntimeColors {
           readonly g?: number;
           readonly b?: number;
         };
+    export type ColorArgument = ColorInput | Color;
+    export type JavaHandle = RuntimeJava.ObjectHandle;
+    export type DistanceAlgorithm = "diff" | "rgb" | "rgb+" | "hs" | "h" | "equal" | "oklab";
+    export type HarmonyKind = "complementary" | "analogous" | "triadic" | "tetradic" | "split-complementary" | "square" | string;
+    export type Deficiency = "protanopia" | "deuteranopia" | "tritanopia" | "achromatopsia" | string;
 
     export interface ComponentOptions {
       readonly max?: 1 | 255;
@@ -1374,73 +1418,212 @@ export namespace RuntimeColors {
       readonly keepTrailingZeroForFullAlpha?: boolean;
     }
 
+    /**
+     * Rhino's Color (the global Color(...) / new Color(...), autojs6:global): a color with the colors functions as
+     * members (the color first) and setters that change it and return the Color. Members that need a Java object
+     * return Promises.
+     */
+    export interface Color {
+      toInt(): number;
+      toHex(alphaOrLength?: boolean | number | string | null): string;
+      toFullHex(): string;
+      toString(alphaOrLength?: boolean | number | string | null): string;
+      alpha(options?: ComponentOptions | null): number;
+      getAlpha(options?: ComponentOptions | null): number;
+      alphaDouble(): number;
+      getAlphaDouble(): number;
+      red(options?: ComponentOptions | null): number;
+      getRed(options?: ComponentOptions | null): number;
+      redDouble(): number;
+      getRedDouble(): number;
+      green(options?: ComponentOptions | null): number;
+      getGreen(options?: ComponentOptions | null): number;
+      greenDouble(): number;
+      getGreenDouble(): number;
+      blue(options?: ComponentOptions | null): number;
+      getBlue(options?: ComponentOptions | null): number;
+      blueDouble(): number;
+      getBlueDouble(): number;
+      toRgb(): number[];
+      toRgba(options?: ComponentOptions | null): number[];
+      toArgb(options?: ComponentOptions | null): number[];
+      /** With a float[] handle (java.newArray("float", n)) the result is a Promise of it. */
+      toHsv(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsva(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsl(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsla(...args: unknown[]): number[];
+      argb(options?: ComponentOptions | null): number[];
+      rgb(): number[];
+      rgba(options?: ComponentOptions | null): number[];
+      hsv(...args: unknown[]): number[] | Promise<JavaHandle>;
+      hsva(...args: unknown[]): number[] | Promise<JavaHandle>;
+      hsl(...args: unknown[]): number[] | Promise<JavaHandle>;
+      hsla(...args: unknown[]): number[];
+      isSimilar(other: ColorArgument, threshold?: number | null, algorithm?: DistanceAlgorithm | null): boolean;
+      isEqual(other: ColorArgument, alphaMatters?: boolean | null): boolean;
+      distance(other: ColorArgument, algorithm?: DistanceAlgorithm | null): number;
+      invert(): number;
+      blend(other: ColorArgument, ratio?: number | null): number;
+      contrast(other: ColorArgument): number;
+      toColorStateList(...colors: readonly ColorArgument[]): Promise<JavaHandle>;
+      luminance(): number;
+      build(...components: number[]): Color;
+      summary(): string;
+      toOklab(): number[];
+      oklab(...components: unknown[]): number;
+      toOklch(): number[];
+      oklch(...components: unknown[]): number;
+      ensureContrast(background: ColorArgument, ratio?: number | null): number;
+      harmony(kind: HarmonyKind): number[];
+      tones(count?: number | null): number[];
+      derive(): { readonly primary: number; readonly accent: number; readonly dark: number };
+      nightVariant(): number;
+      simulate(deficiency: Deficiency): number;
+      /** Throws as in Rhino (the color is taken as the image). */
+      extract(...args: unknown[]): never;
+      toRgbString(): string;
+      toRgbaString(options?: AlphaStringOptions | null): string;
+      toArgbString(options?: AlphaStringOptions | null): string;
+      toHsvString(): string;
+      toHsvaString(): string;
+      toHslString(): string;
+      toHslaString(): string;
+      setAlpha(alpha: number): Color;
+      setAlphaRelative(percentage: number): Color;
+      removeAlpha(): Color;
+      setRed(red: number): Color;
+      setRedRelative(percentage: number): Color;
+      removeRed(): Color;
+      setGreen(green: number): Color;
+      setGreenRelative(percentage: number): Color;
+      removeGreen(): Color;
+      setBlue(blue: number): Color;
+      setBlueRelative(percentage: number): Color;
+      removeBlue(): Color;
+      setRgb(...components: unknown[]): Color;
+      setRgba(...components: unknown[]): Color;
+      setArgb(...components: unknown[]): Color;
+      setHsv(...components: unknown[]): Color;
+      setHsva(hue: number, saturation: number, value: number, alpha: number): Color;
+      setHsl(...components: unknown[]): Color;
+      setHsla(hue: number, saturation: number, lightness: number, alpha: number): Color;
+      /** Sets the color of a Java android.graphics.Paint handle (or an earlier Node paint object). */
+      setPaintColor(paint: JavaHandle | RuntimeAndroid.PaintHandle): Promise<Color>;
+      equals(other: unknown): boolean;
+      toStringReadable(): string;
+    }
+    export interface ColorConstructor {
+      (...components: unknown[]): Color;
+      new (...components: unknown[]): Color;
+      readonly [constant: string]: unknown;
+    }
+
+    /**
+     * Rhino's colors module (ColorsModule, the color tables, android.graphics.Color.parseColor and the HSV helpers):
+     * same argument counts, conversions and errors. Java objects are facade handles; the calls that need one return
+     * Promises. colors.theme is not available yet (api-coverage Q80).
+     */
     export interface ColorsModule {
+      /** Every table constant by name (not enumerable). */
       readonly all: Readonly<Record<string, number>>;
-      /** Live asynchronous host theme; getThemeColor() accepts call options. */
-      readonly themeColor: Promise<RuntimeAndroid.ThemeColor>;
-      toInt(color: ColorInput): number;
-      toHex(color: ColorInput, alphaOrLength?: boolean | number | null): string;
-      toFullHex(color: ColorInput): string;
-      toString(color: ColorInput, alphaOrLength?: boolean | number | null): string;
-      alpha(color: ColorInput, options?: ComponentOptions | null): number;
-      getAlpha(color: ColorInput, options?: ComponentOptions | null): number;
-      alphaDouble(color: ColorInput): number;
-      getAlphaDouble(color: ColorInput): number;
-      setAlpha(color: ColorInput, alpha: number): number;
-      setAlphaRelative(color: ColorInput, percentage: number): number;
-      removeAlpha(color: ColorInput): number;
-      red(color: ColorInput, options?: ComponentOptions | null): number;
-      getRed(color: ColorInput, options?: ComponentOptions | null): number;
-      redDouble(color: ColorInput): number;
-      getRedDouble(color: ColorInput): number;
-      setRed(color: ColorInput, red: number): number;
-      setRedRelative(color: ColorInput, percentage: number): number;
-      removeRed(color: ColorInput): number;
-      green(color: ColorInput, options?: ComponentOptions | null): number;
-      getGreen(color: ColorInput, options?: ComponentOptions | null): number;
-      greenDouble(color: ColorInput): number;
-      getGreenDouble(color: ColorInput): number;
-      setGreen(color: ColorInput, green: number): number;
-      setGreenRelative(color: ColorInput, percentage: number): number;
-      removeGreen(color: ColorInput): number;
-      blue(color: ColorInput, options?: ComponentOptions | null): number;
-      getBlue(color: ColorInput, options?: ComponentOptions | null): number;
-      blueDouble(color: ColorInput): number;
-      getBlueDouble(color: ColorInput): number;
-      setBlue(color: ColorInput, blue: number): number;
-      setBlueRelative(color: ColorInput, percentage: number): number;
-      removeBlue(color: ColorInput): number;
-      argb(alpha: number, red: number, green: number, blue: number): number;
-      rgb(red: number, green: number, blue: number): number;
-      rgba(red: number, green: number, blue: number, alpha?: number): number;
-      hsv(hue: number, saturation: number, value: number): number;
-      hsva(hue: number, saturation: number, value: number, alpha?: number): number;
-      hsl(hue: number, saturation: number, lightness: number): number;
-      hsla(hue: number, saturation: number, lightness: number, alpha?: number): number;
-      toRgb(color: ColorInput): readonly [number, number, number];
-      toRgba(color: ColorInput): readonly [number, number, number, number];
-      toArgb(color: ColorInput): readonly [number, number, number, number];
-      toHsv(color: ColorInput): readonly [number, number, number];
-      toHsva(color: ColorInput): readonly [number, number, number, number];
-      toHsl(color: ColorInput): readonly [number, number, number];
-      toHsla(color: ColorInput): readonly [number, number, number, number];
-      toRgbString(color: ColorInput): string;
-      toRgbaString(color: ColorInput, options?: AlphaStringOptions | null): string;
-      toArgbString(color: ColorInput, options?: AlphaStringOptions | null): string;
-      toHsvString(color: ColorInput): string;
-      toHsvaString(color: ColorInput): string;
-      toHslString(color: ColorInput): string;
-      toHslaString(color: ColorInput): string;
-      isEqual(left: ColorInput, right: ColorInput): boolean;
-      isSimilar(left: ColorInput, right: ColorInput, threshold?: number | null): boolean;
-      luminance(color: ColorInput): number;
-      build(alpha?: number, red?: number, green?: number, blue?: number): number;
-      summary(color: ColorInput): string;
-      toColorStateList(color: ColorInput, ...colors: readonly ColorInput[]): Promise<RuntimeAndroid.ColorStateListHandle>;
+      readonly android: Readonly<Record<string, number>>;
+      readonly css: Readonly<Record<string, number>>;
+      readonly web: Readonly<Record<string, number>>;
+      readonly material: Readonly<Record<string, number>>;
+      /** A Promise of the host's ThemeColor (a Java handle). */
+      readonly themeColor: Promise<JavaHandle>;
+      readonly [constant: string]: unknown;
+      toInt(color: ColorArgument): number;
+      toHex(color: ColorArgument, alphaOrLength?: boolean | number | string | null): string;
+      toFullHex(color: ColorArgument): string;
+      toString(color?: ColorArgument, alphaOrLength?: boolean | number | string | null): string;
+      alpha(color: ColorArgument, options?: ComponentOptions | null): number;
+      getAlpha(color: ColorArgument, options?: ComponentOptions | null): number;
+      alphaDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      getAlphaDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      setAlpha(color: ColorArgument, alpha: number): number;
+      setAlphaRelative(color: ColorArgument, percentage: number): number;
+      removeAlpha(color: ColorArgument): number;
+      red(color: ColorArgument, options?: ComponentOptions | null): number;
+      getRed(color: ColorArgument, options?: ComponentOptions | null): number;
+      redDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      getRedDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      setRed(color: ColorArgument, red: number): number;
+      setRedRelative(color: ColorArgument, percentage: number): number;
+      removeRed(color: ColorArgument): number;
+      green(color: ColorArgument, options?: ComponentOptions | null): number;
+      getGreen(color: ColorArgument, options?: ComponentOptions | null): number;
+      greenDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      getGreenDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      setGreen(color: ColorArgument, green: number): number;
+      setGreenRelative(color: ColorArgument, percentage: number): number;
+      removeGreen(color: ColorArgument): number;
+      blue(color: ColorArgument, options?: ComponentOptions | null): number;
+      getBlue(color: ColorArgument, options?: ComponentOptions | null): number;
+      blueDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      getBlueDouble(color: ColorArgument, options?: ComponentOptions | null): number;
+      setBlue(color: ColorArgument, blue: number): number;
+      setBlueRelative(color: ColorArgument, percentage: number): number;
+      removeBlue(color: ColorArgument): number;
+      rgb(...components: unknown[]): number;
+      argb(...components: unknown[]): number;
+      rgba(...components: unknown[]): number;
+      hsv(...components: unknown[]): number;
+      hsva(...components: unknown[]): number;
+      hsl(...components: unknown[]): number;
+      hsla(...components: unknown[]): number;
+      toRgb(...args: unknown[]): number[];
+      toRgba(color: ColorArgument, options?: ComponentOptions | null): number[];
+      toArgb(color: ColorArgument, options?: ComponentOptions | null): number[];
+      /** With a float[] handle (java.newArray("float", n)) as the last argument the result is a Promise of it. */
+      toHsv(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsva(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsl(...args: unknown[]): number[] | Promise<JavaHandle>;
+      toHsla(...args: unknown[]): number[];
+      toRgbString(...args: unknown[]): string;
+      toRgbaString(color: ColorArgument, options?: AlphaStringOptions | null): string;
+      toArgbString(color: ColorArgument, options?: AlphaStringOptions | null): string;
+      toHsvString(...args: unknown[]): string;
+      toHsvaString(color: ColorArgument, options?: AlphaStringOptions | null): string;
+      toHslString(...args: unknown[]): string;
+      toHslaString(color: ColorArgument, options?: AlphaStringOptions | null): string;
+      isSimilar(left: ColorArgument, right: ColorArgument, threshold?: number | null, algorithm?: DistanceAlgorithm | null): boolean;
+      isEqual(left: ColorArgument, right: ColorArgument, alphaMatters?: boolean | null): boolean;
+      distance(left: ColorArgument, right: ColorArgument, algorithm?: DistanceAlgorithm | null): number;
+      invert(color: ColorArgument): number;
+      blend(left: ColorArgument, right: ColorArgument, ratio?: number | null): number;
+      contrast(left: ColorArgument, right: ColorArgument): number;
+      luminance(color: ColorArgument): number;
+      build(...components: unknown[]): Color;
+      summary(color: ColorArgument): string;
+      toOklab(color: ColorArgument): number[];
+      toOklch(color: ColorArgument): number[];
+      oklab(...components: unknown[]): number;
+      oklch(...components: unknown[]): number;
+      ensureContrast(color: ColorArgument, background: ColorArgument, ratio?: number | null): number;
+      harmony(color: ColorArgument, kind: HarmonyKind): number[];
+      tones(color: ColorArgument, count?: number | null): number[];
+      derive(color: ColorArgument): { readonly primary: number; readonly accent: number; readonly dark: number };
+      nightVariant(color: ColorArgument): number;
+      simulate(color: ColorArgument, deficiency: Deficiency): number;
+      /**
+       * The dominant colors of an image: an ImageWrapper or android.graphics.Bitmap handle, or pixels as images.readPixels
+       * gives them (Node scripts have no ImageWrapper); the region is [x, y, w, h]. Needs java_interop (the host's
+       * ColorQuantizer).
+       */
+      extract(image: JavaHandle | { readonly data: readonly number[]; readonly width: number; readonly height: number },
+        options?: { readonly count?: number; readonly region?: readonly number[]; readonly step?: number } | null): Promise<number[]>;
+      toColorStateList(color: ColorArgument, ...colors: readonly ColorArgument[]): Promise<JavaHandle>;
+      setPaintColor(paint: JavaHandle | RuntimeAndroid.PaintHandle, color: ColorArgument): Promise<void>;
+      /** android.graphics.Color.parseColor. */
+      parseColor(colorString: string): number;
+      RGBToHSV(red: number, green: number, blue: number, hsv: JavaHandle | readonly number[]): void | Promise<void>;
+      colorToHSV(color: number, hsv: JavaHandle | readonly number[]): void | Promise<void>;
+      HSVToColor(...args: unknown[]): number;
+      /** Members of the earlier Node module (not enumerable). */
       createColorStateList(descriptor: RuntimeAndroid.ColorStateListOptions, options?: AutomationCallOptions): Promise<RuntimeAndroid.ColorStateListHandle>;
       createPaint(options?: RuntimeAndroid.PaintOptions, control?: AutomationCallOptions): Promise<RuntimeAndroid.PaintHandle>;
       getThemeColor(options?: AutomationCallOptions): Promise<RuntimeAndroid.ThemeColor>;
-      setPaintColor(paint: RuntimeAndroid.PaintHandle, color: ColorInput, options?: AutomationCallOptions): Promise<void>;
     }
   }
 // END GENERATED ANDROID TASK TYPES
@@ -2655,6 +2838,8 @@ export namespace RuntimeEpub {
     annotations(callOptions?: CallOptions): Promise<Annotation[]>;
     annotationsAsync(callOptions?: CallOptions): Promise<Annotation[]>;
     close(callOptions?: CallOptions): Promise<void>;
+    /** `EpubBook { path: <path> }`, with `, closed` after the path once closed (Rhino's text). */
+    toString(): string;
   }
   interface EventMap {
     open: OpenEvent;
@@ -4447,6 +4632,46 @@ export namespace RuntimeGlobal {
       isObjectSpecies(o: unknown): boolean;
       /** The axios 1.1.2 library of AutoJs6 Rhino scripts, embedded in the client and running on fetch. */
       readonly axios: RuntimeAxios.AxiosStatic;
+      /** Rhino's bundled libraries (the host's builds, shipped with the runtime), compiled on first access in each thread. */
+      readonly dayjs: Dayjs;
+      readonly pangu: Pangu;
+      readonly cheerio: Cheerio;
+      /** Rhino's i18n: banana-i18n with the messages of ./i18n (or ./assets/i18n) of the working directory loaded. */
+      readonly i18n: I18n;
+      /** Rhino's global open: files.open. */
+      open: RuntimeFiles.FilesModule["open"];
+      /** Rhino's global Color (built with colors on first use). */
+      readonly Color: RuntimeColors.ColorConstructor;
+    }
+    /** dayjs (MIT); see the dayjs documentation for the API. */
+    export interface Dayjs {
+      (date?: unknown, format?: string | readonly string[], locale?: string | boolean, strict?: boolean): any;
+      readonly [member: string]: any;
+    }
+    /** pangu.js 10 (MIT): spacing between CJK and half-width characters. */
+    export interface Pangu {
+      readonly version: string;
+      spaceText(text: string): string;
+      hasProperSpacing(text: string): boolean;
+      readonly [member: string]: any;
+    }
+    /** cheerio (MIT); see the cheerio documentation for the API. */
+    export interface Cheerio {
+      load(content: string | Uint8Array, options?: object | null, isDocument?: boolean): any;
+      readonly [member: string]: any;
+    }
+    export interface I18n {
+      (key: string, ...parameters: unknown[]): string;
+      readonly banana: any;
+      setPath(relativePath: string): void;
+      setLocale(locale: string): void;
+      getFallbackLocales(): string[];
+      getParser(): any;
+      getPath(): string;
+      getLocale(): string;
+      getFinalFallback(): string;
+      load(messageSource: string | object, locale?: string): any;
+      loadAll(): void;
     }
   }
 export namespace RuntimeS13n {
@@ -4613,6 +4838,164 @@ export namespace RuntimeJsox {
       extend(...modules: readonly ModuleNameInput[]): void;
       /** extend("Mathx", "Numberx", "Arrayx"). */
       extendAll(): void;
+    }
+  }
+export namespace RuntimeMime {
+    export interface JsMime {
+      readonly raw: string;
+      readonly type: string;
+      readonly subtype: string;
+      readonly mimeType: string;
+      readonly mimeTypeRefined: string;
+      readonly parameters: Record<string, string>;
+      toString(): string;
+      toStringReadable(): string;
+    }
+
+    /** okhttp3.MediaType as a script object (charset() gives the charset name). */
+    export interface MediaType {
+      type(): string;
+      subtype(): string;
+      charset(defaultValue?: unknown): string | null | unknown;
+      parameter(name: string): string | null;
+      equals(other: unknown): boolean;
+      hashCode(): number;
+      toString(): string;
+    }
+
+    /**
+     * Rhino's mime(mimeString) and the members of its Mime prototype: same argument counts, conversions and errors
+     * (a Java exception is an Error named after its class). fromFile maps the extension with Android's MimeTypeMap
+     * table of this API level and does not read the file. The MIME type constants (TEXT_PLAIN, IMAGE_PNG, ...) are
+     * not enumerable, as in Rhino.
+     */
+    export interface MimeModule {
+      (mimeString: string): JsMime;
+      getMediaType(mediaType: string): MediaType;
+      parseMediaType(mediaType: string): MediaType | null;
+      fromFile(path: string): string | null;
+      fromFileOr(path: string, defaultType: string | null): string;
+      fromFileOrWildcard(path: string): string;
+      getType(mimeType: string): string;
+      getSubtype(mimeType: string): string;
+      readonly WILDCARD: "*/*";
+      readonly TEXT_PLAIN: "text/plain";
+      readonly APPLICATION_JSON: "application/json";
+      readonly APPLICATION_OCTET_STREAM: "application/octet-stream";
+      readonly IMAGE_PNG: "image/png";
+      readonly [constant: string]: unknown;
+      /** The earlier Node name of mime(...) (not enumerable). */
+      parse(mimeString: string): JsMime;
+    }
+  }
+export namespace RuntimeRecorder {
+    export interface RecorderStatus {
+      readonly schema: "autojs6-node-recorder-status-v1";
+      readonly recording: boolean;
+      readonly starting: boolean;
+      readonly providerAvailable: boolean;
+      readonly microphonePermissionRequired: boolean;
+      readonly microphonePermissionGranted: boolean;
+      readonly foregroundDisclosureRequired: boolean;
+      readonly reason: string;
+      readonly active: Recording | null;
+      readonly lastRecording: RecordingResult | null;
+    }
+
+    export interface Recording {
+      readonly id: string;
+      readonly path: string;
+      readonly recording: boolean;
+      readonly format: "m4a";
+      readonly mimeType: "audio/mp4";
+      readonly maxDurationMs: number;
+    }
+    export interface RecordingResult extends Recording {
+      readonly recording: false;
+      readonly durationMs: number;
+      readonly byteCount: number;
+      readonly reason: string;
+    }
+
+    export interface RecorderStartOptions extends AutomationCallOptions {
+      /** Absolute or working-directory-relative output file path; Android file access applies with the updated host. */
+      readonly path?: string;
+      readonly sampleRate?: number;
+      readonly bitRate?: number;
+      readonly format?: "m4a" | "mp4";
+      /** Defaults to 60000; range 1000..300000. The recording stops automatically at this limit. */
+      readonly maxDurationMs?: number;
+    }
+
+    /**
+     * Rhino's recorder: the timing recorder (recorder(key?, ts?), save / load / isLessThan / isGreaterThan / has /
+     * remove / clear, synchronous, per thread) with the audio recorder's getStatus / start / stop.
+     */
+    export interface RecorderModule {
+      /** A function key runs it and gives its duration; another key saves the first time and loads afterwards. */
+      (key?: unknown, timestamp?: unknown): number;
+      /** Saves the time (now, or timestamp) under key (or on the anonymous stack); returns it. */
+      save(key?: string | null, timestamp?: number | null): number;
+      /** The milliseconds from the saved time to now (or timestamp); the anonymous form pops the last record. */
+      load(key?: string | null, timestamp?: number | null): number;
+      isLessThan(key: string | null, compare: number): boolean;
+      isGreaterThan(key: string | null, compare: number): boolean;
+      has(key: string | null): boolean;
+      remove(key: string | null): boolean;
+      clear(): void;
+      getStatus(options?: AutomationCallOptions): Promise<RecorderStatus>;
+      start(options?: RecorderStartOptions): Promise<Recording>;
+      /** Returns the last completed recording, or null when none has started. */
+      stop(options?: AutomationCallOptions): Promise<RecordingResult | null>;
+    }
+  }
+export namespace RuntimeZip {
+    export type JavaHandle = RuntimeJava.ObjectHandle;
+    export interface ZipOptions {
+      readonly password?: string;
+      readonly aesKeyStrength?: string | number | JavaHandle;
+      readonly aesVersion?: string | number | JavaHandle;
+      readonly compressionLevel?: string | number | JavaHandle;
+      readonly compressionMethod?: string | number | JavaHandle;
+      readonly encryptionMethod?: string | number | JavaHandle;
+      readonly excludeFileFilter?: (file: JavaHandle) => unknown;
+      readonly [option: string]: unknown;
+    }
+
+    export interface Zip {
+      /** "open", "zipFile", "zipDir", "zipFiles" or "unzip". */
+      readonly name: string;
+      readonly path: string;
+      readonly options: ZipOptions;
+      getPath(): string;
+      toString(): string;
+      toStringReadable(): string;
+      addFile(filePath: string, options?: ZipOptions | null): Promise<void>;
+      addFiles(filePathList: readonly string[], options?: ZipOptions | null): Promise<void>;
+      addFolder(folderPath: string, options?: ZipOptions | null): Promise<void>;
+      extractAll(destPath: string, options?: ZipOptions | null): Promise<void>;
+      extractFile(fileName: string, destPath: string, options?: ZipOptions | null, newFileName?: string | null): Promise<void>;
+      setPassword(password: string): Promise<void>;
+      getFileHeader(fileName: string): Promise<JavaHandle | null>;
+      getFileHeaders(): Promise<JavaHandle[]>;
+      isEncrypted(): Promise<boolean>;
+      removeFile(fileName: string): Promise<void>;
+      isValidZipFile(): Promise<boolean>;
+      /** A new handle of the Zip's ZipFile each time. */
+      getZipFile(): Promise<JavaHandle>;
+      /** Rhino: the zipFile / zipParameters / unzipParameters properties. */
+      zipFile(): Promise<JavaHandle>;
+      zipParameters(): Promise<JavaHandle>;
+      unzipParameters(): Promise<JavaHandle>;
+    }
+
+    export interface ZipModule {
+      (zipPath: string): Promise<Zip>;
+      open(zipPath: string, options?: ZipOptions | null): Promise<Zip>;
+      zipFile(filePath: string, destZipPath: string | null | undefined | ZipOptions, options?: ZipOptions | null): Promise<Zip>;
+      zipDir(dirPath: string, destZipPath: string | null | undefined | ZipOptions, options?: ZipOptions | null): Promise<Zip>;
+      zipFiles(filePathList: readonly string[], destZipPath: string | null | undefined | ZipOptions, options?: ZipOptions | null): Promise<Zip>;
+      unzip(zipPath: string, destPath: string | null | undefined | ZipOptions, options?: ZipOptions | null): Promise<Zip>;
     }
   }
 // END GENERATED JS TOOLS TYPES
@@ -4813,7 +5196,14 @@ export interface HostClient {
   readonly fmt: RuntimeFormatter.FormatterModule;
   readonly jsox: RuntimeJsox.JsoxModule;
   readonly android: RuntimeAndroid.AndroidModule;
+  /** Rhino's colors and Color, computed locally (the shared JS tools core); the Paint / theme helpers use android.objects, the Java array forms the Java facade. */
   readonly colors: RuntimeColors.ColorsModule;
+  /** Rhino's zip (zip4j in the host) over the Java facade (java.interop); relative paths resolve against the host's script directory (files.control). */
+  readonly zip: RuntimeZip.ZipModule;
+  /** Rhino's mime, computed locally. */
+  readonly mime: RuntimeMime.MimeModule;
+  /** Rhino's timing recorder, computed locally per thread (the Node runtime's audio recorder members are not in Bun). */
+  readonly recorder: ((key?: unknown, timestamp?: unknown) => number) & Omit<RuntimeRecorder.RecorderModule, "getStatus" | "start" | "stop">;
   readonly tasks: RuntimeTasks.TasksModule;
   readonly events: RuntimeEvents.EventsModule;
   readonly notifications: RuntimeNotifications.NotificationsModule;

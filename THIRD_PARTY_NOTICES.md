@@ -98,7 +98,7 @@ For each applicable plugin release, `tools/bun-runtime/release/assemble-correspo
 
 ## axios 1.1.2 (host client)
 
-The explicit host client (`app/src/main/assets/autojs6/host-client.mjs`, section `GENERATED AXIOS`) embeds axios 1.1.2 as the AutoJs6 host ships it in `assets/modules/axios/axios.min.js` (browser build, transpiled; module reference contributed through [AutoX](https://github.com/AutoX) by aiselp), so that Bun scripts see the same `axios` as Rhino scripts. `tools/host-client/sync-axios.mjs` reproduces the section from the host file. axios is licensed under the MIT License:
+The explicit host client (`app/src/main/assets/autojs6/host-client.mjs`, section `GENERATED AXIOS`) embeds axios 1.1.2 as AutoJs6 Rhino scripts load it from `assets/modules/axios/axios.min.js` (shipped by the host until host commit 67ef4c1a5, since then by the AutoJs6 Bundled Libraries plugin; browser build, transpiled; module reference contributed through [AutoX](https://github.com/AutoX) by aiselp), so that Bun scripts see the same `axios` as Rhino scripts. `tools/host-client/sync-axios.mjs` reproduces the section from the Bundled Libraries plugin's file. axios is licensed under the MIT License:
 
 > Copyright (c) 2014-present Matt Zabriskie & Collaborators
 >
@@ -107,6 +107,10 @@ The explicit host client (`app/src/main/assets/autojs6/host-client.mjs`, section
 > The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 >
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+## Rhino global libraries (host client)
+
+The Rhino global libraries of AutoJs6 (api-coverage Q61 / Q64) ship in `app/src/main/assets/autojs6/libraries` and are copied next to the host client, which compiles them on first use. `tools/host-client/sync-js-tools.mjs` copies them unchanged from the Node runtime plugin, which copies them unchanged from the AutoJs6 host's `app/src/main/assets/modules` (since host commit 67ef4c1a5 the same files ship in the AutoJs6 Bundled Libraries plugin): dayjs (MIT, Copyright (c) 2018-present iamkun; `dayjs.LICENSE.txt`), pangu.js 10.1.0 (MIT, Copyright (c) 2013 Vinta; `pangu.LICENSE.txt`), cheerio as the single-file build used by AutoX (aiselp), with the htmlparser2 / domhandler / domutils / css-select / entities modules it bundles (MIT, the Cheerio and fb55 contributors) and banana-i18n (MIT, the Wikimedia Foundation and contributors).
 
 ## Project code
 

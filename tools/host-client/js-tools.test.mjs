@@ -11,8 +11,6 @@ const {cases,encode,thrown}=createRequire(import.meta.url)('./js-tools/cases.js'
 const expected=JSON.parse(readFileSync(new URL('./js-tools/rhino-expected.json',import.meta.url),'utf8')).cases;
 // Expressions reaching the Java facade, and values that depend on the device (display metrics, SDK level).
 const JAVA=/\bjava\.|util\.java\.|s13n\.(point|throwable)\(|\.vibrate\(/,DEVICE=/^util\.((dp|sp|px)To\w+|version)\./;
-// The library getters of the Rhino global object not in the Bun client yet (api-coverage Q61; axios is embedded, Q64).
-const LIBRARIES=/^global\.(dayjs|pangu|cheerio|i18n)\./;
 async function fixture(grants=[],answer=()=>null){
   const calls=[];
   const host=await createHostClient({socket:'fixture',fetch:async(url,init)=>{
@@ -42,7 +40,7 @@ test('Bun JS tools give the Rhino results of the shared cases without any grant'
   const {host,calls}=await fixture(),scope=env(host),failures=[];let compared=0,denied=0;
   for(const [id,rhino,runtime] of cases){
     const source=runtime===undefined?rhino:runtime;
-    if(source===null||DEVICE.test(id)||LIBRARIES.test(id))continue;
+    if(source===null||DEVICE.test(id))continue;
     const want=expected[id],actual=await run(scope,source);assert(want,id+' has no Rhino value');
     const java=JAVA.test(source);java?denied++:compared++;
     // Without java.interop a case reaching the Java facade rejects with NOT_GRANTED; one answered before that

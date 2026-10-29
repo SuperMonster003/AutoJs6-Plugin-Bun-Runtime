@@ -508,11 +508,12 @@ Bun Runtime 0.4.0 和配套宿主 build 5579 提供 `host.files`, `host.storage`
 
 ### host.files
 
-对应 Node.js `files` 的 15 个可用方法. `join`, `getName`, `getExtension` 是同步的 POSIX 路径字符串辅助方法, 不需要授权. 其余方法访问宿主或打包应用的文件并返回 Promise, 调用时使用 `await`:
+对应 Rhino 的 `files`. 路径字符串与大小格式化辅助方法 `join`, `getName`, `getExtension`, `getNameWithoutExtension`, `getHumanReadableSize`, `formatSizeWithUnit` 与 `getSdcardPath` 来自客户端内的共享 JS 核心 (与 Node.js 运行时相同, 路径规范化按 java.io.File, 结果同 Rhino; api-coverage P4.2b), 同步执行, 不需要授权. 下列方法访问宿主或打包应用的文件并返回 Promise, 调用时使用 `await`:
 
 | 方法 | 参数 | Promise 的结果 |
 | --- | --- | --- |
 | path | path?: string 或 null | 绝对路径, 空值返回 null |
+| nonNullPath | path: string | 同 path, 结果为 null 时抛出 TypeError |
 | read | path?: string 或 null, encoding?: string | 文件文本, 空路径返回空字符串 |
 | write / append | path: string, text: unknown, encoding?: string | void |
 | exists / isFile / isDir | path?: string 或 null | boolean, 空路径返回 false |
@@ -542,7 +543,7 @@ Rhino `files` 对象的原型成员 (api-coverage P4.2b) 同样经 `files.contro
 
 相对路径按宿主的脚本工作目录解析, 缺省为执行应用的 filesDir; 绝对路径和本地 file: URL 仍由 Android 判定访问权限. 这与 Bun 自身 `process.cwd()` 指向的临时工作区不同. 不返回项目归档写回承诺; `Bun.file` 和 `node:fs` 仍在 Bun 插件进程中执行. 保存持久文件时可使用 host.files 或已经授权且可访问的持久路径.
 
-ensureDir 的路径以斜杠结尾时创建该目录, 否则只创建文件的父目录. write/append 不自动创建父目录; copy 会创建目标父目录, move 不会. remove 只移除文件或空目录, 非空目录会拒绝. 文件不存在, 路径无权访问及不支持的跨文件系统移动均保留失败结果, 不伪装成功. `open` 和 `toFile` 与 Node.js 一样不提供 Rhino 文件句柄或原始 Java 对象.
+ensureDir 的路径以斜杠结尾时创建该目录, 否则只创建文件的父目录. write/append 不自动创建父目录; copy 会创建目标父目录, move 不会. remove 只移除文件或空目录, 非空目录会拒绝. 文件不存在, 路径无权访问及不支持的跨文件系统移动均保留失败结果, 不伪装成功. `open` (即 `host.global.open`) 与 `toFile` 是共享核心的 Rhino 实现: 经 Java 门面在宿主进程中创建 Rhino 的文件句柄或 `java.io.File` 句柄, 需要默认关闭的 `java.interop` 授权, 返回 Promise, 句柄由调用方用 `host.java.release` 释放. 它们与 `host.zip` 的相对路径按宿主的脚本工作目录解析: 有 `files.control` 授权时, 客户端在其中任一方法首次调用前经 `files.cwd()` 取得该目录 (每次执行只取一次); 没有该授权时按 Bun 自身的 `process.cwd()` 解析, 宿主进程通常无权访问这个临时工作区, 应改用绝对路径 (例如以 `files.sdcardPath` 开头).
 
 文件字节通过 base64 JSON 传输, 沿用 64 KiB 请求与 256 KiB 结果限制; 封装和编码共同占用额度. 当前单次读取最多 196512 字节, 单次写入的可用原始字节少于 48 KiB, 取决于路径和参数长度. 超限拒绝, 不截断; 过大的写请求在打开目标文件前被拒绝. 大型文件可使用 Bun/Node 原生文件 API 访问插件自身有权访问的路径. 该传输差异不意味着 Node.js files 具有相同大小上限.
 
@@ -567,7 +568,7 @@ console.log(await host.files.read('output/settings.json'));
 - selfRemove(options?) / selfRemoveSync(...): 清空当前存储, 返回 void.
 - 模块级 remove(name, options?) / removeSync(...): 清空指定存储, 返回 void.
 
-`Sync` 后缀沿用 Node.js 的历史别名, 仍须 await. names/all 不提供全局命名空间枚举, 调用时抛出 NOT_SUPPORTED. 名称和键去除首尾空白后最多 128 字符, 不得为空或含 NUL; value 不接受 undefined, 函数, Symbol, BigInt 或循环对象. JSON 序列化规则与 Node.js 一致.
+`Sync` 后缀沿用 Node.js 的历史别名, 仍须 await. 模块级 names(options?) / all(options?) 与 Node.js 相同 (api-coverage Q79): 列出本包与本工作目录下由 Node.js / Bun 脚本写入过且非空的存储 (同一作用域的登记存储 `__autojs6_storage_names__` 记录名称), all 返回对应的存储对象; 存储对象的 size(options?) 返回键数的 Promise (Rhino 为属性). 名称和键去除首尾空白后最多 128 字符, 不得为空或含 NUL; value 不接受 undefined, 函数, Symbol, BigInt 或循环对象. JSON 序列化规则与 Node.js 一致.
 
 存储按执行应用包名和宿主脚本工作目录分组. 同一应用及目录的 Node.js/Bun 脚本可以共享数据; 更换目录或打包包名后属于不同存储. 后端沿用 Node.js 的名称规则: 字母转小写, 非字母数字及 ._- 字符替换为 _, 并取前 64 字符. 因此不同原始名称可能指向同一个存储; 不要依赖大小写或第 65 个字符区分名称. 此 API 不等同于 Rhino 全局 storages.
 
@@ -982,7 +983,7 @@ Paint 的线宽和文字大小使用 px, 必须有限且非负; style 为 fill, 
 
 颜色状态支持 Android 属性整数, 或 enabled, pressed, focused, checked, selected, activated, window_focused 名称. 名称前加 `!` 表示不具备该状态; 空数组表示默认分支. Android 按 states 的顺序选择首个匹配分支, 应将默认分支放在最后. 句柄包含 defaultColor 和 stateful.
 
-colors.createPaint, colors.createColorStateList 和 colors.setPaintColor 是对应辅助接口. colors.toColorStateList(color, ...colors) 保留旧接口的默认颜色行为, 使用首个颜色; 多状态颜色使用 createColorStateList 明确提供 states.
+`host.colors` 是 Rhino 的 colors (见 "纯 JS 工具"); 其中 createPaint, createColorStateList 与 getThemeColor 保留为上述辅助接口 (不可枚举), setPaintColor 也接受这里的 Paint 句柄. toColorStateList 与 Rhino 相同, 经 Java 门面 (`java.interop`) 返回 ColorStateList 句柄; 多状态颜色使用 createColorStateList 明确提供 states.
 
 ```js
 "nodejs";
@@ -1008,7 +1009,7 @@ main().catch(console.error);
 
 ### 主题色与 URI
 
-android.getThemeColor(control?) 和 colors.getThemeColor(control?) 返回 Promise<ThemeColor>, 包含 colorPrimary, colorPrimaryDark 和 colorAccent. colors.themeColor 为异步属性, 需使用 await; 持续读取最新主题可调用 getThemeColor. 主题快照可作为颜色输入, colors.toInt/toHex 等方法使用其 colorPrimary.
+android.getThemeColor(control?) 和 colors.getThemeColor(control?) 返回 Promise<ThemeColor>, 包含 colorPrimary, colorPrimaryDark 和 colorAccent. colors.themeColor 与 Rhino 相同, 是宿主 ThemeColor 对象的句柄, 经 Java 门面 (`java.interop`) 取得, 因此是需要 await 的异步属性.
 
 android.parseUri(value, control?) 返回原生 Android URI 的只读快照, 包含 value, scheme, authority, host, port, path, query 和 fragment; 缺失的字符串字段为 null, 缺失端口为 -1. null/undefined 输入返回 null.
 
@@ -1312,7 +1313,18 @@ host.jsox.extend("Mathx"); // 与 Rhino 相同, 把 Mathx 的方法装到本执�
 - `util.dpToPx` / `spToPx` / `pxToDp` / `pxToSp` 与 `util.version.sdkInt` 读取插件在本次执行开始时写在客户端旁边的 `device-info.json` (DisplayMetrics 的 `density` / `densityDpi` / `scaledDensity` 与 SDK 级别), 按宿主 DisplayUtils 的方式换算; 执行期间改动显示大小或字体缩放不会刷新. sp 按 `scaledDensity` 线性换算, Android 14 起系统字体放大时与宿主的非线性曲线不同 (api-coverage Q60). 单独导入 `host-client.mjs` 而旁边没有该文件时 (例如桌面测试), 按 density 1, SDK 0 计算.
 - `host.jsox.extend` / `extendAll` 与 Rhino 一样修改本执行 (主线程或各 Worker) 的内建对象 (api-coverage Q59).
 - 与 Rhino 的已知差异同 Node 运行时 (api-coverage Q62): `util.inspect` / `format` 遇到 Java 句柄时按普通对象打印, `species.isJavaPackage` 恒为 false, `util.toRegularAndCall` / `toRegularAndApply` 抛出的错误 name 为 `ObsoletedRhinoFunctionException` (Rhino 包装为 `JavaException`).
-- `host.global.axios` 是 Rhino 脚本所用的 axios 1.1.2 (宿主 `assets/modules/axios/axios.min.js` 的浏览器构建, MIT), 内嵌在客户端里, 首次读取时创建 (api-coverage Q64). Rhino 给它的 XMLHttpRequest 走宿主 OkHttp, Bun 给它的 XMLHttpRequest 走 Bun 自身的 `fetch`, 所以请求在插件进程内发出, 不经宿主桥, 不需要授权, 也不占调用预算; 拦截器, `create`, `CancelToken` / `AbortSignal` 取消, `timeout`, `auth`, `params`, `responseType` (text / json / arraybuffer / blob) 与错误对象 (`AxiosError` 的 `ERR_BAD_REQUEST` / `ERR_NETWORK` / `ECONNABORTED`) 与 Rhino 相同. 与 Rhino 的差异: `axios.defaults` 是真实的默认配置 (Rhino 中被替换为只含 `transformRequest: []` 的对象), 不提供 Rhino 专有的 `axios.utils` (java.io.File 与线程池辅助); `axios.browser` 提供 Bun 的 `FormData` / `Blob` / `EventTarget` / `Event` 与上述 XMLHttpRequest; GET / HEAD / OPTIONS 的请求体被丢弃 (FormData 的字符串字段并入查询串, 同 Rhino), 字符串请求体保留 axios 设置的 Content-Type (Rhino 的 OkHttp 会把默认的 urlencoded 改成 text/plain), `arraybuffer` 返回 ArrayBuffer (Rhino 返回文本). 重复的 `set-cookie` 响应头与 Rhino 一样被 axios 1.1.2 合并为一个字符串.
-- 尚未提供: Rhino 全局对象上的库 getter `dayjs`, `pangu`, `cheerio`, `i18n` (待 api-coverage Q61, 随 Node 运行时的共享核心同步; 现在可在项目中安装同名 npm 包), 以及 Rhino 专有的 `util.unwrapJavaObject`.
+- `host.global.axios` 是 Rhino 脚本所用的 axios 1.1.2 (`assets/modules/axios/axios.min.js` 的浏览器构建, MIT; 宿主 67ef4c1a5 起由 Bundled Libraries 插件提供, 之前随宿主发布), 内嵌在客户端里, 首次读取时创建 (api-coverage Q64). Rhino 给它的 XMLHttpRequest 走宿主 OkHttp, Bun 给它的 XMLHttpRequest 走 Bun 自身的 `fetch`, 所以请求在插件进程内发出, 不经宿主桥, 不需要授权, 也不占调用预算; 拦截器, `create`, `CancelToken` / `AbortSignal` 取消, `timeout`, `auth`, `params`, `responseType` (text / json / arraybuffer / blob) 与错误对象 (`AxiosError` 的 `ERR_BAD_REQUEST` / `ERR_NETWORK` / `ECONNABORTED`) 与 Rhino 相同. 与 Rhino 的差异: `axios.defaults` 是真实的默认配置 (Rhino 中被替换为只含 `transformRequest: []` 的对象), 不提供 Rhino 专有的 `axios.utils` (java.io.File 与线程池辅助); `axios.browser` 提供 Bun 的 `FormData` / `Blob` / `EventTarget` / `Event` 与上述 XMLHttpRequest; GET / HEAD / OPTIONS 的请求体被丢弃 (FormData 的字符串字段并入查询串, 同 Rhino), 字符串请求体保留 axios 设置的 Content-Type (Rhino 的 OkHttp 会把默认的 urlencoded 改成 text/plain), `arraybuffer` 返回 ArrayBuffer (Rhino 返回文本). 重复的 `set-cookie` 响应头与 Rhino 一样被 axios 1.1.2 合并为一个字符串.
+- `host.global` 上的 `dayjs`, `pangu`, `cheerio`, `i18n` 是 Rhino 全局对象上的同名库 (api-coverage Q61 / Q64): 与宿主相同的构建 (dayjs, pangu.js 10.1.0, cheerio 单文件构建, banana-i18n) 随插件 APK 发布, 插件在执行开始时把它们复制到客户端旁边的 `libraries` 目录, 客户端在首次读取时编译. 宿主 67ef4c1a5 起 Rhino 脚本的这些库 (与 axios) 来自 Bundled Libraries 插件, 未安装时 Rhino 中读取它们会抛出引导错误; Bun 客户端内嵌它们, 不依赖该插件. i18n 读取 Bun 工作目录 (`process.cwd()`) 中的 `./i18n` (或 `./assets/i18n`) JSON. `host.global.open` 即 `host.files.open`, `host.global.Color` 即 Rhino 的 Color.
+- 尚未提供: Rhino 专有的 `util.unwrapJavaObject`.
+
+### colors / Color, zip, mime 与计时 recorder (api-coverage P4.2b)
+
+`host.colors`, `host.global.Color`, `host.zip`, `host.mime` 与 `host.recorder` 是 Node.js 运行时共享 JS 核心的同名模块 (Node 提交 b92e7a99, 由 `tools/host-client/sync-js-tools.mjs` 同步), 首次读取时创建, 在客户端本地执行, 与 Rhino 的参数个数, 转换与错误相同 (Java 异常是以简单类名为 name 的 Error).
+
+- colors / Color: 75 个模块函数, 四张颜色表 (android / css / web / material), parseColor / RGBToHSV / colorToHSV / HSVToColor. 需要 Java 对象的成员 (toColorStateList, setPaintColor 传入 Java Paint, extract, themeColor, 以及传入 float[] 句柄的 toHsv / toHsva / toHsl) 经 `host.java` 调用宿主, 需要 `java.interop` 授权并返回 Promise. colors.theme 尚无入口 (api-coverage Q80).
+- zip: zip4j 经 Java 门面在宿主进程执行 (`java.interop`), 文件由宿主打开. 模块函数与 Zip 的成员都返回 Promise, 参数错误也以 reject 报告 (Rhino 同步抛出); 相对路径的解析见 host.files 的 open / toFile.
+- mime: `mime(mimeString)` 与 getMediaType / parseMediaType / fromFile / fromFileOr / fromFileOrWildcard / getType / getSubtype; fromFile 按扩展名查 Android MimeTypeMap 的表 (按 `util.version.sdkInt` 选择 Android 10 - 14 或 15 起的表), 不读取文件.
+- recorder: 计时的 recorder(key?, ts?) 与 save / load / isLessThan / isGreaterThan / has / remove / clear 同步执行, 记录按客户端保存. Bun 不提供 Node.js 的音频录制成员 getStatus / start / stop.
+- 尚未提供: files.batchRename (api-coverage Q82), gallery (Q81).
 
 工作线程用 `await import(process.env.AUTOJS6_HOST_CLIENT_MODULE)` 取得各自的客户端, 这些工具在 Worker 中的行为相同. 客户端只在宿主提供动态桥时出现 (至少开启一项 Bun 授权, 默认开启 8 项); 撤销全部授权后, 这些本地工具也随客户端一起不可用.

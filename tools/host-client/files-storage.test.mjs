@@ -42,15 +42,17 @@ test('files preserve encodings, Unicode, nullish text and void writes over encod
  assert.equal(await files.read(null,'invalid'), '');
  await assert.rejects(files.write(null,'x'),TypeError);await assert.rejects(files.write('owned','x','invalid'),TypeError);
 });
-test('files keep strict directory filters, POSIX helpers and explicit unsupported Java handles',async()=>{
+test('files keep strict directory filters, Rhino path helpers and Java handle entries',async()=>{
  const {host:{files},requests}=await fixture();
  assert.deepEqual(await files.listDir('owned',name=>name.endsWith('.txt')),['a.txt']);
  assert.deepEqual(await files.listDir('owned',()=>1),[]);
  assert.deepEqual(await files.listDir(null,42),[]);await assert.rejects(files.listDir('owned',42),TypeError);
- assert.equal(files.join('/a','/b','../c/'),'/a/c/');assert.equal(files.getName('/a/b.txt/'),'b.txt');
+ // The path helpers are the shared JS tools core's (Rhino's PFiles: join does not normalize the children).
+ assert.equal(files.join('/a','/b','../c/'),'/a/b/../c');assert.equal(files.getName('/a/b.txt/'),'b.txt');
  assert.equal(files.getExtension('.hidden'),'');assert.equal(files.getExtension('a.tar.gz'),'gz');
  await files.path('file:///tmp/owned%20file');assert.equal(requests.at(-1).args[0],'/tmp/owned file');
- assert.throws(()=>files.open(),{code:'NOT_SUPPORTED'});assert.throws(()=>files.toFile('x'),{code:'NOT_SUPPORTED'});
+ // open / toFile return Java handles through the Java facade (java.interop, not granted here) after the arity check.
+ await assert.rejects(files.open(),TypeError);await assert.rejects(files.toFile('x'),{code:'NOT_GRANTED'});
 });
 test('storage preserves missing versus JSON null, defaults, aliases, keys and asynchronous Sync methods',async()=>{
  const {host}=await fixture();const store=host.storage.create(' owned '),alias=host.storages.open('owned');
@@ -63,7 +65,9 @@ test('storage preserves missing versus JSON null, defaults, aliases, keys and as
  await store.removeSync('zero');assert.equal(await store.contains('zero'),false);
  await store.selfRemoveSync();assert.deepEqual(await alias.keys(),[]);
  await alias.put('a',1);await host.storages.removeSync('owned');assert.deepEqual(await store.keys(),[]);
- assert.throws(()=>host.storage.names(),{code:'NOT_SUPPORTED'});assert.throws(()=>host.storages.all(),{code:'NOT_SUPPORTED'});
+ // names / all list the non-empty stores the runtime registered (Q79 (a)).
+ assert.deepEqual(await host.storage.names(),[]);assert.deepEqual(await host.storages.all(),[]);
+ await alias.put('a',1);assert.deepEqual(await host.storages.names(),['owned']);assert.equal((await host.storages.all())[0].name,'owned');
 });
 test('storage rejects invalid names and nonserializable values before dispatch and honors pre-abort',async()=>{
  const {host,requests}=await fixture(),store=host.storage.open('owned');
@@ -97,6 +101,7 @@ test('files prototype members of Rhino reach the host with encoded bytes and kee
  assert.equal(await files.rename('x','y'),true);assert.deepEqual(requests.at(-1).args,['x','y']);
  assert.equal(await files.renameWithoutExtension('x.txt','y'),true);
  await files.cwd();assert.deepEqual([requests.at(-1).method,requests.at(-1).args],['cwd',[]]);
- assert.equal(files.sdcardPath,null);
+ // Without device-info.json, the path the Node runtime derives from the user id.
+ assert.equal(files.sdcardPath,'/storage/emulated/0');assert.equal(files.getSdcardPath(),files.sdcardPath);
  assert(requests.every(request=>request.capability==='files.control'));
 });

@@ -2,6 +2,8 @@ package io.github.supermonster003.autojs6.plugin.bun.runtime
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.io.File
+import java.nio.file.Files
 
 class BunHostClientModuleTest {
     @Test
@@ -31,5 +33,30 @@ class BunHostClientModuleTest {
             "{\"sdkInt\":33,\"density\":1.0,\"densityDpi\":0,\"scaledDensity\":1.0}",
             BunHostClientModule.deviceInfo(33, Float.NaN, -1, 0f),
         )
+    }
+
+    @Test
+    fun materializeCopiesTheClientAndTheGlobalLibrariesNextToIt() {
+        val assets = mapOf(
+            "autojs6/host-client.mjs" to "export {};",
+            "autojs6/libraries/dayjs.min.js" to "dayjs",
+            "autojs6/libraries/pangu.min.js" to "pangu",
+        )
+        val workspace = Files.createTempDirectory("bun-host-client").toFile()
+        try {
+            val client = BunHostClientModule.materialize(
+                workspace,
+                "{}",
+                { path -> if (path == "autojs6/libraries") arrayOf("dayjs.min.js", "pangu.min.js") else null },
+                { path -> assets.getValue(path).byteInputStream() },
+            )
+            assertEquals(File(workspace, "autojs6/host-client.mjs"), client)
+            assertEquals("export {};", client.readText())
+            assertEquals("{}", File(workspace, "autojs6/device-info.json").readText())
+            assertEquals(listOf("dayjs.min.js", "pangu.min.js"), File(workspace, "autojs6/libraries").list()!!.sorted())
+            assertEquals("pangu", File(workspace, "autojs6/libraries/pangu.min.js").readText())
+        } finally {
+            workspace.deleteRecursively()
+        }
     }
 }

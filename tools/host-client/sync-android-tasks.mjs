@@ -19,7 +19,7 @@ for(const [name,exported] of [['android','RuntimeAndroid'],['tasks','RuntimeTask
   const text=readFileSync(resolve(nodeRoot,`docs/nodejs/types/autojs6-node/${name}.d.ts`),'utf8').replaceAll('\r\n','\n');
   const first=text.indexOf(`  namespace ${name} {`),last=text.indexOf('\n  }',first);assert(first>=0&&last>first);
   types+=text.slice(first,last+4).replace(`  namespace ${name}`,`export namespace ${exported}`).replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions')
-    .replaceAll('AutoJs6Node.JsonValue','JsonValue').replaceAll('import("colors").','RuntimeColors.').replaceAll('import("autojs6:android").','RuntimeAndroid.')+'\n';
+    .replaceAll('AutoJs6Node.JsonValue','JsonValue').replaceAll('import("colors").','RuntimeColors.').replaceAll('import("autojs6:android").','RuntimeAndroid.').replaceAll('import("java").','RuntimeJava.')+'\n';
 }
 types+='// END GENERATED ANDROID TASK TYPES';
 update('app/src/main/assets/autojs6/host-client.d.mts','// BEGIN GENERATED ANDROID TASK TYPES','// END GENERATED ANDROID TASK TYPES',types,'export interface HostClient {');

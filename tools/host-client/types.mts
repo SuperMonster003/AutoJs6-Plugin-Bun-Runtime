@@ -83,3 +83,12 @@ await axiosInstance.post("/items", { name: "x" }, { headers: { "X-Custom": "1" }
 void [axiosOk, host.global.axios.VERSION.length];
 // @ts-expect-error axios configurations are objects
 await host.global.axios.get("http://127.0.0.1/", "config");
+
+// Files and data family of Rhino (api-coverage P4.2b): colors / Color, zip, mime, the timing recorder and the global libraries.
+const hex: string = host.colors.toHex(host.colors.rgb(255, 128, 0));
+const color = host.global.Color("#ff8000");
+const mediaType: string | null = host.mime.getType("text/plain");
+host.recorder("p4.2b");
+const size: string = host.files.getHumanReadableSize(1024);
+const zipped = await host.zip.open("/sdcard/a.zip");
+const day: string = host.global.dayjs("2020-01-02").format("YYYY-MM-DD");
