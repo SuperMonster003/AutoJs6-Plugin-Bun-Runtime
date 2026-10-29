@@ -96,6 +96,18 @@ The authoritative build configuration, dependency revisions, and platform profil
 
 For each applicable plugin release, `tools/bun-runtime/release/assemble-corresponding-source.mjs` emits these materials as assets separate from the APKs but destined for the same GitHub Release. A machine-readable manifest binds the three signed APK hashes and the runtime payload hashes found inside them to every logical source archive and split part. `SHA256SUMS` covers the exact Release asset set. `verify-corresponding-source-release.mjs` performs the offline checks; `publish-github-release.mjs` uploads to a draft, requires GitHub's returned `sha256:` digest to match every local asset, rejects missing or extra files, and publishes only after the full set agrees. The standalone `CORRESPONDING_SOURCE_NOTICE.md` makes this license and relinking information visible on the Release page.
 
+## axios 1.1.2 (host client)
+
+The explicit host client (`app/src/main/assets/autojs6/host-client.mjs`, section `GENERATED AXIOS`) embeds axios 1.1.2 as the AutoJs6 host ships it in `assets/modules/axios/axios.min.js` (browser build, transpiled; module reference contributed through [AutoX](https://github.com/AutoX) by aiselp), so that Bun scripts see the same `axios` as Rhino scripts. `tools/host-client/sync-axios.mjs` reproduces the section from the host file. axios is licensed under the MIT License:
+
+> Copyright (c) 2014-present Matt Zabriskie & Collaborators
+>
+> Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+>
+> The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+>
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 ## Project code
 
 Code written specifically for AutoJs6 Plugin Bun Runtime is licensed under the repository's Mozilla Public License 2.0 unless a file explicitly states otherwise. The project-owned Bun startup, spawn and scoped-directory changes in downstream patches 7, 8 and 9, their `SPDX-License-Identifier: MIT` headers, and the matching standalone C++ test fixtures are provided under Bun's MIT license. The Java wrapper and lifecycle supervisor remain MPL-2.0. No statement in this file grants additional rights to Bun, WebKit, JavaScriptCore, or their bundled dependencies.

@@ -1,4 +1,4 @@
-import { createHostClient, type HostClient, type ScreenInfo } from "../../app/src/main/assets/autojs6/host-client.mjs";
+import { createHostClient, type HostClient, type ScreenInfo, type RuntimeAxios } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
 const host: HostClient = await createHostClient();
 const traditional: string = await host.opencc("汉语", "s2t");
@@ -76,5 +76,10 @@ const dpPixels: number = host.util.dpToPx(8) + host.util.version.sdkInt;
 const ints = await host.util.java.array("int", 2);
 const pinyinStyle: 1 = host.pinyin.STYLE_TONE;
 host.jsox.extend("Mathx");
-// @ts-expect-error the Node main thread's axios is not part of the Bun client
-host.global.axios;
+const axiosResponse: RuntimeAxios.Response<{ ok: boolean }> = await host.global.axios.get<{ ok: boolean }>("http://127.0.0.1/", { timeout: 1000, params: { q: 1 } });
+const axiosOk: boolean = axiosResponse.data.ok && host.global.axios.isAxiosError(null) === false;
+const axiosInstance = host.global.axios.create({ baseURL: "http://127.0.0.1/" });
+await axiosInstance.post("/items", { name: "x" }, { headers: { "X-Custom": "1" } });
+void [axiosOk, host.global.axios.VERSION.length];
+// @ts-expect-error axios configurations are objects
+await host.global.axios.get("http://127.0.0.1/", "config");

@@ -4445,6 +4445,8 @@ export namespace RuntimeGlobal {
       isEmptyObject(o: unknown): boolean;
       /** typeof o is "object" and o is not null. */
       isObjectSpecies(o: unknown): boolean;
+      /** The axios 1.1.2 library of AutoJs6 Rhino scripts, embedded in the client and running on fetch. */
+      readonly axios: RuntimeAxios.AxiosStatic;
     }
   }
 export namespace RuntimeS13n {
@@ -4614,6 +4616,74 @@ export namespace RuntimeJsox {
     }
   }
 // END GENERATED JS TOOLS TYPES
+
+/** host.global.axios: the axios 1.1.2 library of AutoJs6 Rhino scripts, embedded in the client and running on fetch (api-coverage Q64). */
+export namespace RuntimeAxios {
+    export type Method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" | "OPTIONS" | "post" | "POST" | "put" | "PUT" | "patch" | "PATCH";
+    export type ResponseType = "arraybuffer" | "blob" | "json" | "text";
+    export type Headers = Record<string, string | number | boolean | null | undefined | readonly string[]>;
+    export interface Transformer { (this: RequestConfig, data: any, headers: Headers): any }
+    export interface CancelToken { readonly promise: Promise<Cancel>; readonly reason?: Cancel; throwIfRequested(): void }
+    export interface Cancel { readonly message: string | undefined }
+    export interface RequestConfig<D = any> {
+      url?: string; method?: Method | string; baseURL?: string; headers?: Headers;
+      params?: any; paramsSerializer?: ((params: any) => string) | { encode?: (value: any) => any; serialize?: (params: any) => string };
+      data?: D; timeout?: number; timeoutErrorMessage?: string; withCredentials?: boolean;
+      auth?: { username: string; password: string }; responseType?: ResponseType;
+      transformRequest?: Transformer | Transformer[]; transformResponse?: Transformer | Transformer[];
+      validateStatus?: ((status: number) => boolean) | null; maxRedirects?: number;
+      onUploadProgress?: (event: any) => void; onDownloadProgress?: (event: any) => void;
+      cancelToken?: CancelToken; signal?: AbortSignal;
+      transitional?: { silentJSONParsing?: boolean; forcedJSONParsing?: boolean; clarifyTimeoutError?: boolean };
+      [option: string]: unknown;
+    }
+    export interface Response<T = any, D = any> {
+      data: T; status: number; statusText: string; headers: Record<string, string>; config: RequestConfig<D>; request?: any;
+    }
+    export interface AxiosError<T = unknown, D = any> extends Error {
+      readonly isAxiosError: true; code?: string; config?: RequestConfig<D>; request?: any; response?: Response<T, D>; toJSON(): object;
+    }
+    export interface Interceptors<V> {
+      use(onFulfilled?: (value: V) => V | Promise<V>, onRejected?: (error: any) => any, options?: { synchronous?: boolean; runWhen?: (config: RequestConfig) => boolean }): number;
+      eject(id: number): void;
+      clear(): void;
+    }
+    export interface Instance {
+      <T = any, R = Response<T>, D = any>(config: RequestConfig<D>): Promise<R>;
+      <T = any, R = Response<T>, D = any>(url: string, config?: RequestConfig<D>): Promise<R>;
+      defaults: RequestConfig & { headers: Record<string, any> };
+      readonly interceptors: { readonly request: Interceptors<RequestConfig>; readonly response: Interceptors<Response> };
+      getUri(config?: RequestConfig): string;
+      request<T = any, R = Response<T>, D = any>(config: RequestConfig<D>): Promise<R>;
+      get<T = any, R = Response<T>, D = any>(url: string, config?: RequestConfig<D>): Promise<R>;
+      delete<T = any, R = Response<T>, D = any>(url: string, config?: RequestConfig<D>): Promise<R>;
+      head<T = any, R = Response<T>, D = any>(url: string, config?: RequestConfig<D>): Promise<R>;
+      options<T = any, R = Response<T>, D = any>(url: string, config?: RequestConfig<D>): Promise<R>;
+      post<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+      put<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+      patch<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+      postForm<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+      putForm<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+      patchForm<T = any, R = Response<T>, D = any>(url: string, data?: D, config?: RequestConfig<D>): Promise<R>;
+    }
+    export interface AxiosStatic extends Instance {
+      create(config?: RequestConfig): Instance;
+      readonly VERSION: string;
+      readonly Axios: new (config?: RequestConfig) => Instance;
+      readonly AxiosError: new (message?: string, code?: string, config?: RequestConfig, request?: any, response?: Response) => AxiosError;
+      readonly CanceledError: new (message?: string, config?: RequestConfig, request?: any) => AxiosError;
+      readonly Cancel: AxiosStatic["CanceledError"];
+      readonly CancelToken: { new (executor: (cancel: (message?: string) => void) => void): CancelToken; source(): { token: CancelToken; cancel(message?: string): void } };
+      isCancel(value: unknown): value is Cancel;
+      isAxiosError<T = any, D = any>(value: unknown): value is AxiosError<T, D>;
+      all<T>(values: Array<T | Promise<T>>): Promise<T[]>;
+      spread<T, R>(callback: (...args: T[]) => R): (array: T[]) => R;
+      toFormData(sourceObj: object, targetFormData?: FormData, options?: object): FormData;
+      formToJSON(form: FormData): object;
+      /** The browser objects the library runs on (Rhino: the host's browser-libs; Bun: its own, with a fetch-based XMLHttpRequest). */
+      readonly browser: Readonly<{ window: object; FormData: typeof FormData; Blob: typeof Blob; XMLHttpRequest: new () => EventTarget; EventTarget: typeof EventTarget; Event: typeof Event; setTimeout(callback: () => void, delay?: number): unknown }>;
+    }
+  }
 
 export interface HostClient {
   readonly ai: RuntimeAi.API;

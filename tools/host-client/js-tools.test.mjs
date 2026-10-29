@@ -11,8 +11,8 @@ const {cases,encode,thrown}=createRequire(import.meta.url)('./js-tools/cases.js'
 const expected=JSON.parse(readFileSync(new URL('./js-tools/rhino-expected.json',import.meta.url),'utf8')).cases;
 // Expressions reaching the Java facade, and values that depend on the device (display metrics, SDK level).
 const JAVA=/\bjava\.|util\.java\.|s13n\.(point|throwable)\(|\.vibrate\(/,DEVICE=/^util\.((dp|sp|px)To\w+|version)\./;
-// The library getters of the Rhino global object are not in the Bun client yet (api-coverage Q61 / Q64).
-const LIBRARIES=/^global\.(axios|dayjs|pangu|cheerio|i18n)\./;
+// The library getters of the Rhino global object not in the Bun client yet (api-coverage Q61; axios is embedded, Q64).
+const LIBRARIES=/^global\.(dayjs|pangu|cheerio|i18n)\./;
 async function fixture(grants=[],answer=()=>null){
   const calls=[];
   const host=await createHostClient({socket:'fixture',fetch:async(url,init)=>{

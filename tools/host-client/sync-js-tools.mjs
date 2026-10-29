@@ -30,8 +30,9 @@ for(const [file,module,name,exported] of [['util','autojs6:util','util','Runtime
   const declared=text.indexOf(`declare module "${module}" {\n  namespace ${name} {`),from=text.indexOf(`  namespace ${name} {`,declared),to=text.indexOf('\n  }\n',from);
   assert(declared>=0&&to>from,file);
   let body=text.slice(from,to+4).replace(`  namespace ${name}`,`export namespace ${exported}`).replaceAll('import("java").','RuntimeJava.');
-  // Bun has no axios module; the Node main thread's global.axios is not part of the Bun client.
-  if(name==='global'){const axios=/\n *\/\*\*[^\n]*\*\/\n *readonly axios: typeof import\("axios"\);/;assert.match(body,axios);body=body.replace(axios,'');}
+  // Bun has no axios module: its global.axios is the embedded host axios library (RuntimeAxios, api-coverage Q64 (b)).
+  if(name==='global'){const axios=/\n( *)\/\*\*[^\n]*\*\/\n *readonly axios: typeof import\("axios"\);/;assert.match(body,axios);
+    body=body.replace(axios,(_,space)=>`\n${space}/** The axios 1.1.2 library of AutoJs6 Rhino scripts, embedded in the client and running on fetch. */\n${space}readonly axios: RuntimeAxios.AxiosStatic;`);}
   assert(!body.includes('import('),file+' declarations reference another Node module');
   types+=body+'\n';
 }
