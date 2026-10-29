@@ -29,7 +29,10 @@ test('app identity, aliases, URL/email/uninstall intents and nonprivileged opera
  assert.equal(starts[1].args[0].action,'android.intent.action.SENDTO');assert.match(starts[2].args[0].data,/^package:owned.fixture$/);
  assert.equal(starts[3].method,'startService');assert.equal(starts[4].args[0].action,'owned.fixture.EVENT');
  assert.deepEqual(await app.getInstalledApps(),[]);
- for(const name of ['launchDual','uninstallDual','kill','startDualActivity'])await assert.rejects(app[name]('owned.fixture'),{code:'NOT_SUPPORTED'});
+ // D-4 (api-coverage P4.1a): the privileged and dual-user helpers run through the shell grants, off in this fixture.
+ const before=requests.length;
+ for(const name of ['launchDual','uninstallDual','kill','startDualActivity'])await assert.rejects(app[name]('owned.fixture'),{code:'NOT_GRANTED',missingCapabilities:['shell.control']});
+ assert.equal(requests.length,before);
  await assert.rejects(app.getUriForFile('/private/file'),{code:'NOT_GRANTED'});
 });
 test('all 16 local selector builders preserve descriptor validation, regex flags and frozen snapshots',async()=>{
@@ -58,7 +61,7 @@ test('clipboard values, pre-abort and timeout validation do not dispatch uninten
  await assert.rejects(host.clipboard.setText('denied',{signal:controller.signal}),/owned abort/);await assert.rejects(host.clipboard.setText('denied',{timeoutMs:Infinity}));assert.equal(requests.length,count);
 });
 test('automation wire catalog excludes internal Node diagnostics and generic module dispatch',()=>{
- assert.equal(HOST_API_METHODS['app.control'].length,13);assert.equal(HOST_API_METHODS['accessibility.control'].length,18);assert.equal(HOST_API_METHODS['clipboard.control'].length,3);
+ assert.equal(HOST_API_METHODS['app.control'].length,19);assert.equal(HOST_API_METHODS['accessibility.control'].length,18);assert.equal(HOST_API_METHODS['clipboard.control'].length,3);
  for(const name of ['flowProbe','flowForeground'])assert(HOST_API_METHODS['accessibility.control'].includes(name));
  for(const name of ['dump','readScreenText','inspectNode','currentWindow','readDoc','pluginCapabilities'])assert(!Object.values(HOST_API_METHODS).flat().includes(name));
 });

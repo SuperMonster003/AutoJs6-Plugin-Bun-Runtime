@@ -7,19 +7,30 @@ const root=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const nodeRoot=process.argv.includes('--node-root')?resolve(process.argv[process.argv.indexOf('--node-root')+1]):resolve(root,'../AutoJs6-Plugin-NodeJs-Runtime');
 const source=readFileSync(resolve(nodeRoot,'app/src/main/cpp/node_bridge_sources.cpp'),'utf8').replaceAll('\r\n','\n');
 function section(first,last){const start=source.indexOf('  function '+first+'('),end=source.indexOf('  function '+last+'(',start);assert(start>=0&&end>start);return source.slice(start,end);}
-const body=[section('__autojs6_clipboard_options','__autojs6_device_options'),section('__autojs6_app_timeout_from_options','__autojs6_engine_timeout_from_options'),section('__autojs6_accessibility_timeout_from_options','__autojs6_number_property')].join('\n').replaceAll('Node.js engine','Bun engine')
+// The app facade is Node's shared factory (api-coverage P3.1a); clipboard and accessibility stay top-level sections.
+const appStart=source.indexOf('  function __autojs6_create_app('),appEnd=source.indexOf('\n  function __autojs6_limited_app() {\n    return __autojs6_limited_app_cache',appStart);
+assert(appStart>=0&&appEnd>appStart,'Node shared app factory');
+// A grant the client finds missing (createHostClient's declaredCall) is NOT_GRANTED with missingCapabilities; it rejects
+// as Node's undeclared capability does (api-coverage Q90), while host denials keep Rhino's failed command results.
+const kept='error.code === "ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED" || error.name === "AbortError"';
+const appFactory=source.slice(appStart,appEnd+1);assert.equal(appFactory.split(kept).length,2,'Node app kept-error predicate');
+const body=[section('__autojs6_clipboard_options','__autojs6_device_options'),
+  appFactory.replace(kept,'error.code === "ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED" || error.code === "NOT_GRANTED" && Array.isArray(error.missingCapabilities) || error.name === "AbortError"'),
+  section('__autojs6_accessibility_timeout_from_options','__autojs6_number_property')].join('\n').replaceAll('Node.js engine','Bun engine')
   .replace('__autojs6_limited_android().getUriForFile(path,options)', '__autojs6_call_autojs("android","getUriForFile",[String(path)],options)');
 const generated=`// BEGIN GENERATED AUTOMATION
-// Reproduced from Node's public adapters by tools/host-client/sync-automation.mjs.
-function createAutomation(dispatch, hostInfo) {
-  let __autojs6_limited_app_cache, __autojs6_limited_clipboard_cache, __autojs6_limited_accessibility_cache;
+// Reproduced from Node's public adapters by tools/host-client/sync-automation.mjs. The app factory takes the shell and
+// android modules as getters (the client builds them later) and a function mapping Node capability names to missing grants.
+function createAutomation(dispatch, hostInfo, shell, missing, android) {
+  let __autojs6_limited_clipboard_cache, __autojs6_limited_accessibility_cache;
   const __autojs6_call_autojs = dispatch;
   const __autojs6_bridge_signal_from_options = options => options && options.signal;
   const __autojs6_host_app_info = () => hostInfo || {};
   const __autojs6_bridge_error = (message, code, module, method) => Object.assign(new HostCallError(
-    message.includes('not available') ? 'NOT_SUPPORTED' : 'INVALID_REQUEST', message, module + '.control'), { method });
+    code === 'ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED' ? 'NOT_GRANTED' : message.includes('not available') ? 'NOT_SUPPORTED' : 'INVALID_REQUEST',
+    message, module + '.control'), { method });
 ${body}
-  const app = { ...__autojs6_limited_app() };
+  const app = { ...__autojs6_create_app(__autojs6_call_autojs, __autojs6_host_app_info, __autojs6_bridge_error, __autojs6_bridge_signal_from_options, android, shell, missing) };
   for (const key of ['packageName','versionName','versionCode']) Object.defineProperty(app,key,{enumerable:true,get(){
     if (!hostInfo) throw new HostCallError('NOT_GRANTED','Host application identity requires app.control','app.control');
     return hostInfo[key];
@@ -35,7 +46,8 @@ if(process.argv.includes('--check'))assert.equal(readFileSync(path,'utf8').repla
 else writeFileSync(path,text);
 const ids=new Set(body.match(/__autojs6_[\w]+/g));
 const defined=new Set([...body.matchAll(/(?:function|const|let|var)\s+(__autojs6_\w+)/g)].map(m=>m[1]));
-for(const name of ['__autojs6_call_autojs','__autojs6_bridge_signal_from_options','__autojs6_host_app_info','__autojs6_bridge_error','__autojs6_limited_app_cache','__autojs6_limited_clipboard_cache','__autojs6_limited_accessibility_cache'])defined.add(name);
+for(const name of ['__autojs6_call_autojs','__autojs6_bridge_signal_from_options','__autojs6_host_app_info','__autojs6_bridge_error','__autojs6_limited_clipboard_cache','__autojs6_limited_accessibility_cache',
+  '__autojs6_limited_android','__autojs6_app_shell','__autojs6_app_missing_capabilities'])defined.add(name);
 assert.deepEqual([...ids].filter(id=>!defined.has(id)),[],'Unbound Node adapter dependencies');
 console.log('Node/Bun app, accessibility and clipboard adapters match');
 

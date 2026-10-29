@@ -436,9 +436,14 @@ export namespace RuntimeApp {
       categories?: string | readonly string[];
       flags?: number | readonly number[];
       extras?: IntentExtras;
-      readonly root?: never;
-      readonly shizuku?: never;
-      readonly dual?: never;
+      /**
+       * Rhino intent options of startActivity, startService and sendBroadcast: run "am" through Shizuku or root when
+       * requested, declared (shell.shizuku / shell.root) and usable, else the ordinary call; dual starts the activity
+       * for the other users as startDualActivity. startDualActivity reads root / shizuku as the route order.
+       */
+      root?: boolean;
+      shizuku?: boolean;
+      dual?: boolean;
     }
 
     export interface IntentDescriptor {
@@ -481,6 +486,34 @@ export namespace RuntimeApp {
       readonly lastUpdateTime: number;
     }
 
+    /** PackageManager flag names: `{get: ["activities"]}` is GET_ACTIVITIES; GET_META_DATA is always set. */
+    export interface PackageQueryOptions {
+      readonly get?: readonly string[];
+      readonly match?: readonly string[];
+    }
+
+    /** JSON snapshot of android.content.pm.PackageInfo; component lists are null unless requested with get. */
+    export interface PackageSnapshot extends PackageInfo {
+      readonly uid: number;
+      readonly targetSdkVersion: number;
+      readonly minSdkVersion: number;
+      readonly sourceDir: string | null;
+      readonly requestedPermissions: readonly string[] | null;
+      readonly activities: readonly string[] | null;
+      readonly services: readonly string[] | null;
+      readonly receivers: readonly string[] | null;
+      readonly providers: readonly string[] | null;
+    }
+
+    /** A preset application of AutoJs6 (app.getAppByAlias), e.g. alias "QQ". */
+    export interface PresetApp {
+      readonly alias: string;
+      readonly packageName: string;
+      readonly appName: string;
+      readonly appNameZh: string;
+      readonly appNameEn: string;
+    }
+
     export interface SendEmailRequest {
       readonly to?: EmailAddressList;
       readonly email?: EmailAddressList;
@@ -501,41 +534,46 @@ export namespace RuntimeApp {
       getUriForFile(path: string, options?: AutomationCallOptions): Promise<RuntimeAndroid.UriSnapshot>;
       intentToShell(request: IntentRequest | IntentDescriptor): string;
       openUrl(url: string, options?: AutomationCallOptions): Promise<void>;
-      openDualUrl(url: string, options?: AutomationCallOptions): Promise<never>;
+      /**
+       * Dual-user helpers (D-4): "am" / "cmd package" for each other user through Shizuku, root or the plain shell,
+       * whichever is declared and usable first; they also need app.query and shell. Without other users they do
+       * nothing (launch / kill helpers resolve true, isDualInstalled false).
+       */
+      openDualUrl(url: string, options?: AutomationCallOptions): Promise<void>;
       sendEmail(request: SendEmailRequest | EmailAddressList, options?: AutomationCallOptions & Partial<SendEmailRequest>): Promise<void>;
       uninstall(packageName: string, options?: AutomationCallOptions): Promise<void>;
-      uninstallDual(packageName: string, options?: AutomationCallOptions): Promise<never>;
+      uninstallDual(packageName: string, options?: AutomationCallOptions): Promise<void>;
       getPackageName(appName: string, options?: AutomationCallOptions): Promise<string | null>;
       getAppName(packageName: string, options?: AutomationCallOptions): Promise<string | null>;
       isInstalled(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
-      isDualInstalled(packageName: string, options?: AutomationCallOptions): Promise<never>;
+      isDualInstalled(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
       viewFile(path: string, options?: AutomationCallOptions): Promise<boolean>;
       editFile(path: string, options?: AutomationCallOptions): Promise<boolean>;
       launch(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
-      launchDual(packageName: string, options?: AutomationCallOptions): Promise<never>;
+      launchDual(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
       launchPackage(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
-      launchDualPackage(packageName: string, options?: AutomationCallOptions): Promise<never>;
+      launchDualPackage(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
       launchApp(appName: string, options?: AutomationCallOptions): Promise<boolean>;
-      launchDualApp(appName: string, options?: AutomationCallOptions): Promise<never>;
+      launchDualApp(appName: string, options?: AutomationCallOptions): Promise<boolean>;
       openAppSetting(options?: AutomationCallOptions): Promise<void>;
       openAppSetting(packageName?: string, options?: AutomationCallOptions): Promise<void>;
       openAppSettings(options?: AutomationCallOptions): Promise<void>;
       openAppSettings(packageName?: string, options?: AutomationCallOptions): Promise<void>;
-      openDualAppSetting(options?: AutomationCallOptions): Promise<never>;
-      openDualAppSetting(packageName?: string, options?: AutomationCallOptions): Promise<never>;
-      openDualAppSettings(options?: AutomationCallOptions): Promise<never>;
-      openDualAppSettings(packageName?: string, options?: AutomationCallOptions): Promise<never>;
+      openDualAppSetting(options?: AutomationCallOptions): Promise<boolean>;
+      openDualAppSetting(packageName?: string, options?: AutomationCallOptions): Promise<boolean>;
+      openDualAppSettings(options?: AutomationCallOptions): Promise<boolean>;
+      openDualAppSettings(packageName?: string, options?: AutomationCallOptions): Promise<boolean>;
       launchSettings(options?: AutomationCallOptions): Promise<void>;
       launchSettings(packageName?: string, options?: AutomationCallOptions): Promise<void>;
-      launchDualSettings(options?: AutomationCallOptions): Promise<never>;
-      launchDualSettings(packageName?: string, options?: AutomationCallOptions): Promise<never>;
+      launchDualSettings(options?: AutomationCallOptions): Promise<boolean>;
+      launchDualSettings(packageName?: string, options?: AutomationCallOptions): Promise<boolean>;
       launchAppDetailsSettings(options?: AutomationCallOptions): Promise<void>;
       launchAppDetailsSettings(packageName?: string, options?: AutomationCallOptions): Promise<void>;
-      launchDualAppDetailsSettings(options?: AutomationCallOptions): Promise<never>;
-      launchDualAppDetailsSettings(packageName?: string, options?: AutomationCallOptions): Promise<never>;
+      launchDualAppDetailsSettings(options?: AutomationCallOptions): Promise<boolean>;
+      launchDualAppDetailsSettings(packageName?: string, options?: AutomationCallOptions): Promise<boolean>;
       startActivity(request: IntentRequest, options?: AutomationCallOptions): Promise<void>;
       startActivity(url: string, options?: AutomationCallOptions): Promise<void>;
-      startDualActivity(request: IntentRequest | string, options?: AutomationCallOptions): Promise<never>;
+      startDualActivity(request: IntentRequest | string, options?: AutomationCallOptions): Promise<void>;
       /** Sends through Android as the host app; a string is an action name. */
       sendBroadcast(request: IntentRequest | string, options?: AutomationCallOptions): Promise<void>;
       /** Starts a regular Android service, subject to Android background-start restrictions. */
@@ -543,8 +581,15 @@ export namespace RuntimeApp {
       /** Returns packages visible to Android's package manager. */
       getInstalledApps(filter?: { readonly includeSystem?: boolean }, options?: AutomationCallOptions): Promise<readonly PackageInfo[]>;
       getPackageInfo(packageName: string, options?: AutomationCallOptions): Promise<PackageInfo | null>;
-      kill(packageName: string, options?: AutomationCallOptions): Promise<never>;
-      killDual(packageName: string, options?: AutomationCallOptions): Promise<never>;
+      getInstalledPackages(query?: PackageQueryOptions, options?: AutomationCallOptions): Promise<readonly PackageSnapshot[]>;
+      /** Reads an APK file in the script's file scope; null when it is not a readable package. */
+      getApkInfo(path: string, query?: PackageQueryOptions, options?: AutomationCallOptions): Promise<PackageSnapshot | null>;
+      getAppByAlias(alias: string, options?: AutomationCallOptions): Promise<PresetApp | null>;
+      /** Delivers to the host app's local receivers before resolving; a string is an action name. */
+      sendLocalBroadcastSync(request: IntentRequest | string, options?: AutomationCallOptions): Promise<void>;
+      /** "am force-stop" through Shizuku, root or the plain shell; true when the command succeeds. */
+      kill(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
+      killDual(packageName: string, options?: AutomationCallOptions): Promise<boolean>;
     }
   }
 export namespace RuntimeAccessibility {
@@ -896,11 +941,31 @@ export namespace RuntimeShell {
     interface ShellAccessState {
       readonly shell: boolean; readonly rootAvailable: boolean;
       readonly shizukuRunning: boolean; readonly shizukuGranted: boolean; readonly shizuku: boolean;
+      /** Rhino shizuku.isInstalled / hasService / isOperational; absent before AutoJs6 6.8.0. */
+      readonly shizukuInstalled?: boolean; readonly shizukuHasService?: boolean; readonly shizukuOperational?: boolean;
       readonly uid: number; readonly missingCapabilities: readonly string[];
     }
     interface ShellResult {
       readonly code: number; readonly stdout: string; readonly stderr: string;
       readonly timedOut: boolean; readonly truncated: boolean;
+    }
+    /** Rhino command: an array runs its lines in one RuntimeShell. */
+    type ShellCommand = string | readonly string[];
+    /**
+     * Rhino command arguments: `{l: true, maxDepth: 2}` or `"l|max-depth=2"` become `-l --max-depth 2`;
+     * the keys root, adb and exit set the route and append "exit" as in Rhino.
+     */
+    type ShellCommandArguments = string | Readonly<Record<string, string | number | boolean | null | undefined>>;
+    /** Rhino AbstractShell.Result: each line ends with "\n"; output on stderr turns exit code 0 into 1. */
+    interface ShellCommandResult {
+      readonly code: number; readonly result: string; readonly error: string;
+      readonly timedOut: boolean; readonly truncated: boolean;
+    }
+    /** Defaults of execCommand, spawn and the global key / input functions; null clears one. */
+    interface ShellDefaultOptions { root?: boolean | null; adb?: boolean | null; }
+    interface ShizukuState {
+      readonly isInstalled: boolean; readonly hasService: boolean; readonly isRunning: boolean;
+      readonly hasPermission: boolean; readonly isOperational: boolean;
     }
     interface OutputChunk extends Uint8Array { toString(encoding?: string, start?: number, end?: number): string; }
     /** Real node:stream objects; this portable declaration covers their common streaming operations. */
@@ -950,6 +1015,17 @@ export namespace RuntimeShell {
       once(event: 'error', listener: (error: Error) => void): this;
       off(event: string, listener: (...args: any[]) => void): this;
       removeAllListeners(event?: string): this;
+      addListener(event: string, listener: (...args: any[]) => void): this;
+      removeListener(event: string, listener: (...args: any[]) => void): this;
+      prependListener(event: string, listener: (...args: any[]) => void): this;
+      prependOnceListener(event: string, listener: (...args: any[]) => void): this;
+      listenerCount(event: string): number;
+      isAlive(): boolean;
+      /** Rhino names: stdout, stderr and stdin; reading a stream directly excludes readLine / readErrorLine on it. */
+      getInputStream(): OutputStream;
+      getErrorStream(): OutputStream;
+      getOutputStream(): InputStream;
+      toString(): string;
     }
     interface ShellModule {
       exec(command: string, options?: ShellExecOptions): Promise<ShellResult>;
@@ -961,17 +1037,73 @@ export namespace RuntimeShell {
       getAccess(options?: AutomationCallOptions): Promise<ShellAccessState>;
       requestShizukuPermission(options?: AutomationCallOptions): Promise<boolean>;
       setDefaultTimeout(ms: number): number;
-      spawn(command: string, options?: ShellSpawnOptions): ShellProcess;
+      /** A boolean is Rhino's root flag; absent root / adb follow setDefaultOptions. */
+      spawn(command: ShellCommand, options?: ShellSpawnOptions | boolean): ShellProcess;
       open(options?: ShellOpenOptions): ShellProcess;
+      /**
+       * Rhino shell(command, arguments?, withRoot?): root through su, adb through Shizuku ("su -c" when both);
+       * a leading "adb shell" is dropped. A command that cannot start resolves with its error.
+       */
+      execCommand(command: ShellCommand, argumentsOrRoot?: ShellCommandArguments | boolean | number, withRoot?: boolean | number): Promise<ShellCommandResult>;
+      /** The text execCommand runs; root adds a leading "su" line. */
+      getCommand(command: ShellCommand, argumentsOrRoot?: ShellCommandArguments | boolean | number, withRoot?: boolean | number): string;
+      /** The "am" arguments of a JSON intent, as app.intentToShell. */
+      fromIntent(request: RuntimeApp.IntentRequest | RuntimeApp.IntentDescriptor): string;
+      /** "am force-stop" through root for an alias, package name or application label; false without root. */
+      kill(target: string): Promise<boolean>;
+      setDefaultOptions(options?: ShellDefaultOptions | null): void;
+      isRootAvailable(): Promise<boolean>;
+      /** The resumed activity read with root from "dumpsys activity activities"; "" without root. */
+      currentPackage(): Promise<string>;
+      currentActivity(): Promise<string>;
+      currentComponent(): Promise<string>;
+      /** Rhino global key functions: "input keyevent" through a usable Shizuku, else root. */
+      Menu(): Promise<void>;
+      Home(): Promise<void>;
+      Back(): Promise<void>;
+      Up(): Promise<void>;
+      Down(): Promise<void>;
+      Left(): Promise<void>;
+      Right(): Promise<void>;
+      OK(): Promise<void>;
+      VolumeUp(): Promise<void>;
+      VolumeDown(): Promise<void>;
+      Power(): Promise<void>;
+      Camera(): Promise<void>;
+      /** A key code, a KeyEvent name with or without "KEYCODE_", or "0x" hexadecimal; unknown names reject. */
+      KeyCode(keyCode: number | string): Promise<void>;
+      /** Rhino global input functions: root, or Shizuku after setDefaultOptions({adb: true}); results are not reported. */
+      Text(text: string): Promise<void>;
+      Input(text: string): Promise<void>;
+      /** Coordinates scale from SetScreenMetrics to the device size. */
+      Tap(x: number, y: number): Promise<void>;
+      Swipe(x1: number, y1: number, x2: number, y2: number, duration?: number): Promise<void>;
+      Screencap(path: string): Promise<void>;
+      SetScreenMetrics(width: number, height: number): void;
     }
     interface ShizukuModule {
       (command: string, options?: ShellExecOptions): Promise<ShellResult>;
       exec(command: string, options?: ShellExecOptions): Promise<ShellResult>;
-      spawn(command: string, options?: ShellSpawnOptions): ShellProcess;
+      spawn(command: ShellCommand, options?: ShellSpawnOptions | boolean): ShellProcess;
       open(options?: ShellOpenOptions): ShellProcess;
       checkAccess(options?: ShellAccessOptions): ShellAccessReport;
       getAccess(options?: AutomationCallOptions): Promise<ShellAccessState>;
       requestPermission(options?: AutomationCallOptions): Promise<boolean>;
+      /** Rhino shizuku(command, arguments?): always through Shizuku; root is ignored. */
+      execCommand(command: ShellCommand, argumentsOrRoot?: ShellCommandArguments | boolean | number, withRoot?: boolean | number): Promise<ShellCommandResult>;
+      getCommand(command: ShellCommand, argumentsOrRoot?: ShellCommandArguments | boolean | number, withRoot?: boolean | number): string;
+      kill(target: string): Promise<boolean>;
+      /** Read through Shizuku from "dumpsys activity activities"; the activity is a full class name. */
+      currentPackage(): Promise<string>;
+      currentActivity(): Promise<string>;
+      currentComponent(): Promise<string>;
+      isInstalled(): Promise<boolean>;
+      hasService(): Promise<boolean>;
+      isRunning(): Promise<boolean>;
+      hasPermission(): Promise<boolean>;
+      isOperational(): Promise<boolean>;
+      /** Read on every access. */
+      readonly state: Promise<ShizukuState>;
     }
   }
 // END GENERATED SHELL TYPES

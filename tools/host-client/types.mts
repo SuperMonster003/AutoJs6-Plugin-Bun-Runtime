@@ -1,4 +1,4 @@
-import { createHostClient, type HostClient, type ScreenInfo, type RuntimeAxios } from "../../app/src/main/assets/autojs6/host-client.mjs";
+import { createHostClient, type HostClient, type ScreenInfo, type RuntimeAxios, type RuntimeShell } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
 const host: HostClient = await createHostClient();
 const traditional: string = await host.opencc("汉语", "s2t");
@@ -83,6 +83,17 @@ await axiosInstance.post("/items", { name: "x" }, { headers: { "X-Custom": "1" }
 void [axiosOk, host.global.axios.VERSION.length];
 // @ts-expect-error axios configurations are objects
 await host.global.axios.get("http://127.0.0.1/", "config");
+// Rhino app / shell / shizuku members (api-coverage P4.1a).
+const killed: boolean = await host.app.kill("com.example") && await host.app.launchDual("com.example") && await host.app.isDualInstalled("com.example");
+const apk = await host.app.getApkInfo("/sdcard/example.apk");
+const command: RuntimeShell.ShellCommandResult = await host.shell.execCommand("id", true);
+const foreground: string = await host.shell.currentPackage() + await host.shizuku.currentComponent() + host.shell.getCommand("ls", { l: true });
+await host.shell.Home(); await host.shell.Tap(1, 2); host.shell.SetScreenMetrics(1080, 2400);
+const shizukuState = await host.shizuku.state;
+const spawned = host.shell.spawn("cat"); const alive: boolean = spawned.isAlive(); const label: string = spawned.toString();
+void [killed, apk, command.code, foreground, shizukuState.isOperational, alive, label, spawned.getInputStream(), spawned.listenerCount("exit")];
+// @ts-expect-error KeyCode takes a number or a string
+await host.shell.KeyCode(true);
 
 // Files and data family of Rhino (api-coverage P4.2b): colors / Color, zip, mime, the timing recorder and the global libraries.
 const hex: string = host.colors.toHex(host.colors.rgb(255, 128, 0));

@@ -191,7 +191,7 @@ open class BunRuntimeService : Service() {
     @Suppress("DEPRECATION") // DisplayMetrics.scaledDensity: util.spToPx / pxToSp of the host client are linear in it.
     private fun deviceInfo(): String = resources.displayMetrics.let {
         BunHostClientModule.deviceInfo(Build.VERSION.SDK_INT, it.density, it.densityDpi, it.scaledDensity,
-            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull())
+            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), it.widthPixels, it.heightPixels)
     }
 
     private fun execute(

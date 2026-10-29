@@ -28,6 +28,18 @@ class BunHostClientModuleTest {
     }
 
     @Test
+    fun deviceInfoCarriesThePositiveDisplaySizeForSetScreenMetrics() {
+        assertEquals(
+            "{\"sdkInt\":35,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0,\"width\":1080,\"height\":2400,\"externalStoragePath\":\"/storage/emulated/0\"}",
+            BunHostClientModule.deviceInfo(35, 2f, 320, 2f, "/storage/emulated/0", 1080, 2400),
+        )
+        assertEquals(
+            "{\"sdkInt\":35,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0}",
+            BunHostClientModule.deviceInfo(35, 2f, 320, 2f, null, 1080, 0),
+        )
+    }
+
+    @Test
     fun invalidDensitiesFallBackToOne() {
         assertEquals(
             "{\"sdkInt\":33,\"density\":1.0,\"densityDpi\":0,\"scaledDensity\":1.0}",
