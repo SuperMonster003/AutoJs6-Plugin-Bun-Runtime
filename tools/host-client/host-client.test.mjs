@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { createHostClient, HostCallError, HOST_API_METHODS, OPENCC_CONVERSION_TYPES, SDK_VERSION } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
-const capabilities = ["ui.toast", "device.info", ...Object.keys(HOST_API_METHODS)];
+// engines.control makes the client ask the host for its engine record first (system.test.mjs covers it).
+const capabilities = ["ui.toast", "device.info", ...Object.keys(HOST_API_METHODS).filter(id => id !== "engines.control")];
 const limits = { maxRequestBytes: 65536, maxResultBytes: 262144, maxCallsPerExecution: 1024, maxConcurrentCalls: 4, callTimeoutMillis: 10000 };
 function transport(grants = capabilities, invoke = () => ({ value: null })) {
   const requests = [];

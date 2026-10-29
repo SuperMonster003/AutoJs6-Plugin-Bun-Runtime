@@ -39,7 +39,7 @@ jobs:
           node tools/bun-runtime/supervisor/verify-supervisor.mjs
           node --test tools/bun-runtime/supervisor/supervisor-common.test.mjs
           node --test tools/bun-runtime/verify-apk-runtime.test.mjs
-          node --test tools/host-client/host-client.test.mjs tools/host-client/automation.test.mjs tools/host-client/files-storage.test.mjs tools/host-client/database.test.mjs tools/host-client/sensors.test.mjs tools/host-client/shell.test.mjs tools/host-client/events.test.mjs tools/host-client/device-dialogs.test.mjs tools/host-client/android-tasks.test.mjs tools/host-client/java-interop.test.mjs tools/host-client/java-callbacks.test.mjs tools/host-client/tts.test.mjs tools/host-client/speech.test.mjs tools/host-client/mediainfo.test.mjs
+          node --test tools/host-client/host-client.test.mjs tools/host-client/automation.test.mjs tools/host-client/files-storage.test.mjs tools/host-client/database.test.mjs tools/host-client/sensors.test.mjs tools/host-client/shell.test.mjs tools/host-client/events.test.mjs tools/host-client/device-dialogs.test.mjs tools/host-client/android-tasks.test.mjs tools/host-client/java-interop.test.mjs tools/host-client/java-callbacks.test.mjs tools/host-client/tts.test.mjs tools/host-client/speech.test.mjs tools/host-client/mediainfo.test.mjs tools/host-client/system.test.mjs
           node --test tools/diagnostics/runtime-message-common.test.mjs
           node --test tools/host-client/ai-agent.test.mjs
           node --test tools/host-client/axios.test.mjs tools/host-client/js-tools.test.mjs tools/host-client/files-data.test.mjs

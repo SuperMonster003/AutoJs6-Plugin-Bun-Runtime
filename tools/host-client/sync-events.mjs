@@ -18,7 +18,8 @@ let types='// BEGIN GENERATED EVENT TYPES\n';
 for(const [file,name,exported] of [['host_events','hostEvents','RuntimeEvents'],['notifications','notifications','RuntimeNotifications']]){
   const text=readFileSync(resolve(nodeRoot,`docs/nodejs/types/autojs6-node/${file}.d.ts`),'utf8').replaceAll('\r\n','\n');
   const first=text.indexOf(`  namespace ${name} {`),last=text.indexOf('\n  }',first);assert(first>=0&&last>first);
-  types+=text.slice(first,last+4).replace(`  namespace ${name}`,`export namespace ${exported}`).replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions')+'\n';
+  types+=text.slice(first,last+4).replace(`  namespace ${name}`,`export namespace ${exported}`).replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions')
+    .replaceAll('AutoJs6Node.JsonValue','JsonValue').replaceAll('import("java").','RuntimeJava.')+'\n';
 }
 types+='// END GENERATED EVENT TYPES';
 update('app/src/main/assets/autojs6/host-client.d.mts','// BEGIN GENERATED EVENT TYPES','// END GENERATED EVENT TYPES',types,'export interface HostClient {');
