@@ -521,6 +521,23 @@ Bun Runtime 0.4.0 和配套宿主 build 5579 提供 `host.files`, `host.storage`
 | copy / move | source: string, destination: string | boolean |
 | ensureDir | path: string | boolean |
 
+Rhino `files` 对象的原型成员 (api-coverage P4.2b) 同样经 `files.control` 由宿主执行, 结果与 Rhino 相同, 只是返回 Promise:
+
+| 方法 | 参数 | Promise 的结果 |
+| --- | --- | --- |
+| cwd | - | 宿主的脚本工作目录 (相对路径的基准) |
+| create | path?: string 或 null | boolean; 以斜杠结尾时创建目录, 否则创建空文件 (已存在也为 true), 不创建父目录 |
+| createIfNotExists / createWithDirs | path?: string 或 null | boolean; 先创建父目录, 文件已存在时为 false |
+| readBytes | path: string | Buffer (Rhino 为 Java byte[]) |
+| writeBytes / appendBytes | path: string, bytes | void; bytes 可为 Buffer, TypedArray, ArrayBuffer 或数值数组 (取低 8 位); appendBytes 在文件不存在时创建它 |
+| rename / renameWithoutExtension | path: string, newName: string | boolean; renameWithoutExtension 保留原扩展名 |
+| removeDir | path?: string 或 null | boolean, 递归删除 |
+| isEmptyDir | path?: string 或 null | boolean |
+| readAssets | name: string, encoding?: string | 宿主应用 assets 中该文件的文本 |
+| getSimplifiedPath | path: string | 外部存储前缀简化后的路径 (同 Rhino) |
+
+`files.sdcardPath` 是同步属性: 执行开始时插件写入 device-info.json 的外部存储路径 (Android 用户的共享存储, 与宿主相同), 不需要授权. readBytes 与 read 共用单次读取上限, writeBytes / appendBytes 与 write 共用请求上限.
+
 默认编码为 utf8, 支持 utf16le, latin1, ascii, hex, base64, base64url 及运行时 Buffer 接受的编码别名. text 为 null/undefined 时写入空字符串, 其他值按 String 转换. listDir 的 filter 在 Bun 中同步执行, 仅返回 true 时保留文件名. 未保证目录列表顺序.
 
 相对路径按宿主的脚本工作目录解析, 缺省为执行应用的 filesDir; 绝对路径和本地 file: URL 仍由 Android 判定访问权限. 这与 Bun 自身 `process.cwd()` 指向的临时工作区不同. 不返回项目归档写回承诺; `Bun.file` 和 `node:fs` 仍在 Bun 插件进程中执行. 保存持久文件时可使用 host.files 或已经授权且可访问的持久路径.
@@ -560,6 +577,24 @@ options 支持 timeoutMs (1..120000 毫秒) 和 AbortSignal. 默认单次存储�
 let store = host.storages.create('settings');
 await store.putSync('enabled', true);
 console.log(await host.storage.open('settings').get('enabled', false));
+```
+
+## host.mediainfo
+
+`host.mediainfo` 是 Node.js `mediainfo` 模块 (经 MediaInfo 插件读取媒体文件元数据), 需要默认关闭的独立授权 `mediainfo.control` (插件中心 "Bun 媒体元数据"; 打包项目在 `bun.hostCapabilities` 中声明), 并且设备上安装并启用了 MediaInfo 插件. 路径由宿主打开, 相对路径按宿主的脚本工作目录解析, Android 文件权限照常适用.
+
+- `mediainfo(path, options?)` / `read(path, options?)`: 不带 schema 时返回 Node 的快照 (`autojs6-node-mediainfo-snapshot-v1`, 含 path), 带 schema 时返回插件该版本的快照; options 还有 includeInform / includeSections.
+- `snapshot(path, options?)`: Rhino 的 snapshot, 返回插件快照, 未给 schema 时用插件的默认版本 (`capabilities().defaultSnapshotSchema`).
+- `get(path, streamKind, parameter?, options?)`: 返回字符串; options.streamNumber / infoKind 不是默认值 (0 / TEXT) 时先核对插件的 capabilities, 不支持时拒绝 MEDIAINFO_QUERY_UNSUPPORTED.
+- `countGet(path, streamKind, options?)`: 返回该类流的数量, 插件不支持计数时拒绝 MEDIAINFO_QUERY_UNSUPPORTED.
+- `capabilities(options?)`: 插件支持的快照版本, 计数与查询选项.
+- `SNAPSHOT_SCHEMA_V1` / `SNAPSHOT_SCHEMA_V2`: 插件快照版本名, 同 Rhino.
+
+方法都返回 Promise, 记录被深度冻结; options 支持 timeoutMs 与 AbortSignal (read / get / countGet 缺省 10000 毫秒, capabilities 5000 毫秒). 路径为空或含 NUL, 流类型不是字母名称时在调用宿主前抛出 TypeError.
+
+```js
+let info = await host.mediainfo.snapshot('/sdcard/Music/a.mp3');
+console.log(info.schema, await host.mediainfo.get('/sdcard/Music/a.mp3', 'audio', 'Format'));
 ```
 
 
