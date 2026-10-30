@@ -124,3 +124,12 @@ const session = await host.media.playMusic("/sdcard/a.mp3", 0.5, true);
 const sessionStatus = await session.status();
 const scanned: boolean = await host.media.scanFile("/sdcard/a.mp3");
 const position: number = await host.media.getMusicCurrentPosition();
+// Rhino's console output (AutoJs6 api-coverage P4.3, D-10): synchronous, with Rhino's global names next to the controls.
+host.console.log("%s", 1);
+host.console.err(new Error("e"));
+host.console.trace("t", "warn");
+const asserted: typeof host.console = host.console.assert(() => true, "message");
+host.console.timeEnd(null);
+await host.console.openConsole(true);
+// @ts-expect-error console.log returns nothing to await on
+const logged: Promise<void> = host.console.log("x");

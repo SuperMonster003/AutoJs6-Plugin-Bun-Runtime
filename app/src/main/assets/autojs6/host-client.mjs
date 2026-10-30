@@ -4,6 +4,7 @@ import {EventEmitter} from "node:events";
 /** Explicit Bun client for AutoJs6's per-execution capability bridge. No globals are installed. */
 import {posix as filePath} from 'node:path';
 import {Buffer} from 'node:buffer';
+import {format as __autojs6_bun_format} from 'node:util';
 import * as __autojs6_bun_fs from 'node:fs';
 import {readFileSync} from 'node:fs';
 import {isMainThread} from 'node:worker_threads';
@@ -16757,6 +16758,82 @@ function __autojs6_bun_media(call) {
     }, args => bridge("media_store", "scanFile", args, options, 40000, ["media", "media.library"])).then(result => result?.scanned === true)});
 }
 
+// Rhino's console output (api-coverage P4.3, D-10): log / print / verbose / info / warn / error / assert / time / timeEnd /
+// trace / printAllStackTrace and Rhino's global names err / openConsole / showConsole / clearConsole / launchConsole, next to
+// the console.control routes. With console.control the host prints each line at Rhino's level (log and print at debug); the
+// lines of one event loop turn travel in one call outside the per-run call budget, in call order. Without the grant, or when
+// a call fails, the text goes to Bun's stdout, or stderr for warn / error / assert (Q171 (a)), which the host shows at info /
+// error. The output functions return undefined (assert the console) at once, as Rhino's; time labels belong to this thread.
+const __autojs6_bun_trace_levels = Object.freeze({verbose: "verbose", debug: "log", info: "info", warn: "warn", error: "error",
+  2: "verbose", 3: "log", 4: "info", 5: "warn", 6: "error"});
+function __autojs6_bun_console(control, granted, call) {
+  const pending = [];
+  let flushing = null;
+  const fallback = entries => {
+    for (const [level, text] of entries) (["warn", "error", "assert"].includes(level) ? process.stderr : process.stdout).write(`${text}\n`);
+  };
+  const flush = () => {
+    flushing = null;
+    const entries = pending.splice(0);
+    let size = 0, cut = entries.length;
+    // One request stays below the bridge's 64 KiB body limit; the rest waits for the next call.
+    for (let i = 0; i < entries.length; i++) if ((size += Buffer.byteLength(entries[i][1]) + 16) > 60_000 && i > 0) { cut = i; break; }
+    if (cut < entries.length) { pending.unshift(...entries.splice(cut)); schedule(); }
+    return call("console.control", {method: "println", args: [entries]}).catch(() => fallback(entries));
+  };
+  const schedule = () => { flushing ??= Promise.resolve().then(flush); };
+  const write = (level, text) => {
+    if (!granted) return fallback([[level, text]]);
+    pending.push([level, text]); schedule();
+  };
+  const format = args => __autojs6_bun_format(...args);
+  const stack = () => String(new Error().stack ?? "").split("\n").slice(3).join("\n");
+  const times = new Map();
+  const label = (value, name) => {
+    if (value === undefined || value === null) return "default";
+    if (typeof value !== "string") throw new TypeError(`console.${name} label must be a string`);
+    return value;
+  };
+  const console = {
+    log: (...data) => write("log", format(data)),
+    print: (...data) => write("log", format(data)),
+    verbose: (...data) => write("verbose", format(data)),
+    info: (...data) => write("info", format(data)),
+    warn: (...data) => write("warn", format(data)),
+    error: (...data) => write("error", format(data)),
+    assert(value, message) {
+      if (message !== undefined && message !== null && typeof message !== "string") throw new TypeError("console.assert message must be a string");
+      if (typeof value === "function") value = value();
+      if (!value) {
+        const text = message ?? "java.lang.AssertionError";
+        write("assert", text);
+        throw Object.assign(new Error(text), {name: "AssertionError"});
+      }
+      return api;
+    },
+    time: name => { times.set(label(name, "time"), Math.floor(performance.now())); },
+    timeEnd: name => {
+      const key = label(name, "timeEnd"), start = times.get(key);
+      times.delete(key);
+      write("log", `${key}: ${start === undefined ? NaN : Math.floor(performance.now()) - start}ms`);
+    },
+    trace(message, level) {
+      let kind = "log";
+      if (level !== undefined && level !== null) {
+        if (typeof level !== "string" && typeof level !== "number") throw new TypeError("console.trace level must be a string or a number");
+        kind = __autojs6_bun_trace_levels[typeof level === "string" ? level.toLowerCase() : level];
+        if (!kind || typeof level === "string" && /^\d+$/.test(level)) throw new RangeError(`console.trace level must be ${typeof level === "string" ? "'verbose' | 'debug' | 'info' | 'warn' | 'error'" : "2 to 6"}`);
+      }
+      write(kind, `${format([message])}\n${stack()}`);
+    },
+    printAllStackTrace: error => write("error", String(error?.stack ?? error ?? new Error().stack)),
+  };
+  console.err = console.error;
+  const api = Object.freeze({...control, ...console, openConsole: control.show, showConsole: control.show, clearConsole: control.clear,
+    launchConsole: control.launch});
+  return api;
+}
+
 // BEGIN GENERATED SYSTEM
 // Reproduced from Node's system information family and main-thread engines by tools/host-client/sync-system.mjs
 // (api-coverage P4.1b). engineInfo is the record of this execution that engines.myEngine returns.
@@ -18045,6 +18122,6 @@ export async function createHostClient(options = {}) {
     images,
     screenRecorder: group("screen.record"),
     coordinates: group("screen.metrics"),
-    console: group("console.control"),
+    console: __autojs6_bun_console(group("console.control"), grants.has("console.control"), call),
   });
 }

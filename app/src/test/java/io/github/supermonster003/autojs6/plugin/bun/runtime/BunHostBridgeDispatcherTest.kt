@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 /** The android.jar `org.json` stubs are unusable on the JVM, so replies are checked as the exact strings the bridge emits. */
 class BunHostBridgeDispatcherTest {
     @Test
-    fun streamingKeepsUniqueCallIdsWithoutExhaustingTheOrdinaryCallBudget() = listOf("agent.control", "ai.control", "flow.control", "speech.control", "epub.control", "mail.control").forEach { capability ->
+    fun streamingKeepsUniqueCallIdsWithoutExhaustingTheOrdinaryCallBudget() = listOf("agent.control", "ai.control", "flow.control", "speech.control", "epub.control", "mail.control", "console.control").forEach { capability ->
         val ids = mutableSetOf<String>()
         val dispatcher = BunHostBridgeDispatcher(listOf(capability, "device.info"), BunHostBrokerInvoker { id, _, _ ->
             assertTrue(ids.add(id))

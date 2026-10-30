@@ -38,7 +38,7 @@ internal class BunHostBridgeDispatcher(
     private val inFlight = AtomicInteger(0)
     private val closed = AtomicBoolean(false)
 
-    /** Budgeted ordinary calls, including host failures. Speech streaming, info and fast rejections are not charged. */
+    /** Budgeted ordinary calls, including host failures. Streaming, console calls, info and fast rejections are not charged. */
     val relayedCalls: Int get() = minOf(attempted.get(), maxCalls)
 
     fun handle(request: BunHostBridgeHttpRequest): BunHostBridgeReply {
@@ -68,8 +68,9 @@ internal class BunHostBridgeDispatcher(
             // Only calls that hold a slot count against the budget, so a concurrency rejection is free to retry.
             val callNumber = sequence.incrementAndGet()
             // Speech and EPUB have long-running sessions and chunked results. Keep size, grant and concurrency
-            // checks, but do not charge every transport fragment to the finite ordinary-call budget.
-            if (capability !in setOf("agent.control", "ai.control", "flow.control", "speech.control", "epub.control", "mail.control") && attempted.incrementAndGet() > maxCalls) {
+            // checks, but do not charge every transport fragment to the finite ordinary-call budget. Neither is the
+            // console output of the host client (console.control, AutoJs6 api-coverage P4.3), whose text the host bounds.
+            if (capability !in setOf("agent.control", "ai.control", "flow.control", "speech.control", "epub.control", "mail.control", "console.control") && attempted.incrementAndGet() > maxCalls) {
                 return error(429, capability, TOO_MANY_REQUESTS, "Call limit of $maxCalls per execution reached")
             }
             val resultJson = try {

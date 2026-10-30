@@ -419,6 +419,37 @@ export interface ConsoleApi {
   setGlobalLogConfig(config: { readonly [key: string]: JsonValue }): Promise<void>;
   resetGlobalLogConfig(): Promise<void>;
 }
+/**
+ * Rhino's console output and global console names (AutoJs6 api-coverage P4.3, D-10). With console.control the host prints
+ * each line at Rhino's level (log and print at debug); without it the text goes to Bun's stdout, or stderr for warn / error /
+ * assert, which the host shows at info / error (Q171 (a)). The lines leave in call order after the current event loop turn,
+ * separately from Bun's own console; process.exit right after a call can drop them.
+ */
+export interface ConsoleOutputApi {
+  log(...data: unknown[]): void;
+  print(...data: unknown[]): void;
+  verbose(...data: unknown[]): void;
+  info(...data: unknown[]): void;
+  warn(...data: unknown[]): void;
+  error(...data: unknown[]): void;
+  /** Rhino's global err. */
+  err(...data: unknown[]): void;
+  /** Prints message (default "java.lang.AssertionError") at assert level and throws an AssertionError when value, or what the function value returns, is falsy. */
+  assert(value: unknown, message?: string | null): HostConsole;
+  time(label?: string | null): void;
+  /** Prints "label: <ms>ms" (NaN for a label without time) at debug level. */
+  timeEnd(label?: string | null): void;
+  /** Prints the message and the caller's stack at level ("debug" by default; "verbose" / "debug" / "info" / "warn" / "error" or 2 to 6). */
+  trace(message?: unknown, level?: "verbose" | "debug" | "info" | "warn" | "error" | (string & {}) | number | null): void;
+  /** Prints the stack of an Error, or a message, at error level. */
+  printAllStackTrace(error: unknown): void;
+  /** Rhino's global names of show / clear / launch. */
+  openConsole(reset?: boolean): Promise<void>;
+  showConsole(reset?: boolean): Promise<void>;
+  clearConsole(): Promise<void>;
+  launchConsole(): Promise<void>;
+}
+export interface HostConsole extends ConsoleApi, ConsoleOutputApi {}
 export interface DeviceInfo {
   readonly brand: string;
   readonly manufacturer: string;
@@ -6055,7 +6086,7 @@ export interface HostClient {
   readonly images: ImagesApi;
   readonly screenRecorder: ScreenRecorderApi;
   readonly coordinates: CoordinateApi;
-  readonly console: ConsoleApi;
+  readonly console: HostConsole;
 }
 export interface HostClientOptions {
   readonly socket?: string;

@@ -198,11 +198,18 @@ if (host.hasCapability("console.control")) {
 
 窗口方法是真实宿主调用, 不再以返回自身的空操作表示成功. `show/hide/expand/collapse/reset/clear/launch` 与标题、尺寸、位置、文字/背景颜色、触摸和退出配置可用, 完整签名见 `ConsoleApi`. 原生 Bun `console` 不被替换; stdout/stderr 同时转发到本执行控制台和宿主全局日志. `setGlobalLogConfig/resetGlobalLogConfig` 修改宿主的全局日志配置, 不限于本执行, 应谨慎使用并恢复. 控制接口不提供 Rhino 的同步 `input/rawInput` 或 builder 对象.
 
+Rhino 的输出函数 (2026-10-30, AutoJs6 api-coverage P4.3, D-10): `host.console.log / print / verbose / info / warn / error / assert / time / timeEnd / trace / printAllStackTrace`, 以及 Rhino 的全局名称 `err` (同 error), `openConsole / showConsole` (同 show), `clearConsole` (同 clear), `launchConsole` (同 launch), 声明见 `ConsoleOutputApi`.
+
+- 有 console.control 时, 宿主按 Rhino 的级别写入本执行控制台: log / print 为 debug, verbose / info / warn / error 同名, assert 为 assert. 同一轮事件循环的输出合成一次 `println` 调用按调用顺序发出; console.control 调用不计入每次执行 1024 次的调用上限, 输出文本另有每次执行 8 MiB 的上限.
+- 没有 console.control (默认关闭) 时不报错 (Q171 (a)): 文本写到 Bun 的 stdout, warn / error / assert 写到 stderr, 宿主按 INFO / ERROR 两级显示. 宿主调用失败或文本超出上限时同样回落.
+- 输出函数同步返回 undefined (assert 返回 host.console), 文本在本轮事件循环之后发出, 与 Bun 原生 `console` 是两条通道, 两者交错时顺序不保证; 紧接着 `process.exit()` 可能丢失尚未发出的行.
+- 格式与 Rhino 一致: 参数经 `util.format` 拼接; `assert(value, message?)` 在 value (或函数 value 的返回值) 为假时以 assert 级别打印 message (默认 "java.lang.AssertionError") 并抛出 name 为 AssertionError 的错误; `time(label?)` / `timeEnd(label?)` 打印 "label: <毫秒>ms", 没有对应 time 的标签为 NaN, 标签按线程独立; `trace(message?, level?)` 打印消息与调用处堆栈, level 为 "verbose" / "debug" / "info" / "warn" / "error" (不分大小写) 或 2 到 6, 默认 debug; `printAllStackTrace(error)` 以 error 级别打印 Error 的 stack 或消息文本.
+
 ## 错误与上限
 
 `HostCallError` 包含 `code`, `capability`, `status`. 未授权调用在客户端以 `NOT_GRANTED` 拒绝; socket 不可达返回 `HOST_UNAVAILABLE`; 桥版本不支持返回 `UNSUPPORTED_BRIDGE`; 无效响应返回 `INVALID_RESPONSE`. 宿主返回的参数、权限、插件不可用等失败保持为错误, 客户端不会自动重试或伪造成功值.
 
-桥仍沿用每次执行最多 1024 次调用、4 路并发、请求 64 KiB、结果 256 KiB 和单次宿主 10 s 超时. 客户端为网络往返增加 15 s 上限. 请求在发送后被取消不等于宿主操作撤销; 不应自动重试有副作用的调用.
+桥仍沿用每次执行最多 1024 次调用 (流式能力与 console.control 不计数)、4 路并发、请求 64 KiB、结果 256 KiB 和单次宿主 10 s 超时. 客户端为网络往返增加 15 s 上限. 请求在发送后被取消不等于宿主操作撤销; 不应自动重试有副作用的调用.
 
 ## 验证
 
