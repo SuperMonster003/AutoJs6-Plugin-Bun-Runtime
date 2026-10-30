@@ -1,4 +1,5 @@
-import { createHostClient, type HostClient, type ScreenInfo, type RuntimeAxios, type RuntimeShell } from "../../app/src/main/assets/autojs6/host-client.mjs";
+import { createHostClient, type HostClient, type ScreenInfo, type RuntimeAxios, type RuntimeShell, type RuntimeUi, type RuntimeFloaty, type RuntimeWeb,
+  type RuntimeTerminal, type RuntimeConsole, type RuntimeCompose } from "../../app/src/main/assets/autojs6/host-client.mjs";
 
 const host: HostClient = await createHostClient();
 const traditional: string = await host.opencc("汉语", "s2t");
@@ -165,3 +166,21 @@ await host.console.setGravity(17);
 await host.console.configure({ title: "t", size: [400, 600] });
 const line: string = await host.console.rawInput("name?");
 const evaluated: unknown = await host.console.input();
+// Rhino's UI family (AutoJs6 api-coverage P4.3): the content view members of ui, floaty, web, terminal, console.build and the
+// web globals with ComposeError on host.global.
+await host.ui.layout("<frame><text id='t'/></frame>");
+const rootView: RuntimeUi.NativeViewHandle | null = host.ui.root;
+const barHeight: number = await host.ui.getStatusBarHeight({ withDimen: false });
+const floatyWindow: RuntimeFloaty.FloatyWindow = await host.floaty.window("<frame/>");
+await floatyWindow.setPosition(1, 2);
+const raw: RuntimeFloaty.RawWindow = await host.floaty.rawWindow("<frame/>");
+await raw.setTouchable(false);
+const socket: RuntimeWeb.WebSocket = host.web.newWebSocket("wss://example.com", { headers: { a: "b" } });
+socket.send(host.web.ByteString.encodeUtf8("hi"));
+const terminalSession: RuntimeTerminal.TerminalSession = await host.terminal.open({ cwd: "/sdcard" });
+const matched: string = await terminalSession.waitFor(/ready/, 1000);
+const configurator: RuntimeConsole.ConsoleConfigurator = host.console.build({ title: "t" }).setSize(1, 2);
+await configurator.show();
+const composeError: RuntimeCompose.ComposeError = new host.global.ComposeError("bad", "INVALID_ARGUMENT");
+// @ts-expect-error floaty.window takes a layout
+host.floaty.window();

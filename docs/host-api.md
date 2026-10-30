@@ -43,6 +43,9 @@ console.log(text);
 | `screen.capture` | `host.images.requestScreenCapture/captureScreen/stopScreenCapture` | 关闭 | 请求 Android 同意, 取得屏幕帧和停止会话 |
 | `screen.metrics` | `host.coordinates` | 开启 | 实时屏幕坐标换算, 本执行的 Scale 基数 |
 | `console.control` | `host.console` | 关闭 | 本执行控制台窗口, 外观及日志配置 |
+| `floaty.control` | `host.floaty` | 关闭 | 悬浮窗及其视图, 查询或申请悬浮窗权限 (2026-10-30, P4.3) |
+| `floaty.raw` / `floaty.touch` | `host.floaty.rawWindow` / `RawWindow.setTouchable` | 关闭 | 原始悬浮窗 / 触摸穿透, 另需 `floaty.control` |
+| `terminal.control` | `host.terminal` | 关闭 | 终端插件会话与命令, 不被 shell 授权隐含 |
 
 这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销, 对下一次执行生效. 拼音和 OpenCC 还需要对应插件安装并启用; 控制台显示需要 Android 悬浮窗权限. 图像的 OpenCV 运算需要宿主可用的 OpenCV 实现. 屏幕截图开关只允许申请权限, 仍需 Android 的录屏授权. 无障碍, OCR, UI 布局, Java 等其他能力见下文各节; 客户端没有 `rhino.run`.
 
@@ -518,6 +521,30 @@ Bun Runtime 0.3.0 and host 5572 expose `host.app`, `host.accessibility` and `hos
 
 Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10-second per-RPC bound for long gestures/activation; four operations may be outstanding and the SDK queues further operations. Cancellation stops waiting but cannot undo an Android action already dispatched. Polls count toward the original execution quota. Raw Java nodes and internal Agent diagnostics are not exposed; root/Shizuku and dual-app actions run through the shell grants (see "Rhino 的应用与 shell 成员" below, api-coverage P4.1a). Coordinate click retains the current Node provider rejection; use an explicitly granted single-point gesture. Native Bun payloads and the frozen compatibility matrix are unchanged. Validation: host docs/dev/bun-automation-2026-10-19.md.
 
+
+## Rhino 的 UI 族 (2026-10-30, api-coverage P4.3)
+
+`host.ui` 的内容视图与窗口成员, `host.floaty`, `host.web`, `host.terminal`, `host.console.build` 与 Node.js Runtime 是同一份代码: Node 的 `tools/nodejs/api/sync-ui-compose.js` 把共享的 `portable-ui-compose.js` 写进 host-client.mjs, `tools/host-client/sync-ui-family.mjs` 从 Node 的声明生成 RuntimeUi / RuntimeCompose / RuntimeFloaty / RuntimeWeb / RuntimeTerminal / RuntimeConsole. 行为与差异见 Node 的 HOST-API "UI 族的 Rhino 对照"; Bun 的授权如下 (未授权时以 `NOT_GRANTED` 拒绝, `missingCapabilities` 列出缺少的 Bun 授权, 不发往宿主):
+
+| 成员 | Bun 授权 | 宿主路由 (Node 能力) |
+|---|---|---|
+| ui.layout / layoutFile / setContentView / finish / root / findById / findByStringId / emitter, 窗口成员 (statusBarColor 等) 与栏高 | `ui.layout` | ui showLayout (contentView) / windowControl / barHeight (`ui`) |
+| floaty.window / closeAll, 悬浮窗的 setPosition / setSize / requestFocus / disableFocus / setAdjustEnabled / x / y / width / height / close 及其视图 | `floaty.control` | ui floatyWindow / floatyControl / floatyCloseAll 与视图路由 (`ui`, `ui.overlay`) |
+| floaty.rawWindow | `floaty.control` + `floaty.raw` | ui floatyRawWindow (`floaty.raw`) |
+| RawWindow.setTouchable | `floaty.control` + `floaty.touch` | ui floatyControl setTouchable (`floaty.touch`) |
+| floaty.hasPermission / checkPermission / requestPermission / ensurePermission | `floaty.control` | ui.overlay hasPermission / openPermissionSettings (`ui.overlay.permission`) |
+| floaty.getClip | `clipboard.control` | clipboard getText |
+| web.newInjectableWebView / newInjectableWebClient | `ui.layout` | ui inflate 与 WebView 路由 (Q174 (a)) |
+| web.newWebSocket, web.ByteString | 无 | Bun 自带的 WebSocket (Q174 (a)), 不经宿主 |
+| terminal 的全部方法, TerminalSession 的方法, terminal.npm.run | `terminal.control` | terminal (`terminal`, 不被 `shell` / `shell.root` 隐含) |
+| console.build(...).show() | `console.control` | console configure |
+
+- 新增的四项授权默认关闭, 在插件中心独立启用, 打包项目在 `bun.hostCapabilities` 中声明: `terminal.control` (Q3 (a)), `floaty.control`, `floaty.raw`, `floaty.touch` (Q173 (a), 后两项不被 `floaty.control` 隐含, 单独开启也没有作用).
+- `ui.layout` 关闭而 `floaty.control` 开启时, 悬浮窗视图的读写与事件经 `floaty.control` 发往宿主; Activity 内容窗口的路由 (showLayout / windowControl / barHeight) 只属 `ui.layout`.
+- 终端调用经宿主的长任务路由 (start / poll, 每次轮询最多约 1 s), exec (wait) / waitFor / npm.run 每次调用最多等 905 s: Rhino 的默认 10 min 不变, 更长的 timeout 或 0 (不限) 在 905 s 时以 TIMEOUT 结束. 宿主的终端错误保留插件的代码 (PLUGIN_UNAVAILABLE, SESSION_NOT_FOUND, TIMEOUT 等), 由共享门面转为 TerminalError.
+- web.newWebSocket 用 Bun 的 WebSocket 连接 (options 的 headers / protocols / timeoutMs), 事件名同 Rhino (open / message / text / bytes / closing / closed / failure); 不需要授权, 连接受插件进程的网络条件约束.
+- `host.global` 增加 `newWebSocket / newInjectableWebView / newInjectableWebClient / ComposeError` (`UiFamilyGlobals`), `host.global.install()` 同时安装; isUiThread 与 toast 全局见上节.
+- 主线程与 Worker 相同: 每个线程各自 `createHostClient()`; 内容窗口每个执行只有一个, 悬浮窗随执行结束关闭, 终端会话属终端插件, 不随执行结束关闭 (同 Rhino).
 
 ## Rhino 的自动化族 (2026-10-30, api-coverage P4.4)
 
