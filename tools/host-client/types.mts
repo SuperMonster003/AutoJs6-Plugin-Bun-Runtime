@@ -150,7 +150,7 @@ await host.automator.swipe([0, 0], [10, 10], 300);
 await host.auto.waitFor(5000);
 const running: boolean = (await host.auto.state).isRunning;
 const counter: number = host.threads.atomic(1).incrementAndGet();
-const resumed: true = host.continuation.enabled;
+const resumed: false = host.continuation.enabled;
 clearTimeout(host.timers.keepAlive(100));
 const text: string = await host.ocr.mlkit.recognizeText({ id: "img" });
 const codes: readonly string[] = await host.qrcode.recognizeTexts("/sdcard/qr.png");

@@ -100,8 +100,8 @@ test('threads, continuation, timers and the family globals are local and host.gl
   const counter=host.threads.atomic(5);assert.equal(counter.incrementAndGet(),6);
   const lock=host.threads.lock();await lock.lock();assert.equal(lock.isLocked(),true);lock.unlock();
   const box=host.threads.disposable();setTimeout(()=>box.setAndNotify('v'),5);assert.equal(await box.blockedGet(1000),'v');
-  assert.equal(host.continuation.enabled,true);
-  const timer=host.timers.keepAlive(50);clearTimeout(timer);
+  assert.equal(host.continuation.enabled,false);
+  const timer=host.timers.keepAlive(50);assert.equal(typeof timer,'number');clearTimeout(timer);
   const target={};const names=host.global.install(target);
   for(const name of ['click','press','swipe','sleep','wait','keepAlive','sync','pickup','existsAll','toastLog'])assert(names.includes(name),name);
   assert.equal(target.click,host.automator.click);assert.equal(target.keepAlive,host.timers.keepAlive);
