@@ -290,6 +290,21 @@ export interface PinyinOptions {
   readonly segment?: boolean;
   readonly customDictionary?: Readonly<Record<string, readonly (readonly string[])[]>>;
 }
+/** Rhino's keys module: the android.view.KeyEvent codes of the keys events.observeKey / onKeyDown report (local values). */
+export interface KeysApi {
+  readonly home: 3;
+  readonly HOME: 3;
+  readonly menu: 82;
+  readonly MENU: 82;
+  readonly back: 4;
+  readonly BACK: 4;
+  readonly volumeUp: 24;
+  readonly volume_up: 24;
+  readonly VOLUME_UP: 24;
+  readonly volumeDown: 25;
+  readonly volume_down: 25;
+  readonly VOLUME_DOWN: 25;
+}
 export interface PinyinApi {
   readonly STYLE_NORMAL: 0;
   readonly STYLE_TONE: 1;
@@ -6032,6 +6047,8 @@ export interface HostClient {
   readonly dialogs: RuntimeDialogs.DialogsModule;
   readonly ui: RuntimeUi.UiModule;
   readonly compose: RuntimeCompose.Api;
+  /** Rhino's key codes (KeysApi), local values. */
+  readonly keys: KeysApi;
   readonly pinyin: PinyinApi;
   readonly pinyin4j: Pinyin4jApi;
   readonly opencc: OpenccApi;

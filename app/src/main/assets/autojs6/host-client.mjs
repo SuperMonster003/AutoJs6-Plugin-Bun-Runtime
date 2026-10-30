@@ -22,6 +22,13 @@ const PINYIN_CONSTANTS = Object.freeze({
   MODE_NORMAL: 0, MODE_SURNAME: 1, MODE_PLACENAME: 2, MODE_PLACE_NAME: 2,
 });
 
+// Rhino's keys module: the android.view.KeyEvent codes of the keys events.observeKey / onKeyDown report, under Rhino's
+// names (api-coverage P4.4). Local values, no grant.
+const KEY_CODES = Object.freeze({
+  home: 3, HOME: 3, menu: 82, MENU: 82, back: 4, BACK: 4,
+  volumeUp: 24, volume_up: 24, VOLUME_UP: 24, volumeDown: 25, volume_down: 25, VOLUME_DOWN: 25,
+});
+
 export class HostCallError extends Error {
   constructor(code, message, capability = null, status = 0) {
     super(message);
@@ -18031,6 +18038,7 @@ export async function createHostClient(options = {}) {
       {morsePattern: source => jsTools.util.morseCode.getPattern(source)}), grants.has("device.info"), () => call("device.info")),
     media: __autojs6_bun_media(deviceCall),
     dialogs: __autojs6_create_dialogs(automationCall),
+    keys: KEY_CODES,
     pinyin: Object.freeze({...group("text.pinyin"), ...PINYIN_CONSTANTS}),
     pinyin4j: group("text.pinyin4j"),
     opencc,
