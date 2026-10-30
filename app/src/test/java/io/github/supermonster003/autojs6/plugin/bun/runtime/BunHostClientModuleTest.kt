@@ -48,6 +48,22 @@ class BunHostClientModuleTest {
     }
 
     @Test
+    fun deviceInfoCarriesTheProfileOfRhinosDeviceAndSensorsModules() {
+        assertEquals(
+            "{\"sdkInt\":33,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0,\"pageSize\":16384,\"marketName\":\"Redmi \\\"Note\\\"\"," +
+                "\"roms\":{\"isMiui\":true,\"isFlyme\":false},\"sensors\":{\"light\":{\"name\":\"L\",\"maximumRange\":10000.0,\"resolution\":null,\"minDelay\":0}}}",
+            BunHostClientModule.deviceInfo(
+                33, 2f, 320, 2f,
+                profile = linkedMapOf(
+                    "pageSize" to 16384L, "marketName" to "Redmi \"Note\"", "brands" to null,
+                    "roms" to linkedMapOf("isMiui" to true, "isFlyme" to false),
+                    "sensors" to mapOf("light" to linkedMapOf("name" to "L", "maximumRange" to 10000f, "resolution" to Double.NaN, "minDelay" to 0)),
+                ),
+            ),
+        )
+    }
+
+    @Test
     fun invalidDensitiesFallBackToOne() {
         assertEquals(
             "{\"sdkInt\":33,\"density\":1.0,\"densityDpi\":0,\"scaledDensity\":1.0}",

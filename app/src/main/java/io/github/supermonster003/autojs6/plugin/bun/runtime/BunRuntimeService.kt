@@ -195,7 +195,8 @@ open class BunRuntimeService : Service() {
     private fun deviceInfo(): String = resources.displayMetrics.let {
         val (width, height) = screenSides(it)
         BunHostClientModule.deviceInfo(Build.VERSION.SDK_INT, it.density, it.densityDpi, it.scaledDensity,
-            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), width, height, buildFields())
+            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), width, height, buildFields(),
+            runCatching { BunDeviceProfile.read(this) }.getOrDefault(emptyMap()))
     }
 
     /** The android.os.Build fields of Rhino's device module (org.autojs.autojs.runtime.api.Device); buildId is Build.DISPLAY there too. */

@@ -47,10 +47,13 @@ internal object BunHostClientModule {
      * (api-coverage P4.1a); they are written only when both are positive.
      * [build] holds the string fields of Rhino's device module from android.os.Build (device.brand, device.buildId and
      * so on, api-coverage P4.1c), which the client offers with the device.info grant; null values are left out.
+     * [profile] holds the rest of Rhino's synchronous device and sensors members ([BunDeviceProfile]: pageSize, marketName,
+     * the manufacturers / brands / roms checks and sensors), top-level members of strings, numbers, booleans and nested
+     * maps; null values are left out as well.
      */
     fun deviceInfo(
         sdkInt: Int, density: Float, densityDpi: Int, scaledDensity: Float, externalStoragePath: String? = null, width: Int = 0, height: Int = 0,
-        build: Map<String, String?> = emptyMap(),
+        build: Map<String, String?> = emptyMap(), profile: Map<String, Any?> = emptyMap(),
     ): String {
         val dp = if (density.isFinite() && density > 0f) density else 1f
         val sp = if (scaledDensity.isFinite() && scaledDensity > 0f) scaledDensity else dp
@@ -58,7 +61,17 @@ internal object BunHostClientModule {
         val size = if (width > 0 && height > 0) ",\"width\":$width,\"height\":$height" else ""
         val fields = build.entries.filter { it.value != null }.joinToString(",") { (key, value) -> "${quote(key)}:${quote(value!!)}" }
         val buildJson = if (fields.isEmpty()) "" else ",\"build\":{$fields}"
-        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}$size$storage$buildJson}"
+        val profileJson = profile.entries.filter { it.value != null }.joinToString("") { (key, value) -> ",${quote(key)}:${json(value)}" }
+        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}$size$storage$buildJson$profileJson}"
+    }
+
+    private fun json(value: Any?): String = when (value) {
+        null -> "null"
+        is String -> quote(value)
+        is Boolean, is Int, is Long, is Short, is Byte -> value.toString()
+        is Number -> value.toDouble().let { if (it.isFinite()) it.toString() else "null" }
+        is Map<*, *> -> value.entries.joinToString(",", "{", "}") { (key, item) -> "${quote(key.toString())}:${json(item)}" }
+        else -> quote(value.toString())
     }
 
     private fun quote(text: String): String =
