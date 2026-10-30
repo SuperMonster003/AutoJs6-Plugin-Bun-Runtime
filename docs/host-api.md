@@ -1001,7 +1001,7 @@ main().catch(console.error);
 - `digest()`, `getMarketName()`, `isManufacturer(name)`, `manufacturers.isXxx()` / `brands.isXxx()` / `roms.isXxx()` (判断规则同宿主 Device / RomUtils, 读系统属性).
 - 传感器列表: `sensors.getSensor(name)` 与 `sensors.register(name)` 据此判断设备有无该传感器.
 
-`device.info` 关闭时这些成员不存在, `roms` 只剩 `isBackgroundStartGranted()` (宿主路由), `getSensor` 返回 null, `register` 返回 null; 异步的 `getBrand()` / `getWidth()` 等仍走 `device.control`. 单独导入 `host-client.mjs` 而旁边没有该文件时只有 `sdkInt` (0) 与 0 尺寸.
+`device.info` 关闭时这些成员不存在, `roms` 只剩 `isBackgroundStartGranted()` (宿主路由), `getSensor` 返回 null, `register` 在有 `sensors.control` 时返回 null (没有时先以 `NOT_GRANTED` 抛出); 异步的 `getBrand()` / `getWidth()` 等仍走 `device.control`. 单独导入 `host-client.mjs` 而旁边没有该文件时只有 `sdkInt` (0) 与 0 尺寸.
 
 异步成员与授权 (未授权时调用即以 `NOT_GRANTED` 拒绝, `missingCapabilities` 列出缺少的 Bun 授权, 不发往宿主):
 
@@ -1017,7 +1017,7 @@ main().catch(console.error);
 `device.identifiers` (Q153 (a), 插件中心 "Bun 设备标识符"), `media.control` 与 `media.library` (Q152 (a), "Bun 音乐播放" / "Bun 媒体库扫描") 默认关闭, 打包项目在 `bun.hostCapabilities` 中声明; `device.identifiers` 不随 `device.control` 隐含.
 
 - `rotation`, `orientation`, `imei`, `serial` 是 getter, 每次读取都向宿主查询并返回新的 Promise.
-- `sensors` 是 Rhino 事件发射器 (`on` / `once` / `emit` / `emitSticky` / `getTimer` 等). `sensors.register(name, delay = sensors.delay.normal)` 同步返回 SensorEventEmitter (设备无该传感器时返回 null), 样本以 `change` (event, ...values) 与 `accuracy_change` (accuracy) 事件送达, `unregister()` / `sensors.unregisterAll()` 结束订阅; 订阅失败时发 `error` 事件, 没有监听时打印警告. 已知传感器在 `sensors.control` 关闭时 `register` 抛 `NOT_GRANTED`.
+- `sensors` 是 Rhino 事件发射器 (`on` / `once` / `emit` / `emitSticky` / `getTimer` 等). `sensors.register(name, delay = sensors.delay.normal)` 同步返回 SensorEventEmitter (设备无该传感器时返回 null), 样本以 `change` (event, ...values) 与 `accuracy_change` (accuracy) 事件送达, `unregister()` / `sensors.unregisterAll()` 结束订阅; 订阅失败时发 `error` 事件, 没有监听时打印警告. `sensors.control` 关闭时 `register` 先于传感器列表检查授权, 抛 `NOT_GRANTED` (同 Node 74f6dfa8).
 - `media.playMusic(path, volume, looping)` 返回播放会话 (`id`, `path`, `status()`, `pause()`, `stop()` 等), `scanFile(path)` 返回宿主是否已扫描该文件, 其余 Rhino 名称返回 Rhino 的结果 (无活动会话时时长 0, 位置 -1). 播放器属于本次执行, 执行结束 (含 Worker 结束整个执行) 时宿主停止播放并释放. 相对路径按宿主的脚本工作目录解析.
 
 ## Android 对象辅助接口与日历任务

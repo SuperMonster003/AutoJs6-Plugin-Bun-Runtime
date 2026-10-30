@@ -106,9 +106,13 @@ test('Bun sensors answer getSensor and register from the snapshot sensor list th
   assert.equal(host.sensors.register('pressure'),null);
   assert.deepEqual({...host.sensors.delay},{normal:3,ui:2,game:1,fastest:0});
   assert.equal((await client(['sensors.control'],WITH_PROFILE)).sensors.getSensor('light'),null);
-  // A known sensor without sensors.control: NOT_GRANTED before any subscription (Q90).
+  // Without sensors.control register is NOT_GRANTED before any subscription (Q90), and before the sensor list, which is empty
+  // without device.info.
   const denied=await client(['device.info'],WITH_PROFILE);
   assert.throws(()=>denied.sensors.register('light'),notGranted(['sensors.control']));
+  assert.throws(()=>denied.sensors.register('pressure'),notGranted(['sensors.control']));
+  const blind=await client([],WITH_PROFILE);
+  assert.throws(()=>blind.sensors.register('light'),notGranted(['sensors.control']));
 });
 
 test('Bun media plays through media.control and scans through media.library (Q149 (a) / Q152 (a))',async()=>{
