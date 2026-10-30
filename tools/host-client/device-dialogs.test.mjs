@@ -27,7 +27,7 @@ async function fixture(capabilities=['device.info','device.control','device.powe
 test('Bun preserves legacy info and exposes the full snapshot, live getters and quiet volume control',async()=>{
   const f=await fixture();assert.deepEqual(await f.host.device.info(),{model:'legacy'});assert.equal((await f.host.device.getInfo()).build.model,'full');assert.equal(await f.host.device.getWidth(),720);
   await f.host.device.setMusicVolume(0);assert.equal(await f.host.device.getMusicVolume(),0);await f.host.device.keepScreenOn(1000);await f.host.device.cancelKeepingAwake();
-  assert(f.calls.some(c=>c.capability==='device.audio'&&c.request.args?.[1]===0));assert.equal(HOST_API_METHODS['device.control'].length,11);
+  assert(f.calls.some(c=>c.capability==='device.audio'&&c.request.args?.[1]===0));assert.equal(HOST_API_METHODS['device.control'].length,41);
 });
 test('Bun device, power, audio and dialog grants are independent',async()=>{
   const f=await fixture(['device.info','device.control']);assert.equal(await f.host.device.getWidth(),720);

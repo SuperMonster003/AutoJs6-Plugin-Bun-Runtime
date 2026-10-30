@@ -44,8 +44,18 @@ export const HOST_API_METHODS = Object.freeze({
   "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName","proxy","defineClass","loadDex","loadJar","drainCallbacks","completeCallback","closeCallbacks","callSuper","retain"]),
   "android.objects": Object.freeze(["createPaint","setPaintColor","getPaintInfo","measureText","createColorStateList","getColorForState","close","getThemeColor","getUriForFile","parseUri"]),
   "tasks.control": Object.freeze(["addTimedTask","addIntentTask","queryTimedTasks","queryIntentTasks","getTimedTask","getIntentTask","removeTimedTask","removeIntentTask","updateTask","sendLocalBroadcastSync"]),
-  "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope"]),
+  "device.control": Object.freeze(["info","isScreenOn","wakeUp","vibrate","isIgnoringBatteryOptimizations","openBatteryOptimizationSettings","setBrightness","setBrightnessMode","keepScreenOn","cancelKeepingAwake","closeScope",
+    // Rhino's device members (api-coverage P4.1c): the host's keepAwake / cancelVibration and RuntimeDeviceBridge routes; the
+    // identifiers also need device.identifiers, keepAwake and the pointer location switches device.power.
+    "keepAwake","cancelVibration","summary","getOrientation","getRotation","isScreenOff","isScreenPortrait","isScreenLandscape",
+    "isPowerSourceAC","isPowerSourceUSB","isPowerSourceWireless","isPowerSourceDock","getIpAddress","getIpv6Address","getGatewayAddress",
+    "isActiveNetworkMetered","isConnectedOrConnecting","isWifiAvailable","isPointerLocationEnabled","isPointerLocationDisabled",
+    "hasReadPhoneStatePermission","ensureReadPhoneStatePermission","isBackgroundStartGranted","setPointerLocation","togglePointerLocation",
+    "getIMEI","getSerial","getAndroidId","getMacAddress","getSharedDeviceId"]),
   "device.audio": Object.freeze(["getAudioStreamVolume","getAudioStreamMaxVolume","setAudioStreamVolume"]),
+  // Rhino's media module (api-coverage P4.1c, Q152 (a)): playback and the media library scan.
+  "media.control": Object.freeze(["play", "pause", "resume", "stop", "seekTo", "getPlaybackStatus"]),
+  "media.library": Object.freeze(["scanFile"]),
   "dialogs.control": Object.freeze(["alert","confirm","input","rawInput","select","singleChoice","multiChoice","progressShow","progressUpdate","progressDismiss","cancelRequest","closeScope"]),
   "events.observe": Object.freeze(["observeNotification","observeToast","observeKey","observeBroadcasts","drainEvents","close"]),
   "notifications.post": Object.freeze(["notify","cancel","cancelAll","getPermissionStatus","openSettings"]),
@@ -17273,7 +17283,7 @@ export async function createHostClient(options = {}) {
     // A grant also answers a second Node module, named in the request (api-coverage P4.1b): the notice extras of
     // notifications.post and powerManager of device.control.
     const shared = {notice: 'notifications.post', power_manager: 'device.control'}[module];
-    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module === 'plugin_tools' ? 'plugintools.control' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? (HOST_API_METHODS['media.control'].includes(method) ? 'media.control' : 'device.audio') : module === 'media_store' ? 'media.library' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module === 'plugin_tools' ? 'plugintools.control' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     // Installs, uninstalls and plugin tools wait for the user or the tool up to 15 min and 5 s, as in Node; other tasks 120 s.
     const limit = module === 'installer' || module === 'plugin_tools' ? 905000 : 120000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > limit) throw new TypeError(`Automation timeoutMs must be in 1..${limit}`);
@@ -17333,7 +17343,20 @@ export async function createHostClient(options = {}) {
   // notice.builder and notify(builder) use the Java facade (java.interop); the notice routes check their grants first.
   const notifications = __autojs6_create_notifications((module,...rest)=>module==='notice'?systemCall(module,...rest):automationCall(module,...rest),
     (message)=>new HostCallError("INVALID_REQUEST",message,"notifications.post"),undefined,()=>java,()=>engine);
-  const sensors = __autojs6_create_sensors(automationCall, EventEmitter, undefined,
+  // The device / sensors / media family (api-coverage P4.1c). The shared factories name Node capabilities; a call whose Bun
+  // grants are off rejects here as NOT_GRANTED with the missing grants (Q90): device is device.control, the hardware
+  // identifiers device.identifiers (Q153 (a)), media.audio device.audio, playback media.control and the library scan
+  // media.library (Q152 (a)), sensors sensors.control.
+  const DEVICE_GRANTS = {device: 'device.control', 'media.audio': 'device.audio', 'media.playback': 'media.control', media_store: 'media.library',
+    sensors: 'sensors.control'};
+  function deviceCall(module, method, args, options = {}) {
+    const required = (options.permissions || [module]).filter(name => name !== 'media');
+    const missing = [...new Set(required.map(name => DEVICE_GRANTS[name] ?? name))].filter(name => !grants.has(name));
+    if (missing.length) return Promise.reject(Object.assign(new HostCallError('NOT_GRANTED',
+      `${module}.${method} requires grants that are off for this execution: ${missing.join(', ')}`, missing[0]), {missingCapabilities: Object.freeze(missing)}));
+    return automationCall(module, method, args, options);
+  }
+  const sensors = __autojs6_create_sensors(deviceCall, EventEmitter, undefined,
     (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
     (message,code,module,method)=>Object.assign(new HostCallError(
@@ -17642,7 +17665,7 @@ export async function createHostClient(options = {}) {
     ui: __autojs6_create_ui(async (module, method, args) => (await call("ui.layout", { method, args })).value),
     compose: __autojs6_create_compose(async (module, method, args) => (await call(module === "ui" ? "ui.layout" : "ui.compose", { method, args })).value),
     toast: (text, duration) => call("ui.toast", { text, ...(duration === undefined ? {} : { duration }) }),
-    device: Object.freeze({ ...__autojs6_create_device(automationCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info"))), info: () => call("device.info") }),
+    device: Object.freeze({ ...__autojs6_create_device(deviceCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info"))), info: () => call("device.info") }),
     dialogs: __autojs6_create_dialogs(automationCall),
     pinyin: Object.freeze({...group("text.pinyin"), ...PINYIN_CONSTANTS}),
     pinyin4j: group("text.pinyin4j"),

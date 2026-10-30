@@ -39,3 +39,13 @@ test('Bun device Build fields ignore what is not a string',async()=>{
   const host=await client(['device.info'],{sdkInt:35,density:2,densityDpi:320,scaledDensity:2,build:{brand:'Redmi',model:7,board:null}});
   assert.deepEqual([host.device.brand,host.device.model,host.device.board,host.device.sdkInt],['Redmi',undefined,undefined,35]);
 });
+
+// The fixture host answers every request as /info, so a call that reached it would fail with INVALID_RESPONSE instead.
+test('Bun device and sensors calls whose grants are off reject NOT_GRANTED with the missing Bun grants',async()=>{
+  const host=await client(['device.info','device.control']);
+  for(const [call,missing] of [
+    [()=>host.device.keepScreenOn(1000),['device.power']],
+    [()=>host.device.getMusicVolume(),['device.audio']],
+    [()=>host.sensors.getAvailableSensors(),['sensors.control']],
+  ])await assert.rejects(call(),error=>error.code==='NOT_GRANTED'&&JSON.stringify(error.missingCapabilities)===JSON.stringify(missing));
+});
