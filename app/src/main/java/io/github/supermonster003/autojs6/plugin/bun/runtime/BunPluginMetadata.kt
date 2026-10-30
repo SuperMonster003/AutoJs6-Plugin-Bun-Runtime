@@ -61,6 +61,8 @@ internal fun Context.bunPluginInfo(): PluginInfo {
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_WORKSPACE_ARCHIVE, true)
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_INFO, true)
             putBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_CAPABILITY_BRIDGE, true)
+            // The most granted capability IDs one request may carry (AutoJs6 api-coverage Q170 (a)); the host offers no more.
+            putInt(BunPluginCapabilityKeys.MAX_HOST_CAPABILITY_COUNT, BunRuntimeContract.MAX_HOST_CAPABILITY_COUNT)
         }
     }
 }

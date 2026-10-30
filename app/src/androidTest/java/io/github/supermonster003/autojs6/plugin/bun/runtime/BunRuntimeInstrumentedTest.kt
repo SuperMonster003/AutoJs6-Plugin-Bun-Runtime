@@ -137,6 +137,10 @@ class BunRuntimeInstrumentedTest {
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_STREAMING_OUTPUT))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_WORKSPACE_ARCHIVE))
             assertTrue(requireNotNull(info.capabilities).getBoolean(BunPluginCapabilityKeys.SUPPORTS_HOST_INFO))
+            assertEquals(
+                BunRuntimeContract.MAX_HOST_CAPABILITY_COUNT,
+                requireNotNull(info.capabilities).getInt(BunPluginCapabilityKeys.MAX_HOST_CAPABILITY_COUNT),
+            )
 
             val probes = List(PREWARM_REPETITIONS) { runtime.prewarmRuntime() }
             val installedRuntimeAbi = requireNotNull(

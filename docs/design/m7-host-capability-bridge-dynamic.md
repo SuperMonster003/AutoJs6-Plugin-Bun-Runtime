@@ -38,7 +38,7 @@
 | `HOST_CALL_TIMEOUT_MILLIS` | `10_000` | 单次调用从发出到收到回调的上限 |
 | `KEY_HOST_CAPABILITY_BRIDGE_VERSION` | `"hostCapabilityBridgeVersion"` | 请求 int; 缺席 = 不提供动态桥; 存在则必须等于 1 |
 | `KEY_HOST_CAPABILITY_BROKER` | `"hostCapabilityBroker"` | 请求 IBinder (`putBinder`), 实现 `IBunHostCapabilityBroker` |
-| `KEY_HOST_CAPABILITIES` | `"hostCapabilities"` | 请求 `ArrayList<String>`, 已授权的能力 ID, 1..64 项, 无重复 |
+| `KEY_HOST_CAPABILITIES` | `"hostCapabilities"` | 请求 `ArrayList<String>`, 已授权的能力 ID, 1..`MAX_HOST_CAPABILITY_COUNT` 项 (2026-10-30 AutoJs6 api-coverage Q170 (a) 起 128, 插件经 PluginInfo 的 `MAX_HOST_CAPABILITY_COUNT` 声明, 未声明的旧插件按 64), 无重复 |
 | `KEY_HOST_CALL_ID` | `"hostCallId"` | 代理请求/结果 string, 本次执行内唯一 |
 | `KEY_HOST_CAPABILITY` | `"hostCapability"` | 代理请求 string, 能力 ID |
 | `KEY_HOST_CALL_REQUEST_JSON` | `"hostCallRequestJson"` | 代理请求 string, JSON 对象 |
@@ -105,7 +105,7 @@ await call("ui.toast", { text: "hello from Bun" });     // {"shown":true}
 parse(request):
   if request has hostCapabilityBridgeVersion:
       version == 1; broker = getBinder(hostCapabilityBroker) != null
-      capabilities: 1..64 个 ID, 每个匹配 ID 形状且 <= 64 字节, 无重复      # 否则 INVALID_REQUEST
+      capabilities: 1..MAX_HOST_CAPABILITY_COUNT (128, 旧插件 64) 个 ID, 每个匹配 ID 形状且 <= 64 字节, 无重复      # 否则 INVALID_REQUEST
 gate -> probe -> createWorkspace -> prepareExecution -> materializeHostInfo (现状)
   if request.hostBridge:
       bridge = BunHostBridge.start(hostBridge, callingUid, executionId)

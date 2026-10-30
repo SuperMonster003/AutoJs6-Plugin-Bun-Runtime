@@ -3,9 +3,9 @@
   "artifacts": [
     {
       "file": "bun-runtime-api.aar",
-      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host build 5562; packaged runtime action and normal permission, unchanged AIDL transaction order",
-      "bytes": 22506,
-      "sha256": "d8cde473909cd0c74dfe21e2ab02700ad4179f3a7ca1cb4fe5f34b6e82fafaef"
+      "source": "AutoJs6/plugin-api/bun-runtime-api release AAR at host bcabd0452 (api-coverage Q170 (a): MAX_HOST_CAPABILITY_COUNT 128, LEGACY_MAX_HOST_CAPABILITY_COUNT 64 and the BunPluginCapabilityKeys.MAX_HOST_CAPABILITY_COUNT key); packaged runtime action and normal permission, unchanged AIDL transaction order",
+      "bytes": 22535,
+      "sha256": "e0df0340ad9476f5015ded3a041cc83bdbb66f91a153e6a39cd5c198c9c5a388"
     },
     {
       "file": "common-plugin-api.aar",
