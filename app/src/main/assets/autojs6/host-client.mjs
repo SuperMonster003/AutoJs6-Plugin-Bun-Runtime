@@ -40,6 +40,9 @@ export const HOST_API_METHODS = Object.freeze({
   "ai.control": Object.freeze(["open","start","poll","ack","cancel","close"]),
   "agent.control": Object.freeze(["open","start","poll","ack","cancel","release","close","context","result","hasAccess","requestAccess"]),
   "epub.control": Object.freeze(["open","start","poll","cancel","close"]),
+  "theme.control": Object.freeze(["get","set","reset","libraries","activate","deactivate","next","state","current"]),
+  "gallery.control": Object.freeze(["open","start","poll","cancel","close"]),
+  "batchrename.control": Object.freeze(["open","start","poll","cancel","close"]),
   "speech.control": Object.freeze(["open","start","poll","cancel","uploadBegin","uploadChunk","uploadDiscard","close"]),
   "tts.control": Object.freeze(["open","invoke","drain","stopTask","close"]),
   "java.interop": Object.freeze(["type","callStatic","new","call","callInstance","getField","getStatic","setField","setStatic","release","dispose","getContext","newArray","arrayLength","getArrayItem","setArrayItem","toArray","instanceOf","getClassName","proxy","defineClass","loadDex","loadJar","drainCallbacks","completeCallback","closeCallbacks","callSuper","retain"]),
@@ -324,6 +327,7 @@ function createFiles(dispatch, device = null, shared = null) {
     for (const name of ['open', 'toFile'])
       result[name] = Object.defineProperty(async (...args) => { await shared.ready(); return shared.core()[name](...args); }, 'name', {value: name});
     result.getSdcardPath = () => result.sdcardPath;
+    result.batchRename = shared.batchRename;
     result.nonNullPath = async value => {
       const resolved = await dispatch('path', [path(value, true)]);
       if (resolved == null) throw new TypeError(`Resolved path for "${value}" cannot be null`);
@@ -6369,6 +6373,22 @@ function createStorage(dispatch) {
       recognize: (source, options, callOptions) => audio("recognize", source, options, callOptions),
       recognizeAsync: (source, options, callOptions) => audio("recognizeAsync", source, options, callOptions),
       detectVoice: (source, options, callOptions) => audio("detectVoice", source, options, callOptions),
+      diarize: (file, options, callOptions) => start("diarize", [file, json(options, true)], callOptions, options?.onProgress),
+      diarizeAsync: (file, options, callOptions) => start("diarizeAsync", [file, json(options, true)], callOptions, options?.onProgress),
+      detectLanguage: (file, options, callOptions) => start("detectLanguage", [file, json(options, true)], callOptions, options?.onProgress),
+      detectLanguageAsync: (file, options, callOptions) => start("detectLanguageAsync", [file, json(options, true)], callOptions, options?.onProgress),
+      tag: (file, options, callOptions) => start("tag", [file, json(options, true)], callOptions, options?.onProgress),
+      tagAsync: (file, options, callOptions) => start("tagAsync", [file, json(options, true)], callOptions, options?.onProgress),
+      speaker: Object.freeze({
+        enroll: (name, files, options, callOptions) => start("speaker.enroll", [name, files, json(options, true)], callOptions, options?.onProgress),
+        enrollAsync: (name, files, options, callOptions) => start("speaker.enrollAsync", [name, files, json(options, true)], callOptions, options?.onProgress),
+        verify: (name, file, options, callOptions) => start("speaker.verify", [name, file, json(options, true)], callOptions, options?.onProgress),
+        verifyAsync: (name, file, options, callOptions) => start("speaker.verifyAsync", [name, file, json(options, true)], callOptions, options?.onProgress),
+        identify: (file, options, callOptions) => start("speaker.identify", [file, json(options, true)], callOptions, options?.onProgress),
+        identifyAsync: (file, options, callOptions) => start("speaker.identifyAsync", [file, json(options, true)], callOptions, options?.onProgress),
+        list: options => start("speaker.list", [], options),
+        remove: (name, options) => start("speaker.remove", [name], options)
+      }),
       listen: (options, callOptions) => start("listen", [json(options)], callOptions),
       wake: (keywords, options, callOptions) => { const parsed = json(options); return start("wake", [keywords, parsed], callOptions, null, parsed); },
       synthesize: (text, path, options, callOptions) => start("synthesize", [text, path, json(options)], callOptions),
@@ -17582,6 +17602,56 @@ function __autojs6_bun_create_axios() {
       define(colors, "createPaint", (options, control) => androidObjects().createPaint(options, control), false);
       define(colors, "getThemeColor", options => androidObjects().getThemeColor(options), false);
 
+      // Rhino's colors.theme (api-coverage Q80 (a)). The theme color lives in the host, so every member returns a Promise; the
+      // arguments are checked here with Rhino's rules, the host answers what it refuses.
+      const themeOptions = (fn, options) => {
+        if (!isNullish(options) && !isNativeObject(options)) throw typeErrorOf(fn, "options", "Object", options);
+        return options ?? {};
+      };
+      function themeInteger(fn, param, value) {
+        const x = component(value, fn, param);
+        if (!Number.isFinite(x) || x !== Math.floor(x)) throw rangeError(fn, argumentType(param, "integer", numberText(x)));
+        return x;
+      }
+      const theme = {};
+      for (const [name, min, max, body] of [
+        ["get", 0, 0, () => host.themeCall("get", [])],
+        ["set", 1, 2, async (fn, color, options) => {
+          const given = themeOptions(fn, options);
+          const optional = key => isNullish(given[key]) ? null : int(given[key], fn, "options." + key) | OPAQUE;
+          await host.themeCall("set", [int(color, fn) | OPAQUE, optional("accent"), optional("dark")]);
+        }],
+        ["reset", 0, 0, async () => { await host.themeCall("reset", []); }],
+        ["libraries", 0, 0, () => host.themeCall("libraries", [])],
+        ["activate", 1, 2, async (fn, libraryId, options) => {
+          const given = themeOptions(fn, options);
+          const id = themeInteger(fn, "libraryId", libraryId);
+          const group = isNullish(given.group) ? null : themeInteger(fn, "options.group", given.group);
+          const answer = await host.themeCall("activate", [id, group]);
+          if (answer.library === false) throw rangeError(fn, argumentType("libraryId", "id of an intelligent color library", quote(libraryId)));
+          if (answer.group === false) throw rangeError(fn, argumentType("options.group", "id of a usable group of " + answer.name, quote(given.group)));
+        }],
+        ["deactivate", 0, 0, () => host.themeCall("deactivate", [])],
+        ["next", 0, 0, () => host.themeCall("next", [])],
+        ["state", 1, 1, async (fn, name) => {
+          if (isNullish(name)) throw typeError(fn, `Argument "name" cannot be ${quote(name)}`);
+          const answer = await host.themeCall("state", [String(name)]);
+          if (answer.error) throw rangeError(fn, answer.error);
+        }],
+        ["current", 0, 0, () => host.themeCall("current", [])]
+      ]) {
+        const fn = "colors.theme." + name;
+        define(theme, name, named(async (...args) => {
+          if (!host.themeCall) throw new Error("colors.theme needs the AutoJs6 host bridge");
+          let n = args.length;
+          while (n > min && args[n - 1] === undefined) n--;
+          if (n > max) throw arityError(fn, min, max);
+          if (n < min) throw arityError(fn, min, max);
+          return body(fn, ...args);
+        }, name, max));
+      }
+      define(colors, "theme", Object.freeze(theme));
+
       const Color = named(function Color(...args) {
         return buildColor(new.target ? "new Color" : "Color", args);
       }, "Color", 0);
@@ -17608,12 +17678,13 @@ function __autojs6_bun_create_axios() {
     }
     // colors, files, zip, mime and the timing recorder (api-coverage P3.2b) are created on first use.
     const once = create => { let value; return () => value || (value = create()); };
-    const files = once(() => __autojs6_js_tools_files({ fs: host.fs, cwd: host.cwd, sdcardPath: host.sdcardPath, java: host.java,
-      TextDecoder: globalThis.TextDecoder, filesDir: host.filesDir, cacheDir: host.cacheDir, dataDir: host.dataDir }));
+    const files = once(() => Object.assign(__autojs6_js_tools_files({ fs: host.fs, cwd: host.cwd, sdcardPath: host.sdcardPath, java: host.java,
+      TextDecoder: globalThis.TextDecoder, filesDir: host.filesDir, cacheDir: host.cacheDir, dataDir: host.dataDir }),
+      host.batchRename ? { batchRename: host.batchRename() } : {}));
     const zip = once(() => Object.freeze(__autojs6_js_tools_zip({ java: host.java, cwd: host.hostCwd || host.cwd })));
     const mimeRecorder = once(() => __autojs6_js_tools_mime_recorder({ device: host.device }));
     const colors = once(() => {
-      const result = __autojs6_js_tools_colors({ java: host.java, device: host.device, get android() { return host.android && host.android(); } });
+      const result = __autojs6_js_tools_colors({ java: host.java, device: host.device, themeCall: host.themeCall, get android() { return host.android && host.android(); } });
       Object.freeze(result.colors);
       return result;
     });
@@ -19723,6 +19794,319 @@ function __autojs6_bun_host_info() {
   return {host: part("host"), execution: part("execution")};
 }
 
+// BEGIN GENERATED PLUGIN FAMILY FACADE
+  // Shared plugin family facades: gallery and files.batchRename (api-coverage Q81 (a) / Q82 (a)). The Promise forms of Rhino's
+  // modules over the host's execution-owned clients: the host applies Rhino's argument rules and does the plugin and file work,
+  // an operation's events and outcome come back through poll. The execution's end closes the clients.
+  function __autojs6_create_plugin_family(call, EventEmitter) {
+    function codedError(name, prefix) {
+      const CodedError = {[name]: function (message, code) {
+        if (!(this instanceof CodedError)) return new CodedError(message, code);
+        const text = message === undefined || message === null ? "" : String(message);
+        Object.defineProperty(this, "message", {value: text, writable: true, configurable: true, enumerable: false});
+        this.code = code === undefined || code === null ? "INTERNAL" : String(code);
+        const stack = new Error(text).stack;
+        if (typeof stack === "string") Object.defineProperty(this, "stack", {value: stack, writable: true, configurable: true, enumerable: false});
+      }}[name];
+      CodedError.prototype = Object.create(Error.prototype, {
+        constructor: {value: CodedError, writable: true, configurable: true},
+        name: {value: name, writable: true, configurable: true},
+        toString: {value() { return this.name + " [" + this.code + "]: " + this.message; }, writable: true, configurable: true}
+      });
+      const failure = error => {
+        if (error instanceof CodedError) return error;
+        const code = String(error?.code || "INTERNAL");
+        const value = new CodedError(error?.message ?? String(error), code.startsWith(prefix) ? code.slice(prefix.length) : code);
+        for (const key of ["capability", "missingCapabilities"]) if (error?.[key] !== undefined) value[key] = error[key];
+        return value;
+      };
+      return {CodedError, failure};
+    }
+    // One client per thread and module, opened on first use. run settles with the operation's outcome; a hooks.answered
+    // operation (the viewer) stays registered for its events after it answered, until the hook's end is called.
+    function operations(module, capability, noun, {CodedError, failure}, invalid) {
+      let opening = null, generation = 0, pumping = false;
+      const records = new Map();
+      const raw = (method, args) => Promise.resolve().then(() =>
+        call(module, method, args, {timeoutMs: 10000, permissions: [capability]})).catch(error => { throw failure(error); });
+      function client() {
+        if (!opening) {
+          const value = raw("open", []).then(descriptor => descriptor.id);
+          opening = value;
+          value.catch(() => { if (opening === value) opening = null; });
+        }
+        return opening;
+      }
+      function forget(record) {
+        if (record.key) records.delete(record.key);
+        record.cleanup?.(); record.fragments = [];
+      }
+      function settle(record, error, value) {
+        if (record.settled) return;
+        record.settled = true;
+        forget(record);
+        error ? record.reject(error) : record.resolve(value);
+      }
+      function deliver(record, message) {
+        if (message.type === "progress") record.hooks.progress?.(message.value);
+        else if (message.type === "event") record.hooks.event?.(message.value);
+        else if (message.type === "reject") settle(record, failure(message.value));
+        else if (message.type === "resolve" && !record.hooks.answered) settle(record, null, message.value);
+        else if (message.type === "resolve") {
+          record.settled = true; record.clearDeadline();
+          record.resolve(record.hooks.answered(message.value, () => forget(record)));
+        }
+      }
+      async function pump() {
+        if (pumping || !records.size) return;
+        pumping = true;
+        const epoch = generation;
+        let delay = 25;
+        try {
+          const id = await client();
+          while (epoch === generation && records.size) {
+            const parts = await raw("poll", [id, [...records.keys()]]);
+            for (const part of parts) {
+              const record = records.get(part.id);
+              if (!record) continue;
+              record.fragments.push(Buffer.from(part.data, "base64"));
+              if (part.last) {
+                const message = JSON.parse(Buffer.concat(record.fragments).toString("utf8"));
+                record.fragments = [];
+                deliver(record, message);
+              }
+            }
+            if (parts.length) delay = 25;
+            else {
+              await new Promise(resolve => setTimeout(resolve, delay));
+              delay = Math.min(delay * 2, 200);
+            }
+          }
+        } catch (error) {
+          if (epoch === generation) {
+            generation++;
+            const old = opening;
+            opening = null;
+            for (const record of [...records.values()]) {
+              if (record.settled) record.hooks.failed?.(failure(error));
+              else settle(record, failure(error));
+            }
+            old?.then(id => raw("close", [id])).catch(() => {});
+          }
+        } finally {
+          pumping = false;
+          if (records.size) setTimeout(pump, 0);
+        }
+      }
+      function run(method, args, options, hooks = {}) {
+        return new Promise((resolve, reject) => {
+          let timer;
+          const record = {resolve, reject, hooks, key: null, client: null, fragments: [], settled: false, cancelError: null,
+            cleanup: null, clearDeadline: () => clearTimeout(timer)};
+          const cancel = error => {
+            record.cancelError ||= error;
+            if (record.key) raw("cancel", [record.client, record.key]).catch(() => {});
+            if (record.settled) hooks.cancelled?.();
+            else settle(record, error);
+          };
+          try {
+            if (options !== undefined && options !== null && (typeof options !== "object" || Array.isArray(options)))
+              throw new CodedError("Call options must be an object", invalid);
+            const timeout = options?.timeoutMs, signal = options?.signal;
+            if (timeout !== undefined && timeout !== null && (!Number.isFinite(timeout) || timeout <= 0))
+              throw new CodedError("timeoutMs must be positive and finite", invalid);
+            if (signal !== undefined && signal !== null && (typeof signal.addEventListener !== "function" || typeof signal.removeEventListener !== "function"))
+              throw new CodedError("signal must be an AbortSignal", invalid);
+            const abort = () => cancel(new CodedError(noun + " operation cancelled", "CANCELLED"));
+            record.cleanup = () => { clearTimeout(timer); signal?.removeEventListener("abort", abort); };
+            signal?.addEventListener("abort", abort, {once: true});
+            if (signal?.aborted) { abort(); return; }
+            if (timeout !== undefined && timeout !== null) {
+              const deadline = Date.now() + timeout;
+              const watchDeadline = () => {
+                const remaining = deadline - Date.now();
+                if (remaining <= 0) cancel(new CodedError(noun + " operation timed out", "TIMEOUT"));
+                else timer = setTimeout(watchDeadline, Math.min(remaining, 2147483647));
+              };
+              watchDeadline();
+            }
+            (async () => {
+              record.client = await client();
+              if (record.cancelError) return;
+              record.key = (await raw("start", [record.client, method, args])).id;
+              if (record.cancelError) { await raw("cancel", [record.client, record.key]).catch(() => {}); return; }
+              records.set(record.key, record);
+              pump();
+            })().catch(error => settle(record, failure(error)));
+          } catch (error) { settle(record, failure(error)); }
+        });
+      }
+      return run;
+    }
+    const members = (errors, invalid) => {
+      const argumentsText = n => n === 1 ? "1 argument" : n + " arguments";
+      const arity = (min, max) => max === 0 ? "Arguments must be empty" : min === max ? "Method only accepts " + argumentsText(min) :
+        min === 0 ? "Method only accepts no more than " + argumentsText(max) : `Method only accepts a number of arguments in the range [${min}..${max}]`;
+      // Rhino's parameters, then this runtime's call options. Every form is a Promise, so a bad argument rejects.
+      const member = (name, min, max, work) => Object.defineProperty(async (...args) => {
+        let n = args.length;
+        while (n > 0 && args[n - 1] === undefined) n--;
+        if (n < min || n > max + 1) throw new errors.CodedError(arity(min, max), invalid);
+        return work(args.slice(0, max), args[max]);
+      }, "name", {value: name});
+      // Plain data as Rhino's JSON conversion gives it: functions and undefined members are left out.
+      const plain = value => {
+        try {
+          const text = JSON.stringify(value);
+          return text === undefined ? null : JSON.parse(text);
+        } catch (error) { throw new errors.CodedError(error.message, invalid); }
+      };
+      return {member, plain};
+    };
+
+    const galleryErrors = codedError("GalleryError", "ERR_AUTOJS6_GALLERY_");
+    const GalleryError = galleryErrors.CodedError;
+    const galleryRun = operations("gallery", "gallery", "Gallery", galleryErrors, "INVALID_ARGUMENT");
+    const {member: galleryMember, plain: galleryPlain} = members(galleryErrors, "INVALID_ARGUMENT");
+    // Rhino's GalleryViewSession: an emitter whose open, page, error and close events follow the plugin's viewer.
+    class GalleryViewSession extends EventEmitter {
+      #view;
+      constructor(view) { super(); this.#view = view; }
+      get paths() { return this.#view.paths; }
+      get count() { return this.#view.paths.length; }
+      get index() { return this.#view.index; }
+      get path() { return this.#view.path; }
+      get state() { return this.#view.state; }
+      get isOpen() { return this.#view.state === "open"; }
+      get isClosed() { return this.#view.state === "closed"; }
+      get reason() { return this.#view.reason; }
+      async close(options) {
+        if (!this.isClosed) await galleryRun("view.close", [this.#view.id, galleryPlain(options)]);
+        return this;
+      }
+      toString() {
+        return "GalleryViewSession { count: " + this.count + ", state: " + this.state + (this.index >= 0 ? ", index: " + this.index : "") +
+          (this.reason === null ? "" : ", reason: " + this.reason) + " }";
+      }
+    }
+    function view(method, paths, options, callOptions) {
+      const state = {id: null, paths: [], index: -1, path: null, state: "pending", reason: null};
+      const waiting = [];
+      let session = null, end = null, ready = false;
+      function emit(event) {
+        const {type, ...payload} = event;
+        try {
+          if (type !== "error") session.emit(type, payload);
+          else if (session.listenerCount("error")) session.emit("error", new GalleryError(event.message, event.code));
+        } catch (error) { setTimeout(() => { throw error; }, 0); }
+      }
+      function arrive(event) {
+        if (state.state === "closed") return;
+        if (event.type === "open") state.state = "open";
+        else if (event.type === "page") { state.index = event.index; state.path = event.path; }
+        else if (event.type === "close") { state.state = "closed"; state.reason = event.reason; end?.(); }
+        if (ready) emit(event);
+        else waiting.push(event);
+      }
+      return galleryRun(method, [galleryPlain(paths), galleryPlain(options)], callOptions, {
+        event: arrive,
+        answered(value, finish) {
+          state.id = value.id; state.paths = Object.freeze([...value.paths]); end = finish;
+          session = new GalleryViewSession(state);
+          if (state.state === "closed") end();
+          // The caller's listeners arrive with its await: the events so far wait for them.
+          setTimeout(() => { ready = true; for (const event of waiting.splice(0)) emit(event); }, 0);
+          return session;
+        },
+        cancelled: () => arrive({type: "close", reason: "cancelled"}),
+        failed(error) {
+          arrive({type: "error", code: error.code, message: error.message});
+          arrive({type: "close", reason: "error"});
+        }
+      });
+    }
+    const gallery = {GalleryError};
+    for (const [name, min, max, work] of [
+      ["pick", 0, 1, ([options], callOptions) => galleryRun("pick", [galleryPlain(options)], callOptions)],
+      ["view", 1, 2, ([paths, options], callOptions) => view("view", paths, options, callOptions)],
+      ["edit", 1, 2, ([path, options], callOptions) => galleryRun("edit", [galleryPlain(path), galleryPlain(options)], callOptions)],
+      ["convert", 1, 2, ([path, options], callOptions) => galleryRun("convert", [galleryPlain(path), galleryPlain(options)], callOptions)],
+      ["isAvailable", 0, 0, (_, callOptions) => galleryRun("isAvailable", [], callOptions)]
+    ]) {
+      gallery[name] = galleryMember(name, min, max, work);
+      gallery[name + "Async"] = galleryMember(name + "Async", min, max, name === "view" ?
+        ([paths, options], callOptions) => view("viewAsync", paths, options, callOptions) : work);
+    }
+
+    const renameErrors = codedError("BatchRenameError", "ERR_AUTOJS6_BATCH_RENAME_");
+    const BatchRenameError = renameErrors.CodedError;
+    const renameRun = operations("batch_rename", "batch_rename", "Batch rename", renameErrors, "INVALID_OPTIONS");
+    const {member: renameMember, plain: renamePlain} = members(renameErrors, "INVALID_OPTIONS");
+    const refused = message => new BatchRenameError(message, "INVALID_OPTIONS");
+    const brief = value => String(value) + " (" + Object.prototype.toString.call(value).slice(8, -1) + ")";
+    const isObject = value => value !== null && (typeof value === "object" || typeof value === "function");
+    function progressOf(options) {
+      const value = isObject(options) ? options.onProgress : null;
+      if (value === undefined || value === null) return null;
+      if (typeof value !== "function") throw refused("onProgress must be a function, got " + brief(value));
+      return value;
+    }
+    function regExpOf(options) {
+      const search = isObject(options) ? options.search : null;
+      return Object.prototype.toString.call(search) === "[object RegExp]" ? {source: search.source, flags: search.flags} : null;
+    }
+    const namedOptions = options => [renamePlain(options), regExpOf(options)];
+    const plan = (paths, options, callOptions) => renameRun("plan", [renamePlain(paths), ...namedOptions(options)], callOptions);
+    // A throwing onProgress does not interrupt the batch: it finishes and is journaled, then the call rejects with the error.
+    async function applied(id, excluded, conflict, progress, callOptions) {
+      const thrown = [];
+      const hooks = progress ? {progress([done, total, item]) {
+        if (thrown.length) return;
+        try { progress(done, total, item); } catch (error) { thrown.push(error); }
+      }} : {};
+      let result;
+      try { result = await renameRun("apply", [id, excluded, conflict, Boolean(progress)], callOptions, hooks); }
+      catch (error) { if (!thrown.length) throw error; }
+      if (thrown.length) throw thrown[0];
+      return result;
+    }
+    const batchRename = renameMember("batchRename", 2, 2, async ([paths, options], callOptions) => {
+      const progress = progressOf(options);
+      const planned = await plan(paths, options, callOptions);
+      return applied(planned.id, planned.items.map(item => item.excluded === true), null, progress, callOptions);
+    });
+    batchRename.BatchRenameError = BatchRenameError;
+    for (const [name, min, max, asyncForm, work] of [
+      ["plan", 2, 2, true, ([paths, options], callOptions) => plan(paths, options, callOptions)],
+      ["preview", 2, 2, true, ([items, options], callOptions) => renameRun("preview", [renamePlain(items), ...namedOptions(options)], callOptions)],
+      ["apply", 1, 2, true, ([planned, options], callOptions) => {
+        if (!isObject(planned)) throw refused("apply needs a plan returned by plan(), got " + brief(planned));
+        if (typeof planned.id !== "string") throw refused("apply needs a plan returned by plan(): the plan has no id");
+        if (!Array.isArray(planned.items)) throw refused("apply needs a plan returned by plan(): the plan has no items");
+        const excluded = planned.items.map(item => isObject(item) && item.excluded === true);
+        return applied(planned.id, excluded, renamePlain(options), progressOf(options), callOptions);
+      }],
+      ["undo", 1, 1, true, ([target], callOptions) => renameRun("undo", [renamePlain(target)], callOptions)],
+      ["history", 0, 1, false, ([limit], callOptions) => renameRun("history", [renamePlain(limit)], callOptions)],
+      ["presets", 0, 0, true, (_, callOptions) => renameRun("presets", [], callOptions)],
+      ["importPresets", 1, 2, true, ([document, options], callOptions) => {
+        if (typeof document !== "string" && !isObject(document))
+          throw refused("importPresets needs a JSON string or an object of exported presets, got " + brief(document));
+        const text = typeof document === "string" ? document : JSON.stringify(renamePlain(document));
+        return renameRun("importPresets", [text, renamePlain(options)], callOptions);
+      }],
+      ["deleteHistory", 1, 1, false, ([target], callOptions) => renameRun("deleteHistory", [renamePlain(target)], callOptions)],
+      ["clearHistory", 0, 1, false, ([options], callOptions) => renameRun("clearHistory", [renamePlain(options)], callOptions)],
+      ["isAvailable", 0, 0, false, (_, callOptions) => renameRun("isAvailable", [], callOptions)]
+    ]) {
+      batchRename[name] = renameMember(name, min, max, work);
+      if (asyncForm) batchRename[name + "Async"] = renameMember(name + "Async", min, max, work);
+    }
+    return {gallery: Object.freeze(gallery), batchRename: Object.freeze(batchRename)};
+  }
+  // End shared plugin family facades.
+// END GENERATED PLUGIN FAMILY FACADE
+
 export async function createHostClient(options = {}) {
   const socket = options.socket ?? globalThis.process?.env?.AUTOJS6_HOST_BRIDGE_SOCKET;
   const fetcher = options.fetch ?? globalThis.fetch;
@@ -19820,7 +20204,7 @@ export async function createHostClient(options = {}) {
     // A grant also answers a second Node module, named in the request (api-coverage P4.1b): the notice extras of
     // notifications.post, powerManager of device.control and automator / auto of accessibility.control (P4.4, Q183 (a)).
     const shared = {notice: 'notifications.post', power_manager: 'device.control', automator: 'accessibility.control', auto: 'accessibility.control'}[module];
-    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? (HOST_API_METHODS['media.control'].includes(method) ? 'media.control' : 'device.audio') : module === 'media_store' ? 'media.library' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module === 'plugin_tools' ? 'plugintools.control' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'batch_rename' ? 'batchrename.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? (HOST_API_METHODS['media.control'].includes(method) ? 'media.control' : 'device.audio') : module === 'media_store' ? 'media.library' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module === 'plugin_tools' ? 'plugintools.control' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     // Installs, uninstalls and plugin tools wait for the user or the tool up to 15 min and 5 s, as in Node, and so do terminal
     // commands and waitFor (AutoJs6 api-coverage P4.3); other tasks 120 s.
     const limit = module === 'installer' || module === 'plugin_tools' || module === 'terminal' ? 905000 : 120000;
@@ -19984,7 +20368,9 @@ export async function createHostClient(options = {}) {
     ? call('execution.control', {method: 'cwd', args: []}).then(result => result.value) : Promise.reject(new Error('no execution.control')))
     .catch(() => grants.has('files.control') ? files.cwd() : null).catch(() => null)
     .then(value => typeof value === 'string' && value ? value : process.cwd());
-  const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value, deviceInfo, {core: () => jsTools.files, ready: hostDirectory});
+  // Rhino's gallery and files.batchRename (AutoJs6 api-coverage Q81 (a) / Q82 (a)): gallery.control and batchrename.control.
+  const pluginFamily = __autojs6_create_plugin_family(automationCall, EventEmitter);
+  const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value, deviceInfo, {core: () => jsTools.files, ready: hostDirectory, batchRename: pluginFamily.batchRename});
 
   function group(capability) {
     return Object.freeze(Object.fromEntries(HOST_API_METHODS[capability].map(method => [method, async (...args) => {
@@ -20161,6 +20547,7 @@ export async function createHostClient(options = {}) {
   const nodeRequire = __autojs6_bun_create_require(import.meta.url);
   jsTools = __autojs6_create_js_tools({device: deviceInfo, java: () => java,
     log: text => globalThis.console.log(text), warn: text => globalThis.console.warn(text),
+    themeCall: (method, args) => automationCall('theme', method, args),
     axios: () => axios ??= __autojs6_bun_create_axios(),
     fs: __autojs6_bun_fs, path: {...filePath, resolve: (_, file) => filePath.resolve(process.cwd(), file)},
     cwd: () => hostCwd ?? process.cwd(), sdcardPath: files.sdcardPath, android: () => android,
@@ -20213,6 +20600,7 @@ export async function createHostClient(options = {}) {
     mail: __autojs6_create_mail(automationCall),
     ai: __autojs6_create_ai(automationCall),
     epub: __autojs6_create_epub(automationCall),
+    gallery: pluginFamily.gallery,
     speech: __autojs6_create_speech(automationCall),
     tts: __autojs6_create_tts(automationCall),
     java,

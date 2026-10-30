@@ -46,6 +46,9 @@ console.log(text);
 | `floaty.control` | `host.floaty` | 关闭 | 悬浮窗及其视图, 查询或申请悬浮窗权限 (2026-10-30, P4.3) |
 | `floaty.raw` / `floaty.touch` | `host.floaty.rawWindow` / `RawWindow.setTouchable` | 关闭 | 原始悬浮窗 / 触摸穿透, 另需 `floaty.control` |
 | `terminal.control` | `host.terminal` | 关闭 | 终端插件会话与命令, 不被 shell 授权隐含 |
+| `theme.control` | `host.colors.theme` | 关闭 | 读取和修改 AutoJs6 主题色, 激活色库 (2026-10-30, P4.5) |
+| `gallery.control` | `host.gallery` | 关闭 | 3-Maple Image 插件的选择器, 查看器, 编辑器与转换 (P4.5) |
+| `batchrename.control` | `host.files.batchRename` | 关闭 | Batch Rename 插件的批量重命名, 撤销, 历史与预设 (P4.5) |
 
 这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销, 对下一次执行生效. 拼音和 OpenCC 还需要对应插件安装并启用; 控制台显示需要 Android 悬浮窗权限. 图像的 OpenCV 运算需要宿主可用的 OpenCV 实现. 屏幕截图开关只允许申请权限, 仍需 Android 的录屏授权. 无障碍, OCR, UI 布局, Java 等其他能力见下文各节; 客户端没有 `rhino.run`.
 
@@ -1403,6 +1406,22 @@ Packaged applications declare `epub.control` and use the paired Runtime Kit. Bui
 
 See Documentation `api/runtimeApis.md` for complete signatures. `node tools/host-client/sync-epub.mjs --check` verifies the shared implementation and declarations; `node --test tools/host-client/epub.test.mjs` exercises SDK negotiation and denied grants.
 
+
+## Theme color, gallery and batch rename (2026-10-30, AutoJs6 api-coverage P4.5)
+
+Three independent, default-off grants, one per host bridge module, each listed in the plugin settings of the host (Q195 (a)):
+
+| Grant | Client member | Needs |
+| --- | --- | --- |
+| `theme.control` | `host.colors.theme` (get, set, reset, libraries, activate, deactivate, next, state, current) | nothing else |
+| `gallery.control` | `host.gallery` (pick, view, edit, convert, isAvailable, their Async forms, GalleryError) | 3-Maple Image 3.4.0 or later |
+| `batchrename.control` | `host.files.batchRename` (callable; plan, preview, apply, undo, history, presets, importPresets, deleteHistory, clearHistory, isAvailable, the six Async forms, BatchRenameError) | Batch Rename 1.0.0 or later |
+
+They are the shared Node facades: `colors.theme` of the JS tools core and the plugin family factory, so argument rules, error types and codes are those of Rhino and of Node, and every member returns a Promise. A call without its grant rejects with `NOT_GRANTED` and the capability. `gallery.control` and `batchrename.control` polling is exempt from the ordinary 1024-call execution quota, like `epub.control`, because a viewer stays open and pickers wait for the user. Size, grant, concurrency and per-RPC deadline checks remain active; a gallery or batch rename client that was opened late for an abandoned call is closed.
+
+`speech` adds `diarize`, `detectLanguage`, `tag` with their Async forms and `speech.speaker` under `speech.control` (3-Macaw Speech 1.3.0 or later).
+
+See Documentation `api/runtimeApis.md` for signatures. `node tools/host-client/sync-plugin-family.mjs --check` verifies the shared implementation and declarations; `node --test tools/host-client/plugin-family.test.mjs` runs the client regressions.
 
 ## Mail accounts, messages and watches (2026-10-21)
 

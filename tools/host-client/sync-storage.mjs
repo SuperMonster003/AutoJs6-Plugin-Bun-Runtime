@@ -40,5 +40,5 @@ let fileTypes=filesInput.slice(fileStart,fileEnd+4).replace('  namespace files',
 // The members Bun answers through files.control (the Rhino prototype members of P4.2b too) return Promises; the path
 // string helpers, the size formatting and sdcardPath stay synchronous, open / toFile / readAssets are Promises in Node.
 fileTypes=fileTypes.replace(/^(\s*)(path|nonNullPath|cwd|read|write|append|exists|listDir|remove|copy|move|ensureDir|isFile|isDir|create|createIfNotExists|createWithDirs|readBytes|writeBytes|appendBytes|rename|renameWithoutExtension|removeDir|isEmptyDir|getSimplifiedPath)(\([^\n]*\)): ([^;]+);/gm,(_,space,name,args,type)=>space+name+args+': Promise<'+type+'>;')
-  .replaceAll('import("java").','RuntimeJava.');
+  .replaceAll('import("java").','RuntimeJava.').replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions');
 update('app/src/main/assets/autojs6/host-client.d.mts','// BEGIN GENERATED FILE TYPES','// END GENERATED FILE TYPES','// BEGIN GENERATED FILE TYPES\n'+fileTypes+'\n// END GENERATED FILE TYPES','export interface HostClient {');
