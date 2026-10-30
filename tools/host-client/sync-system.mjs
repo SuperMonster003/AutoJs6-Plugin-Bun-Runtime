@@ -39,7 +39,8 @@ function update(file,begin,end,body,anchor){
 update('app/src/main/assets/autojs6/host-client.mjs','// BEGIN GENERATED SYSTEM','// END GENERATED SYSTEM',generated,'export async function createHostClient');
 
 const types=text=>text.replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions').replaceAll('AutoJs6Node.JsonObject','{ readonly [key: string]: JsonValue }')
-  .replaceAll('AutoJs6Node.JsonValue','JsonValue');
+  .replaceAll('AutoJs6Node.JsonValue','JsonValue').replace('(capability plugin_tools; the tools of','(grant plugintools.control; the tools of')
+  .replace('when the script also declares plugin_tools.user_granted','when plugintools.usergranted is on too');
 const declaration=file=>readFileSync(resolve(nodeRoot,`docs/nodejs/types/autojs6-node/${file}.d.ts`),'utf8').replaceAll('\r\n','\n').replace(/^﻿/,'');
 let declarations='// BEGIN GENERATED SYSTEM TYPES\n';
 for(const [file,name,namespace] of [['autojs','autojs','RuntimeAutojs'],['installer','installer','RuntimeInstaller'],['memory','memory','RuntimeMemory'],
@@ -55,7 +56,7 @@ const block=name=>{const first=plugins.indexOf(`    export interface ${name} `),
 const membersFirst=plugins.indexOf('      /** Rhino\'s plugins.extend*'),membersLast=plugins.indexOf('      readonly tools: PluginToolsModule;\n',membersFirst);
 assert(membersFirst>=0&&membersLast>membersFirst,'Rhino members of PluginsModule');
 declarations+=types('export namespace RuntimePlugins {\n'+block('PluginToolCallOptions')+'\n'+block('PluginToolsModule')+'\n'+
-  '    /** Rhino\'s plugins: extend* and tools (Bun grants plugin_tools.control and plugin_tools.user_granted for tools). */\n'+
+  '    /** Rhino\'s plugins: extend* and tools (Bun grants plugintools.control and plugintools.usergranted for tools). */\n'+
   '    export interface PluginsModule {\n'+plugins.slice(membersFirst,membersLast)+'      readonly tools: PluginToolsModule;\n    }\n  }\n');
 declarations+='// END GENERATED SYSTEM TYPES';
 update('app/src/main/assets/autojs6/host-client.d.mts','// BEGIN GENERATED SYSTEM TYPES','// END GENERATED SYSTEM TYPES',declarations,'export interface HostClient {');

@@ -838,7 +838,7 @@ host.autojs, host.installer, host.memory, host.settings, host.sysprops, host.pow
 | memory.control / memory.dump | memory 的 snapshot / collect / retained / dumpHeap | memory / memory.dump |
 | installer.control / installer.mutate | installer 的查询 / install, uninstall, setDefault, session, authorizer.request | installer / installer.mutate |
 | engines.control / engines.exec | engines 的列表与停止 / execScript, execScriptFile, execAutoFile | engines / engines:exec |
-| plugin_tools.control / plugin_tools.user_granted | plugins.tools / 另放行用户授权 (USER_GRANTED) 的第三方插件的工具; 工具要截屏或读写路径时还需 screen.capture / files.control | plugin_tools / plugin_tools.user_granted |
+| plugintools.control / plugintools.usergranted | plugins.tools / 另放行用户授权 (USER_GRANTED) 的第三方插件的工具; 工具要截屏或读写路径时还需 screen.capture / files.control | plugin_tools / plugin_tools.user_granted |
 
 powerManager 使用已有的 device.control 与 device.power, notice 的扩展成员使用 notifications.post (ensureEnabled / launchSettings 另需 notifications.settings), notice.builder 与 notify(builder) 经 host.java (java.interop). 当前包名 / Activity (current* 与 waitFor*) 的 auto 模式依次尝试 shell.shizuku, shell.root 与 accessibility.control, 都不可用时得到空字符串. 授权关闭时在访问宿主之前 reject HostCallError NOT_GRANTED, missingCapabilities 列出缺少的 Bun 授权名 (Q90). installer 的安装类操作与插件工具调用最长等待 15 分钟 5 秒 (等待用户确认或工具完成), 其他调用 120 秒.
 

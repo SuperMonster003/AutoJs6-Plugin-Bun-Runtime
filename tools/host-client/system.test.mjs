@@ -30,7 +30,7 @@ const client = fake => createHostClient({socket: "/private/bridge.sock", fetch: 
 
 test("the family's query grants have the host's routes and the client exposes Rhino's namespaces", async () => {
   assert.deepEqual(HOST_API_METHODS["engines.control"], ["myEngine", "all", "stopAll", "stopSelf", "execScript", "execScriptFile", "list", "stop", "execAutoFile", "stopAllAndToast"]);
-  assert.deepEqual(HOST_API_METHODS["plugin_tools.control"], ["list", "invoke", "cancel"]);
+  assert.deepEqual(HOST_API_METHODS["plugintools.control"], ["list", "invoke", "cancel"]);
   const fake = transport([]);
   const host = await client(fake);
   for (const name of ["autojs", "installer", "memory", "settings", "sysprops", "powerManager", "engines", "plugins"]) assert.equal(typeof host[name], "object", name);
@@ -59,7 +59,7 @@ test("a call whose Bun grants are off rejects NOT_GRANTED with the missing grant
     [() => host.engines.execScript("a", "1"), ["engines.exec"]],
     [() => host.powerManager.isIgnoringBatteryOptimizations(), ["device.power"]],
     [() => host.notifications.ensureEnabled(), ["notifications.settings"]],
-    [() => host.plugins.tools.list(), ["plugin_tools.control"]],
+    [() => host.plugins.tools.list(), ["plugintools.control"]],
     [() => host.sysprops.get("ro.build.type"), ["sysprops.control"]],
   ]) {
     await assert.rejects(call(), error => error.code === "NOT_GRANTED" && assert.deepEqual([...error.missingCapabilities], missing) === undefined);
@@ -69,7 +69,7 @@ test("a call whose Bun grants are off rejects NOT_GRANTED with the missing grant
 
 test("the notice extras and powerManager name their Node module under their Bun grants; long installs and tools wait 15 min", async () => {
   const fake = transport(["notifications.post", "notifications.settings", "device.control", "device.power", "installer.control", "installer.mutate",
-    "plugin_tools.control", "plugin_tools.user_granted"], method => method === "list" ? {tools: [{name: "t"}], providers: []} : method === "install" ? {value: {ok: true}} : true);
+    "plugintools.control", "plugintools.usergranted"], method => method === "list" ? {tools: [{name: "t"}], providers: []} : method === "install" ? {value: {ok: true}} : true);
   const host = await client(fake);
   assert.equal(await host.notifications.isEnabled(), true);
   assert.equal(await host.powerManager.isIgnoringBatteryOptimizations("org.example"), true);
@@ -77,7 +77,7 @@ test("the notice extras and powerManager name their Node module under their Bun 
   assert.deepEqual(await host.plugins.tools.list(), [{name: "t"}]);
   assert.deepEqual(fake.starts.map(start => [start.capability, start.module, start.method]), [
     ["notifications.post", "notice", "isEnabled"], ["device.control", "power_manager", "isIgnoringBatteryOptimizations"],
-    ["installer.control", undefined, "install"], ["plugin_tools.control", undefined, "list"],
+    ["installer.control", undefined, "install"], ["plugintools.control", undefined, "list"],
   ]);
   assert.equal(fake.starts[2].timeoutMs, 905000);
 });

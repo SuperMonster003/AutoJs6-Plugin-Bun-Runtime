@@ -61,7 +61,7 @@ export const HOST_API_METHODS = Object.freeze({
   "accessibility.control": Object.freeze(["isEnabled", "ensureEnabled", "click", "back", "home", "recentApps", "findByText", "clickText", "findOne", "findAll", "flowProbe", "flowForeground", "longClick", "setText", "scrollForward", "scrollBackward", "swipe", "gesture"]),
   "clipboard.control": Object.freeze(["getText", "setText", "hasText"]),
   // The system information and engines family (api-coverage P4.1b): the host routes of each query grant; the write grants
-  // (autojs.manage, settings.write, memory.dump, installer.mutate, engines.exec, plugin_tools.user_granted) admit more of them.
+  // (autojs.manage, settings.write, memory.dump, installer.mutate, engines.exec, plugintools.usergranted) admit more of them.
   "autojs.control": Object.freeze(["isRootAvailable", "getRootMode", "setRootMode", "canModifySystemSettings", "canWriteSecureSettings",
     "canDisplayOverOtherApps", "getLanguage", "screen", "themeColor", "resourceId", "restart", "exit"]),
   "settings.control": Object.freeze(["isEnabled", "setEnabled", "export", "categories"]),
@@ -70,7 +70,7 @@ export const HOST_API_METHODS = Object.freeze({
   "installer.control": Object.freeze(["isAvailable", "status", "isDefault", "users", "inspect", "install", "uninstall", "setDefault",
     "authorizerState", "authorizerRequest", "sessionOpen", "sessionStart", "sessionState", "sessionDrain", "sessionCancel", "sessionWait", "sessionClose"]),
   "engines.control": Object.freeze(["myEngine", "all", "stopAll", "stopSelf", "execScript", "execScriptFile", "list", "stop", "execAutoFile", "stopAllAndToast"]),
-  "plugin_tools.control": Object.freeze(["list", "invoke", "cancel"]),
+  "plugintools.control": Object.freeze(["list", "invoke", "cancel"]),
   "text.pinyin": Object.freeze(["convert", "simple", "compare", "compact", "fromCodePoint", "fromPhrase"]),
   "text.pinyin4j": Object.freeze(["of", "as", "readings"]),
   "text.opencc": Object.freeze(["convert"]),
@@ -17228,7 +17228,7 @@ export async function createHostClient(options = {}) {
     // A grant also answers a second Node module, named in the request (api-coverage P4.1b): the notice extras of
     // notifications.post and powerManager of device.control.
     const shared = {notice: 'notifications.post', power_manager: 'device.control'}[module];
-    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
+    const capability = shared ? shared : module === 'aiAgent' ? 'agent.control' : module === 'java' ? 'java.interop' : module === 'android' ? 'android.objects' : module === 'media' ? 'device.audio' : module === 'events' ? 'events.observe' : module === 'notifications' ? 'notifications.post' : module === 'plugin_tools' ? 'plugintools.control' : module + '.control', timeoutMs = options.timeoutMs ?? 10000;
     // Installs, uninstalls and plugin tools wait for the user or the tool up to 15 min and 5 s, as in Node; other tasks 120 s.
     const limit = module === 'installer' || module === 'plugin_tools' ? 905000 : 120000;
     if (!Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > limit) throw new TypeError(`Automation timeoutMs must be in 1..${limit}`);
@@ -17299,7 +17299,7 @@ export async function createHostClient(options = {}) {
   const SYSTEM_GRANTS = {autojs: 'autojs.control', 'autojs.control': 'autojs.manage', settings: 'settings.control', sysprops: 'sysprops.control',
     memory: 'memory.control', installer: 'installer.control', engines: 'engines.control', 'engines:exec': 'engines.exec', 'files.write': 'files.control',
     device: 'device.control', notifications: 'notifications.post', accessibility: 'accessibility.control', clipboard: 'clipboard.control',
-    plugin_tools: 'plugin_tools.control'};
+    plugin_tools: 'plugintools.control', 'plugin_tools.user_granted': 'plugintools.usergranted'};
   function systemCall(module, method, args, options = {}) {
     // Calls without permissions (engines.all / stopAll / stopSelf) need the module's own capability.
     const required = options.permissions || [{notice: 'notifications', power_manager: 'device'}[module] ?? module];
@@ -17325,7 +17325,7 @@ export async function createHostClient(options = {}) {
   // Worker ends that Worker (process.exit of a Bun Worker).
   let systemStopped = false;
   systemFamily = createSystemFamily(systemCall, {engine, device: deviceInfo, EventEmitter, jsox: () => jsTools.jsox,
-    shell: () => shellModules.shell, shizuku: () => shellModules.shizuku, userGrantedTools: () => grants.has('plugin_tools.user_granted'),
+    shell: () => shellModules.shell, shizuku: () => shellModules.shizuku, userGrantedTools: () => grants.has('plugintools.usergranted'),
     lifecycle: {
       isStopped: () => systemStopped,
       exit(error) {

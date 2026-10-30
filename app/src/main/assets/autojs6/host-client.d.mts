@@ -2,7 +2,7 @@
 export declare const SDK_VERSION: 1;
 export type HostCapability = "agent.control" | "ai.control" | "flow.control" | "mail.control" | "epub.control" | "speech.control" | "tts.control" | "java.interop" | "android.objects" | "tasks.control" | "device.control" | "device.power" | "device.audio" | "dialogs.control" | "events.observe" | "events.notification" | "events.toast" | "events.key" | "notifications.post" | "notifications.settings" | "database.control" | "shell.control" | "shell.root" | "shell.shizuku" | "sensors.control" | "files.control" | "storage.control" | "mediainfo.control" | "app.control" | "accessibility.control" | "accessibility.gesture" | "clipboard.control" | "ui.layout" | "ui.compose" | "screen.record.microphone" | "screen.record.playback" | "ui.toast" | "device.info" | "text.pinyin" | "text.pinyin4j" | "text.opencc" | "image.process" | "image.files" | "screen.capture" | "screen.record" | "screen.metrics" | "console.control"
   | "autojs.control" | "autojs.manage" | "settings.control" | "settings.write" | "sysprops.control" | "memory.control" | "memory.dump"
-  | "installer.control" | "installer.mutate" | "engines.control" | "engines.exec" | "plugin_tools.control" | "plugin_tools.user_granted";
+  | "installer.control" | "installer.mutate" | "engines.control" | "engines.exec" | "plugintools.control" | "plugintools.usergranted";
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | { readonly [key: string]: JsonValue };
 export declare class HostCallError extends Error {
   readonly code: string;
@@ -11,7 +11,7 @@ export declare class HostCallError extends Error {
   constructor(code: string, message: string, capability?: string | null, status?: number);
 }
 export declare const HOST_API_METHODS: Readonly<Record<"agent.control" | "ai.control" | "flow.control" | "mail.control" | "epub.control" | "speech.control" | "tts.control" | "java.interop" | "android.objects" | "tasks.control" | "device.control" | "device.audio" | "dialogs.control" | "events.observe" | "notifications.post" | "database.control" | "shell.control" | "sensors.control" | "files.control" | "storage.control" | "mediainfo.control" | "app.control" | "accessibility.control" | "clipboard.control" | "text.pinyin" | "text.pinyin4j" | "text.opencc" | "image.process" | "image.files" | "screen.capture" | "screen.record" | "screen.metrics" | "console.control"
-  | "autojs.control" | "settings.control" | "sysprops.control" | "memory.control" | "installer.control" | "engines.control" | "plugin_tools.control", readonly string[]>>;
+  | "autojs.control" | "settings.control" | "sysprops.control" | "memory.control" | "installer.control" | "engines.control" | "plugintools.control", readonly string[]>>;
 export declare const OPENCC_CONVERSION_TYPES: readonly [
   "hk2s", "hk2t", "jp2t", "s2hk", "s2t", "s2tw", "s2twp", "t2hk", "t2s", "t2tw", "t2jp", "tw2s", "tw2t", "tw2sp",
   "s2twi", "twi2s", "s2jp", "t2twi", "hk2tw", "hk2twi", "hk2jp", "tw2hk", "tw2twi", "tw2jp",
@@ -5642,15 +5642,15 @@ export namespace RuntimePlugins {
       cancel(invocationId: string, options?: AutomationCallOptions): Promise<unknown>;
     }
 
-    /** Rhino's plugins: extend* and tools (Bun grants plugin_tools.control and plugin_tools.user_granted for tools). */
+    /** Rhino's plugins: extend* and tools (Bun grants plugintools.control and plugintools.usergranted for tools). */
     export interface PluginsModule {
       /** Rhino's plugins.extend* on the shared jsox: Mathx / Arrayx / Numberx extend the built-ins of this thread. */
       extend(...names: (string | readonly string[])[]): void;
       extendAll(): void;
       extendAllBut(...names: (string | readonly string[])[]): void;
       /**
-       * Rhino's plugins.tools: the tools of installed tool-provider plugins (capability plugin_tools; the tools of
-       * USER_GRANTED providers are listed and run when the script also declares plugin_tools.user_granted).
+       * Rhino's plugins.tools: the tools of installed tool-provider plugins (grant plugintools.control; the tools of
+       * USER_GRANTED providers are listed and run when plugintools.usergranted is on too).
        */
       readonly tools: PluginToolsModule;
     }
@@ -5699,7 +5699,7 @@ export interface HostClient {
   readonly powerManager: RuntimePowerManager.PowerManagerModule;
   /** Rhino's engines as the host sees its executions (engines.control; execScript* also engines.exec). myEngine is this execution. */
   readonly engines: RuntimeEngines.EnginesModule;
-  /** Rhino's plugins.extend* (the built-ins of this thread) and plugins.tools (plugin_tools.control, plugin_tools.user_granted). */
+  /** Rhino's plugins.extend* (the built-ins of this thread) and plugins.tools (plugintools.control, plugintools.usergranted). */
   readonly plugins: RuntimePlugins.PluginsModule;
   readonly events: RuntimeEvents.EventsModule;
   readonly notifications: RuntimeNotifications.NotificationsModule;
