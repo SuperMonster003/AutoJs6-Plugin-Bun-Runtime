@@ -7313,6 +7313,8 @@ export namespace RuntimeEngines {
       readonly workingDirectory?: string;
       readonly packageName?: string;
       readonly nodeVersion?: string;
+      /** The script's source directory in the host: relative paths of host-side calls resolve against it, not against cwd. */
+      readonly hostCwd: string;
       readonly spawnDepth: number;
     }
 
