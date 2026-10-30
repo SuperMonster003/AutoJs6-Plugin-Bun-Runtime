@@ -67,9 +67,9 @@ test("a call whose Bun grants are off rejects NOT_GRANTED with the missing grant
   assert.equal(fake.requests.length, before, "denied entries must not reach the host");
 });
 
-test("the notice extras and powerManager name their Node module under their Bun grants; long installs and tools wait 15 min", async () => {
+test("the notice extras and powerManager name their Node module under their Bun grants; long installs and tools wait 15 min; plugintools.control alone lists the tools (Q162 (a))", async () => {
   const fake = transport(["notifications.post", "notifications.settings", "device.control", "device.power", "installer.control", "installer.mutate",
-    "plugintools.control", "plugintools.usergranted"], method => method === "list" ? {tools: [{name: "t"}], providers: []} : method === "install" ? {value: {ok: true}} : true);
+    "plugintools.control"], method => method === "list" ? {tools: [{name: "t"}], providers: []} : method === "install" ? {value: {ok: true}} : true);
   const host = await client(fake);
   assert.equal(await host.notifications.isEnabled(), true);
   assert.equal(await host.powerManager.isIgnoringBatteryOptimizations("org.example"), true);
@@ -113,4 +113,88 @@ test("the engine record: the host's record with engines.control, else the host i
     if (saved === undefined) delete process.env.AUTOJS6_HOST_INFO_FILE; else process.env.AUTOJS6_HOST_INFO_FILE = saved;
     rmSync(directory, {recursive: true, force: true});
   }
+});
+
+// Q135 (b), followed by Bun: Rhino's RootMode object, the script's file name as the default channel id and the global
+// system functions on globalThis after host.global.install() (Q161 (a)).
+test("getRootMode resolves with Rhino's RootMode object, which setRootMode takes", async () => {
+  const fake = transport(["autojs.control", "autojs.manage"], method => method === "getRootMode" ? "FORCE_NON_ROOT" : null);
+  const host = await client(fake);
+  const mode = await host.autojs.getRootMode();
+  assert.deepEqual([mode.key, mode.description, mode.name(), mode.ordinal(), String(mode)], ["key_$_root_mode_force_non_root", "Force set non-root mode",
+    "FORCE_NON_ROOT", 1, "RootMode{key=key_$_root_mode_force_non_root, description='Force set non-root mode'}"]);
+  assert.equal(await host.autojs.getRootMode(), mode);
+  assert(Object.isFrozen(mode));
+  await host.autojs.setRootMode(mode);
+  assert.deepEqual(fake.starts.at(-1).args, ["FORCE_NON_ROOT", false]);
+});
+
+test("an omitted notice channel id is the script's file name", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "bun-system-"));
+  const file = join(directory, "host-info.json");
+  writeFileSync(file, JSON.stringify({hostInfoVersion: 1, host: {packageName: "org.autojs.autojs6", versionName: "6.8.0", versionCode: 5935},
+    execution: {executionId: "bun-engine-2", sourceName: "p41b_main.js", workspaceArchive: false}}));
+  const saved = process.env.AUTOJS6_HOST_INFO_FILE;
+  process.env.AUTOJS6_HOST_INFO_FILE = file;
+  try {
+    const fake = transport(["notifications.post"], (method, args) => method === "channelCreate" ? args[0] : true);
+    const host = await client(fake);
+    assert.equal(await host.notifications.channel.create({name: "P41B"}), "p41b_main.js");
+    host.notifications.config({useScriptNameAsDefaultChannelId: false});
+    assert.equal(await host.notifications.channel.create({name: "P41B"}), "script_channel");
+  } finally {
+    if (saved === undefined) delete process.env.AUTOJS6_HOST_INFO_FILE; else process.env.AUTOJS6_HOST_INFO_FILE = saved;
+    rmSync(directory, {recursive: true, force: true});
+  }
+});
+
+test("host.global.install puts the system functions and R on a target, and is not one of host.global's members", async () => {
+  const host = await client(transport([]));
+  assert.equal(Object.keys(host.global).includes("install"), false);
+  const target = {exit: "kept"};
+  const names = host.global.install(target);
+  assert(Object.isFrozen(names));
+  for (const name of ["currentPackage", "waitForActivity", "stop", "isStopped", "requiresApi", "setScreenMetrics", "getClip", "WIDTH", "HEIGHT", "isAutoJs6", "R"]) {
+    assert(names.includes(name), name);
+  }
+  assert.equal(names.includes("exit"), false);
+  assert.equal(target.exit, "kept");
+  assert.equal(target.currentPackage, host.global.currentPackage);
+  assert.equal(typeof Object.getOwnPropertyDescriptor(target, "R").get, "function");
+  assert.equal(typeof target.R, "object");
+  assert.equal(target.isAutoJs6, true);
+  target.stop = 1;
+  assert.equal(target.stop, 1);
+  assert.throws(() => host.global.install(1), TypeError);
+});
+
+// Q139 (b): exit / stop in a Worker end the whole execution through the host's execution.control.
+test("exit in a Worker asks the host to stop the execution with the error, then ends the Worker", async () => {
+  const {Worker} = await import("node:worker_threads");
+  const sdk = new URL("../../app/src/main/assets/autojs6/host-client.mjs", import.meta.url).href;
+  const source = `const {parentPort} = require("node:worker_threads");
+    import(${JSON.stringify(sdk)}).then(async ({createHostClient}) => {
+      const fetch = async (url, init) => {
+        const id = url.split("/").at(-1);
+        if (id === "info") return Response.json({ok: true, bridgeVersion: 1, capabilities: ["execution.control"], limits: {}});
+        parentPort.postMessage([id, JSON.parse(init.body)]);
+        return Response.json({ok: true, capability: id, result: {value: null}});
+      };
+      const host = await createHostClient({socket: "/private/bridge.sock", fetch});
+      host.global.exit(new Error("p41b worker"));
+      host.global.stop();
+      parentPort.postMessage(["after", host.global.isStopped()]);
+    });`;
+  const messages = [];
+  const code = await new Promise((resolve, reject) => {
+    const worker = new Worker(source, {eval: true});
+    worker.on("message", message => messages.push(message));
+    worker.on("error", reject);
+    worker.on("exit", resolve);
+  });
+  assert.equal(code, 0);
+  assert.deepEqual(messages.map(([id]) => id), ["after", "execution.control"]);
+  assert.equal(messages[0][1], true);
+  assert.equal(messages[1][1].method, "stop");
+  assert.match(messages[1][1].args[0], /^Error: p41b worker/);
 });

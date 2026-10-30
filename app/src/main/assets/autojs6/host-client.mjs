@@ -6,6 +6,7 @@ import {posix as filePath} from 'node:path';
 import {Buffer} from 'node:buffer';
 import * as __autojs6_bun_fs from 'node:fs';
 import {readFileSync} from 'node:fs';
+import {isMainThread} from 'node:worker_threads';
 import {builtinModules as __autojs6_bun_builtins, createRequire as __autojs6_bun_create_require} from 'node:module';
 export const SDK_VERSION = 1;
 
@@ -61,7 +62,7 @@ export const HOST_API_METHODS = Object.freeze({
   "accessibility.control": Object.freeze(["isEnabled", "ensureEnabled", "click", "back", "home", "recentApps", "findByText", "clickText", "findOne", "findAll", "flowProbe", "flowForeground", "longClick", "setText", "scrollForward", "scrollBackward", "swipe", "gesture"]),
   "clipboard.control": Object.freeze(["getText", "setText", "hasText"]),
   // The system information and engines family (api-coverage P4.1b): the host routes of each query grant; the write grants
-  // (autojs.manage, settings.write, memory.dump, installer.mutate, engines.exec, plugintools.usergranted) admit more of them.
+  // (autojs.manage, settings.write, memory.dump, installer.mutate, engines.exec) admit more of them.
   "autojs.control": Object.freeze(["isRootAvailable", "getRootMode", "setRootMode", "canModifySystemSettings", "canWriteSecureSettings",
     "canDisplayOverOtherApps", "getLanguage", "screen", "themeColor", "resourceId", "restart", "exit"]),
   "settings.control": Object.freeze(["isEnabled", "setEnabled", "export", "categories"]),
@@ -4130,7 +4131,7 @@ function createStorage(dispatch) {
     });
     return api;
   }
-  function __autojs6_create_notifications(call, createError, scope="notifications-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2), java) {
+  function __autojs6_create_notifications(call, createError, scope="notifications-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2), java, engine) {
     const error=message=>createError?createError(message,"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST","notifications"):Object.assign(new TypeError(message),{code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
     const options=value=>{if(value===undefined)return {};if(!value||typeof value!=="object"||Array.isArray(value))throw error("Notification options must be an object.");if(value.signal!==undefined&&(typeof value.signal?.addEventListener!=="function"||typeof value.signal?.removeEventListener!=="function"))throw error("signal must be an AbortSignal.");return value;};
     const id=value=>{const n=Number(value);if(!Number.isInteger(n)||n<1||n>2147483647)throw error("Notification id must be an integer in 1..2147483647.");return n;};
@@ -4167,7 +4168,11 @@ function createStorage(dispatch) {
         return notificationId;
       }finally{for(const handle of handles)if(handle&&typeof handle.__autojs6JavaHandle==="string")j.release(handle).catch(()=>{});}
     }
-    const channelId=(fn,value)=>{if(value===undefined||value===null)return "script_channel";if(typeof value!=="string"&&typeof value!=="number")throw error("notice.channel."+fn+": channelId must be string | number.");return String(value);};
+    // Rhino's default channel id (Q135 (b)): preset defaultChannelId, else the script's full name (source.fullName), or
+    // "script_channel" when useScriptNameAsDefaultChannelId is false or the name is unknown.
+    function scriptFullName(){const record=engine?engine()||{}:{};const base=String(record.sourcePath||record.sourceName||"").split("/").pop();return base===""?"":/[.][^.]+$/.test(base)?base:base+".js";}
+    const defaultChannelId=()=>preset.useScriptNameAsDefaultChannelId===false?"script_channel":preset.defaultChannelId!==undefined?preset.defaultChannelId:scriptFullName()||"script_channel";
+    const channelId=(fn,value)=>{if(value===undefined||value===null)return defaultChannelId();if(typeof value!=="string"&&typeof value!=="number")throw error("notice.channel."+fn+": channelId must be string | number.");return String(value);};
     function channelArgs(fn,first,second,idKey){
       if(first&&typeof first==="object"&&!Array.isArray(first)){
         if(second!==undefined&&second!==null)throw error("notice.channel."+fn+": no overload matches (options, options).");
@@ -16475,7 +16480,20 @@ function createSystemFamily(call, host, engineInfo, bridgeError) {
     const autojsCall = (method, args, options, control) => invoke("autojs", method, args, control ? ["autojs", "autojs.control"] : ["autojs"], options);
     const screen = options => autojsCall("screen", [], options);
     const ROOT_MODES = "RootMode | 1 | 0 | -1 | true | false | 'root' | 'non-root' | 'auto'";
+    // Rhino's RootUtils.RootMode (Q135 (b)): key and description (English, as the host's), name() / ordinal() / toString()
+    // of the enum; one frozen object per mode.
+    const ROOT_MODE_VALUES = Object.freeze(Object.fromEntries([
+      ["FORCE_ROOT", "key_$_root_mode_force_root", "Force set root mode"],
+      ["FORCE_NON_ROOT", "key_$_root_mode_force_non_root", "Force set non-root mode"],
+      ["AUTO_DETECT", "key_$_root_mode_auto_detect", "Auto detect root access"]
+    ].map(([name, key, description], index) => [name, Object.freeze({ key, description, name: () => name, ordinal: () => index,
+      toString: () => "RootMode{key=" + key + ", description='" + description + "'}" })])));
     function rootMode(value) {
+      if (value && typeof value === "object" && typeof value.key === "string") {
+        const name = Object.keys(ROOT_MODE_VALUES).find(item => ROOT_MODE_VALUES[item].key === value.key);
+        if (name) return name;
+        throw outOfRange("autojs.setRootMode", "rootMode must be " + ROOT_MODES + ", got RootMode with key \"" + value.key + "\"");
+      }
       if (typeof value === "number") {
         if (value === 1) return "FORCE_ROOT";
         if (value === 0) return "FORCE_NON_ROOT";
@@ -16529,7 +16547,10 @@ function createSystemFamily(call, host, engineInfo, bridgeError) {
     const autojs = {
       versionCode, versionName, versionDate, name: text(engine.appName || "AutoJs6"), packageName: text(engine.packageName), version,
       isRootAvailable: async options => await autojsCall("isRootAvailable", [], options) === true,
-      getRootMode: async options => String(await autojsCall("getRootMode", [], options)),
+      async getRootMode(options) {
+        const name = String(await autojsCall("getRootMode", [], options));
+        return ROOT_MODE_VALUES[name] || name;
+      },
       async setRootMode(mode, isWriteIntoPreference, options) {
         const write = typeof isWriteIntoPreference === "boolean" ? isWriteIntoPreference
           : typeof isWriteIntoPreference === "string" && isWriteIntoPreference.trim().toLowerCase() === "write_into_pref";
@@ -16829,9 +16850,10 @@ function createSystemFamily(call, host, engineInfo, bridgeError) {
     const BUILT_INS = ["Mathx", "Arrayx", "Numberx"];
     const builtInName = name => { const s = String(name); const base = s.endsWith("x") ? s.slice(0, -1) : s; return base.charAt(0).toUpperCase() + base.slice(1) + "x"; };
     let invocation = 0;
-    // The host lists and runs the tools of USER_GRANTED providers only for requests that carry plugin_tools.user_granted.
+    // As Rhino, the tools of USER_GRANTED providers are listed and run too (Q135 (b)): the host serves them to requests that
+    // carry plugin_tools.user_granted, which plugin_tools implies.
     const toolsCall = (method, args, options, timeoutMs = 60000) => invoke("plugin_tools", method, args,
-      host.userGrantedTools && host.userGrantedTools() ? ["plugin_tools", "plugin_tools.user_granted"] : ["plugin_tools"], options, timeoutMs);
+      ["plugin_tools", "plugin_tools.user_granted"], options, timeoutMs);
     async function callTool(name, args, options) {
       const value = options && typeof options === "object" ? options : {};
       const invocationId = value.invocationId || "bun-" + Date.now().toString(36) + "-" + (++invocation);
@@ -16864,9 +16886,23 @@ function createSystemFamily(call, host, engineInfo, bridgeError) {
       })
     };
 
+    // Rhino's global system functions and R on a global object (Q135 (b)), as accessors over these members; assigning one
+    // replaces it with a plain value. Names the target already has are left alone.
+    function installGlobals(target) {
+      const names = [...Object.keys(system), "R"].filter(name => !Object.prototype.hasOwnProperty.call(target, name));
+      for (const name of names) {
+        Object.defineProperty(target, name, {
+          configurable: true, enumerable: false,
+          get: name === "R" ? () => autojs.R : () => system[name],
+          set(value) { Object.defineProperty(target, name, { value, writable: true, configurable: true, enumerable: false }); }
+        });
+      }
+      return names;
+    }
+
     return {
       autojs: Object.freeze(autojs), installer: Object.freeze(installer), memory: Object.freeze(memory), settings: Object.freeze(settings),
-      sysprops: Object.freeze(sysprops), power_manager: Object.freeze(power_manager), system: Object.freeze(system), plugins, scale
+      sysprops: Object.freeze(sysprops), power_manager: Object.freeze(power_manager), system: Object.freeze(system), plugins, scale, installGlobals
     };
   }
   function __autojs6_engine_timeout_from_options(options, fallbackMs) {
@@ -17296,7 +17332,7 @@ export async function createHostClient(options = {}) {
     (message)=>new HostCallError("INVALID_REQUEST",message,"events.observe"));
   // notice.builder and notify(builder) use the Java facade (java.interop); the notice routes check their grants first.
   const notifications = __autojs6_create_notifications((module,...rest)=>module==='notice'?systemCall(module,...rest):automationCall(module,...rest),
-    (message)=>new HostCallError("INVALID_REQUEST",message,"notifications.post"),undefined,()=>java);
+    (message)=>new HostCallError("INVALID_REQUEST",message,"notifications.post"),undefined,()=>java,()=>engine);
   const sensors = __autojs6_create_sensors(automationCall, EventEmitter, undefined,
     (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
@@ -17304,11 +17340,12 @@ export async function createHostClient(options = {}) {
       code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':code==='ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT'?'QUOTA_EXCEEDED':'INVALID_REQUEST',message,'database.control'),{method}),value=>value);
   const deviceInfo = __autojs6_bun_device_info();
   // The system information and engines family (api-coverage P4.1b, Q136 (a) / Q137 (a)). The shared factory names Node
-  // capabilities; a call whose Bun grants are off rejects here as NOT_GRANTED with the missing grants (Q90).
+  // capabilities; a call whose Bun grants are off rejects here as NOT_GRANTED with the missing grants (Q90). plugin_tools
+  // implies plugin_tools.user_granted (Q162 (a)), so plugintools.control alone lists the tools of every provider.
   const SYSTEM_GRANTS = {autojs: 'autojs.control', 'autojs.control': 'autojs.manage', settings: 'settings.control', sysprops: 'sysprops.control',
     memory: 'memory.control', installer: 'installer.control', engines: 'engines.control', 'engines:exec': 'engines.exec', 'files.write': 'files.control',
     device: 'device.control', notifications: 'notifications.post', accessibility: 'accessibility.control', clipboard: 'clipboard.control',
-    plugin_tools: 'plugintools.control', 'plugin_tools.user_granted': 'plugintools.usergranted'};
+    plugin_tools: 'plugintools.control', 'plugin_tools.user_granted': 'plugintools.control'};
   function systemCall(module, method, args, options = {}) {
     // Calls without permissions (engines.all / stopAll / stopSelf) need the module's own capability.
     const required = options.permissions || [{notice: 'notifications', power_manager: 'device'}[module] ?? module];
@@ -17330,18 +17367,28 @@ export async function createHostClient(options = {}) {
     spawnDepth: Math.max(0, Math.min(1, Math.trunc(recordNumber(record.spawnDepth, 0)))), processName: String(record.processName ?? ''),
     pid: recordNumber(record.pid, process.pid), packageName: String(engine.packageName ?? ''), versionName: String(engine.versionName ?? ''),
     versionCode: recordNumber(engine.versionCode, 0), startedAt: recordNumber(record.startedAt, 0)});
-  // The host stops a Bun execution by ending its process, so isStopped sees the exit / stop of this thread. exit in a
-  // Worker ends that Worker (process.exit of a Bun Worker).
+  // The host stops a Bun execution by ending its process, so isStopped sees the exit / stop of this thread. exit / stop
+  // end the whole execution (Q139 (b)): a main thread ends the process; a Worker asks the host (execution.control, which
+  // every host bridge of host 6.8.0 offers) and ends itself once the host has the request, as exit in a Node Worker ends
+  // the main thread's execution. The error of exit(error) fails the execution in both. Without execution.control (an older
+  // host) a Worker ends only itself.
   let systemStopped = false;
+  const errorText = error => error && typeof error === "object" && error.stack ? error.stack : String(error && error.message !== undefined ? error.message : error);
   systemFamily = createSystemFamily(systemCall, {engine, device: deviceInfo, EventEmitter, jsox: () => jsTools.jsox,
-    shell: () => shellModules.shell, shizuku: () => shellModules.shizuku, userGrantedTools: () => grants.has('plugintools.usergranted'),
+    shell: () => shellModules.shell, shizuku: () => shellModules.shizuku,
     lifecycle: {
       isStopped: () => systemStopped,
       exit(error) {
+        const first = !systemStopped;
         systemStopped = true;
+        if (!isMainThread && grants.has('execution.control')) {
+          if (first) call('execution.control', {method: 'stop', args: error === undefined ? [] : [errorText(error)]})
+            .catch(() => {}).finally(() => process.exit());
+          return;
+        }
         if (error !== undefined) {
           process.exitCode = 1;
-          console.error(error && typeof error === "object" && error.stack ? error.stack : String(error && error.message !== undefined ? error.message : error));
+          console.error(errorText(error));
         }
         process.exit();
       }
@@ -17554,8 +17601,13 @@ export async function createHostClient(options = {}) {
     species: jsTools.species,
     // Rhino's global open is files.open, which first learns the host's script directory (as toFile and zip do); the global
     // system functions (current*, waitFor*, exit / stop, requires*, setScreenMetrics, WIDTH / HEIGHT) are the system family's.
+    // install (Q161 (a)) puts the global system functions and R on globalThis (or target) as Rhino has them, for the thread
+    // that calls it; not enumerable, so the members of host.global stay Rhino's.
     global: Object.freeze(Object.defineProperties({}, {...Object.getOwnPropertyDescriptors(jsTools.global), open: {value: files.open, enumerable: true},
-      ...Object.getOwnPropertyDescriptors(systemFamily.system)})),
+      ...Object.getOwnPropertyDescriptors(systemFamily.system), install: {value: function install(target = globalThis) {
+        if (target === null || typeof target !== 'object' && typeof target !== 'function') throw new TypeError('host.global.install target must be an object');
+        return Object.freeze(systemFamily.installGlobals(target));
+      }}})),
     s13n: jsTools.s13n,
     cvt: jsTools.converter,
     fmt: jsTools.formatter,

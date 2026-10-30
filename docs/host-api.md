@@ -825,9 +825,9 @@ Tap / Swipe 的坐标在 SetScreenMetrics 之后按插件写入 device-info.json
 
 ### Rhino 的系统信息与引擎族 (2026-10-30, api-coverage P4.1b)
 
-host.autojs, host.installer, host.memory, host.settings, host.sysprops, host.powerManager, host.engines, host.plugins, host.dialogs.build, host.notifications 上 notice 的扩展成员 (config / isEnabled / ensureEnabled / launchSettings / getBuilder / builder / channel) 与 host.global 上的全局系统函数, 和 Node.js 主线程共用同一份共享工厂 (Node `__autojs6_create_system` 与主线程 engines, 由 sync-system.mjs 原样同步; notice 与 dialogs.build 随 sync-events.mjs / sync-device-dialogs.mjs 同步), 成员与语义见 Node.js Runtime 的 HOST-API "系统信息与引擎族". Rhino 的 workManager 就是 host.tasks 的同名函数. 访问宿主的成员返回 Promise, 主线程与 Worker 相同.
+host.autojs, host.installer, host.memory, host.settings, host.sysprops, host.powerManager, host.engines, host.plugins, host.dialogs.build, host.notifications 上 notice 的扩展成员 (config / isEnabled / ensureEnabled / launchSettings / getBuilder / builder / channel) 与 host.global 上的全局系统函数, 和 Node.js 主线程共用同一份共享工厂 (Node `__autojs6_create_system` 与主线程 engines, 由 sync-system.mjs 原样同步; notice 与 dialogs.build 随 sync-events.mjs / sync-device-dialogs.mjs 同步), 成员与语义见 Node.js Runtime 的 HOST-API "系统信息与引擎族". Rhino 的 workManager 就是 host.tasks 的同名函数. 访问宿主的成员返回 Promise, 主线程与 Worker 相同. autojs.getRootMode() 得到 Rhino 的 RootMode 对象 (key, description, name(), ordinal(), toString(), 每种模式一个冻结实例), setRootMode 接受它; notice.channel 省略 id 时与 Rhino 相同, 依次取 config 的 defaultChannelId, 脚本文件名 (例如 "main.js"), useScriptNameAsDefaultChannelId 为 false 时取 "script_channel" (Q135 (b)).
 
-授权 (宿主 6.8.0, 均默认关闭, 打包项目在 `bun.hostCapabilities` 中声明; Q136 (a) / Q137 (a)):
+授权 (宿主 6.8.0, 均默认关闭, 打包项目在 `bun.hostCapabilities` 中声明; Q136 (a) / Q137 (a) / Q162 (a)):
 
 | Bun 授权 | 用途 | 对应 Node 能力 |
 |---|---|---|
@@ -838,14 +838,15 @@ host.autojs, host.installer, host.memory, host.settings, host.sysprops, host.pow
 | memory.control / memory.dump | memory 的 snapshot / collect / retained / dumpHeap | memory / memory.dump |
 | installer.control / installer.mutate | installer 的查询 / install, uninstall, setDefault, session, authorizer.request | installer / installer.mutate |
 | engines.control / engines.exec | engines 的列表与停止 / execScript, execScriptFile, execAutoFile | engines / engines:exec |
-| plugintools.control / plugintools.usergranted | plugins.tools / 另放行用户授权 (USER_GRANTED) 的第三方插件的工具; 工具要截屏或读写路径时还需 screen.capture / files.control | plugin_tools / plugin_tools.user_granted |
+| plugintools.control | plugins.tools, 与 Rhino 相同也列出并调用用户授权 (USER_GRANTED) 的第三方插件的工具; 工具要截屏或读写路径时还需 screen.capture / files.control | plugin_tools (隐含 plugin_tools.user_granted) |
 
 powerManager 使用已有的 device.control 与 device.power, notice 的扩展成员使用 notifications.post (ensureEnabled / launchSettings 另需 notifications.settings), notice.builder 与 notify(builder) 经 host.java (java.interop). 当前包名 / Activity (current* 与 waitFor*) 的 auto 模式依次尝试 shell.shizuku, shell.root 与 accessibility.control, 都不可用时得到空字符串. 授权关闭时在访问宿主之前 reject HostCallError NOT_GRANTED, missingCapabilities 列出缺少的 Bun 授权名 (Q90). installer 的安装类操作与插件工具调用最长等待 15 分钟 5 秒 (等待用户确认或工具完成), 其他调用 120 秒.
 
-与 Node.js 的差异 (Bun 特有, 见宿主 ROADMAP 附录 C Q138 - Q140):
+与 Node.js 的差异 (Bun 特有, 见宿主 ROADMAP 附录 C Q138 - Q140, Q161):
 
 - autojs 的版本字段 (versionName / versionCode / versionDate / packageName) 读取插件写入的宿主信息快照 (`AUTOJS6_HOST_INFO_FILE`, 宿主的 host_info 授权, 默认开启); 开启 engines.control 时客户端创建时向宿主取一次本次执行的记录, engines.myEngine() 带 cwd / spawnDepth, autojs.name 与 versionDate 取宿主记录. 只有快照时 myEngine().cwd 为空, autojs.restart / exit 的 "@" 只给出脚本名.
-- exit / stop 结束当前线程: 主线程结束整个执行, Worker 中只结束该 Worker (Bun Worker 的 process.exit). 宿主停止 Bun 执行时直接结束进程, isStopped 只反映本线程调用过的 exit / stop.
+- 全局系统函数 (current*, waitFor*, exit / stop 与状态函数, requires*, setScreenMetrics, getClip / setClip, WIDTH / HEIGHT, isAutoJs6) 与 R 默认只在 host.global / host.autojs 上 (Bun 插件不注入 AutoJs6 全局); 调用 `host.global.install()` 后装到 globalThis, 与 Rhino 的全局写法相同 (访问器, 赋值即替换, 已有的同名属性不覆盖, 返回装上的名称), 只对调用它的线程生效, Worker 各自调用; 也可传入其他目标对象. install 不可枚举, 不计入 host.global 的成员 (Q161 (a)).
+- exit / stop 结束整个执行 (Q139 (b)): 主线程结束进程; Worker 经宿主的 execution.control 请求结束本次执行, 宿主收到后 Worker 自行结束, exit(error) 的错误使执行以该错误失败 (与主线程 exit(error) 的退出码 1 相同). execution.control 不是授权, 宿主 6.8.0 的每个能力桥都带它, 只能结束本次执行; 没有它的旧宿主上 Worker 只结束自身. 宿主停止 Bun 执行时直接结束进程, isStopped 只反映本线程调用过的 exit / stop.
 - memory.watch 不提供 (not-portable: runtime-native, 与 Node 相同的 D-22; 对应写法是 FinalizationRegistry 与 bun:jsc 的 heapStats).
 
 
