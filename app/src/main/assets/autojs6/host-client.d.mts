@@ -2105,24 +2105,24 @@ export namespace RuntimeTasks {
       extras?: Readonly<Record<string, string | number | boolean | null>>;
     }
     export interface TasksModule {
-      addTask(options: TimedTaskOptions | IntentTaskOptions): Promise<Task>;
-      addTimedTask(options: TimedTaskOptions & { repeatMode: RepeatMode }): Promise<TimedTask>;
-      addDailyTask(options: TimedTaskOptions): Promise<TimedTask>;
-      addWeeklyTask(options: TimedTaskOptions & { daysOfWeek: readonly Weekday[] }): Promise<TimedTask>;
-      addMonthlyTask(options: TimedTaskOptions & { dayOfMonth: number }): Promise<TimedTask>;
-      addYearlyTask(options: TimedTaskOptions & { dayOfMonth: number; monthOfYear: number }): Promise<TimedTask>;
-      addDisposableTask(options: TimedTaskOptions): Promise<TimedTask>;
-      addCountdownTask(options: TimedTaskOptions & { delayMs: number }): Promise<TimedTask>;
-      addIntentTask(options: IntentTaskOptions): Promise<IntentTask>;
-      addBroadcastIntentTask(options: IntentTaskOptions): Promise<IntentTask>;
-      queryTasks(options?: QueryOptions): Promise<readonly Task[]>;
-      queryTimedTasks(options?: QueryOptions): Promise<readonly TimedTask[]>;
-      queryIntentTasks(options?: QueryOptions): Promise<readonly IntentTask[]>;
+      addTask(options: TimedTaskOptions | IntentTaskOptions | null): Promise<Task>;
+      addTimedTask(options: TimedTaskOptions & { repeatMode: RepeatMode } | null): Promise<TimedTask>;
+      addDailyTask(options: TimedTaskOptions | null): Promise<TimedTask>;
+      addWeeklyTask(options: TimedTaskOptions & { daysOfWeek: readonly Weekday[] } | null): Promise<TimedTask>;
+      addMonthlyTask(options: TimedTaskOptions & { dayOfMonth: number } | null): Promise<TimedTask>;
+      addYearlyTask(options: TimedTaskOptions & { dayOfMonth: number; monthOfYear: number } | null): Promise<TimedTask>;
+      addDisposableTask(options: TimedTaskOptions | null): Promise<TimedTask>;
+      addCountdownTask(options: TimedTaskOptions & { delayMs: number } | null): Promise<TimedTask>;
+      addIntentTask(options: IntentTaskOptions | null): Promise<IntentTask>;
+      addBroadcastIntentTask(options: IntentTaskOptions | null): Promise<IntentTask>;
+      queryTasks(options?: QueryOptions | null): Promise<readonly Task[]>;
+      queryTimedTasks(options?: QueryOptions | null): Promise<readonly TimedTask[]>;
+      queryIntentTasks(options?: QueryOptions | null): Promise<readonly IntentTask[]>;
       getTimedTask(id: number | string | TimedTask, options?: AutomationCallOptions): Promise<TimedTask | null>;
       getIntentTask(id: number | string | IntentTask, options?: AutomationCallOptions): Promise<IntentTask | null>;
-      removeTask(task: Task | number | string, options?: AutomationCallOptions): Promise<boolean>;
-      removeTimedTask(id: number | string | TimedTask, options?: AutomationCallOptions): Promise<boolean>;
-      removeIntentTask(id: number | string | IntentTask, options?: AutomationCallOptions): Promise<boolean>;
+      removeTask(task: Task | number | string, options?: AutomationCallOptions | null): Promise<boolean>;
+      removeTimedTask(id: number | string | TimedTask, options?: AutomationCallOptions | null): Promise<boolean>;
+      removeIntentTask(id: number | string | IntentTask, options?: AutomationCallOptions | null): Promise<boolean>;
       updateTask(task: TimedTask, patch?: TimedTaskOptions): Promise<TimedTask | null>;
       updateTask(task: IntentTask, patch?: Partial<IntentTaskOptions>): Promise<IntentTask | null>;
       updateTask(task: Task, patch?: TimedTaskOptions | Partial<IntentTaskOptions>): Promise<Task | null>;
@@ -6179,7 +6179,7 @@ export namespace RuntimeThreads {
     }
     export interface ThreadsModule {
       start(action: ((signal: AbortSignal) => unknown) | { run(): unknown }): Thread;
-      pool(options?: PoolOptions): Pool;
+      pool(options?: PoolOptions | null): Pool;
       atomic(initial?: number | SharedArrayBuffer | { readonly buffer: SharedArrayBuffer }): AtomicLong;
       lock(shared?: SharedArrayBuffer | { readonly buffer: SharedArrayBuffer }): Lock;
       disposable<T = unknown>(): VolatileDispose<T>;
@@ -6211,7 +6211,7 @@ export namespace RuntimeTimers {
       keepAlive(timeout?: number): number;
       /** Runs listener every interval ms (200 by default) until the timeout or until condition returns a value other than false; then callback(value). */
       setIntervalExt(listener: () => void, interval?: number, timeoutOrCondition?: number | ((this: IntervalRecord) => unknown),
-        callback?: (this: IntervalRecord, value: unknown) => void): ReturnType<typeof setTimeout>;
+        callback?: (this: IntervalRecord, value: unknown) => void): number;
       /** Abandoned in Rhino: only warns once. */
       loop(): void;
     }
@@ -6506,7 +6506,7 @@ export namespace RuntimeAutojs {
       isHigherThan(other: string | { toString(): string }): boolean;
       isLowerThan(other: string | { toString(): string }): boolean;
       isEqual(other: string | { toString(): string }): boolean;
-      isAtLeast(other: string | { toString(): string }, ignoreSuffix?: boolean): boolean;
+      isAtLeast(other: string | { toString(): string }, ignoreSuffix?: boolean | null): boolean;
     }
     export interface ThemeColor {
       readonly colorPrimary: number;
@@ -6615,16 +6615,16 @@ export namespace RuntimeSettings {
   }
 export namespace RuntimeSysprops {
     export interface SyspropsModule {
-      get(name: string, defaultValue?: string, options?: AutomationCallOptions): Promise<string>;
-      getInt(name: string, defaultValue?: number, options?: AutomationCallOptions): Promise<number>;
-      getBoolean(name: string, defaultValue?: boolean, options?: AutomationCallOptions): Promise<boolean>;
+      get(name: string, defaultValue?: string | null, options?: AutomationCallOptions): Promise<string>;
+      getInt(name: string, defaultValue?: number | null, options?: AutomationCallOptions): Promise<number | null>;
+      getBoolean(name: string, defaultValue?: boolean | null, options?: AutomationCallOptions): Promise<boolean | null>;
       getAll(options?: AutomationCallOptions): Promise<Readonly<Record<string, string>>>;
     }
   }
 export namespace RuntimePowerManager {
     export interface PowerManagerModule {
       isIgnoringBatteryOptimizations(packageName?: string | null, options?: AutomationCallOptions): Promise<boolean>;
-      requestIgnoreBatteryOptimizations(forceRequest?: boolean, packageName?: string | null, options?: AutomationCallOptions): Promise<void>;
+      requestIgnoreBatteryOptimizations(forceRequest?: boolean | null, packageName?: string | null, options?: AutomationCallOptions): Promise<void>;
     }
   }
 export namespace RuntimeSystem {

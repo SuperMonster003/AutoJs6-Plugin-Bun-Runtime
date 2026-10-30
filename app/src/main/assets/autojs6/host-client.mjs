@@ -5710,7 +5710,7 @@ function createStorage(dispatch) {
   }
   function __autojs6_create_tasks(call) {
     const freeze=value=>{if(value&&typeof value==='object'){for(const child of Object.values(value))freeze(child);Object.freeze(value);}return value;};
-    const options=value=>{if(!value||typeof value!=='object'||Array.isArray(value))throw new TypeError('Task options must be an object.');return value;};
+    const options=value=>{if(value===null||value===undefined)return {};if(typeof value!=='object'||Array.isArray(value))throw new TypeError('Task options must be an object.');return value;};
     const payload=input=>{const {signal,timeoutMs,...value}=options(input);for(const key of ['time','date'])if(value[key] instanceof Date)value[key]=value[key].getTime();return value;};
     const invoke=(method,args,input={})=>call('tasks',method,args,{timeoutMs:5000,...input,permissions:['tasks']});
     const identity=value=>{
@@ -12017,11 +12017,14 @@ function __autojs6_bun_create_axios() {
         return true;
       }
 
+      // The script's source directory: open and toFile run in the host process, which cannot read the plugin's private
+      // working directory (Q120 (b)); a runtime without it (Bun's core learns the host directory as its cwd) uses cwd.
+      const hostDirectory = () => (host.hostCwd || host.cwd)();
       // Files.path: an absolute path stays as it is, a relative one is resolved against the working directory by its
       // segments ("." and blank ones skipped, ".." above the root gives null), keeping a trailing separator.
-      function resolvePath(relativePath) {
+      function resolvePath(relativePath, directory = host.cwd) {
         if (relativePath === null) return null;
-        const cwd = host.cwd();
+        const cwd = directory();
         if (isNullish(cwd)) return null;
         if (relativePath.startsWith("/")) return relativePath;
         let file = normalize(`${cwd}`);
@@ -12710,7 +12713,7 @@ function __autojs6_bun_create_axios() {
         const encoding = n > 2 && !isNullish(args[2]) ? string(fn, "encoding", args[2]) : null;
         const bufferSize = n > 3 && !isNullish(args[3]) ? int(fn, "bufferSize", args[3]) : null;
         // Files.open: PFiles.open with the resolved path (null above the root, an IllegalArgumentException there).
-        return javaCall(host.java().callStatic(PFILES, "open", [resolvePath(path), mode, encoding, bufferSize],
+        return javaCall(host.java().callStatic(PFILES, "open", [resolvePath(path, hostDirectory), mode, encoding, bufferSize],
           { parameterTypes: [STRING, STRING, STRING, "java.lang.Integer"] }));
       }
       function path(...args) {
@@ -12728,7 +12731,7 @@ function __autojs6_bun_create_axios() {
       async function toFile(args) {
         const fn = "files.toFile";
         count(fn, args, 1, 1);
-        const p = resolvePath(string(fn, "path", args[0]));
+        const p = resolvePath(string(fn, "path", args[0]), hostDirectory);
         if (p === null) throw javaError("java.lang.IllegalArgumentException", `Resolved path for "%1$s" cannot be null`);
         return javaCall(host.java().create("java.io.File", [p], { parameterTypes: [STRING] }));
       }
@@ -17607,7 +17610,7 @@ function __autojs6_bun_create_axios() {
     const once = create => { let value; return () => value || (value = create()); };
     const files = once(() => __autojs6_js_tools_files({ fs: host.fs, cwd: host.cwd, sdcardPath: host.sdcardPath, java: host.java,
       TextDecoder: globalThis.TextDecoder, filesDir: host.filesDir, cacheDir: host.cacheDir, dataDir: host.dataDir }));
-    const zip = once(() => Object.freeze(__autojs6_js_tools_zip({ java: host.java, cwd: host.cwd })));
+    const zip = once(() => Object.freeze(__autojs6_js_tools_zip({ java: host.java, cwd: host.hostCwd || host.cwd })));
     const mimeRecorder = once(() => __autojs6_js_tools_mime_recorder({ device: host.device }));
     const colors = once(() => {
       const result = __autojs6_js_tools_colors({ java: host.java, device: host.device, get android() { return host.android && host.android(); } });
@@ -18756,7 +18759,7 @@ function __autojs6_bun_recognition(call, images, rhinoOcr) {
           else if (typeof callback === "function") callback.call(record, result);
         };
         record.handle = setTimeout(tick, pause);
-        return record.handle;
+        return Number(record.handle);
       },
       loop() {
         if (!loopWarned) { loopWarned = true; logger().warn("Method loop has been abandoned and should not be used"); }
@@ -19235,8 +19238,14 @@ function createSystemFamily(call, host, engineInfo, bridgeError) {
         const value = await invoke("sysprops", "get", [propName("get", name), nullish(defaultValue) ? null : String(defaultValue)], ["sysprops"], options);
         return nullish(value) ? (nullish(defaultValue) ? "" : String(defaultValue)) : String(value);
       },
-      getInt: async (name, defaultValue, options) => Number(await invoke("sysprops", "getInt", [propName("getInt", name), nullish(defaultValue) ? null : Math.trunc(Number(defaultValue))], ["sysprops"], options)),
-      getBoolean: async (name, defaultValue, options) => await invoke("sysprops", "getBoolean", [propName("getBoolean", name), nullish(defaultValue) ? null : !!defaultValue], ["sysprops"], options) === true,
+      getInt: async (name, defaultValue, options) => {
+        const value = await invoke("sysprops", "getInt", [propName("getInt", name), nullish(defaultValue) ? null : Math.trunc(Number(defaultValue))], ["sysprops"], options);
+        return nullish(value) ? null : Number(value);
+      },
+      getBoolean: async (name, defaultValue, options) => {
+        const value = await invoke("sysprops", "getBoolean", [propName("getBoolean", name), nullish(defaultValue) ? null : !!defaultValue], ["sysprops"], options);
+        return nullish(value) ? null : value === true;
+      },
       getAll: async options => freezeDeep(await invoke("sysprops", "getAll", [], ["sysprops"], options))
     };
     const power_manager = {
@@ -19968,11 +19977,13 @@ export async function createHostClient(options = {}) {
     }}, () => currentEngine, (message, code, module, method) => Object.assign(new HostCallError(
       code === 'ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED' ? 'NOT_GRANTED' : 'INVALID_REQUEST', message, 'engines.control'), {method}));
   // The host's script working directory: relative paths of files.open / toFile and zip resolve against it, as the
-  // host's files.control does. Asked once, before the first of those calls, when that grant is on; otherwise (or on a
-  // host without files.cwd) the Bun working directory.
+  // host's files.control does (Q120 (b)). Asked once, before the first of those calls: execution.control offers it
+  // without a grant; a host without that method answers through files.control; otherwise the Bun working directory.
   let hostCwd = null;
-  const hostDirectory = async () => hostCwd ??= grants.has('files.control')
-    ? await files.cwd().then(value => typeof value === 'string' && value ? value : process.cwd(), () => process.cwd()) : process.cwd();
+  const hostDirectory = async () => hostCwd ??= await (grants.has('execution.control')
+    ? call('execution.control', {method: 'cwd', args: []}).then(result => result.value) : Promise.reject(new Error('no execution.control')))
+    .catch(() => grants.has('files.control') ? files.cwd() : null).catch(() => null)
+    .then(value => typeof value === 'string' && value ? value : process.cwd());
   const files = createFiles(async(method,args)=>(await call('files.control',{method,args})).value, deviceInfo, {core: () => jsTools.files, ready: hostDirectory});
 
   function group(capability) {
