@@ -33,7 +33,7 @@ console.log(text);
 
 | 授权 ID | 客户端 | 默认授权 | 行为 |
 |---|---|---|---|
-| `ui.toast` | `host.toast(text, duration?)` | 开启 | 现有短消息通知, 每次执行最多 4 条 |
+| `ui.toast` | `host.toast(text, isLong?, isForcible?)`, `host.toast.dismissAll()`, `host.global.toastLog` 等 | 开启 | 短消息通知, 参数同 Rhino, 不限条数 (AutoJs6 api-coverage Q172 (a)) |
 | `device.info` | `host.device.info()`, `host.device` 的同步 Build 字段 | 开启 | Build 品牌/型号/系统版本/ABI, 不含标识符 |
 | `text.pinyin` | `host.pinyin` | 开启 | 宿主 Pinyin 插件, 无小字典回退 |
 | `text.pinyin4j` | `host.pinyin4j` | 开启 | 宿主 Pinyin4j 插件, 含多音字读音矩阵 |
@@ -204,6 +204,12 @@ Rhino 的输出函数 (2026-10-30, AutoJs6 api-coverage P4.3, D-10): `host.conso
 - 没有 console.control (默认关闭) 时不报错 (Q171 (a)): 文本写到 Bun 的 stdout, warn / error / assert 写到 stderr, 宿主按 INFO / ERROR 两级显示. 宿主调用失败或文本超出上限时同样回落.
 - 输出函数同步返回 undefined (assert 返回 host.console), 文本在本轮事件循环之后发出, 与 Bun 原生 `console` 是两条通道, 两者交错时顺序不保证; 紧接着 `process.exit()` 可能丢失尚未发出的行.
 - 格式与 Rhino 一致: 参数经 `util.format` 拼接; `assert(value, message?)` 在 value (或函数 value 的返回值) 为假时以 assert 级别打印 message (默认 "java.lang.AssertionError") 并抛出 name 为 AssertionError 的错误; `time(label?)` / `timeEnd(label?)` 打印 "label: <毫秒>ms", 没有对应 time 的标签为 NaN, 标签按线程独立; `trace(message?, level?)` 打印消息与调用处堆栈, level 为 "verbose" / "debug" / "info" / "warn" / "error" (不分大小写) 或 2 到 6, 默认 debug; `printAllStackTrace(error)` 以 error 级别打印 Error 的 stack 或消息文本.
+
+Rhino 的 toast 族 (2026-10-30, AutoJs6 api-coverage P4.3): 声明见 `HostToast` 与 `ToastGlobals`.
+
+- `host.toast(text, isLong?, isForcible?)` 接受 Rhino 的参数形式: 布尔值, 数字 (按真假), "long" / "short" / "forcible" 及首字母 (不分大小写); 原有的 `host.toast(text, "short" | "long")` 写法不变. text 经 String 转换, 去掉首尾空白后为 1 到 1024 字节, 不能含换行以外的控制字符. forcible 时先关闭本执行此前显示的 toast. 返回 `Promise<{shown}>`.
+- `host.toast.dismissAll()` 关闭本执行显示过的 toast (Rhino 的 toast.dismissAll). 每次执行不再限 4 条 (Q172 (a)), 一个应用排队的 toast 数量由 Android 限制, 超出的由系统丢弃.
+- `host.global.toastLog / toastVerbose / toastInfo / toastWarn / toastError` 及小写别名: 先显示 toast, 再以对应级别经 `host.console` 打印第一个参数 (toastLog 可不带参数, 其余至少 1 个, 最多 3 个), 返回 toast 的 Promise. `host.global.isUiThread()` 恒为 false. `host.global.install()` 同时安装这些名称.
 
 ## 错误与上限
 

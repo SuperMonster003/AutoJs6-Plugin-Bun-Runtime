@@ -16834,6 +16834,53 @@ function __autojs6_bun_console(control, granted, call) {
   return api;
 }
 
+// Rhino's toast family (api-coverage P4.3): toast(text, isLong?, isForcible?) with Rhino's argument forms (booleans, numbers,
+// the "long" / "short" / "forcible" badges and their initials; a forcible toast first dismisses this execution's earlier ones),
+// toast.dismissAll, and the global toastLog / toastVerbose / toastInfo / toastWarn / toastError with their lower-case aliases:
+// the toast, then the first argument at that console level through host.console. ui.toast has no per-run limit (Q172 (a)).
+// The toast functions return the ui.toast Promise ({shown}); isUiThread is false, a Bun thread is never Android's UI thread.
+const __autojs6_bun_toast_badges = Object.freeze({long: /^l(ong)?$/i, short: /^s(hort)?$/i, forcible: /^f(orcible)?$/i});
+function __autojs6_bun_toast(call, console) {
+  const badge = (value, name) => {
+    const found = Object.keys(__autojs6_bun_toast_badges).find(key => __autojs6_bun_toast_badges[key].test(value));
+    if (!found) throw new TypeError(`toast ${name} ${JSON.stringify(value)} is invalid`);
+    return found;
+  };
+  const toast = (text, isLong, isForcible) => {
+    let long = false, forcible = false;
+    if (typeof isLong === "boolean" || typeof isLong === "number") long = Boolean(isLong);
+    else if (typeof isLong === "string") { const found = badge(isLong, "isLong"); if (found === "forcible") forcible = true; else long = found === "long"; }
+    if (typeof isForcible === "boolean" || typeof isForcible === "number") forcible = Boolean(isForcible);
+    else if (typeof isForcible === "string") { const found = badge(isForcible, "isForcible"); if (found === "forcible") forcible = true; else long = found === "long"; }
+    return call("ui.toast", {text: String(text), ...(long ? {duration: "long"} : {}), ...(forcible ? {forcible} : {})});
+  };
+  toast.dismissAll = async () => { await call("ui.toast", {dismissAll: true}); };
+  const logged = (level, least) => function (...args) {
+    if (args.length < least || args.length > 3) throw new TypeError(`toast${level[0].toUpperCase()}${level.slice(1)} takes ${least} to 3 arguments`);
+    const shown = toast(...args);
+    console[level](...args.slice(0, 1));
+    return shown;
+  };
+  const globals = {toastLog: logged("log", 0), toastVerbose: logged("verbose", 1), toastInfo: logged("info", 1), toastWarn: logged("warn", 1),
+    toastError: logged("error", 1)};
+  for (const name of Object.keys(globals)) globals[name.toLowerCase()] = globals[name];
+  globals.isUiThread = () => false;
+  return {toast: Object.freeze(toast), globals: Object.freeze(globals)};
+}
+
+// Defines members on target as host.global.install does for the system family: names target already owns are left alone,
+// the others are non-enumerable and writable through a setter; answers the names it defined.
+function __autojs6_bun_install(target, members) {
+  const names = Object.keys(members).filter(name => !Object.prototype.hasOwnProperty.call(target, name));
+  for (const name of names) {
+    Object.defineProperty(target, name, {
+      configurable: true, enumerable: false, get: () => members[name],
+      set(value) { Object.defineProperty(target, name, { value, writable: true, configurable: true, enumerable: false }); }
+    });
+  }
+  return names;
+}
+
 // BEGIN GENERATED SYSTEM
 // Reproduced from Node's system information family and main-thread engines by tools/host-client/sync-system.mjs
 // (api-coverage P4.1b). engineInfo is the record of this execution that engines.myEngine returns.
@@ -18055,6 +18102,8 @@ export async function createHostClient(options = {}) {
       return nodeRequire(name);
     },
     librarySource: file => readFileSync(new URL(`./libraries/${file}`, import.meta.url), 'utf8')});
+  const hostConsole = __autojs6_bun_console(group("console.control"), grants.has("console.control"), call);
+  const toastFamily = __autojs6_bun_toast(call, hostConsole);
 
   return Object.freeze({
     sdkVersion: SDK_VERSION,
@@ -18070,12 +18119,14 @@ export async function createHostClient(options = {}) {
     species: jsTools.species,
     // Rhino's global open is files.open, which first learns the host's script directory (as toFile and zip do); the global
     // system functions (current*, waitFor*, exit / stop, requires*, setScreenMetrics, WIDTH / HEIGHT) are the system family's.
-    // install (Q161 (a)) puts the global system functions and R on globalThis (or target) as Rhino has them, for the thread
-    // that calls it; not enumerable, so the members of host.global stay Rhino's.
+    // install (Q161 (a)) puts the global system functions, R and the toast family's globals (toastLog and the rest, isUiThread)
+    // on globalThis (or target) as Rhino has them, for the thread that calls it; not enumerable, so the members of host.global
+    // stay Rhino's.
     global: Object.freeze(Object.defineProperties({}, {...Object.getOwnPropertyDescriptors(jsTools.global), open: {value: files.open, enumerable: true},
-      ...Object.getOwnPropertyDescriptors(systemFamily.system), install: {value: function install(target = globalThis) {
+      ...Object.getOwnPropertyDescriptors(systemFamily.system), ...Object.getOwnPropertyDescriptors(toastFamily.globals),
+      install: {value: function install(target = globalThis) {
         if (target === null || typeof target !== 'object' && typeof target !== 'function') throw new TypeError('host.global.install target must be an object');
-        return Object.freeze(systemFamily.installGlobals(target));
+        return Object.freeze([...systemFamily.installGlobals(target), ...__autojs6_bun_install(target, toastFamily.globals)]);
       }}})),
     s13n: jsTools.s13n,
     cvt: jsTools.converter,
@@ -18110,7 +18161,7 @@ export async function createHostClient(options = {}) {
     call,
     ui: __autojs6_create_ui(async (module, method, args) => (await call("ui.layout", { method, args })).value),
     compose: __autojs6_create_compose(async (module, method, args) => (await call(module === "ui" ? "ui.layout" : "ui.compose", { method, args })).value),
-    toast: (text, duration) => call("ui.toast", { text, ...(duration === undefined ? {} : { duration }) }),
+    toast: toastFamily.toast,
     device: __autojs6_bun_device(__autojs6_create_device(deviceCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info")), undefined,
       {morsePattern: source => jsTools.util.morseCode.getPattern(source)}), grants.has("device.info"), () => call("device.info")),
     media: __autojs6_bun_media(deviceCall),
@@ -18122,6 +18173,6 @@ export async function createHostClient(options = {}) {
     images,
     screenRecorder: group("screen.record"),
     coordinates: group("screen.metrics"),
-    console: __autojs6_bun_console(group("console.control"), grants.has("console.control"), call),
+    console: hostConsole,
   });
 }

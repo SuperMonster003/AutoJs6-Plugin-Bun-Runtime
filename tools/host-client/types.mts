@@ -133,3 +133,12 @@ host.console.timeEnd(null);
 await host.console.openConsole(true);
 // @ts-expect-error console.log returns nothing to await on
 const logged: Promise<void> = host.console.log("x");
+// Rhino's toast family (AutoJs6 api-coverage P4.3): Rhino's argument forms, dismissAll and the globals on host.global.
+const shown: { shown: boolean } = await host.toast("t", "long", true);
+await host.toast(1, false, "f");
+const dismissed: void = await host.toast.dismissAll();
+await host.global.toastLog();
+await host.global.toastwarn("w", "s");
+const uiThread: false = host.global.isUiThread();
+// @ts-expect-error toastInfo takes the text
+host.global.toastInfo();
