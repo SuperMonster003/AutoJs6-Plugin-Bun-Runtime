@@ -195,8 +195,17 @@ open class BunRuntimeService : Service() {
     private fun deviceInfo(): String = resources.displayMetrics.let {
         val (width, height) = screenSides(it)
         BunHostClientModule.deviceInfo(Build.VERSION.SDK_INT, it.density, it.densityDpi, it.scaledDensity,
-            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), width, height)
+            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), width, height, buildFields())
     }
+
+    /** The android.os.Build fields of Rhino's device module (org.autojs.autojs.runtime.api.Device); buildId is Build.DISPLAY there too. */
+    private fun buildFields(): Map<String, String?> = mapOf(
+        "buildId" to Build.DISPLAY, "buildDisplay" to Build.DISPLAY, "product" to Build.PRODUCT, "board" to Build.BOARD,
+        "brand" to Build.BRAND, "manufacturer" to Build.MANUFACTURER, "device" to Build.DEVICE, "model" to Build.MODEL,
+        "bootloader" to Build.BOOTLOADER, "hardware" to Build.HARDWARE, "fingerprint" to Build.FINGERPRINT,
+        "incremental" to Build.VERSION.INCREMENTAL, "release" to Build.VERSION.RELEASE, "baseOS" to Build.VERSION.BASE_OS,
+        "securityPatch" to Build.VERSION.SECURITY_PATCH, "codename" to Build.VERSION.CODENAME,
+    )
 
     /**
      * The short and the long side of the whole display, as Rhino's WIDTH / HEIGHT and its SetScreenMetrics scaling take

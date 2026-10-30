@@ -34,7 +34,7 @@ console.log(text);
 | 授权 ID | 客户端 | 默认授权 | 行为 |
 |---|---|---|---|
 | `ui.toast` | `host.toast(text, duration?)` | 开启 | 现有短消息通知, 每次执行最多 4 条 |
-| `device.info` | `host.device.info()` | 开启 | Build 品牌/型号/系统版本/ABI, 不含标识符 |
+| `device.info` | `host.device.info()`, `host.device` 的同步 Build 字段 | 开启 | Build 品牌/型号/系统版本/ABI, 不含标识符 |
 | `text.pinyin` | `host.pinyin` | 开启 | 宿主 Pinyin 插件, 无小字典回退 |
 | `text.pinyin4j` | `host.pinyin4j` | 开启 | 宿主 Pinyin4j 插件, 含多音字读音矩阵 |
 | `text.opencc` | `host.opencc` | 开启 | 宿主 3-Hanzi CC 插件, 完整 32 类转换及复合转换计划 |
@@ -925,7 +925,7 @@ Bun 仍受每次执行 1024 次桥接调用, 四个并行任务, 64 KiB 请求, 
 
 Bun 的上述四项授权默认关闭, `device.info` 保留原有独立授权和格式. 打包项目在 `bun.hostCapabilities` 或 `node.permissions` 中声明能力. 构建器补入 WAKE_LOCK, VIBRATE, WRITE_SETTINGS 和 MODIFY_AUDIO_SETTINGS 对应清单项; 修改系统亮度仍需 Android 单独允许应用修改系统设置, 不会因项目声明自动获准.
 
-`device.getInfo(options?)` 返回完整实时快照, 包含 build, screen, battery, memory, screenOn, locale, timeZone, uptimeMs 和 now. Node 的 `device.info()` 是其别名. Bun 的 `host.device.info()` 继续返回原有 Build 简要信息, 完整快照使用 `host.device.getInfo()`. Node 的同步 width/height/density/densityDpi 和 Build 属性是执行启动快照, Worker 继承它; Bun 使用异步 getter, 不提供这些同步属性.
+`device.getInfo(options?)` 返回完整实时快照, 包含 build, screen, battery, memory, screenOn, locale, timeZone, uptimeMs 和 now. Node 的 `device.info()` 是其别名. Bun 的 `host.device.info()` 继续返回原有 Build 简要信息, 完整快照使用 `host.device.getInfo()`. Node 的同步 width/height/density/densityDpi 和 Build 属性是执行启动快照, Worker 继承它. Bun 的同步 Build 字段见下文 "Rhino 的设备 / 传感器 / 媒体族"; 宽高与密度仍使用异步 getter.
 
 实时 getter 均返回 Promise:
 
@@ -988,6 +988,19 @@ async function main() {
 }
 main().catch(console.error);
 ```
+
+### Rhino 的设备 / 传感器 / 媒体族 (2026-10-30, api-coverage P4.1c)
+
+同步 Build 字段: `host.device.sdkInt`, `release`, `model`, `brand`, `product`, `board`, `bootloader`, `hardware`, `fingerprint`, `buildId`, `buildDisplay`, `manufacturer`, `device`, `incremental`, `baseOS`, `securityPatch`, `codename` 与 Rhino `device` 的同名字段一致 (android.os.Build 与 Build.VERSION 的值; `buildId` 同 Rhino 取 Build.DISPLAY). 插件在本次执行开始时写进客户端旁的 `device-info.json`, 只在 `device.info` 授权 (默认开启) 打开时提供; 关闭时这些字段不存在 (`undefined`), 异步的 `getBrand()` 等仍走 `device.control` (Q151 (a)). 单独导入 `host-client.mjs` 而旁边没有该文件时只有 `sdkInt` (0).
+
+`host.media` 对应 Rhino 的 media 模块, 两个默认关闭的独立授权 (Q152 (a), 插件中心 "Bun 音乐播放" / "Bun 媒体库扫描", 打包项目在 `bun.hostCapabilities` 中声明):
+
+| 成员 | Bun 授权 | 宿主路由 (Node 能力) |
+|---|---|---|
+| playMusic, pauseMusic, resumeMusic, stopMusic, musicSeekTo, isMusicPlaying, getMusicDuration, getMusicCurrentPosition | `media.control` | media play / pause / resume / stop / seekTo / getPlaybackStatus (`media` + `media.playback`) |
+| scanFile | `media.library` | media_store scanFile (`media` + `media.library`) |
+
+播放器属于本次执行, 执行结束 (含 Worker 结束整个执行) 时宿主停止播放并释放. 相对路径按宿主的脚本工作目录解析.
 
 ## Android 对象辅助接口与日历任务
 

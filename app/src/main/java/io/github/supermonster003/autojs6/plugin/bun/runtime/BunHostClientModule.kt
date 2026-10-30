@@ -45,15 +45,22 @@ internal object BunHostClientModule {
      * [externalStoragePath] is files.sdcardPath (the shared external storage of this Android user, the host's as well).
      * [width] / [height] are the display size in pixels the Rhino Tap / Swipe coordinates scale to after SetScreenMetrics
      * (api-coverage P4.1a); they are written only when both are positive.
+     * [build] holds the string fields of Rhino's device module from android.os.Build (device.brand, device.buildId and
+     * so on, api-coverage P4.1c), which the client offers with the device.info grant; null values are left out.
      */
-    fun deviceInfo(sdkInt: Int, density: Float, densityDpi: Int, scaledDensity: Float, externalStoragePath: String? = null, width: Int = 0, height: Int = 0): String {
+    fun deviceInfo(
+        sdkInt: Int, density: Float, densityDpi: Int, scaledDensity: Float, externalStoragePath: String? = null, width: Int = 0, height: Int = 0,
+        build: Map<String, String?> = emptyMap(),
+    ): String {
         val dp = if (density.isFinite() && density > 0f) density else 1f
         val sp = if (scaledDensity.isFinite() && scaledDensity > 0f) scaledDensity else dp
-        val storage = externalStoragePath?.let { path ->
-            val quoted = path.map { c -> if (c == '"' || c == '\\') "\\$c" else if (c < ' ') "\\u%04x".format(c.code) else c.toString() }
-            ",\"externalStoragePath\":\"" + quoted.joinToString("") + "\""
-        }.orEmpty()
+        val storage = externalStoragePath?.let { path -> ",\"externalStoragePath\":${quote(path)}" }.orEmpty()
         val size = if (width > 0 && height > 0) ",\"width\":$width,\"height\":$height" else ""
-        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}$size$storage}"
+        val fields = build.entries.filter { it.value != null }.joinToString(",") { (key, value) -> "${quote(key)}:${quote(value!!)}" }
+        val buildJson = if (fields.isEmpty()) "" else ",\"build\":{$fields}"
+        return "{\"sdkInt\":$sdkInt,\"density\":${dp.toDouble()},\"densityDpi\":${densityDpi.coerceAtLeast(0)},\"scaledDensity\":${sp.toDouble()}$size$storage$buildJson}"
     }
+
+    private fun quote(text: String): String =
+        "\"" + text.map { c -> if (c == '"' || c == '\\') "\\$c" else if (c < ' ') "\\u%04x".format(c.code) else c.toString() }.joinToString("") + "\""
 }

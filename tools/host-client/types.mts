@@ -103,3 +103,8 @@ host.recorder("p4.2b");
 const size: string = host.files.getHumanReadableSize(1024);
 const zipped = await host.zip.open("/sdcard/a.zip");
 const day: string = host.global.dayjs("2020-01-02").format("YYYY-MM-DD");
+// api-coverage P4.1c: Rhino's synchronous Build fields with device.info.
+const deviceBrand: string | undefined = host.device.brand;
+const deviceSdkInt: number | undefined = host.device.sdkInt;
+// @ts-expect-error the Build fields are read-only
+host.device.buildId = "x";

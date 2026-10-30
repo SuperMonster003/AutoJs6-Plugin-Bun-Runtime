@@ -40,6 +40,14 @@ class BunHostClientModuleTest {
     }
 
     @Test
+    fun deviceInfoCarriesTheBuildFieldsOfRhinosDeviceModule() {
+        assertEquals(
+            "{\"sdkInt\":33,\"density\":2.0,\"densityDpi\":320,\"scaledDensity\":2.0,\"build\":{\"buildId\":\"V14.0.3 \\\"x\\\"\",\"brand\":\"Redmi\"}}",
+            BunHostClientModule.deviceInfo(33, 2f, 320, 2f, build = mapOf("buildId" to "V14.0.3 \"x\"", "baseOS" to null, "brand" to "Redmi")),
+        )
+    }
+
+    @Test
     fun invalidDensitiesFallBackToOne() {
         assertEquals(
             "{\"sdkInt\":33,\"density\":1.0,\"densityDpi\":0,\"scaledDensity\":1.0}",

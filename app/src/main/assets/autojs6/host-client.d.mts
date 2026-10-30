@@ -412,6 +412,29 @@ export interface DeviceInfo {
   readonly release: string;
   readonly supportedAbis: readonly string[];
 }
+/**
+ * Rhino's synchronous device fields from android.os.Build at script startup (api-coverage P4.1c), offered with the
+ * device.info grant (on by default) like the info() snapshot and absent without it. buildId is Build.DISPLAY, as in Rhino.
+ */
+export interface DeviceBuildFields {
+  readonly sdkInt?: number;
+  readonly release?: string;
+  readonly model?: string;
+  readonly brand?: string;
+  readonly product?: string;
+  readonly board?: string;
+  readonly bootloader?: string;
+  readonly hardware?: string;
+  readonly fingerprint?: string;
+  readonly buildId?: string;
+  readonly buildDisplay?: string;
+  readonly manufacturer?: string;
+  readonly device?: string;
+  readonly incremental?: string;
+  readonly baseOS?: string;
+  readonly securityPatch?: string;
+  readonly codename?: string;
+}
 // BEGIN GENERATED AUTOMATION TYPES
 export interface AutomationCallOptions { readonly timeoutMs?: number; readonly signal?: AbortSignal }
 export interface AutomationBounds { readonly left: number; readonly top: number; readonly right: number; readonly bottom: number }
@@ -5727,8 +5750,11 @@ export interface HostClient {
   /** Raw calls still obey the same host grants and method validation. No generic Node bridge is exposed. */
   call(capability: string, payload?: { readonly [key: string]: JsonValue }): Promise<{ [key: string]: JsonValue }>;
   toast(text: string, duration?: "short" | "long"): Promise<{ shown: boolean }>;
-  /** Async device methods; info() preserves the original small snapshot, getInfo() returns the full live snapshot. */
-  readonly device: Omit<RuntimeDevice.DeviceModule, "info" | "sdkInt" | "width" | "height" | "density" | "densityDpi" | "release" | "model" | "brand" | "product" | "board" | "bootloader" | "hardware" | "fingerprint" | "buildId"> & { info(): Promise<DeviceInfo> };
+  /**
+   * Async device methods; info() preserves the original small snapshot, getInfo() returns the full live snapshot. The
+   * Build fields are synchronous with device.info (DeviceBuildFields).
+   */
+  readonly device: Omit<RuntimeDevice.DeviceModule, "info" | "sdkInt" | "width" | "height" | "density" | "densityDpi" | "release" | "model" | "brand" | "product" | "board" | "bootloader" | "hardware" | "fingerprint" | "buildId"> & DeviceBuildFields & { info(): Promise<DeviceInfo> };
   readonly dialogs: RuntimeDialogs.DialogsModule;
   readonly ui: RuntimeUi.UiModule;
   readonly compose: RuntimeCompose.Api;

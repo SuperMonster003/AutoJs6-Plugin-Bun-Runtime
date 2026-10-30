@@ -16364,7 +16364,16 @@ function __autojs6_bun_device_info() {
   info.width = Math.max(0, Math.trunc(number(parsed?.width, 0)));
   info.height = Math.max(0, Math.trunc(number(parsed?.height, 0)));
   if (typeof parsed?.externalStoragePath === "string") info.externalStoragePath = parsed.externalStoragePath;
+  // The android.os.Build strings of Rhino's device module (device.brand, device.buildId and so on, api-coverage P4.1c).
+  info.build = Object.freeze(Object.fromEntries(Object.entries(parsed?.build && typeof parsed.build === "object" ? parsed.build : {})
+    .filter(([, value]) => typeof value === "string")));
   return Object.freeze(info);
+}
+
+// Rhino's synchronous device fields (api-coverage P4.1c): sdkInt and the Build strings of device-info.json, offered with the
+// device.info grant (on by default) like the info() snapshot; without it they are absent.
+function __autojs6_bun_device_fields(deviceInfo, granted) {
+  return granted ? {sdkInt: deviceInfo.sdkInt, ...deviceInfo.build} : {};
 }
 
 // BEGIN GENERATED SYSTEM
@@ -17581,7 +17590,7 @@ export async function createHostClient(options = {}) {
     ui: __autojs6_create_ui(async (module, method, args) => (await call("ui.layout", { method, args })).value),
     compose: __autojs6_create_compose(async (module, method, args) => (await call(module === "ui" ? "ui.layout" : "ui.compose", { method, args })).value),
     toast: (text, duration) => call("ui.toast", { text, ...(duration === undefined ? {} : { duration }) }),
-    device: Object.freeze({ ...__autojs6_create_device(automationCall), info: () => call("device.info") }),
+    device: Object.freeze({ ...__autojs6_create_device(automationCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info"))), info: () => call("device.info") }),
     dialogs: __autojs6_create_dialogs(automationCall),
     pinyin: Object.freeze({...group("text.pinyin"), ...PINYIN_CONSTANTS}),
     pinyin4j: group("text.pinyin4j"),
