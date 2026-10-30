@@ -3596,18 +3596,28 @@ function createStorage(dispatch) {
 
 // BEGIN GENERATED SENSORS
 // Shared with Node main threads and Workers by tools/host-client/sync-sensors.mjs.
-  function __autojs6_create_sensors(call, EventEmitter, attachEvents, createError) {
+  function __autojs6_create_sensors(call, EventEmitter, attachEvents, createError, rhino = {}) {
     const policy = Object.freeze({maxSubscriptions:4, minSamplingIntervalMs:20, defaultSamplingIntervalMs:250,
       maxSamplingIntervalMs:60000, defaultTimeoutMs:5000, drainIntervalMs:100, defaultMaxQueueSize:16, hardMaxQueueSize:64});
     const number = (value, fallback, min, max) => Number.isFinite(Number(value ?? fallback))
       ? Math.min(max, Math.max(min, Math.trunc(Number(value ?? fallback)))) : fallback;
     const error = (message, code = "ERR_AUTOJS6_BRIDGE_INVALID_REQUEST") => createError ? createError(message,code) : Object.assign(new Error(message), {code, module:"sensors"});
     const options = value => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const sensorMap = rhino.sensors && typeof rhino.sensors === "object" ? rhino.sensors : {};
+    const known = type => ["accelerometer", "gyroscope", "light"].includes(type) || Object.prototype.hasOwnProperty.call(sensorMap, type);
+    // Rhino's sensors.delay picks Android's rate (the host reads it); samplingIntervalMs is the same rate for older hosts.
+    const DELAY = Object.freeze({normal:3, ui:2, game:1, fastest:0});
+    const delayIntervals = [20, 20, 67, 200];
     function descriptor(type, input) {
       type = String(type ?? "").trim().toLowerCase();
-      if (!["accelerometer", "gyroscope", "light"].includes(type)) throw error("Sensors support only accelerometer, gyroscope, and light.");
-      return {type, samplingIntervalMs:number(input.samplingIntervalMs ?? input.intervalMs,250,20,60000),
+      if (!known(type)) throw error("This device has no " + (type || "such") + " sensor.");
+      const request = {type, samplingIntervalMs:number(input.samplingIntervalMs ?? input.intervalMs,250,20,60000),
         maxQueueSize:number(input.maxQueueSize,16,1,64), timeoutMs:number(input.timeoutMs,5000,100,60000)};
+      if (Number.isInteger(input.delay) && input.delay >= 0 && input.delay <= 3) {
+        request.delay = input.delay;
+        request.samplingIntervalMs = delayIntervals[input.delay];
+      }
+      return request;
     }
     function callOptions(input, fallback = 5000) {
       const value = options(input), signal = value.signal;
@@ -3705,7 +3715,145 @@ function createStorage(dispatch) {
         await sub.close();
       }
     }
-    return Object.freeze({policy,getAvailableSensors,once,subscribe});
+    // api-coverage P3.1c (Q147 (a)): Rhino's sensors module over subscribe. The module and each SensorEventEmitter are Rhino
+    // EventEmitters (org.autojs.autojs.core.eventloop.EventEmitter: listeners run in order when emitted, sticky events reach later
+    // listeners, at most getMaxListeners() listeners per event, newListener / removeListener events; getTimer() returns a Timer
+    // with Rhino's members over this thread's timers, Q147 (a)). register answers from the startup sensor list: a sensor the device lacks gives null, or with ignoresUnsupportedSensor
+    // an "unsupported_sensor" event and an emitter that never fires. Samples arrive as "change" (event, ...values) and
+    // "accuracy_change" (accuracy); a delay of 0..3 is Rhino's sensors.delay, a larger one a sampling period in microseconds.
+    const timer = (() => {
+      const pending = new Map();
+      let sequence = 0;
+      const add = (kind, callback, delay, args) => {
+        if (typeof callback !== "function") throw new TypeError("The timer callback must be a function.");
+        const id = ++sequence, run = () => { if (kind !== "interval") pending.delete(id); callback(...args); };
+        pending.set(id, {kind, handle: kind === "immediate" ? setImmediate(run) : (kind === "interval" ? setInterval : setTimeout)(run, Math.max(0, Number(delay) || 0))});
+        return id;
+      };
+      const clear = kind => id => {
+        const entry = pending.get(id);
+        if (!entry || entry.kind !== kind) return false;
+        pending.delete(id);
+        (kind === "immediate" ? clearImmediate : kind === "interval" ? clearInterval : clearTimeout)(entry.handle);
+        return true;
+      };
+      return Object.freeze({
+        setTimeout: (callback, delay, ...args) => add("timeout", callback, delay, args), clearTimeout: clear("timeout"),
+        setInterval: (callback, interval, ...args) => add("interval", callback, interval, args), clearInterval: clear("interval"),
+        setImmediate: (callback, ...args) => add("immediate", callback, 0, args), clearImmediate: clear("immediate"),
+        hasPendingCallbacks: () => pending.size > 0,
+        removeAllCallbacks() { for (const [id, entry] of [...pending]) clear(entry.kind)(id); }
+      });
+    })();
+    function rhinoEmitter(target) {
+      const table = new Map(), sticky = new Map();
+      let max = 10;
+      const list = name => { name = String(name); if (!table.has(name)) table.set(name, []); return table.get(name); };
+      function add(name, listener, once, prepend) {
+        if (typeof listener !== "function") throw new TypeError("The listener of \"" + String(name) + "\" must be a function.");
+        const items = list(name), args = prepend ? undefined : sticky.get(String(name));
+        if (args) listener.apply(target, args);
+        if (!args || !once) {
+          if (max !== 0 && items.length >= max) throw new RangeError("Max listeners exceeded: " + max + ".");
+          items[prepend ? "unshift" : "push"]({listener, once});
+        }
+        target.emit("newListener", name, listener);
+        return target;
+      }
+      const methods = {
+        on: (name, listener) => add(name, listener, false, false),
+        addListener: (name, listener) => add(name, listener, false, false),
+        once: (name, listener) => add(name, listener, true, false),
+        prependListener: (name, listener) => add(name, listener, false, true),
+        prependOnceListener: (name, listener) => add(name, listener, true, true),
+        emit(name, ...args) {
+          const items = table.get(String(name));
+          if (!items || !items.length) return false;
+          for (const item of items.slice()) {
+            if (item.once) {
+              const index = items.indexOf(item);
+              if (index < 0) continue;
+              items.splice(index, 1);
+            }
+            item.listener.apply(target, args);
+          }
+          return true;
+        },
+        emitSticky(name, ...args) {
+          const result = target.emit(name, ...args);
+          sticky.set(String(name), args);
+          return result;
+        },
+        eventNames: () => [...table.keys()],
+        getMaxListeners: () => max,
+        setMaxListeners(value) { max = Math.trunc(Number(value)) || 0; return target; },
+        getTimer: () => timer,
+        listenerCount: name => (table.get(String(name)) || []).length,
+        listeners: name => list(name).map(item => item.listener),
+        removeListener(name, listener) {
+          const items = table.get(String(name)), index = items ? items.findIndex(item => item.listener === listener) : -1;
+          if (index >= 0) { items.splice(index, 1); target.emit("removeListener", name, listener); }
+          return target;
+        },
+        removeAllListeners(name) {
+          const entries = name === undefined ? [...table] : table.has(String(name)) ? [[String(name), table.get(String(name))]] : [];
+          if (name !== undefined) table.delete(String(name));
+          for (const [event, items] of entries) for (const item of items) target.emit("removeListener", event, item.listener);
+          if (name === undefined) table.clear();
+          return target;
+        }
+      };
+      for (const [name, value] of Object.entries(methods)) Object.defineProperty(target, name, {value, writable: true, enumerable: true, configurable: true});
+      return target;
+    }
+    const registered = new Set();
+    // A listener's exception becomes an uncaught exception, as in Rhino, instead of ending the subscription.
+    const deliver = (emitter, name, args) => {
+      try { emitter.emit(name, ...args); } catch (reason) { setTimeout(() => { throw reason; }); }
+    };
+    const reportAsync = (emitter, type, reason) => {
+      if (emitter.listenerCount("error")) deliver(emitter, "error", [reason]);
+      else globalThis.console?.warn?.("sensors.register(\"" + type + "\"): " + (reason && reason.message || reason));
+    };
+    const noOpEmitter = Object.freeze(rhinoEmitter({unregister() {}}));
+    function getSensor(name) {
+      if (name === undefined || name === null) throw new TypeError("sensors.getSensor requires a sensor name.");
+      const info = sensorMap[String(name).toLowerCase()];
+      return info && typeof info === "object" ? Object.freeze({...info}) : null;
+    }
+    function register(name, delay = DELAY.normal) {
+      if (name === undefined || name === null) throw new TypeError("sensors.register requires a sensor name.");
+      const type = String(name).toLowerCase(), info = getSensor(type);
+      if (!info) {
+        if (api.ignoresUnsupportedSensor) { api.emit("unsupported_sensor", name); return noOpEmitter; }
+        return null;
+      }
+      const missing = typeof rhino.missing === "function" ? rhino.missing() : [];
+      if (missing.length) throw Object.assign(error("sensors.register requires the " + missing.join(", ") + " capability.", "ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED"), {missingCapabilities: Object.freeze([...missing])});
+      const rate = Number(delay);
+      if (!Number.isInteger(rate) || rate < 0) throw new TypeError("sensors.register delay must be one of sensors.delay or a sampling period in microseconds.");
+      const subscription = subscribe(type, undefined, rate <= 3 ? {delay: rate, maxQueueSize: 64} : {samplingIntervalMs: Math.ceil(rate / 1000), maxQueueSize: 64});
+      const emitter = rhinoEmitter({unregister: () => api.unregister(emitter)});
+      Object.defineProperty(emitter, "__autojs6SensorSubscription", {value: subscription});
+      subscription.on("event", event => deliver(emitter, "change", [Object.freeze({...event, sensor: info}), ...event.values]));
+      subscription.on("accuracy", event => deliver(emitter, "accuracy_change", [Number(event && event.accuracy)]));
+      subscription.on("error", reason => reportAsync(emitter, type, reason));
+      subscription.ready.catch(reason => reportAsync(emitter, type, reason));
+      registered.add(emitter);
+      return Object.freeze(emitter);
+    }
+    const api = {policy, getAvailableSensors, subscribe, delay: DELAY, register, getSensor,
+      unregister(emitter) {
+        if (emitter && registered.delete(emitter)) emitter.__autojs6SensorSubscription.close().catch(() => {});
+      },
+      unregisterAll() { for (const emitter of [...registered]) api.unregister(emitter); }
+    };
+    rhinoEmitter(api);
+    // once(event, listener) is Rhino's EventEmitter once; once(type, options) samples one event as before.
+    const listenOnce = api.once;
+    Object.defineProperty(api, "once", {value: (type, value) => typeof value === "function" ? listenOnce(type, value) : once(type, value), enumerable: true});
+    for (const name of Object.keys(api)) Object.defineProperty(api, name, {writable: false, configurable: false});
+    return Object.seal(Object.defineProperty(api, "ignoresUnsupportedSensor", {value: false, writable: true, enumerable: true}));
   }
 // END GENERATED SENSORS
 
@@ -4232,36 +4380,130 @@ function createStorage(dispatch) {
 
 // BEGIN GENERATED DEVICE DIALOG FACADES
   // Shared device and dialog facades for Node main threads, Workers and Bun.
-  function __autojs6_create_device(call, snapshot = {}, scope = "device-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2)) {
+  function __autojs6_create_device(call, snapshot = {}, scope = "device-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2), extras = {}) {
     const invoke = (method, args, options = {}, power = false) => call("device", method, args,
-      { timeoutMs: 5000, ...options, permissions: power ? ["device", "device.power"] : ["device"] });
+      { timeoutMs: 5000, ...options, permissions: power === "identifiers" ? ["device", "device.identifiers"] : power ? ["device", "device.power"] : ["device"] });
     const invalid = message => Object.assign(new TypeError(message), {code:"ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
     const info = options => invoke("info", [], options);
     const control = async (method, value, options) => {
       if (!Number.isSafeInteger(value) || (method === "setBrightness" ? value < 0 || value > 255 : value !== 0 && value !== 1)) throw invalid("Invalid device." + method + " value.");
       await invoke(method, [value], options, true);
     };
-    const api = {...snapshot, info, getInfo: info,
+    const options = value => value && typeof value === "object" && !Array.isArray(value) ? value : undefined;
+    // keepScreenOn / keepScreenDim / keepAwake: the timeout is optional as in Rhino (without one the lock is held until
+    // cancelKeepingAwake or the end of the execution); a trailing object is the call options.
+    async function keep(method, args, timeoutMs, opts = {}) {
+      if (timeoutMs !== undefined && timeoutMs !== null && (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0)) throw invalid(method + " requires a positive integer timeout.");
+      const abort = () => Object.assign(new Error("Keeping the screen awake was aborted."), {name:"AbortError",code:"ABORT_ERR"});
+      if (opts.signal?.aborted) throw abort();
+      await invoke(method === "keepScreenOn" ? "keepScreenOn" : "keepAwake", [...args, timeoutMs ?? null, scope], {...opts, signal:undefined}, true);
+      if (opts.signal?.aborted) { await api.cancelKeepingAwake(); throw abort(); }
+    }
+    const timing = (value, name) => {
+      const number = Number(value);
+      if (typeof value === "boolean" || Number.isNaN(number)) throw invalid("device.vibrate " + name + " must be a number.");
+      return Math.trunc(number);
+    };
+    // Rhino's PowerManager flags of keepScreenDim: SCREEN_DIM_WAKE_LOCK | ACQUIRE_CAUSES_WAKEUP.
+    const SCREEN_DIM = 0x00000006 | 0x10000000;
+    // api-coverage P3.1c (Q146 (a) / Q148 (a)): Rhino's device members. The startup snapshot answers the Build fields, width /
+    // height (the whole display's short and long side), density (dpi, as Rhino), pageSize, digest, getMarketName, isManufacturer
+    // and the manufacturers / brands / roms checks synchronously; the other queries reach the host's RuntimeDeviceBridge and
+    // return Promises (rotation / orientation / imei / serial are getters, a new Promise per read). The hardware identifiers
+    // need device.identifiers, the pointer location switches device.power.
+    const {sensors: _sensors, manufacturers = {}, brands = {}, roms = {}, marketName, ...build} = snapshot;
+    const checks = (source, names) => Object.freeze(Object.fromEntries(names.map(name => [name, () => source[name] === true])));
+    const query = (method, power) => (...args) => {
+      const last = options(args[args.length - 1]);
+      if (last) args.pop();
+      return invoke(method, args, last, power);
+    };
+    const api = {...build, density: Number.isFinite(build.densityDpi) && build.densityDpi > 0 ? build.densityDpi : build.density,
+      buildId: typeof build.buildDisplay === "string" ? build.buildDisplay : build.buildId, info, getInfo: info,
       setBrightness: (value, opts) => control("setBrightness", value, opts),
       setBrightnessMode: (value, opts) => control("setBrightnessMode", value, opts),
-      async keepScreenOn(timeoutMs, options = {}) {
-        if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) throw invalid("keepScreenOn requires a positive integer timeout.");
-        const abort = () => Object.assign(new Error("Keeping the screen awake was aborted."), {name:"AbortError",code:"ABORT_ERR"});
-        if (options.signal?.aborted) throw abort();
-        await invoke("keepScreenOn", [timeoutMs, scope], {...options, signal:undefined}, true);
-        if (options.signal?.aborted) { await api.cancelKeepingAwake(); throw abort(); }
+      keepScreenOn(timeoutMs, opts) {
+        if (options(timeoutMs)) [timeoutMs, opts] = [undefined, timeoutMs];
+        return keep("keepScreenOn", [], timeoutMs, opts);
+      },
+      keepScreenDim(timeoutMs, opts) {
+        if (options(timeoutMs)) [timeoutMs, opts] = [undefined, timeoutMs];
+        return keep("keepScreenDim", [SCREEN_DIM], timeoutMs, opts);
+      },
+      keepAwake(flags, timeoutMs, opts) {
+        if (!Number.isSafeInteger(flags)) return Promise.reject(invalid("keepAwake requires integer PowerManager wake lock flags."));
+        if (options(timeoutMs)) [timeoutMs, opts] = [undefined, timeoutMs];
+        return keep("keepAwake", [flags], timeoutMs, opts);
       },
       async cancelKeepingAwake(options) { await invoke("cancelKeepingAwake", [scope], options, true); },
       async isScreenOn(options) { return await invoke("isScreenOn", [], options) === true; },
       async wakeUp(options) { await invoke("wakeUp", [], options); },
-      async vibrate(value, options) {
-        const duration = Number(value);
-        if (!Number.isFinite(duration) || duration < 0) throw invalid("vibrate requires a non-negative finite duration.");
-        await invoke("vibrate", [Math.min(10000, Math.trunc(duration))], options);
+      async wakeUpIfNeeded(options) { if (!await api.isScreenOn(options)) await api.wakeUp(options); },
+      // vibrate(millis | timings | morseCode), vibrate(off, millis), vibrate(timingsWithoutOff, off), vibrate(morseCode, delay), as
+      // Rhino's DeviceModule.vibrate; timings start with the delay. One duration stays within 10 seconds, as before.
+      async vibrate(pattern, second, opts) {
+        if (options(second)) [second, opts] = [undefined, second];
+        let timings;
+        if (typeof pattern === "string") {
+          if (typeof extras.morsePattern !== "function") throw invalid("device.vibrate(morseCode) needs util.morseCode.");
+          const morse = extras.morsePattern(pattern);
+          if (!morse.length) return;
+          const delay = second === undefined || second === null ? 0 : Number(second);
+          timings = [Number.isNaN(delay) ? 0 : Math.max(0, Math.trunc(delay)), ...morse];
+        } else if (Array.isArray(pattern)) {
+          const list = pattern.map((value, index) => timing(value, "timings[" + index + "]"));
+          timings = second === undefined ? list : [timing(second, "off"), ...list];
+        } else if (typeof pattern === "number" && second !== undefined) {
+          timings = [timing(pattern, "off"), timing(second, "millis")];
+        } else {
+          const duration = Number(pattern);
+          if (typeof pattern !== "number" || !Number.isFinite(duration) || duration < 0) throw invalid("vibrate requires a non-negative finite duration, a timing array or a morse code string.");
+          return void await invoke("vibrate", [Math.min(10000, Math.trunc(duration))], opts);
+        }
+        if (timings.some(value => value < 0)) throw invalid("device.vibrate timings must not be negative.");
+        await invoke("vibrate", [timings], opts);
       },
+      async cancelVibration(options) { await invoke("cancelVibration", [], options); },
       async isIgnoringBatteryOptimizations(options) { return await invoke("isIgnoringBatteryOptimizations", [], options, true) === true; },
-      async openBatteryOptimizationSettings(options = {}) { return Object.freeze({...await invoke("openBatteryOptimizationSettings", [{dryRun:options.dryRun === true}], options, true)}); }
+      async openBatteryOptimizationSettings(options = {}) { return Object.freeze({...await invoke("openBatteryOptimizationSettings", [{dryRun:options.dryRun === true}], options, true)}); },
+      pageSize: Number.isFinite(build.pageSize) ? build.pageSize : 4096,
+      digest() {
+        const suffix = (body, reject) => body === reject ? "" : " (" + body + ")";
+        return [build.brand + suffix(build.manufacturer, build.brand), build.device + suffix(build.model, build.device), build.release + suffix(String(build.sdkInt))].join(" / ");
+      },
+      getMarketName: () => typeof marketName === "string" ? marketName : build.model,
+      isManufacturer(name) {
+        if (name === undefined || name === null) throw invalid("device.isManufacturer requires a manufacturer name.");
+        return String(name).trim().toLowerCase() === String(build.manufacturer).toLowerCase();
+      },
+      manufacturers: checks(manufacturers, ["isHtc", "isLG", "isOnePlus", "isSamsung", "isZte", "isLetv", "isHuawei", "isNova", "isHonor", "isXiaomi",
+        "isOppo", "isSony", "isVivo", "isLenovo", "isCoolpad", "isSmartisan", "isMeizu"]),
+      brands: checks(brands, ["isXperia", "isRedmi", "isMiMix"]),
+      roms: Object.freeze({...checks(roms, ["isMiui", "isEmui", "isOppo", "isSmartisan", "isVivo", "isGionee", "isLenovo", "isFlyme", "isQiku"]),
+        isBackgroundStartGranted: async options => await invoke("isBackgroundStartGranted", [], options) === true}),
+      summary: query("summary"),
+      setPointerLocationEnabled: options => api.setPointerLocation(true, options),
+      setPointerLocationDisabled: options => api.setPointerLocation(false, options),
+      async setPointerLocation(enabled, options) { return await invoke("setPointerLocation", [enabled === true], options, true) === true; },
+      async togglePointerLocation(options) { return await invoke("togglePointerLocation", [], options, true) === true; },
+      async getAndroidId(useSystemId, opts) {
+        if (options(useSystemId)) [useSystemId, opts] = [undefined, useSystemId];
+        return invoke("getAndroidId", [useSystemId === true], opts, "identifiers");
+      },
+      async getIpAddress(useIPv4, opts) {
+        if (options(useIPv4)) [useIPv4, opts] = [undefined, useIPv4];
+        return invoke("getIpAddress", useIPv4 === undefined || useIPv4 === null ? [] : [useIPv4 === true], opts);
+      },
+      async ensureReadPhoneStatePermission(options) { await invoke("ensureReadPhoneStatePermission", [], options); }
     };
+    for (const method of ["getOrientation", "getRotation", "isScreenOff", "isScreenPortrait", "isScreenLandscape", "isPowerSourceAC", "isPowerSourceUSB",
+      "isPowerSourceWireless", "isPowerSourceDock", "getIpv6Address", "getGatewayAddress", "isActiveNetworkMetered", "isConnectedOrConnecting", "isWifiAvailable",
+      "isPointerLocationEnabled", "isPointerLocationDisabled", "hasReadPhoneStatePermission"]) api[method] = query(method);
+    for (const method of ["getIMEI", "getSerial", "getMacAddress", "getSharedDeviceId"]) api[method] = query(method, "identifiers");
+    // Getters that reach the host are left out of the ESM named exports (read through the default export).
+    for (const [name, method] of [["rotation", "getRotation"], ["orientation", "getOrientation"], ["imei", "getIMEI"], ["serial", "getSerial"]]) {
+      Object.defineProperty(api, name, {get: Object.assign(() => api[method](), {__autojs6LazyExport: true}), enumerable: true});
+    }
     const fields = {getWidth:["screen","width"],getHeight:["screen","height"],getDensity:["screen","density"],getDensityDpi:["screen","densityDpi"],
       getBrightness:["screen","brightness"],getBrightnessMode:["screen","brightnessMode"],getBattery:["battery","percent"],isCharging:["battery","isCharging"],
       getTotalMem:["memory","totalMem"],getAvailMem:["memory","availMem"]};
@@ -16382,13 +16624,129 @@ function __autojs6_bun_device_info() {
   // The android.os.Build strings of Rhino's device module (device.brand, device.buildId and so on, api-coverage P4.1c).
   info.build = Object.freeze(Object.fromEntries(Object.entries(parsed?.build && typeof parsed.build === "object" ? parsed.build : {})
     .filter(([, value]) => typeof value === "string")));
+  // The rest of Rhino's synchronous device and sensors members (BunDeviceProfile, Q154 (a)): the native page size, the market
+  // name, the manufacturers / brands / roms checks and the default sensor of each name sensors.register accepts.
+  const object = value => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const flags = value => Object.freeze(Object.fromEntries(Object.entries(object(value)).filter(([, flag]) => typeof flag === "boolean")));
+  if (number(parsed?.pageSize, 0) > 0) info.pageSize = Math.trunc(parsed.pageSize);
+  if (typeof parsed?.marketName === "string") info.marketName = parsed.marketName;
+  [info.manufacturers, info.brands, info.roms] = [flags(parsed?.manufacturers), flags(parsed?.brands), flags(parsed?.roms)];
+  info.sensors = Object.freeze(Object.fromEntries(Object.entries(object(parsed?.sensors))
+    .filter(([, sensor]) => sensor && typeof sensor === "object" && !Array.isArray(sensor)).map(([name, sensor]) => [name, Object.freeze({...sensor})])));
   return Object.freeze(info);
 }
 
-// Rhino's synchronous device fields (api-coverage P4.1c): sdkInt and the Build strings of device-info.json, offered with the
-// device.info grant (on by default) like the info() snapshot; without it they are absent.
+// Rhino's synchronous device members (api-coverage P4.1c, Q151 (a) / Q154 (a)): the snapshot __autojs6_create_device answers
+// them from (sdkInt, width / height, density / densityDpi, the Build strings, pageSize, marketName and the manufacturers /
+// brands / roms checks), offered with the device.info grant (on by default) like the info() snapshot.
 function __autojs6_bun_device_fields(deviceInfo, granted) {
-  return granted ? {sdkInt: deviceInfo.sdkInt, ...deviceInfo.build} : {};
+  if (!granted) return {};
+  const {sdkInt, width, height, density, densityDpi, build, pageSize, marketName, manufacturers, brands, roms} = deviceInfo;
+  return {sdkInt, width, height, density, densityDpi, ...build, pageSize, marketName, manufacturers, brands, roms};
+}
+
+// The device module of the client. Without device.info the members the snapshot answers are absent (Q154 (a)), roms keeping
+// isBackgroundStartGranted (a device.control route); members left undefined are dropped. Copying the descriptors keeps the
+// getters (rotation, orientation, imei, serial) a host call per read. info is the plugin's device.info route.
+function __autojs6_bun_device(api, granted, info) {
+  const descriptors = Object.getOwnPropertyDescriptors(api);
+  if (!granted) {
+    for (const name of ["pageSize", "digest", "getMarketName", "isManufacturer", "manufacturers", "brands"]) delete descriptors[name];
+    if (typeof api.roms?.isBackgroundStartGranted === "function") {
+      descriptors.roms = {value: Object.freeze({isBackgroundStartGranted: api.roms.isBackgroundStartGranted}), enumerable: true};
+    } else delete descriptors.roms;
+  }
+  for (const [name, descriptor] of Object.entries(descriptors)) if ("value" in descriptor && descriptor.value === undefined) delete descriptors[name];
+  descriptors.info = {value: info, enumerable: true};
+  return Object.freeze(Object.defineProperties({}, descriptors));
+}
+
+// Rhino's media module with Node's playback sessions (autojs6:media; api-coverage P4.1c, Q149 (a) / Q152 (a)): playback asks
+// media.control, scanFile media.library (the host's media_store scan). playMusic resolves the playback session, scanFile
+// whether the host scanned the file; the other Rhino members resolve Rhino's results (duration 0 and position -1 without an
+// active session). The host stops the playback when the execution ends.
+function __autojs6_bun_media(call) {
+  const input = value => value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const freeze = value => !value || typeof value !== "object" ? (value === undefined ? null : value) : Array.isArray(value)
+    ? Object.freeze(value.map(freeze)) : Object.freeze(Object.fromEntries(Object.entries(value).map(([key, item]) => [key, freeze(item)])));
+  const bridge = (module, method, args, options, fallbackMs, permissions) => {
+    const {signal, timeoutMs = fallbackMs} = input(options);
+    return call(module, method, args, {timeoutMs, signal, permissions}).then(freeze);
+  };
+  const playback = (method, args, options, fallbackMs) => bridge("media", method, args, options, fallbackMs, ["media", "media.playback"]);
+  const attempt = (build, run) => {
+    let args;
+    try { args = build(); } catch (error) { return Promise.reject(error); }
+    return run(args);
+  };
+  const filePath = (module, method, value) => {
+    const text = value === undefined || value === null ? "" : String(value);
+    if (!text || text.includes("\u0000")) {
+      throw Object.assign(new TypeError(`${module}.${method} path must be a non-empty file path without NUL bytes.`), {code: "ERR_AUTOJS6_BRIDGE_INVALID_REQUEST"});
+    }
+    return text;
+  };
+  const sessionRef = (value, method) => {
+    if (value === undefined || value === null || value === "") return null;
+    if (typeof value === "object" && !Array.isArray(value)) return sessionRef(value.id, method);
+    const text = String(value).trim();
+    if (!/^[A-Za-z0-9_.:-]+$/.test(text)) throw new TypeError(`media.${method} session must be a playback session, its id or a status object.`);
+    return text;
+  };
+  const reference = options => input(options).session !== undefined ? input(options).session : input(options).id;
+  const seekArgs = (ref, positionMs, method) => {
+    if (typeof positionMs !== "number" || !Number.isFinite(positionMs) || positionMs < 0) {
+      throw new TypeError(`media.${method} requires a non-negative position in milliseconds.`);
+    }
+    const id = sessionRef(ref, method);
+    return id === null ? [Math.trunc(positionMs)] : [Math.trunc(positionMs), {id}];
+  };
+  const control = (method, fallbackMs) => options => attempt(() => {
+    const id = sessionRef(reference(options), method);
+    return id === null ? [] : [{id}];
+  }, args => playback(method, args, options, fallbackMs));
+  const pause = control("pause", 5000), resume = control("resume", 10000), stop = control("stop", 10000);
+  const getPlaybackStatus = control("getPlaybackStatus", 5000);
+  const seekTo = (positionMs, options) => attempt(() => seekArgs(reference(options), positionMs, "seekTo"), args => playback("seekTo", args, options, 5000));
+  const session = status => {
+    const id = typeof status?.id === "string" ? status.id : "";
+    return Object.freeze({id, path: typeof status?.path === "string" ? status.path : null, looping: status?.looping === true,
+      volume: typeof status?.volume === "number" ? status.volume : null,
+      status: options => playback("getPlaybackStatus", [{id}], options, 5000),
+      pause: options => playback("pause", [{id}], options, 5000),
+      resume: options => playback("resume", [{id}], options, 10000),
+      stop: options => playback("stop", [{id}], options, 10000),
+      seekTo: (positionMs, options) => attempt(() => seekArgs(id, positionMs, "seekTo"), args => playback("seekTo", args, options, 5000))});
+  };
+  const play = (path, options) => attempt(() => {
+    const {volume, looping} = input(options), payload = {};
+    if (volume !== undefined && volume !== null) {
+      if (typeof volume !== "number" || !Number.isFinite(volume) || volume < 0 || volume > 1) throw new TypeError("media.play volume must be a number between 0 and 1.");
+      payload.volume = volume;
+    }
+    if (looping !== undefined && looping !== null) payload.looping = looping === true;
+    return [filePath("media", "play", path), payload];
+  }, args => playback("play", args, options, 40000).then(session));
+  const ignore = () => undefined;
+  const active = (options, read, fallback) => getPlaybackStatus(options).then(status => status?.active === true ? read(status) : fallback);
+  return Object.freeze({play, pause, resume, stop, seekTo, getPlaybackStatus,
+    playMusic(path, volume, looping, options) {
+      const playOptions = {...input(options)};
+      if (volume !== undefined && volume !== null) playOptions.volume = volume;
+      if (looping !== undefined && looping !== null) playOptions.looping = looping === true;
+      return play(path, playOptions);
+    },
+    pauseMusic: options => pause(options).then(ignore),
+    resumeMusic: options => resume(options).then(ignore),
+    stopMusic: options => stop(options).then(ignore),
+    musicSeekTo: (positionMs, options) => seekTo(positionMs, options).then(ignore),
+    isMusicPlaying: options => active(options, status => status.playing === true, false),
+    getMusicDuration: options => active(options, status => status.durationMs, 0),
+    getMusicCurrentPosition: options => active(options, status => status.positionMs, -1),
+    scanFile: (path, options) => attempt(() => {
+      const {mimeType} = input(options);
+      return [filePath("media_store", "scanFile", path), typeof mimeType === "string" ? {mimeType} : {}];
+    }, args => bridge("media_store", "scanFile", args, options, 40000, ["media", "media.library"])).then(result => result?.scanned === true)});
 }
 
 // BEGIN GENERATED SYSTEM
@@ -17333,7 +17691,7 @@ export async function createHostClient(options = {}) {
   const tasks = __autojs6_create_tasks(automationCall);
   const storage = createStorage(automationCall);
   // SetScreenMetrics scales Tap / Swipe to the display size of device-info.json.
-  const screen = __autojs6_bun_device_info();
+  const deviceInfo = __autojs6_bun_device_info(), screen = deviceInfo;
   shellModules = __autojs6_create_shell(declaredCall,EventEmitter,shellStreams,Buffer,
     required=>required.filter(name=>!grants.has(name==='shell'?'shell.control':name)),
     (message,code)=>new HostCallError(code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':'INVALID_REQUEST',message,'shell.control'),
@@ -17356,12 +17714,15 @@ export async function createHostClient(options = {}) {
       `${module}.${method} requires grants that are off for this execution: ${missing.join(', ')}`, missing[0]), {missingCapabilities: Object.freeze(missing)}));
     return automationCall(module, method, args, options);
   }
+  // Rhino's getSensor / register (Q147 (a)) answer from the sensor list of device-info.json, part of the startup snapshot
+  // that comes with device.info (Q154 (a)); register without sensors.control rejects NOT_GRANTED (Q90).
+  const sensorsGranted = grants.has("sensors.control");
   const sensors = __autojs6_create_sensors(deviceCall, EventEmitter, undefined,
-    (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : "INVALID_REQUEST",message,"sensors.control"));
+    (message,code)=>new HostCallError(code === "ERR_AUTOJS6_BRIDGE_TIMEOUT" ? "TIMEOUT" : code === "ERR_AUTOJS6_BRIDGE_CAPABILITY_NOT_DECLARED" ? "NOT_GRANTED" : "INVALID_REQUEST",message,"sensors.control"),
+    {sensors: grants.has("device.info") ? deviceInfo.sensors : {}, missing: () => sensorsGranted ? [] : ["sensors.control"]});
   const database = __autojs6_create_database((_,method,args,options)=>automationCall('database',method,args,options),
     (message,code,module,method)=>Object.assign(new HostCallError(
       code==='ERR_AUTOJS6_BRIDGE_PERMISSION_DENIED'?'NOT_GRANTED':code==='ERR_AUTOJS6_BRIDGE_RESOURCE_LIMIT'?'QUOTA_EXCEEDED':'INVALID_REQUEST',message,'database.control'),{method}),value=>value);
-  const deviceInfo = __autojs6_bun_device_info();
   // The system information and engines family (api-coverage P4.1b, Q136 (a) / Q137 (a)). The shared factory names Node
   // capabilities; a call whose Bun grants are off rejects here as NOT_GRANTED with the missing grants (Q90). plugin_tools
   // implies plugin_tools.user_granted (Q162 (a)), so plugintools.control alone lists the tools of every provider.
@@ -17665,7 +18026,9 @@ export async function createHostClient(options = {}) {
     ui: __autojs6_create_ui(async (module, method, args) => (await call("ui.layout", { method, args })).value),
     compose: __autojs6_create_compose(async (module, method, args) => (await call(module === "ui" ? "ui.layout" : "ui.compose", { method, args })).value),
     toast: (text, duration) => call("ui.toast", { text, ...(duration === undefined ? {} : { duration }) }),
-    device: Object.freeze({ ...__autojs6_create_device(deviceCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info"))), info: () => call("device.info") }),
+    device: __autojs6_bun_device(__autojs6_create_device(deviceCall, __autojs6_bun_device_fields(deviceInfo, grants.has("device.info")), undefined,
+      {morsePattern: source => jsTools.util.morseCode.getPattern(source)}), grants.has("device.info"), () => call("device.info")),
+    media: __autojs6_bun_media(deviceCall),
     dialogs: __autojs6_create_dialogs(automationCall),
     pinyin: Object.freeze({...group("text.pinyin"), ...PINYIN_CONSTANTS}),
     pinyin4j: group("text.pinyin4j"),

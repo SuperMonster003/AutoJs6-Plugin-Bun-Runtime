@@ -992,16 +992,33 @@ main().catch(console.error);
 
 ### Rhino 的设备 / 传感器 / 媒体族 (2026-10-30, api-coverage P4.1c)
 
-同步 Build 字段: `host.device.sdkInt`, `release`, `model`, `brand`, `product`, `board`, `bootloader`, `hardware`, `fingerprint`, `buildId`, `buildDisplay`, `manufacturer`, `device`, `incremental`, `baseOS`, `securityPatch`, `codename` 与 Rhino `device` 的同名字段一致 (android.os.Build 与 Build.VERSION 的值; `buildId` 同 Rhino 取 Build.DISPLAY). 插件在本次执行开始时写进客户端旁的 `device-info.json`, 只在 `device.info` 授权 (默认开启) 打开时提供; 关闭时这些字段不存在 (`undefined`), 异步的 `getBrand()` 等仍走 `device.control` (Q151 (a)). 单独导入 `host-client.mjs` 而旁边没有该文件时只有 `sdkInt` (0).
+`host.device`, `host.sensors` 与 `host.media` 采用 Node.js Runtime 的同一套实现 (`sync-device-dialogs.mjs` / `sync-sensors.mjs` 从 Node 源码复制设备与传感器工厂, media 为 Bun 自有的同形实现), 成员形态与 Node 的 `autojs6:device` / `autojs6:sensors` / `autojs6:media` 相同.
 
-`host.media` 对应 Rhino 的 media 模块, 两个默认关闭的独立授权 (Q152 (a), 插件中心 "Bun 音乐播放" / "Bun 媒体库扫描", 打包项目在 `bun.hostCapabilities` 中声明):
+启动快照 (同步成员): 插件在本次执行开始时把以下值写进客户端旁的 `device-info.json` (`BunDeviceProfile`, 与 Node 插件的 NodeDeviceProfile 相同), 只在 `device.info` 授权 (默认开启) 打开时提供 (Q151 (a) / Q154 (a)):
+
+- Build 字段 `sdkInt`, `release`, `model`, `brand`, `product`, `board`, `bootloader`, `hardware`, `fingerprint`, `buildId`, `buildDisplay`, `manufacturer`, `device`, `incremental`, `baseOS`, `securityPatch`, `codename` (android.os.Build 与 Build.VERSION 的值; `buildId` 同 Rhino 取 Build.DISPLAY).
+- `width` / `height` (整屏短边 / 长边像素), `density` (同 Rhino 为 dpi), `densityDpi`, `pageSize` (原生页大小).
+- `digest()`, `getMarketName()`, `isManufacturer(name)`, `manufacturers.isXxx()` / `brands.isXxx()` / `roms.isXxx()` (判断规则同宿主 Device / RomUtils, 读系统属性).
+- 传感器列表: `sensors.getSensor(name)` 与 `sensors.register(name)` 据此判断设备有无该传感器.
+
+`device.info` 关闭时这些成员不存在, `roms` 只剩 `isBackgroundStartGranted()` (宿主路由), `getSensor` 返回 null, `register` 返回 null; 异步的 `getBrand()` / `getWidth()` 等仍走 `device.control`. 单独导入 `host-client.mjs` 而旁边没有该文件时只有 `sdkInt` (0) 与 0 尺寸.
+
+异步成员与授权 (未授权时调用即以 `NOT_GRANTED` 拒绝, `missingCapabilities` 列出缺少的 Bun 授权, 不发往宿主):
 
 | 成员 | Bun 授权 | 宿主路由 (Node 能力) |
 |---|---|---|
-| playMusic, pauseMusic, resumeMusic, stopMusic, musicSeekTo, isMusicPlaying, getMusicDuration, getMusicCurrentPosition | `media.control` | media play / pause / resume / stop / seekTo / getPlaybackStatus (`media` + `media.playback`) |
-| scanFile | `media.library` | media_store scanFile (`media` + `media.library`) |
+| summary, getOrientation, getRotation, isScreenOff / Portrait / Landscape, isPowerSourceAC / USB / Wireless / Dock, getIpAddress, getIpv6Address, getGatewayAddress, isActiveNetworkMetered, isConnectedOrConnecting, isWifiAvailable, isPointerLocationEnabled / Disabled, has / ensureReadPhoneStatePermission, roms.isBackgroundStartGranted, wakeUpIfNeeded, cancelVibration, `rotation` / `orientation` getter | `device.control` | device (`device`) |
+| keepAwake, keepScreenDim, setPointerLocation, setPointerLocationEnabled / Disabled, togglePointerLocation | `device.control` + `device.power` | device (`device` + `device.power`) |
+| getIMEI, getSerial, getAndroidId, getMacAddress, getSharedDeviceId, `imei` / `serial` getter | `device.control` + `device.identifiers` | device (`device` + `device.identifiers`) |
+| sensors.register 后的订阅, getAvailableSensors, once, subscribe | `sensors.control` | sensors (`sensors`) |
+| media.playMusic, pauseMusic, resumeMusic, stopMusic, musicSeekTo, isMusicPlaying, getMusicDuration, getMusicCurrentPosition, play / pause / resume / stop / seekTo / getPlaybackStatus | `media.control` | media (`media` + `media.playback`) |
+| media.scanFile | `media.library` | media_store scanFile (`media` + `media.library`) |
 
-播放器属于本次执行, 执行结束 (含 Worker 结束整个执行) 时宿主停止播放并释放. 相对路径按宿主的脚本工作目录解析.
+`device.identifiers` (Q153 (a), 插件中心 "Bun 设备标识符"), `media.control` 与 `media.library` (Q152 (a), "Bun 音乐播放" / "Bun 媒体库扫描") 默认关闭, 打包项目在 `bun.hostCapabilities` 中声明; `device.identifiers` 不随 `device.control` 隐含.
+
+- `rotation`, `orientation`, `imei`, `serial` 是 getter, 每次读取都向宿主查询并返回新的 Promise.
+- `sensors` 是 Rhino 事件发射器 (`on` / `once` / `emit` / `emitSticky` / `getTimer` 等). `sensors.register(name, delay = sensors.delay.normal)` 同步返回 SensorEventEmitter (设备无该传感器时返回 null), 样本以 `change` (event, ...values) 与 `accuracy_change` (accuracy) 事件送达, `unregister()` / `sensors.unregisterAll()` 结束订阅; 订阅失败时发 `error` 事件, 没有监听时打印警告. 已知传感器在 `sensors.control` 关闭时 `register` 抛 `NOT_GRANTED`.
+- `media.playMusic(path, volume, looping)` 返回播放会话 (`id`, `path`, `status()`, `pause()`, `stop()` 等), `scanFile(path)` 返回宿主是否已扫描该文件, 其余 Rhino 名称返回 Rhino 的结果 (无活动会话时时长 0, 位置 -1). 播放器属于本次执行, 执行结束 (含 Worker 结束整个执行) 时宿主停止播放并释放. 相对路径按宿主的脚本工作目录解析.
 
 ## Android 对象辅助接口与日历任务
 

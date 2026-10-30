@@ -108,3 +108,19 @@ const deviceBrand: string | undefined = host.device.brand;
 const deviceSdkInt: number | undefined = host.device.sdkInt;
 // @ts-expect-error the Build fields are read-only
 host.device.buildId = "x";
+// The rest of the startup snapshot (Q154 (a)), the Promise getters and the hardware identifiers (Q153 (a)).
+const pageSize: number | undefined = host.device.pageSize;
+const marketName: string | undefined = host.device.getMarketName?.();
+const miui: boolean | undefined = host.device.roms.isMiui?.();
+const backgroundStart: Promise<boolean> = host.device.roms.isBackgroundStartGranted();
+const rotation: Promise<number> = host.device.rotation;
+const imei: Promise<string | null> = host.device.getIMEI();
+await host.device.keepAwake(1, 1000);
+// Rhino's sensors (Q147 (a)) and media (Q149 (a) / Q152 (a)).
+const light = host.sensors.register("light", host.sensors.delay.ui);
+light?.on("change", (event: unknown, value: number) => void value);
+light?.unregister();
+const session = await host.media.playMusic("/sdcard/a.mp3", 0.5, true);
+const sessionStatus = await session.status();
+const scanned: boolean = await host.media.scanFile("/sdcard/a.mp3");
+const position: number = await host.media.getMusicCurrentPosition();
