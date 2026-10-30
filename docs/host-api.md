@@ -44,7 +44,7 @@ console.log(text);
 | `screen.metrics` | `host.coordinates` | 开启 | 实时屏幕坐标换算, 本执行的 Scale 基数 |
 | `console.control` | `host.console` | 关闭 | 本执行控制台窗口, 外观及日志配置 |
 
-这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销, 对下一次执行生效. 拼音和 OpenCC 还需要对应插件安装并启用; 控制台显示需要 Android 悬浮窗权限. 图像的 OpenCV 运算需要宿主可用的 OpenCV 实现. 屏幕截图开关只允许申请权限, 仍需 Android 的录屏授权. 当前客户端没有无障碍, OCR, UI 布局, Java 或 `rhino.run` 等能力.
+这些组可以在 AutoJs6 插件中心的 Bun 设置页独立撤销, 对下一次执行生效. 拼音和 OpenCC 还需要对应插件安装并启用; 控制台显示需要 Android 悬浮窗权限. 图像的 OpenCV 运算需要宿主可用的 OpenCV 实现. 屏幕截图开关只允许申请权限, 仍需 Android 的录屏授权. 无障碍, OCR, UI 布局, Java 等其他能力见下文各节; 客户端没有 `rhino.run`.
 
 宿主操作方法返回 Promise, 应等待结果或处理错误; `hasCapability` 和 `images.getSize` 同步读取本地信息. 方法调用通过 `{method, args}` 发送, 成功值包含在 `{value: ...}` 中. `host.call` 可以直接发送能力请求, 仍受相同授权, 方法范围和参数规则约束.
 
@@ -515,6 +515,36 @@ Bun Runtime 0.3.0 and host 5572 expose `host.app`, `host.accessibility` and `hos
 Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10-second per-RPC bound for long gestures/activation; four operations may be outstanding and the SDK queues further operations. Cancellation stops waiting but cannot undo an Android action already dispatched. Polls count toward the original execution quota. Raw Java nodes and internal Agent diagnostics are not exposed; root/Shizuku and dual-app actions run through the shell grants (see "Rhino 的应用与 shell 成员" below, api-coverage P4.1a). Coordinate click retains the current Node provider rejection; use an explicitly granted single-point gesture. Native Bun payloads and the frozen compatibility matrix are unchanged. Validation: host docs/dev/bun-automation-2026-10-19.md.
 
 
+## Rhino 的自动化族 (2026-10-30, api-coverage P4.4)
+
+`host.automator`, `host.auto`, `host.threads`, `host.continuation`, `host.timers`, `host.yolo`, `host.selector` 与 `host.keys` 采用 Node.js Runtime 的同一工厂 (`tools/host-client/sync-automation-family.mjs` 从 Node 源码复制 `__autojs6_create_automation` 及其声明, `--check` 核对一致), 成员与 Node 的 `autojs6:automator` / `autojs6:auto` / `autojs6:threads` / `autojs6:continuation` / `autojs6:timers` / `autojs6:yolo` / `autojs6:selector` 相同. `host.ocr`, `host.barcode`, `host.qrcode` 是 Bun 自有的同形实现, ocr 的 Rhino 层 (mode / tap, detect, summary, ocr.mlkit / paddle / rapid) 用同一工厂. `host.events` 另有 Rhino 的 events 成员 (发射器方法, emitSticky, emitter, getTimer, broadcast, onKeyDown / onKeyUp 等按键名监听, setKeyInterceptionEnabled, observeTouch / onTouch, onNotification / onToast), `host.global` 另有 sleep / wait.
+
+授权 (未授权时调用即以 `NOT_GRANTED` 拒绝, `missingCapabilities` 列出缺少的 Bun 授权, 不发往宿主):
+
+| 成员 | Bun 授权 | 宿主路由 (Node 能力) |
+|---|---|---|
+| automator 的点击 / 滚动 / 输入 / 全局动作 / 输入法切换, auto 的服务状态 / 窗口 / 根节点 / 模式 / 标志, auto.waitFor / automator.waitForService, auto.dump / explain (Q185 (a)) | `accessibility.control` | automator / auto / accessibility (`accessibility`; back / home / recents 以外的全局动作另需 `keys`) |
+| automator.press / swipe / gesture / gestures / gestureAsync / gesturesAsync | `accessibility.control` + `accessibility.gesture` | automator press / gestures (`accessibility.gesture`) |
+| auto.start / stop / enable / disable / launchSettings / clearCache | `accessibility.control` + `accessibility.service` | auto (`accessibility.service`) |
+| automator.captureScreen (无障碍截图, Android 11+) | `accessibility.control` + `screen.capture` | accessibility captureScreenImage (`screen_capture`, `image`) |
+| auto.registerEvent(s) / stateListener | `events.observe` + `accessibility.control` | events observeAccessibility / observeAccessibilityState (`accessibility`) |
+| events.observeTouch / onTouch | `events.observe` + `events.touch` | events observeTouch (`events.touch`) |
+| events.setKeyInterceptionEnabled | `events.observe` + `events.key` + `events.key.intercept` | events interceptKeys (`events.key.intercept`) |
+| events.broadcast | `events.observe` | events observeScriptBroadcasts / sendScriptBroadcast (`events`) |
+| ocr 的全部方法 | `ocr.control` | ocr (`ocr`, `image`) |
+| barcode / qrcode 的全部方法 | `barcode.control` | barcode (`barcode`, `image`) |
+| yolo.load, YoloDetector.detect / close | `yolo.control` | yolo (`yolo`, `image`) |
+
+新增的六项授权默认关闭, 在插件中心独立启用, 打包项目在 `bun.hostCapabilities` 中声明: `accessibility.service`, `events.touch`, `events.key.intercept` (Q182 (a), 不被 `accessibility.control` / `events.observe` / `events.key` 隐含), `ocr.control`, `barcode.control` (qrcode 共用), `yolo.control` (Q181 (a)). automator / auto 复用无障碍授权 (Q183 (a)).
+
+- 坐标随 `host.global.setScreenMetrics` 缩放, 同 Rhino 的 ScreenMetrics.
+- Rhino 的阻塞调用在这里返回 Promise. auto.waitFor(timeout?) 与 automator.waitForService 先请求启用服务 (不打开设置页), 再每 200 ms 查询一次, 超时以 code `ERR_AUTOJS6_TIMEOUT` 拒绝 (Q179). auto 的 service / services / windows / root / rootInActiveWindow / windowRoots / state / stats 是 getter, 每次读取返回新的 Promise.
+- threads.start(fn) 在本线程的下一轮事件循环异步执行 fn (Q175 (a)), 返回句柄 (interrupt / join / isAlive / waitFor); threads.pool 为本地任务池. threads.atomic / lock 存放在 SharedArrayBuffer 中, 可经 postMessage 交给 Worker (Q176 (a)), lock 不可重入. threads.disposable() 即 VolatileDispose, blockedGet 返回 Promise. continuation.enabled 为 true, create() 返回可恢复的延续. timers.keepAlive 返回计时器, loop() 只警告一次, setIntervalExt 同 Rhino; Rhino 的 timers.setTimeout 等即全局 setTimeout 等 (D-9). 这些成员在本地运行, 不需要授权.
+- selector 的 pickup / detect / existsOne / existsAll 与选择器形式的全局 wait 用 flow 的单次探测 (`flow.control`); 函数形式的 wait 在本地轮询.
+- `host.global` 含本族的 Rhino 全局 (`AutomationGlobals`: click / longClick / press / swipe / gesture* / scrollUp / scrollDown / input / setText / back / home / recents / notifications / quickSettings / powerDialog / splitScreen / retry / sync / keepAlive / loop / pickup / detect / existsOne / existsAll) 与系统族的 sleep / wait (wait.async 即 flow.waitAsync); `host.global.install()` 把它们一并装到 globalThis (Q184 (a)), 每个 Worker 需各自调用.
+- ocr / barcode 的图像是本执行的 images 句柄; barcode / qrcode 也接受文件路径 (需 `image.files`) 与 `{type: "capture", requireExistingPermission: true}` (需 `screen.capture`), 读取或截取的图像在调用结束时回收. ocr.recognizeText 返回一个字符串 (各行以换行连接, Rhino 返回行数组). ocr.mode / tap 选择引擎 (auto / mlkit / paddle / rapid), ocr.mlkit / paddle / rapid 固定引擎. yolo.load(modelDir, {component}) 返回 YoloDetector 句柄, 失败时 error.code 为 Rhino 的 `YOLO_*` 码.
+- 主线程与 Worker 相同: 每个线程各自 `createHostClient()`, 事件订阅, 线程任务与 ocr 模式按线程独立.
+
 ## Bun 文件与存储
 
 Bun Runtime 0.4.0 和配套宿主 build 5579 提供 `host.files`, `host.storage`, `host.storages`. 两个独立授权 `files.control` 和 `storage.control` 默认关闭, 在插件中心分别开启; 打包项目在 `bun.hostCapabilities` 中显式声明. 授权不替代 Android 对执行应用的文件权限.
@@ -876,10 +906,14 @@ powerManager 使用已有的 device.control 与 device.power, notice 的扩展�
 | 通知监听 | events.observe + events.notification | events + events.notification | 当前应用已获得通知使用权, 且通知监听服务已连接 |
 | Toast 监听 | events.observe + events.toast | events + events.toast | 当前应用的无障碍服务已连接; 仅观察其他应用的 Toast |
 | 按键监听 | events.observe + events.key | events + events.key | 当前应用的无障碍服务已连接; 不拦截按键 |
+| 按键拦截 (setKeyInterceptionEnabled) | events.observe + events.key + events.key.intercept | events + events.key + events.key.intercept | 当前应用的无障碍服务已连接 |
+| 触摸监听 (observeTouch / onTouch) | events.observe + events.touch | events + events.touch | Root 或 Shizuku |
+| 无障碍事件与服务状态 (auto.registerEvent / stateListener) | events.observe + accessibility.control | accessibility | 当前应用的无障碍服务已连接 |
+| 跨脚本广播 (events.broadcast) | events.observe | events | 无 |
 | 发送/取消通知 | notifications.post | notifications | Android 通知已启用; Android 13+ 需要 POST_NOTIFICATIONS |
 | 打开通知设置 | notifications.post + notifications.settings | notifications + notifications.settings | 系统存在通知设置入口 |
 
-六项 Bun 授权默认关闭, 在插件中心独立启用, 打包应用在 bun.hostCapabilities 中声明. Node.js 项目在 node.permissions 中声明. 通知发送权限与通知使用权不同, 任何一项都不隐式授予另一项. 打包配置会根据通知发送能力补入 POST_NOTIFICATIONS, 仍需实际系统授权. getPermissionStatus 查询的是发送通知的状态, 不代表已获通知读取权限.
+六项 Bun 授权默认关闭, 在插件中心独立启用, 打包应用在 bun.hostCapabilities 中声明. events.touch 与 events.key.intercept (2026-10-30, api-coverage P4.4, Q182 (a)) 同样默认关闭, 不被 events.observe / events.key 隐含. Node.js 项目在 node.permissions 中声明. 通知发送权限与通知使用权不同, 任何一项都不隐式授予另一项. 打包配置会根据通知发送能力补入 POST_NOTIFICATIONS, 仍需实际系统授权. getPermissionStatus 查询的是发送通知的状态, 不代表已获通知读取权限.
 
 ### 事件模块
 

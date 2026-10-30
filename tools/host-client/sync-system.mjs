@@ -39,7 +39,9 @@ function update(file,begin,end,body,anchor){
 update('app/src/main/assets/autojs6/host-client.mjs','// BEGIN GENERATED SYSTEM','// END GENERATED SYSTEM',generated,'export async function createHostClient');
 
 const types=text=>text.replaceAll('AutoJs6Node.BridgeCallOptions','AutomationCallOptions').replaceAll('AutoJs6Node.JsonObject','{ readonly [key: string]: JsonValue }')
-  .replaceAll('AutoJs6Node.JsonValue','JsonValue').replace('(capability plugin_tools, which implies plugin_tools.user_granted)','(grant plugintools.control)');
+  .replaceAll('AutoJs6Node.JsonValue','JsonValue').replace('(capability plugin_tools, which implies plugin_tools.user_granted)','(grant plugintools.control)')
+  // Rhino's wait (api-coverage P3.4 / P4.4): the selector targets and Flow of the Bun declarations.
+  .replaceAll('import("autojs6:selector").','RuntimeSelector.').replaceAll('import("flow").','RuntimeFlow.');
 const declaration=file=>readFileSync(resolve(nodeRoot,`docs/nodejs/types/autojs6-node/${file}.d.ts`),'utf8').replaceAll('\r\n','\n').replace(/^﻿/,'');
 let declarations='// BEGIN GENERATED SYSTEM TYPES\n';
 for(const [file,name,namespace] of [['autojs','autojs','RuntimeAutojs'],['installer','installer','RuntimeInstaller'],['memory','memory','RuntimeMemory'],

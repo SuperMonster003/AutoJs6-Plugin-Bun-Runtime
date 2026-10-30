@@ -142,3 +142,20 @@ await host.global.toastwarn("w", "s");
 const uiThread: false = host.global.isUiThread();
 // @ts-expect-error toastInfo takes the text
 host.global.toastInfo();
+// Rhino's automation family (AutoJs6 api-coverage P4.4): automator / auto over the accessibility grants, local threads /
+// continuation / timers, recognition modules and the family's globals on host.global.
+const clicked: boolean = await host.automator.click(1, 2);
+await host.automator.swipe([0, 0], [10, 10], 300);
+await host.auto.waitFor(5000);
+const running: boolean = (await host.auto.state).isRunning;
+const counter: number = host.threads.atomic(1).incrementAndGet();
+const resumed: true = host.continuation.enabled;
+clearTimeout(host.timers.keepAlive(100));
+const text: string = await host.ocr.mlkit.recognizeText({ id: "img" });
+const codes: readonly string[] = await host.qrcode.recognizeTexts("/sdcard/qr.png");
+const detector = await host.yolo.load("/sdcard/model", { component: "p/c" });
+await detector.close();
+await host.global.press(1, 2, 50);
+await host.global.sleep(10, 20);
+// @ts-expect-error threads.atomic takes a number or a shared buffer
+host.threads.atomic("1");

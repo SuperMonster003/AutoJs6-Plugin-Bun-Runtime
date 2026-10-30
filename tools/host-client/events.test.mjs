@@ -26,7 +26,7 @@ async function fixture(capabilities=['events.observe','notifications.post']){
 test('Bun events use start/poll transport and retain typed event fields',async()=>{
   const f=await fixture(),sub=await f.host.events.observeBroadcasts();
   const events=await sub.drainEvents();assert.equal(events[0].level,50);assert(Object.isFrozen(events[0]));assert.equal(await sub.close(),true);assert.equal(f.live.size,0);
-  assert.equal(HOST_API_METHODS['events.observe'].length,6);assert(f.calls.every(c=>c.url.endsWith('/events.observe')));
+  assert.equal(HOST_API_METHODS['events.observe'].length,12);assert(f.calls.every(c=>c.url.endsWith('/events.observe')));
 });
 test('Bun notification calls carry one stable scope and preserve the settings alias',async()=>{
   const f=await fixture();await f.host.notifications.notify({id:22,title:'owned'});assert.equal(f.posted.size,1);await f.host.notifications.cancelAll();assert.equal(f.posted.size,0);
