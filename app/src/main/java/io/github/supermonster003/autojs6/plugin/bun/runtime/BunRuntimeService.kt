@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.Service
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.display.DisplayManager
 import android.os.Binder
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.system.Os
 import android.system.OsConstants
+import android.util.DisplayMetrics
+import android.view.Display
 import org.autojs.plugin.bun.runtime.api.BunRuntimeContract
 import org.autojs.plugin.bun.runtime.api.IBunRuntimeCallback
 import org.autojs.plugin.bun.runtime.api.IBunRuntimePlugin
@@ -190,8 +193,22 @@ open class BunRuntimeService : Service() {
 
     @Suppress("DEPRECATION") // DisplayMetrics.scaledDensity: util.spToPx / pxToSp of the host client are linear in it.
     private fun deviceInfo(): String = resources.displayMetrics.let {
+        val (width, height) = screenSides(it)
         BunHostClientModule.deviceInfo(Build.VERSION.SDK_INT, it.density, it.densityDpi, it.scaledDensity,
-            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), it.widthPixels, it.heightPixels)
+            runCatching { android.os.Environment.getExternalStorageDirectory().path }.getOrNull(), width, height)
+    }
+
+    /**
+     * The short and the long side of the whole display, as Rhino's WIDTH / HEIGHT and its SetScreenMetrics scaling take
+     * them (the host's ScreenMetrics, api-coverage P4.1b); resources.displayMetrics is this service's window, which leaves
+     * out the navigation bar on many devices.
+     */
+    @Suppress("DEPRECATION") // Display.getRealMetrics: the real size of the display for a non-visual context.
+    private fun screenSides(window: DisplayMetrics): Pair<Int, Int> {
+        val real = DisplayMetrics()
+        runCatching { getSystemService(DisplayManager::class.java)?.getDisplay(Display.DEFAULT_DISPLAY)?.getRealMetrics(real) }
+        val source = if (real.widthPixels > 0 && real.heightPixels > 0) real else window
+        return minOf(source.widthPixels, source.heightPixels) to maxOf(source.widthPixels, source.heightPixels)
     }
 
     private fun execute(
