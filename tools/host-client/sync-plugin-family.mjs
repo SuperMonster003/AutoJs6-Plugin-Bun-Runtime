@@ -21,5 +21,5 @@ const types = read(resolve(node, 'docs/nodejs/types/autojs6-node/gallery.d.ts'))
 const start = types.indexOf('  namespace gallery {'), end = types.indexOf('\n  const gallery:', start);
 assert(start >= 0 && end > start);
 update('app/src/main/assets/autojs6/host-client.d.mts', 'TYPES', types.slice(start, end).replace('  namespace gallery', 'export namespace RuntimeGallery')
-  .replaceAll('AutoJs6Node.BridgeCallOptions', 'AutomationCallOptions').replaceAll('import("events").', 'import("node:events").') + '\n', 'export interface HostClient {');
+  .replaceAll('AutoJs6Node.BridgeCallOptions', 'AutomationCallOptions') + '\n', 'export interface HostClient {');
 console.log('Node/Bun plugin family factories and types match');
