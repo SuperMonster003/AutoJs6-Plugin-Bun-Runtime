@@ -807,11 +807,11 @@ export namespace RuntimeApp {
       /** Starts a regular Android service, subject to Android background-start restrictions. */
       startService(request: IntentRequest, options?: AutomationCallOptions): Promise<string | null>;
       /** Returns packages visible to Android's package manager. */
-      getInstalledApps(filter?: { readonly includeSystem?: boolean }, options?: AutomationCallOptions): Promise<readonly PackageInfo[]>;
+      getInstalledApps(filter?: { readonly includeSystem?: boolean } | null, options?: AutomationCallOptions): Promise<readonly PackageInfo[]>;
       getPackageInfo(packageName: string, options?: AutomationCallOptions): Promise<PackageInfo | null>;
-      getInstalledPackages(query?: PackageQueryOptions, options?: AutomationCallOptions): Promise<readonly PackageSnapshot[]>;
+      getInstalledPackages(query?: PackageQueryOptions | null, options?: AutomationCallOptions): Promise<readonly PackageSnapshot[]>;
       /** Reads an APK file in the script's file scope; null when it is not a readable package. */
-      getApkInfo(path: string, query?: PackageQueryOptions, options?: AutomationCallOptions): Promise<PackageSnapshot | null>;
+      getApkInfo(path: string, query?: PackageQueryOptions | null, options?: AutomationCallOptions): Promise<PackageSnapshot | null>;
       getAppByAlias(alias: string, options?: AutomationCallOptions): Promise<PresetApp | null>;
       /** Delivers to the host app's local receivers before resolving; a string is an action name. */
       sendLocalBroadcastSync(request: IntentRequest | string, options?: AutomationCallOptions): Promise<void>;
@@ -2102,7 +2102,7 @@ export namespace RuntimeDevice {
       isPowerSourceUSB(options?: AutomationCallOptions): Promise<boolean>;
       isPowerSourceWireless(options?: AutomationCallOptions): Promise<boolean>;
       isPowerSourceDock(options?: AutomationCallOptions): Promise<boolean>;
-      getIpAddress(useIPv4?: boolean, options?: AutomationCallOptions): Promise<string>;
+      getIpAddress(useIPv4?: boolean | null, options?: AutomationCallOptions): Promise<string>;
       getIpv6Address(options?: AutomationCallOptions): Promise<string>;
       getGatewayAddress(options?: AutomationCallOptions): Promise<string>;
       isActiveNetworkMetered(options?: AutomationCallOptions): Promise<boolean>;
@@ -5967,6 +5967,8 @@ export namespace RuntimeGlobal {
      */
     export interface GlobalModule {
       /** A random number in [0, 1), or in [min, max] (NaN when only one bound is given). */
+      /** Always throws a NotImplementedError, as in Rhino. */
+      TODO(reason?: unknown): never;
       random(min?: number | null, max?: number | null): number;
       randomInt(...values: readonly unknown[]): number;
       randomFloat(...values: readonly unknown[]): number;

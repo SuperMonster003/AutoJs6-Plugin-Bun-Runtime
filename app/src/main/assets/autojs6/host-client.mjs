@@ -11759,6 +11759,12 @@ function __autojs6_bun_create_axios() {
       });
 
       const global = {
+        // Always throws, as Kotlin's TODO: the host's message when the reason is nullish or empty.
+        TODO: fixed("TODO", 0, 1, reason => {
+          const e = new Error(reason === undefined || reason === null || reason === "" ? "An operation is not implemented" : String(reason));
+          e.name = "NotImplementedError";
+          throw e;
+        }),
         random: fixed("random", 0, 2, (...range) => {
           if (range.length === 0) return Math.random();
           if (range.length === 1) return NaN;
@@ -17522,7 +17528,7 @@ function __autojs6_bun_create_axios() {
       };
 
       // ColorNativeObject.get: argb / hsl / hsla / hsv / hsva / rgb / rgba go to toArgb ... toRgba; other names call the
-      // Colors function of that name through reflection, so its errors reach scripts as InvocationTargetException.
+      // Colors function of that name through reflection, and its errors reach scripts unchanged (host Q116).
       const PROXY_TOWARDS = ["argb", "hsl", "hsla", "hsv", "hsva", "rgb", "rgba"];
       const PROXIED = ["toInt", "toHex", "toFullHex", "toString", "alpha", "getAlpha", "alphaDouble", "getAlphaDouble", "red", "getRed",
         "redDouble", "getRedDouble", "green", "getGreen", "greenDouble", "getGreenDouble", "blue", "getBlue", "blueDouble",
@@ -17531,22 +17537,9 @@ function __autojs6_bun_create_axios() {
         "ensureContrast", "harmony", "tones", "derive", "nightVariant", "simulate", "extract", "toRgbString", "toRgbaString",
         "toArgbString", "toHsvString", "toHsvaString", "toHslString", "toHslaString"];
 
-      function invocationTarget(e) {
-        return javaError("InvocationTargetException", "java.lang.reflect.InvocationTargetException", e);
-      }
-
       function proxied(target) {
         return named(function (...args) {
-          const c = colorOf(receiver(this));
-          let result;
-          try {
-            result = LEGACY[target]([c, ...args]);
-          } catch (e) {
-            throw invocationTarget(e);
-          }
-          return result instanceof Promise ? result.catch(e => {
-            throw invocationTarget(e);
-          }) : result;
+          return LEGACY[target]([colorOf(receiver(this)), ...args]);
         }, target, 0);
       }
 

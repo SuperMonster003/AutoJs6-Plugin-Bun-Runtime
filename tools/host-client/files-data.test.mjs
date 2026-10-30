@@ -38,7 +38,7 @@ function check(results){
   const failures={};let pass=0;
   for(const [id,actual] of Object.entries(results)){
     const want=expected[id];
-    const ok=!want?false:want.rhinoCrash?'th' in actual:'th' in want?'th' in actual&&errorName(want.th.name)===errorName(actual.th.name):'ok' in actual&&same(want.ok,actual.ok);
+    const ok=!want?false:'th' in want?'th' in actual&&errorName(want.th.name)===errorName(actual.th.name):'ok' in actual&&same(want.ok,actual.ok);
     if(ok)pass++;else failures[id]='expected '+JSON.stringify(want).slice(0,120)+', got '+JSON.stringify(actual).slice(0,160);
   }
   assert.deepEqual(failures,{});
