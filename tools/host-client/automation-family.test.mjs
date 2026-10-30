@@ -69,7 +69,7 @@ test('touches and key interception need their own grants beside events.observe',
 test('ocr, barcode, qrcode and yolo use their grants with images handles of this execution',async()=>{
   const image={id:'img-7',__autojs6ImageHandle:'img-7',width:4,height:4};
   const host=await client(['ocr.control','barcode.control','yolo.control'],(method,args,capability)=>{
-    if(capability==='ocr.control')return [{text:'A',confidence:0.9,bounds:{left:0,top:0,right:2,bottom:1}},{text:'B'}];
+    if(capability==='ocr.control')return [{text:'A',confidence:0.9,bounds:{left:0,top:0,right:2,bottom:1},extras:{quad:[0,0,2,0,2,1,0,1],nested:{items:[1]},executionProvider:'cpu'}},{text:'B'}];
     if(capability==='barcode.control')return method==='recognizeText'?'qr-text':{format:'QR_CODE',rawValue:'qr-text'};
     return method==='load'?{id:'yolo-1',component:'p/c'}:method==='detect'?[{classId:1,label:'cat',confidence:0.8,bounds:{left:0,top:0,right:1,bottom:1}}]:true;
   });
@@ -78,6 +78,10 @@ test('ocr, barcode, qrcode and yolo use their grants with images handles of this
   await host.ocr.mlkit.detect(image,{region:[0,0,2,2]});
   assert.deepEqual(host.calls.at(-1).args[1],{region:[0,0,2,2],engine:'mlkit-ocr'});
   assert.equal(host.calls.at(-1).method,'detectTextBounds');
+  const [withExtras,withoutExtras]=await host.ocr.detect(image);
+  assert.deepEqual(withExtras.extras,{quad:[0,0,2,0,2,1,0,1],nested:{items:[1]},executionProvider:'cpu'});
+  assert(Object.isFrozen(withExtras.extras)&&Object.isFrozen(withExtras.extras.quad)&&Object.isFrozen(withExtras.extras.nested.items));
+  assert.deepEqual(withoutExtras.extras,{});
   host.ocr.tap('paddle');assert.equal(host.ocr.mode,'paddle');
   await host.ocr.recognize(image);assert.equal(host.calls.at(-1).args[1].engine,'paddle-ocr');
   assert.equal(await host.qrcode.recognizeText(image),'qr-text');

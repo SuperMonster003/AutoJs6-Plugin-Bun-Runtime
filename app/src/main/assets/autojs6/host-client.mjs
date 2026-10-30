@@ -17993,6 +17993,8 @@ function __autojs6_bun_recognition(call, images, rhinoOcr) {
       confidence: finite(source.confidence)};
     const box = bounds(source.bounds || source.boundingBox || source.region);
     if (box) result.bounds = box;
+    // An older host sends no extras.
+    result.extras = frozen(plain(source.extras) ? source.extras : {});
     return Object.freeze(result);
   }
   const listOf = value => Array.isArray(value) ? value : plain(value) && Array.isArray(value.results) ? value.results : [];

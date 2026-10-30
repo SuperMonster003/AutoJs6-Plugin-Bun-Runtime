@@ -153,6 +153,7 @@ const counter: number = host.threads.atomic(1).incrementAndGet();
 const resumed: false = host.continuation.enabled;
 clearTimeout(host.timers.keepAlive(100));
 const text: string = await host.ocr.mlkit.recognizeText({ id: "img" });
+const ocrQuad: readonly number[] | undefined = (await host.ocr.paddle.detect({ id: "img" }, { useOpenCL: true }))[0]?.extras.quad;
 const codes: readonly string[] = await host.qrcode.recognizeTexts("/sdcard/qr.png");
 const detector = await host.yolo.load("/sdcard/model", { component: "p/c" });
 await detector.close();
