@@ -115,6 +115,10 @@ export const HOST_API_METHODS = Object.freeze({
     "setContentTextColors", "setContentBackgroundColor", "setContentBackgroundTint", "setContentBackgroundAlpha",
     "setTextSize", "setTextColor", "setBackgroundColor", "setBackgroundTint", "setBackgroundAlpha",
     "setExitOnClose", "setTouchable", "setGlobalLogConfig", "resetGlobalLogConfig",
+    // Rhino's other window controls and console.build(options).show() as one call (AutoJs6 api-coverage P3.3 / P4.3).
+    "isShowing", "resetBackgroundAlpha", "resetContentBackgroundAlpha", "resetTitleBackgroundAlpha",
+    "setAvoidStatusBar", "setColorful", "setInputVisible", "setTimeVisible", "setTouchThrough", "setGravity", "setTimeFormat",
+    "configure",
   ]),
 });
 
@@ -16873,7 +16877,7 @@ const __autojs6_bun_trace_levels = Object.freeze({verbose: "verbose", debug: "lo
   2: "verbose", 3: "log", 4: "info", 5: "warn", 6: "error"});
 function __autojs6_bun_console(control, granted, call) {
   const pending = [];
-  let flushing = null;
+  let flushing = null, last = Promise.resolve();
   const fallback = entries => {
     for (const [level, text] of entries) (["warn", "error", "assert"].includes(level) ? process.stderr : process.stdout).write(`${text}\n`);
   };
@@ -16884,8 +16888,10 @@ function __autojs6_bun_console(control, granted, call) {
     // One request stays below the bridge's 64 KiB body limit; the rest waits for the next call.
     for (let i = 0; i < entries.length; i++) if ((size += Buffer.byteLength(entries[i][1]) + 16) > 60_000 && i > 0) { cut = i; break; }
     if (cut < entries.length) { pending.unshift(...entries.splice(cut)); schedule(); }
-    return call("console.control", {method: "println", args: [entries]}).catch(() => fallback(entries));
+    return last = call("console.control", {method: "println", args: [entries]}).catch(() => fallback(entries));
   };
+  // Resolves once the lines written so far have reached the host (or stdout / stderr).
+  const settled = async () => { while (flushing) await flushing; await last; };
   const schedule = () => { flushing ??= Promise.resolve().then(flush); };
   const write = (level, text) => {
     if (!granted) return fallback([[level, text]]);
@@ -16932,6 +16938,24 @@ function __autojs6_bun_console(control, granted, call) {
       write(kind, `${format([message])}\n${stack()}`);
     },
     printAllStackTrace: error => write("error", String(error?.stack ?? error ?? new Error().stack)),
+    // Rhino's console input (api-coverage P4.3, D-7, Q165 (a)): the prompt (data, when given) is printed as log prints it, then
+    // the console window shows its input bar and the next line submitted there (or to stdin) resolves the Promise. The host
+    // keeps the request while this client polls it, at most a second per call; the end of the execution or a console reset
+    // rejects it with ERR_AUTOJS6_BRIDGE_CANCELLED.
+    async rawInput(...data) {
+      if (data.length) write("log", format(data));
+      await settled();
+      const id = (await call("console.control", {method: "rawInput", args: []})).value;
+      for (;;) {
+        const {done, text} = (await call("console.control", {method: "rawInputPoll", args: [id]})).value;
+        if (!done) continue;
+        if (text === null) throw Object.assign(new Error("console.rawInput was cancelled: the execution ended or the console was reset"),
+          {code: "ERR_AUTOJS6_BRIDGE_CANCELLED"});
+        return text;
+      }
+    },
+    // Rhino's console.input: the line read as rawInput reads it, evaluated as JavaScript in the global scope.
+    input: async (...data) => (0, eval)(await api.rawInput(...data)),
   };
   console.err = console.error;
   const api = Object.freeze({...control, ...console, openConsole: control.show, showConsole: control.show, clearConsole: control.clear,
@@ -19004,7 +19028,7 @@ export async function createHostClient(options = {}) {
       while (args.length && args[args.length - 1] === undefined) args.pop();
       const result = await call(capability, { method, args });
       if (!Object.hasOwn(result, "value")) throw new HostCallError("INVALID_RESPONSE", "Host method result has no value", capability);
-      if (capability === "console.control" || (capability === "screen.metrics" && method.startsWith("setScale"))) return undefined;
+      if (capability === "console.control" && method !== "isShowing" || (capability === "screen.metrics" && method.startsWith("setScale"))) return undefined;
       return result.value;
     }])));
   }

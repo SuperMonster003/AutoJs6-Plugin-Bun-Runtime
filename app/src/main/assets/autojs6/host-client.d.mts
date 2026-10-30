@@ -451,7 +451,29 @@ export interface ConsoleApi {
   setTouchable(touchable?: boolean): Promise<void>;
   setGlobalLogConfig(config: { readonly [key: string]: JsonValue }): Promise<void>;
   resetGlobalLogConfig(): Promise<void>;
+  /** Rhino's other window controls (AutoJs6 api-coverage P4.3): enabled defaults to true, as in Rhino. */
+  isShowing(): Promise<boolean>;
+  resetBackgroundAlpha(): Promise<void>;
+  resetContentBackgroundAlpha(): Promise<void>;
+  resetTitleBackgroundAlpha(): Promise<void>;
+  setAvoidStatusBar(enabled?: boolean): Promise<void>;
+  setColorful(enabled?: boolean): Promise<void>;
+  setInputVisible(visible?: boolean): Promise<void>;
+  setTimeVisible(visible?: boolean): Promise<void>;
+  setTouchThrough(enabled?: boolean): Promise<void>;
+  /** An android.view.Gravity value or a gravity name. */
+  setGravity(gravity: number | string): Promise<void>;
+  /** A java.text.SimpleDateFormat pattern; omitted, Rhino's default. */
+  setTimeFormat(format?: string | null): Promise<void>;
+  /**
+   * Rhino's console.build(options).show() as one call: applies the configurator fields that options names (size, position,
+   * gravity, title and its text / background / icons, content and the whole window's text and background, exitOnClose,
+   * touchable, touchThrough, timeVisible, timeFormat, colorful, avoidStatusBar, inputVisible) and shows the window.
+   */
+  configure(options?: ConsoleConfigureOptions): Promise<void>;
 }
+/** Rhino's console.build options: the configurator fields, an array value spread as the setter's arguments. */
+export type ConsoleConfigureOptions = { readonly [field: string]: JsonValue };
 /**
  * Rhino's console output and global console names (AutoJs6 api-coverage P4.3, D-10). With console.control the host prints
  * each line at Rhino's level (log and print at debug); without it the text goes to Bun's stdout, or stderr for warn / error /
@@ -482,7 +504,18 @@ export interface ConsoleOutputApi {
   clearConsole(): Promise<void>;
   launchConsole(): Promise<void>;
 }
-export interface HostConsole extends ConsoleApi, ConsoleOutputApi {}
+/**
+ * Rhino's console input (AutoJs6 api-coverage P4.3, D-7, Q165 (a)), with console.control: the prompt (data, when given) is
+ * printed as log prints it, the console window shows its input bar, and the next line submitted there (or to stdin, first come
+ * first served with other scripts) resolves the Promise. The end of the execution or a console reset rejects it with
+ * ERR_AUTOJS6_BRIDGE_CANCELLED; without the overlay permission a hidden console window rejects NOT_GRANTED at once.
+ */
+export interface ConsoleInputApi {
+  rawInput(...data: unknown[]): Promise<string>;
+  /** The line read as rawInput reads it, evaluated as JavaScript in the global scope (Rhino's console.input). */
+  input(...data: unknown[]): Promise<unknown>;
+}
+export interface HostConsole extends ConsoleApi, ConsoleOutputApi, ConsoleInputApi {}
 /** Rhino's isLong / isForcible forms: booleans, numbers (truthy) and "long" / "short" / "forcible" or their initials, in any case. */
 export type ToastFlag = boolean | number | "long" | "short" | "forcible" | "l" | "s" | "f" | (string & {});
 /**

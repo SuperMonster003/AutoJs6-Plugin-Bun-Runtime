@@ -132,3 +132,29 @@ test("Rhino's global console names are host.console members", async () => {
   assert.deepEqual(calls.map(call => [call.method, call.args]), [["show", []], ["show", [true]], ["clear", []], ["launch", []]]);
   assert.equal(host.console.err, host.console.error);
 });
+
+test("Rhino's other window controls are console.control routes; isShowing answers the host's value", async () => {
+  const { host, calls } = await client(["console.control"], (id, body) => ({ value: body.method === "isShowing" ? true : null }));
+  assert.equal(await host.console.isShowing(), true);
+  assert.equal(await host.console.setGravity("center"), undefined);
+  await host.console.setAvoidStatusBar();
+  await host.console.configure({ title: "t", size: [400, 600], timeVisible: false });
+  assert.deepEqual(calls.map(call => [call.method, call.args]), [["isShowing", []], ["setGravity", ["center"]], ["setAvoidStatusBar", []],
+    ["configure", [{ title: "t", size: [400, 600], timeVisible: false }]]]);
+});
+
+test("rawInput prints the prompt first, then polls the host's line request; input evaluates the line", async () => {
+  let polls = 0;
+  const lines = ["6 * 7", null];
+  const { host, calls } = await client(["console.control"], (id, body) => {
+    if (body.method === "rawInput") return { value: `request-${calls.filter(call => call.method === "rawInput").length}` };
+    if (body.method === "rawInputPoll") return { value: ++polls % 2 ? { done: false } : { done: true, text: lines.shift() } };
+    return { value: null };
+  });
+  assert.equal(await host.console.input("value %d?", 1), 42);
+  assert.deepEqual(calls.map(call => [call.method, call.args]), [["println", [[["log", "value 1?"]]]], ["rawInput", []],
+    ["rawInputPoll", ["request-1"]], ["rawInputPoll", ["request-1"]]]);
+  await assert.rejects(host.console.rawInput(), error => error.code === "ERR_AUTOJS6_BRIDGE_CANCELLED");
+  assert.equal(calls.filter(call => call.method === "println").length, 1);
+  await assert.rejects((await client([])).host.console.rawInput("x"), error => error.code === "NOT_GRANTED");
+});

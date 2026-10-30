@@ -159,3 +159,9 @@ await host.global.press(1, 2, 50);
 await host.global.sleep(10, 20);
 // @ts-expect-error threads.atomic takes a number or a shared buffer
 host.threads.atomic("1");
+// Rhino's other console window controls (AutoJs6 api-coverage P4.3).
+const consoleShowing: boolean = await host.console.isShowing();
+await host.console.setGravity(17);
+await host.console.configure({ title: "t", size: [400, 600] });
+const line: string = await host.console.rawInput("name?");
+const evaluated: unknown = await host.console.input();

@@ -196,7 +196,11 @@ if (host.hasCapability("console.control")) {
 }
 ```
 
-窗口方法是真实宿主调用, 不再以返回自身的空操作表示成功. `show/hide/expand/collapse/reset/clear/launch` 与标题、尺寸、位置、文字/背景颜色、触摸和退出配置可用, 完整签名见 `ConsoleApi`. 原生 Bun `console` 不被替换; stdout/stderr 同时转发到本执行控制台和宿主全局日志. `setGlobalLogConfig/resetGlobalLogConfig` 修改宿主的全局日志配置, 不限于本执行, 应谨慎使用并恢复. 控制接口不提供 Rhino 的同步 `input/rawInput` 或 builder 对象.
+窗口方法是真实宿主调用, 不再以返回自身的空操作表示成功. `show/hide/expand/collapse/reset/clear/launch` 与标题、尺寸、位置、文字/背景颜色、触摸和退出配置可用, 完整签名见 `ConsoleApi`. 原生 Bun `console` 不被替换; stdout/stderr 同时转发到本执行控制台和宿主全局日志. `setGlobalLogConfig/resetGlobalLogConfig` 修改宿主的全局日志配置, 不限于本执行, 应谨慎使用并恢复.
+
+Rhino 的其余窗口控制 (2026-10-30, AutoJs6 api-coverage P4.3, 宿主路由见 P3.3): `isShowing()` 返回 boolean; `resetBackgroundAlpha / resetContentBackgroundAlpha / resetTitleBackgroundAlpha`; `setAvoidStatusBar / setColorful / setInputVisible / setTimeVisible / setTouchThrough` (省略参数为 true); `setGravity` (数值或重力名); `setTimeFormat`; `configure(options?)` 一次应用 Rhino `console.build(options)` 的选项并显示窗口, 键同 Rhino 构建器的字段 (size, position, title, contentTextColors 等), 未知键在应用任何选项前拒绝; 宿主没有悬浮窗权限时选项已应用, 显示一步 reject NOT_GRANTED.
+
+控制台输入 (D-7, Q165 (a)): `rawInput(...data)` 有参数时先以 log 级别打印提示, 再显示控制台与输入框, 用户提交一行后 resolve 该行文本; 与 stdin 及 Rhino `console.rawInput` 共用宿主的输入队列, 先到先得. 单次宿主调用最长 10 s, 客户端因此经 `rawInput` / `rawInputPoll` 路由排队后每次最多等 1 s 轮询 (console.control 不计入调用上限), 同时最多 4 个请求等待. 执行结束或控制台被重置时 reject, code 为 ERR_AUTOJS6_BRIDGE_CANCELLED; 控制台未显示且宿主没有悬浮窗权限时立即 reject NOT_GRANTED (Rhino 会一直等待). `input(...data)` 读行同 rawInput, 再在全局作用域间接 eval, resolve 求值结果. 声明见 `ConsoleInputApi`.
 
 Rhino 的输出函数 (2026-10-30, AutoJs6 api-coverage P4.3, D-10): `host.console.log / print / verbose / info / warn / error / assert / time / timeEnd / trace / printAllStackTrace`, 以及 Rhino 的全局名称 `err` (同 error), `openConsole / showConsole` (同 show), `clearConsole` (同 clear), `launchConsole` (同 launch), 声明见 `ConsoleOutputApi`.
 
