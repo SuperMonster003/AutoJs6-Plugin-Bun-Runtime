@@ -17301,7 +17301,9 @@ export async function createHostClient(options = {}) {
     device: 'device.control', notifications: 'notifications.post', accessibility: 'accessibility.control', clipboard: 'clipboard.control',
     plugin_tools: 'plugin_tools.control'};
   function systemCall(module, method, args, options = {}) {
-    const missing = [...new Set((options.permissions || []).map(name => SYSTEM_GRANTS[name] ?? name))].filter(name => !grants.has(name));
+    // Calls without permissions (engines.all / stopAll / stopSelf) need the module's own capability.
+    const required = options.permissions || [{notice: 'notifications', power_manager: 'device'}[module] ?? module];
+    const missing = [...new Set(required.map(name => SYSTEM_GRANTS[name] ?? name))].filter(name => !grants.has(name));
     if (missing.length) return Promise.reject(Object.assign(new HostCallError('NOT_GRANTED',
       `${module}.${method} requires grants that are off for this execution: ${missing.join(', ')}`, missing[0]), {missingCapabilities: Object.freeze(missing)}));
     return automationCall(module, method, args, options);
