@@ -51,7 +51,7 @@ test("floaty windows ride floaty.control; raw windows and setTouchable need thei
   assert.deepEqual(calls.map(({ id, method }) => [id, method]), [["floaty.control", "floatyCloseAll"], ["floaty.control", "hasPermission"]]);
   const { host: denied, calls: none } = await client([]);
   await assert.rejects(denied.floaty.window("<frame/>"), error => error.code === "NOT_GRANTED" && error.missingCapabilities.join() === "floaty.control");
-  await assert.rejects(denied.terminal.state(), error => error.code === "NOT_GRANTED" && (error.missingCapabilities ?? error.cause?.missingCapabilities).join() === "terminal.control");
+  await assert.rejects(denied.terminal.state(), error => error.code === "NOT_GRANTED" && error.missingCapabilities.join() === "terminal.control");
   assert.deepEqual(none, []);
 });
 

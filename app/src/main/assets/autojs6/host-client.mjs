@@ -1831,6 +1831,8 @@ function createMediainfo(call) {
             return true;
           },
           cancel() {
+            // As Rhino's OkHttp socket, a failed, closed or canceled socket stays quiet (a failure listener may cancel).
+            if (closed && !connection) { generation++; pending.length = 0; return; }
             const target = connection;
             generation++; closed = true; connection = null; pending.length = 0;
             if (target) target.close(1001, "").catch(() => {});
@@ -1916,10 +1918,11 @@ function createMediainfo(call) {
         name: { value: "TerminalError", writable: true, configurable: true },
         toString: { value: function() { return this.name + " [" + this.code + "]: " + this.message; }, writable: true, configurable: true }
       });
-      // Host failures carry the plugin's code (PLUGIN_UNAVAILABLE, TIMEOUT, ...); bridge and capability errors (ERR_*) stay as
-      // they are. The session id comes from the call, the host does not repeat it.
+      // Host failures carry the plugin's code (PLUGIN_UNAVAILABLE, TIMEOUT, ...); bridge and capability errors (ERR_*, or with
+      // missingCapabilities like Bun's NOT_GRANTED) stay as they are. The session id comes from the call, the host does not repeat it.
       const terminalError = (error, id) => error && typeof error === "object" && !(error instanceof TerminalError)
         && /^[A-Z][A-Z0-9_]*$/.test(String(error.code || "")) && !String(error.code).startsWith("ERR_")
+        && !Array.isArray(error.missingCapabilities)
         ? Object.assign(new TerminalError(error.message, error.code, id), { cause: error }) : error;
       // exec / waitFor wait on the host up to 10 minutes by default; those calls pass their own timeout.
       const terminalCall = (method, args, timeoutMs, id) => call("terminal", method, args, { permissions: ["terminal"], ...(timeoutMs ? { timeoutMs } : {}) })
@@ -5247,7 +5250,8 @@ function createStorage(dispatch) {
       session.then(sub=>{if(sub)sub.close().catch(()=>{});});
     }
     const broadcast=Object.freeze({
-      emit:(name,...args)=>invoke("sendScriptBroadcast",[String(name),args]).then(Boolean),
+      // Waits for a session that is opening, so a broadcast right after the first on() reaches this script too (as Rhino's synchronous registration).
+      emit:(name,...args)=>Promise.resolve(broadcastSession).catch(()=>{}).then(()=>invoke("sendScriptBroadcast",[String(name),args])).then(Boolean),
       on(name,listener){broadcastEmitter.on(name,listener);broadcastListen();return broadcast;},
       addListener(name,listener){return broadcast.on(name,listener);},
       once(name,listener){broadcastEmitter.once(name,listener);broadcastListen();return broadcast;},
