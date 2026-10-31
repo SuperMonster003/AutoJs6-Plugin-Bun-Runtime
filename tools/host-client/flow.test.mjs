@@ -26,6 +26,15 @@ test('Bun Flow core is usable without any host grants, with explicit denial for 
   await assert.rejects(host.flow.wait('denied').toPromise(), error => error.code === 'NOT_GRANTED');
   assert.equal(calls.length, 0);
 });
+test('Bun Flow answers await and sync with Promises and sync(timeout) leaves the chain running (Q202)', async () => {
+  const {host} = await client([], async () => ({}));
+  const flow = host.flow, chain = flow.sleep(30).map(() => 'late');
+  assert.equal(chain.await(), chain.toPromise()); assert.equal(chain.sync(), chain.toPromise());
+  const error = await chain.sync(1).then(() => assert.fail('A timeout is expected'), failure => failure);
+  assert.equal(error.code, 'TIMEOUT'); assert.equal(error.step, 'sync'); assert.equal(error.reason, 'sync');
+  assert.equal(chain.state, 'pending'); assert.equal(await chain.sync(1000), 'late'); assert.equal(await chain.await(), 'late');
+  assert.throws(() => chain.sync(-1), TypeError);
+});
 test('Bun Flow queries pass through its normal granted automation transport', async () => {
   const {host, calls, jobs} = await client(['accessibility.control'], payload => {
     assert.equal(payload.method, 'flowProbe'); assert.deepEqual(payload.args, [{text:'ready'}]);
