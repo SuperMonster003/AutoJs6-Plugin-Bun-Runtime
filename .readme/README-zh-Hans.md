@@ -239,6 +239,26 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.22.0
+
+_2026/11/01_
+
+- `新增` host 的 util, species, s13n, cvt, fmt, jsox, pinyin 及全局数据函数与 AutoJs6 脚本一致
+- `新增` host 的 colors / Color, files, zip, mime, 计时记录器, storages 和 mediainfo 与 AutoJs6 脚本一致; 全局 open, Color, axios, dayjs, pangu, cheerio 和 i18n
+- `新增` host 的 app, shell, shizuku 模块与 ShellProcess 与 AutoJs6 脚本一致, 结果以 Promise 返回
+- `新增` host 的 autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build 及 notifications 的扩展成员与 AutoJs6 脚本一致, host.global.install() 把全局系统函数与 R 装到 globalThis
+- `新增` host 的 device, sensors 和 media 与 AutoJs6 脚本一致
+- `新增` host 的 ui, floaty, web, compose, terminal, toast 和 console 与 AutoJs6 脚本一致, 界面在 AutoJs6 中显示; 需要新增的 terminal.control, floaty.control, floaty.raw 和 floaty.touch 授权
+- `新增` host 的 automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector 与 events 的按键, 触摸监听与 AutoJs6 脚本一致; 需要新增的 accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control 和 yolo.control 授权
+- `新增` host 的 colors.theme, gallery (需要 3-Maple Image), files.batchRename (需要 Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage 和 speech.tag; 需要新增的 theme.control, gallery.control 和 batchrename.control 授权, 默认关闭; 独立签名的打包应用调用不到 3-Maple Image 与 Batch Rename
+- `新增` Flow 对象的 await() 和 sync(timeout), 两者都返回 Promise, 写作 await chain.sync(); 超过 timeout (毫秒) 时以 TIMEOUT 错误拒绝, 流程继续运行, 与 AutoJs6 脚本相同
+- `修复` chooseFiles() 之后立即调用 web.cancelFileChooser() 时文件选择器可能没有关闭的问题
+- `修复` files.open, files.toFile 和 zip 的相对路径没有按脚本所在目录解析, 找不到脚本旁边的文件的问题
+- `修复` shell.exec 执行很快结束的命令时偶尔以 ERR_STREAM_DESTROYED 错误失败的问题
+- `修复` WIDTH / HEIGHT 与 setScreenMetrics 的缩放没有使用完整屏幕尺寸的问题
+- `优化` 一次请求可携带的宿主授权上限 64 -> 128
+- `优化` ocr 的结果带有只读的 extras 对象, 选项声明补全 useOpenCL, mergeLine 等识别选项
+
 #### v0.21.0
 
 _2026/10/22_
@@ -250,12 +270,6 @@ _2026/10/22_
 _2026/10/22_
 
 - `新增` Node.js, Bun 和 Worker 的 AI 文本生成, 流式结果, 模型目录与持久会话, 支持取消及 3-Stone AI 对打包应用的逐应用授权
-
-#### v0.19.0
-
-_2026/10/21_
-
-- `新增` Node.js, Bun 与 Worker 的 Flow within/scope 范围继承, 罗盘导航和结果投影, 以及 press/swipe/gesture/gestures 手势重载
 
 ##### 更多发行历史
 

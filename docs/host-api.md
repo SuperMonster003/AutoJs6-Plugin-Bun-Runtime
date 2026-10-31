@@ -1454,6 +1454,10 @@ Node 1.30.0 and Bun 0.19.0 add Flow instance within/scope, inherited root/compas
 
 Node 2.1.0 and Bun 0.22.0 add the Rhino terminals await() and sync(timeout?) to the Flow handle, on main threads and in Workers (Q202). Neither blocks the script thread: both answer with the Promise of the settlement, so scripts write `await chain.sync()`. sync(timeout) rejects with a TIMEOUT FlowError (step and reason `sync`, elapsed the timeout) while the chain keeps running, as in Rhino; no timeout, null and Infinity wait without a limit. await() and sync() are the Promise of toPromise(), and a timed sync() left unobserved is not an unhandled rejection. Rhino's limits on the UI thread and the flow worker thread do not apply here.
 
+## 2026-11-01 Host build for Bun 0.22.0
+
+Host 6.8.0+6551, Node 2.1.0 and Bun 0.22.0 are built and tested together. The modules and grants added since 0.21.0 use routes and settings that only host 6.8.0 has.
+
 ## AI provider core
 
 `host.ai` provides callable ask, chat, stream, catalog and persistent sessions under the separate default-off `ai.control` grant. Its factory and declarations are synchronized from Node, including events, cancellation, UTF-8 result fragments, stream ready/result and explicit close. AI polling is excluded from the ordinary cumulative bridge-call budget; permission, byte, concurrency and per-request limits still apply. No Bun native payload or compatibility matrix changes.
