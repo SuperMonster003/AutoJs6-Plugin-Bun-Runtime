@@ -25,6 +25,7 @@
 * `修复` WIDTH / HEIGHT 与 setScreenMetrics 的缩放没有使用完整屏幕尺寸的问题
 * `优化` 一次请求可携带的宿主授权上限 64 -> 128
 * `优化` ocr 的结果带有只读的 extras 对象, 选项声明补全 useOpenCL, mergeLine 等识别选项
+* `优化` host.speech.models.list 的类型声明补全 updateAvailable 和 latestVersionCode, 可据此判断已安装的模型有没有新版本 (需要 3-Macaw Speech 1.4.0 或以上)
 
 # v0.21.0
 
