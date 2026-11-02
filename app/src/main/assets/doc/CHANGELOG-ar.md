@@ -4,6 +4,29 @@
 
 ******
 
+# v0.22.0
+
+###### 2026/11/01
+
+* `ميزة` يمكن لـ Bun.file و node:fs قراءة التخزين المشترك والكتابة فيه (مثل /sdcard): تعلن الإضافة الآن إذن "الوصول إلى جميع الملفات" الذي يجب تفعيله في إعدادات النظام; عند ظهور EACCES / EPERM للتخزين المشترك, يعرض AutoJs6 تنبيها يتيح فتح صفحة الإعدادات مرة واحدة كحد أقصى لكل تنفيذ, دون تغيير الخطأ نفسه
+* `ميزة` تطابق دوال host util, species, s13n, cvt, fmt, jsox, pinyin ودوال البيانات العامة سكربتات AutoJs6
+* `ميزة` تطابق أعضاء host colors / Color, files, zip, mime, مسجل التوقيت, storages و mediainfo سكربتات AutoJs6; الدوال العامة open, Color, axios, dayjs, pangu, cheerio و i18n
+* `ميزة` تطابق وحدات host app, shell, shizuku و ShellProcess سكربتات AutoJs6 وتعيد النتائج على هيئة Promise
+* `ميزة` تطابق أعضاء host autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build وامتدادات notifications سكربتات AutoJs6; يثبت host.global.install() دوال النظام العامة و R على globalThis
+* `ميزة` تطابق أعضاء host device, sensors و media سكربتات AutoJs6
+* `ميزة` تطابق أعضاء host ui, floaty, web, compose, terminal, toast و console سكربتات AutoJs6 وتعرض الواجهات في AutoJs6; تتطلب الأذونات الجديدة terminal.control, floaty.control, floaty.raw و floaty.touch
+* `ميزة` تطابق أعضاء host automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector ومستمعات المفاتيح واللمس في events سكربتات AutoJs6; تتطلب الأذونات الجديدة accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control و yolo.control
+* `ميزة` أعضاء host colors.theme, gallery (يتطلب 3-Maple Image), files.batchRename (يتطلب Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage و speech.tag; تتطلب الأذونات الجديدة theme.control, gallery.control و batchrename.control المعطلة افتراضيا; لا يمكن للتطبيقات المحزمة بتوقيع مستقل استدعاء 3-Maple Image أو Batch Rename
+* `ميزة` توفر كائنات Flow الدالتين await() و sync(timeout), وتعيد كلتاهما Promise وتستخدمان بصيغة await chain.sync(); يؤدي تجاوز timeout (بالمللي ثانية) إلى الرفض بخطأ TIMEOUT مع استمرار التدفق كما في سكربتات AutoJs6
+* `إصلاح` قد يفوت waitFor في جلسة terminal الإخراج المرتد بسرعة وينتهي بمهلة عند استدعاء write بعده مباشرة
+* `إصلاح` قد يبقى منتقي الملفات مفتوحا عند استدعاء web.cancelFileChooser() مباشرة بعد chooseFiles()
+* `إصلاح` لم تكن المسارات النسبية في files.open, files.toFile و zip تحل نسبة إلى دليل السكربت, مما منع العثور على الملفات المجاورة له
+* `إصلاح` قد يفشل shell.exec أحيانا بخطأ ERR_STREAM_DESTROYED عند تنفيذ أمر ينتهي بسرعة شديدة
+* `إصلاح` عدم استخدام أبعاد الشاشة الكاملة في WIDTH / HEIGHT وتحجيم setScreenMetrics
+* `تحسين` رفع الحد الأقصى لأذونات المضيف في الطلب الواحد من 64 إلى 128
+* `تحسين` تتضمن نتائج ocr كائن extras للقراءة فقط, وتشمل تصريحات الخيارات إعدادات التعرف مثل useOpenCL و mergeLine
+* `تحسين` تتضمن تصريحات host.speech.models.list الحقلين updateAvailable و latestVersionCode لمعرفة توفر إصدار أحدث للنموذج المثبت (يتطلب 3-Macaw Speech 1.4.0 أو أحدث)
+
 # v0.21.0
 
 ###### 2026/10/22

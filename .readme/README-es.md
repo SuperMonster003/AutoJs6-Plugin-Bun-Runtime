@@ -239,6 +239,29 @@ La hoja de ruta responde dos preguntas: qué funciona ahora y qué viene despué
 
 ******
 
+#### v0.22.0
+
+_2026/11/01_
+
+- `Función` Bun.file y node:fs pueden leer y escribir en el almacenamiento compartido (como /sdcard): el plugin declara "Acceso a todos los archivos", que debe habilitarse en los ajustes del sistema; si un script informa EACCES / EPERM en ese almacenamiento, AutoJs6 muestra un aviso que permite abrir esos ajustes, como máximo una vez por ejecución y sin cambiar el error
+- `Función` Las funciones host util, species, s13n, cvt, fmt, jsox, pinyin y las funciones globales de datos coinciden con los scripts AutoJs6
+- `Función` Los miembros host colors / Color, files, zip, mime, el registro de tiempos, storages y mediainfo coinciden con los scripts AutoJs6; funciones globales open, Color, axios, dayjs, pangu, cheerio e i18n
+- `Función` Los módulos host app, shell, shizuku y ShellProcess coinciden con los scripts AutoJs6 y devuelven resultados como Promise
+- `Función` Los miembros host autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build y las extensiones de notifications coinciden con los scripts AutoJs6; host.global.install() instala las funciones globales del sistema y R en globalThis
+- `Función` Los miembros host device, sensors y media coinciden con los scripts AutoJs6
+- `Función` Los miembros host ui, floaty, web, compose, terminal, toast y console coinciden con los scripts AutoJs6, con interfaces mostradas en AutoJs6; se requieren las nuevas autorizaciones terminal.control, floaty.control, floaty.raw y floaty.touch
+- `Función` Los miembros host automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector y los oyentes de teclas/toques de events coinciden con los scripts AutoJs6; se requieren las nuevas autorizaciones accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control y yolo.control
+- `Función` Los miembros host colors.theme, gallery (requiere 3-Maple Image), files.batchRename (requiere Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage y speech.tag; se requieren las nuevas autorizaciones theme.control, gallery.control y batchrename.control, desactivadas de forma predeterminada; las aplicaciones empaquetadas con firma independiente no pueden llamar a 3-Maple Image ni Batch Rename
+- `Función` Los objetos Flow ofrecen await() y sync(timeout), ambos devuelven Promise y se usan como await chain.sync(); superar timeout (milisegundos) rechaza con TIMEOUT mientras el flujo continúa, igual que en los scripts AutoJs6
+- `Corrección` Un waitFor de una sesión terminal seguido inmediatamente de write podía perder una salida reflejada muy rápidamente y agotar el tiempo de espera
+- `Corrección` Llamar a web.cancelFileChooser() inmediatamente después de chooseFiles() podía dejar abierto el selector de archivos
+- `Corrección` Las rutas relativas de files.open, files.toFile y zip no se resolvían desde el directorio del script, impidiendo encontrar archivos junto a él
+- `Corrección` shell.exec podía fallar ocasionalmente con ERR_STREAM_DESTROYED al ejecutar comandos que terminaban muy rápido
+- `Corrección` WIDTH / HEIGHT y el escalado de setScreenMetrics no usaban las dimensiones completas de la pantalla
+- `Mejora` El máximo de autorizaciones del anfitrión por solicitud aumenta de 64 a 128
+- `Mejora` Los resultados ocr incluyen un objeto extras de solo lectura, y las declaraciones incluyen opciones de reconocimiento como useOpenCL y mergeLine
+- `Mejora` Las declaraciones de host.speech.models.list incluyen updateAvailable y latestVersionCode para detectar nuevas versiones de los modelos instalados (requiere 3-Macaw Speech 1.4.0 o posterior)
+
 #### v0.21.0
 
 _2026/10/22_
@@ -250,12 +273,6 @@ _2026/10/22_
 _2026/10/22_
 
 - `Función` Generación de texto con IA, transmisión, catálogo de modelos y sesiones persistentes para Node.js, Bun y Workers, con cancelación y consentimiento por aplicación en 3-Stone AI
-
-#### v0.19.0
-
-_2026/10/21_
-
-- `Función` Flow within/scope para Node.js, Bun y Workers, con raíces de búsqueda heredadas, navegación por brújula, proyecciones tipadas y sobrecargas press/swipe/gesture/gestures
 
 ##### Más historial de versiones
 

@@ -4,6 +4,29 @@
 
 ******
 
+# v0.22.0
+
+###### 2026/11/01
+
+* `기능` Bun.file 및 node:fs로 공유 저장소 (/sdcard 등)를 읽고 쓰기 가능: 플러그인이 이제 "모든 파일 접근"을 선언하며 시스템 설정에서 허용해야 함; 공유 저장소에서 EACCES / EPERM이 발생하면 AutoJs6가 실행당 최대 한 번 해당 설정 페이지로 이동할 수 있는 안내를 표시하며 오류 자체는 유지
+* `기능` host의 util, species, s13n, cvt, fmt, jsox, pinyin 및 전역 데이터 함수가 AutoJs6 스크립트와 일치
+* `기능` host의 colors / Color, files, zip, mime, 시간 기록기, storages 및 mediainfo가 AutoJs6 스크립트와 일치; 전역 open, Color, axios, dayjs, pangu, cheerio 및 i18n
+* `기능` host의 app, shell, shizuku 모듈 및 ShellProcess가 AutoJs6 스크립트와 일치하며 결과를 Promise로 반환
+* `기능` host의 autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build 및 notifications 확장 멤버가 AutoJs6 스크립트와 일치; host.global.install()이 전역 시스템 함수 및 R을 globalThis에 설치
+* `기능` host의 device, sensors 및 media가 AutoJs6 스크립트와 일치
+* `기능` host의 ui, floaty, web, compose, terminal, toast 및 console이 AutoJs6 스크립트와 일치하며 화면은 AutoJs6에 표시; 새 terminal.control, floaty.control, floaty.raw 및 floaty.touch 권한 필요
+* `기능` host의 automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector 및 events의 키/터치 리스너가 AutoJs6 스크립트와 일치; 새 accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control 및 yolo.control 권한 필요
+* `기능` host의 colors.theme, gallery (3-Maple Image 필요), files.batchRename (Batch Rename 필요), speech.speaker, speech.diarize, speech.detectLanguage 및 speech.tag; 새 theme.control, gallery.control 및 batchrename.control 권한이 필요하며 기본적으로 비활성화됨; 독립적으로 서명된 패키지 앱에서는 3-Maple Image 및 Batch Rename 호출 불가
+* `기능` Flow 객체의 await() 및 sync(timeout)은 모두 Promise를 반환하며 await chain.sync()로 사용; timeout (밀리초) 초과 시 TIMEOUT 오류로 거부하지만 흐름은 AutoJs6 스크립트처럼 계속 실행
+* `수정` terminal 세션에서 waitFor 직후 write를 호출하면 빠른 에코 출력을 waitFor가 놓쳐 시간 초과가 발생할 수 있던 문제
+* `수정` chooseFiles() 직후 web.cancelFileChooser()를 호출해도 파일 선택기가 닫히지 않을 수 있던 문제
+* `수정` files.open, files.toFile 및 zip의 상대 경로가 스크립트 디렉터리를 기준으로 해석되지 않아 스크립트 옆 파일을 찾지 못하던 문제
+* `수정` 매우 빨리 끝나는 명령에서 shell.exec가 간헐적으로 ERR_STREAM_DESTROYED 오류를 내던 문제
+* `수정` WIDTH / HEIGHT 및 setScreenMetrics의 배율 계산에 전체 화면 크기를 사용하지 않던 문제
+* `개선` 요청 하나에 포함할 수 있는 호스트 권한의 상한을 64에서 128로 확대
+* `개선` ocr 결과에 읽기 전용 extras 객체를 포함하고 옵션 선언에 useOpenCL, mergeLine 등 인식 옵션 보완
+* `개선` host.speech.models.list 타입 선언에 updateAvailable 및 latestVersionCode를 추가하여 설치된 모델의 새 버전 여부 확인 가능 (3-Macaw Speech 1.4.0 이상 필요)
+
 # v0.21.0
 
 ###### 2026/10/22

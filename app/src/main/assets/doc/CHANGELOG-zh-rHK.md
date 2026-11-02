@@ -4,6 +4,29 @@
 
 ******
 
+# v0.22.0
+
+###### 2026/11/01
+
+* `新增` Bun.file 與 node:fs 可以讀寫共享存儲 (如 /sdcard): 插件現在聲明 "所有文件訪問權限", 需要在系統設置裏開啓; 腳本報出共享存儲的 EACCES / EPERM 時, AutoJs6 提示一次並可跳轉到該設置頁, 每次執行最多一次, 錯誤本身不變
+* `新增` host 的 util, species, s13n, cvt, fmt, jsox, pinyin 及全局數據函數與 AutoJs6 腳本一致
+* `新增` host 的 colors / Color, files, zip, mime, 計時記錄器, storages 和 mediainfo 與 AutoJs6 腳本一致; 全局 open, Color, axios, dayjs, pangu, cheerio 和 i18n
+* `新增` host 的 app, shell, shizuku 模塊與 ShellProcess 與 AutoJs6 腳本一致, 結果以 Promise 返回
+* `新增` host 的 autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build 及 notifications 的擴展成員與 AutoJs6 腳本一致, host.global.install() 把全局系統函數與 R 裝到 globalThis
+* `新增` host 的 device, sensors 和 media 與 AutoJs6 腳本一致
+* `新增` host 的 ui, floaty, web, compose, terminal, toast 和 console 與 AutoJs6 腳本一致, 界面在 AutoJs6 中顯示; 需要新增的 terminal.control, floaty.control, floaty.raw 和 floaty.touch 授權
+* `新增` host 的 automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector 與 events 的按鍵, 觸摸監聽與 AutoJs6 腳本一致; 需要新增的 accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control 和 yolo.control 授權
+* `新增` host 的 colors.theme, gallery (需要 3-Maple Image), files.batchRename (需要 Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage 和 speech.tag; 需要新增的 theme.control, gallery.control 和 batchrename.control 授權, 默認關閉; 獨立簽名的打包應用調用不到 3-Maple Image 與 Batch Rename
+* `新增` Flow 對象的 await() 和 sync(timeout), 兩者都返回 Promise, 寫作 await chain.sync(); 超過 timeout (毫秒) 時以 TIMEOUT 錯誤拒絕, 流程繼續運行, 與 AutoJs6 腳本相同
+* `修復` terminal 會話的 waitFor 之後緊跟 write 時, 回顯很快的輸出可能被 waitFor 錯過而超時的問題
+* `修復` chooseFiles() 之後立即調用 web.cancelFileChooser() 時文件選擇器可能沒有關閉的問題
+* `修復` files.open, files.toFile 和 zip 的相對路徑沒有按腳本所在目錄解析, 找不到腳本旁邊的文件的問題
+* `修復` shell.exec 執行很快結束的命令時偶爾以 ERR_STREAM_DESTROYED 錯誤失敗的問題
+* `修復` WIDTH / HEIGHT 與 setScreenMetrics 的縮放沒有使用完整屏幕尺寸的問題
+* `優化` 一次請求可攜帶的宿主授權上限 64 -> 128
+* `優化` ocr 的結果帶有隻讀的 extras 對象, 選項聲明補全 useOpenCL, mergeLine 等識別選項
+* `優化` host.speech.models.list 的類型聲明補全 updateAvailable 和 latestVersionCode, 可據此判斷已安裝的模型有沒有新版本 (需要 3-Macaw Speech 1.4.0 或以上)
+
 # v0.21.0
 
 ###### 2026/10/22

@@ -239,6 +239,29 @@ La feuille de route répond à deux questions: ce qui fonctionne maintenant et c
 
 ******
 
+#### v0.22.0
+
+_2026/11/01_
+
+- `Fonctionnalité` Bun.file et node:fs peuvent lire et écrire le stockage partagé (comme /sdcard): le plugin déclare désormais "Accès à tous les fichiers", à activer dans les paramètres système; si un script signale EACCES / EPERM pour ce stockage, AutoJs6 affiche une invite permettant d'ouvrir ces paramètres, au plus une fois par exécution, sans modifier l'erreur
+- `Fonctionnalité` Les fonctions host util, species, s13n, cvt, fmt, jsox, pinyin et les fonctions globales de données correspondent aux scripts AutoJs6
+- `Fonctionnalité` Les membres host colors / Color, files, zip, mime, l'enregistreur de temps, storages et mediainfo correspondent aux scripts AutoJs6; fonctions globales open, Color, axios, dayjs, pangu, cheerio et i18n
+- `Fonctionnalité` Les modules host app, shell, shizuku et ShellProcess correspondent aux scripts AutoJs6 et renvoient les résultats sous forme de Promise
+- `Fonctionnalité` Les membres host autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build et les extensions de notifications correspondent aux scripts AutoJs6; host.global.install() installe les fonctions système globales et R dans globalThis
+- `Fonctionnalité` Les membres host device, sensors et media correspondent aux scripts AutoJs6
+- `Fonctionnalité` Les membres host ui, floaty, web, compose, terminal, toast et console correspondent aux scripts AutoJs6, avec affichage des interfaces dans AutoJs6; les nouvelles autorisations terminal.control, floaty.control, floaty.raw et floaty.touch sont nécessaires
+- `Fonctionnalité` Les membres host automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector et les écouteurs de touches/toucher de events correspondent aux scripts AutoJs6; les nouvelles autorisations accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control et yolo.control sont nécessaires
+- `Fonctionnalité` Les membres host colors.theme, gallery (nécessite 3-Maple Image), files.batchRename (nécessite Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage et speech.tag; les nouvelles autorisations theme.control, gallery.control et batchrename.control sont nécessaires et désactivées par défaut; les applications empaquetées avec une signature indépendante ne peuvent appeler ni 3-Maple Image ni Batch Rename
+- `Fonctionnalité` Les objets Flow proposent await() et sync(timeout), qui renvoient des Promise et s'utilisent avec await chain.sync(); dépasser timeout (millisecondes) provoque un rejet TIMEOUT tandis que le flux continue, comme dans les scripts AutoJs6
+- `Correctif` Un waitFor de session terminal immédiatement suivi de write pouvait manquer une sortie renvoyée très rapidement et expirer
+- `Correctif` Appeler web.cancelFileChooser() juste après chooseFiles() pouvait laisser le sélecteur de fichiers ouvert
+- `Correctif` Les chemins relatifs de files.open, files.toFile et zip n'étaient pas résolus depuis le dossier du script, empêchant de trouver les fichiers voisins
+- `Correctif` shell.exec pouvait parfois échouer avec ERR_STREAM_DESTROYED pour les commandes terminées très rapidement
+- `Correctif` WIDTH / HEIGHT et la mise à l'échelle setScreenMetrics n'utilisaient pas toutes les dimensions de l'écran
+- `Amélioration` Nombre maximal d'autorisations de l'hôte par requête porté de 64 à 128
+- `Amélioration` Les résultats ocr incluent un objet extras en lecture seule, et les déclarations d'options incluent useOpenCL, mergeLine et d'autres options de reconnaissance
+- `Amélioration` Les déclarations de host.speech.models.list incluent updateAvailable et latestVersionCode pour détecter une nouvelle version des modèles installés (nécessite 3-Macaw Speech 1.4.0 ou ultérieur)
+
 #### v0.21.0
 
 _2026/10/22_
@@ -250,12 +273,6 @@ _2026/10/22_
 _2026/10/22_
 
 - `Fonctionnalité` Génération de texte IA, flux, catalogue de modèles et sessions persistantes pour Node.js, Bun et Workers, avec annulation et consentement par application dans 3-Stone AI
-
-#### v0.19.0
-
-_2026/10/21_
-
-- `Fonctionnalité` Flow within/scope pour Node.js, Bun et les Workers, avec racines de recherche héritées, navigation par boussole, projections typées et surcharges press/swipe/gesture/gestures
 
 ##### Pour plus d'historique
 

@@ -4,6 +4,29 @@
 
 ******
 
+# v0.22.0
+
+###### 2026/11/01
+
+* `機能` Bun.file と node:fs で共有ストレージ (/sdcard など) を読み書き可能: プラグインが宣言する "すべてのファイルへのアクセス" をシステム設定で有効にする必要あり; 共有ストレージで EACCES / EPERM が発生すると, AutoJs6 が実行ごとに最大 1 回, 設定ページに移動できる案内を表示し, エラー自体は変更しない
+* `機能` host の util, species, s13n, cvt, fmt, jsox, pinyin とグローバルデータ関数を AutoJs6 スクリプトと統一
+* `機能` host の colors / Color, files, zip, mime, 時間記録, storages, mediainfo を AutoJs6 スクリプトと統一; グローバルの open, Color, axios, dayjs, pangu, cheerio, i18n
+* `機能` host の app, shell, shizuku モジュールと ShellProcess を AutoJs6 スクリプトと統一し, 結果を Promise で返す
+* `機能` host の autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build と notifications の拡張メンバーを AutoJs6 スクリプトと統一; host.global.install() がグローバルシステム関数と R を globalThis に設定
+* `機能` host の device, sensors, media を AutoJs6 スクリプトと統一
+* `機能` host の ui, floaty, web, compose, terminal, toast, console を AutoJs6 スクリプトと統一し, 画面を AutoJs6 に表示; 新しい terminal.control, floaty.control, floaty.raw, floaty.touch の許可が必要
+* `機能` host の automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector と events のキー/タッチ監視を AutoJs6 スクリプトと統一; 新しい accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control, yolo.control の許可が必要
+* `機能` host の colors.theme, gallery (3-Maple Image が必要), files.batchRename (Batch Rename が必要), speech.speaker, speech.diarize, speech.detectLanguage, speech.tag; 新しい theme.control, gallery.control, batchrename.control の許可が必要で, 既定では無効; 独立署名されたパッケージアプリは 3-Maple Image と Batch Rename を呼び出せない
+* `機能` Flow オブジェクトの await() と sync(timeout) はどちらも Promise を返し, await chain.sync() と記述; timeout (ミリ秒) を超えると TIMEOUT で拒否するが, フローは AutoJs6 スクリプトと同様に継続
+* `修正` terminal セッションで waitFor の直後に write を呼ぶと, 高速なエコー出力を waitFor が見逃してタイムアウトすることがあった問題
+* `修正` chooseFiles() の直後に web.cancelFileChooser() を呼んでもファイル選択画面が閉じないことがあった問題
+* `修正` files.open, files.toFile, zip の相対パスがスクリプトのディレクトリを基準に解決されず, 同じ場所のファイルを見つけられなかった問題
+* `修正` すぐに終了するコマンドで shell.exec が ERR_STREAM_DESTROYED エラーになることがあった問題
+* `修正` WIDTH / HEIGHT と setScreenMetrics の拡大縮小で画面全体の寸法を使用していなかった問題
+* `改善` 1 回のリクエストに含められるホストの許可数の上限を 64 から 128 に拡大
+* `改善` ocr の結果に読み取り専用の extras オブジェクトを追加し, オプション宣言に useOpenCL, mergeLine などの認識オプションを追加
+* `改善` host.speech.models.list の型宣言に updateAvailable と latestVersionCode を追加し, インストール済みモデルの更新を判定可能 (3-Macaw Speech 1.4.0 以降が必要)
+
 # v0.21.0
 
 ###### 2026/10/22

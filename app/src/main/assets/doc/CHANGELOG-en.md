@@ -4,6 +4,29 @@
 
 ******
 
+# v0.22.0
+
+###### 2026/11/01
+
+* `Feature` Bun.file and node:fs can read and write shared storage (such as /sdcard): the plugin now declares "All files access", which must be enabled in system settings; when a script reports EACCES / EPERM for shared storage, AutoJs6 shows a prompt with a link to that settings page, at most once per execution, without changing the error itself
+* `Feature` The host util, species, s13n, cvt, fmt, jsox, pinyin and global data functions match AutoJs6 scripts
+* `Feature` The host colors / Color, files, zip, mime, timing recorder, storages and mediainfo match AutoJs6 scripts; global open, Color, axios, dayjs, pangu, cheerio and i18n
+* `Feature` The host app, shell and shizuku modules and ShellProcess match AutoJs6 scripts, returning results as Promise values
+* `Feature` The host autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build and extended notifications members match AutoJs6 scripts; host.global.install() installs global system functions and R on globalThis
+* `Feature` The host device, sensors and media match AutoJs6 scripts
+* `Feature` The host ui, floaty, web, compose, terminal, toast and console match AutoJs6 scripts, with interfaces displayed in AutoJs6; the new terminal.control, floaty.control, floaty.raw and floaty.touch authorizations are required
+* `Feature` The host automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector and events key/touch listeners match AutoJs6 scripts; the new accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control and yolo.control authorizations are required
+* `Feature` The host colors.theme, gallery (requires 3-Maple Image), files.batchRename (requires Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage and speech.tag; the new theme.control, gallery.control and batchrename.control authorizations are required and disabled by default; independently signed packaged apps cannot call 3-Maple Image or Batch Rename
+* `Feature` Flow objects provide await() and sync(timeout), both returning Promise values, used as await chain.sync(); exceeding timeout (milliseconds) rejects with TIMEOUT while the flow continues, as in AutoJs6 scripts
+* `Fix` A terminal session waitFor immediately followed by write could miss rapidly echoed output and time out
+* `Fix` Calling web.cancelFileChooser() immediately after chooseFiles() could leave the file chooser open
+* `Fix` Relative paths in files.open, files.toFile and zip were not resolved against the script directory, preventing files alongside the script from being found
+* `Fix` shell.exec could occasionally fail with ERR_STREAM_DESTROYED when a command finished very quickly
+* `Fix` WIDTH / HEIGHT and setScreenMetrics scaling did not use the full screen dimensions
+* `Improvement` The maximum number of host authorizations per request increased from 64 to 128
+* `Improvement` ocr results include a read-only extras object, and option declarations include recognition options such as useOpenCL and mergeLine
+* `Improvement` Type declarations for host.speech.models.list include updateAvailable and latestVersionCode to indicate whether an installed model has a newer version (requires 3-Macaw Speech 1.4.0 or later)
+
 # v0.21.0
 
 ###### 2026/10/22

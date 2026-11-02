@@ -239,6 +239,29 @@ default timeout: 60 seconds
 
 ******
 
+#### v0.22.0
+
+_2026/11/01_
+
+- `Функция` Bun.file и node:fs могут читать и записывать общее хранилище (например, /sdcard): плагин теперь объявляет "Доступ ко всем файлам", который нужно разрешить в системных настройках; при EACCES / EPERM для общего хранилища AutoJs6 показывает сообщение с переходом к настройкам не более раза за запуск, не меняя саму ошибку
+- `Функция` Функции host util, species, s13n, cvt, fmt, jsox, pinyin и глобальные функции данных согласованы со скриптами AutoJs6
+- `Функция` Члены host colors / Color, files, zip, mime, запись времени, storages и mediainfo согласованы со скриптами AutoJs6; глобальные open, Color, axios, dayjs, pangu, cheerio и i18n
+- `Функция` Модули host app, shell, shizuku и ShellProcess согласованы со скриптами AutoJs6 и возвращают результаты через Promise
+- `Функция` Члены host autojs, installer, memory, settings, sysprops, powerManager, engines, plugins, dialogs.build и расширения notifications согласованы со скриптами AutoJs6; host.global.install() устанавливает глобальные системные функции и R в globalThis
+- `Функция` Члены host device, sensors и media согласованы со скриптами AutoJs6
+- `Функция` Члены host ui, floaty, web, compose, terminal, toast и console согласованы со скриптами AutoJs6, интерфейсы отображаются в AutoJs6; нужны новые разрешения terminal.control, floaty.control, floaty.raw и floaty.touch
+- `Функция` Члены host automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector и обработчики клавиш/касаний events согласованы со скриптами AutoJs6; нужны новые разрешения accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control и yolo.control
+- `Функция` Члены host colors.theme, gallery (требуется 3-Maple Image), files.batchRename (требуется Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage и speech.tag; нужны новые разрешения theme.control, gallery.control и batchrename.control, отключенные по умолчанию; упакованные приложения с независимой подписью не могут вызывать 3-Maple Image и Batch Rename
+- `Функция` Объекты Flow предоставляют await() и sync(timeout), оба возвращают Promise и используются как await chain.sync(); превышение timeout (миллисекунды) отклоняет Promise с TIMEOUT, но поток продолжает работу, как в скриптах AutoJs6
+- `Исправление` waitFor сеанса terminal с последующим немедленным write мог пропустить быстрый эхо-вывод и завершиться по тайм-ауту
+- `Исправление` Вызов web.cancelFileChooser() сразу после chooseFiles() мог оставить окно выбора файлов открытым
+- `Исправление` Относительные пути files.open, files.toFile и zip не разрешались относительно каталога скрипта, поэтому соседние файлы не находились
+- `Исправление` shell.exec иногда завершался ошибкой ERR_STREAM_DESTROYED для очень быстро выполняемых команд
+- `Исправление` WIDTH / HEIGHT и масштабирование setScreenMetrics не использовали полный размер экрана
+- `Улучшение` Максимальное число разрешений хоста в одном запросе увеличено с 64 до 128
+- `Улучшение` Результаты ocr содержат объект extras только для чтения, а объявления параметров включают useOpenCL, mergeLine и другие параметры распознавания
+- `Улучшение` Объявления host.speech.models.list включают updateAvailable и latestVersionCode для проверки новых версий установленных моделей (требуется 3-Macaw Speech 1.4.0 или новее)
+
 #### v0.21.0
 
 _2026/10/22_
@@ -250,12 +273,6 @@ _2026/10/22_
 _2026/10/22_
 
 - `Функция` Генерация текста ИИ, потоковые ответы, каталог моделей и постоянные сеансы для Node.js, Bun и Workers, с отменой и отдельным разрешением для приложений в 3-Stone AI
-
-#### v0.19.0
-
-_2026/10/21_
-
-- `Функция` Flow within/scope для Node.js, Bun и Worker: наследование корня поиска, навигация по компасу, типизированные проекции и перегрузки press/swipe/gesture/gestures
 
 ##### Дополнительная история выпусков
 
