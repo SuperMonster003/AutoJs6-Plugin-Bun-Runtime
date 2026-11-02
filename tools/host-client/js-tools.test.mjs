@@ -7,6 +7,7 @@ import {join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {createHostClient} from '../../app/src/main/assets/autojs6/host-client.mjs';
 // The shared JS tools cases (synced from the Node runtime by sync-js-tools.mjs) against the Rhino values of a device.
+process.env.TZ='Asia/Shanghai'; // The oracle device is at UTC+8; util.versionCodes gives local midnight timestamps.
 const {cases,encode,thrown}=createRequire(import.meta.url)('./js-tools/cases.js');
 const expected=JSON.parse(readFileSync(new URL('./js-tools/rhino-expected.json',import.meta.url),'utf8')).cases;
 // Expressions reaching the Java facade, and values that depend on the device (display metrics, SDK level).
