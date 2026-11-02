@@ -243,7 +243,7 @@ default timeout: 60 seconds
 
 _2026/11/01_
 
-- `新增` Bun.file 与 node:fs 可以读写共享存储 (如 /sdcard): 插件现在声明 "所有文件访问权限", 需要在系统设置里开启; 脚本报出共享存储的 EACCES 时, AutoJs6 提示一次并可跳转到该设置页, 每次执行最多一次, 错误本身不变
+- `新增` Bun.file 与 node:fs 可以读写共享存储 (如 /sdcard): 插件现在声明 "所有文件访问权限", 需要在系统设置里开启; 脚本报出共享存储的 EACCES / EPERM 时, AutoJs6 提示一次并可跳转到该设置页, 每次执行最多一次, 错误本身不变
 - `新增` host 的 util, species, s13n, cvt, fmt, jsox, pinyin 及全局数据函数与 AutoJs6 脚本一致
 - `新增` host 的 colors / Color, files, zip, mime, 计时记录器, storages 和 mediainfo 与 AutoJs6 脚本一致; 全局 open, Color, axios, dayjs, pangu, cheerio 和 i18n
 - `新增` host 的 app, shell, shizuku 模块与 ShellProcess 与 AutoJs6 脚本一致, 结果以 Promise 返回
