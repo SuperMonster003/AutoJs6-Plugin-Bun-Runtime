@@ -1932,16 +1932,29 @@ function createMediainfo(call) {
       const terminalCall = (method, args, timeoutMs, id) => call("terminal", method, args, { permissions: ["terminal"], ...(timeoutMs ? { timeoutMs } : {}) })
         .catch(error => { throw terminalError(error, id); });
       const sessionId = value => value && typeof value === "object" ? String(value.id) : String(value);
+      // A waitFor reads the output from its subscription on, and it and a following write are concurrent host calls. The host
+      // answers waitForStart once the subscription runs; a write to the session goes after the waits started before it (Q227 (a)).
+      const terminalGates = new Map();
+      function terminalWait(id, args, timeoutMs) {
+        const started = terminalCall("waitForStart", args, 0, id);
+        const gate = Promise.all([terminalGates.get(id), started.catch(() => {})]).then(() => { if (terminalGates.get(id) === gate) terminalGates.delete(id); });
+        terminalGates.set(id, gate);
+        return started.then(token => terminalCall("waitForResult", [token], timeoutMs, id));
+      }
       function terminalSession(json) {
         if (!json || typeof json !== "object") return null;
         const id = String(json.id);
         const session = { ...json,
           isAlive: () => terminalCall("isAlive", [id], 0, id).then(Boolean),
-          write(text) { return terminalCall("write", [id, text === undefined || text === null ? "" : String(text)], 0, id).then(() => session); },
+          write(text) {
+            const send = () => terminalCall("write", [id, text === undefined || text === null ? "" : String(text)], 0, id).then(() => session);
+            const gate = terminalGates.get(id);
+            return gate ? gate.then(send) : send();
+          },
           waitFor(pattern, timeout) {
             const value = pattern instanceof RegExp ? { regex: pattern.source, flags: pattern.flags } : String(pattern);
             const ms = timeout === undefined || timeout === null ? undefined : Number(timeout);
-            return terminalCall("waitFor", ms === undefined ? [id, value] : [id, value, ms], ms === undefined ? 2147483647 : ms + 5000, id);
+            return terminalWait(id, ms === undefined ? [id, value] : [id, value, ms], ms === undefined ? 2147483647 : ms + 5000);
           },
           transcript: maxBytes => terminalCall("transcript", maxBytes === undefined ? [id] : [id, Number(maxBytes)], 0, id).then(String),
           show() { return terminalCall("show", [id], 0, id).then(() => session); },
@@ -11895,6 +11908,26 @@ function __autojs6_bun_create_axios() {
         pangu: () => load("pangu.min.js"),
       };
     }
+    function __autojs6_js_tools_storage_fs(host) {
+      // Most files methods turn a refused access into false. One line on stderr tells the host, which offers the settings page of
+      // the plugin once per execution (Q228 (b)); the failure itself stays as it is.
+      let reported = false;
+      return new Proxy(host.fs, { get(target, name) {
+        const value = target[name];
+        if (typeof value !== "function" || typeof name !== "string" || !name.endsWith("Sync")) return value;
+        return (...args) => {
+          try {
+            return value.apply(target, args);
+          } catch (e) {
+            if (!reported && e && e.code === "EACCES") {
+              reported = true;
+              process.stderr.write(`EACCES: ${e.path ?? args[0]}: this runtime plugin has no access to shared storage\n`);
+            }
+            throw e;
+          }
+        };
+      } });
+    }
     function __autojs6_js_tools_files(host) {
       // The files module of AutoJs6 Rhino scripts (FilesModule: open, path, join and toFile; its prototype, the host's
       // Files object: the other members as Java methods), synchronous on host.fs like the host; open, toFile and
@@ -17691,7 +17724,7 @@ function __autojs6_bun_create_axios() {
     }
     // colors, files, zip, mime and the timing recorder (api-coverage P3.2b) are created on first use.
     const once = create => { let value; return () => value || (value = create()); };
-    const files = once(() => Object.assign(__autojs6_js_tools_files({ fs: host.fs, cwd: host.cwd, hostCwd: host.hostCwd, sdcardPath: host.sdcardPath, java: host.java,
+    const files = once(() => Object.assign(__autojs6_js_tools_files({ fs: __autojs6_js_tools_storage_fs(host), cwd: host.cwd, hostCwd: host.hostCwd, sdcardPath: host.sdcardPath, java: host.java,
       TextDecoder: globalThis.TextDecoder, filesDir: host.filesDir, cacheDir: host.cacheDir, dataDir: host.dataDir }),
       host.batchRename ? { batchRename: host.batchRename() } : {}));
     const zip = once(() => Object.freeze(__autojs6_js_tools_zip({ java: host.java, cwd: host.hostCwd || host.cwd })));

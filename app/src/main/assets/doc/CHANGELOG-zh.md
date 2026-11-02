@@ -8,6 +8,7 @@
 
 ###### 2026/11/01
 
+* `新增` Bun.file 与 node:fs 可以读写共享存储 (如 /sdcard): 插件现在声明 "所有文件访问权限", 需要在系统设置里开启; 脚本报出共享存储的 EACCES 时, AutoJs6 提示一次并可跳转到该设置页, 每次执行最多一次, 错误本身不变
 * `新增` host 的 util, species, s13n, cvt, fmt, jsox, pinyin 及全局数据函数与 AutoJs6 脚本一致
 * `新增` host 的 colors / Color, files, zip, mime, 计时记录器, storages 和 mediainfo 与 AutoJs6 脚本一致; 全局 open, Color, axios, dayjs, pangu, cheerio 和 i18n
 * `新增` host 的 app, shell, shizuku 模块与 ShellProcess 与 AutoJs6 脚本一致, 结果以 Promise 返回
@@ -17,6 +18,7 @@
 * `新增` host 的 automator, auto, keys, ocr, barcode, qrcode, yolo, threads, continuation, timers, selector 与 events 的按键, 触摸监听与 AutoJs6 脚本一致; 需要新增的 accessibility.service, events.touch, events.key.intercept, ocr.control, barcode.control 和 yolo.control 授权
 * `新增` host 的 colors.theme, gallery (需要 3-Maple Image), files.batchRename (需要 Batch Rename), speech.speaker, speech.diarize, speech.detectLanguage 和 speech.tag; 需要新增的 theme.control, gallery.control 和 batchrename.control 授权, 默认关闭; 独立签名的打包应用调用不到 3-Maple Image 与 Batch Rename
 * `新增` Flow 对象的 await() 和 sync(timeout), 两者都返回 Promise, 写作 await chain.sync(); 超过 timeout (毫秒) 时以 TIMEOUT 错误拒绝, 流程继续运行, 与 AutoJs6 脚本相同
+* `修复` terminal 会话的 waitFor 之后紧跟 write 时, 回显很快的输出可能被 waitFor 错过而超时的问题
 * `修复` chooseFiles() 之后立即调用 web.cancelFileChooser() 时文件选择器可能没有关闭的问题
 * `修复` files.open, files.toFile 和 zip 的相对路径没有按脚本所在目录解析, 找不到脚本旁边的文件的问题
 * `修复` shell.exec 执行很快结束的命令时偶尔以 ERR_STREAM_DESTROYED 错误失败的问题

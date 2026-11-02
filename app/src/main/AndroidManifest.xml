@@ -1,6 +1,13 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Scripts run under the plugin's own uid, so its node:fs and Bun.write cannot use the host's
+         grants. Only the user can turn on "All files access" for this plugin in system settings;
+         the host offers that page after EACCES on shared storage (AutoJs6 api-coverage Q228). -->
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
     <uses-permission android:name="org.autojs.permission.PLUGIN" />
     <permission android:name="org.autojs.permission.BUN_PACKAGED_RUNTIME" android:protectionLevel="normal" />

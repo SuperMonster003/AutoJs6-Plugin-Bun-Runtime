@@ -545,6 +545,7 @@ Calls support timeoutMs (1..120000) and AbortSignal. Short polls preserve the 10
 - 新增的四项授权默认关闭, 在插件中心独立启用, 打包项目在 `bun.hostCapabilities` 中声明: `terminal.control` (Q3 (a)), `floaty.control`, `floaty.raw`, `floaty.touch` (Q173 (a), 后两项不被 `floaty.control` 隐含, 单独开启也没有作用).
 - `ui.layout` 关闭而 `floaty.control` 开启时, 悬浮窗视图的读写与事件经 `floaty.control` 发往宿主; Activity 内容窗口的路由 (showLayout / windowControl / barHeight) 只属 `ui.layout`.
 - 终端调用经宿主的长任务路由 (start / poll, 每次轮询最多约 1 s), exec (wait) / waitFor / npm.run 每次调用最多等 905 s: Rhino 的默认 10 min 不变, 更长的 timeout 或 0 (不限) 在 905 s 时以 TIMEOUT 结束. 宿主的终端错误保留插件的代码 (PLUGIN_UNAVAILABLE, SESSION_NOT_FOUND, TIMEOUT 等), 由共享门面转为 TerminalError.
+- 同一会话的 write 排在此前发起的 waitFor 订阅生效之后 (宿主路由 waitForStart 在订阅运行后应答, waitForResult 取结果), `const line = s.waitFor(re); await s.write(cmd); await line;` 不会错过较快的输出; 先 write 后 waitFor 时输出仍可能先于订阅到达.
 - web.newWebSocket 用 Bun 的 WebSocket 连接 (options 的 headers / protocols / timeoutMs), 事件名同 Rhino (open / message / text / bytes / closing / closed / failure); 不需要授权, 连接受插件进程的网络条件约束.
 - `host.global` 增加 `newWebSocket / newInjectableWebView / newInjectableWebClient / ComposeError` (`UiFamilyGlobals`), `host.global.install()` 同时安装; isUiThread 与 toast 全局见上节.
 - 主线程与 Worker 相同: 每个线程各自 `createHostClient()`; 内容窗口每个执行只有一个, 悬浮窗随执行结束关闭, 终端会话属终端插件, 不随执行结束关闭 (同 Rhino).
@@ -618,7 +619,7 @@ Rhino `files` 对象的原型成员 (api-coverage P4.2b) 同样经 `files.contro
 
 默认编码为 utf8, 支持 utf16le, latin1, ascii, hex, base64, base64url 及运行时 Buffer 接受的编码别名. text 为 null/undefined 时写入空字符串, 其他值按 String 转换. listDir 的 filter 在 Bun 中同步执行, 仅返回 true 时保留文件名. 未保证目录列表顺序.
 
-相对路径按宿主的脚本工作目录解析, 缺省为执行应用的 filesDir; 绝对路径和本地 file: URL 仍由 Android 判定访问权限. 这与 Bun 自身 `process.cwd()` 指向的临时工作区不同. 不返回项目归档写回承诺; `Bun.file` 和 `node:fs` 仍在 Bun 插件进程中执行. 保存持久文件时可使用 host.files 或已经授权且可访问的持久路径.
+相对路径按宿主的脚本工作目录解析, 缺省为执行应用的 filesDir; 绝对路径和本地 file: URL 仍由 Android 判定访问权限. 这与 Bun 自身 `process.cwd()` 指向的临时工作区不同. 不返回项目归档写回承诺; `Bun.file` 和 `node:fs` 仍在 Bun 插件进程中执行, 读写共享存储 (如 `/sdcard`) 要在系统设置里给 Bun Runtime 开启 "所有文件访问权限". 未授权时 Android 报 EACCES, 错误原样抛出; 宿主看到 stderr 或未捕获错误里共享存储的 EACCES 后提示一次并可跳转到设置页 (每次执行最多一次, AutoJs6 Q228 (b)), 脚本自己 catch 且不打印的错误不提示. 保存持久文件时可使用 host.files 或已经授权且可访问的持久路径.
 
 ensureDir 的路径以斜杠结尾时创建该目录, 否则只创建文件的父目录. write/append 不自动创建父目录; copy 会创建目标父目录, move 不会. remove 只移除文件或空目录, 非空目录会拒绝. 文件不存在, 路径无权访问及不支持的跨文件系统移动均保留失败结果, 不伪装成功. `open` (即 `host.global.open`) 与 `toFile` 是共享核心的 Rhino 实现: 经 Java 门面在宿主进程中创建 Rhino 的文件句柄或 `java.io.File` 句柄, 需要默认关闭的 `java.interop` 授权, 返回 Promise, 句柄由调用方用 `host.java.release` 释放. 它们与 `host.zip` 的相对路径按宿主的脚本工作目录 (脚本源目录) 解析: 客户端在其中任一方法首次调用前向宿主取得该目录 (每次执行只取一次), 不需要授权 (`execution.control` 的 cwd, 宿主 6.8.0 起; api-coverage Q120 (b)). 更早的宿主没有这个方法时改用 `files.cwd()` (需 `files.control`), 两者都不可用时按 Bun 工作目录 `process.cwd()` 解析, 宿主进程通常无权访问这个临时工作区, 应改用绝对路径 (例如以 `files.sdcardPath` 开头).
 
